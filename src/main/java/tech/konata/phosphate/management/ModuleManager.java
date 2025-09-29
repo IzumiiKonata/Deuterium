@@ -147,7 +147,6 @@ public class ModuleManager extends AbstractManager {
         }
 
         modules.add(GlobalSettings.dummyModule);
-        modules.add(GlobalSettings.dummyMusicModule);
     }
 
     @Override

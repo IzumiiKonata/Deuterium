@@ -2,7 +2,6 @@ package tech.konata.phosphate.module.impl.other;
 
 import org.lwjglx.input.Keyboard;
 import tech.konata.phosphate.module.Module;
-import tech.konata.phosphate.screens.ClickGui;
 import tech.konata.phosphate.screens.ConsoleScreen;
 
 /**

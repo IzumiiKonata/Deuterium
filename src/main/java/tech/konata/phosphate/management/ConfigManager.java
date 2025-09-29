@@ -5,22 +5,11 @@ import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.NativeBackedImage;
-import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.util.Location;
-import tech.konata.ncm.OptionsUtil;
 import tech.konata.phosphate.Phosphate;
 import tech.konata.phosphate.utils.alt.Alt;
 import tech.konata.phosphate.utils.alt.AltManager;
 import tech.konata.phosphate.module.Module;
-import tech.konata.phosphate.utils.music.CloudMusic;
-import tech.konata.phosphate.utils.music.dto.PlayList;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.rendering.texture.Textures;
-import tech.konata.phosphate.screens.clickgui.panels.MusicPanel;
 import tech.konata.phosphate.settings.GlobalSettings;
-import tech.konata.phosphate.utils.other.multithreading.MultiThreadingUtil;
-import tech.konata.phosphate.utils.network.HttpClient;
 import tech.konata.phosphate.widget.Widget;
 import tech.konata.phosphate.widget.impl.GifTextureWidget;
 import tech.konata.phosphate.widget.impl.StaticTextureWidget;
@@ -77,7 +66,7 @@ public class ConfigManager extends AbstractManager {
 
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(curConfigFile), StandardCharsets.UTF_8));
 
-            writer.write("{\"Config\": \"Default\",\"CMCookie\": \"\"}");
+            writer.write("{\"Config\": \"Default\"}");
 
             writer.flush();
             writer.close();
@@ -91,105 +80,22 @@ public class ConfigManager extends AbstractManager {
             firstTime = true;
         }
 
-        File musicCacheDir = new File(configDir, "MusicCache");
-
-        if (!musicCacheDir.exists()) {
-            musicCacheDir.mkdir();
-        }
-
-        File dynamicCoverDir = new File(configDir, "DynamicCover");
-
-        if (!dynamicCoverDir.exists()) {
-            dynamicCoverDir.mkdir();
-        }
-
         Gson gson = new Gson();
 
         @Cleanup
         Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(curConfigFile), StandardCharsets.UTF_8));
         JsonObject element = gson.fromJson(reader, JsonObject.class);
 
-        JsonElement config = element.get("Config");
-        if (config != null && !config.isJsonNull()) {
-            currentConfig = config.getAsString();
+        if (element != null) {
+            JsonElement config = element.get("Config");
+            if (config != null && !config.isJsonNull()) {
+                currentConfig = config.getAsString();
+            }
+
+            this.loadConfig();
         }
 
-        JsonElement cookie = element.get("CMCookie");
-        if (cookie != null && !cookie.isJsonNull()) {
-            String cmCookie = cookie.getAsString();
-            CloudMusic.initialize(cmCookie);
-//            MultiThreadingUtil.runAsync(this::refreshNCM);
-        }
-
-        this.loadConfig();
         this.loadAlts();
-    }
-
-    public void refreshNCM() {
-        try {
-            CloudMusic.initialize(OptionsUtil.getCookie());
-            MusicPanel.profile = CloudMusic.getUserProfile();
-
-            if (MusicPanel.profile == null)
-                return;
-
-            List<PlayList> playLists = new ArrayList<>();
-
-            int page = 0;
-
-            while (true) {
-
-                List<PlayList> pl = MusicPanel.profile.playLists(page, 30);
-
-                if (pl == null || pl.isEmpty())
-                    break;
-
-                playLists.addAll(pl);
-
-                page += 1;
-            }
-
-            MusicPanel.playLists = playLists;
-            MusicPanel.likeList = CloudMusic.likeList();
-
-            if (!MusicPanel.playLists.isEmpty()) {
-                MusicPanel.selectedList = MusicPanel.playLists.get(0);
-//
-//                MultiThreadingUtil.runAsync(new Runnable() {
-//                    @Override
-//                    @SneakyThrows
-//                    public void run() {
-//
-//                        for (PlayList playList : MusicPanel.playLists) {
-//                            Location location = MusicPanel.getPlaylistCoverLocation(playList);
-//                            Location locationSmall = MusicPanel.getPlaylistCoverLocationSmall(playList);
-//
-//                            TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-//                            AsyncGLContext.submit(() -> {
-//                                if (textureManager.getTexture(location) != null)
-//                                    textureManager.deleteTexture(location);
-//
-//                                if (textureManager.getTexture(locationSmall) != null)
-//                                    textureManager.deleteTexture(locationSmall);
-//                            });
-//
-//                            BufferedImage img = NativeBackedImage.make(HttpClient.downloadStream(playList.coverUrl + "?param=128y128"));
-//
-//                            Textures.loadTextureAsyncly(location, img);
-//
-//                            BufferedImage imgSmall = NativeBackedImage.make(HttpClient.downloadStream(playList.coverUrl + "?param=40y40"));
-//                            Textures.loadTextureAsyncly(locationSmall, imgSmall);
-//
-//                        }
-//
-//                    }
-//                });
-            }
-
-        } catch (Throwable t) {
-//            CloudMusic.api.setCookie("");
-            t.printStackTrace();
-        }
     }
 
     @SneakyThrows
@@ -280,41 +186,15 @@ public class ConfigManager extends AbstractManager {
             JsonObject widgets = config.get("Widgets").getAsJsonObject();
 
             widgets.entrySet().forEach(w -> {
-                if (w.getKey().equals("Texture")) {
-                    JsonObject jObj = w.getValue().getAsJsonObject();
-
-                    String path = jObj.get("Path").getAsString();
-
-                    File file = new File(path);
-
-                    if (file.exists()) {
-                        StaticTextureWidget stw = new StaticTextureWidget(file);
-                        stw.loadConfig(jObj);
-                        WidgetsManager.getWidgets().add(stw);
-                    }
-                } else if (w.getKey().equals("GifTexture")) {
-                    JsonObject jObj = w.getValue().getAsJsonObject();
-
-                    String path = jObj.get("Path").getAsString();
-
-                    File file = new File(path);
-
-                    if (file.exists()) {
-                        GifTextureWidget gte = new GifTextureWidget(file);
-                        gte.loadConfig(jObj);
-                        WidgetsManager.getWidgets().add(gte);
-                    }
-                } else {
-                    Optional<Widget> widget = client.getWidgetsManager().getWidgetByName(w.getKey());
+                Optional<Widget> widget = client.getWidgetsManager().getWidgetByName(w.getKey());
 
 
-                    widget.ifPresent(wid -> {
-                        wid.loadConfig(w.getValue().getAsJsonObject());
-                    });
+                widget.ifPresent(wid -> {
+                    wid.loadConfig(w.getValue().getAsJsonObject());
+                });
 
-                    if (!widget.isPresent()) {
-                        this.logger.error("Widget {} is missing!", w.getKey());
-                    }
+                if (!widget.isPresent()) {
+                    this.logger.error("Widget {} is missing!", w.getKey());
                 }
             });
         } catch (Throwable ignored) {
@@ -341,9 +221,6 @@ public class ConfigManager extends AbstractManager {
         JsonObject obj = new JsonObject();
 
         obj.addProperty("Config", currentConfig);
-
-        obj.addProperty("CMCookie", OptionsUtil.getCookie());
-        writer.write(gson.toJson(obj));
 
         writer.flush();
         writer.close();

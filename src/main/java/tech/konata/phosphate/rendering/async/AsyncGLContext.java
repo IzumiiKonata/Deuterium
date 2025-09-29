@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL21;
 import org.lwjgl.opengl.GL32;
 import org.lwjgl.system.MemoryUtil;
 import tech.konata.phosphate.utils.logging.Logger;
-import tech.konata.phosphate.utils.music.CloudMusic;
 import tech.konata.phosphate.utils.other.DevUtils;
 import tech.konata.phosphate.utils.timing.Timer;
 

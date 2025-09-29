@@ -8,9 +8,9 @@
 
 package ingameime;
 
-import tech.konata.obfuscation.ExcludeThis;
 
-@ExcludeThis
+
+
 public final class InputMode {
     public final static InputMode AlphaNumeric = new InputMode("AlphaNumeric");
     public final static InputMode Native = new InputMode("Native");

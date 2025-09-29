@@ -22,7 +22,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
 import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.screens.multiplayer.ZephyrMultiPlayerUI;
 import tech.konata.phosphate.utils.logging.LogManager;
 import tech.konata.phosphate.utils.logging.Logger;
 
@@ -246,7 +245,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         }
 
         if (button.id == 2) {
-            this.mc.displayGuiScreen(new ZephyrMultiPlayerUI(this));
+            this.mc.displayGuiScreen(new GuiMultiplayer(this));
         }
 
         if (button.id == 4) {

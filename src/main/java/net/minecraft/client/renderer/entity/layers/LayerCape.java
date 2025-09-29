@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.MathHelper;
 import tech.konata.phosphate.management.WidgetsManager;
-import tech.konata.phosphate.screens.altmanager.AltScreen;
 import tech.konata.phosphate.widget.impl.PaperDoll;
 
 public class LayerCape implements LayerRenderer<AbstractClientPlayer> {
@@ -48,11 +47,7 @@ public class LayerCape implements LayerRenderer<AbstractClientPlayer> {
                 f1 = -5.0F;
             }
 
-            if ((Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof AltScreen)) {
-                GlStateManager.rotate(20, 1.0F, 0.0F, 0.0F);
-//                GlStateManager.rotate(f3 / 2.0F, 0.0F, 0.0F, 1.0F);
-//                GlStateManager.rotate(-f3 / 2.0F, 0.0F, 1.0F, 0.0F);
-            } else if (WidgetsManager.paperDoll.isEnabled() && PaperDoll.isRendering) {
+            if (WidgetsManager.paperDoll.isEnabled() && PaperDoll.isRendering) {
                 PaperDoll p = WidgetsManager.paperDoll;
 
                 d0 = entitylivingbaseIn.prevChasingPosX + (entitylivingbaseIn.chasingPosX - entitylivingbaseIn.prevChasingPosX) * (double) partialTicks - (entitylivingbaseIn.prevPosX + (entitylivingbaseIn.posX - entitylivingbaseIn.prevPosX) * (double) partialTicks);

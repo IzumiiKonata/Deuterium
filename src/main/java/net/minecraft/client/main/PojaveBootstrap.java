@@ -9,7 +9,7 @@ import joptsimple.OptionSpec;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import org.lwjgl.system.Configuration;
-import tech.konata.obfuscation.ExcludeThis;
+
 import tech.konata.phosphate.Phosphate;
 import tech.konata.phosphate.utils.logging.ConsoleOutputRedirector;
 
@@ -24,7 +24,7 @@ import java.util.List;
  * @author IzumiiKonata
  * Date: 2025/1/23 13:06
  */
-@ExcludeThis
+
 public class PojaveBootstrap {
 
     public static void main(String[] args) {

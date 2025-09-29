@@ -11,12 +11,7 @@ import org.lwjglx.input.InputEvents;
 import org.lwjglx.input.KeyCodes;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
-import tech.konata.phosphate.event.events.input.FileDroppedEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.rendering.background.AcrylicBackground;
-import tech.konata.phosphate.rendering.background.utils.WindowUtil;
 import tech.konata.phosphate.settings.GlobalSettings;
-import tech.konata.phosphate.utils.dnd.DropTarget;
 
 import javax.swing.*;
 import java.awt.*;
@@ -149,25 +144,10 @@ public class Display {
 
         glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, GLFW_FALSE);
 
-        if (GlobalSettings.BORDERLESS_WINDOW.getValue()) {
-            glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_TRUE);
-            glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-        }
-
-
         Window.handle = glfwCreateWindow(mode.getWidth(), mode.getHeight(), windowTitle, NULL, NULL);
         if (Window.handle == 0L) {
             throw new IllegalStateException("Failed to create Display window");
         }
-
-        // Store window handle for later use
-        if (Platform.get() == Platform.WINDOWS) {
-            AcrylicBackground.setWindowHandle(WindowUtil.getWindowHandle(getWindow()));
-        }
-//        DragNDropManager.enableDragAndDrop(getWindow());
-
-        // Apply Win11-Specific window setup
-        AcrylicBackground.ApplyWin11Specific();
 
         glfwMakeContextCurrent(Window.handle);
         drawable = new DrawableGL();

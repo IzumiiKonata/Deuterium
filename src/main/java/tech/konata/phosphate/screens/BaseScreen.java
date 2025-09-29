@@ -7,7 +7,6 @@ import org.lwjglx.input.Mouse;
 import tech.konata.phosphate.interfaces.SharedRenderingConstants;
 import tech.konata.phosphate.rendering.entities.RenderableEntity;
 import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.screens.dialog.Dialog;
 import tech.konata.phosphate.settings.GlobalSettings;
 import tech.konata.phosphate.utils.cursor.CursorUtils;
 
@@ -27,10 +26,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
 
     int clickMoveTicks = 0;
     long lastClick = 0L;
-
-    @Getter
-    @Setter
-    public Dialog dialog = null;
 
     public void drawScreen(double mouseX, double mouseY) {
 
@@ -76,24 +71,12 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
     }
 
     private void handleKeyTyped(char typedChar, int keyCode) {
-
-        if (this.dialog != null) {
-            this.dialog.keyTyped(typedChar, keyCode);
-            return;
-        }
-
         this.widgets.forEach(w -> w.keyTyped(typedChar, keyCode));
 
         this.onKeyTyped(typedChar, keyCode);
     }
 
     private void handleMouseClicked(double mouseX, double mouseY, int mouseButton) throws IOException {
-
-        if (this.dialog != null) {
-            this.dialog.mouseClicked(mouseX, mouseY, mouseButton);
-            return;
-        }
-
         this.widgets.forEach(w -> w.mouseClicked(mouseX, mouseY, mouseButton));
 
         clickMoveTicks = 0;
@@ -103,12 +86,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
     }
 
     private void handleMouseReleased(double mouseX, double mouseY, int mouseButton) {
-
-        if (this.dialog != null) {
-            this.dialog.mouseReleased(mouseX, mouseY, mouseButton);
-            return;
-        }
-
         this.widgets.forEach(w -> w.mouseReleased(mouseX, mouseY, mouseButton));
 
         if (mouseButton == 0) {
@@ -180,14 +157,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
         this.widgets.forEach(w -> w.draw(mouseX, mouseY));
 
         this.renderLast(mouseX, mouseY);
-
-        if (this.dialog != null) {
-            this.dialog.onRender(mouseX, mouseY);
-
-            if (this.dialog.canClose())
-                this.dialog = null;
-        }
-
         CursorUtils.setCursor(overrideMouseCursor);
 
     }

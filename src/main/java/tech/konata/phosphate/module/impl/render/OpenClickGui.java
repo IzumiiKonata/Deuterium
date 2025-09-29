@@ -2,7 +2,6 @@ package tech.konata.phosphate.module.impl.render;
 
 import org.lwjglx.input.Keyboard;
 import tech.konata.phosphate.module.Module;
-import tech.konata.phosphate.screens.ClickGui;
 
 /**
  * @author IzumiiKonata
@@ -18,10 +17,6 @@ public class OpenClickGui extends Module {
 
     @Override
     public void onEnable() {
-
-        if (mc.thePlayer != null && mc.currentScreen != ClickGui.getInstance()) {
-            mc.displayGuiScreen(ClickGui.getInstance());
-        }
 
         this.toggle();
 

@@ -27,7 +27,6 @@ import tech.konata.phosphate.event.events.rendering.RenderPlayerRotationsEvent;
 import tech.konata.phosphate.management.EventManager;
 import tech.konata.phosphate.management.ModuleManager;
 import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.screens.altmanager.AltScreen;
 import tech.konata.phosphate.settings.GlobalSettings;
 import tech.konata.phosphate.utils.logging.LogManager;
 import tech.konata.phosphate.utils.logging.Logger;
@@ -655,7 +654,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
         }
 
-        return !(Minecraft.getMinecraft().currentScreen instanceof AltScreen) && Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || GlobalSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
+        return Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || GlobalSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
     }
 
     public void setRenderOutlines(boolean renderOutlinesIn) {

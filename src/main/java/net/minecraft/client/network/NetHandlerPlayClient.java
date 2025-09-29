@@ -68,7 +68,6 @@ import tech.konata.phosphate.event.events.player.EntityVelocityEvent;
 import tech.konata.phosphate.event.events.player.RespawnEvent;
 import tech.konata.phosphate.management.EventManager;
 import tech.konata.phosphate.screens.MainMenu;
-import tech.konata.phosphate.screens.multiplayer.ZephyrMultiPlayerUI;
 import tech.konata.phosphate.utils.logging.LogManager;
 import tech.konata.phosphate.utils.logging.Logger;
 
@@ -572,7 +571,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         if (this.guiScreenServer != null) {
             this.gameController.displayGuiScreen(new GuiDisconnected(this.guiScreenServer, "disconnect.lost", reason));
         } else {
-            this.gameController.displayGuiScreen(new GuiDisconnected(new ZephyrMultiPlayerUI(MainMenu.getInstance()), "disconnect.lost", reason));
+            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(MainMenu.getInstance()), "disconnect.lost", reason));
         }
     }
 

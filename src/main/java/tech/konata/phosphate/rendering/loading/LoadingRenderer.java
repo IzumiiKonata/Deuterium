@@ -15,14 +15,11 @@ import tech.konata.phosphate.rendering.animation.Easing;
 import tech.konata.phosphate.rendering.animation.Interpolations;
 import tech.konata.phosphate.rendering.async.GLContextUtils;
 import tech.konata.phosphate.rendering.entities.impl.Rect;
-import tech.konata.phosphate.rendering.loading.screens.GenshinImpactLoadingScreen;
 import tech.konata.phosphate.rendering.loading.screens.NormalLoadingScreen;
-import tech.konata.phosphate.rendering.loading.screens.OpaiLoadingScreen;
 import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
 import tech.konata.phosphate.settings.GlobalSettings;
 import tech.konata.phosphate.utils.other.SplashGenerator;
 
-import java.awt.*;
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Random;
@@ -62,17 +59,7 @@ public class LoadingRenderer {
      */
     @SneakyThrows
     private static LoadingScreenRenderer getLoadingScreen() {
-
-//        List<Class<? extends LoadingScreenRenderer>> loadingScreenRenderers = Arrays.asList(/*NormalLoadingScreen.class, */GenshinImpactLoadingScreen.class);
-//
-//        return loadingScreenRenderers.get(Math.abs(random.nextInt()) % loadingScreenRenderers.size()).newInstance();
-//        return new GenshinImpactLoadingScreen();
-
-        if (GlobalSettings.GENSHIN_IMPACT_MODE.getValue())
-            return new GenshinImpactLoadingScreen();
-
         return new NormalLoadingScreen();
-//        return new OpaiLoadingScreen();
     }
 
     @SneakyThrows

@@ -3,7 +3,7 @@ package ingameime;
 import com.sun.jna.Native;
 import com.sun.jna.Structure;
 import com.sun.jna.platform.win32.*;
-import tech.konata.obfuscation.ExcludeThis;
+
 
 import java.util.*;
 
@@ -11,7 +11,7 @@ import java.util.*;
  * @author IzumiiKonata
  * @since 2024/10/7 22:35
  */
-@ExcludeThis
+
 public class SystemCursorUtils {
 
     private static final User32 user32 = User32.INSTANCE;
@@ -31,7 +31,7 @@ public class SystemCursorUtils {
         return cursorinfo.hCursor.toString();
     }
 
-    @ExcludeThis
+    
     public static class CURSORINFO extends Structure {
 
         public int cbSize;
@@ -48,7 +48,7 @@ public class SystemCursorUtils {
         }
     }
 
-    @ExcludeThis
+    
     public interface User32 extends com.sun.jna.Library {
         User32 INSTANCE = Native.load("User32.dll", User32.class);
 

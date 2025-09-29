@@ -8,9 +8,6 @@
 
 package ingameime;
 
-import tech.konata.obfuscation.*;
-
-@ExcludeThis
 public final class API {
     public final static API TextServiceFramework = new API("TextServiceFramework");
     public final static API Imm32 = new API("Imm32");

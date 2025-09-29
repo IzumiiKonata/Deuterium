@@ -160,8 +160,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         float r2 = r, g2 = g, b2 = b;
         GlStateManager.pushMatrix();
 
-        x += GlobalSettings.FONT_OFFSET_X.getValue();
-        y += GlobalSettings.FONT_OFFSET_Y.getValue();
+        y -= 2.0f;
 
         GlStateManager.translate(roundToDecimal(x), roundToDecimal(y), 0);
 

@@ -3,7 +3,6 @@ package net.minecraft.client.gui;
 import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.resources.I18n;
 import tech.konata.phosphate.screens.MainMenu;
-import tech.konata.phosphate.screens.multiplayer.ZephyrMultiPlayerUI;
 
 import java.io.IOException;
 
@@ -54,7 +53,7 @@ public class GuiIngameMenu extends GuiScreen {
                 if (flag) {
                     this.mc.displayGuiScreen(MainMenu.getInstance());
                 } else {
-                    this.mc.displayGuiScreen(new ZephyrMultiPlayerUI(MainMenu.getInstance()));
+                    this.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.getInstance()));
                 }
 
             case 2:

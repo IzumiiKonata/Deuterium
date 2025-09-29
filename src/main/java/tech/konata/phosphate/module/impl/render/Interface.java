@@ -10,11 +10,6 @@ import tech.konata.phosphate.rendering.TitleBar;
 import tech.konata.phosphate.rendering.async.AsyncGLContext;
 import tech.konata.phosphate.rendering.font.CFontRenderer;
 import tech.konata.phosphate.rendering.font.GlyphCache;
-import tech.konata.phosphate.rendering.music.PVRenderer;
-import tech.konata.phosphate.rendering.music.impl.KyuKurarin;
-import tech.konata.phosphate.rendering.music.impl.LagTrain;
-import tech.konata.phosphate.rendering.music.impl.LiarDancer;
-import tech.konata.phosphate.rendering.music.impl.OchameKino;
 import tech.konata.phosphate.rendering.notification.NotificationManager;
 import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
 import tech.konata.phosphate.settings.BooleanSetting;
@@ -22,7 +17,6 @@ import tech.konata.phosphate.settings.GlobalSettings;
 import tech.konata.phosphate.settings.NumberSetting;
 import tech.konata.phosphate.settings.StringSetting;
 import tech.konata.phosphate.utils.other.multithreading.MultiThreadingUtil;
-import tech.konata.phosphate.utils.music.CloudMusic;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
@@ -46,19 +40,9 @@ public class Interface extends Module {
     public StringSetting waterMarkValue = new StringSetting("Title", Phosphate.NAME + "", () -> waterMark.getValue());
     public NumberSetting<Double> pvScale = new NumberSetting<>("<..?> Scale", 1.5, 0.8, 3.0, 0.05);
 
-    List<PVRenderer> pvRenderers;
-
     @Override
     public void onEnable() {
 
-        pvRenderers = Arrays.asList(
-                new OchameKino(),
-                new LagTrain(),
-                new KyuKurarin(),
-                new LiarDancer()
-        );
-
-        pvRenderers.forEach(PVRenderer::initRenderer);
     }
 
     @Handler
@@ -69,15 +53,6 @@ public class Interface extends Module {
 
         if (this.waterMark.getValue()) {
             this.renderWaterMark();
-        }
-
-        if (CloudMusic.currentlyPlaying != null && CloudMusic.player != null) {
-
-            for (PVRenderer pvRenderer : pvRenderers) {
-                if (pvRenderer.isApplicable(CloudMusic.currentlyPlaying.getId()))
-                    pvRenderer.render();
-            }
-
         }
 
         if (GlobalSettings.DEBUG_MODE.getValue()) {

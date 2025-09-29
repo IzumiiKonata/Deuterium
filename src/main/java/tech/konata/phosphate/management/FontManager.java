@@ -73,61 +73,27 @@ public class FontManager extends AbstractManager {
         icon30 = create(40, "icomoon", "icomoon");
         icon18 = create(25, "icomoon", "icomoon");
 
-        String externalBold = GlobalSettings.BOLD_FONT_RENDERER_PATH.getValue();
-
         String boldName = "pf_middlebold";
 
-        if (!externalBold.isEmpty() && Files.exists(new File(externalBold).toPath())) {
-
-            File bold = new File(externalBold);
-
-            pf14bold = createFromExternalFile(14, bold, boldName);
-            pf16bold = createFromExternalFile(16, bold, boldName);
-            pf18bold = createFromExternalFile(18, bold, boldName);
-            pf20bold = createFromExternalFile(20, bold, boldName);
-            pf25bold = createFromExternalFile(25, bold, boldName);
-            pf28bold = createFromExternalFile(28, bold, boldName);
-
-        } else {
-            pf14bold = create(14, boldName, boldName);
-            pf16bold = create(16, boldName, boldName);
-            pf18bold = create(18, boldName, boldName);
-            pf20bold = create(20, boldName, boldName);
-            pf25bold = create(25, boldName, boldName);
-            pf28bold = create(28, boldName, boldName);
-        }
-
-        String externalRegular = GlobalSettings.REGULAR_FONT_RENDERER_PATH.getValue();
+        pf14bold = create(14, boldName, boldName);
+        pf16bold = create(16, boldName, boldName);
+        pf18bold = create(18, boldName, boldName);
+        pf20bold = create(20, boldName, boldName);
+        pf25bold = create(25, boldName, boldName);
+        pf28bold = create(28, boldName, boldName);
 
         String normal = "pf_normal";
 
-        if (!externalRegular.isEmpty() && Files.exists(new File(externalRegular).toPath())) {
-
-            File regular = new File(externalRegular);
-
-            pf12 = createFromExternalFile(12, regular, normal);
-            pf14 = createFromExternalFile(14, regular, normal);
-            pf16 = createFromExternalFile(16, regular, normal);
-            pf18 = createFromExternalFile(18, regular, normal);
-            pf20 = createFromExternalFile(20, regular, normal);
-            pf25 = createFromExternalFile(25, regular, normal);
-            pf28 = createFromExternalFile(28, regular, normal);
-            pf40 = createFromExternalFile(40, regular, normal);
-            pf60 = createFromExternalFile(60, regular, normal);
-            pf100 = createFromExternalFile(100, regular, normal);
-        } else {
-
-            pf12 = create(12, normal, normal);
-            pf14 = create(14, normal, normal);
-            pf16 = create(16, normal, normal);
-            pf18 = create(18, normal, normal);
-            pf20 = create(20, normal, normal);
-            pf25 = create(25, normal, normal);
-            pf28 = create(28, normal, normal);
-            pf40 = create(40, normal, normal);
-            pf60 = create(60, normal, normal);
-            pf100 = create(100, normal, normal);
-        }
+        pf12 = create(12, normal, normal);
+        pf14 = create(14, normal, normal);
+        pf16 = create(16, normal, normal);
+        pf18 = create(18, normal, normal);
+        pf20 = create(20, normal, normal);
+        pf25 = create(25, normal, normal);
+        pf28 = create(28, normal, normal);
+        pf40 = create(40, normal, normal);
+        pf60 = create(60, normal, normal);
+        pf100 = create(100, normal, normal);
 
     }
 

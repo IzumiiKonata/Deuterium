@@ -8,9 +8,9 @@
 
 package ingameime;
 
-import tech.konata.obfuscation.ExcludeThis;
 
-@ExcludeThis
+
+
 public final class CompositionState {
     public final static CompositionState Begin = new CompositionState("Begin");
     public final static CompositionState Update = new CompositionState("Update");

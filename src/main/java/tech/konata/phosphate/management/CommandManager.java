@@ -49,27 +49,6 @@ public class CommandManager extends AbstractManager {
     public final void onChat(ChatEvent event) {
         String unformatted = event.getMsg();
 
-        //genshin detector
-        {
-            if (GlobalSettings.GENSHIN_IMPACT_MODE.getValue()) {
-                for (String s : turnOff) {
-                    if (unformatted.contains(s)) {
-                        Minecraft.getMinecraft().thePlayer.addChatMessage("[神必人] 收到! 已关闭原神模式");
-                        GlobalSettings.GENSHIN_IMPACT_MODE.setValue(Boolean.FALSE);
-                        break;
-                    }
-                }
-            } else {
-                for (String s : turnOn) {
-                    if (unformatted.contains(s)) {
-                        Minecraft.getMinecraft().thePlayer.addChatMessage("[神必人] 收到! 已打开原神模式");
-                        GlobalSettings.GENSHIN_IMPACT_MODE.setValue(Boolean.TRUE);
-                        break;
-                    }
-                }
-            }
-        }
-
         if (!unformatted.startsWith("."))
             return;
 

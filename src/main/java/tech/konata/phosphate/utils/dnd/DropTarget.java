@@ -2,7 +2,6 @@ package tech.konata.phosphate.utils.dnd;
 
 import lombok.Getter;
 import net.minecraft.util.Util;
-import tech.konata.obfuscation.ExcludeThis;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,7 +12,6 @@ import java.io.InputStream;
  * @author IzumiiKonata
  * Date: 2025/2/4 09:09
  */
-@ExcludeThis
 public class DropTarget {
 
     @Getter

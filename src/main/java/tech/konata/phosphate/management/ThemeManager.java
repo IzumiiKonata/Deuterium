@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import tech.konata.phosphate.event.eventapi.Handler;
 import tech.konata.phosphate.event.events.rendering.Render2DEvent;
-import tech.konata.phosphate.utils.music.CloudMusic;
 import tech.konata.phosphate.rendering.AccentColor;
 import tech.konata.phosphate.rendering.animation.Interpolations;
 import tech.konata.phosphate.rendering.materialcolors.dynamiccolor.DynamicScheme;
@@ -118,13 +117,7 @@ public class ThemeManager extends AbstractManager {
         from.r = Interpolations.interpBezier(from.r, r, speed);
         from.g = Interpolations.interpBezier(from.g, g, speed);
         from.b = Interpolations.interpBezier(from.b, b, speed);
-
-        if (GlobalSettings.MUSIC_THEME.getValue() && from != ThemeColor.Text && CloudMusic.currentlyPlaying != null) {
-            from.a = Interpolations.interpBezier(from.a, 80, speed);
-        } else {
-            from.a = Interpolations.interpBezier(from.a, 255, speed);
-        }
-
+        from.a = Interpolations.interpBezier(from.a, 255, speed);
     }
 
     private int mix(int a, int b, double aPerc) {
@@ -151,53 +144,9 @@ public class ThemeManager extends AbstractManager {
 
     @Handler
     public void onRender2D(Render2DEvent e) {
-
-        if (GlobalSettings.MUSIC_THEME.getValue() && CloudMusic.currentlyPlaying != null) {
-
-            CloudMusic.ColorPlatte cp = CloudMusic.avgColor.get(CloudMusic.currentlyPlaying.getId());
-
-            if (cp != null) {
-
-                int c = cp.get(0);
-
-                if (cp.colors.length > 1) {
-                    c = cp.get();
-
-                    if (dynamicScheme == null || dynamicScheme.sourceColorArgb != c) {
-                        dynamicScheme = new SchemeFidelity(Hct.fromInt(c), true, 0);
-                    }
-
-                    double v = 1 - GlobalSettings.MIX_FACTOR.getValue();
-
-                    float speed = 0.04f;
-
-                    interpCat(ThemeColor.OnSurface, mix(getActual(ThemeColor.OnSurface), mdc.onSurfaceVariant().getArgb(dynamicScheme), v), speed);
-                    interpCat(ThemeColor.Text, mix(getActual(ThemeColor.Text), mdc.secondary().getArgb(dynamicScheme), v * 1.375), speed);
-                    interpCat(ThemeColor.Surface, mix(getActual(ThemeColor.Surface), mdc.primaryFixedDim().getArgb(dynamicScheme), v), speed);
-
-                } else {
-                    if (dynamicScheme == null || dynamicScheme.sourceColorArgb != c) {
-                        dynamicScheme = new SchemeFidelity(Hct.fromInt(c), true, 0);
-                    }
-
-
-                    double v = 1 - GlobalSettings.MIX_FACTOR.getValue();
-
-                    interpCat(ThemeColor.OnSurface, mix(getActual(ThemeColor.OnSurface), mdc.primaryFixed().getArgb(dynamicScheme), v), 0.2f);
-                    interpCat(ThemeColor.Text, mix(getActual(ThemeColor.Text), mdc.secondary().getArgb(dynamicScheme), v * 1.375), 0.2f);
-                    interpCat(ThemeColor.Surface, mix(getActual(ThemeColor.Surface), mdc.primaryFixedDim().getArgb(dynamicScheme), v), 0.2f);
-
-                }
-
-            }
-
-        } else {
-
-            interpCat(ThemeColor.OnSurface, getActual(ThemeColor.OnSurface), 0.2f);
-            interpCat(ThemeColor.Text, getActual(ThemeColor.Text), 0.2f);
-            interpCat(ThemeColor.Surface, getActual(ThemeColor.Surface), 0.2f);
-
-        }
+        interpCat(ThemeColor.OnSurface, getActual(ThemeColor.OnSurface), 0.2f);
+        interpCat(ThemeColor.Text, getActual(ThemeColor.Text), 0.2f);
+        interpCat(ThemeColor.Surface, getActual(ThemeColor.Surface), 0.2f);
     }
 
     public static int get(ThemeColor c) {

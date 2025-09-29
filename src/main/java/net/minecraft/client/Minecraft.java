@@ -113,7 +113,6 @@ import tech.konata.phosphate.rendering.animation.Interpolations;
 import tech.konata.phosphate.rendering.async.AsyncGLContext;
 import tech.konata.phosphate.rendering.loading.LoadingRenderer;
 import tech.konata.phosphate.screens.MainMenu;
-import tech.konata.phosphate.screens.altmanager.AltScreen;
 import tech.konata.phosphate.settings.GlobalSettings;
 import tech.konata.phosphate.utils.logging.LogManager;
 import tech.konata.phosphate.utils.logging.Logger;
@@ -630,9 +629,7 @@ public class Minecraft implements IThreadListener {
 
         InputEvents.addKeyboardListener(new McKeybindHandler());
 
-        if (!Phosphate.POJAVE) {
-            Phosphate.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Main.startupTime) / 1000.0d);
-        }
+        Phosphate.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Main.startupTime) / 1000.0d);
     }
 
     private void registerMetadataSerializers() {
@@ -1137,7 +1134,7 @@ public class Minecraft implements IThreadListener {
         this.mcProfiler.startSection("display");
         GlStateManager.enableTexture2D();
 
-        if (!(this.currentScreen instanceof AltScreen) && this.thePlayer != null && this.theWorld != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
+        if (this.thePlayer != null && this.theWorld != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
             this.gameSettings.thirdPersonView = 0;
         }
 
@@ -2102,10 +2099,8 @@ public class Minecraft implements IThreadListener {
         }
 
         if (!this.isGamePaused) {
-            if (!(this.currentScreen instanceof AltScreen)) {
-                this.mcMusicTicker.update();
-                this.mcSoundHandler.update();
-            }
+            this.mcMusicTicker.update();
+            this.mcSoundHandler.update();
         }
 
         if (this.theWorld != null) {
