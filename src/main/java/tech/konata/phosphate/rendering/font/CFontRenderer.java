@@ -1,0 +1,539 @@
+package tech.konata.phosphate.rendering.font;
+
+import lombok.SneakyThrows;
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.Location;
+import org.lwjgl.opengl.GL11;
+import tech.konata.phosphate.Phosphate;
+import tech.konata.phosphate.event.events.rendering.RenderTextEvent;
+import tech.konata.phosphate.interfaces.IFontRenderer;
+import tech.konata.phosphate.management.EventManager;
+import tech.konata.phosphate.management.FontManager;
+import tech.konata.phosphate.rendering.TexturedShadow;
+import tech.konata.phosphate.settings.GlobalSettings;
+import tech.konata.phosphate.utils.other.StringUtils;
+
+import java.awt.*;
+import java.io.Closeable;
+import java.util.List;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
+public class CFontRenderer implements Closeable, IFontRenderer {
+
+    public Glyph[] allGlyphs = new Glyph['\uFFFF' + 1];
+
+    public Font font;
+    public Font[] fallBackFonts;
+    private boolean initialized;
+    private final Map<String, Integer> stringWidthMap = new HashMap<>();
+    public float sizePx;
+
+    public CFontRenderer(Font font, float sizePx) {
+        this.sizePx = sizePx;
+
+        init(font, sizePx);
+    }
+
+    @SneakyThrows
+    public CFontRenderer(Font font, float sizePx, Font... fallBackFonts) {
+        this(font, sizePx);
+
+        this.fallBackFonts = new Font[fallBackFonts.length + 2];
+
+        for (int i = 0; i < fallBackFonts.length; i++) {
+            this.fallBackFonts[i] = fallBackFonts[i].deriveFont(sizePx * 2);
+        }
+
+        this.fallBackFonts[fallBackFonts.length] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/Phosphate/fonts/NotoColorEmoji.ttf")).deriveFont(sizePx * 2);
+        this.fallBackFonts[fallBackFonts.length + 1] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/Phosphate/fonts/Symbola.ttf")).deriveFont(sizePx * 2);
+    }
+
+    public static String stripControlCodes(String text) {
+        char[] chars = text.toCharArray();
+        StringBuilder f = new StringBuilder();
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            if (c == '§') {
+                i++;
+                continue;
+            }
+            f.append(c);
+        }
+        return f.toString();
+    }
+
+    static final String preloadCharArray = "单人游戏多账号管理设置退出战斗移动视觉玩家其他界面小组件主题朋友使你不能攻击.客户端图形用打开防砍画非常好 17模式物品XYZ辅助瞄准假连点器自为除反作弊生成的控距格挡破坏方块重最CPS大目标选取速度(水平)垂直离角随机隐身队伍检查需要按下鼠持续值列表显示启类阴影颜色背景描边彩虹语言无命令杂项部所有固定Gui关闭系统疾跑线条音乐轨迹摄像栏掉落更粒子夜飘扬披风龙翅膀强制装备包键纸娃计分板信息歌词页网易云扫二维码登录g缩放延迟渲染本地NameT全屏辨率创建者:播未在调整第三称让上拥效果实体时可化幕频谱型义正样倍数插RnbowhrF添加微软消等待中获Mcsftk到xLv档案增亮偏力高只一淡范围宽量暴普通搜索矩间隔逐字滚对齐糊日罗马转头已过期剩余运相pdVl流差预测新志聊天缓入外发光试航俯仰迪克原版拧螺丝AyW旋滑基拟波浪素立即居雅确左右跟简完暗名欺骗来改变存位级近远轴指权jB得!载{}个手专辑长布喜欢>从吗?质较极损H-清环绕声沉浸超母带封混合优I圆受伤世修/气印次每秒帧服务撇我两静态隆药复进它十五提醒刷框窗口畅收以晃历史限仅输见就删换2360°。住切饱和台均衡着填充致性先佳请将文拖这里曲替观择粗默认血液弓箭行南针朝向群海洋沙漠丘陵森林叶沼泽河末冻冰山蘑菇岛岸滩缘丛深石冷桦木树冠巨+热草恶葵繁花刺岩柱疏突杉红坐翻译功失败知顶钓鱼竿蹲百比法解析接至与址资源禁您些？旦，恢采雪雨验累冲双道吸附猜是于什么例藏亚半径<馈响阻尼房湿[]噪D锯齿磁盘5没";
+
+    private void init(Font font, float sizePx) {
+        if (initialized) throw new IllegalStateException("Double call to init()");
+        initialized = true;
+        this.font = font.deriveFont(sizePx * 2);
+
+//        for (char c : preloadCharArray.toCharArray()) {
+//            locateGlyph(c);
+//        }
+    }
+
+    List<Integer> loaded = new ArrayList<>();
+
+    public int fontHeight = -1;
+
+    public interface GlyphLoaded {
+        void loaded(Glyph glyph);
+    }
+
+    private Glyph locateGlyph(char ch) {
+
+        Glyph gly = allGlyphs[ch];
+        if (gly != null) return gly;
+
+        GlyphGenerator.generate(this, ch, this.font, randomIdentifier(), fontHeight -> {
+            this.fontHeight = Math.max(this.fontHeight, fontHeight);
+        });
+
+        return null;
+    }
+
+    public float drawString(String s, double x, double y, int color) {
+        float r = ((color >> 16) & 0xff) / 255f;
+        float g = ((color >> 8) & 0xff) / 255f;
+        float b = ((color) & 0xff) / 255f;
+        float a = ((color >> 24) & 0xff) / 255f;
+        drawString(s, (float) x, (float) y, r, g, b, a);
+        return getStringWidth(s);
+    }
+
+    @Override
+    public int drawStringWithShadow(String text, double x, double y, int color) {
+
+        float a = ((color >> 24) & 0xff) / 255f;
+
+        drawString(net.minecraft.util.StringUtils.stripControlCodes(text), x + 1, y + 1, new Color(0, 0, 0, a).getRGB());
+        drawString(text, x, y, color);
+
+        return this.getStringWidth(text);
+    }
+
+    public void drawString(String s, double x, double y, Color color) {
+        drawString(s, (float) x, (float) y, color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha());
+    }
+
+    public void drawString(String s, float x, float y, float r, float g, float b, float a) {
+        drawString(s, x, y, r, g, b, a, false, 0);
+    }
+
+    private int getColorCode(char c) {
+        switch (c) {
+            case '0': return 0x000000;
+            case '1': return 0x0000AA;
+            case '2': return 0x00AA00;
+            case '3': return 0x00AAAA;
+            case '4': return 0xAA0000;
+            case '5': return 0xAA00AA;
+            case '6': return 0xFFAA00;
+            case '7': return 0xAAAAAA;
+            case '8': return 0x555555;
+            case '9': return 0x5555FF;
+            case 'A': return 0x55FF55;
+            case 'B': return 0x55FFFF;
+            case 'C': return 0xFF5555;
+            case 'D': return 0xFF55FF;
+            case 'E': return 0xFFFF55;
+            case 'F': return 0xFFFFFF;
+
+            default: return Integer.MIN_VALUE; // Default color or throw an exception
+        }
+    }
+
+    public void drawString(String s, float x, float y, float r, float g, float b, float a, boolean gradient, int offset) {
+
+        RenderTextEvent call = EventManager.call(new RenderTextEvent(s));
+
+        if (call.isCancelled())
+            return;
+
+        s = call.getText();
+
+        float r2 = r, g2 = g, b2 = b;
+        GlStateManager.pushMatrix();
+
+        x += GlobalSettings.FONT_OFFSET_X.getValue();
+        y += GlobalSettings.FONT_OFFSET_Y.getValue();
+
+        GlStateManager.translate(roundToDecimal(x), roundToDecimal(y), 0);
+
+        GL11.glScalef(0.5f, 0.5f, 1f);
+
+        GlStateManager.enableBlend();
+
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+
+        GlStateManager.enableTexture2D();
+
+        char[] chars = s.toCharArray();
+        float xOffset = 0;
+        float yOffset = 0;
+        boolean inSel = false;
+        for (char aChar : chars) {
+            char c = aChar;
+            if (inSel) {
+                inSel = false;
+                char c1 = Character.toUpperCase(c);
+                if (c1 == 'R') {
+                    r2 = r;
+                    g2 = g;
+                    b2 = b;
+                } else {
+                    int colorCode = this.getColorCode(c1);
+
+                    if (colorCode != Integer.MIN_VALUE) {
+                        int[] col = RGBIntToRGB(colorCode);
+
+                        r2 = col[0] / 255f;
+                        g2 = col[1] / 255f;
+                        b2 = col[2] / 255f;
+                    }
+                }
+                continue;
+            }
+
+            if (c == '§') {
+                inSel = true;
+                continue;
+            } else if (c == '\n') {
+                yOffset += this.getHeight() * 2 + 4;
+                xOffset = 0;
+                continue;
+            }
+
+            if (c == '（')
+                c = '(';
+
+            if (c == '）')
+                c = ')';
+
+            Glyph glyph = locateGlyph(c);
+            if (glyph != null) {
+                xOffset += glyph.render(xOffset, yOffset, r2, g2, b2, a);
+            }
+        }
+
+
+        GlStateManager.popMatrix();
+    }
+
+    public void drawCenteredString(String s, double x, double y, int color) {
+        float r = ((color >> 16) & 0xff) / 255f;
+        float g = ((color >> 8) & 0xff) / 255f;
+        float b = ((color) & 0xff) / 255f;
+        float a = ((color >> 24) & 0xff) / 255f;
+
+        drawString(s, (float) (x - getStringWidth(s) / 2f), (float) y, r, g, b, a);
+    }
+
+    public void drawCenteredStringWithShadow(String s, double x, double y, int color) {
+        drawStringWithShadow(s, (float) (x - getStringWidth(s) / 2f), (float) y, color);
+    }
+
+    public void drawCenteredStringMultiLine(String s, double x, double y, int color) {
+        float r = ((color >> 16) & 0xff) / 255f;
+        float g = ((color >> 8) & 0xff) / 255f;
+        float b = ((color) & 0xff) / 255f;
+        float a = ((color >> 24) & 0xff) / 255f;
+
+        double offsetY = y;
+        for (String string : s.split("\n")) {
+            drawString(string, (float) (x - getStringWidth(string) / 2f), (float) offsetY, r, g, b, a);
+            offsetY += this.getStringHeight(string);
+        }
+
+    }
+
+    public int getStringWidth(String text) {
+
+        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
+
+        text = call.getText();
+
+        Integer i = this.stringWidthMap.get(text);
+        if (i != null)
+            return i;
+
+        boolean shouldntAdd = false;
+
+        char[] c = stripControlCodes(text).toCharArray();
+        float currentLine = 0;
+        float maxPreviousLines = 0;
+        for (char c1 : c) {
+            if (c1 == '\n') {
+                maxPreviousLines = Math.max(currentLine, maxPreviousLines);
+                currentLine = 0;
+                continue;
+            }
+
+            if (c1 == '（')
+                c1 = '(';
+
+            if (c1 == '）')
+                c1 = ')';
+
+            Glyph glyph = locateGlyph(c1);
+
+            if (!shouldntAdd) {
+                shouldntAdd = glyph == null || glyph.width == 0;
+            }
+
+            currentLine += glyph == null ? 0 : (glyph.width * 0.5f);
+        }
+
+        if (!shouldntAdd) {
+            this.stringWidthMap.put(text, (int) Math.max(currentLine, maxPreviousLines));
+        }
+
+        return (int) Math.max(currentLine, maxPreviousLines);
+    }
+
+    private final Map<String, Double> stringWidthMapD = new HashMap<>();
+
+    public double getStringWidthD(String text) {
+        Double f = this.stringWidthMapD.get(text);
+        if (f != null)
+            return f;
+
+        boolean shouldntAdd = false;
+
+        char[] c = stripControlCodes(text).toCharArray();
+        double currentLine = 0;
+        double maxPreviousLines = 0;
+        for (char c1 : c) {
+            if (c1 == '\n') {
+                maxPreviousLines = Math.max(currentLine, maxPreviousLines);
+                currentLine = 0;
+                continue;
+            }
+
+            if (c1 == '（')
+                c1 = '(';
+
+            if (c1 == '）')
+                c1 = ')';
+
+            Glyph glyph = locateGlyph(c1);
+
+            if (!shouldntAdd) {
+                shouldntAdd = glyph == null || glyph.width == 0;
+            }
+
+            currentLine += glyph == null ? 0 : (glyph.width * 0.5);
+        }
+
+        if (!shouldntAdd) {
+            this.stringWidthMapD.put(text, Math.max(currentLine, maxPreviousLines));
+        }
+
+        return Math.max(currentLine, maxPreviousLines);
+    }
+
+    private final Map<String, Float> stringHeightMap = new HashMap<>();
+
+    public float getStringHeight(String text) {
+
+        Float f = this.stringHeightMap.get(text);
+        if (f != null)
+            return f;
+
+        char[] c = stripControlCodes(text).toCharArray();
+        if (c.length == 0) {
+            c = new char[]{' '};
+        }
+        float currentLine = 0;
+        float previous = 0;
+        for (char c1 : c) {
+
+            if (c1 == '\n') {
+                if (currentLine == 0) {
+                    currentLine = this.getHeight();
+                }
+                previous += currentLine;
+                currentLine = 0;
+                continue;
+            }
+
+            Glyph glyph = locateGlyph(c1);
+
+            if (glyph == null)
+                return -1;
+
+            currentLine = Math.max(this.getHeight(), currentLine);
+        }
+
+        this.stringHeightMap.put(text, currentLine + previous);
+
+        return currentLine + previous;
+    }
+
+
+
+    public int getHeight() {
+
+//        if (fontHeightObj == null) {
+//
+//            int i = (int) ((this.getStringHeight(" ") - 4) / 2);
+//
+//            if (i > 10) {
+//                fontHeightObj = i;
+//            } else {
+//                return i;
+//            }
+//
+//        }
+
+        return (this.fontHeight - 8) / 2;
+    }
+
+
+    @Override
+    public void close() {
+        for (Glyph gly : allGlyphs) {
+            if (gly != null) {
+
+                if (gly.textureId != -1) {
+                    GlStateManager.deleteTexture(gly.textureId);
+                }
+
+                if (gly.callList != -1 && !gly.cached) {
+                    GLAllocation.deleteDisplayLists(gly.callList);
+                    GlyphCache.CALL_LIST_COUNTER.set(GlyphCache.CALL_LIST_COUNTER.get() - 1);
+                }
+
+            }
+        }
+
+        allGlyphs = new Glyph['\uFFFF' + 1];
+        initialized = false;
+    }
+
+    public static Location randomIdentifier() {
+        return Location.of(Phosphate.NAME, "temp/" + randomString());
+    }
+
+    private static String randomString() {
+        return IntStream.range(0, 32)
+                .mapToObj(operand -> String.valueOf((char) ('a' + new Random().nextInt('z' + 1 - 'a'))))
+                .collect(Collectors.joining());
+    }
+
+    public static int[] RGBIntToRGB(int in) {
+        int red = in >> 8 * 2 & 0xFF;
+        int green = in >> 8 & 0xFF;
+        int blue = in & 0xFF;
+        return new int[]{red, green, blue};
+    }
+
+    public void drawGradientString(String s, float x, float y, int offset) {
+        drawString(s, x, y, 255, 255, 255, 255, true, offset);
+    }
+
+    public void drawGradientCenteredString(String s, float x, float y, int i) {
+        drawGradientString(s, x - getStringWidth(s) / 2f, y, i);
+    }
+
+    double roundToDecimal(double n) {
+        return Math.round(n * 10.0) / 10.0;
+    }
+
+    public String[] fitWidth(String text, double width) {
+
+        List<String> split = new ArrayList<>();
+
+        StringBuilder sb = new StringBuilder();
+        double w = 0;
+        char[] charArray = text.toCharArray();
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+            String s = Character.toString(c);
+
+            if (c == '\247') {
+                i += 1;
+                sb.append(c);
+
+                if (i < charArray.length) {
+                    sb.append(charArray[i]);
+                }
+
+                continue;
+            }
+
+            if (c == '\n') {
+                split.add(sb.toString());
+                sb = new StringBuilder();
+                w = 0;
+                continue;
+            }
+
+            double tWidth = this.getStringWidth(s);
+
+            if (w + tWidth < width) {
+                sb.append(s);
+                w += tWidth;
+            } else {
+                if (s.equals(" ")) {
+                    split.add(sb.toString());
+                    sb = new StringBuilder(s);
+                    w = this.getStringWidth(s);
+                } else {
+                    int lastSpace = sb.toString().lastIndexOf(" ");
+                    if (lastSpace != -1) {
+                        String res = sb.substring(0, lastSpace);
+                        split.add(res);
+                        i = text.substring(0 , Math.min(text.length(), i + res.length())).lastIndexOf(res) + res.length();
+                        sb = new StringBuilder();
+                    } else {
+                        split.add(sb.toString());
+                        sb = new StringBuilder(s);
+                    }
+                    w = 0;
+                }
+            }
+        }
+        if (sb.length() != 0) {
+            split.add(sb.toString());
+        }
+
+        return split.toArray(new String[0]);
+    }
+
+    public void drawCenteredStringWithBetterShadow(String text, double x, double y, int color) {
+        TexturedShadow.drawFontShadow(x - getStringWidth(text) / 2.0, y, this.getStringWidth(text) + 1, this.getHeight() - 1);
+        drawString(text, x - getStringWidth(text) / 2.0, y, color);
+    }
+
+    public void drawStringWithBetterShadow(String text, double x, double y, int color) {
+        drawString(text, x, y, color);
+    }
+
+    public void drawOutlineCenteredString(String text, double x, double y, int color, int onlineColor) {
+        drawOutlineString(text, x - getStringWidth(text) / 2.0, y, color, onlineColor);
+    }
+
+    public void drawOutlineString(String text, double x, double y, int color, int outlineColor) {
+        String outlinetext = StringUtils.removeFormattingCodes(text);
+        drawString(outlinetext, x + 0.5, y, outlineColor);
+        drawString(outlinetext, x - 0.5, y, outlineColor);
+        drawString(outlinetext, x, y + 0.5, outlineColor);
+        drawString(outlinetext, x, y - 0.5, outlineColor);
+        drawString(text, x, y, color);
+    }
+
+    public int getWidth(String text) {
+        return this.getStringWidth(text);
+    }
+
+    public double getWidthDouble(String text) {
+        return this.getStringWidthD(text);
+    }
+}

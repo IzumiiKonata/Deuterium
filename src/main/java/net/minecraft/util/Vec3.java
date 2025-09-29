@@ -1,0 +1,244 @@
+package net.minecraft.util;
+
+public class Vec3 {
+    /**
+     * X coordinate of Vec3D
+     */
+    public final double xCoord;
+
+    /**
+     * Y coordinate of Vec3D
+     */
+    public final double yCoord;
+
+    /**
+     * Z coordinate of Vec3D
+     */
+    public final double zCoord;
+
+    public Vec3(double x, double y, double z) {
+        if (x == -0.0D) {
+            x = 0.0D;
+        }
+
+        if (y == -0.0D) {
+            y = 0.0D;
+        }
+
+        if (z == -0.0D) {
+            z = 0.0D;
+        }
+
+        this.xCoord = x;
+        this.yCoord = y;
+        this.zCoord = z;
+    }
+
+    public Vec3(Vec3i p_i46377_1_) {
+        this(p_i46377_1_.getX(), p_i46377_1_.getY(), p_i46377_1_.getZ());
+    }
+
+    /**
+     * Returns a new vector with the result of the specified vector minus this.
+     */
+    public Vec3 subtractReverse(Vec3 vec) {
+        return new Vec3(vec.xCoord - this.xCoord, vec.yCoord - this.yCoord, vec.zCoord - this.zCoord);
+    }
+
+    public Vec3 multiply(double mult) {
+        return new Vec3(this.xCoord * mult, this.yCoord * mult, this.zCoord * mult);
+    }
+
+    public Vec3 multiply(double[][] matrix) {
+        return new Vec3(
+                this.xCoord * matrix[0][0] + this.yCoord * matrix[0][1] + this.zCoord * matrix[0][2],
+                this.xCoord * matrix[1][0] + this.yCoord * matrix[1][1] + this.zCoord * matrix[1][2],
+                this.xCoord * matrix[2][0] + this.yCoord * matrix[2][1] + this.zCoord * matrix[2][2]
+        );
+    }
+
+    /**
+     * Normalizes the vector to a length of 1 (except if it is the zero vector)
+     */
+    public Vec3 normalize() {
+        double d0 = MathHelper.sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
+        return d0 < 1.0E-4D ? new Vec3(0.0D, 0.0D, 0.0D) : new Vec3(this.xCoord / d0, this.yCoord / d0, this.zCoord / d0);
+    }
+
+    public double dotProduct(Vec3 vec) {
+        return this.xCoord * vec.xCoord + this.yCoord * vec.yCoord + this.zCoord * vec.zCoord;
+    }
+
+    /**
+     * Returns a new vector with the result of this vector x the specified vector.
+     */
+    public Vec3 crossProduct(Vec3 vec) {
+        return new Vec3(this.yCoord * vec.zCoord - this.zCoord * vec.yCoord, this.zCoord * vec.xCoord - this.xCoord * vec.zCoord, this.xCoord * vec.yCoord - this.yCoord * vec.xCoord);
+    }
+
+    public Vec3 subtract(Vec3 vec) {
+        return this.subtract(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+
+    public Vec3 subtract(double x, double y, double z) {
+        return this.addVector(-x, -y, -z);
+    }
+
+    public Vec3 add(Vec3 vec) {
+        return this.addVector(vec.xCoord, vec.yCoord, vec.zCoord);
+    }
+
+    /**
+     * Adds the specified x,y,z vector components to this vector and returns the resulting vector. Does not change this
+     * vector.
+     */
+    public Vec3 addVector(double x, double y, double z) {
+        return new Vec3(this.xCoord + x, this.yCoord + y, this.zCoord + z);
+    }
+
+    /**
+     * Euclidean distance between this and the specified vector, returned as double.
+     */
+    public double distanceTo(Vec3 vec) {
+        double d0 = vec.xCoord - this.xCoord;
+        double d1 = vec.yCoord - this.yCoord;
+        double d2 = vec.zCoord - this.zCoord;
+        return MathHelper.sqrt_double(d0 * d0 + d1 * d1 + d2 * d2);
+    }
+
+    /**
+     * The square of the Euclidean distance between this and the specified vector.
+     */
+    public double squareDistanceTo(Vec3 vec) {
+        double d0 = vec.xCoord - this.xCoord;
+        double d1 = vec.yCoord - this.yCoord;
+        double d2 = vec.zCoord - this.zCoord;
+        return d0 * d0 + d1 * d1 + d2 * d2;
+    }
+
+    /**
+     * Returns the length of the vector.
+     */
+    public double lengthVector() {
+        return MathHelper.sqrt_double(this.xCoord * this.xCoord + this.yCoord * this.yCoord + this.zCoord * this.zCoord);
+    }
+
+    /**
+     * Returns a new vector with x value equal to the second parameter, along the line between this vector and the
+     * passed in vector, or null if not possible.
+     */
+    public Vec3 getIntermediateWithXValue(Vec3 vec, double x) {
+        double d0 = vec.xCoord - this.xCoord;
+        double d1 = vec.yCoord - this.yCoord;
+        double d2 = vec.zCoord - this.zCoord;
+
+        if (d0 * d0 < 1.0000000116860974E-7D) {
+            return null;
+        } else {
+            double d3 = (x - this.xCoord) / d0;
+            return d3 >= 0.0D && d3 <= 1.0D ? new Vec3(this.xCoord + d0 * d3, this.yCoord + d1 * d3, this.zCoord + d2 * d3) : null;
+        }
+    }
+
+    /**
+     * Returns a new vector with y value equal to the second parameter, along the line between this vector and the
+     * passed in vector, or null if not possible.
+     */
+    public Vec3 getIntermediateWithYValue(Vec3 vec, double y) {
+        double d0 = vec.xCoord - this.xCoord;
+        double d1 = vec.yCoord - this.yCoord;
+        double d2 = vec.zCoord - this.zCoord;
+
+        if (d1 * d1 < 1.0000000116860974E-7D) {
+            return null;
+        } else {
+            double d3 = (y - this.yCoord) / d1;
+            return d3 >= 0.0D && d3 <= 1.0D ? new Vec3(this.xCoord + d0 * d3, this.yCoord + d1 * d3, this.zCoord + d2 * d3) : null;
+        }
+    }
+
+    /**
+     * Returns a new vector with z value equal to the second parameter, along the line between this vector and the
+     * passed in vector, or null if not possible.
+     */
+    public Vec3 getIntermediateWithZValue(Vec3 vec, double z) {
+        double d0 = vec.xCoord - this.xCoord;
+        double d1 = vec.yCoord - this.yCoord;
+        double d2 = vec.zCoord - this.zCoord;
+
+        if (d2 * d2 < 1.0000000116860974E-7D) {
+            return null;
+        } else {
+            double d3 = (z - this.zCoord) / d2;
+            return d3 >= 0.0D && d3 <= 1.0D ? new Vec3(this.xCoord + d0 * d3, this.yCoord + d1 * d3, this.zCoord + d2 * d3) : null;
+        }
+    }
+
+    public String toString() {
+        return "(" + this.xCoord + ", " + this.yCoord + ", " + this.zCoord + ")";
+    }
+
+    public Vec3 rotatePitch(float pitch) {
+        float f = MathHelper.cos(pitch);
+        float f1 = MathHelper.sin(pitch);
+        double d1 = this.yCoord * (double) f + this.zCoord * (double) f1;
+        double d2 = this.zCoord * (double) f - this.yCoord * (double) f1;
+        return new Vec3(this.xCoord, d1, d2);
+    }
+
+    public Vec3 rotateYaw(float yaw) {
+        float f = MathHelper.cos(yaw);
+        float f1 = MathHelper.sin(yaw);
+        double d0 = this.xCoord * (double) f + this.zCoord * (double) f1;
+        double d2 = this.zCoord * (double) f - this.xCoord * (double) f1;
+        return new Vec3(d0, this.yCoord, d2);
+    }
+
+    public Vec3 clone() {
+        return new Vec3(this.xCoord, this.yCoord, this.zCoord);
+    }
+
+    public static double[][] getRotationMatrix(Vec3 axis, double angle) {
+        double sin = Math.sin(angle);
+        double cos = Math.cos(angle);
+        double ux = axis.xCoord, uy = axis.yCoord, uz = axis.zCoord;
+
+        return new double[][]{
+                {
+                        cos + ux * ux * (1 - cos),
+                        ux * uy * (1 - cos) - uz * sin,
+                        ux * uz * (1 - cos) + uy * sin
+                },
+                {
+                        uy * ux * (1 - cos) + uz * sin,
+                        cos + uy * uy * (1 - cos),
+                        uy * uz * (1 - cos) - ux * sin
+                },
+                {
+                        uz * ux * (1 - cos) - uy * sin,
+                        uz * uy * (1 - cos) + ux * sin,
+                        cos + uz * uz * (1 - cos)
+                }
+        };
+    }
+
+    public Vec3 rotateAroundPoint(Vec3 point, Vec3 axis, double angle) {
+        Vec3 translatedVector = this.subtract(point);
+
+        double[][] rotationMatrix = getRotationMatrix(axis, angle);
+
+        Vec3 rotatedVector = translatedVector.multiply(rotationMatrix);
+
+        return rotatedVector.add(point);
+    }
+
+    public double getX() {
+        return this.xCoord;
+    }
+    public double getY() {
+        return this.yCoord;
+    }
+    public double getZ() {
+        return this.zCoord;
+    }
+}

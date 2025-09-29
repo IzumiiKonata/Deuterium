@@ -1,0 +1,48 @@
+package tech.konata.phosphate.rendering.shader.impl;
+
+
+import net.minecraft.client.renderer.GlStateManager;
+import tech.konata.phosphate.rendering.shader.Shader;
+import tech.konata.phosphate.rendering.shader.ShaderProgram;
+import tech.konata.phosphate.rendering.shader.ShaderRenderType;
+import tech.konata.phosphate.rendering.shader.uniform.Uniform1i;
+
+import java.util.List;
+
+/**
+ * @author IzumiiKonata
+ * @since 2024/12/3 21:17
+ */
+public class BlendShader extends Shader {
+
+    private final ShaderProgram blendProgram = new ShaderProgram("blend.frag", "vertex.vsh");
+    private final Uniform1i textureIn = new Uniform1i(blendProgram, "textureIn");
+
+    public void render() {
+//        GlStateManager.disableAlpha();
+
+        this.blendProgram.start();
+        textureIn.setValue(0);
+
+        ShaderProgram.drawQuad();
+//        GlStateManager.disableBlend();
+
+        ShaderProgram.stop();
+    }
+
+    @Override
+    public void run(ShaderRenderType type, List<Runnable> runnable) {
+        // does nothing
+    }
+
+    @Override
+    public void runNoCaching(ShaderRenderType type, List<Runnable> runnable) {
+
+    }
+
+    @Override
+    public void update() {
+
+    }
+
+}

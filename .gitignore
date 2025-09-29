@@ -1,0 +1,6 @@
+run/
+target/
+.settings/
+.git/
+.DS_Store
+.idea/
