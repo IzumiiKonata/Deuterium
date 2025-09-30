@@ -1452,8 +1452,8 @@ public class Config {
                 InputStream inputstream1 = null;
 
                 try {
-                    inputstream = getDefaultResourcePack().getInputStreamAssets(Location.of("icons/icon_16x16.png"));
-                    inputstream1 = getDefaultResourcePack().getInputStreamAssets(Location.of("icons/icon_32x32.png"));
+                    inputstream = getDefaultResourcePack().getInputStreamAssets(Location.of("tritium/textures/icons/icon_16x16.png"));
+                    inputstream1 = getDefaultResourcePack().getInputStreamAssets(Location.of("tritium/textures/icons/icon_32x32.png"));
 
                     if (inputstream != null && inputstream1 != null) {
                         Display.setIcon(new ByteBuffer[]{readIconImage(inputstream), readIconImage(inputstream1)});

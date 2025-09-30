@@ -67,29 +67,20 @@ public final class FastMath extends CmnFastMath {
             negateResult = true;
         }
         if (angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO) {
-            if (false) {
-                // Can give very bad relative error near PI (mod 2*PI).
-                angle = remainderTwoPi(angle);
-                if (angle < 0.0) {
-                    angle = -angle;
-                    negateResult = !negateResult;
-                }
+            final long remAndQuad = remainderPiO2(angle);
+            angle = decodeRemainder(remAndQuad);
+            final double sin;
+            final int q = decodeQuadrant(remAndQuad);
+            if (q == 0) {
+                sin = sin(angle);
+            } else if (q == 1) {
+                sin = cos(angle);
+            } else if (q == 2) {
+                sin = -sin(angle);
             } else {
-                final long remAndQuad = remainderPiO2(angle);
-                angle = decodeRemainder(remAndQuad);
-                final double sin;
-                final int q = decodeQuadrant(remAndQuad);
-                if (q == 0) {
-                    sin = sin(angle);
-                } else if (q == 1) {
-                    sin = cos(angle);
-                } else if (q == 2) {
-                    sin = -sin(angle);
-                } else {
-                    sin = -cos(angle);
-                }
-                return (negateResult ? -sin : sin);
+                sin = -cos(angle);
             }
+            return (negateResult ? -sin : sin);
         }
         // index: possibly outside tables range.
         int index = (int)(angle * SIN_COS_INDEXER + 0.5);

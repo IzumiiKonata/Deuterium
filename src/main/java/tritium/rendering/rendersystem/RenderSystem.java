@@ -96,7 +96,7 @@ public class RenderSystem {
             return ScaledResolution.get().getScaledHeight_double();
         }
 
-        return Minecraft.getMinecraft().displayHeight / 2.0;
+        return Minecraft.getMinecraft().displayHeight * .5;
     }
 
     public static void color(int color) {

@@ -6,7 +6,6 @@ import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
 import tritium.module.Module;
-import tritium.rendering.TitleBar;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
@@ -92,7 +91,7 @@ public class Interface extends Module {
     final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
     private void renderWaterMark() {
-        double posX = 4, posY = 4 + TitleBar.getTitlebarHeight();
+        double posX = 4, posY = 4 + (double) 0;
 
         String text = mc.getSession().getUsername() + " | " + sdf.format(new Date());
 

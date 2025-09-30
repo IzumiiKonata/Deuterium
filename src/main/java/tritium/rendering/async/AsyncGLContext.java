@@ -60,7 +60,7 @@ public class AsyncGLContext {
         @Override
         @SneakyThrows
         public void run() {
-            System.out.println("Context: " + pContextHandle);
+//            System.out.println("Context: " + pContextHandle);
             GLFW.glfwMakeContextCurrent(this.pContextHandle);
             GL.createCapabilities();
 

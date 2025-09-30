@@ -177,7 +177,6 @@ public class GuiPlayerTabOverlay extends Gui {
                 NetworkPlayerInfo networkplayerinfo1 = list.get(k4);
 
 //                PlayerAdapter instance = PlayerAdapter.getInstance(networkplayerinfo1.getGameProfile());
-                boolean phosphate = false;
 
                 String s1 = this.getPlayerName(networkplayerinfo1);
                 GameProfile gameprofile = networkplayerinfo1.getGameProfile();
@@ -199,21 +198,11 @@ public class GuiPlayerTabOverlay extends Gui {
                     j2 += 9;
                 }
 
-                if (phosphate) {
-
-                    SVGImage.draw(Location.of(Tritium.NAME + "/textures/icon_white.svg"), j2 + 1, k2, 8, 8);
-
-                    j2 += 11;
-                }
                 if (networkplayerinfo1.getGameType() == WorldSettings.GameType.SPECTATOR) {
                     s1 = EnumChatFormatting.ITALIC + s1;
                     this.mc.fontRendererObj.drawStringWithShadow(s1, (float) j2, (float) k2, -1862270977);
                 } else {
                     this.mc.fontRendererObj.drawStringWithShadow(s1, (float) j2, (float) k2, -1);
-                }
-
-                if (phosphate) {
-                    j2 -= 11;
                 }
 
                 if (scoreObjectiveIn != null && networkplayerinfo1.getGameType() != WorldSettings.GameType.SPECTATOR) {

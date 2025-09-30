@@ -8,7 +8,6 @@ import tritium.management.EventManager;
 import tritium.utils.i18n.Localizable;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
-import tritium.rendering.TitleBar;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -287,7 +286,7 @@ public class MoveWidgetsScreen extends BaseScreen {
 
     private void doCollisions(Widget widget, double mouseX, double mouseY) {
 
-        if (TitleBar.usingTitleBar()) {
+        if (false) {
             if (widget.getWidth() < 0 && widget.getX() + widget.getWidth() < 0)
                 widget.setX(-widget.getWidth());
             else if (widget.getX() < 0) {
@@ -300,7 +299,7 @@ public class MoveWidgetsScreen extends BaseScreen {
                 widget.setX(RenderSystem.getWidth() - widget.getWidth());
             }
 
-            double limit = TitleBar.getTitlebarHeight();
+            double limit = 0;
 
             if (widget.getHeight() < limit && widget.getY() + widget.getHeight() < limit)
                 widget.setY(-widget.getHeight());

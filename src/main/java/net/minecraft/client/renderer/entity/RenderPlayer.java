@@ -73,11 +73,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
             double d0 = entity.getDistanceSqToEntity(this.renderManager.livingPlayer);
             String str = entity.getDisplayName().getFormattedText();
 
-            boolean phosphate = false;
-
-            if (entity == Minecraft.getMinecraft().thePlayer)
-                phosphate = true;
-//            else {
+            //            else {
 //                PlayerAdapter instance = PlayerAdapter.getInstance(entity);
 //                phosphate = instance.isUsingPhosphate();
 //            }
@@ -119,9 +115,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 
                 int j = fontrenderer.getStringWidth(str) / 2;
 
-                if (phosphate)
-                    j += 5;
-
                 GlStateManager.disableTexture2D();
                 worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
                 worldrenderer.pos(-j - 1, -1 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
@@ -131,18 +124,10 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
                 tessellator.draw();
                 GlStateManager.enableTexture2D();
 
-                if (phosphate) {
-                    fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2 + 5, i, 553648127);
-                    GlStateManager.enableDepth();
-                    GlStateManager.depthMask(true);
-                    SVGImage.draw(Location.of(Tritium.NAME + "/textures/icon_white.svg"), -fontrenderer.getStringWidth(str) / 2.0 - 4.5, i - 0.5, 8, 8);
-                    fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2 + 5, i, -1);
-                } else {
-                    fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, i, 553648127);
-                    GlStateManager.enableDepth();
-                    GlStateManager.depthMask(true);
-                    fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, i, -1);
-                }
+                fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, i, 553648127);
+                GlStateManager.enableDepth();
+                GlStateManager.depthMask(true);
+                fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, i, -1);
 
                 GlStateManager.enableLighting();
                 GlStateManager.disableBlend();

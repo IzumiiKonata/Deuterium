@@ -24,7 +24,6 @@ import net.optifine.util.MemoryMonitor;
 import net.optifine.util.NativeMemory;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.Display;
-import tritium.rendering.TitleBar;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -77,7 +76,7 @@ public class GuiOverlayDebug extends Gui {
                 int j = this.fontRenderer.FONT_HEIGHT;
                 int k = this.fontRenderer.getStringWidth(s);
                 int l = 2;
-                int i1 = (int) (2 + j * i + TitleBar.getTitlebarHeight());
+                int i1 = (int) (2 + j * i + (double) 0);
                 drawRect(1, i1 - 1, 2 + k + 1, i1 + j - 1, -1873784752);
                 this.fontRenderer.drawString(s, 2, i1, 14737632);
             }
@@ -100,7 +99,7 @@ public class GuiOverlayDebug extends Gui {
                 int j = this.fontRenderer.FONT_HEIGHT;
                 int k = this.fontRenderer.getStringWidth(s);
                 int l = scaledRes.getScaledWidth() - 2 - k;
-                int i1 = (int) (2 + j * i + TitleBar.getTitlebarHeight());
+                int i1 = (int) (2 + j * i + (double) 0);
                 drawRect(l - 1, i1 - 1, l + k + 1, i1 + j - 1, -1873784752);
                 this.fontRenderer.drawString(s, l, i1, 14737632);
             }

@@ -34,6 +34,10 @@ public class Rect extends RenderableEntity {
         }
     }
 
+    public static void draw(double x, double y, double x2, double y2, int color) {
+        Rect.draw(x, y, x2, y2, color, RectType.EXPAND);
+    }
+
     public void onRender(double mouseX, double mouseY) {
 
         if (this.getRectType() == RectType.EXPAND) {

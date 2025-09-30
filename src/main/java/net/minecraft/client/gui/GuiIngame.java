@@ -34,7 +34,6 @@ import net.optifine.CustomColors;
 import org.lwjgl.opengl.GL11;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
-import tritium.rendering.TitleBar;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderUtil;
 import tritium.settings.ClientSettings;
@@ -339,7 +338,7 @@ public class GuiIngame extends Gui {
                 this.overlayPlayerList.updatePlayerList(true);
 
                 GlStateManager.pushMatrix();
-                GlStateManager.translate(0, TitleBar.getTitlebarHeight(), 0);
+                GlStateManager.translate(0, (double) 0, 0);
                 this.overlayPlayerList.renderPlayerlist(i, scoreboard, scoreobjective1);
                 GlStateManager.popMatrix();
             } else {
@@ -851,7 +850,7 @@ public class GuiIngame extends Gui {
             int j = 182;
             int k = i / 2 - j / 2;
             int l = (int) (BossStatus.healthScale * (float) (j + 1));
-            int i1 = (int) (12 + TitleBar.getTitlebarHeight());
+            int i1 = (int) (12 + (double) 0);
             this.drawTexturedModalRect(k, i1, 0, 74, j, 5);
             this.drawTexturedModalRect(k, i1, 0, 74, j, 5);
 

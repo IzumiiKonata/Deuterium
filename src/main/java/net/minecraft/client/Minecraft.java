@@ -755,8 +755,8 @@ public class Minecraft implements IThreadListener {
             InputStream inputstream1 = null;
 
             try {
-                inputstream = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("icons/icon_16x16.png"));
-                inputstream1 = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("icons/icon_32x32.png"));
+                inputstream = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("tritium/textures/icons/icon_16x16.png"));
+                inputstream1 = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("tritium/textures/icons/icon_32x32.png"));
 
                 if (inputstream != null && inputstream1 != null) {
                     Display.setIcon(new ByteBuffer[]{Config.readIconImage(inputstream), Config.readIconImage(inputstream1)});

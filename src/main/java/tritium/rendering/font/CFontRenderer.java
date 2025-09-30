@@ -40,14 +40,14 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     public CFontRenderer(Font font, float sizePx, Font... fallBackFonts) {
         this(font, sizePx);
 
-        this.fallBackFonts = new Font[fallBackFonts.length + 2];
+        this.fallBackFonts = new Font[fallBackFonts.length];
 
         for (int i = 0; i < fallBackFonts.length; i++) {
             this.fallBackFonts[i] = fallBackFonts[i].deriveFont(sizePx * 2);
         }
 
-        this.fallBackFonts[fallBackFonts.length] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/NotoColorEmoji.ttf")).deriveFont(sizePx * 2);
-        this.fallBackFonts[fallBackFonts.length + 1] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/Symbola.ttf")).deriveFont(sizePx * 2);
+//        this.fallBackFonts[fallBackFonts.length] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/NotoColorEmoji.ttf")).deriveFont(sizePx * 2);
+//        this.fallBackFonts[fallBackFonts.length + 1] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/Symbola.ttf")).deriveFont(sizePx * 2);
     }
 
     public static String stripControlCodes(String text) {

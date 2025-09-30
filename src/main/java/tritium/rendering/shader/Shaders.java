@@ -22,5 +22,5 @@ public class Shaders {
     public static RQTShader RQT_SHADER = new RQTShader();
     public static RQGShader RQG_SHADER = new RQGShader();
 
-    public static RoundShader ROUND_SHADER = new RoundShader();
+    public static Deconverge DECONVERGE = new Deconverge();
 }
