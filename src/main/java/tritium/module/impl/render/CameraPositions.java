@@ -2,12 +2,23 @@ package tritium.module.impl.render;
 
 import lombok.var;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.util.Location;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
+import tritium.event.eventapi.Handler;
+import tritium.event.events.rendering.Render3DEvent;
 import tritium.module.Module;
 import tritium.rendering.animation.Interpolations;
+import tritium.rendering.entities.impl.Rect;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
@@ -114,7 +125,6 @@ public class CameraPositions extends Module {
 
     }
 
-    // 呵呵 写这个二维向量旋转的东西我看了好久文档 这下提前预习高等数学了
     public static double[] rotateByY(double x, double z, float theta) {
         double ry = theta * Math.PI / 180;
         double outx = Math.cos(ry) * x + Math.sin(ry) * z;
@@ -144,6 +154,80 @@ public class CameraPositions extends Module {
         }
 
         return distance;
+    }
+
+    @Handler
+    public void onRender3D(Render3DEvent event) {
+
+        if (!movementCamera.getValue() || mc.gameSettings.thirdPersonView != 1)
+            return;
+
+        Vec3 lookVec = mc.thePlayer.getLook(event.partialTicks).normalize();
+
+        Vec3 eyePos = mc.thePlayer.getPositionEyes(mc.timer.renderPartialTicks);
+
+        double distance = 3.0;
+        Vec3 targetPos = new Vec3(
+                eyePos.xCoord + lookVec.xCoord * distance,
+                eyePos.yCoord + lookVec.yCoord * distance,
+                eyePos.zCoord + lookVec.zCoord * distance
+        );
+
+        double x = targetPos.xCoord - mc.getRenderManager().renderPosX;
+        double y = targetPos.yCoord - mc.getRenderManager().renderPosY;
+        double z = targetPos.zCoord - mc.getRenderManager().renderPosZ;
+
+        this.startDrawing(x, y, z);
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(Gui.icons);
+        GlStateManager.enableBlend();
+
+        GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
+        GlStateManager.enableAlpha();
+        double size = 48;
+        drawTexturedModalRect(-size * .5 + 1, -size * .5 + 1, 0, 0, 16, 16, size, size);
+
+//        Rect.draw(-1, -0.5, 2, 1, -1);
+//        Rect.draw(-0.5, -1, 1, 2, -1);
+
+        this.stopDrawing();
+
+    }
+
+    public void drawTexturedModalRect(double x, double y, int textureX, int textureY, int textureWidth, int textureHeight, double width, double height) {
+        float f = 0.00390625F;
+        float f1 = 0.00390625F;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        worldrenderer.pos(x, y + height, 0).tex((float) (textureX) * f, (float) (textureY + textureHeight) * f1).endVertex();
+        worldrenderer.pos(x + width, y + height, 0).tex((float) (textureX + textureWidth) * f, (float) (textureY + textureHeight) * f1).endVertex();
+        worldrenderer.pos(x + width, y, 0).tex((float) (textureX + textureWidth) * f, (float) (textureY) * f1).endVertex();
+        worldrenderer.pos(x, y, 0).tex((float) (textureX) * f, (float) (textureY) * f1).endVertex();
+        tessellator.draw();
+    }
+
+
+    private void startDrawing(double x, double y, double z) {
+        float invert = mc.gameSettings.thirdPersonView == 2 ? -1.0f : 1.0f;
+        double size = 1.0;
+        GL11.glPushMatrix();
+        this.startDrawing();
+        GL11.glTranslated(x, y, z);
+        GL11.glNormal3f(0.0f, 1.0f, 0.0f);
+        GL11.glRotatef(-mc.getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
+        GL11.glRotatef(mc.getRenderManager().playerViewX, invert, 0.0f, 0.0f);
+        GL11.glScaled(-0.01666666753590107 * size, -0.01666666753590107 * size, 0.01666666753590107 * size);
+    }
+
+    public void startDrawing() {
+        mc.entityRenderer.setupCameraTransform(mc.timer.renderPartialTicks, 0);
+    }
+
+    private void stopDrawing() {
+        GlStateManager.color(1.0f, 1.0f, 1.0f);
+        GlStateManager.popMatrix();
     }
 
 }

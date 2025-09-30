@@ -545,6 +545,10 @@ public class GuiIngame extends Gui {
                 return false;
             }
         } else {
+
+            if (ModuleManager.cameraPositions.isEnabled() && ModuleManager.cameraPositions.movementCamera.getValue() && mc.gameSettings.thirdPersonView == 1)
+                return false;
+
             return true;
         }
     }

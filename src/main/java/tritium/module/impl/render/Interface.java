@@ -7,6 +7,7 @@ import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
 import tritium.module.Module;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
 import tritium.rendering.notification.NotificationManager;
@@ -80,6 +81,8 @@ public class Interface extends Module {
             }
         }
 
+//        Rect.draw(0, RenderSystem.getHeight() * .5 - .5, RenderSystem.getWidth(), 1, -1);
+//        Rect.draw(RenderSystem.getWidth() * .5 - .5, 0, 1, RenderSystem.getHeight(), -1);
     }
 
     double x, y;
