@@ -9,8 +9,8 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import net.minecraft.util.JsonUtils;
 import org.apache.commons.io.IOUtils;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.BufferedReader;
 import java.io.File;

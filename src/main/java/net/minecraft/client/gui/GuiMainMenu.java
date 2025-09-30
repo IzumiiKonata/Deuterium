@@ -21,9 +21,9 @@ import org.apache.commons.io.Charsets;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.BufferedReader;
 import java.io.IOException;

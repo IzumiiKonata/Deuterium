@@ -28,8 +28,8 @@ import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
 import org.lwjglx.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.*;
 import java.lang.reflect.ParameterizedType;

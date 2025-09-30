@@ -9,8 +9,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.rendering.ItemPhysicRender;
+import tritium.management.ModuleManager;
+import tritium.rendering.ItemPhysicRender;
 
 import java.util.Random;
 

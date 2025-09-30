@@ -27,8 +27,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import org.apache.commons.lang3.ArrayUtils;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;

@@ -18,9 +18,9 @@ import net.optifine.*;
 import net.optifine.shaders.ShadersTex;
 import net.optifine.util.CounterInt;
 import net.optifine.util.TextureUtils;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;

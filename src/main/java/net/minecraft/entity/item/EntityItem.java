@@ -14,8 +14,8 @@ import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 public class EntityItem extends Entity {
     private static final Logger logger = LogManager.getLogger("EntityItem");

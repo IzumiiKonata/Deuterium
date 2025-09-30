@@ -32,11 +32,11 @@ import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.apache.commons.lang3.Validate;
-import tech.konata.phosphate.event.eventapi.State;
-import tech.konata.phosphate.event.events.world.WorldTickEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.event.eventapi.State;
+import tritium.event.events.world.WorldTickEvent;
+import tritium.management.EventManager;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

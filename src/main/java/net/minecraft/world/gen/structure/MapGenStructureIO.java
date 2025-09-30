@@ -3,8 +3,8 @@ package net.minecraft.world.gen.structure;
 import com.google.common.collect.Maps;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.util.Map;
 

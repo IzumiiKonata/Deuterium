@@ -219,7 +219,7 @@ public class IngameIMEJNI {
 
         initialized = true;
         File libFile;
-        String libFileName = "/assets/minecraft/Phosphate/textures/igime.png";
+        String libFileName = "/assets/minecraft/tritium/textures/igime.png";
         try {
             libFile = File.createTempFile("lib", null);
             libFile.deleteOnExit();

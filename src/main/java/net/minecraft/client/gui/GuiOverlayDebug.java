@@ -24,7 +24,7 @@ import net.optifine.util.MemoryMonitor;
 import net.optifine.util.NativeMemory;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.Display;
-import tech.konata.phosphate.rendering.TitleBar;
+import tritium.rendering.TitleBar;
 
 import java.util.List;
 import java.util.Map.Entry;

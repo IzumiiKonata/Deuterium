@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import tech.konata.phosphate.utils.optimization.Deduplicator;
+import tritium.utils.optimization.Deduplicator;
 
 import java.util.List;
 

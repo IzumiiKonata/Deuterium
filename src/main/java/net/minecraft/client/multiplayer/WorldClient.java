@@ -31,7 +31,7 @@ import net.minecraft.world.storage.WorldInfo;
 import net.optifine.CustomGuis;
 import net.optifine.DynamicLights;
 import net.optifine.override.PlayerControllerOF;
-import tech.konata.phosphate.management.ModuleManager;
+import tritium.management.ModuleManager;
 
 import java.util.Random;
 import java.util.Set;

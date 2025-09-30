@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.MathHelper;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
+import tritium.rendering.rendersystem.RenderSystem;
 
 public class GuiOptionSlider extends GuiButton {
     private float sliderValue;

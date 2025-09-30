@@ -1,7 +1,7 @@
 package net.minecraft.client.gui;
 
 import net.minecraft.client.resources.I18n;
-import tech.konata.phosphate.screens.MainMenu;
+import tritium.screens.MainMenu;
 
 import java.io.IOException;
 

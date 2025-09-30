@@ -10,8 +10,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import org.lwjgl.system.Configuration;
 
-import tech.konata.phosphate.Phosphate;
-import tech.konata.phosphate.utils.logging.ConsoleOutputRedirector;
+import tritium.Tritium;
+import tritium.utils.logging.ConsoleOutputRedirector;
 
 import java.io.File;
 import java.net.Authenticator;
@@ -28,7 +28,7 @@ import java.util.List;
 public class PojaveBootstrap {
 
     public static void main(String[] args) {
-        Phosphate.POJAVE = true;
+        Tritium.POJAVE = true;
         ConsoleOutputRedirector.init();
 
         Configuration.DISABLE_CHECKS.set(true);
@@ -49,7 +49,7 @@ public class PojaveBootstrap {
         OptionSpec<Integer> optionspec6 = optionparser.accepts("proxyPort").withRequiredArg().defaultsTo("8080", new String[0]).ofType(Integer.class);
         OptionSpec<String> optionspec7 = optionparser.accepts("proxyUser").withRequiredArg();
         OptionSpec<String> optionspec8 = optionparser.accepts("proxyPass").withRequiredArg();
-        OptionSpec<String> optionspec9 = optionparser.accepts("username").withRequiredArg().defaultsTo(Phosphate.NAME + System.currentTimeMillis() % 1000L);
+        OptionSpec<String> optionspec9 = optionparser.accepts("username").withRequiredArg().defaultsTo(Tritium.NAME + System.currentTimeMillis() % 1000L);
         OptionSpec<String> optionspec10 = optionparser.accepts("uuid").withRequiredArg();
         OptionSpec<String> optionspec11 = optionparser.accepts("accessToken").withRequiredArg().required();
         OptionSpec<String> optionspec12 = optionparser.accepts("version").withRequiredArg().required();

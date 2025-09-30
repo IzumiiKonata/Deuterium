@@ -69,12 +69,12 @@ import org.lwjgl.opengl.GL11;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.util.vector.Vector3f;
 import org.lwjglx.util.vector.Vector4f;
-import tech.konata.phosphate.event.events.rendering.BlockOverlayEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.event.events.rendering.BlockOverlayEvent;
+import tritium.management.EventManager;
+import tritium.management.ModuleManager;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.IOException;
 import java.util.*;

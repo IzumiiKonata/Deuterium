@@ -41,8 +41,8 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.rendering.waveycapes.simulation.StickSimulation;
+import tritium.management.ModuleManager;
+import tritium.rendering.waveycapes.simulation.StickSimulation;
 
 import java.util.Collection;
 import java.util.List;

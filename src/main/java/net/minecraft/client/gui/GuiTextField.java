@@ -10,9 +10,9 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
-import tech.konata.phosphate.rendering.ime.Internal;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.utils.timing.Timer;
+import tritium.rendering.ime.Internal;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.timing.Timer;
 
 public class GuiTextField extends Gui {
     private final int id;

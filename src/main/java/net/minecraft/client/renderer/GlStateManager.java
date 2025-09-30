@@ -10,13 +10,9 @@ import net.optifine.util.LockCounter;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
-import tech.konata.phosphate.rendering.FramebufferCaching;
-import tech.konata.phosphate.settings.GlobalSettings;
 
-import java.nio.Buffer;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class GlStateManager {
     private static final GlStateManager.AlphaState alphaState = new GlStateManager.AlphaState();

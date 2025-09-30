@@ -6,7 +6,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.src.Config;
 import org.lwjgl.opengl.*;
 import org.lwjglx.opengl.GLContext;
-import tech.konata.phosphate.utils.other.multithreading.MultiThreadingUtil;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;

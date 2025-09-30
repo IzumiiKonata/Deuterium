@@ -46,7 +46,7 @@ import org.lwjglx.BufferUtils;
 import org.lwjgl.opengl.*;
 import org.lwjglx.util.glu.GLU;
 import org.lwjglx.util.vector.Vector4f;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
+import tritium.rendering.rendersystem.RenderSystem;
 
 import java.io.*;
 import java.nio.ByteBuffer;

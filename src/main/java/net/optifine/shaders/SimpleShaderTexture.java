@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.*;
 import org.apache.commons.io.IOUtils;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
+import tritium.rendering.async.AsyncGLContext;
 
 import java.awt.image.BufferedImage;
 import java.io.*;

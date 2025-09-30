@@ -10,7 +10,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.layers.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemStack;
@@ -20,16 +19,13 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.Location;
 import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;
-import tech.konata.phosphate.Phosphate;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.module.impl.render.BlockAnimations;
-import tech.konata.phosphate.module.impl.render.Perspective;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.rendering.entities.impl.Rect;
-import tech.konata.phosphate.rendering.entities.impl.SVGImage;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.rendering.waveycapes.layers.CustomCapeRenderLayer;
-import tech.konata.phosphate.widget.impl.PaperDoll;
+import tritium.Tritium;
+import tritium.management.ModuleManager;
+import tritium.module.impl.render.BlockAnimations;
+import tritium.module.impl.render.Perspective;
+import tritium.rendering.entities.impl.SVGImage;
+import tritium.rendering.waveycapes.layers.CustomCapeRenderLayer;
+import tritium.widget.impl.PaperDoll;
 
 public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 
@@ -139,7 +135,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
                     fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2 + 5, i, 553648127);
                     GlStateManager.enableDepth();
                     GlStateManager.depthMask(true);
-                    SVGImage.draw(Location.of(Phosphate.NAME + "/textures/icon_white.svg"), -fontrenderer.getStringWidth(str) / 2.0 - 4.5, i - 0.5, 8, 8);
+                    SVGImage.draw(Location.of(Tritium.NAME + "/textures/icon_white.svg"), -fontrenderer.getStringWidth(str) / 2.0 - 4.5, i - 0.5, 8, 8);
                     fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2 + 5, i, -1);
                 } else {
                     fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, i, 553648127);
@@ -277,12 +273,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
      */
     protected void preRenderCallback(AbstractClientPlayer entitylivingbaseIn, float partialTickTime) {
         float f = 0.9375F;
-
-        Tuple<Float, Float> tuple = ModuleManager.smallPlayerModel.scalePlayerModel(f, shadowSize, this.getMainModel().bipedHead, this.getMainModel().bipedHeadwear);
-
-        f = tuple.getFirst();
-        this.shadowSize = tuple.getSecond();
-
         GlStateManager.scale(f, f, f);
     }
 

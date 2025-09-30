@@ -28,9 +28,9 @@ import net.minecraft.util.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import tech.konata.phosphate.event.events.player.MoveEntityRotationEvent;
-import tech.konata.phosphate.event.events.player.SafeWalkEvent;
-import tech.konata.phosphate.management.EventManager;
+import tritium.event.events.player.MoveEntityRotationEvent;
+import tritium.event.events.player.SafeWalkEvent;
+import tritium.management.EventManager;
 
 import java.util.List;
 import java.util.Random;

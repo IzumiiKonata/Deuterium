@@ -11,9 +11,7 @@ import org.lwjglx.input.InputEvents;
 import org.lwjglx.input.KeyCodes;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
-import tech.konata.phosphate.settings.GlobalSettings;
 
-import javax.swing.*;
 import java.awt.*;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;

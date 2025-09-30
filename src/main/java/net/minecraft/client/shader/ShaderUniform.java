@@ -3,8 +3,8 @@ package net.minecraft.client.shader;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.BufferUtils;
 import org.lwjglx.util.vector.Matrix4f;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

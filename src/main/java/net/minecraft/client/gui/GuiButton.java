@@ -5,7 +5,7 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
+import tritium.rendering.rendersystem.RenderSystem;
 
 public class GuiButton extends Gui {
     protected static final Location buttonTextures = Location.of("textures/gui/widgets.png");

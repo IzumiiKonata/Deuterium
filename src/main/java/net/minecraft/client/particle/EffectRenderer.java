@@ -18,7 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.src.Config;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import tech.konata.phosphate.rendering.ParticleCulling;
+import tritium.rendering.ParticleCulling;
 
 import java.util.*;
 import java.util.concurrent.Callable;

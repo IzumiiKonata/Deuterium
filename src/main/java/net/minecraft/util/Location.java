@@ -1,7 +1,7 @@
 package net.minecraft.util;
 
 import org.apache.commons.lang3.Validate;
-import tech.konata.phosphate.utils.optimization.IdentifierCaches;
+import tritium.utils.optimization.IdentifierCaches;
 
 import java.util.HashMap;
 import java.util.Map;

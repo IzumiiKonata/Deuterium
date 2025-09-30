@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.MathHelper;
-import tech.konata.phosphate.management.WidgetsManager;
-import tech.konata.phosphate.widget.impl.PaperDoll;
+import tritium.management.WidgetsManager;
+import tritium.widget.impl.PaperDoll;
 
 public class LayerCape implements LayerRenderer<AbstractClientPlayer> {
     private final RenderPlayer playerRenderer;

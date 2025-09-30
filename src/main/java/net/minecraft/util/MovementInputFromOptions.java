@@ -1,8 +1,8 @@
 package net.minecraft.util;
 
 import net.minecraft.client.settings.GameSettings;
-import tech.konata.phosphate.event.events.player.MovementInputEvent;
-import tech.konata.phosphate.management.EventManager;
+import tritium.event.events.player.MovementInputEvent;
+import tritium.management.EventManager;
 
 public class MovementInputFromOptions extends MovementInput {
     private final GameSettings gameSettings;

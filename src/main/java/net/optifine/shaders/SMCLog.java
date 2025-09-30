@@ -1,7 +1,7 @@
 package net.optifine.shaders;
 
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 public abstract class SMCLog {
     private static final Logger LOGGER = LogManager.getLogger("SMCLog");

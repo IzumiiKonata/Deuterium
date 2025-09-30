@@ -7,7 +7,7 @@ import net.minecraft.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
-import tech.konata.phosphate.rendering.ime.Internal;
+import tritium.rendering.ime.Internal;
 
 import java.io.IOException;
 import java.util.List;

@@ -1,7 +1,7 @@
 package net.optifine;
 
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 public class Log {
     private static final Logger LOGGER = LogManager.getLogger();

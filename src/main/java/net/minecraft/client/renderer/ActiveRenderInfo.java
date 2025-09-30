@@ -11,8 +11,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.util.glu.GLU;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.module.impl.render.Perspective;
+import tritium.management.ModuleManager;
+import tritium.module.impl.render.Perspective;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

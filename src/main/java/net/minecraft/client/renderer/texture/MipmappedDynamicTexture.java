@@ -8,8 +8,8 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL30;
 import org.lwjgl.stb.STBImageResize;
 import org.lwjgl.system.MemoryUtil;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.utils.other.DevUtils;
+import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.other.DevUtils;
 
 import java.awt.image.BufferedImage;
 import java.nio.ByteBuffer;

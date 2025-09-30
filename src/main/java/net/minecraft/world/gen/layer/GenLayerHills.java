@@ -1,8 +1,8 @@
 package net.minecraft.world.gen.layer;
 
 import net.minecraft.world.biome.BiomeGenBase;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 public class GenLayerHills extends GenLayer {
     private static final Logger logger = LogManager.getLogger("GenLayerHills");

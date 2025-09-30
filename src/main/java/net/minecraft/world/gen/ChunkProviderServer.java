@@ -1,7 +1,7 @@
 package net.minecraft.world.gen;
 
 import com.google.common.collect.Lists;
-import tech.konata.phosphate.rendering.phosphor.api.ILightingEngineProvider;
+import tritium.rendering.phosphor.api.ILightingEngineProvider;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.EnumCreatureType;
@@ -18,8 +18,8 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.EmptyChunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.IChunkLoader;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.IOException;
 import java.util.Collections;

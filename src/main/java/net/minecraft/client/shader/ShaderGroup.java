@@ -14,7 +14,7 @@ import net.minecraft.util.Location;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.util.vector.Matrix4f;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
+import tritium.rendering.rendersystem.RenderSystem;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

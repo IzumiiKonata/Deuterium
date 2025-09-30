@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import tech.konata.phosphate.management.ModuleManager;
+import tritium.management.ModuleManager;
 
 public class ModelPlayer extends ModelBiped {
     public ModelRenderer bipedLeftArmwear;

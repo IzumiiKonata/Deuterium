@@ -1,0 +1,28 @@
+package tritium.utils.other.info;
+
+import lombok.Getter;
+
+/**
+ * @author IzumiiKonata
+ * @since 11/19/2023
+ */
+@Getter
+public class Version {
+
+    private final int major, minor, patch;
+    private final String suffix;
+
+    public Version(int major, int minor, int patch, String suffix) {
+        this.major = major;
+        this.minor = minor;
+        this.patch = patch;
+
+        this.suffix = suffix;
+    }
+
+    @Override
+    public String toString() {
+        return major + "." + minor + "." + patch + suffix;
+    }
+
+}

@@ -27,11 +27,11 @@ import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
-import tech.konata.phosphate.event.events.game.RawKeyInputEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
-import tech.konata.phosphate.utils.timing.Timer;
+import tritium.event.events.game.RawKeyInputEvent;
+import tritium.management.EventManager;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
+import tritium.utils.timing.Timer;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;

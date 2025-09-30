@@ -1,21 +1,14 @@
 import lombok.SneakyThrows;
 import net.minecraft.client.main.Main;
-import tech.konata.phosphate.Phosphate;
+import tritium.Tritium;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 public class Start {
 
     @SneakyThrows
     public static void main(String[] args) {
-        String[] launchArgs = concat(new String[]{ "--version", Phosphate.NAME, "--accessToken", "0", "--assetsDir", "assets", "--assetIndex", "1.8", "--userProperties", "{}", "--width", "854", "--height", "480" }, args);
+        String[] launchArgs = concat(new String[]{ "--version", Tritium.NAME, "--accessToken", "0", "--assetsDir", "assets", "--assetIndex", "1.8", "--userProperties", "{}", "--width", "854", "--height", "480" }, args);
         Main.main(launchArgs);
     }
 

@@ -60,9 +60,7 @@ import net.optifine.gui.GuiChatOF;
 import net.optifine.shaders.Shaders;
 import net.optifine.shaders.ShadersRender;
 import net.optifine.util.MemoryMonitor;
-import net.optifine.util.TextureUtils;
 import net.optifine.util.TimedEvent;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjglx.input.Keyboard;
@@ -70,28 +68,28 @@ import org.lwjglx.input.Mouse;
 import org.lwjglx.opengl.Display;
 import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
-import tech.konata.phosphate.Phosphate;
-import tech.konata.phosphate.event.events.input.MouseXYChangeEvent;
-import tech.konata.phosphate.event.events.rendering.HurtCamEvent;
-import tech.konata.phosphate.event.events.rendering.Render2DEvent;
-import tech.konata.phosphate.event.events.rendering.Render3DEvent;
-import tech.konata.phosphate.event.events.rendering.UpdateCameraAndRenderEvent;
-import tech.konata.phosphate.interfaces.SharedRenderingConstants;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.module.impl.render.CameraPositions;
-import tech.konata.phosphate.module.impl.render.Perspective;
-import tech.konata.phosphate.module.impl.render.WorldTime;
-import tech.konata.phosphate.rendering.ParticleCulling;
-import tech.konata.phosphate.rendering.TitleBar;
-import tech.konata.phosphate.rendering.TransitionAnimation;
-import tech.konata.phosphate.rendering.animation.Animation;
-import tech.konata.phosphate.rendering.animation.Easing;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.screens.BaseScreen;
-import tech.konata.phosphate.settings.GlobalSettings;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.Tritium;
+import tritium.event.events.input.MouseXYChangeEvent;
+import tritium.event.events.rendering.HurtCamEvent;
+import tritium.event.events.rendering.Render2DEvent;
+import tritium.event.events.rendering.Render3DEvent;
+import tritium.event.events.rendering.UpdateCameraAndRenderEvent;
+import tritium.interfaces.SharedRenderingConstants;
+import tritium.management.EventManager;
+import tritium.management.ModuleManager;
+import tritium.module.impl.render.CameraPositions;
+import tritium.module.impl.render.Perspective;
+import tritium.module.impl.render.WorldTime;
+import tritium.rendering.ParticleCulling;
+import tritium.rendering.TitleBar;
+import tritium.rendering.TransitionAnimation;
+import tritium.rendering.animation.Animation;
+import tritium.rendering.animation.Easing;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.screens.BaseScreen;
+import tritium.settings.ClientSettings;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -1157,7 +1155,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         //CLIENT
         MouseXYChangeEvent event = new MouseXYChangeEvent(dX, dY);
 
-        if (Phosphate.getInstance().getEventManager() != null) {
+        if (Tritium.getInstance().getEventManager() != null) {
             EventManager.call(event);
         }
 
@@ -1267,7 +1265,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     //CLIENT
                     GL11.glPushMatrix();
 
-                    if (GlobalSettings.FIXED_SCALE.getValue()) {
+                    if (ClientSettings.FIXED_SCALE.getValue()) {
                         GlStateManager.color(1f, 1f, 1f, 1f);
                         GlStateManager.clear(256);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -1309,7 +1307,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                     GL11.glPopMatrix();
 
-                    if (GlobalSettings.FIXED_SCALE.getValue()) {
+                    if (ClientSettings.FIXED_SCALE.getValue()) {
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.loadIdentity();
                         GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(),
@@ -1342,7 +1340,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.matrixMode(5888);
                 GlStateManager.loadIdentity();
 
-                if (this.mc.currentScreen instanceof BaseScreen && GlobalSettings.FIXED_SCALE.getValue()) {
+                if (this.mc.currentScreen instanceof BaseScreen && ClientSettings.FIXED_SCALE.getValue()) {
                     GlStateManager.clear(256);
                     GlStateManager.matrixMode(GL11.GL_PROJECTION);
                     GlStateManager.loadIdentity();
@@ -1365,7 +1363,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                 try {
 
-                    if (this.mc.currentScreen instanceof BaseScreen && GlobalSettings.FIXED_SCALE.getValue()) {
+                    if (this.mc.currentScreen instanceof BaseScreen && ClientSettings.FIXED_SCALE.getValue()) {
                         GlStateManager.pushMatrix();
                         GlStateManager.clear(256);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);

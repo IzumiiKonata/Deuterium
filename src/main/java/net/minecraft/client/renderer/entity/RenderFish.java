@@ -9,7 +9,7 @@ import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
-import tech.konata.phosphate.management.ModuleManager;
+import tritium.management.ModuleManager;
 
 public class RenderFish extends Render<EntityFishHook> {
     private static final Location FISH_PARTICLES = Location.of("textures/particle/particles.png");

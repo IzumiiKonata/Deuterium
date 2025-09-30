@@ -22,15 +22,15 @@ import net.optifine.EmissiveTextures;
 import net.optifine.entity.model.CustomEntityModels;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
-import tech.konata.phosphate.Phosphate;
-import tech.konata.phosphate.event.events.rendering.RenderPlayerRotationsEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.settings.GlobalSettings;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
-import tech.konata.phosphate.widget.impl.PaperDoll;
+import tritium.Tritium;
+import tritium.event.events.rendering.RenderPlayerRotationsEvent;
+import tritium.management.EventManager;
+import tritium.management.ModuleManager;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.settings.ClientSettings;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
+import tritium.widget.impl.PaperDoll;
 
 import java.awt.*;
 import java.nio.FloatBuffer;
@@ -146,7 +146,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
             //CLIENT
             if (entity == Minecraft.getMinecraft().thePlayer) {
-                if (Phosphate.getInstance().getEventManager().canReceive(RenderPlayerRotationsEvent.class)) {
+                if (Tritium.getInstance().getEventManager().canReceive(RenderPlayerRotationsEvent.class)) {
                     RenderPlayerRotationsEvent event = EventManager.call(new RenderPlayerRotationsEvent(Minecraft.getMinecraft().thePlayer.rotationYaw, Minecraft.getMinecraft().thePlayer.rotationPitch));
 
                     if (event.getRotationYaw() != Minecraft.getMinecraft().thePlayer.rotationYaw || event.getRotationPitch() != Minecraft.getMinecraft().thePlayer.rotationPitch) {
@@ -654,7 +654,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
         }
 
-        return Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || GlobalSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
+        return Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || ClientSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
     }
 
     public void setRenderOutlines(boolean renderOutlinesIn) {

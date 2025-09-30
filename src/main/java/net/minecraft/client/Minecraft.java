@@ -16,7 +16,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
-import tech.konata.phosphate.rendering.phosphor.api.ILightingEngineProvider;
+import tritium.rendering.phosphor.api.ILightingEngineProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -97,28 +97,28 @@ import org.lwjglx.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import org.lwjglx.opengl.OpenGLException;
 import org.lwjglx.opengl.PixelFormat;
-import tech.konata.phosphate.Phosphate;
-import tech.konata.phosphate.event.eventapi.State;
-import tech.konata.phosphate.event.events.game.KeyPressedEvent;
-import tech.konata.phosphate.event.events.rendering.DisplayResizedEvent;
-import tech.konata.phosphate.event.events.world.TickEvent;
-import tech.konata.phosphate.event.events.world.WorldChangedEvent;
-import tech.konata.phosphate.rendering.ime.Internal;
-import tech.konata.phosphate.management.ConfigManager;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.management.FontManager;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.rendering.TransitionAnimation;
-import tech.konata.phosphate.rendering.animation.Interpolations;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.rendering.loading.LoadingRenderer;
-import tech.konata.phosphate.screens.MainMenu;
-import tech.konata.phosphate.settings.GlobalSettings;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
-import tech.konata.phosphate.utils.other.multithreading.MultiThreadingUtil;
-import tech.konata.phosphate.utils.optimization.Deduplicator;
-import tech.konata.phosphate.widget.impl.keystrokes.CPSUtils;
+import tritium.Tritium;
+import tritium.event.eventapi.State;
+import tritium.event.events.game.KeyPressedEvent;
+import tritium.event.events.rendering.DisplayResizedEvent;
+import tritium.event.events.world.TickEvent;
+import tritium.event.events.world.WorldChangedEvent;
+import tritium.rendering.ime.Internal;
+import tritium.management.ConfigManager;
+import tritium.management.EventManager;
+import tritium.management.FontManager;
+import tritium.management.ModuleManager;
+import tritium.rendering.TransitionAnimation;
+import tritium.rendering.animation.Interpolations;
+import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.loading.LoadingRenderer;
+import tritium.screens.MainMenu;
+import tritium.settings.ClientSettings;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
+import tritium.utils.optimization.Deduplicator;
+import tritium.widget.impl.keystrokes.CPSUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -370,8 +370,7 @@ public class Minecraft implements IThreadListener {
         this.profileProperties = gameConfig.userInfo.profileProperties;
         this.mcDefaultResourcePack = new DefaultResourcePack((new ResourceIndex(gameConfig.folderInfo.assetsDir, gameConfig.folderInfo.assetIndex)).getResourceMap());
 
-        GlobalSettings.config = ConfigManager.preloadGlobalSettings();
-        GlobalSettings.initialize();
+        ClientSettings.initialize();
 
         MultiThreadingUtil.runAsync(FontManager::loadFonts);
 
@@ -590,7 +589,7 @@ public class Minecraft implements IThreadListener {
         TextureUtils.registerResourceListener();
 
         //CLIENT
-        Phosphate.getInstance().run();
+        Tritium.getInstance().run();
         LoadingRenderer.notifyGameLoaded();
         //END CLIENT
 
@@ -629,7 +628,7 @@ public class Minecraft implements IThreadListener {
 
         InputEvents.addKeyboardListener(new McKeybindHandler());
 
-        Phosphate.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Main.startupTime) / 1000.0d);
+        Tritium.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Main.startupTime) / 1000.0d);
     }
 
     private void registerMetadataSerializers() {
@@ -905,7 +904,7 @@ public class Minecraft implements IThreadListener {
         }
 
         if (this.isFullScreen()) {
-            String value = GlobalSettings.FULL_SCREEN_RESOLUTION.getValue();
+            String value = ClientSettings.FULL_SCREEN_RESOLUTION.getValue();
 
             String[] split = value.split("x");
             int w = Integer.parseInt(split[0]);
@@ -913,8 +912,8 @@ public class Minecraft implements IThreadListener {
 
             int refreshRate = glfwGetVideoMode(glfwGetPrimaryMonitor()).refreshRate();
 
-            if (!GlobalSettings.FULL_SCREEN_REFRESH_RATE.getValue().equals("Auto")) {
-                refreshRate = Integer.parseInt(GlobalSettings.FULL_SCREEN_REFRESH_RATE.getValue());
+            if (!ClientSettings.FULL_SCREEN_REFRESH_RATE.getValue().equals("Auto")) {
+                refreshRate = Integer.parseInt(ClientSettings.FULL_SCREEN_REFRESH_RATE.getValue());
             }
 
             displaymode = new DisplayMode(w, h, glfwGetVideoMode(glfwGetPrimaryMonitor()).redBits() + glfwGetVideoMode(glfwGetPrimaryMonitor()).greenBits() + glfwGetVideoMode(glfwGetPrimaryMonitor()).blueBits(), refreshRate, true);
@@ -1167,7 +1166,7 @@ public class Minecraft implements IThreadListener {
         int sync = this.getLimitFramerate();
         boolean needSync = this.isFramerateLimitBelowMax();
 
-        if (GlobalSettings.FRAME_PREDICT.getValue()) {
+        if (ClientSettings.FRAME_PREDICT.getValue()) {
 
             if (lastFrameTex == -1) {
                 lastFrameTex = GL11.glGenTextures();
@@ -1193,7 +1192,7 @@ public class Minecraft implements IThreadListener {
                 GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
                 GlStateManager.disableAlpha();
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                tech.konata.phosphate.rendering.shader.Shaders.MOTION.run(framebufferMc.framebufferTexture, lastFrameTex, this.displayWidth, this.displayHeight);
+                tritium.rendering.shader.Shaders.MOTION.run(framebufferMc.framebufferTexture, lastFrameTex, this.displayWidth, this.displayHeight);
             }
 
             this.updateDisplay();
@@ -1210,7 +1209,7 @@ public class Minecraft implements IThreadListener {
         } else {
             this.framebufferMc.framebufferRender(this.displayWidth, this.displayHeight);
 
-            if (GlobalSettings.FRAME_PREDICT.getValue() && lastFrameTex != -1) {
+            if (ClientSettings.FRAME_PREDICT.getValue() && lastFrameTex != -1) {
                 // update content
                 this.framebufferMc.bindFramebuffer(true);
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
@@ -1229,7 +1228,7 @@ public class Minecraft implements IThreadListener {
         }
         this.updateDisplay();
         if (needSync)
-            Display.sync(GlobalSettings.FRAME_PREDICT.getValue() ? sync * 2 : sync);
+            Display.sync(ClientSettings.FRAME_PREDICT.getValue() ? sync * 2 : sync);
 
 //        Thread.yield();
         this.checkGLError("Post render");
@@ -1510,7 +1509,7 @@ public class Minecraft implements IThreadListener {
     }
 
     public void clickMouse() {
-        if (this.leftClickCounter <= 0 || GlobalSettings.NO_CLICK_DELAY.getValue()) {
+        if (this.leftClickCounter <= 0 || ClientSettings.NO_CLICK_DELAY.getValue()) {
             CPSUtils.addLeftCPS();
             this.thePlayer.swingItem();
 

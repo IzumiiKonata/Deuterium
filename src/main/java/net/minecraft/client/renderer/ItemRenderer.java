@@ -27,10 +27,10 @@ import net.minecraft.world.storage.MapData;
 import net.optifine.DynamicLights;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
-import tech.konata.phosphate.event.events.rendering.BlockAnimationEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.module.impl.render.BlockAnimations;
+import tritium.event.events.rendering.BlockAnimationEvent;
+import tritium.management.EventManager;
+import tritium.management.ModuleManager;
+import tritium.module.impl.render.BlockAnimations;
 
 public class ItemRenderer {
     private static final Location RES_MAP_BACKGROUND = Location.of("textures/map/map_background.png");

@@ -17,9 +17,9 @@ import net.optifine.render.GlBlendState;
 import net.optifine.util.FontUtils;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
-import tech.konata.phosphate.event.events.rendering.RenderTextEvent;
-import tech.konata.phosphate.interfaces.IFontRenderer;
-import tech.konata.phosphate.management.EventManager;
+import tritium.event.events.rendering.RenderTextEvent;
+import tritium.interfaces.IFontRenderer;
+import tritium.management.EventManager;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

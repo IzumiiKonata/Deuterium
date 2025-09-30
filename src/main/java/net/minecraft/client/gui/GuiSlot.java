@@ -8,8 +8,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
-import tech.konata.phosphate.rendering.animation.Animation;
-import tech.konata.phosphate.rendering.animation.Easing;
+import tritium.rendering.animation.Animation;
+import tritium.rendering.animation.Easing;
 
 import java.time.Duration;
 

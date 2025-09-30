@@ -4,14 +4,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IResourceManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.utils.other.DevUtils;
+import tritium.utils.other.DevUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

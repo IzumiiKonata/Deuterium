@@ -1,6 +1,6 @@
 package net.minecraft.util;
 
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.Logger;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;

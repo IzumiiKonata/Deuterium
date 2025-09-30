@@ -12,9 +12,9 @@ import org.lwjgl.openal.ALC10;
 import org.lwjgl.system.MemoryUtil;
 import paulscode.sound.*;
 import paulscode.sound.codecs.CodecJOrbis;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
-import tech.konata.phosphate.utils.other.multithreading.MultiThreadingUtil;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.IOException;
 import java.io.InputStream;

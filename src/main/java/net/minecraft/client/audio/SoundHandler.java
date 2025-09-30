@@ -12,8 +12,8 @@ import net.minecraft.util.ITickable;
 import net.minecraft.util.Location;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;

@@ -25,11 +25,14 @@ import net.minecraft.util.*;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 import org.lwjglx.util.vector.Vector2f;
-import tech.konata.phosphate.event.eventapi.State;
-import tech.konata.phosphate.event.events.game.ChatEvent;
-import tech.konata.phosphate.event.events.player.*;
-import tech.konata.phosphate.event.events.rendering.FovModifierEvent;
-import tech.konata.phosphate.management.EventManager;
+import tritium.event.eventapi.State;
+import tritium.event.events.game.ChatEvent;
+import tritium.event.events.player.MoveEvent;
+import tritium.event.events.player.PlayerUpdateEvent;
+import tritium.event.events.player.SlowDownEvent;
+import tritium.event.events.player.UpdateEvent;
+import tritium.event.events.rendering.FovModifierEvent;
+import tritium.management.EventManager;
 
 import javax.vecmath.Vector3f;
 

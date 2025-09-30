@@ -24,8 +24,8 @@ import net.optifine.CustomItems;
 import net.optifine.util.StrUtils;
 import net.optifine.util.TextureUtils;
 import org.apache.commons.io.IOUtils;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.*;
 import java.util.*;

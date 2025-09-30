@@ -7,9 +7,9 @@ import net.minecraft.world.gen.layer.IntCache;
 import net.optifine.CrashReporter;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
-import tech.konata.phosphate.Phosphate;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.Tritium;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -68,7 +68,7 @@ public class CrashReport {
      */
     private void populateEnvironment() {
         this.theReportCategory.addCrashSectionCallable("《我的手艺》 版本", () -> "1.8.9");
-        this.theReportCategory.addCrashSectionCallable("磷酸盐 版本", () -> Phosphate.getVersion().toString());
+        this.theReportCategory.addCrashSectionCallable("磷酸盐 版本", () -> Tritium.getVersion().toString());
         this.theReportCategory.addCrashSectionCallable("操作系统", () -> System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") 版本 " + System.getProperty("os.version"));
         this.theReportCategory.addCrashSectionCallable("Java版本", () -> System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
         this.theReportCategory.addCrashSectionCallable("Java虚拟机版本", () -> System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));

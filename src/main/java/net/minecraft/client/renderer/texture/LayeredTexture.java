@@ -5,9 +5,9 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.optifine.shaders.ShadersTex;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

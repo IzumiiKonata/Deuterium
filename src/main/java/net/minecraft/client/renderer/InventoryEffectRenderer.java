@@ -5,7 +5,7 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.inventory.Container;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import tech.konata.phosphate.settings.GlobalSettings;
+import tritium.settings.ClientSettings;
 
 import java.util.Collection;
 
@@ -31,7 +31,7 @@ public abstract class InventoryEffectRenderer extends GuiContainer {
     protected void updateActivePotionEffects() {
         if (!this.mc.thePlayer.getActivePotionEffects().isEmpty()) {
 
-            if (!GlobalSettings.CENTER_INVENTORY.getValue())
+            if (!ClientSettings.CENTER_INVENTORY.getValue())
                 this.guiLeft = 160 + (this.width - this.xSize - 200) / 2;
 
             this.hasActivePotionEffects = true;

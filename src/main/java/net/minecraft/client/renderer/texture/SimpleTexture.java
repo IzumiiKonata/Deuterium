@@ -12,10 +12,10 @@ import net.optifine.shaders.ShadersTex;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.system.MemoryUtil;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
-import tech.konata.phosphate.utils.other.DevUtils;
+import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
+import tritium.utils.other.DevUtils;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;

@@ -32,21 +32,16 @@ import net.minecraft.util.*;
 import net.minecraft.world.border.WorldBorder;
 import net.optifine.CustomColors;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-import tech.konata.phosphate.management.ModuleManager;
-import tech.konata.phosphate.management.WidgetsManager;
-import tech.konata.phosphate.module.impl.render.HotBar;
-import tech.konata.phosphate.rendering.TitleBar;
-import tech.konata.phosphate.rendering.rendersystem.RenderSystem;
-import tech.konata.phosphate.rendering.shader.ShaderUtil;
-import tech.konata.phosphate.settings.GlobalSettings;
+import tritium.management.ModuleManager;
+import tritium.management.WidgetsManager;
+import tritium.rendering.TitleBar;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.shader.ShaderUtil;
+import tritium.settings.ClientSettings;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.Random;
-
-import static org.lwjgl.opengl.GL11.GL_ONE;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 public class GuiIngame extends Gui {
     private static final Location vignetteTexPath = Location.of("textures/misc/vignette.png");
@@ -163,7 +158,7 @@ public class GuiIngame extends Gui {
     public void renderGameOverlay(float partialTicks) {
         ScaledResolution scaledresolution = ScaledResolution.get();
 
-        if (GlobalSettings.GUIINGAME_CACHE.getValue()) {
+        if (ClientSettings.GUIINGAME_CACHE.getValue()) {
 
             int i = scaledresolution.getScaledWidth();
             int j = scaledresolution.getScaledHeight();
@@ -191,7 +186,7 @@ public class GuiIngame extends Gui {
         }
 
         // 这里是方块人原版的 GuiIngame的内容
-        if (!GlobalSettings.GUIINGAME_CACHE.getValue() || dirty) {
+        if (!ClientSettings.GUIINGAME_CACHE.getValue() || dirty) {
             int i = scaledresolution.getScaledWidth();
             int j = scaledresolution.getScaledHeight();
             this.mc.entityRenderer.setupOverlayRendering();
@@ -213,24 +208,20 @@ public class GuiIngame extends Gui {
                 }
             }
 
-            //CLIENT
-            if (!ModuleManager.hotBar.isEnabled() || ModuleManager.hotBar.style.getValue() == HotBar.Style.Style1ButVanillaItem) {
-                if (this.mc.playerController.isSpectator()) {
-                    this.spectatorGui.renderTooltip(scaledresolution, partialTicks);
-                } else {
-                    if (GlobalSettings.GUIINGAME_CACHE.getValue()) {
-                        GL11.glCullFace(GL11.GL_BACK);
-                    }
-
-                    this.renderTooltip(scaledresolution, partialTicks);
+            if (this.mc.playerController.isSpectator()) {
+                this.spectatorGui.renderTooltip(scaledresolution, partialTicks);
+            } else {
+                if (ClientSettings.GUIINGAME_CACHE.getValue()) {
+                    GL11.glCullFace(GL11.GL_BACK);
                 }
+
+                this.renderTooltip(scaledresolution, partialTicks);
             }
-            //END CLIENT
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.mc.getTextureManager().bindTexture(icons);
             GlStateManager.enableBlend();
-            if (!GlobalSettings.GUIINGAME_CACHE.getValue() && this.showCrosshair()) {
+            if (!ClientSettings.GUIINGAME_CACHE.getValue() && this.showCrosshair()) {
                 GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
                 GlStateManager.enableAlpha();
                 this.drawTexturedModalRect(i / 2 - 7, j / 2 - 7, 0, 0, 16, 16);
@@ -243,10 +234,8 @@ public class GuiIngame extends Gui {
             this.mc.mcProfiler.endSection();
 
             if (this.mc.playerController.shouldDrawHUD()) {
-                //CLIENT
-                if (!ModuleManager.hotBar.isEnabled())
-                    this.renderPlayerStats(scaledresolution);
-                //END CLIENT
+                this.renderPlayerStats(scaledresolution);
+
             }
 
             GlStateManager.disableBlend();
@@ -254,21 +243,17 @@ public class GuiIngame extends Gui {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             int k1 = i / 2 - 91;
 
-            //CLIENT
-            if (!ModuleManager.hotBar.isEnabled()) {
-                if (this.mc.thePlayer.isRidingHorse()) {
-                    this.renderHorseJumpBar(scaledresolution, k1);
-                } else if (this.mc.playerController.gameIsSurvivalOrAdventure()) {
-                    this.renderExpBar(scaledresolution, k1);
-                }
-
-                if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator()) {
-                    this.renderSelectedItem(scaledresolution);
-                } else if (this.mc.thePlayer.isSpectator()) {
-                    this.spectatorGui.renderSelectedItem(scaledresolution);
-                }
+            if (this.mc.thePlayer.isRidingHorse()) {
+                this.renderHorseJumpBar(scaledresolution, k1);
+            } else if (this.mc.playerController.gameIsSurvivalOrAdventure()) {
+                this.renderExpBar(scaledresolution, k1);
             }
-            //END CLIENT
+
+            if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator()) {
+                this.renderSelectedItem(scaledresolution);
+            } else if (this.mc.thePlayer.isSpectator()) {
+                this.spectatorGui.renderSelectedItem(scaledresolution);
+            }
 
             if (this.mc.isDemo()) {
                 this.renderDemo(scaledresolution);
@@ -366,7 +351,7 @@ public class GuiIngame extends Gui {
             GlStateManager.enableAlpha();
         }
 
-        if (GlobalSettings.GUIINGAME_CACHE.getValue()) {
+        if (ClientSettings.GUIINGAME_CACHE.getValue()) {
             mc.getFramebuffer().bindFramebuffer(true);
             dirty = false;
 

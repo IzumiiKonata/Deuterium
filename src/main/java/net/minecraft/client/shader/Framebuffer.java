@@ -10,10 +10,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
-import tech.konata.phosphate.rendering.FramebufferCaching;
-import tech.konata.phosphate.rendering.shader.Shaders;
+import tritium.rendering.FramebufferCaching;
+import tritium.rendering.shader.Shaders;
 
-import java.awt.*;
 import java.nio.ByteBuffer;
 
 public class Framebuffer {

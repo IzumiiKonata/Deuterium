@@ -1,8 +1,8 @@
 package net.minecraft.nbt;
 
 import com.google.common.collect.Lists;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.DataInput;
 import java.io.DataOutput;

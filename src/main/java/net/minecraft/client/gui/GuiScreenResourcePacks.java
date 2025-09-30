@@ -4,8 +4,8 @@ import com.google.common.collect.Lists;
 import net.minecraft.client.resources.*;
 import net.minecraft.util.Util;
 import org.lwjglx.Sys;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import java.io.File;
 import java.io.IOException;

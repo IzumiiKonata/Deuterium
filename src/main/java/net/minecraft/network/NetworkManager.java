@@ -21,12 +21,12 @@ import io.netty.util.concurrent.GenericFutureListener;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
-import tech.konata.phosphate.event.events.packet.ReceivePacketEvent;
-import tech.konata.phosphate.event.events.packet.SendPacketEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.utils.timing.Counter;
-import tech.konata.phosphate.utils.logging.LogManager;
-import tech.konata.phosphate.utils.logging.Logger;
+import tritium.event.events.packet.ReceivePacketEvent;
+import tritium.event.events.packet.SendPacketEvent;
+import tritium.management.EventManager;
+import tritium.utils.timing.Counter;
+import tritium.utils.logging.LogManager;
+import tritium.utils.logging.Logger;
 
 import javax.crypto.SecretKey;
 import java.net.InetAddress;

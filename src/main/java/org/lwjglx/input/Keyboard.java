@@ -5,7 +5,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.Sys;
 import org.lwjglx.opengl.Display;
-import tech.konata.phosphate.Phosphate;
+import tritium.Tritium;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -188,7 +188,7 @@ public class Keyboard {
 
     static {
 
-        if (Phosphate.getInstance().isObfuscated()) {
+        if (Tritium.getInstance().isObfuscated()) {
             reverseKeyMap.put("NONE", 0);
             reverseKeyMap.put("ESCAPE", 1);
             reverseKeyMap.put("1", 2);

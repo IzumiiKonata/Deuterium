@@ -20,9 +20,8 @@ import net.minecraft.world.World;
 import net.optifine.entity.model.IEntityRenderer;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
-import tech.konata.phosphate.module.impl.render.Perspective;
-import tech.konata.phosphate.rendering.async.AsyncGLContext;
-import tech.konata.phosphate.widget.impl.PaperDoll;
+import tritium.module.impl.render.Perspective;
+import tritium.widget.impl.PaperDoll;
 
 public abstract class Render<T extends Entity> implements IEntityRenderer {
     private static final Location shadowTextures = Location.of("textures/misc/shadow.png");

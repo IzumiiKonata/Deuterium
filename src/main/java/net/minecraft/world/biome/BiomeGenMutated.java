@@ -5,7 +5,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
-import tech.konata.phosphate.utils.i18n.Localizable;
+import tritium.utils.i18n.Localizable;
 
 import java.util.Random;
 

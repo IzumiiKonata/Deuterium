@@ -3,7 +3,7 @@ package net.minecraft.client.gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
-import tech.konata.phosphate.screens.MainMenu;
+import tritium.screens.MainMenu;
 
 import java.io.IOException;
 

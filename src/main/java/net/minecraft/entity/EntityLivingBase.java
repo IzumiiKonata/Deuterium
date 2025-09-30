@@ -31,9 +31,9 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import tech.konata.phosphate.event.events.player.JumpEvent;
-import tech.konata.phosphate.management.EventManager;
-import tech.konata.phosphate.utils.timing.Timer;
+import tritium.event.events.player.JumpEvent;
+import tritium.management.EventManager;
+import tritium.utils.timing.Timer;
 
 import java.util.*;
 

@@ -19,8 +19,8 @@ import net.minecraft.stats.StatFileWriter;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import tech.konata.phosphate.event.events.player.AttackEvent;
-import tech.konata.phosphate.management.EventManager;
+import tritium.event.events.player.AttackEvent;
+import tritium.management.EventManager;
 
 public class PlayerControllerMP {
     /**

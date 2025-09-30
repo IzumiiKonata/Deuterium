@@ -18,8 +18,8 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
-import tech.konata.phosphate.Phosphate;
-import tech.konata.phosphate.rendering.entities.impl.SVGImage;
+import tritium.Tritium;
+import tritium.rendering.entities.impl.SVGImage;
 
 import java.util.Comparator;
 import java.util.List;
@@ -201,7 +201,7 @@ public class GuiPlayerTabOverlay extends Gui {
 
                 if (phosphate) {
 
-                    SVGImage.draw(Location.of(Phosphate.NAME + "/textures/icon_white.svg"), j2 + 1, k2, 8, 8);
+                    SVGImage.draw(Location.of(Tritium.NAME + "/textures/icon_white.svg"), j2 + 1, k2, 8, 8);
 
                     j2 += 11;
                 }
