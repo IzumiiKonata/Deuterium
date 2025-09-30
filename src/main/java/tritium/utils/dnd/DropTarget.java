@@ -46,7 +46,7 @@ public class DropTarget {
         }
 
         File libFile;
-        String libFileName = "/assets/minecraft/tritium/textures/dt.png";
+        String libFileName = "/assets/minecraft/tritium/DropTarget.dll";
         try {
             libFile = File.createTempFile("lib", null);
             libFile.deleteOnExit();

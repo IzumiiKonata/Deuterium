@@ -18,14 +18,18 @@ public class ClickableIcon extends ClickEntity {
     @Setter
     private String icon;
 
-    @Getter
-    @Setter
-    private boolean smallFr = false;
+    private CFontRenderer fr;
 
-    public ClickableIcon(String icon, double x, double y, double width, double height,
+    public ClickableIcon(String icon, CFontRenderer fr, double x, double y, double width, double height,
                          Runnable click, Runnable hold, Runnable focus, Runnable release, Runnable onBlur) {
         super(x, y, width, height, MouseBounds.CallType.Expand, click, hold, focus, release, onBlur);
         this.icon = icon;
+        this.fr = fr;
+    }
+
+    public ClickableIcon(String icon, double x, double y, double width, double height,
+                         Runnable click, Runnable hold, Runnable focus, Runnable release, Runnable onBlur) {
+        this(icon, FontManager.icon30, x, y, width, height, click, hold, focus, release, onBlur);
     }
 
     float alphaAnim = 0f, alphaAnim2 = 0f;
@@ -36,7 +40,7 @@ public class ClickableIcon extends ClickEntity {
 
         GlStateManager.disableAlpha();
 
-        double size = smallFr ? 8 : 12;
+        double size = 12;
 
         if (alphaAnim != 0f)
             roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, ClientSettings.THEME.getValue() == ThemeManager.Theme.Light ? new Color(0, 0, 0, (int) (alphaAnim * 255)) : new Color(255, 255, 255, (int) (alphaAnim * 255)));
@@ -63,16 +67,10 @@ public class ClickableIcon extends ClickEntity {
             alphaAnim = Interpolations.interpBezier(alphaAnim, 0, 0.2f);
         }
 
-        CFontRenderer fr = smallFr ? FontManager.icon18 : FontManager.icon30;
-
         int w = fr.getStringWidth(icon);
         double h = fr.getHeight();
 
-        if (smallFr) {
-            fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5, this.getY() + this.getHeight() * 0.5 - h * 0.5, Color.GRAY.getRGB());
-        } else {
-            fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5, this.getY() + this.getHeight() * 0.5 - h * 0.5, ThemeManager.get(ThemeManager.ThemeColor.Text));
-        }
+        fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5, this.getY() + this.getHeight() * 0.5 - h * 0.5, ThemeManager.get(ThemeManager.ThemeColor.Text));
 
         super.tick(mouseX, mouseY);
     }

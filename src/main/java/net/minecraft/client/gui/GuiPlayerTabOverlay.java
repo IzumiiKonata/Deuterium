@@ -87,13 +87,8 @@ public class GuiPlayerTabOverlay extends Gui {
         for (NetworkPlayerInfo networkplayerinfo : list) {
 
 //            PlayerAdapter instance = PlayerAdapter.getInstance(networkplayerinfo.getGameProfile());
-            boolean phosphate = false;
 
             int k = this.mc.fontRendererObj.getStringWidth(this.getPlayerName(networkplayerinfo));
-
-            if (phosphate) {
-                k += 16;
-            }
 
             i = Math.max(i, k);
 

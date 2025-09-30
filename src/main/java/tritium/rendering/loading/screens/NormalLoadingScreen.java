@@ -3,16 +3,19 @@ package tritium.rendering.loading.screens;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.Display;
 import tritium.interfaces.SharedRenderingConstants;
+import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
+import tritium.rendering.entities.impl.Image;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.loading.LoadingScreenRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.other.SplashGenerator;
+import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
 
 import java.awt.*;
@@ -23,12 +26,9 @@ import java.awt.*;
  */
 public class NormalLoadingScreen extends LoadingScreenRenderer implements SharedRenderingConstants {
 
-
     double progressWidth = 0;
 
     double pbWidth;
-    double pbHeight;
-    double pbOffsetY;
 
     float screenMaskAlpha = 1.0f;
 
@@ -44,27 +44,23 @@ public class NormalLoadingScreen extends LoadingScreenRenderer implements Shared
     }
 
     @Override
-    public void render(int width, int height) {
+    public void render(double width, double height) {
+        GlStateManager.disableAlpha();
 
-        pbWidth = width - 80;
-        pbHeight = 20;
-        pbOffsetY = height * 0.8576923076923077; // curious why? cuz it's 6.0 / 7.0
+        pbWidth = width * .45;
         progressWidth = Interpolations.interpBezier(progressWidth, pbWidth * MathHelper.clamp_double(LoadingRenderer.progress / 100F, 0, 1), 0.2f);
 
-        Rect.draw(0, 0, width, height, RenderSystem.hexColor(23, 23, 23), Rect.RectType.ABSOLUTE_POSITION);
+        ThemeManager.Theme theme = ClientSettings.THEME.getValue();
 
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE);
-        GlStateManager.bindTexture(SplashGenerator.t.getGlTextureId());
+        int bgColor = theme == ThemeManager.Theme.Dark ? RenderSystem.hexColor(32, 32, 43, (int) (alpha * 255)) : RenderSystem.hexColor(235, 235, 235, (int) (alpha * 255));
+        int progressBarColor = theme == ThemeManager.Theme.Light ? RenderSystem.hexColor(32, 32, 43, (int) (alpha * 255)) : RenderSystem.hexColor(235, 235, 235, (int) (alpha * 255));
 
-        drawModalRectWithCustomSizedTexture((Display.getWidth() - SplashGenerator.logo.getWidth()) / 2.0, (Display.getHeight() - SplashGenerator.logo.getHeight()) / 2.0, 0, 0, SplashGenerator.logo.getWidth(), SplashGenerator.logo.getHeight(), SplashGenerator.logo.getWidth(), SplashGenerator.logo.getHeight());
+        Rect.draw(0, 0, width, height, bgColor);
 
-        GlStateManager.enableAlpha();
-        GlStateManager.disableBlend();
+        GlStateManager.color(1, 1, 1, alpha);
+        Image.draw(Location.of("tritium/textures/logo" + (theme == ThemeManager.Theme.Light ? "" : "_white") + ".png"), width / 2.0d - 64, height / 2.0d - 64, 128, 128, Image.Type.NoColor);
 
-        this.roundedRect(width / 2.0d - pbWidth / 2.0, pbOffsetY, pbWidth, pbHeight, 5, new Color(128, 128, 128));
+        Rect.draw(width / 2.0d - pbWidth / 2.0, height * 5.0 / 6.0, progressWidth, 4, progressBarColor);
 
         if (timer.isDelayed(500)) {
             screenMaskAlpha = Interpolations.interpBezier(screenMaskAlpha, 0, 0.1f);

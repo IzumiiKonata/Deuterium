@@ -25,11 +25,11 @@ public class Tritium {
     private static final Tritium instance = new Tritium();
 
     @Getter
-    private static final Version version = new Version(0, 0, 1, " Alpha");
+    private static final Version version = new Version(Version.Type.Dev, 0, 0, 1);
 
     public static final String NAME = "Tritium";
 
-    public static String BUILD_DATE = "Dev Environment";
+    public static String BUILD_DATE = "Dev Env";
 
     @Getter
     private final Logger logger = LogManager.getLogger("Tritium");
@@ -67,8 +67,6 @@ public class Tritium {
     @Getter
     private final boolean obfuscated = DevUtils.isObfuscated();
 
-    public static boolean POJAVE = false;
-
     public Tritium() {
         this.logger.setOverrideLevel(LogLevel.DEBUG);
     }
@@ -82,8 +80,8 @@ public class Tritium {
 
         Display.setTitle(
                 String.format(
-                        NAME + " %s",
-                        Tritium.getVersion().toString().equals(" Release") ? "" : Tritium.getVersion().toString()
+                        NAME + "-X %s",
+                        Tritium.getVersion().getType().toString()
                 )
         );
 

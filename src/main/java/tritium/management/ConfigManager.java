@@ -32,7 +32,8 @@ public class ConfigManager extends AbstractManager {
 
     public static final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Tritium.NAME);
     private final File ALT = new File(configDir, "Alts.json");
-    public String currentConfig = "Default";
+
+    public static final File curConfigFile = new File(configDir, "Config.json");
 
     static final Timer configSavingScheduler = new Timer();
 
@@ -58,42 +59,7 @@ public class ConfigManager extends AbstractManager {
             firstTime = true;
         }
 
-        File curConfigFile = new File(configDir, "Config.json");
-
-        if (!curConfigFile.exists()) {
-            curConfigFile.createNewFile();
-
-            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(curConfigFile), StandardCharsets.UTF_8));
-
-            writer.write("{\"Config\": \"Default\"}");
-
-            writer.flush();
-            writer.close();
-            firstTime = true;
-        }
-
-        File configsFile = new File(configDir, "Profiles");
-
-        if (!configsFile.exists()) {
-            configsFile.mkdir();
-            firstTime = true;
-        }
-
-        Gson gson = new Gson();
-
-        @Cleanup
-        Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(curConfigFile), StandardCharsets.UTF_8));
-        JsonObject element = gson.fromJson(reader, JsonObject.class);
-
-        if (element != null) {
-            JsonElement config = element.get("Config");
-            if (config != null && !config.isJsonNull()) {
-                currentConfig = config.getAsString();
-            }
-
-            this.loadConfig();
-        }
-
+        this.loadConfig();
         this.loadAlts();
     }
 
@@ -153,19 +119,11 @@ public class ConfigManager extends AbstractManager {
         //加载模块设置
         //模块配置目录
 
-        File configsFile = new File(configDir, "Profiles");
-        File configFile = new File(configsFile, currentConfig + ".json");
-
-        if (!configFile.exists()) {
-            configFile.createNewFile();
-            return;
-        }
-
         try {
             Gson gson = new Gson();
 
             @Cleanup
-            Reader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
+            Reader fileReader = new BufferedReader(new InputStreamReader(Files.newInputStream(curConfigFile.toPath()), StandardCharsets.UTF_8));
             JsonObject config = gson.fromJson(fileReader, JsonObject.class);
 
             JsonObject modules = config.get("Modules").getAsJsonObject();
@@ -211,22 +169,7 @@ public class ConfigManager extends AbstractManager {
             configDir.mkdir();
         }
 
-        File curConfigFile = new File(configDir, "Config.json");
-        curConfigFile.createNewFile();
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(curConfigFile), StandardCharsets.UTF_8));
-
-        JsonObject obj = new JsonObject();
-
-        obj.addProperty("Config", currentConfig);
-
-        writer.flush();
-        writer.close();
-
-        //模块配置目录
-        File configsFile = new File(configDir, "Profiles");
-        File configFile = new File(configsFile, currentConfig + ".json");
+        File configFile = curConfigFile;
         JsonObject jsonObject = new JsonObject();
 
         JsonObject modules = new JsonObject();

@@ -2,14 +2,11 @@ package tritium.rendering.loading;
 
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.Display;
-import tritium.Tritium;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
@@ -17,11 +14,11 @@ import tritium.rendering.async.GLContextUtils;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.loading.screens.NormalLoadingScreen;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.other.SplashGenerator;
 
 import java.nio.ByteBuffer;
 import java.time.Duration;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -45,6 +42,8 @@ public class LoadingRenderer {
     private static Throwable threadError;
     private static int max_texture_size = -1;
 
+    public static boolean hide = false;
+
     public static boolean crashDetected = false;
 
     public static long subWindow;
@@ -64,32 +63,6 @@ public class LoadingRenderer {
     @SneakyThrows
     public static void init() {
 
-        if (Tritium.POJAVE) {
-            GlStateManager.matrixMode(GL11.GL_PROJECTION);
-            GlStateManager.loadIdentity();
-            GlStateManager.ortho(0.0D, Display.getWidth(), Display.getHeight(), 0.0D, 1000.0D, 3000.0D);
-            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-            GlStateManager.loadIdentity();
-            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
-            GlStateManager.disableLighting();
-            GlStateManager.disableFog();
-            GlStateManager.disableDepth();
-            GlStateManager.enableTexture2D();
-            GlStateManager.disableAlpha();
-            GL11.glEnable(GL_TEXTURE_2D);
-
-            Rect.draw(0, 0, Display.getWidth(), Display.getHeight(), RenderSystem.hexColor(23, 23, 23), Rect.RectType.ABSOLUTE_POSITION);
-
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.enableBlend();
-            GlStateManager.disableAlpha();
-            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE);
-            GlStateManager.bindTexture(SplashGenerator.t.getGlTextureId());
-
-            Gui.drawScaledCustomSizeModalRect((Display.getWidth() - SplashGenerator.logo.getWidth()) / 2.0, (Display.getHeight() - SplashGenerator.logo.getHeight()) / 2.0, 0, 0, SplashGenerator.logo.getWidth(), SplashGenerator.logo.getHeight(), SplashGenerator.logo.getWidth(), SplashGenerator.logo.getHeight(), SplashGenerator.logo.getWidth(), SplashGenerator.logo.getHeight());
-            return;
-        }
-
         // INIT LOL
         subWindow = GLContextUtils.createContext();
         GLFW.glfwMakeContextCurrent(subWindow);
@@ -107,13 +80,14 @@ public class LoadingRenderer {
 
                 loadingScreenRenderer.init();
 
-
                 GlStateManager.matrixMode(GL11.GL_PROJECTION);
                 GlStateManager.loadIdentity();
                 GlStateManager.ortho(0.0D, Display.getWidth(), Display.getHeight(), 0.0D, 1000.0D, 3000.0D);
                 GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 GlStateManager.loadIdentity();
                 GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+
+                GlStateManager.viewport(0, 0, Display.getWidth(), Display.getHeight());
                 GlStateManager.disableLighting();
                 GlStateManager.disableFog();
                 GlStateManager.disableDepth();
@@ -127,9 +101,19 @@ public class LoadingRenderer {
 
                     if (Display.wasResized()) {
                         initGL();
+                        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+                        GlStateManager.loadIdentity();
+                        GlStateManager.ortho(0.0D, Display.getWidth(), Display.getHeight(), 0.0D, 1000.0D, 3000.0D);
+                        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+                        GlStateManager.loadIdentity();
+                        GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+
+                        GlStateManager.viewport(0, 0, Display.getWidth(), Display.getHeight());
+
                     }
 
                     if (Display.isCloseRequested()) {
+                        Display.destroy();
                         System.exit(0);
                     }
 
@@ -147,7 +131,13 @@ public class LoadingRenderer {
                         int width = Display.getWidth();
                         int height = Display.getHeight();
 
-                        loadingScreenRenderer.render(Display.getWidth(), Display.getHeight());
+                        GlStateManager.pushMatrix();
+
+                        GlStateManager.scale(2, 2, 1);
+
+                        loadingScreenRenderer.render(Display.getWidth() * .5, Display.getHeight() * .5);
+
+                        GlStateManager.popMatrix();
 
                         alphaMask = (float) alphaAnimation.run(0f);
 
@@ -175,9 +165,11 @@ public class LoadingRenderer {
 
                         GLFW.glfwMakeContextCurrent(0L);
 
-                        synchronized (notifyLock) {
-                            notifyLock.notifyAll();
-                        }
+                        loaded.set(true);
+
+//                        synchronized (notifyLock) {
+//                            notifyLock.notifyAll();
+//                        }
 
                         break;
                     }
@@ -211,7 +203,7 @@ public class LoadingRenderer {
 
     @SneakyThrows
     public static void hide() {
-//        hide = true;
+        hide = true;
 
         GlStateManager.enableTexture2D();
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
@@ -236,13 +228,10 @@ public class LoadingRenderer {
 
     }
 
-    static final Object notifyLock = new Object();
+    static final AtomicBoolean loaded = new AtomicBoolean(false);
 
     @SneakyThrows
     public static void notifyGameLoaded() {
-
-        if (Tritium.POJAVE)
-            return;
 
         if (!crashDetected && threadError == null) {
             loadingScreenRenderer.onGameLoadFinishedNotify();
@@ -253,8 +242,9 @@ public class LoadingRenderer {
 //                GLFW.glfwPollEvents();
 //            }
 
-            synchronized (notifyLock) {
-                notifyLock.wait();
+            while (!loaded.get()) {
+                Thread.sleep(16);
+                GLFW.glfwPollEvents();
             }
 
             GLFW.glfwMakeContextCurrent(Display.getWindow());

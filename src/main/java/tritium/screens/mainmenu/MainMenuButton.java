@@ -22,7 +22,7 @@ public class MainMenuButton implements SharedRenderingConstants {
         this.handler = clickHandler;
     }
 
-    public void draw() {
+    public void renderButton(double mouseX, double mouseY) {
 
     }
 

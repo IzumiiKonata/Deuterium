@@ -440,7 +440,7 @@ public class Minecraft implements IThreadListener {
                     }
                 }
 
-                if (this.running && (!this.hasCrashed || this.crashReporter == null) && !this.isJvmShuttingDown()) {
+                if (this.running && (!this.hasCrashed || this.crashReporter == null)) {
                     continue;
                 }
 
@@ -460,9 +460,6 @@ public class Minecraft implements IThreadListener {
                 this.displayCrashReport(crashreport1);
                 this.crashed(crashreport1);
             } finally {
-
-                if (this.running && (!this.hasCrashed || this.crashReporter == null) && !this.isJvmShuttingDown())
-                    continue;
 
                 this.shutdownMinecraftApplet();
             }
@@ -731,7 +728,7 @@ public class Minecraft implements IThreadListener {
 
     private void createDisplay() {
         Display.setResizable(true);
-        Display.setTitle("Minecraft 1.8.9");
+        Display.setTitle("Tritium-X");
 
         Display.create((new PixelFormat()).withDepthBits(24));
     }
@@ -755,11 +752,11 @@ public class Minecraft implements IThreadListener {
             InputStream inputstream1 = null;
 
             try {
-                inputstream = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("tritium/textures/icons/icon_16x16.png"));
-                inputstream1 = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("tritium/textures/icons/icon_32x32.png"));
+                inputstream = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_16x16.png");
+                inputstream1 = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_32x32.png");
 
                 if (inputstream != null && inputstream1 != null) {
-                    Display.setIcon(new ByteBuffer[]{Config.readIconImage(inputstream), Config.readIconImage(inputstream1)});
+                    Display.setIcon(new ByteBuffer[]{ Config.readIconImage(inputstream), Config.readIconImage(inputstream1) });
                 }
             } catch (IOException ioexception) {
                 logger.error("Couldn't set icon", ioexception);

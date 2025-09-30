@@ -11,6 +11,7 @@ import tritium.interfaces.IFontRenderer;
 import tritium.management.EventManager;
 import tritium.management.FontManager;
 import tritium.rendering.TexturedShadow;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.StringUtils;
 
 import java.awt.*;
@@ -71,6 +72,11 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         initialized = true;
         this.font = font.deriveFont(sizePx * 2);
 
+        // ascii chars
+        for (int i = 0; i < 256; i++) {
+            locateGlyph((char) i);
+        }
+
 //        for (char c : preloadCharArray.toCharArray()) {
 //            locateGlyph(c);
 //        }
@@ -108,9 +114,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     @Override
     public int drawStringWithShadow(String text, double x, double y, int color) {
 
-        float a = ((color >> 24) & 0xff) / 255f;
+        int a = (color >> 24) & 0xff;
 
-        drawString(net.minecraft.util.StringUtils.stripControlCodes(text), x + 1, y + 1, new Color(0, 0, 0, a).getRGB());
+        drawString(net.minecraft.util.StringUtils.stripControlCodes(text), x + .5, y + .5, RenderSystem.hexColor(0, 0, 0, a));
         drawString(text, x, y, color);
 
         return this.getStringWidth(text);
@@ -120,8 +126,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         drawString(s, (float) x, (float) y, color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha());
     }
 
-    public void drawString(String s, float x, float y, float r, float g, float b, float a) {
-        drawString(s, x, y, r, g, b, a, false, 0);
+    public boolean drawString(String s, float x, float y, float r, float g, float b, float a) {
+        return drawString(s, x, y, r, g, b, a, false, 0);
     }
 
     private int getColorCode(char c) {
@@ -147,12 +153,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         }
     }
 
-    public void drawString(String s, float x, float y, float r, float g, float b, float a, boolean gradient, int offset) {
+    public boolean drawString(String s, float x, float y, float r, float g, float b, float a, boolean gradient, int offset) {
 
         RenderTextEvent call = EventManager.call(new RenderTextEvent(s));
 
         if (call.isCancelled())
-            return;
+            return false;
 
         s = call.getText();
 
@@ -170,6 +176,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         GlStateManager.enableTexture2D();
+
+        boolean bl = true;
 
         char[] chars = s.toCharArray();
         float xOffset = 0;
@@ -216,20 +224,29 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             Glyph glyph = locateGlyph(c);
             if (glyph != null) {
                 xOffset += glyph.render(xOffset, yOffset, r2, g2, b2, a);
+            } else {
+                bl = false;
             }
         }
 
-
         GlStateManager.popMatrix();
+        return bl;
     }
 
     public void drawCenteredString(String s, double x, double y, int color) {
+        _drawCenteredString(s, x, y, color);
+    }
+
+    /**
+     * @return true if all the chars in the string are loaded
+     */
+    public boolean _drawCenteredString(String s, double x, double y, int color) {
         float r = ((color >> 16) & 0xff) / 255f;
         float g = ((color >> 8) & 0xff) / 255f;
         float b = ((color) & 0xff) / 255f;
         float a = ((color >> 24) & 0xff) / 255f;
 
-        drawString(s, (float) (x - getStringWidth(s) / 2f), (float) y, r, g, b, a);
+        return drawString(s, (float) (x - getStringWidth(s) / 2f), (float) y, r, g, b, a);
     }
 
     public void drawCenteredStringWithShadow(String s, double x, double y, int color) {

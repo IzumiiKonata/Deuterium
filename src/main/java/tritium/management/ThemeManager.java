@@ -61,6 +61,10 @@ public class ThemeManager extends AbstractManager {
 
     @Handler
     public void onRender2D(Render2DEvent e) {
+        this.interp();
+    }
+
+    public void interp() {
         interpCat(ThemeColor.OnSurface, getActual(ThemeColor.OnSurface), 0.2f);
         interpCat(ThemeColor.Text, getActual(ThemeColor.Text), 0.2f);
         interpCat(ThemeColor.Surface, getActual(ThemeColor.Surface), 0.2f);

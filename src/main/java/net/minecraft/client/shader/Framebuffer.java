@@ -15,6 +15,8 @@ import tritium.rendering.shader.Shaders;
 
 import java.nio.ByteBuffer;
 
+import static tritium.rendering.rendersystem.RenderSystem.DIVIDE_BY_255;
+
 public class Framebuffer {
     public int framebufferTextureWidth;
     public int framebufferTextureHeight;
@@ -209,6 +211,18 @@ public class Framebuffer {
         this.framebufferColor[1] = p_147604_2_;
         this.framebufferColor[2] = p_147604_3_;
         this.framebufferColor[3] = p_147604_4_;
+    }
+
+    public void setFramebufferColor(int rgb, float alpha) {
+
+        float f1 = (rgb >> 16 & 255) * DIVIDE_BY_255;
+        float f2 = (rgb >> 8 & 255) * DIVIDE_BY_255;
+        float f3 = (rgb & 255) * DIVIDE_BY_255;
+
+        this.framebufferColor[0] = f1;
+        this.framebufferColor[1] = f2;
+        this.framebufferColor[2] = f3;
+        this.framebufferColor[3] = alpha;
     }
 
     public void framebufferRender(int p_147615_1_, int p_147615_2_) {

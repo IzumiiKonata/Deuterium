@@ -6,11 +6,13 @@ package tritium.rendering.loading;
  */
 public class LoadingScreenRenderer {
 
+    public float alpha = 1.0f;
+
     public void init() {
 
     }
 
-    public void render(int width, int height) {
+    public void render(double width, double height) {
 
     }
 

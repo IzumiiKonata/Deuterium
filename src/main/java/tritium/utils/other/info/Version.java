@@ -10,19 +10,25 @@ import lombok.Getter;
 public class Version {
 
     private final int major, minor, patch;
-    private final String suffix;
+    private final Type type;
 
-    public Version(int major, int minor, int patch, String suffix) {
+    public Version(Type type, int major, int minor, int patch) {
         this.major = major;
         this.minor = minor;
         this.patch = patch;
 
-        this.suffix = suffix;
+        this.type = type;
     }
 
     @Override
     public String toString() {
-        return major + "." + minor + "." + patch + suffix;
+        return String.format("%d.%d.%d %s", major, minor, patch, type);
+    }
+
+    public enum Type {
+        Release,
+        Beta,
+        Dev
     }
 
 }

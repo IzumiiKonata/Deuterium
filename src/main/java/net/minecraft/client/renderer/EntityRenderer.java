@@ -76,6 +76,7 @@ import tritium.event.events.rendering.Render3DEvent;
 import tritium.event.events.rendering.UpdateCameraAndRenderEvent;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.EventManager;
+import tritium.management.FontManager;
 import tritium.management.ModuleManager;
 import tritium.module.impl.render.CameraPositions;
 import tritium.module.impl.render.Perspective;
@@ -89,6 +90,7 @@ import tritium.screens.BaseScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
+import tritium.utils.other.info.Version;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -1417,7 +1419,21 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             TransitionAnimation.render();
 
+            if (Tritium.getVersion().getType() == Version.Type.Dev) {
+                GlStateManager.pushMatrix();
+                GlStateManager.clear(256);
+                GlStateManager.matrixMode(GL11.GL_PROJECTION);
+                GlStateManager.loadIdentity();
+                GlStateManager.ortho(0.0D, mc.displayWidth / 2.0d, mc.displayHeight / 2.0d,
+                        0.0D, 1000.0D, 3000.0D);
+                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+                GlStateManager.loadIdentity();
+                GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
+                FontManager.pf18.drawCenteredStringWithShadow("警告: 你正在使用开发版本。", RenderSystem.getWidth() * .5, 4, 0xFFFF0000);
+
+                GlStateManager.popMatrix();
+            }
         }
 
         this.frameFinish();
@@ -1429,8 +1445,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             this.mc.gameSettings.showDebugProfilerChart = true;
         }
     }
-
-    Framebuffer framebuffer = new Framebuffer(1, 1, false);
 
     private boolean isDrawBlockOutline() {
         boolean drawBlockOutline = true;
