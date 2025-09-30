@@ -2,6 +2,7 @@ package tritium.rendering.shader.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.uniform.Uniform1f;
 import tritium.rendering.shader.uniform.Uniform2f;
@@ -25,9 +26,8 @@ public class RQShader {
      * @param width  The width which is used to determine the second x rectangle
      * @param height The height which is used to determine the second y rectangle
      * @param radius The radius for the corners of the rectangles (>0)
-     * @param color  The color used to draw the rectangle
      */
-    public void draw(float x, float y, float width, float height, final float radius, final Color color) {
+    public void draw(float x, float y, float width, float height, final float radius, float r, float g, float b, float a) {
 
         if (x > x + width) {
             float i = x;
@@ -45,7 +45,7 @@ public class RQShader {
 
         this.u_size.setValue(width, height);
         this.u_radius.setValue(radius);
-        this.u_color.setValue(color.getRed() / 255.0F, color.getGreen() / 255.0F, color.getBlue() / 255.0F, color.getAlpha() / 255.0F);
+        this.u_color.setValue(r, g, b, a);
 
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -54,17 +54,15 @@ public class RQShader {
         ShaderProgram.stop();
     }
 
-    /**
-     * Draws a rounded rectangle at the given coordinates with the given lengths
-     *
-     * @param x      The top left x coordinate of the rectangle
-     * @param y      The top y coordinate of the rectangle
-     * @param width  The width which is used to determine the second x rectangle
-     * @param height The height which is used to determine the second y rectangle
-     * @param radius The radius for the corners of the rectangles (>0)
-     * @param color  The color used to draw the rectangle
-     */
-    public void draw(final double x, final double y, final double width, final double height, final double radius, final Color color) {
-        draw((float) x, (float) y, (float) width, (float) height, (float) radius, color);
+    public void draw(final double x, final double y, final double width, final double height, final double radius, float r, float g, float b, float a) {
+        draw((float) x, (float) y, (float) width, (float) height, (float) radius, r, g, b, a);
+    }
+
+    public void draw(final double x, final double y, final double width, final double height, final double radius, Color color) {
+        draw((float) x, (float) y, (float) width, (float) height, (float) radius, color.getRed() * RenderSystem.DIVIDE_BY_255, color.getGreen() * RenderSystem.DIVIDE_BY_255, color.getBlue() * RenderSystem.DIVIDE_BY_255, color.getAlpha() * RenderSystem.DIVIDE_BY_255);
+    }
+
+    public void draw(final double x, final double y, final double width, final double height, final double radius, int r, int g, int b, int a) {
+        draw((float) x, (float) y, (float) width, (float) height, (float) radius, r * RenderSystem.DIVIDE_BY_255, g * RenderSystem.DIVIDE_BY_255, b * RenderSystem.DIVIDE_BY_255, a * RenderSystem.DIVIDE_BY_255);
     }
 }

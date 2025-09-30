@@ -71,31 +71,10 @@ public class ConfigManager extends AbstractManager {
             configDir.mkdir();
         }
 
-        File curConfigFile = new File(configDir, "Config.json");
-
-        if (!curConfigFile.exists()) {
-            return new JsonObject();
-        }
-
-        File configsFile = new File(configDir, "Profiles");
-
-        if (!configsFile.exists()) {
-            return new JsonObject();
-        }
-
         Gson gson = new Gson();
 
         try {
-            @Cleanup
-            Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(curConfigFile), StandardCharsets.UTF_8));
-            JsonObject element = gson.fromJson(reader, JsonObject.class);
-
-            String currentConfig = element.get("Config").getAsString();
-
-            //加载模块设置
-            //模块配置目录
-
-            File configFile = new File(configsFile, currentConfig + ".json");
+            File configFile = curConfigFile;
 
             if (!configFile.exists()) {
                 return new JsonObject();

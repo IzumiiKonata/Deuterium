@@ -60,6 +60,7 @@ public class NormalLoadingScreen extends LoadingScreenRenderer implements Shared
         GlStateManager.color(1, 1, 1, alpha);
         Image.draw(Location.of("tritium/textures/logo" + (theme == ThemeManager.Theme.Light ? "" : "_white") + ".png"), width / 2.0d - 64, height / 2.0d - 64, 128, 128, Image.Type.NoColor);
 
+        Rect.draw(width / 2.0d - pbWidth / 2.0, height * 5.0 / 6.0, pbWidth, 4, RenderSystem.hexColor(128, 128, 128, (int) (alpha * 255)));
         Rect.draw(width / 2.0d - pbWidth / 2.0, height * 5.0 / 6.0, progressWidth, 4, progressBarColor);
 
         if (timer.isDelayed(500)) {

@@ -2,6 +2,7 @@ package tritium.module.impl.render;
 
 import org.lwjglx.input.Keyboard;
 import tritium.module.Module;
+import tritium.screens.ClickGui;
 
 /**
  * @author IzumiiKonata
@@ -17,6 +18,9 @@ public class OpenClickGui extends Module {
 
     @Override
     public void onEnable() {
+
+        if (!(mc.currentScreen instanceof ClickGui))
+            mc.displayGuiScreen(ClickGui.getInstance());
 
         this.toggle();
 

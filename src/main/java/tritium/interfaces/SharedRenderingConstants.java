@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
+import static tritium.rendering.rendersystem.RenderSystem.DIVIDE_BY_255;
 
 
 /**
@@ -39,12 +40,30 @@ public interface SharedRenderingConstants {
         this.roundedOutline(x - expand, y - expand, width + expand * 2, height + expand * 2, radius, thickness, outline);
     }
 
+    default void roundedRect(double x, double y, double width, double height, double radius, float r, float g, float b, float a) {
+        Shaders.RQ_SHADER.draw(x, y, width, height, radius, r, g, b, a);
+    }
+
+    default void roundedRect(double x, double y, double width, double height, double radius, int r, int g, int b, int a) {
+        Shaders.RQ_SHADER.draw(x, y, width, height, radius, r, g, b, a);
+    }
+
+    default void roundedRect(double x, double y, double width, double height, double radius, int color) {
+
+        float f = (color >> 24 & 255) * DIVIDE_BY_255;
+        float f1 = (color >> 16 & 255) * DIVIDE_BY_255;
+        float f2 = (color >> 8 & 255) * DIVIDE_BY_255;
+        float f3 = (color & 255) * DIVIDE_BY_255;
+
+        Shaders.RQ_SHADER.draw(x, y, width, height, radius, f1, f2, f3, f);
+    }
+
     default void roundedRect(double x, double y, double width, double height, double radius, Color color) {
-        Shaders.RQ_SHADER.draw(x, y, width, height, radius, color);
+        Shaders.RQ_SHADER.draw(x, y, width, height, radius, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
     default void roundedRect(double x, double y, double width, double height, double radius, double expand, Color color) {
-        Shaders.RQ_SHADER.draw(x - expand, y - expand, width + expand * 2, height + expand * 2, radius, color);
+        Shaders.RQ_SHADER.draw(x - expand, y - expand, width + expand * 2, height + expand * 2, radius, color.getRed(), color.getGreen(), color.getBlue(), color.getAlpha());
     }
 
     default void roundedRectTextured(double x, double y, double width, double height, double radius) {

@@ -24,8 +24,8 @@ public class FontManager extends AbstractManager {
 
     public static CFontRenderer pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold;
     public static CFontRenderer pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40;
-    public static CFontRenderer icon18, icon25, icon30, icon40, tritium42;
-    public static CFontRenderer arial60bold;
+    public static CFontRenderer icon18, icon25, icon30, icon40, tritium24, tritium42;
+    public static CFontRenderer arial18bold, arial60bold;
 
     public static CFontRenderer getBySize(int size) {
         return getBySize(size, false);
@@ -102,8 +102,11 @@ public class FontManager extends AbstractManager {
         icon25 = create(25, "icomoon");
         icon30 = create(30, "icomoon");
         icon40 = create(40, "icomoon");
+
+        tritium24 = create(24, "tritium");
         tritium42 = create(42, "tritium");
 
+        arial18bold = create(18, "arialBold");
         arial60bold = create(60, "arialBold");
     }
 

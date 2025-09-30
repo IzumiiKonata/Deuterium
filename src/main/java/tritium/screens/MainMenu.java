@@ -145,6 +145,7 @@ public class MainMenu extends BaseScreen {
         boolean shouldUpdate = refreshDeconvergeThisFrame || prevWidth != fbConverge.framebufferWidth || prevHeight != fbConverge.framebufferHeight;
 
         if (shouldUpdate) {
+            refreshDeconvergeThisFrame = false;
             fbConverge.setFramebufferColor(this.getColor(ColorType.BACKGROUND), 0.0F);
             fbConverge.bindFramebuffer(true);
             fbConverge.framebufferClearNoBinding();
