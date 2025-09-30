@@ -19,7 +19,7 @@ public abstract class SimpleTextWidget extends Widget {
 
     @Override
     public void onRender(boolean editing) {
-        IFontRenderer fr = FontManager.pf25;
+        IFontRenderer fr = FontManager.pf16;
 
         String text = this.getText();
 

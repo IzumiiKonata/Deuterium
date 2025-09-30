@@ -1,6 +1,7 @@
 package tritium.screens.clickgui.category;
 
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Tuple;
 import org.lwjglx.input.Mouse;
 import tritium.management.FontManager;
@@ -8,6 +9,7 @@ import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
+import tritium.screens.MoveWidgetsScreen;
 import tritium.screens.clickgui.Window;
 import tritium.utils.i18n.Localizable;
 
@@ -39,6 +41,8 @@ public class CategoriesWindow extends Window {
     @Override
     public void init() {
         this.topRectDragging = false;
+
+        layout();
     }
 
     private void layout() {
@@ -134,6 +138,13 @@ public class CategoriesWindow extends Window {
                 edit.setColor(this.getColor(edit.isHovering() ? 5 : 4));
                 edit.centerHorizontally();
                 edit.setPosition(edit.getRelativeX(), edit.getParentHeight() - 24 - edit.getHeight());
+            });
+
+            edit.setOnClickCallback((rx, ry, i) -> {
+                if (i == 0) {
+                    Minecraft.getMinecraft().displayGuiScreen(new MoveWidgetsScreen());
+                }
+                return true;
             });
 
             Localizable lEditText = Localizable.of("clickgui.edit");

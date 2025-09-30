@@ -9,6 +9,8 @@ import tritium.rendering.animation.Interpolations;
 import java.awt.*;
 import java.time.Duration;
 
+import static tritium.rendering.rendersystem.RenderSystem.DIVIDE_BY_255;
+
 /**
  * @author IzumiiKonata
  * @since 2024/12/5 13:36
@@ -24,7 +26,7 @@ public class CheckRenderer implements SharedRenderingConstants {
     float alpha = 0;
 
 
-    public void render(double x, double y, double size, double lineSize, boolean checked) {
+    public void render(double x, double y, double size, double lineSize, boolean checked, int color) {
 
         double offsetX = x + size * 0.45;
         double offsetY = y + size * 0.7;
@@ -76,13 +78,18 @@ public class CheckRenderer implements SharedRenderingConstants {
 
             rBounced = false;
 
-            alpha = Interpolations.interpBezier(alpha, 0, 0.2f);
+            alpha = Interpolations.interpBezier(alpha, 0, 0.4f);
         }
 
         double lVal = checked ? left.getValue() : 1;
         double rVal = checked ? right.getValue() + rBounce.getValue() : 1;
 
-        Color c = new Color(255, 255, 255, (int) (alpha * 255));
+        float f = (color >> 24 & 255) * DIVIDE_BY_255;
+        float f1 = (color >> 16 & 255) * DIVIDE_BY_255;
+        float f2 = (color >> 8 & 255) * DIVIDE_BY_255;
+        float f3 = (color & 255) * DIVIDE_BY_255;
+
+        Color c = new Color(f1, f2, f3, Math.min(alpha, f));
 
         GlStateManager.pushMatrix();
         rotateAtPos(offsetX, offsetY, 50);

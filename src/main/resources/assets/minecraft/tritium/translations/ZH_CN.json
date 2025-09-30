@@ -10,6 +10,10 @@
     "mainmenu.settings": "设置",
     "mainmenu.quit": "退出",
 
+    "category.modules.name": "功能",
+    "category.global.name": "全局",
+    "clickgui.edit": "编辑",
+
     "panel.settings.name": "设置",
     "module.setting.name": "设置",
 
@@ -635,7 +639,7 @@
 
     "setting.debug info.name": "调试信息",
 
-    "setting.center the inventory.name": "物品栏居中",
+    "setting.center the inventory.name": "背包居中",
 
     "setting.stereo.name": "双声道",
 

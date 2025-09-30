@@ -207,7 +207,7 @@ public class MoveWidgetsScreen extends BaseScreen {
             spacingH = -spacingH;
         }
 
-        this.roundedOutline(widget.getX() - spacingH, widget.getY() - spacingV, widget.getWidth() + spacingH * 2, widget.getHeight() + spacingV * 2, 12 * widget.scaleFactor, 1.5 * widget.scaleFactor, new Color(1, 1, 1, 0.5f + widget.hoveredAlpha));
+        this.roundedOutline(widget.getX() - spacingH, widget.getY() - spacingV, widget.getWidth() + spacingH * 2, widget.getHeight() + spacingV * 2, 3, 1.5 * widget.scaleFactor, new Color(1, 1, 1, 0.5f + widget.hoveredAlpha));
 
         boolean hovered = isHovered(mouseX, mouseY, widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight());
 

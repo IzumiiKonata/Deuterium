@@ -12,6 +12,10 @@
 
     "panel.settings.name": "Settings",
     "module.setting.name": "Settings",
+    "clickgui.edit": "Edit",
+
+    "category.modules.name": "Modules",
+    "category.global.name": "Global",
 
     "panel.combat.name": "Combat",
     "panel.movement.name": "Movement",

@@ -31,7 +31,7 @@ public class ScrollPanel extends Panel {
 
         if (dWheel != 0) {
 
-            double strength = 12;
+            double strength = 24;
 
             // hovering this panel
             if (this.testHovered(mouseX, mouseY)) {
@@ -47,7 +47,8 @@ public class ScrollPanel extends Panel {
         double childrenHeightSum = this.getChildrenHeightSum();
         if (childrenHeightSum > this.getHeight())
             this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
-        this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+        else
+            this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
 
         this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
     }
@@ -56,8 +57,14 @@ public class ScrollPanel extends Panel {
         double offsetY = -this.actualScrollOffset;
 
         for (AbstractWidget<?> child : this.getChildren()) {
+
+            double height = child.getHeight();
+
+            if (child.isHidden())
+                continue;
+
             child.setPosition(child.getRelativeX(), offsetY);
-            offsetY += child.getHeight() + spacing;
+            offsetY += height + spacing;
         }
     }
 
@@ -67,7 +74,13 @@ public class ScrollPanel extends Panel {
         List<AbstractWidget<?>> children = this.getChildren();
 
         for (AbstractWidget<?> child : children) {
-            result += child.getHeight() + this.spacing;
+
+            double height = child.getHeight();
+
+            if (child.isHidden())
+                continue;
+
+            result += height + this.spacing;
         }
 
         if (result > 0)

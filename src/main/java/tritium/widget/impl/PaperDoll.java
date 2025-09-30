@@ -78,6 +78,7 @@ public class PaperDoll extends Widget {
                 GlStateManager.disableAlpha();
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 GlStateManager.bindTexture(fb.framebufferTexture);
+                GlStateManager.color(0, 0, 0, 1);
                 ShaderUtil.drawQuads();
                 GlStateManager.bindTexture(0);
 //                GlStateManager.popMatrix();

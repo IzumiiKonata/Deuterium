@@ -31,26 +31,29 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
 
             RectWidget dotCenter = new RectWidget();
             dotCenter.setBounds(1, 1);
-            dotCenter.setColor(-1);
+            dotCenter.setColor(ClickGui.getColor(16));
             dotCenter.setClickable(false);
             settingsRect.addChild(dotCenter);
             dotCenter.center();
+            dotCenter.setBeforeRenderCallback(() -> dotCenter.setColor(ClickGui.getColor(16)));
 
             RectWidget dotTop = new RectWidget();
             dotTop.setBounds(1, 1);
-            dotTop.setColor(-1);
+            dotTop.setColor(ClickGui.getColor(16));
             dotTop.setClickable(false);
             settingsRect.addChild(dotTop);
             dotTop.center();
             dotTop.setPosition(dotTop.getRelativeX(), dotTop.getRelativeY() - 3);
+            dotTop.setBeforeRenderCallback(() -> dotTop.setColor(ClickGui.getColor(16)));
 
             RectWidget dotBottom = new RectWidget();
             dotBottom.setBounds(1, 1);
-            dotBottom.setColor(-1);
+            dotBottom.setColor(ClickGui.getColor(16));
             dotBottom.setClickable(false);
             settingsRect.addChild(dotBottom);
             dotBottom.center();
             dotBottom.setPosition(dotBottom.getRelativeX(), dotBottom.getRelativeY() + 3);
+            dotBottom.setBeforeRenderCallback(() -> dotBottom.setColor(ClickGui.getColor(16)));
 
             this.addChild(settingsRect);
 

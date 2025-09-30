@@ -3,12 +3,14 @@ package tritium.screens.clickgui.module;
 import lombok.Getter;
 import lombok.Setter;
 import tritium.management.ModuleManager;
+import tritium.management.WidgetsManager;
 import tritium.module.Module;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.category.CategoriesWindow;
+import tritium.widget.Widget;
 
 /**
  * @author IzumiiKonata
@@ -47,6 +49,10 @@ public class ModuleListWindow extends Window {
         scrollPanel.setSpacing(4);
 
         for (Module module : ModuleManager.getModules()) {
+            scrollPanel.addChild(new ModuleRect(module));
+        }
+
+        for (Widget module : WidgetsManager.getWidgets()) {
             scrollPanel.addChild(new ModuleRect(module));
         }
 

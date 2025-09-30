@@ -37,7 +37,7 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
             public void onRender(double mouseX, double mouseY, int dWheel) {
                 super.onRender(mouseX, mouseY, dWheel);
 
-                cr.render(this.getX(), this.getY(), this.getWidth(), 2, setting.getValue());
+                cr.render(this.getX(), this.getY(), this.getWidth(), 2, setting.getValue(), ClickGui.getColor(20));
             }
         };
 
@@ -54,6 +54,16 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
         });
 
         this.addChild(rect);
+    }
+
+    @Override
+    public double getHeight() {
+
+        this.setHidden(!setting.shouldRender());
+
+        if (!setting.shouldRender())
+            return 0;
+        return super.getHeight();
     }
 
     @Override
