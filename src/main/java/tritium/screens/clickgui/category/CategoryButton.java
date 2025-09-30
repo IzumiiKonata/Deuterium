@@ -59,7 +59,7 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
                 this.getWidth() * scale,
                 this.getHeight() * scale,
                 radius * scale,
-                RenderSystem.reAlpha(ClickGui.getInstance().getColor(7), Math.min(this.selectIndicatorAlpha, this.getAlpha()))
+                RenderSystem.reAlpha(ClickGui.getColor(7), Math.min(this.selectIndicatorAlpha, this.getAlpha()))
         );
 
         this.hoverIndicatorAlpha = Interpolations.interpBezier(this.hoverIndicatorAlpha, CategoryButton.this.isHovering() ? .15f : 0, 0.2f);
@@ -71,9 +71,9 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
                 RenderSystem.hexColor(255, 255, 255, (int) (Math.min(this.hoverIndicatorAlpha, this.getAlpha()) * 255))
         );
 
-        FontManager.tritium42.drawCenteredString(this.icon, this.getX() + this.getWidth() * .5, this.getY() + this.getHeight() * .2, RenderSystem.reAlpha(this.isSelected() ? ClickGui.getInstance().getColor(5) : ClickGui.getInstance().getColor(4), this.getAlpha()));
+        FontManager.tritium42.drawCenteredString(this.icon, this.getX() + this.getWidth() * .5, this.getY() + this.getHeight() * .2, RenderSystem.reAlpha(this.isSelected() ? ClickGui.getColor(5) : ClickGui.getColor(4), this.getAlpha()));
 
-        FontManager.pf14.drawCenteredString(this.textSupplier.get(), this.getX() + this.getWidth() * .5, this.getY() + this.getHeight() * .75, RenderSystem.reAlpha(this.isSelected() ? ClickGui.getInstance().getColor(5) : ClickGui.getInstance().getColor(4), this.getAlpha()));
+        FontManager.pf14.drawCenteredString(this.textSupplier.get(), this.getX() + this.getWidth() * .5, this.getY() + this.getHeight() * .75, RenderSystem.reAlpha(this.isSelected() ? ClickGui.getColor(5) : ClickGui.getColor(4), this.getAlpha()));
 
     }
 }

@@ -1,5 +1,7 @@
 package tritium.screens.clickgui.module;
 
+import lombok.Getter;
+import lombok.Setter;
 import tritium.management.ModuleManager;
 import tritium.module.Module;
 import tritium.rendering.ui.container.ScrollPanel;
@@ -14,7 +16,18 @@ import tritium.screens.clickgui.category.CategoriesWindow;
  */
 public class ModuleListWindow extends Window {
 
+    @Getter
     RectWidget baseRect = new RectWidget();
+
+    @Getter
+    @Setter
+    public Module onHover;
+    @Getter
+    @Setter
+    public Module lastOnSetting;
+    @Getter
+    @Setter
+    public Module onSetting;
 
     @Override
     public void init() {
@@ -24,7 +37,7 @@ public class ModuleListWindow extends Window {
         this.baseRect.setBeforeRenderCallback(() -> {
             CategoriesWindow categoriesWindow = ClickGui.getInstance().getCategoriesWindow();
             this.baseRect.setPosition(categoriesWindow.getTopRect().getX() + categoriesWindow.getTopRect().getWidth(), categoriesWindow.getTopRect().getY());
-            this.baseRect.setColor(ClickGui.getInstance().getColor(3));
+            this.baseRect.setColor(ClickGui.getColor(3));
         });
 
         ScrollPanel scrollPanel = new ScrollPanel();

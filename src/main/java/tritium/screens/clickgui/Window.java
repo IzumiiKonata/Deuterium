@@ -39,7 +39,7 @@ public abstract class Window {
     }
 
     protected int getColor(int type) {
-        return ClickGui.getInstance().getColor(type);
+        return ClickGui.getColor(type);
     }
 
 }

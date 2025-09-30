@@ -9,6 +9,7 @@ import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.clickgui.category.CategoriesWindow;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.module.ModuleListWindow;
+import tritium.screens.clickgui.value.ValueWindow;
 import tritium.settings.ClientSettings;
 
 import java.util.ArrayList;
@@ -34,6 +35,9 @@ public class ClickGui extends BaseScreen {
     @Getter
     ModuleListWindow moduleListWindow = new ModuleListWindow();
 
+    @Getter
+    ValueWindow valueWindow = new ValueWindow();
+
     float alpha = .0f;
     boolean closing = false;
 
@@ -47,6 +51,7 @@ public class ClickGui extends BaseScreen {
 
         this.windows.add(categoriesWindow);
         this.windows.add(moduleListWindow);
+        this.windows.add(valueWindow);
 
         this.windows.forEach(Window::init);
         this.closing = false;
@@ -81,7 +86,7 @@ public class ClickGui extends BaseScreen {
         }
     }
 
-    public int getColor(int type) {
+    public static int getColor(int type) {
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
         switch (theme) {
             case Dark:

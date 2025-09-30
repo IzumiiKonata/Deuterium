@@ -24,9 +24,9 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
         if (!this.module.getSettings().isEmpty()) {
             RectWidget settingsRect = new RectWidget();
             settingsRect.setBounds(132, 0, 10, this.getHeight());
-            settingsRect.setColor(ClickGui.getInstance().getColor(8));
+            settingsRect.setColor(ClickGui.getColor(8));
             settingsRect.setBeforeRenderCallback(() -> {
-                settingsRect.setColor(settingsRect.isHovering() ? ClickGui.getInstance().getColor(12) : ClickGui.getInstance().getColor(11));
+                settingsRect.setColor(settingsRect.isHovering() ? ClickGui.getColor(12) : ClickGui.getColor(11));
             });
 
             RectWidget dotCenter = new RectWidget();
@@ -53,12 +53,34 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
             dotBottom.setPosition(dotBottom.getRelativeX(), dotBottom.getRelativeY() + 3);
 
             this.addChild(settingsRect);
+
+            settingsRect.setOnClickCallback((rx, ry, i) -> {
+
+                if (i != 0)
+                    return true;
+
+                ModuleListWindow moduleList = ClickGui.getInstance().getModuleListWindow();
+                if (moduleList.getOnSetting() == this.module)
+                    return true;
+                if (moduleList.getLastOnSetting() == null) {
+                    moduleList.setLastOnSetting(this.module);
+                } else if (moduleList.getLastOnSetting() == moduleList.getOnSetting()) {
+                    moduleList.setLastOnSetting(moduleList.getOnSetting());
+                }
+
+                moduleList.setOnSetting(this.module);
+
+                return true;
+            });
         }
 
         this.moduleEnableAlpha = module.isEnabled() ? 1f : 0f;
 
         this.setOnClickCallback((rx, ry, i) -> {
-            module.toggle();
+
+            if (i == 0)
+                module.toggle();
+
             return true;
         });
     }
@@ -68,7 +90,7 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
 
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
-        this.setColor(this.isHovering() ? ClickGui.getInstance().getColor(10) : ClickGui.getInstance().getColor(8));
+        this.setColor(this.isHovering() ? ClickGui.getColor(10) : ClickGui.getColor(8));
         Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.getHexColor());
 
         Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RenderSystem.hexColor(223, 1, 1, (int) (this.getAlpha() * 255)));
@@ -80,6 +102,6 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
 
         this.nameHoverAnimation = Interpolations.interpBezier(this.nameHoverAnimation, this.isHovering() ? 4 : 0, 0.3f);
 
-        FontManager.pf18.drawString(this.module.getName().get(), this.getX() + 8 + this.nameHoverAnimation, this.getY() + this.getHeight() * .5 - FontManager.pf18.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getInstance().getColor(9), this.getAlpha()));
+        FontManager.pf18.drawString(this.module.getName().get(), this.getX() + 8 + this.nameHoverAnimation, this.getY() + this.getHeight() * .5 - FontManager.pf18.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(9), this.getAlpha()));
     }
 }

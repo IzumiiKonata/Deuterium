@@ -16,7 +16,7 @@ import java.util.List;
 public class ScrollPanel extends Panel {
 
     private double spacing = 0;
-    private double actualScrollOffset = 0, targetScrollOffset = 0;
+    public double actualScrollOffset = 0, targetScrollOffset = 0;
 
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
@@ -44,7 +44,10 @@ public class ScrollPanel extends Panel {
         }
 
         this.targetScrollOffset = Math.max(this.targetScrollOffset, 0);
-        this.targetScrollOffset = Math.min(this.targetScrollOffset, this.getChildrenHeightSum() - this.getHeight());
+        double childrenHeightSum = this.getChildrenHeightSum();
+        if (childrenHeightSum > this.getHeight())
+            this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
+        this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
 
         this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
     }
