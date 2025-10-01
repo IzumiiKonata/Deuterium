@@ -10,6 +10,7 @@ import tritium.event.events.rendering.RenderTextEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.management.EventManager;
 import tritium.management.FontManager;
+import tritium.management.Localizer;
 import tritium.rendering.TexturedShadow;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.StringUtils;
@@ -18,6 +19,7 @@ import java.awt.*;
 import java.io.Closeable;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -77,9 +79,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             locateGlyph((char) i);
         }
 
-//        for (char c : preloadCharArray.toCharArray()) {
-//            locateGlyph(c);
-//        }
+        if (this.sizePx == 9.0 && this.font.getFontName().equals(".萍方-简 正规体")) {
+            for (char c : "单人游戏多设置账号管理".toCharArray()) {
+                locateGlyph(c);
+            }
+        }
+
     }
 
     List<Integer> loaded = new ArrayList<>();
