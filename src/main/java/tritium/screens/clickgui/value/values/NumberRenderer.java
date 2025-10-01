@@ -3,6 +3,7 @@ package tritium.screens.clickgui.value.values;
 import org.lwjglx.input.Mouse;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Interpolations;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
@@ -76,9 +77,9 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
                 super.onRender(mouseX, mouseY, dWheel);
 
                 double r = 8.5;
-                NumberRenderer.this.roundedRect(this.getX() + this.getWidth() - r * .5, this.getY() + this.getHeight() * .5 - r * .5, r, r, r * .5 - 1, ClickGui.getColor(0));
+                NumberRenderer.this.roundedRect(this.getX() + this.getWidth() - r * .5, this.getY() + this.getHeight() * .5 - r * .5, r, r, r * .5 - 1, RenderSystem.reAlpha(ClickGui.getColor(0), this.getAlpha()));
                 r = 8;
-                NumberRenderer.this.roundedRect(this.getX() + this.getWidth() - r * .5, this.getY() + this.getHeight() * .5 - r * .5, r, r, r * .5 - 1, ClickGui.getColor(26));
+                NumberRenderer.this.roundedRect(this.getX() + this.getWidth() - r * .5, this.getY() + this.getHeight() * .5 - r * .5, r, r, r * .5 - 1, RenderSystem.reAlpha(ClickGui.getColor(26), this.getAlpha()));
             }
         };
 
