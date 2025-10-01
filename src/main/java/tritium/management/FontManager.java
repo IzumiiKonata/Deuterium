@@ -3,6 +3,7 @@ package tritium.management;
 import lombok.SneakyThrows;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -11,6 +12,7 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -58,8 +60,9 @@ public class FontManager extends AbstractManager {
     public static void deleteLoadedTextures() {
         List<CFontRenderer> list = Arrays.asList(
                 pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold,
-                pf14, pf16, pf18, pf20, pf25, pf28, pf32,
-                icon25, icon30, icon40
+                pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40,
+                icon18, icon25, icon30, icon40, tritium24, tritium42,
+                arial18bold, arial60bold
         );
 
         list.forEach(c -> {
@@ -74,7 +77,12 @@ public class FontManager extends AbstractManager {
     public static void loadFonts() {
         deleteLoadedTextures();
 
+        String normalName = "pf_normal";
         String boldName = "pf_middlebold";
+
+        tritium42 = create(42, "tritium");
+        arial60bold = create(60, "arialBold");
+        pf18 = create(18, normalName);
 
         pf14bold = create(14, boldName);
         pf16bold = create(16, boldName);
@@ -86,12 +94,10 @@ public class FontManager extends AbstractManager {
         pf50bold = create(50, boldName);
         pf100bold = create(100, boldName);
 
-        String normalName = "pf_normal";
 
         pf12 = create(12, normalName);
         pf14 = create(14, normalName);
         pf16 = create(16, normalName);
-        pf18 = create(18, normalName);
         pf20 = create(20, normalName);
         pf25 = create(25, normalName);
         pf28 = create(28, normalName);
@@ -104,10 +110,31 @@ public class FontManager extends AbstractManager {
         icon40 = create(40, "icomoon");
 
         tritium24 = create(24, "tritium");
-        tritium42 = create(42, "tritium");
 
         arial18bold = create(18, "arialBold");
-        arial60bold = create(60, "arialBold");
+    }
+
+    @SneakyThrows
+    public static void waitUntilAllLoaded() {
+
+        while (true) {
+            List<CFontRenderer> list = Arrays.asList(
+                    pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold,
+                    pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40,
+                    icon18, icon25, icon30, icon40, tritium24, tritium42,
+                    arial18bold, arial60bold
+            );
+
+            Thread.sleep(100);
+
+            long count = list.stream().filter(Objects::isNull).count();
+
+            if (count == 0)
+                break;
+
+            System.out.println(count + " remaining.");
+        }
+
     }
 
     @Override

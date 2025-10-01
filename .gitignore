@@ -4,3 +4,4 @@ target/
 .git/
 .DS_Store
 .idea/
+out/

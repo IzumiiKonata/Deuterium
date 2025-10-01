@@ -80,13 +80,6 @@ public class GlyphGenerator {
             g2d.drawString(String.valueOf(ch), 0, fontMetricsOrig.getAscent());
         }
 
-//        if (font.getFontName().contains("Noto")) {
-//            g2d.drawString(String.valueOf(ch), 0, fontMetrics.getAscent());
-//        } else if (symbola) {
-//            g2d.drawString(String.valueOf(ch), 0, fontMetrics.getAscent() * 1.3f);
-//        } else {
-//        }
-
         g2d.dispose();
 
         onLoaded.onLoaded(fontHeight);

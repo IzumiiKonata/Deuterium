@@ -102,6 +102,28 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return null;
     }
 
+    @SneakyThrows
+    private Glyph locateGlyphBlocking(char ch) {
+        Glyph gly = allGlyphs[ch];
+        if (gly != null) return gly;
+
+        final Object lock = new Object();
+
+        GlyphGenerator.generate(this, ch, this.font, randomIdentifier(), fontHeight -> {
+            this.fontHeight = Math.max(this.fontHeight, fontHeight);
+
+            synchronized (lock) {
+                lock.notifyAll();
+            }
+        });
+
+        synchronized (lock) {
+            lock.wait();
+        }
+
+        return allGlyphs[ch];
+    }
+
     public float drawString(String s, double x, double y, int color) {
         float r = ((color >> 16) & 0xff) / 255f;
         float g = ((color >> 8) & 0xff) / 255f;
@@ -222,7 +244,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 c = ')';
 
             Glyph glyph = locateGlyph(c);
-            if (glyph != null) {
+            if (glyph != null && glyph.callList != -1 && glyph.textureId != -1) {
                 xOffset += glyph.render(xOffset, yOffset, r2, g2, b2, a);
             } else {
                 bl = false;
