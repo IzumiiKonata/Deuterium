@@ -77,6 +77,11 @@ public class ValueWindow extends Window {
 
     @Override
     public void render(double mouseX, double mouseY) {
+
+        if (ClickGui.getInstance().getCategoriesWindow().getSelectedCategoryIndex() >= 2) {
+            return;
+        }
+
         ModuleListWindow moduleList = ClickGui.getInstance().getModuleListWindow();
 
         open = (moduleList.getOnSetting() != null) && (moduleList.getOnSetting() == moduleList.getLastOnSetting());

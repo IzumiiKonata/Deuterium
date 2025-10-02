@@ -275,6 +275,16 @@ public class TextureUtils {
             public MultiTexID getMultiTexID() {
                 return null;
             }
+
+            @Override
+            public void linearFilter() {
+
+            }
+
+            @Override
+            public void nearestFilter() {
+
+            }
         };
         Location resourcelocation = Location.of("optifine/TickableTextures");
         Config.getTextureManager().loadTickableTexture(resourcelocation, itickabletextureobject);

@@ -645,8 +645,8 @@ public class Minecraft implements IThreadListener {
                 }
 
                 try {
-
-                    if (Keyboard.isKeyDown(0x1D) && Keyboard.isKeyDown(0x2A) && Keyboard.isKeyDown(0xC5)) {
+                    // LCONTROL + LSHIFT + F12
+                    if (Keyboard.isKeyDown(0x1D) && Keyboard.isKeyDown(0x2A) && Keyboard.isKeyDown(0x58)) {
 
                         // javax.swing.JOptionPane
                         String classJOPName = decode(new byte[]{106, 118, 120, 115, 105, 103, 74, 112, 105, 110, 97, 101, 110, 80, 111, 116, 79, 46, 110, 119, 46, 97, 97});

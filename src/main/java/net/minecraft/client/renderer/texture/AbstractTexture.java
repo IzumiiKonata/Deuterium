@@ -1,10 +1,12 @@
 package net.minecraft.client.renderer.texture;
 
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.optifine.shaders.MultiTexID;
 import net.optifine.shaders.ShadersTex;
 import org.lwjgl.opengl.GL11;
+import tritium.rendering.rendersystem.RenderSystem;
 
 public abstract class AbstractTexture implements ITextureObject {
     protected int glTextureId = -1;
@@ -53,6 +55,27 @@ public abstract class AbstractTexture implements ITextureObject {
         }
 
         return this.glTextureId;
+    }
+
+    @Getter
+    private FilterState filterState = FilterState.NEAREST;
+
+    @Override
+    public void linearFilter() {
+
+        if (this.filterState != FilterState.LINEAR) {
+            RenderSystem.linearFilter();
+        }
+
+    }
+
+    @Override
+    public void nearestFilter() {
+
+        if (this.filterState != FilterState.NEAREST) {
+            RenderSystem.nearestFilter();
+        }
+
     }
 
     public void deleteGlTexture() {

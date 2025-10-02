@@ -171,4 +171,40 @@ public class RQTShader {
     public void draw(final double x, final double y, final double width, final double height, final double texX, final double texY, final double u, final double v, final double radius, final float alpha) {
         draw((float) x, (float) y, (float) width, (float) height, (float) texX, (float) texY, (float) u, (float) v, (float) radius, alpha);
     }
+
+    public void drawSpecial(final double x, final double y, final double width, final double height, final double texX, final double texY, final double scaleX, final double scaleY, final double radius, final float alpha) {
+        drawSpecial((float) x, (float) y, (float) width, (float) height, (float) texX, (float) texY, (float) scaleX, (float) scaleY, (float) radius, alpha);
+    }
+
+    public void drawSpecial(float x, float y, float width, float height, final float texX, final float texY, final float scaleX, final float scaleY, final float radius, final float alpha) {
+
+        if (x > x + width) {
+            float i = x;
+            x = x + width;
+            width = i - x;
+        }
+
+        if (y > y + height) {
+            float j = y;
+            y = y + height;
+            height = j - y;
+        }
+
+        final int programId = this.program.getProgramId();
+        this.program.start();
+
+        this.textureIn.setValue(0);
+        this.u_size.setValue(width, height);
+        this.u_offset.setValue(texX, texY);
+        this.u_scale.setValue(scaleX, scaleY);
+        this.u_radius.setValue(radius);
+        this.u_alpha.setValue(alpha);
+
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableAlpha();
+//        glStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
+        ShaderProgram.drawQuadFlipped(x, y, width, height);
+        ShaderProgram.stop();
+    }
 }

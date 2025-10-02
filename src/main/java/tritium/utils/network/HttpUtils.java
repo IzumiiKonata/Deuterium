@@ -1,5 +1,7 @@
 package tritium.utils.network;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.io.*;
@@ -393,6 +395,39 @@ public class HttpUtils {
             sb.append(line).append(System.lineSeparator());
         }
         return sb.toString();
+    }
+    @Getter
+    @Setter
+    private static int retryTimes = 10;
+
+    public static InputStream downloadStream(String path) {
+        return downloadStream(path, 0);
+    }
+
+    public static InputStream downloadStream(String path, int retry) {
+        InputStream bin = null;
+        try {
+            // 统一资源
+            URL url = new URL(path);
+            URLConnection urlConnection = url.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+            // 设定请求的方法
+            httpURLConnection.setInstanceFollowRedirects(true);
+            httpURLConnection.setRequestMethod("GET");
+            // 设置字符编码
+            httpURLConnection.setRequestProperty("Charset", "UTF-8");
+            httpURLConnection.setReadTimeout(10 * 1000);
+            // 打开到此 URL 引用的资源的通信链接
+            httpURLConnection.connect();
+
+            bin = httpURLConnection.getInputStream();
+        } catch (Exception err) {
+            if (retry >= retryTimes) {
+                throw new RuntimeException("Max retry time reached for url " + path);
+            }
+            return downloadStream(path, ++retry);
+        }
+        return bin;
     }
 
     /**

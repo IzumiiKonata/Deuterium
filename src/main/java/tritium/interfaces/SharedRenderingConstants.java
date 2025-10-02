@@ -28,6 +28,10 @@ import static tritium.rendering.rendersystem.RenderSystem.DIVIDE_BY_255;
  */
 public interface SharedRenderingConstants {
 
+    default void roundedRectTextured(double x, double y, double width, double height, double texX, double texY, double u, double v, double radius, double expand, float alpha) {
+        Shaders.RQT_SHADER.drawSpecial(x - expand, y - expand, width + expand * 2, height + expand * 2, texX, texY, u, v, radius, alpha);
+    }
+
     default void roundedOutlineGradient(double x, double y, double width, double height, double radius, double thickness, Color bottomLeft, Color topLeft, Color bottomRight, Color topRight) {
         Shaders.ROGQ_SHADER.draw(x, y, width, height, radius, thickness, bottomLeft, topLeft, bottomRight, topRight);
     }

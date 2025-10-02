@@ -57,6 +57,9 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
     public static final Compass compass = new Compass();
     public static final Coords coords = new Coords();
     public static final MouseStrokes mouseStrokes = new MouseStrokes();
+    public static final MusicInfoWidget musicInfo = new MusicInfoWidget();
+    public static final MusicLyricsWidget musicLyrics = new MusicLyricsWidget();
+    public static final MusicSpectrumWidget musicSpectrum = new MusicSpectrumWidget();
 
     @Handler
     public void onRender2D(Render2DEvent event) {

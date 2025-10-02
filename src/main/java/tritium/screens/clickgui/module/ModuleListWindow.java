@@ -60,6 +60,11 @@ public class ModuleListWindow extends Window {
 
     @Override
     public void render(double mouseX, double mouseY) {
+
+        if (ClickGui.getInstance().getCategoriesWindow().getSelectedCategoryIndex() >= 2) {
+            return;
+        }
+
         this.baseRect.renderWidget(mouseX, mouseY, this.getDWheel());
     }
 

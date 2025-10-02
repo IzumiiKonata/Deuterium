@@ -103,6 +103,9 @@ public class CategoriesWindow extends Window {
                     ),
                     Tuple.of(
                             "f", Localizable.of("category.global.name")
+                    ),
+                    Tuple.of(
+                            "f", Localizable.of("category.music.name")
                     )
             );
 
@@ -117,7 +120,7 @@ public class CategoriesWindow extends Window {
             this.bottomRect.addChild(categoriesPanel);
             categoriesPanel.setPosition(
                     categoriesPanel.getParentWidth() * .5 - categoriesPanel.getWidth() * .5,
-                    (categoriesPanel.getParentHeight() - 24) * .5 - categoriesPanel.getHeight() * .5
+                    (categoriesPanel.getParentHeight() - (14 * categories.size())) * .5 - categoriesPanel.getHeight() * .5
             );
 
             categoryButtons.clear();
@@ -128,6 +131,8 @@ public class CategoriesWindow extends Window {
                 categoriesPanel.addChild(button);
                 categoryButtons.add(button);
             }
+
+            this.categoryButtons.get(0).setSelected(true);
         }
 
         // edit button
@@ -203,6 +208,17 @@ public class CategoriesWindow extends Window {
     @Override
     public void mouseReleased(double mouseX, double mouseY, int mouseButton) {
 
+    }
+
+    public int getSelectedCategoryIndex() {
+        for (int i = 0; i < this.categoryButtons.size(); i++) {
+            CategoryButton cb = this.categoryButtons.get(i);
+
+            if (cb.isSelected())
+                return i;
+        }
+
+        return -1;
     }
 
 }
