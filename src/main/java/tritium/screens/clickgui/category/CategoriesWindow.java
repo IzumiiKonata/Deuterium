@@ -42,7 +42,7 @@ public class CategoriesWindow extends Window {
     public void init() {
         this.topRectDragging = false;
 
-        layout();
+//        layout();
     }
 
     private void layout() {
@@ -109,6 +109,18 @@ public class CategoriesWindow extends Window {
                     )
             );
 
+            List<Runnable> onClick = Arrays.asList(
+                    () -> {
+
+                    },
+                    () -> {
+
+                    },
+                    () -> {
+
+                    }
+            );
+
             int numbersOfCategories = categories.size();
             double spacing = 20;
 
@@ -127,7 +139,7 @@ public class CategoriesWindow extends Window {
 
             for (int i = 0; i < categories.size(); i++) {
                 Tuple<String, Localizable> category = categories.get(i);
-                CategoryButton button = new CategoryButton(category.getA(), () -> category.getB().get(), 0, i * (40 + spacing));
+                CategoryButton button = new CategoryButton(category.getA(), () -> category.getB().get(), 0, i * (40 + spacing), onClick.get(i));
                 categoriesPanel.addChild(button);
                 categoryButtons.add(button);
             }

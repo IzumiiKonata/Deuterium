@@ -33,7 +33,7 @@ public class ConfigManager extends AbstractManager {
     public static final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Tritium.NAME);
     private final File ALT = new File(configDir, "Alts.json");
 
-    public static final File curConfigFile = new File(configDir, "Config.json");
+    public static final File configFile = new File(configDir, "Config.json");
 
     static final Timer configSavingScheduler = new Timer();
 
@@ -74,7 +74,7 @@ public class ConfigManager extends AbstractManager {
         Gson gson = new Gson();
 
         try {
-            File configFile = curConfigFile;
+            File configFile = ConfigManager.configFile;
 
             if (!configFile.exists()) {
                 return new JsonObject();
@@ -102,7 +102,7 @@ public class ConfigManager extends AbstractManager {
             Gson gson = new Gson();
 
             @Cleanup
-            Reader fileReader = new BufferedReader(new InputStreamReader(Files.newInputStream(curConfigFile.toPath()), StandardCharsets.UTF_8));
+            Reader fileReader = new BufferedReader(new InputStreamReader(Files.newInputStream(configFile.toPath()), StandardCharsets.UTF_8));
             JsonObject config = gson.fromJson(fileReader, JsonObject.class);
 
             JsonObject modules = config.get("Modules").getAsJsonObject();
@@ -148,7 +148,7 @@ public class ConfigManager extends AbstractManager {
             configDir.mkdir();
         }
 
-        File configFile = curConfigFile;
+        File configFile = ConfigManager.configFile;
         JsonObject jsonObject = new JsonObject();
 
         JsonObject modules = new JsonObject();

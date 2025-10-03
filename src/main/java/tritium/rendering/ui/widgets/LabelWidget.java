@@ -1,6 +1,7 @@
 package tritium.rendering.ui.widgets;
 
 import lombok.Getter;
+import lombok.Setter;
 import tritium.management.FontManager;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
@@ -17,6 +18,10 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
     Supplier<String> label = () -> "点击输入文字";
     @Getter
     CFontRenderer font = FontManager.pf18;
+
+    @Getter
+    @Setter
+    double maxWidth = -1;
 
     public LabelWidget(String label, CFontRenderer font) {
         this.setLabel(label);
@@ -42,9 +47,12 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
 
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
-        String label = this.getLabel();
+        boolean widthLimited = this.getMaxWidth() == -1;
+
+        String label = widthLimited ? this.getLabel() : font.trim(this.getLabel(), this.maxWidth);
+
         font.drawString(label, this.getX(), this.getY(), this.getHexColor());
-        int width = font.getWidth(label);
+        double width = widthLimited ? font.getWidth(label) : this.getMaxWidth();
         this.setBounds(width, font.getHeight());
     }
 

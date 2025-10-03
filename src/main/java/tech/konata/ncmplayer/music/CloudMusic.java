@@ -20,10 +20,11 @@ import tech.konata.commons.ncm.api.CloudMusicApi;
 import tech.konata.ncmplayer.music.dto.Music;
 import tech.konata.ncmplayer.music.dto.PlayList;
 import tech.konata.ncmplayer.music.dto.User;
+import tritium.management.ConfigManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.GaussianKernel;
-import tritium.rendering.notification.Notification;
 import tritium.rendering.texture.Textures;
+import tritium.screens.ClickGui;
 import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.WrappedInputStream;
@@ -66,10 +67,10 @@ public class CloudMusic {
 
     public static Quality quality = Quality.STANDARD;
 
-    public static final File COOKIE_FILE = new File("NCMCookie.txt");
+    public static final File COOKIE_FILE = new File(ConfigManager.configDir, "NCMCookie.txt");
 
     @SneakyThrows
-    public static void initNcm() {
+    public static void initNCM() {
         String s = loadCookie();
 
         if (s.isEmpty()) {
@@ -759,29 +760,27 @@ public class CloudMusic {
 
             if (code == 802) {
                 if (json.has("nickname")) {
-                    // FIXME
-//                    MusicScreen.getInstance().loginRenderer.tempUsername = json.get("nickname").getAsString();
+                    ClickGui.getInstance().getPlaylistsWindow().loginRenderer.tempUsername = json.get("nickname").getAsString();
                 }
 
                 if (json.has("avatarUrl")) {
                     String url = json.get("avatarUrl").getAsString();
 
-                    // FIXME
-//                    if (!MusicScreen.getInstance().loginRenderer.avatarLoaded) {
-//                        MusicScreen.getInstance().loginRenderer.avatarLoaded = true;
-//                        MultiThreadingUtil.runAsync(new Runnable() {
-//                            @Override
-//                            @SneakyThrows
-//                            public void run() {
-//                                try (InputStream is = HttpUtils.get(url, null)) {
-//                                    BufferedImage img = ImageIO.read(is);
-//
-//                                    Textures.loadTextureAsyncly( MusicScreen.getInstance().loginRenderer.tempAvatar, img);
-//
-//                                }
-//                            }
-//                        });
-//                    }
+                    if (!ClickGui.getInstance().getPlaylistsWindow().loginRenderer.avatarLoaded) {
+                        ClickGui.getInstance().getPlaylistsWindow().loginRenderer.avatarLoaded = true;
+                        MultiThreadingUtil.runAsync(new Runnable() {
+                            @Override
+                            @SneakyThrows
+                            public void run() {
+                                try (InputStream is = HttpUtils.get(url, null)) {
+                                    BufferedImage img = ImageIO.read(is);
+
+                                    Textures.loadTextureAsyncly(ClickGui.getInstance().getPlaylistsWindow().loginRenderer.tempAvatar, img);
+
+                                }
+                            }
+                        });
+                    }
                 }
             }
 

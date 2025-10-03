@@ -26,11 +26,13 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
     double scale = .0;
     float selectIndicatorAlpha = 0f;
     float hoverIndicatorAlpha = 0f;
+    Runnable onClick;
 
-    public CategoryButton(String icon, Supplier<String> textSupplier, double x, double y) {
+    public CategoryButton(String icon, Supplier<String> textSupplier, double x, double y, Runnable onClick) {
         this.setBounds(x, y, 40, 40);
         this.icon = icon;
         this.textSupplier = textSupplier;
+        this.onClick = onClick;
 
         this.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
 
@@ -40,6 +42,7 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
             });
 
             this.setSelected(true);
+            this.onClick.run();
 
             return true;
         });

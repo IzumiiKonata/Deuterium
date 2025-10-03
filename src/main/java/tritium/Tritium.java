@@ -22,14 +22,14 @@ import java.util.List;
 public class Tritium {
 
     @Getter
-    private static final Tritium instance = new Tritium();
-
-    @Getter
     private static final Version version = new Version(Version.Type.Dev, 0, 0, 1);
 
     public static final String NAME = "Tritium";
 
     public static String BUILD_DATE = "Dev Env";
+
+    @Getter
+    private static final Tritium instance = new Tritium();
 
     @Getter
     private final Logger logger = LogManager.getLogger("Tritium");
@@ -62,13 +62,17 @@ public class Tritium {
     private ThemeManager themeManager;
 
     @Getter
+    private NCMManager ncmManager;
+
+    @Getter
     private boolean clientLoaded = false;
 
     @Getter
     private final boolean obfuscated = DevUtils.isObfuscated();
 
     public Tritium() {
-        this.logger.setOverrideLevel(LogLevel.DEBUG);
+        if (Tritium.getVersion().getType() == Version.Type.Dev)
+            this.logger.setOverrideLevel(LogLevel.DEBUG);
     }
 
     /**
@@ -101,8 +105,9 @@ public class Tritium {
         this.commandManager = new CommandManager();
         this.configManager = new ConfigManager();
         this.themeManager = new ThemeManager();
+        this.ncmManager = new NCMManager();
 
-        managers.addAll(Arrays.asList(this.fontManager, this.eventManager, this.localizer, this.moduleManager, widgetsManager, commandManager, configManager, themeManager));
+        managers.addAll(Arrays.asList(this.fontManager, this.eventManager, this.localizer, this.moduleManager, widgetsManager, commandManager, configManager, themeManager, ncmManager));
 
         for (AbstractManager manager : this.managers) {
 

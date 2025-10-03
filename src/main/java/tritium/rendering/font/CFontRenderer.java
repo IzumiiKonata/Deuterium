@@ -294,6 +294,26 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     }
 
+    public String trim(String text, double width) {
+        String name = text;
+
+        if (this.getStringWidth(name) > width) {
+            int idx = name.length() - 1;
+            while (true) {
+                String substring = name.substring(0, idx);
+
+                if (this.getStringWidth(substring + "...") <= width) {
+                    name = substring + "...";
+                    break;
+                }
+
+                idx--;
+            }
+        }
+
+        return name;
+    }
+
     public int getStringWidth(String text) {
 
         RenderTextEvent call = EventManager.call(new RenderTextEvent(text));

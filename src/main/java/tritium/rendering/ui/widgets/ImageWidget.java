@@ -9,6 +9,8 @@ import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 
+import java.util.function.Supplier;
+
 /**
  * @author IzumiiKonata
  * Date: 2025/9/30 15:11
@@ -17,16 +19,29 @@ public class ImageWidget extends AbstractWidget<ImageWidget> {
 
     @Getter
     @Setter
-    private Location locImg;
+    private Supplier<Location> locImg;
 
-    public ImageWidget(Location locImg, double x, double y, double width, double height) {
+    public ImageWidget(Supplier<Location> locImg, double x, double y, double width, double height) {
         this.setBounds(x, y, width, height);
         this.locImg = locImg;
     }
 
+    public ImageWidget(Location locImg, double x, double y, double width, double height) {
+        this(() -> locImg, x, y, width, height);
+    }
+
+    public ImageWidget(double x, double y, double width, double height) {
+        this(() -> null, x, y, width, height);
+    }
+
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
+        Location img = locImg.get();
+
+        if (img == null)
+            return;
+
         GlStateManager.color(1, 1, 1, this.getAlpha());
-        Image.draw(locImg, this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.NoColor);
+        Image.draw(img, this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.NoColor);
     }
 }

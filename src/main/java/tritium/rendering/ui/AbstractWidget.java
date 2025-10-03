@@ -13,7 +13,7 @@ import java.util.List;
  * @author IzumiiKonata
  * Date: 2025/7/8 19:42
  */
-public abstract class AbstractWidget<T extends AbstractWidget<?>> implements SharedRenderingConstants {
+public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implements SharedRenderingConstants {
 
     public interface OnClickCallback {
         boolean onClick(double relativeX, double relativeY, int mouseButton);
@@ -29,7 +29,12 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
     public static class Bounds {
         /**
          * 这个组件相对于父组件的坐标的偏移。
-         * 比如说, 有一个坐标为 (100, 100) 的矩形组件, 然后有一个新的组件作为这个矩形组件的子组件, 然后设置子组件 x, y 都为 2, 那么子组件的 {@link AbstractWidget#getX()} 将返回 父组件的屏幕 X 坐标 100 加上子组件的偏移 X 坐标 2, 结果为 102. Y 轴同理。
+         * 比如说, 有一个坐标为 (100, 100) 的矩形组件,
+         * 然后有一个新的组件作为这个矩形组件的子组件,
+         * 然后设置子组件 x, y 都为 2,
+         * 那么子组件的 {@link AbstractWidget#getX()} 将返回 父组件的屏幕 X 坐标 100 加上子组件的偏移 X 坐标 2, 结果为 102. Y 轴同理。
+         * 子组件的 {@link AbstractWidget#getRelativeX()} 将返回 2.
+         *
          */
         private double x, y;
         private double width, height;
@@ -116,9 +121,9 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
         this.hovering = !childHovering && this.testHovered(mouseX, mouseY);
     }
 
-    public T setOnTick(Runnable onTick) {
+    public SELF setOnTick(Runnable onTick) {
         this.onTick = onTick;
-        return (T) this;
+        return (SELF) this;
     }
 
     public void onTick() {
@@ -148,7 +153,7 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
      * 设置这个组件相较于父组件的留边, 会直接修改组件的 x, y 坐标以及长宽。
      * @param margin 留边大小
      */
-    public T setMargin(double margin) {
+    public SELF setMargin(double margin) {
         return this.setMargin(margin, margin, margin, margin);
     }
 
@@ -159,12 +164,12 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
      * @param right 右边的留边大小
      * @param bottom 下面的留边大小
      */
-    public T setMargin(double left, double top, double right, double bottom) {
+    public SELF setMargin(double left, double top, double right, double bottom) {
         this.getBounds().x = left;
         this.getBounds().y = top;
         this.getBounds().width = this.getParentWidth() - left - right;
         this.getBounds().height = this.getParentHeight() - top - bottom;
-        return (T) this;
+        return (SELF) this;
     }
 
     /**
@@ -269,50 +274,50 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
     // getters and setters
 
 
-    public T setBloom(boolean bloom) {
+    public SELF setBloom(boolean bloom) {
         this.bloom = bloom;
-        return (T) this;
+        return (SELF) this;
     }
 
     public boolean isBloom() {
         return bloom;
     }
 
-    public T setBlur(boolean blur) {
+    public SELF setBlur(boolean blur) {
         this.blur = blur;
-        return (T) this;
+        return (SELF) this;
     }
 
     public boolean isBlur() {
         return blur;
     }
 
-    public T setBeforeRenderCallback(BeforeRenderCallback beforeRenderCallback) {
+    public SELF setBeforeRenderCallback(BeforeRenderCallback beforeRenderCallback) {
         this.beforeRenderCallback = beforeRenderCallback;
-        return (T) this;
+        return (SELF) this;
     }
 
     public Color getColor() {
         return new Color(this.color.getRed(), this.color.getGreen(), this.color.getBlue(), (int) (this.getAlpha() * 255));
     }
 
-    public T setColor(int color) {
+    public SELF setColor(int color) {
         this.color = new Color(color);
-        return (T) this;
+        return (SELF) this;
     }
 
-    public T setColor(Color color) {
+    public SELF setColor(Color color) {
         this.color = color;
-        return (T) this;
+        return (SELF) this;
     }
 
     public int getHexColor() {
         return RenderSystem.hexColor(this.color.getRed(), this.color.getGreen(), this.color.getBlue(), (int) (this.getAlpha() * 255));
     }
 
-    public T setTransformations(Runnable transformations) {
+    public SELF setTransformations(Runnable transformations) {
         this.transformations = transformations;
-        return (T) this;
+        return (SELF) this;
     }
 
     public double getParentX() {
@@ -345,9 +350,9 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
         return RenderSystem.getHeight();
     }
 
-    public T setHidden(boolean hidden) {
+    public SELF setHidden(boolean hidden) {
         this.hidden = hidden;
-        return (T) this;
+        return (SELF) this;
     }
 
     public boolean isHidden() {
@@ -376,15 +381,15 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
         return this.alpha;
     }
 
-    public T setAlpha(float alpha) {
+    public SELF setAlpha(float alpha) {
         this.alpha = alpha;
         this.color = new Color(this.color.getRed(), this.color.getGreen(), this.color.getBlue(), (int) (alpha * 255));
-        return (T) this;
+        return (SELF) this;
     }
 
-    public T setOnClickCallback(OnClickCallback callback) {
+    public SELF setOnClickCallback(OnClickCallback callback) {
         this.callback = callback;
-        return (T) this;
+        return (SELF) this;
     }
 
     /**
@@ -431,14 +436,14 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
         return this.getBounds().height;
     }
 
-    public T setWidth(double width) {
+    public SELF setWidth(double width) {
         this.getBounds().width = width;
-        return (T) this;
+        return (SELF) this;
     }
 
-    public T setHeight(double height) {
+    public SELF setHeight(double height) {
         this.getBounds().height = height;
-        return (T) this;
+        return (SELF) this;
     }
 
     /**
@@ -448,28 +453,28 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
      * @param width 宽
      * @param height 长
      */
-    public T setBounds(double x, double y, double width, double height) {
+    public SELF setBounds(double x, double y, double width, double height) {
         this.getBounds().x = x;
         this.getBounds().y = y;
         this.getBounds().width = width;
         this.getBounds().height = height;
-        return (T) this;
+        return (SELF) this;
     }
 
     /**
      * 使组件居中。
      * @return
      */
-    public T center() {
+    public SELF center() {
         return this.setPosition(this.getParentWidth() * .5 - this.getWidth() * .5, this.getParentHeight() * .5 - this.getHeight() * .5);
     }
 
-    public T centerHorizontally() {
-        return this.setPosition(this.getParentWidth() * .5 - this.getWidth() * .5, this.getY());
+    public SELF centerHorizontally() {
+        return this.setPosition(this.getParentWidth() * .5 - this.getWidth() * .5, this.getRelativeY());
     }
 
-    public T centerVertically() {
-        return this.setPosition(this.getX(), this.getParentHeight() * .5 - this.getHeight() * .5);
+    public SELF centerVertically() {
+        return this.setPosition(this.getRelativeX(), this.getParentHeight() * .5 - this.getHeight() * .5);
     }
 
     /**
@@ -477,10 +482,10 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
      * @param x X 坐标偏移
      * @param y Y 坐标偏移
      */
-    public T setPosition(double x, double y) {
+    public SELF setPosition(double x, double y) {
         this.getBounds().x = x;
         this.getBounds().y = y;
-        return (T) this;
+        return (SELF) this;
     }
 
     /**
@@ -488,35 +493,35 @@ public abstract class AbstractWidget<T extends AbstractWidget<?>> implements Sha
      * @param x X 坐标
      * @param y Y 坐标
      */
-    public T setPositionAbsolute(double x, double y) {
+    public SELF setPositionAbsolute(double x, double y) {
         this.getBounds().x = this.getBounds().y = 0;
         this.getBounds().x = x - this.getX();
         this.getBounds().y = y - this.getY();
-        return (T) this;
+        return (SELF) this;
     }
 
-    public T setBounds(double width, double height) {
+    public SELF setBounds(double width, double height) {
         this.getBounds().width = width;
         this.getBounds().height = height;
-        return (T) this;
+        return (SELF) this;
     }
 
     public boolean isClickable() {
         return clickable;
     }
 
-    public T setClickable(boolean clickable) {
+    public SELF setClickable(boolean clickable) {
         this.clickable = clickable;
-        return (T) this;
+        return (SELF) this;
     }
 
     public AbstractWidget<?> getParent() {
         return parent;
     }
 
-    public T setParent(AbstractWidget<?> parent) {
+    public SELF setParent(AbstractWidget<?> parent) {
         this.parent = parent;
-        return (T) this;
+        return (SELF) this;
     }
 
     public List<AbstractWidget<?>> getChildren() {
