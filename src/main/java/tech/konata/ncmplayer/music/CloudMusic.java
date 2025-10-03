@@ -402,14 +402,15 @@ public class CloudMusic {
 
                 });
             } else {
+
+                if (isFlac) {
+                    return music;
+//                return convertFlacToWav(music, converted);
+                }
+
                 if (converted.exists()) {
                     return converted;
                 }
-            }
-
-            if (isFlac) {
-                return music;
-//                return convertFlacToWav(music, converted);
             }
 
             if (isMp3) {

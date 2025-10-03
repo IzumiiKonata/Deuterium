@@ -5,7 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tech.konata.commons.ncm.OptionsUtil;
+import tech.konata.ncmplayer.music.AudioPlayer;
 import tech.konata.ncmplayer.music.CloudMusic;
+import tech.konata.ncmplayer.music.dto.Music;
 import tech.konata.ncmplayer.music.dto.PlayList;
 import tech.konata.ncmplayer.music.dto.User;
 import tritium.management.FontManager;
@@ -20,10 +22,13 @@ import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.category.CategoriesWindow;
+import tritium.utils.i18n.Localizable;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
+import tritium.widget.impl.MusicInfoWidget;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.List;
@@ -47,7 +52,7 @@ public class PlaylistsWindow extends Window {
     public void init() {
         this.baseRect.getChildren().clear();
 
-        this.baseRect.setBounds(150, 300);
+        this.baseRect.setBounds(200, 300);
         this.baseRect.setBeforeRenderCallback(() -> {
             CategoriesWindow categoriesWindow = ClickGui.getInstance().getCategoriesWindow();
             this.baseRect.setPosition(categoriesWindow.getTopRect().getX() + categoriesWindow.getTopRect().getWidth(), categoriesWindow.getTopRect().getY());
@@ -57,7 +62,7 @@ public class PlaylistsWindow extends Window {
         panelDbg = true;
         this.genNickNamePanel();
         this.genPlayListsPanel();
-
+        this.genControlsPanel();
     }
 
     private AbstractWidget<?> genBaseContainer() {
@@ -170,6 +175,81 @@ public class PlaylistsWindow extends Window {
             playListsPanel.addChild(rect);
             rect.setWidth(playListsPanel.getWidth());
         }
+
+    }
+
+    private void genControlsPanel() {
+
+        AbstractWidget<?> base = this.genBaseContainer();
+
+        base.setMargin(4);
+
+        base.setHeight(40);
+
+        base.setPosition(base.getRelativeX(), base.getParentHeight() - 4 - base.getHeight());
+
+        RectWidget progressBarBg = new RectWidget();
+
+        base.addChild(progressBarBg);
+
+        progressBarBg.setMargin(0);
+        progressBarBg.setColor(Color.GRAY);
+        progressBarBg.setHeight(3);
+
+        RectWidget progressBar = new RectWidget();
+
+        progressBarBg.addChild(progressBar);
+        progressBar.setMargin(0);
+        progressBar.setColor(0xff0090ff);
+        progressBar.setWidth(0);
+
+        progressBar.setBeforeRenderCallback(() -> {
+            AudioPlayer player = CloudMusic.player;
+            if (player == null)
+                return;
+
+            progressBar.setWidth((player.getCurrentTimeMillis() / player.getTotalTimeMillis()) * progressBarBg.getWidth());
+        });
+
+        progressBar.setClickable(false);
+
+        RectWidget coverBg = new RectWidget();
+
+        base.addChild(coverBg);
+        coverBg.setMargin(4);
+        coverBg.setPosition(2, 5);
+        coverBg.setWidth(coverBg.getHeight() + .5);
+        coverBg.setHeight(coverBg.getWidth());
+        coverBg.setBounds(coverBg.getHeight(), coverBg.getHeight());
+        coverBg.setColor(Color.GRAY);
+
+        ImageWidget cover = new ImageWidget(() -> {
+            Music currentlyPlaying = CloudMusic.currentlyPlaying;
+
+            if (currentlyPlaying == null)
+                return null;
+
+            return MusicInfoWidget.getMusicCover(currentlyPlaying);
+        }, 0, 0, 0, 0);
+
+        coverBg.addChild(cover);
+        cover.setMargin(0);
+
+
+        Localizable lNotPlaying = Localizable.of("panel.music.notplaying");
+        LabelWidget musicName = new LabelWidget(() -> {
+            if (CloudMusic.currentlyPlaying == null)
+                return lNotPlaying.get();
+
+            return CloudMusic.currentlyPlaying.getName();
+        }, FontManager.pf18);
+
+        base.addChild(musicName);
+        musicName.setClickable(false);
+        musicName.setBeforeRenderCallback(() -> {
+            musicName.setPosition(coverBg.getRelativeX() + coverBg.getWidth() + 4, coverBg.getRelativeY());
+            musicName.setColor(ClickGui.getColor(9));
+        });
 
     }
 

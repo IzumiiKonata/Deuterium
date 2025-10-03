@@ -4,8 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tech.konata.ncmplayer.music.CloudMusic;
+import tech.konata.ncmplayer.music.dto.Music;
 import tech.konata.ncmplayer.music.dto.PlayList;
 import tritium.management.FontManager;
+import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.AbstractWidget;
@@ -13,6 +15,7 @@ import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
+import tritium.utils.math.RandomUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
@@ -20,6 +23,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.List;
 import java.util.function.Supplier;
 
 /**
@@ -37,7 +41,29 @@ public class PlaylistRect extends RectWidget {
         this.setBounds(0, 24);
 
         this.setBeforeRenderCallback(() -> {
-            this.setColor(colorSupplier.get());
+            this.setColor(isHovering() ? ClickGui.getColor(22) : colorSupplier.get());
+        });
+
+        this.setOnClickCallback((rx, ry, i) -> {
+
+            if (i == 0) {
+
+                MultiThreadingUtil.runAsync(() -> {
+                    List<Music> musics = playlist.getMusics();
+                    while (musics.isEmpty()) {
+                        musics = playlist.getMusics();
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+
+                    CloudMusic.play(musics, 0);
+                });
+            }
+
+            return true;
         });
 
         RectWidget imgBg = new RectWidget();
@@ -79,7 +105,18 @@ public class PlaylistRect extends RectWidget {
             }
 
             return coverLoc;
-        }, 0, 0, imgBg.getWidth(), imgBg.getHeight());
+        }, 0, 0, imgBg.getWidth(), imgBg.getHeight()) {
+
+            float alpha = .0f;
+
+            @Override
+            public void onRender(double mouseX, double mouseY, int dWheel) {
+                super.onRender(mouseX, mouseY, dWheel);
+                this.setAlpha(alpha);
+
+                alpha = Interpolations.interpBezier(alpha, this.getLocImg().get() != null ? 1f : 0f, 0.2f);
+            }
+        };
         imgBg.addChild(cover);
         cover.setClickable(false);
 

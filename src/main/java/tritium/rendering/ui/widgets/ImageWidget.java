@@ -2,7 +2,9 @@ package tritium.rendering.ui.widgets;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.util.Location;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.entities.impl.Rect;
@@ -41,7 +43,12 @@ public class ImageWidget extends AbstractWidget<ImageWidget> {
         if (img == null)
             return;
 
+        ITextureObject textureObject = Minecraft.getMinecraft().getTextureManager().getTexture(img);
+
+        if (textureObject == null)
+            return;
+
         GlStateManager.color(1, 1, 1, this.getAlpha());
-        Image.draw(img, this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.NoColor);
+        Image.draw(textureObject, this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.NoColor);
     }
 }

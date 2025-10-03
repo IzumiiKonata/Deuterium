@@ -35,8 +35,21 @@ import java.util.stream.Collectors;
 public class MusicInfoWidget extends Widget {
 
     public BooleanSetting turnComposerIntoLyric = new BooleanSetting("Turn Composer Into Lyric", false);
-    public ModeSetting<Quality> quality = new ModeSetting<>("Quality", Quality.STANDARD);
-    public NumberSetting<Double> volume = new NumberSetting<>("Volume", 0.1, 0.0, 1.0, 0.01);
+    public ModeSetting<Quality> quality = new ModeSetting<Quality>("Quality", Quality.STANDARD) {
+        @Override
+        public void onModeChanged(Quality before, Quality now) {
+
+            CloudMusic.quality = now;
+
+        }
+    };
+    public NumberSetting<Double> volume = new NumberSetting<Double>("Volume", 0.1, 0.0, 1.0, 0.01) {
+        @Override
+        public void onValueChanged(Double last, Double now) {
+            if (CloudMusic.player != null)
+                CloudMusic.player.setVolume(now.floatValue());
+        }
+    };
 
     public MusicInfoWidget() {
         super("Music");

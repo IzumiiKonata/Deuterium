@@ -44,6 +44,10 @@ public class Image extends RenderableEntity {
         draw(img, x, y, width, height, width, height, type);
     }
 
+    public static void draw(ITextureObject img, double x, double y, double width, double height, Type type) {
+        draw(img, x, y, width, height, width, height, type);
+    }
+
     public static void drawLinear(Location img, double x, double y, double width, double height, Type type) {
 
         if (type == Type.Normal) {
@@ -198,6 +202,22 @@ public class Image extends RenderableEntity {
             textureObj = new SimpleTexture(img);
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
+
+        GlStateManager.enableAlpha();
+
+    }
+
+    public static void draw(ITextureObject img, double x, double y, double width, double height, double tWidth, double tHeight, Type type) {
+
+        if (type == Type.Normal) {
+            GlStateManager.color(1, 1, 1, 1);
+        }
+
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        TextureUtils.bindTexture(img.getGlTextureId());
+        Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, tWidth, tHeight, width, height);
 
         GlStateManager.enableAlpha();
 

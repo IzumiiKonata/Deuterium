@@ -34,10 +34,8 @@ public class StencilClipManager {
     
     // 开始裁剪
     public static void beginClip(Runnable drawClipShape) {
-        if (!stencilEnabled) {
-            initialize();
-        }
-        
+        initialize();
+
         // save states
         boolean colorMask = GL11.glGetBoolean(GL11.GL_COLOR_WRITEMASK);
         boolean depthMask = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);

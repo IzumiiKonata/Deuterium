@@ -216,7 +216,6 @@ public class HttpUtils {
      * @param mediaType 参数类型,application/json,application/x-www-form-urlencoded
      */
     public static InputStream request(String url, String params, Map<String, String> headers, String method, String mediaType) throws IOException {
-        ByteArrayInputStream result;
         if (url == null || url.trim().isEmpty()) {
             return null;
         }
@@ -253,33 +252,48 @@ public class HttpUtils {
         if (conn.getResponseCode() >= 300) {
             throw new RuntimeException("HTTP Request is not success, Response code is " + conn.getResponseCode());
 //            bin = new BufferedInputStream(conn.getErrorStream());
-        } else {
-            bin = new BufferedInputStream(conn.getInputStream());
         }
         // 获取返回数据
 
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        int size;
-        byte[] buf = new byte[1024];
-        while ((size = bin.read(buf)) != -1) {
-            baos.write(buf, 0, size);
-        }
+//        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+//        int size;
+//        byte[] buf = new byte[1024];
+//        while ((size = bin.read(buf)) != -1) {
+//            baos.write(buf, 0, size);
+//        }
+//
+//        bin.close();
 
-        bin.close();
+//        result = new ByteArrayInputStream(baos.toByteArray());
 
-        result = new ByteArrayInputStream(baos.toByteArray());
+        int contentLength = conn.getContentLength();
+        InputStream inputStream = conn.getInputStream();
 
-        // 断开连接
-        conn.disconnect();
+        OutputStreamWriter finalWriter = writer;
+        return new InputStream() {
 
-        if (writer != null) {
-            try {
-                writer.close();
-            } catch (IOException e) {
-                e.printStackTrace();
+            @Override
+            public int read() throws IOException {
+                return inputStream.read();
             }
-        }
-        return result;
+
+            @Override
+            public int available() throws IOException {
+                return contentLength;
+            }
+
+            @Override
+            public void close() throws IOException {
+                inputStream.close();
+                if (finalWriter != null) {
+                    try {
+                        finalWriter.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        };
     }
 
     /**
