@@ -85,7 +85,13 @@ public class PlayList implements IMusicList {
             this.songs = new JsonArray();
 
             MultiThreadingUtil.runAsync(() -> {
-                RequestUtil.RequestAnswer requestAnswer = CloudMusicApi.playlistTrackAll(id, 8);
+                RequestUtil.RequestAnswer requestAnswer = null;
+                try {
+                    requestAnswer = CloudMusicApi.playlistTrackAll(id, 8);
+                } catch (Exception e) {
+                    this.songs = null;
+                    throw new RuntimeException(e);
+                }
                 this.songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
                 this.songs.forEach(element -> {
                     this.musics.add(new Music(element.getAsJsonObject(), null));
