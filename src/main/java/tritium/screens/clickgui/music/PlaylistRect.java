@@ -15,6 +15,7 @@ import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
+import tritium.screens.clickgui.module.ModuleListWindow;
 import tritium.utils.math.RandomUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
@@ -46,22 +47,19 @@ public class PlaylistRect extends RectWidget {
 
         this.setOnClickCallback((rx, ry, i) -> {
 
-            if (i == 0) {
+            if (i != 0)
+                return true;
 
-                MultiThreadingUtil.runAsync(() -> {
-                    List<Music> musics = playlist.getMusics();
-                    while (musics.isEmpty()) {
-                        musics = playlist.getMusics();
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-                    }
-
-                    CloudMusic.play(musics, 0);
-                });
+            PlaylistsWindow playlists = ClickGui.getInstance().getPlaylistsWindow();
+            if (playlists.getOnSetting() == this.playlist)
+                return true;
+            if (playlists.getLastOnSetting() == null) {
+                playlists.setLastOnSetting(this.playlist);
+            } else if (playlists.getLastOnSetting() == playlists.getOnSetting()) {
+                playlists.setLastOnSetting(playlists.getOnSetting());
             }
+
+            playlists.setOnSetting(this.playlist);
 
             return true;
         });

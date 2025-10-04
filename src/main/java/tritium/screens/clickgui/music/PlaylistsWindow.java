@@ -1,6 +1,7 @@
 package tritium.screens.clickgui.music;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
@@ -11,6 +12,7 @@ import tech.konata.ncmplayer.music.dto.Music;
 import tech.konata.ncmplayer.music.dto.PlayList;
 import tech.konata.ncmplayer.music.dto.User;
 import tritium.management.FontManager;
+import tritium.module.Module;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.AbstractWidget;
@@ -47,6 +49,13 @@ public class PlaylistsWindow extends Window {
     boolean avatarLoaded = false;
 
     boolean panelDbg = false;
+
+    @Getter
+    @Setter
+    public PlayList lastOnSetting;
+    @Getter
+    @Setter
+    public PlayList onSetting;
 
     @Override
     public void init() {

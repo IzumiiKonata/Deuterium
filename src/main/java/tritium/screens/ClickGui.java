@@ -9,6 +9,7 @@ import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.clickgui.category.CategoriesWindow;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.module.ModuleListWindow;
+import tritium.screens.clickgui.music.MusicsWindow;
 import tritium.screens.clickgui.music.PlaylistsWindow;
 import tritium.screens.clickgui.value.ValueWindow;
 import tritium.settings.ClientSettings;
@@ -42,6 +43,9 @@ public class ClickGui extends BaseScreen {
     @Getter
     PlaylistsWindow playlistsWindow = new PlaylistsWindow();
 
+    @Getter
+    MusicsWindow musicsWindow = new MusicsWindow();
+
     float alpha = .0f;
     boolean closing = false;
 
@@ -57,6 +61,7 @@ public class ClickGui extends BaseScreen {
         this.windows.add(moduleListWindow);
         this.windows.add(valueWindow);
         this.windows.add(playlistsWindow);
+        this.windows.add(musicsWindow);
 
         this.windows.forEach(Window::init);
         this.closing = false;

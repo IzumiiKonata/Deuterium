@@ -16,6 +16,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
+import tritium.rendering.StencilClipManager;
 import tritium.rendering.phosphor.api.ILightingEngineProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -1253,6 +1254,9 @@ public class Minecraft implements IThreadListener {
         Display.update();
         this.mcProfiler.endSection();
         this.checkWindowResize();
+        if (!StencilClipManager.stencilStack.isEmpty())
+            System.err.println("Stencil stack overflow");
+        StencilClipManager.currentStencilValue = 0;
         ++this.fpsCounter;
     }
 

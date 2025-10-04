@@ -21,7 +21,6 @@ public class Stencil {
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 65535);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         GlStateManager.colorMask(false, false, false, false);
-
     }
 
     public static void write2() {
