@@ -97,13 +97,7 @@ public abstract class AbstractTexture implements ITextureObject {
             return;
         }
 
-        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            GlStateManager.bindTexture(this.getGlTextureId());
-        } else {
-            // we're on async gl context
-
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
-        }
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
 
     }
 

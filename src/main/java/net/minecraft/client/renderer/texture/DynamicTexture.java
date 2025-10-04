@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IResourceManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -65,7 +66,7 @@ public class DynamicTexture extends AbstractTexture {
         this.allocateTextureImpl(0, textureWidth, textureHeight);
     }
 
-    public void allocateTextureImpl(int levels, int width, int height) {
+    public synchronized void allocateTextureImpl(int levels, int width, int height) {
 
         this.deleteTexture();
         this.bindTexture();
@@ -80,6 +81,8 @@ public class DynamicTexture extends AbstractTexture {
         for (int i = 0; i <= levels; ++i) {
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, i, GL11.GL_RGBA, width >> i, height >> i, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer) null);
         }
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 
     }
 
@@ -193,6 +196,8 @@ public class DynamicTexture extends AbstractTexture {
             if (this.clearable) {
                 this.dynamicTextureData = new int[0];
             }
+
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 //        }
     }
 
