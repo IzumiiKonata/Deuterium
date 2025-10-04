@@ -5,6 +5,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
+import org.lwjglx.input.Mouse;
 import tech.konata.commons.ncm.OptionsUtil;
 import tech.konata.ncmplayer.music.AudioPlayer;
 import tech.konata.ncmplayer.music.CloudMusic;
@@ -12,6 +13,7 @@ import tech.konata.ncmplayer.music.dto.Music;
 import tech.konata.ncmplayer.music.dto.PlayList;
 import tech.konata.ncmplayer.music.dto.User;
 import tritium.management.FontManager;
+import tritium.management.WidgetsManager;
 import tritium.module.Module;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
@@ -28,6 +30,7 @@ import tritium.utils.i18n.Localizable;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicInfoWidget;
+import tritium.widget.impl.MusicLyricsWidget;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -197,7 +200,22 @@ public class PlaylistsWindow extends Window {
 
         base.setPosition(base.getRelativeX(), base.getParentHeight() - 4 - base.getHeight());
 
-        RectWidget progressBarBg = new RectWidget();
+        RectWidget progressBarBg = new RectWidget() {
+            @Override
+            public void onRender(double mouseX, double mouseY, int dWheel) {
+                super.onRender(mouseX, mouseY, dWheel);
+
+                if (this.isHovering() && Mouse.isButtonDown(0)) {
+                    double xDelta = Math.max(0, Math.min(this.getWidth(), (mouseX - this.getX())));
+                    double percent = xDelta / this.getWidth();
+
+                    if (CloudMusic.player != null) {
+                        CloudMusic.player.setPlaybackTime((float) (percent * CloudMusic.player.getTotalTimeMillis()));
+                        MusicLyricsWidget.quickResetProgress((float) (percent * CloudMusic.player.getTotalTimeMillis()));
+                    }
+                }
+            }
+        };
 
         base.addChild(progressBarBg);
 
