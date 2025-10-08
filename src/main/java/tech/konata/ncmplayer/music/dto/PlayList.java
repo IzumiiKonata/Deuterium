@@ -27,7 +27,7 @@ public class PlayList implements IMusicList {
     public boolean subscribed;
     public long createTime;
     //    public JsonArray tags;
-    public List<Music> musics = new CopyOnWriteArrayList<>();
+    public final List<Music> musics = new CopyOnWriteArrayList<>();
 
     public double scrollSmooth = 0;
     public double scrollOffset = 0;
@@ -76,7 +76,7 @@ public class PlayList implements IMusicList {
 
     @Override
     public List<Music> getMusics() {
-        if (this.musics != null && !musics.isEmpty() && (this.songs != null || searchMode)) {
+        if (!musics.isEmpty() && (this.songs != null || searchMode)) {
             return this.musics;
         }
 
@@ -93,9 +93,11 @@ public class PlayList implements IMusicList {
                     throw new RuntimeException(e);
                 }
                 this.songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
-                this.songs.forEach(element -> {
-                    this.musics.add(new Music(element.getAsJsonObject(), null));
-                });
+                synchronized (this.musics) {
+                    this.songs.forEach(element -> {
+                        this.musics.add(new Music(element.getAsJsonObject(), null));
+                    });
+                }
             });
 
         }

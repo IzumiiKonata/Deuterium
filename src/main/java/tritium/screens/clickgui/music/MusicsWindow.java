@@ -99,17 +99,19 @@ public class MusicsWindow extends Window {
 
         this.baseRect.renderWidget(mouseX, mouseY, this.getDWheel());
 
-        if (playlists.getOnSetting() != null && this.musicsPanel.getChildren().isEmpty()) {
+        if (playlists.getOnSetting() != null && this.musicsPanel.getChildren().isEmpty() && !playlists.getOnSetting().getMusics().isEmpty()) {
             this.musicsPanel.targetScrollOffset = 0;
 
             List<Music> musics = playlists.getOnSetting().getMusics();
-            for (int i = 0; i < musics.size(); i++) {
-                Music music = musics.get(i);
-                Supplier<Integer> colorSupl = i % 2 == 0 ? () -> ClickGui.getColor(11) : () -> ClickGui.getColor(12);
+            synchronized (musics) {
+                for (int i = 0; i < musics.size(); i++) {
+                    Music music = musics.get(i);
+                    Supplier<Integer> colorSupl = i % 2 == 0 ? () -> ClickGui.getColor(11) : () -> ClickGui.getColor(12);
 
-                MusicRect musicRect = new MusicRect(playlists.getOnSetting(), music, colorSupl);
-                this.musicsPanel.addChild(musicRect);
-                musicRect.setWidth(this.musicsPanel.getWidth());
+                    MusicRect musicRect = new MusicRect(playlists.getOnSetting(), music, colorSupl);
+                    this.musicsPanel.addChild(musicRect);
+                    musicRect.setWidth(this.musicsPanel.getWidth());
+                }
             }
         }
 

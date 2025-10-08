@@ -5,6 +5,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
+import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
 import tech.konata.commons.ncm.OptionsUtil;
 import tech.konata.ncmplayer.music.AudioPlayer;
@@ -16,10 +17,12 @@ import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
 import tritium.module.Module;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
+import tritium.rendering.ui.widgets.IconWidget;
 import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
@@ -64,7 +67,7 @@ public class PlaylistsWindow extends Window {
     public void init() {
         this.baseRect.getChildren().clear();
 
-        this.baseRect.setBounds(200, 300);
+        this.baseRect.setBounds(150, 300);
         this.baseRect.setBeforeRenderCallback(() -> {
             CategoriesWindow categoriesWindow = ClickGui.getInstance().getCategoriesWindow();
             this.baseRect.setPosition(categoriesWindow.getTopRect().getX() + categoriesWindow.getTopRect().getWidth(), categoriesWindow.getTopRect().getY());
@@ -80,8 +83,8 @@ public class PlaylistsWindow extends Window {
     private AbstractWidget<?> genBaseContainer() {
         AbstractWidget<?> base = this.panelDbg ? new RectWidget() : new Panel();
 
-        if (base instanceof RectWidget)
-            ((RectWidget) base).setColor(0xff0090ff);
+//        if (base instanceof RectWidget)
+//            ((RectWidget) base).setColor(0xff0090ff);
 
         this.baseRect.addChild(base);
 
@@ -91,6 +94,10 @@ public class PlaylistsWindow extends Window {
     private void genNickNamePanel() {
 
         AbstractWidget<?> base = this.genBaseContainer();
+
+        base.setBeforeRenderCallback(() -> {
+            base.setColor(ClickGui.getColor(11));
+        });
 
         base.setMargin(4);
         base.setHeight(24);
@@ -171,7 +178,7 @@ public class PlaylistsWindow extends Window {
         ScrollPanel playListsPanel = new ScrollPanel();
 
         base.addChild(playListsPanel);
-        playListsPanel.setMargin(2);
+        playListsPanel.setMargin(0);
         playListsPanel.setSpacing(0);
 
         if (CloudMusic.playLists == null) {
@@ -194,6 +201,10 @@ public class PlaylistsWindow extends Window {
 
         AbstractWidget<?> base = this.genBaseContainer();
 
+        base.setBeforeRenderCallback(() -> {
+            base.setColor(ClickGui.getColor(11));
+        });
+
         base.setMargin(4);
 
         base.setHeight(40);
@@ -201,11 +212,18 @@ public class PlaylistsWindow extends Window {
         base.setPosition(base.getRelativeX(), base.getParentHeight() - 4 - base.getHeight());
 
         RectWidget progressBarBg = new RectWidget() {
+
+            boolean prevMouse = false;
+
             @Override
             public void onRender(double mouseX, double mouseY, int dWheel) {
                 super.onRender(mouseX, mouseY, dWheel);
 
-                if (this.isHovering() && Mouse.isButtonDown(0)) {
+                if (prevMouse && !Mouse.isButtonDown(0))
+                    prevMouse = false;
+
+                if (this.testHovered(mouseX, mouseY, 1) && Mouse.isButtonDown(0) && !prevMouse) {
+                    prevMouse = true;
                     double xDelta = Math.max(0, Math.min(this.getWidth(), (mouseX - this.getX())));
                     double percent = xDelta / this.getWidth();
 
@@ -240,42 +258,105 @@ public class PlaylistsWindow extends Window {
 
         progressBar.setClickable(false);
 
-        RectWidget coverBg = new RectWidget();
+//        RectWidget coverBg = new RectWidget();
+//
+//        base.addChild(coverBg);
+//        coverBg.setMargin(4);
+//        coverBg.setPosition(2, 5);
+//        coverBg.setWidth(coverBg.getHeight() + .5);
+//        coverBg.setHeight(coverBg.getWidth());
+//        coverBg.setBounds(coverBg.getHeight(), coverBg.getHeight());
+//        coverBg.setColor(Color.GRAY);
+//
+//        ImageWidget cover = new ImageWidget(() -> {
+//            Music currentlyPlaying = CloudMusic.currentlyPlaying;
+//
+//            if (currentlyPlaying == null)
+//                return null;
+//
+//            return MusicInfoWidget.getMusicCover(currentlyPlaying);
+//        }, 0, 0, 0, 0);
+//
+//        coverBg.addChild(cover);
+//        cover.setMargin(0);
 
-        base.addChild(coverBg);
-        coverBg.setMargin(4);
-        coverBg.setPosition(2, 5);
-        coverBg.setWidth(coverBg.getHeight() + .5);
-        coverBg.setHeight(coverBg.getWidth());
-        coverBg.setBounds(coverBg.getHeight(), coverBg.getHeight());
-        coverBg.setColor(Color.GRAY);
 
-        ImageWidget cover = new ImageWidget(() -> {
-            Music currentlyPlaying = CloudMusic.currentlyPlaying;
+//        Localizable lNotPlaying = Localizable.of("panel.music.notplaying");
+//        LabelWidget musicName = new LabelWidget(() -> {
+//            if (CloudMusic.currentlyPlaying == null)
+//                return lNotPlaying.get();
+//
+//            return CloudMusic.currentlyPlaying.getName();
+//        }, FontManager.pf16);
+//
+//        base.addChild(musicName);
+//        musicName.setClickable(false);
+//        musicName.setMaxWidth(base.getWidth() * .5);
+//        musicName.setBeforeRenderCallback(() -> {
+////            musicName.setPosition(coverBg.getRelativeX() + coverBg.getWidth() + 4, coverBg.getRelativeY());
+//            musicName.centerHorizontally();
+//            musicName.setPosition(musicName.getRelativeX(), base.getHeight() - musicName.getHeight() - 2);
+//            musicName.setColor(ClickGui.getColor(9));
+//        });
 
-            if (currentlyPlaying == null)
-                return null;
+        IconWidget playPause = new IconWidget("B", FontManager.icon30, 0, 0, 20, 20);
 
-            return MusicInfoWidget.getMusicCover(currentlyPlaying);
-        }, 0, 0, 0, 0);
+        base.addChild(playPause);
+        playPause.center();
+        playPause.setPosition(playPause.getRelativeX(), playPause.getRelativeY() + progressBar.getHeight() * .5);
 
-        coverBg.addChild(cover);
-        cover.setMargin(0);
+        playPause.setBeforeRenderCallback(() -> {
+            if (CloudMusic.player == null || CloudMusic.player.isPausing()) {
+                playPause.setIcon("B");
+            } else {
+                playPause.setIcon("A");
+            }
 
+            playPause.setColor(ClickGui.getColor(9));
+        });
 
-        Localizable lNotPlaying = Localizable.of("panel.music.notplaying");
-        LabelWidget musicName = new LabelWidget(() -> {
-            if (CloudMusic.currentlyPlaying == null)
-                return lNotPlaying.get();
+        playPause.setOnClickCallback((x, y, i) -> {
 
-            return CloudMusic.currentlyPlaying.getName();
-        }, FontManager.pf18);
+            if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null) {
+                if (CloudMusic.player.isPausing())
+                    CloudMusic.player.unpause();
+                else
+                    CloudMusic.player.pause();
 
-        base.addChild(musicName);
-        musicName.setClickable(false);
-        musicName.setBeforeRenderCallback(() -> {
-            musicName.setPosition(coverBg.getRelativeX() + coverBg.getWidth() + 4, coverBg.getRelativeY());
-            musicName.setColor(ClickGui.getColor(9));
+            }
+
+           return true;
+        });
+
+        IconWidget prev = new IconWidget("H", FontManager.icon30, 0, 0, 20, 20);
+
+        base.addChild(prev);
+        prev.center();
+        prev.setPosition(prev.getRelativeX() - 20 - prev.getWidth() * .5, prev.getRelativeY() + progressBar.getHeight() * .5);
+        prev.setOnClickCallback((x, y, i) -> {
+            if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
+                CloudMusic.prev();
+
+            return true;
+        });
+
+        prev.setBeforeRenderCallback(() -> {
+            prev.setColor(ClickGui.getColor(9));
+        });
+
+        IconWidget next = new IconWidget("E", FontManager.icon30, 0, 0, 20, 20);
+        base.addChild(next);
+        next.center();
+        next.setPosition(next.getRelativeX() + next.getWidth() * .5 + 20, next.getRelativeY() + progressBar.getHeight() * .5);
+        next.setOnClickCallback((x, y, i) -> {
+            if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
+                CloudMusic.next();
+
+            return true;
+        });
+
+        next.setBeforeRenderCallback(() -> {
+            next.setColor(ClickGui.getColor(9));
         });
 
     }
@@ -305,9 +386,9 @@ public class PlaylistsWindow extends Window {
 
         if (this.loginRenderer.canClose() && !OptionsUtil.getCookie().isEmpty()) {
             this.loginRenderer = null;
-            MultiThreadingUtil.runAsync(() -> {
-                CloudMusic.loadNCM(OptionsUtil.getCookie());
-            });
+            CloudMusic.loadNCM(OptionsUtil.getCookie());
+
+            this.init();
         }
     }
 
@@ -319,5 +400,16 @@ public class PlaylistsWindow extends Window {
     @Override
     public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
         this.baseRect.onMouseClickReceived(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    public void keyTyped(char typedChar, int keyCode) {
+        if (keyCode == Keyboard.KEY_SPACE && CloudMusic.currentlyPlaying != null && CloudMusic.player != null && !CloudMusic.player.isFinished()) {
+
+            if (CloudMusic.player.isPausing())
+                CloudMusic.player.unpause();
+            else
+                CloudMusic.player.pause();
+        }
     }
 }

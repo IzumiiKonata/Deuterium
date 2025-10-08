@@ -100,6 +100,12 @@ public class ScrollPanel extends Panel {
         StencilClipManager.endClip();
     }
 
+    @Override
+    protected boolean shouldClickChildren(double mouseX, double mouseY) {
+//        System.out.println(this.testHovered(mouseX, mouseY));
+        return this.testHovered(mouseX, mouseY);
+    }
+
     public void setSpacing(double spacing) {
         this.spacing = spacing;
     }

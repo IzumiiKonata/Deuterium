@@ -42,4 +42,8 @@ public abstract class Window {
         return ClickGui.getColor(type);
     }
 
+    public void keyTyped(char typedChar, int keyCode) {
+
+    }
+
 }

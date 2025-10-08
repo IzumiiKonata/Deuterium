@@ -3,6 +3,7 @@ package tritium.rendering.ui;
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.ui.container.ScrollPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -183,6 +184,17 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
+     * 测试该组件有没有被鼠标指向
+     * @param mouseX 鼠标 X 坐标
+     * @param mouseY 鼠标 Y 坐标
+     * @param expand 扩张范围
+     * @return 该组件有没有被鼠标指向
+     */
+    protected boolean testHovered(double mouseX, double mouseY, double expand) {
+        return this.isHovered(mouseX, mouseY, this.getX() - expand, this.getY() - expand, this.getWidth() + expand * 2, this.getHeight() + expand * 2);
+    }
+
+    /**
      * 实用方法, 检测鼠标有没有在一个矩形范围内。
      * @param mouseX 鼠标 X 坐标
      * @param mouseY 鼠标 Y 坐标
@@ -208,28 +220,38 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return mouseX >= x && mouseY >= y && mouseX <= x + width && mouseY <= y + height;
     }
 
-    private boolean iterateChildrenMouseClick(List<AbstractWidget<?>> children, double mouseX, double mouseY, int mouseButton) {
+    protected boolean iterateChildrenMouseClick(List<AbstractWidget<?>> children, double mouseX, double mouseY, int mouseButton) {
         for (AbstractWidget<?> child : children) {
 
             if (child.isHidden()) {
                 continue;
             }
 
-            if (child.isHovering() && child.isClickable() && child.onMouseClicked(mouseX - child.getX(), mouseY - child.getY(), mouseButton)) {
-                return true;
-            }
+            if (!child.shouldClickChildren(mouseX, mouseY))
+                continue;
 
             if (!child.getChildren().isEmpty()) {
                 if (this.iterateChildrenMouseClick(child.getChildren(), mouseX, mouseY, mouseButton)) {
                     return true;
                 }
             }
+
+            if (child.isHovering() && child.isClickable() && child.onMouseClicked(mouseX - child.getX(), mouseY - child.getY(), mouseButton)) {
+                return true;
+            }
         }
 
         return false;
     }
 
+    protected boolean shouldClickChildren(double mouseX, double mouseY) {
+        return true;
+    }
+
     public void onMouseClickReceived(double mouseX, double mouseY, int mouseButton) {
+
+        if (!this.shouldClickChildren(mouseX, mouseY))
+            return;
 
         // 先检测子组件
         // 如果子组件都没有响应点击事件, 则测试这个组件

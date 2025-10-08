@@ -94,6 +94,8 @@ public class ClickGui extends BaseScreen {
         if (keyCode == Keyboard.KEY_ESCAPE) {
             this.closing = true;
         }
+
+        this.windows.forEach(window -> window.keyTyped(typedChar, keyCode));
     }
 
     public static int getColor(int type) {
