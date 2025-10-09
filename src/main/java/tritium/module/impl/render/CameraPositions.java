@@ -167,11 +167,8 @@ public class CameraPositions extends Module {
         Vec3 eyePos = mc.thePlayer.getPositionEyes(mc.timer.renderPartialTicks);
 
         double distance = 3.0;
-        Vec3 targetPos = new Vec3(
-                eyePos.xCoord + lookVec.xCoord * distance,
-                eyePos.yCoord + lookVec.yCoord * distance,
-                eyePos.zCoord + lookVec.zCoord * distance
-        );
+
+        Vec3 targetPos = lookVec.multiply(distance).add(eyePos);
 
         double x = targetPos.xCoord - mc.getRenderManager().renderPosX;
         double y = targetPos.yCoord - mc.getRenderManager().renderPosY;
@@ -186,10 +183,12 @@ public class CameraPositions extends Module {
         GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
         GlStateManager.enableAlpha();
         double size = 48;
+        boolean bCull = GL11.glIsEnabled(GL11.GL_CULL_FACE);
+        GlStateManager.disableCull();
         drawTexturedModalRect(-size * .5 + 1, -size * .5 + 1, 0, 0, 16, 16, size, size);
 
-//        Rect.draw(-1, -0.5, 2, 1, -1);
-//        Rect.draw(-0.5, -1, 1, 2, -1);
+        if (bCull)
+            GlStateManager.enableCull();
 
         this.stopDrawing();
 
