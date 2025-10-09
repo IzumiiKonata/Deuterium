@@ -195,6 +195,7 @@ public class ClientSettings {
             });
         }
 
+        dummyModule.getSettings().clear();
         dummyModule.addSettings(settings.toArray(new Setting[0]));
     }
 
