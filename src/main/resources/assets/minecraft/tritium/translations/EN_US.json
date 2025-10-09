@@ -867,20 +867,21 @@
     "setting.length.name": "Length",
     "setting.texture.name": "Textured",
 
-    "n163.wavetable": "[N163] Wavetable",
-
-    "2a03.noise": "[2A03] Noise",
-    "2a03.triangle": "[2A03] Triangle",
-    "2a03.pulse": "[2A03] Pulse",
-    "2a03.dpcm": "[2A03] DPCM",
-
-    "vrc6.pulse": "[VRC6] Pulse",
-    "vrc6.sawtooth": "[VRC6] Sawtooth",
-
-    "vrc7.fmsynthesizer": "[VRC7] FM Synthesizer",
-
-    "fds": "[Famicom DiskSystem Sound]",
-    "s5b": "[Sunsoft 5B]",
+    "widget.musiclyrics.name": "Music Lyrics",
+    "category.music.name": "Music",
+    "setting.turn composer into lyric.name": "Turn composer into lyric",
+    "setting.quality.name": "Quality",
+    "setting.volume.name": "Volume",
+    "mode.FadeIn.name": "Fade In",
+    "setting.shadow.name": "Shadow",
+    "setting.single line mode.name": "Single line mode",
+    "mode.Waveform.name": "Waveform",
+    "mode.Oscilloscope.name": "Oscilloscope",
+    "mode.Line.name": "Line",
+    "setting.compact mode.name": "Compact Mode",
+    "setting.absolute volume.name": "Absolute Volume",
+    "setting.waveform stereo.name": "Waveform Stereo",
+    "setting.window time (ms).name": "Window Time (ms)",
 
     "clickgui.nosettingshere": "No Settings Here."
   }

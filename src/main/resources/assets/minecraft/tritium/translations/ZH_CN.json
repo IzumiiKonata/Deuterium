@@ -685,35 +685,22 @@
     "mode.SlideDown.name": "下滑",
     "mode.SlideMix.name": "滑动 (上下混合)",
 
-    "module.shadertrails.name": "Shader轨迹",
-    "module.shadertrails.desc": "在玩家身后渲染一个拖影轨迹.",
-    "setting.alpha.name": "不透明度",
-    "setting.length.name": "轨迹长度",
-    "setting.texture.name": "贴图渲染",
-
-    "guess_me": "猜猜以下翻译是用于什么条目的?",
-
-    "nsfscreen.draginto": "请将.nsf文件拖动到窗口中",
-    "nsfscreen.playdemo": "播放示例音乐",
-    "nsfscreen.samples": "采样数: ",
-
-    "widgets.size": "大小",
-    "widgets.scale": "缩放",
-
-    "n163.wavetable": "[N163] 波表",
-
-    "2a03.noise": "[2A03] 噪波",
-    "2a03.triangle": "[2A03] 三角波",
-    "2a03.pulse": "[2A03] 方波",
-    "2a03.dpcm": "[2A03] DPCM",
-
-    "vrc6.pulse": "[VRC6] 方波",
-    "vrc6.sawtooth": "[VRC6] 锯齿波",
-
-    "vrc7.fmsynthesizer": "[VRC7] FM 合成器",
-
-    "fds": "[Famicom磁盘系统音频]",
-    "s5b": "[Sunsoft 5B]",
+    "widget.musiclyrics.name": "歌词",
+    "category.music.name": "音乐",
+    "setting.turn composer into lyric.name": "将作者替换为歌词",
+    "setting.quality.name": "品质",
+    "setting.volume.name": "音量",
+    "mode.FadeIn.name": "淡入",
+    "setting.height.name": "高度",
+    "setting.shadow.name": "阴影",
+    "setting.single line mode.name": "单行模式",
+    "mode.Waveform.name": "波形",
+    "mode.Oscilloscope.name": "示波器",
+    "mode.Line.name": "线条",
+    "setting.compact mode.name": "紧凑模式",
+    "setting.absolute volume.name": "绝对音量",
+    "setting.waveform stereo.name": "波形双声道",
+    "setting.window time (ms).name": "窗口大小 (毫秒)",
 
     "clickgui.nosettingshere": "这里没有设置."
   }

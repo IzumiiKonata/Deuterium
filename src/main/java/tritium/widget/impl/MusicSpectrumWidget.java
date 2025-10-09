@@ -44,7 +44,7 @@ public class MusicSpectrumWidget extends Widget {
         Line
     }
 
-    public final BooleanSetting compatMode = new BooleanSetting("Compat Mode", false);
+    public final BooleanSetting compatMode = new BooleanSetting("Compact Mode", false);
     public final BooleanSetting indicator = new BooleanSetting("Indicator", true);
     public final ColorSetting rectColor = new ColorSetting("Rect Color", new HSBColor(125, 125, 125, 200));
 
