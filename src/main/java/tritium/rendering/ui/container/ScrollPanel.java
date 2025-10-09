@@ -1,5 +1,6 @@
 package tritium.rendering.ui.container;
 
+import org.lwjglx.input.Keyboard;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
@@ -32,6 +33,9 @@ public class ScrollPanel extends Panel {
         if (dWheel != 0) {
 
             double strength = 24;
+
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
+                strength *= 2;
 
             // hovering this panel
             if (this.testHovered(mouseX, mouseY)) {
@@ -98,6 +102,18 @@ public class ScrollPanel extends Panel {
         super.renderWidget(mouseX, mouseY, dWheel);
 
         StencilClipManager.endClip();
+    }
+
+    @Override
+    protected boolean shouldRenderChildren(AbstractWidget<?> child, double mouseX, double mouseY) {
+
+        if (child.getY() + child.getHeight() < this.getY())
+            return false;
+
+        if (child.getY() > this.getY() + this.getHeight())
+            return false;
+
+        return true;
     }
 
     @Override

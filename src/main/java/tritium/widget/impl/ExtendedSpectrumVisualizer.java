@@ -147,7 +147,7 @@ public class ExtendedSpectrumVisualizer {
 
         // 高频段使用标准Bark分布
         if (lowFreqMax < maxFreq) {
-            float barkMin = freqToBark(lowFreqMax * .5f);
+            float barkMin = freqToBark(lowFreqMax * .25f);
             float barkMax = freqToBark(maxFreq);
 //            System.out.println("maxFreq * lowFreqFactor: " + (maxFreq * lowFreqFactor) + ", lowFreqMax: " + lowFreqMax);
             float barkStep = (barkMax - barkMin) / highFreqBands;
@@ -241,23 +241,23 @@ public class ExtendedSpectrumVisualizer {
             bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
         }
 
-        // Bark分布部分（低频）
-        float barkMin = freqToBark(midFreq);
-        float barkMax = freqToBark(maxFreq);
-        float barkStep = (barkMax - barkMin) / barkBands;
-
-        for (int i = 0; i < barkBands; i++) {
-            float lowFreq = barkToFreq(barkMin + i * barkStep);
-            float highFreq = barkToFreq(barkMin + (i + 1) * barkStep);
-            float centerFreq = (lowFreq + highFreq) / 2;
-
-            int lowBin = freqToBin(lowFreq);
-            int highBin = freqToBin(highFreq);
-            lowBin = Math.max(0, Math.min(maxBin, lowBin));
-            highBin = Math.max(lowBin, Math.min(maxBin, highBin));
-
-            bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
-        }
+//        // Bark分布部分（低频）
+//        float barkMin = freqToBark(midFreq);
+//        float barkMax = freqToBark(maxFreq);
+//        float barkStep = (barkMax - barkMin) / barkBands;
+//
+//        for (int i = 0; i < barkBands; i++) {
+//            float lowFreq = barkToFreq(barkMin + i * barkStep);
+//            float highFreq = barkToFreq(barkMin + (i + 1) * barkStep);
+//            float centerFreq = (lowFreq + highFreq) / 2;
+//
+//            int lowBin = freqToBin(lowFreq);
+//            int highBin = freqToBin(highFreq);
+//            lowBin = Math.max(0, Math.min(maxBin, lowBin));
+//            highBin = Math.max(lowBin, Math.min(maxBin, highBin));
+//
+//            bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
+//        }
     }
 
     private double freqToMel(double freq) {

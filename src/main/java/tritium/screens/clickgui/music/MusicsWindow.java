@@ -64,6 +64,15 @@ public class MusicsWindow extends Window {
 
         this.baseRect.addChild(back);
 
+        LabelWidget lblLoading = new LabelWidget(() -> musicsPanel.getChildren().isEmpty() ? "Loading..." : "", FontManager.pf25);
+
+        this.baseRect.addChild(lblLoading);
+
+        lblLoading.setBeforeRenderCallback(() -> {
+            lblLoading.center();
+            lblLoading.setColor(ClickGui.getColor(17));
+        });
+
         musicsPanel = new ScrollPanel();
 
         this.baseRect.addChild(musicsPanel);

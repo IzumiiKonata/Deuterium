@@ -102,67 +102,67 @@ public class PlaylistsWindow extends Window {
         base.setMargin(4);
         base.setHeight(24);
 
-        // nickname
+        // avatar
         {
-            LabelWidget nickname = new LabelWidget(() -> {
-                User profile = CloudMusic.profile;
-                if (profile == null)
-                    return "";
+            ImageWidget avatar = new ImageWidget(() -> {
+                if (CloudMusic.profile == null)
+                    return null;
 
-                return profile.getName();
-            }, FontManager.pf16);
+                Location avatarLoc = Location.of("tritium/textures/ncm_avatar_" + CloudMusic.profile.getName() + ".png");
 
-            nickname.setMaxWidth(40);
+                TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+                if (textureManager.getTexture(avatarLoc) == null) {
 
-            nickname.setBeforeRenderCallback(() -> {
-                nickname.setPosition(nickname.getParentWidth() - nickname.getWidth(), 0);
-                nickname.centerVertically();
-                nickname.setColor(ClickGui.getColor(20));
-            });
-
-            base.addChild(nickname);
-
-            // avatar
-            {
-                ImageWidget avatar = new ImageWidget(() -> {
-                    if (CloudMusic.profile == null)
-                        return null;
-
-                    Location avatarLoc = Location.of("tritium/textures/ncm_avatar_" + CloudMusic.profile.getName() + ".png");
-
-                    TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-                    if (textureManager.getTexture(avatarLoc) == null) {
-
-                        if (!avatarLoaded) {
-                            avatarLoaded = true;
-                            MultiThreadingUtil.runAsync(() -> {
-                                try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.getAvatarUrl() + "?param=32y32")) {
-                                    if (inputStream != null) {
-                                        BufferedImage img = ImageIO.read(inputStream);
-                                        AsyncGLContext.submit(() -> {
-                                            if (textureManager.getTexture(avatarLoc) != null) {
-                                                textureManager.deleteTexture(avatarLoc);
-                                            }
-                                            Textures.loadTexture(avatarLoc, img);
-                                        });
-                                    }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                    if (!avatarLoaded) {
+                        avatarLoaded = true;
+                        MultiThreadingUtil.runAsync(() -> {
+                            try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.getAvatarUrl() + "?param=32y32")) {
+                                if (inputStream != null) {
+                                    BufferedImage img = ImageIO.read(inputStream);
+                                    AsyncGLContext.submit(() -> {
+                                        if (textureManager.getTexture(avatarLoc) != null) {
+                                            textureManager.deleteTexture(avatarLoc);
+                                        }
+                                        Textures.loadTexture(avatarLoc, img);
+                                    });
                                 }
-                            });
-                        }
-
-                        return null;
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        });
                     }
 
-                    return avatarLoc;
-                }, 0, 0, 16, 16);
+                    return null;
+                }
 
-                avatar.setBeforeRenderCallback(() -> {
-                    avatar.setPosition(avatar.getParentWidth() - nickname.getWidth() - 4 - avatar.getWidth(), 4);
+                return avatarLoc;
+            }, 0, 0, 16, 16);
+
+            avatar.setBeforeRenderCallback(() -> {
+                avatar.setPosition(4, 4);
+            });
+
+            base.addChild(avatar);
+
+            // nickname
+            {
+                LabelWidget nickname = new LabelWidget(() -> {
+                    User profile = CloudMusic.profile;
+                    if (profile == null)
+                        return "";
+
+                    return profile.getName();
+                }, FontManager.pf16);
+
+                base.addChild(nickname);
+
+                nickname.setMaxWidth(nickname.getParentWidth() - 12 - avatar.getWidth());
+
+                nickname.setBeforeRenderCallback(() -> {
+                    nickname.setPosition(8 + avatar.getWidth(), 0);
+                    nickname.centerVertically();
+                    nickname.setColor(ClickGui.getColor(20));
                 });
-
-                base.addChild(avatar);
             }
         }
     }

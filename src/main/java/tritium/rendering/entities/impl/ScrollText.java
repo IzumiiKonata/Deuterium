@@ -2,6 +2,7 @@ package tritium.rendering.entities.impl;
 
 import lombok.Setter;
 import tritium.rendering.Stencil;
+import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
@@ -51,11 +52,10 @@ public class ScrollText {
             this.reset();
         }
 
-        Stencil.write();
-        double exp = 2;
-        Rect.draw(x, y - exp, width, fr.getHeight() + exp * 2, -1, Rect.RectType.EXPAND);
-
-        Stencil.erase();
+        StencilClipManager.beginClip(() -> {
+            double exp = 2;
+            Rect.draw(x, y - exp, width, fr.getHeight() + exp * 2, -1, Rect.RectType.EXPAND);
+        });
 
         fr.drawString(text, x + scrollOffset, y, color);
 
@@ -99,7 +99,8 @@ public class ScrollText {
 
         }
 
-        Stencil.dispose();
+
+        StencilClipManager.endClip();
 
         if (ClientSettings.DEBUG_MODE.getValue()) {
             fr.drawString("" + scrollOffset, x, y - fr.getHeight(), color);

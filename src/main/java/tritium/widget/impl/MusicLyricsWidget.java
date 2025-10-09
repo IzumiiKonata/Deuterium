@@ -622,11 +622,11 @@ public class MusicLyricsWidget extends Widget {
             case Right:
                 if (shouldRender) {
                     bigFrString(lyric.getLyric(),
-                            this.getX() + this.getWidth() - getFontRenderer().getWidth(lyric.getLyric()), y, hexColor);
+                            this.getX() + this.getWidth() - getFontRenderer().getStringWidthD(lyric.getLyric()), y, hexColor);
                 }
                 if (!secondaryLyricEmpty) {
                     smallFrString(secondaryLyric,
-                            this.getX() + this.getWidth() - getSmallFontRenderer().getWidth(secondaryLyric),
+                            this.getX() + this.getWidth() - getSmallFontRenderer().getStringWidthD(secondaryLyric),
                             y + getFontRenderer().getHeight() + 2, rgb);
                 }
                 break;
@@ -707,9 +707,9 @@ public class MusicLyricsWidget extends Widget {
         long prevTiming = wordInfo.currentIndex == 0 ? 0 : prev.timing;
         double progress = (songProgress - timing.start - prevTiming) / (double) (current.timing - prevTiming);
 
-        double offsetX = progress * getFontRenderer().getWidth(current.word);
+        double offsetX = progress * getFontRenderer().getStringWidthD(current.word);
 
-        lyric.scrollWidth = getFontRenderer().getWidth(wordInfo.textBefore.toString()) + offsetX;
+        lyric.scrollWidth = getFontRenderer().getStringWidthD(wordInfo.textBefore.toString()) + offsetX;
     }
 
     /**
@@ -739,7 +739,7 @@ public class MusicLyricsWidget extends Widget {
         double x = calculateAlignmentX(lyric.getLyric(), alignMode);
 
         StencilClipManager.beginClip(() -> {
-            Rect.draw(x, renderInfo.yPosition, lyric.scrollWidth, getFontRenderer().getHeight() + 4, -1);
+            Rect.draw(x, renderInfo.yPosition, lyric.scrollWidth + 1, getFontRenderer().getHeight() + 4, -1);
         });
 
         renderAlignedText(lyric.getLyric(), renderInfo.yPosition, -1, alignMode);
@@ -837,9 +837,9 @@ public class MusicLyricsWidget extends Widget {
         if (alignMode == AlignMode.Left) {
             return this.getX();
         } else if (alignMode == AlignMode.Center) {
-            return this.getX() + this.getWidth() / 2.0f - getFontRenderer().getWidth(text) / 2.0f;
+            return this.getX() + this.getWidth() / 2.0f - getFontRenderer().getStringWidthD(text) / 2.0f;
         } else {
-            return this.getX() + this.getWidth() - getFontRenderer().getWidth(text);
+            return this.getX() + this.getWidth() - getFontRenderer().getStringWidthD(text);
         }
     }
 

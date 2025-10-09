@@ -62,6 +62,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
      */
     public abstract void onRender(double mouseX, double mouseY, int dWheel);
 
+    protected boolean shouldRenderChildren(AbstractWidget<?> child, double mouseX, double mouseY) {
+        return true;
+    }
+
     /**
      * 渲染这个组件以及它的子组件。
      * @param mouseX 鼠标 X 坐标
@@ -106,6 +110,9 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         for (AbstractWidget<?> child : this.getChildren()) {
 
             if (child.isHidden())
+                continue;
+
+            if (!this.shouldRenderChildren(child, mouseX, mouseY))
                 continue;
 
             child.renderWidget(mouseX, mouseY, dWheel);

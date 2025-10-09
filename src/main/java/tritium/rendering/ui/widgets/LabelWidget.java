@@ -2,7 +2,9 @@ package tritium.rendering.ui.widgets;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.util.LazyLoadBase;
 import tritium.management.FontManager;
+import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
 
@@ -22,6 +24,13 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
     @Getter
     @Setter
     double maxWidth = -1;
+
+    LazyLoadBase<ScrollText> scrollText = new LazyLoadBase<ScrollText>() {
+        @Override
+        protected ScrollText load() {
+            return new ScrollText();
+        }
+    };
 
     public LabelWidget(String label, CFontRenderer font) {
         this.setLabel(label);
@@ -47,12 +56,16 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
 
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
-        boolean widthLimited = this.getMaxWidth() == -1;
+        boolean widthNotLimited = this.getMaxWidth() == -1;
 
-        String label = widthLimited ? this.getLabel() : font.trim(this.getLabel(), this.maxWidth);
+        String lbl = this.getLabel();
 
-        font.drawString(label, this.getX(), this.getY(), this.getHexColor());
-        double width = widthLimited ? font.getWidth(label) : this.getMaxWidth();
+        if (widthNotLimited)
+            font.drawString(lbl, this.getX(), this.getY(), this.getHexColor());
+        else
+            this.scrollText.getValue().render(font, lbl, this.getX(), this.getY(), this.getMaxWidth(), this.getHexColor());
+
+        double width = widthNotLimited ? font.getWidthDouble(lbl) : this.getMaxWidth();
         this.setBounds(width, font.getHeight());
     }
 

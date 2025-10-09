@@ -132,7 +132,6 @@ public class MusicInfoWidget extends Widget {
                             GlStateManager.bindTexture(prevBlurredBg.getGlTextureId());
                             prevBlurredBg.linearFilter();
                             this.roundedRectTextured(posX, posY, width, height + downloadProgHeight, 0, v, 1, v, coverRound, 1, alpha);
-
                         }
 
                         if (texBg != null) {
@@ -165,6 +164,8 @@ public class MusicInfoWidget extends Widget {
 
                     StencilClipManager.endClip();
                 }
+
+                this.roundedRect(this.getX(), this.getY(), width, height + downloadProgHeight, bgRound + 1.5, 1, 0, 0, 0, alpha * 0.2f);
 
                 if (prevBg != null) {
                     GlStateManager.bindTexture(prevBg.getGlTextureId());

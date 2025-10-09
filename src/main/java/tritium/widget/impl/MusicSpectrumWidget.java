@@ -2,6 +2,7 @@ package tritium.widget.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
+import org.lwjglx.opengl.GLSync;
 import processing.sound.JSynFFT;
 import tech.konata.ncmplayer.music.CloudMusic;
 import tritium.management.WidgetsManager;
@@ -86,7 +87,7 @@ public class MusicSpectrumWidget extends Widget {
         if (!this.isEnabled())
             return;
 
-        if (visualizer == null || visualizer.getSampleRate() != CloudMusic.player.player.sampleRate() || visualizer.getFftSize() != JSynFFT.FFT_SIZE) {
+        if (visualizer == null || visualizer.getSampleRate() != CloudMusic.player.player.sampleRate() || visualizer.getFftSize() != JSynFFT.FFT_SIZE || true) {
             visualizer = new ExtendedSpectrumVisualizer(CloudMusic.player.player.sampleRate(), JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
         }
 
@@ -107,12 +108,20 @@ public class MusicSpectrumWidget extends Widget {
 
         boolean compatMode = this.compatMode.getValue();
 
+
+
         if (CloudMusic.player != null) {
 
             boolean rect = style == Rect;
             boolean line = style == Line;
             boolean waveform = style == Waveform;
             boolean oscilloscope = style == Oscilloscope;
+
+            if (compatMode || waveform || oscilloscope) {
+                NORMAL.add(() -> {
+                    this.roundedRect(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 6, 0, 0, 0, 0.4f);
+                });
+            }
 
 //            if (this.visualizer != null) {
 //                List<ExtendedSpectrumVisualizer.FrequencyBand> bands = visualizer.getBands();
@@ -188,10 +197,11 @@ public class MusicSpectrumWidget extends Widget {
                 if (waveform) {
                     boolean stereo = this.stereo.getValue();
 
-                    double pWidgetHeight = stereo ? (this.getHeight() - 17 ) * 0.5 : this.getHeight() - 17;
+                    double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
 
                     // ⚠⚠⚠ race conditions 警告 ⚠⚠⚠
                     if (CloudMusic.player.spectrumDataLFilled) {
+                        GlStateManager.color(1, 1, 1, 1);
                         this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.waveVertexesBufferBackend, CloudMusic.player.waveVertexes.length / 2);
                     }
 
@@ -209,9 +219,10 @@ public class MusicSpectrumWidget extends Widget {
                 if (oscilloscope) {
                     boolean stereo = this.stereo.getValue();
 
-                    double pWidgetHeight = stereo ? (this.getHeight() - 17) * 0.5 : this.getHeight() - 17;
+                    double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
 
                     if (CloudMusic.player.oscilloscopeDataLFilled) {
+                        GlStateManager.color(1, 1, 1, 1);
                         this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.oscilloscopeVertexesBufferBackendL, CloudMusic.player.oscilloscopeVertexesL.length / 2);
                     }
 
@@ -289,7 +300,7 @@ public class MusicSpectrumWidget extends Widget {
         if (bb != null) {
             GlStateManager.disableAlpha();
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 
@@ -318,13 +329,6 @@ public class MusicSpectrumWidget extends Widget {
 
 
     private void drawRect(double spectrumWidth, int j, int step) {
-
-        int rgb = this.rectColor.getValue().getColor().getRGB();
-
-        float a = (rgb >> 24 & 255) * RenderSystem.DIVIDE_BY_255;
-        float r = (rgb >> 16 & 255) * RenderSystem.DIVIDE_BY_255;
-        float g = (rgb >> 8 & 255) * RenderSystem.DIVIDE_BY_255;
-        float b = (rgb & 255) * RenderSystem.DIVIDE_BY_255;
 
         boolean compatMode = this.compatMode.getValue();
 
@@ -378,6 +382,13 @@ public class MusicSpectrumWidget extends Widget {
                 top = bottom;
                 bottom = j1;
             }
+
+            int rgb = this.rectColor.getRGB(i);
+
+            float a = (rgb >> 24 & 255) * RenderSystem.DIVIDE_BY_255;
+            float r = (rgb >> 16 & 255) * RenderSystem.DIVIDE_BY_255;
+            float g = (rgb >> 8 & 255) * RenderSystem.DIVIDE_BY_255;
+            float b = (rgb & 255) * RenderSystem.DIVIDE_BY_255;
 
             GlStateManager.color(r, g, b, a);
 

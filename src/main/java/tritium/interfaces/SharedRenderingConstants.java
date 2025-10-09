@@ -48,6 +48,10 @@ public interface SharedRenderingConstants {
         Shaders.RQ_SHADER.draw(x, y, width, height, radius, r, g, b, a);
     }
 
+    default void roundedRect(double x, double y, double width, double height, double radius, double expand, float r, float g, float b, float a) {
+        roundedRect(x - expand, y - expand, width + expand * 2, height + expand * 2, radius, r, g, b, a);
+    }
+
     default void roundedRect(double x, double y, double width, double height, double radius, int r, int g, int b, int a) {
         Shaders.RQ_SHADER.draw(x, y, width, height, radius, r, g, b, a);
     }
