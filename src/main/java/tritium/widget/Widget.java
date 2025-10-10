@@ -88,9 +88,9 @@ public abstract class Widget extends Module {
     }
 
     public void doScale() {
-        GlStateManager.translate(this.getX(), this.getY(), 1);
+        GlStateManager.translate(this.getX(), this.getY(), 0);
         GlStateManager.scale(this.scaleFactor, this.scaleFactor, 1);
-        GlStateManager.translate(-this.getX(), -this.getY(), 1);
+        GlStateManager.translate(-this.getX(), -this.getY(), 0);
     }
 
     public void renderStyledBackground(double x, double y, double width, double height, double radius) {

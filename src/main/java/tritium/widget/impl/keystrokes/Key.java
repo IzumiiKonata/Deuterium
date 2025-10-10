@@ -46,8 +46,7 @@ public class Key implements SharedRenderingConstants {
 
             this.pressedAlpha = Interpolations.interpBezier(this.pressedAlpha, this.key.pressed ? 80 * RenderSystem.DIVIDE_BY_255 : 0, 0.2f);
 
-            Rect.draw(x + xOffset, y + yOffset, width, height, ThemeManager.get(ThemeManager.ThemeColor.Surface, 50), Rect.RectType.EXPAND);
-
+            Rect.draw(x + xOffset, y + yOffset, width, height, RenderSystem.hexColor(0, 0, 0, 50), Rect.RectType.EXPAND);
             Rect.draw(x + xOffset, y + yOffset, width, height, RenderSystem.hexColor(255, 255, 255, (int) (this.pressedAlpha * 255)), Rect.RectType.EXPAND);
 
             Stencil.write();
@@ -95,13 +94,16 @@ public class Key implements SharedRenderingConstants {
 
             IFontRenderer fontRenderer = FontManager.pf18;
 
-            if (this.key.getKeyCode() != 57 && this.key.getKeyCode() > 0) {
-                fontRenderer.drawString(this.getKeyName(), x + xOffset + 4, y + yOffset + 3, hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255)));
-            }
 
-            if (this.key.getKeyCode() <= -99) {
-                fontRenderer.drawCenteredString(this.getKeyName(), x + xOffset + width / 2, y + yOffset + height / 2 - fontRenderer.getHeight() / 2.0, hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255)));
+
+            if (this.key.getKeyCode() != 57) {
+                fontRenderer.drawCenteredString(this.getKeyName(), x + xOffset + width * .5, y + yOffset + height * .5 - fontRenderer.getHeight() / 2.0, hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255)));
+
+//                fontRenderer.drawString(this.getKeyName(), x + xOffset + 4, y + yOffset + 3, hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255)));
             }
+//
+//            if (this.key.getKeyCode() <= -99) {
+//            }
 
         });
 

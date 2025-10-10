@@ -10,9 +10,13 @@ import net.optifine.util.LockCounter;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
+import tritium.rendering.FramebufferCaching;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 public class GlStateManager {
     private static final GlStateManager.AlphaState alphaState = new GlStateManager.AlphaState();
@@ -182,6 +186,11 @@ public class GlStateManager {
     }
 
     public static void tryBlendFuncSeparate(int srcFactor, int dstFactor, int srcFactorAlpha, int dstFactorAlpha) {
+
+        if (srcFactor == 770 && dstFactor == 771 && srcFactorAlpha == 1 && dstFactorAlpha == 0 && FramebufferCaching.getOverridingFramebuffer() != null) {
+            dstFactorAlpha = GL_ONE_MINUS_SRC_ALPHA;
+//            GlStateManager.tryBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+        }
 
         if (blendLock.isLocked()) {
             blendLockState.setFactors(srcFactor, dstFactor, srcFactorAlpha, dstFactorAlpha);

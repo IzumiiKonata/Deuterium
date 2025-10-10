@@ -36,13 +36,15 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
 
         this.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
 
-            ClickGui.getInstance().getCategoriesWindow().getCategoryButtons().forEach(b -> {
-                if (this != b)
-                    b.setSelected(false);
-            });
+            if (mouseButton == 0) {
+                ClickGui.getInstance().getCategoriesWindow().getCategoryButtons().forEach(b -> {
+                    if (this != b)
+                        b.setSelected(false);
+                });
 
-            this.setSelected(true);
-            this.onClick.run();
+                this.setSelected(true);
+                this.onClick.run();
+            }
 
             return true;
         });

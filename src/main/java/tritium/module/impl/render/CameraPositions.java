@@ -63,7 +63,7 @@ public class CameraPositions extends Module {
 
     public double interpX, interpY, interpZ;
 
-    private static int lastView = 0;
+    private static int lastView = -1;
 
     public void offsetCamera() {
 

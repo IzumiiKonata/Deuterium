@@ -130,7 +130,7 @@ public class PaperDoll extends Widget {
         float f5 = ent.prevRenderYawOffset;
         float f6 = ent.prevRotationPitch;
         GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
-        RenderHelper.enableStandardItemLighting();
+        RenderHelper.enablePaperDollLighting();
         GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
         ent.renderYawOffset = 0;
         ent.rotationYaw = 0;

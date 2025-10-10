@@ -34,7 +34,7 @@ public class ModuleManager extends AbstractManager {
     public static final Interface hud = new Interface();
     public static final OpenClickGui clickGui = new OpenClickGui();
     public static final BlockAnimations blockAnimations = new BlockAnimations();
-    public static final BreadCrumbs breadCrumbs = new BreadCrumbs();
+//    public static final BreadCrumbs breadCrumbs = new BreadCrumbs();
     public static final CameraPositions cameraPositions = new CameraPositions();
     public static final ItemPhysic itemPhysic = new ItemPhysic();
     public static final MoreParticles moreParticles = new MoreParticles();
@@ -138,7 +138,7 @@ public class ModuleManager extends AbstractManager {
             }
         }
 
-        modules.add(ClientSettings.dummyModule);
+        modules.add(ClientSettings.settingsModule);
     }
 
     @Override

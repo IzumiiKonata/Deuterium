@@ -41,7 +41,7 @@ public class ExtendedSpectrumVisualizer {
     }
 
     private void generateFrequencyBands(FrequencyDistribution distribution) {
-        float maxFreq = 20000;
+        float maxFreq = 14000;
         float minFreq = 20.0f;
 
         switch (distribution) {
@@ -221,7 +221,7 @@ public class ExtendedSpectrumVisualizer {
      */
     private void generateDenseBarkBands(float minFreq, float maxFreq, int bandCount) {
         // 在低频区域使用混合分布：部分线性 + 部分Bark
-        int linearBands = bandCount / 3; // 1/3使用线性分布
+        int linearBands = bandCount / 5; // 1/3使用线性分布
         int barkBands = bandCount - linearBands; // 2/3使用Bark分布
 
         float midFreq = minFreq + (maxFreq - minFreq) * .35f;
@@ -280,19 +280,6 @@ public class ExtendedSpectrumVisualizer {
         return Math.round(freq * fftSize / sampleRate);
     }
 
-    private float weightingdB(float freq) {
-        float f2 = freq * freq;
-        double h = ( Math.pow(1037918.48 - f2, 2) + 1080768.16 * f2 ) / ( Math.pow(9837328 - f2, 2) + 11723776 * f2 );
-        double rD = ( freq / 6.8966888496476e-5 ) * Math.sqrt( h / ( ( f2 + 79919.29 ) * ( f2 + 1345600 ) ) );
-        return (float) (20 * Math.log10(rD));
-    }
-
-    private float binToFreq(int magIn) {
-        if (magIn == 0)
-            return 1;
-        return (float) (magIn * this.sampleRate) / this.fftSize;
-    }
-
     public float[] processFFT(float[] magnitudes) {
         if (magnitudes.length < fftSize / 2) {
             return bandMagnitudes;
@@ -340,50 +327,8 @@ public class ExtendedSpectrumVisualizer {
         return bandMagnitudes;
     }
 
-    private float clamp(float val, float min, float max) {
-        if (val < min) {
-            return min;
-        }
-        return Math.min(val, max);
-    }
-
     private float dBToLinear(float input) {
         return (float) Math.pow(10, input / 20);
-    }
-
-    public void printBandInfo() {
-        System.out.println("频谱分析器配置：");
-        System.out.println("采样率: " + sampleRate + " Hz");
-        System.out.println("FFT大小: " + fftSize);
-        System.out.println("频带数量: " + bands.size());
-        System.out.println("频率分辨率: " + (sampleRate / (float) fftSize) + " Hz/bin");
-
-        System.out.println("\n前10个频带：");
-        for (int i = 0; i < Math.min(10, bands.size()); i++) {
-            FrequencyBand band = bands.get(i);
-            System.out.printf("频带 %d: %.1fHz (%.1f-%.1fHz) bins[%d-%d] 带宽:%.1fHz\n",
-                    i, band.centerFreq, band.lowFreq, band.highFreq, band.lowBin, band.highBin,
-                    band.highFreq - band.lowFreq);
-        }
-
-        System.out.println("\n后5个频带：");
-        for (int i = Math.max(0, bands.size() - 5); i < bands.size(); i++) {
-            FrequencyBand band = bands.get(i);
-            System.out.printf("频带 %d: %.1fHz (%.1f-%.1fHz) bins[%d-%d] 带宽:%.1fHz\n",
-                    i, band.centerFreq, band.lowFreq, band.highFreq, band.lowBin, band.highBin,
-                    band.highFreq - band.lowFreq);
-        }
-
-        // 统计低频段信息
-        int lowFreqBandCount = 0;
-        for (FrequencyBand band : bands) {
-            if (band.centerFreq < lowFreqCutoff) {
-                lowFreqBandCount++;
-            }
-        }
-        System.out.println("\n低频段统计：");
-        System.out.println("低频段频带数量: " + lowFreqBandCount + " / " + bands.size());
-        System.out.println("低频段占比: " + String.format("%.1f", (float)lowFreqBandCount / bands.size() * 100) + "%");
     }
 
     public enum FrequencyDistribution {

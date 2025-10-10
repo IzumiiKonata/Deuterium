@@ -8,6 +8,7 @@ import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
+import tritium.settings.ClientSettings;
 
 /**
  * @author IzumiiKonata
@@ -81,7 +82,7 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
 
         this.setOnClickCallback((rx, ry, i) -> {
 
-            if (i == 0)
+            if (i == 0 && this.module != ClientSettings.settingsModule)
                 module.toggle();
 
             return true;
@@ -96,12 +97,14 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
         this.setColor(this.isHovering() ? ClickGui.getColor(10) : ClickGui.getColor(8));
         Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.getHexColor());
 
-        Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RenderSystem.hexColor(223, 1, 1, (int) (this.getAlpha() * 255)));
+        if (this.module != ClientSettings.settingsModule) {
+            Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RenderSystem.hexColor(223, 1, 1, (int) (this.getAlpha() * 255)));
 
-        this.moduleEnableAlpha = Interpolations.interpBezier(this.moduleEnableAlpha, this.module.isEnabled() ? 1f : 0f, 0.2f);
+            this.moduleEnableAlpha = Interpolations.interpBezier(this.moduleEnableAlpha, this.module.isEnabled() ? 1f : 0f, 0.2f);
 
-        if (this.moduleEnableAlpha > .05f)
-            Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RenderSystem.hexColor(1, 223, 1, (int) (Math.min(this.moduleEnableAlpha, this.getAlpha()) * 255)));
+            if (this.moduleEnableAlpha > .05f)
+                Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RenderSystem.hexColor(1, 223, 1, (int) (Math.min(this.moduleEnableAlpha, this.getAlpha()) * 255)));
+        }
 
         this.nameHoverAnimation = Interpolations.interpBezier(this.nameHoverAnimation, this.isHovering() ? 4 : 0, 0.3f);
 

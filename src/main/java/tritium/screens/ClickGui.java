@@ -50,11 +50,6 @@ public class ClickGui extends BaseScreen {
     boolean closing = false;
 
     public ClickGui() {
-
-    }
-
-    @Override
-    public void initGui() {
         this.windows.clear();
 
         this.windows.add(categoriesWindow);
@@ -64,6 +59,10 @@ public class ClickGui extends BaseScreen {
         this.windows.add(musicsWindow);
 
         this.windows.forEach(Window::init);
+    }
+
+    @Override
+    public void initGui() {
         this.closing = false;
     }
 

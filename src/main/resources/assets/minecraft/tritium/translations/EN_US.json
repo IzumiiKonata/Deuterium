@@ -16,6 +16,7 @@
 
     "category.modules.name": "Modules",
     "category.global.name": "Global",
+    "category.widgets.name": "Widgets",
 
     "panel.combat.name": "Combat",
     "panel.movement.name": "Movement",

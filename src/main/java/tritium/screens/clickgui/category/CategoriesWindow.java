@@ -9,6 +9,7 @@ import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
+import tritium.screens.ClickGui;
 import tritium.screens.MoveWidgetsScreen;
 import tritium.screens.clickgui.Window;
 import tritium.utils.i18n.Localizable;
@@ -102,7 +103,7 @@ public class CategoriesWindow extends Window {
                             "e", Localizable.of("category.modules.name")
                     ),
                     Tuple.of(
-                            "f", Localizable.of("category.global.name")
+                            "f", Localizable.of("category.widgets.name")
                     ),
                     Tuple.of(
                             "f", Localizable.of("category.music.name")
@@ -111,10 +112,10 @@ public class CategoriesWindow extends Window {
 
             List<Runnable> onClick = Arrays.asList(
                     () -> {
-
+                        ClickGui.getInstance().getModuleListWindow().refreshModules();
                     },
                     () -> {
-
+                        ClickGui.getInstance().getModuleListWindow().refreshModules();
                     },
                     () -> {
 

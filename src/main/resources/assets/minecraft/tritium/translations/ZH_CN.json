@@ -12,6 +12,7 @@
 
     "category.modules.name": "功能",
     "category.global.name": "全局",
+    "category.widgets.name": "组件",
     "clickgui.edit": "编辑",
 
     "panel.settings.name": "设置",
@@ -633,7 +634,7 @@
     "mode.None.name": "无",
     "mode.Rain.name": "雨",
 
-    "setting.frame predict.name": "帧预测 (实验性)",
+    "setting.frame predict.name": "平滑帧数 (实验性)",
     "mode.Accum.name": "累加",
     "mode.Framebuffer.name": "帧缓冲",
 
@@ -684,6 +685,9 @@
     "mode.SlideUp.name": "上滑",
     "mode.SlideDown.name": "下滑",
     "mode.SlideMix.name": "滑动 (上下混合)",
+
+    "widgets.size": "大小",
+    "widgets.scale": "缩放",
 
     "widget.musiclyrics.name": "歌词",
     "category.music.name": "音乐",

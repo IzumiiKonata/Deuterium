@@ -143,7 +143,7 @@ public class ClientSettings {
 
     };
 
-    public static final Module dummyModule = new Module("Setting", Module.Category.SETTING) {
+    public static final Module settingsModule = new Module("Setting", Module.Category.SETTING) {
         {
             super.setShouldRender(() -> false);
         }
@@ -195,8 +195,8 @@ public class ClientSettings {
             });
         }
 
-        dummyModule.getSettings().clear();
-        dummyModule.addSettings(settings.toArray(new Setting[0]));
+        settingsModule.getSettings().clear();
+        settingsModule.addSettings(settings.toArray(new Setting[0]));
     }
 
     public static Setting<?> getSettingByName(String name) {

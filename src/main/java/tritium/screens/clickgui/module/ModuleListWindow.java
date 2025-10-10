@@ -31,6 +31,8 @@ public class ModuleListWindow extends Window {
     @Setter
     public Module onSetting;
 
+    private ScrollPanel scrollPanel;
+
     @Override
     public void init() {
         this.baseRect.getChildren().clear();
@@ -42,7 +44,7 @@ public class ModuleListWindow extends Window {
             this.baseRect.setColor(ClickGui.getColor(3));
         });
 
-        ScrollPanel scrollPanel = new ScrollPanel();
+        scrollPanel = new ScrollPanel();
 
         this.baseRect.addChild(scrollPanel);
         scrollPanel.setMargin(4);
@@ -52,10 +54,28 @@ public class ModuleListWindow extends Window {
             scrollPanel.addChild(new ModuleRect(module));
         }
 
-        for (Widget module : WidgetsManager.getWidgets()) {
-            scrollPanel.addChild(new ModuleRect(module));
+    }
+
+    public void refreshModules() {
+
+        this.scrollPanel.getChildren().clear();
+        this.scrollPanel.targetScrollOffset = 0;
+
+        int index = ClickGui.getInstance().getCategoriesWindow().getSelectedCategoryIndex();
+
+        // modules
+        if (index == 0) {
+            for (Module module : ModuleManager.getModules()) {
+                scrollPanel.addChild(new ModuleRect(module));
+            }
         }
 
+        // widgets
+        if (index == 1) {
+            for (Widget module : WidgetsManager.getWidgets()) {
+                scrollPanel.addChild(new ModuleRect(module));
+            }
+        }
     }
 
     @Override

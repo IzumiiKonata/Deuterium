@@ -46,10 +46,7 @@ public class Inventory extends Widget {
 
             int count = 0;
 
-            GlStateManager.enableBlend();
-
             for (ItemStack stack : InvUtils.getInventoryContent()) {
-                GlStateManager.disableAlpha();
 
                 Rect.draw(offsetX, offsetY, stackWidth, stackHeight, hexColor(0, 0, 0, 20), Rect.RectType.EXPAND);
 

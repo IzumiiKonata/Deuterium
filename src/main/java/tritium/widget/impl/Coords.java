@@ -11,6 +11,8 @@ import tritium.widget.Widget;
 import tritium.interfaces.SharedRenderingConstants;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -30,13 +32,11 @@ public class Coords extends Widget {
     public void onRender(boolean editing) {
         IFontRenderer fr = FontManager.pf25;
 
-        String[] text = this.getText();
+        List<String> text = this.getText();
 
         double spacing = 6;
 
-
         SharedRenderingConstants.NORMAL.add(() -> {
-
             this.renderStyledBackground(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 8);
 
             GlStateManager.pushMatrix();
@@ -52,15 +52,20 @@ public class Coords extends Widget {
             }
 
             this.setWidth(spacing * 2 + textWidth);
-            this.setHeight(spacing * 2 + (fr.getHeight() + 2) * text.length - 2);
+            this.setHeight(spacing * 2 + (fr.getHeight() + 2) * text.size() - 2);
 
             GlStateManager.popMatrix();
         });
     }
 
-    public String[] getText() {
+    public List<String > getText() {
         Chunk chunk = this.mc.theWorld.getChunkFromBlockCoords(new BlockPos(mc.thePlayer));
         String biome = chunk.getBiome(new BlockPos(mc.thePlayer), this.mc.theWorld.getWorldChunkManager()).lBiomeName.get();
-        return new String[] { "X: " + df.format(mc.thePlayer.posX), "Y: " + df.format(mc.thePlayer.posY), "Z: " + df.format(mc.thePlayer.posZ), lBiome.get() + ": " + biome };
+        return Arrays.asList(
+                "X: " + df.format(mc.thePlayer.posX),
+                "Y: " + df.format(mc.thePlayer.posY),
+                "Z: " + df.format(mc.thePlayer.posZ),
+                lBiome.get() + ": " + biome
+        );
     }
 }

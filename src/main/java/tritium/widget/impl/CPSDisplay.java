@@ -1,5 +1,6 @@
 package tritium.widget.impl;
 
+import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.widget.impl.keystrokes.CPSUtils;
 
@@ -20,12 +21,22 @@ public class CPSDisplay extends SimpleTextWidget {
         Simple
     }
 
+    public BooleanSetting showRmb = new BooleanSetting("Show RMB", false);
+
     @Override
     public String getText() {
-        String text = CPSUtils.left.get() + " CPS | " + CPSUtils.right.get() + " CPS";
+        String text = CPSUtils.left.get() + " CPS";
+
+        if (showRmb.getValue()) {
+            text += " | " + CPSUtils.right.get() + " CPS";
+        }
 
         if (style.getValue() == Style.Simple) {
-            text = CPSUtils.left.get() + " | " + CPSUtils.right.get();
+            text = String.valueOf(CPSUtils.left.get());
+
+            if (showRmb.getValue()) {
+                text += " | " + CPSUtils.right.get();
+            }
         }
 
         return text;

@@ -13,7 +13,7 @@ public class PingDisplay extends SimpleTextWidget {
 
     @Override
     public String getText() {
-        String text = "SinglePlayer";
+        String text = "N/A";
 
         if (mc.getCurrentServerData() != null) {
             text = mc.getCurrentServerData().pingToServer + "ms";

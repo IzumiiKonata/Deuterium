@@ -23,6 +23,7 @@ import net.minecraft.util.Location;
 import net.minecraft.util.Timer;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.input.Mouse;
+import tritium.rendering.FramebufferCaching;
 import tritium.rendering.entities.impl.Rect;
 import tritium.settings.ClientSettings;
 import tritium.utils.res.skin.PlayerSkinTextureCache;
@@ -30,8 +31,8 @@ import tritium.utils.res.skin.PlayerSkinTextureCache;
 import java.awt.*;
 import java.util.UUID;
 
-import static org.lwjgl.opengl.GL11.GL_GREATER;
-import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 /**
  * @author IzumiiKonata
@@ -128,6 +129,7 @@ public class RenderSystem {
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.disableTexture2D();
+
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         RenderSystem.color(color);
 
@@ -345,9 +347,9 @@ public class RenderSystem {
 
     public static void translateAndScale(double posX, double posY, double scale) {
 
-        GlStateManager.translate(posX, posY, 2);
+        GlStateManager.translate(posX, posY, 0);
         GlStateManager.scale(scale, scale, 2);
-        GlStateManager.translate(-posX, -posY, 2);
+        GlStateManager.translate(-posX, -posY, 0);
 
     }
 
