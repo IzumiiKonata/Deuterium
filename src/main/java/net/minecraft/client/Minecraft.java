@@ -114,6 +114,7 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.screens.MainMenu;
+import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
@@ -1131,7 +1132,7 @@ public class Minecraft implements IThreadListener {
         this.mcProfiler.startSection("display");
         GlStateManager.enableTexture2D();
 
-        if (this.thePlayer != null && this.theWorld != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
+        if (!(this.currentScreen instanceof AltScreen) && this.thePlayer != null && this.theWorld != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
             this.gameSettings.thirdPersonView = 0;
         }
 
@@ -1286,13 +1287,13 @@ public class Minecraft implements IThreadListener {
     public int getLimitFramerate() {
 
         if (this.theWorld == null)
-            return Math.min(300, Math.max(120, Display.getDesktopDisplayMode().getFrequency() * 4));
+            if (this.gameSettings.limitFramerate == (int) GameSettings.Options.FRAMERATE_LIMIT.getValueMax())
+                return Math.min(300, Math.max(120, Display.getDesktopDisplayMode().getFrequency() * 4));
 
         return /*this.theWorld == null && this.currentScreen != null ? 240 : */this.gameSettings.limitFramerate;
     }
 
     public boolean isFramerateLimitBelowMax() {
-
         if (this.theWorld == null)
             return true;
 
@@ -2099,8 +2100,10 @@ public class Minecraft implements IThreadListener {
         }
 
         if (!this.isGamePaused) {
-            this.mcMusicTicker.update();
-            this.mcSoundHandler.update();
+            if (!(this.currentScreen instanceof AltScreen)) {
+                this.mcMusicTicker.update();
+                this.mcSoundHandler.update();
+            }
         }
 
         if (this.theWorld != null) {

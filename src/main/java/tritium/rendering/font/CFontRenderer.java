@@ -419,7 +419,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 if (currentLine == 0) {
                     currentLine = this.getHeight();
                 }
-                previous += currentLine;
+                previous += currentLine + 4;
                 currentLine = 0;
                 continue;
             }

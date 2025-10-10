@@ -11,7 +11,6 @@ import tritium.settings.ModeSetting;
 
 public class Perspective extends Module {
     public static boolean perspectiveToggled;
-    public static Minecraft mc = Minecraft.getMinecraft();
     private static float cameraYaw;
     private static float cameraPitch;
     private static int previousPerspective;

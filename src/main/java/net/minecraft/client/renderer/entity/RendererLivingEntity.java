@@ -27,6 +27,7 @@ import tritium.event.events.rendering.RenderPlayerRotationsEvent;
 import tritium.management.EventManager;
 import tritium.management.ModuleManager;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
@@ -654,7 +655,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
         }
 
-        return Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || ClientSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
+        return !(Minecraft.getMinecraft().currentScreen instanceof AltScreen) && Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || ClientSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
     }
 
     public void setRenderOutlines(boolean renderOutlinesIn) {

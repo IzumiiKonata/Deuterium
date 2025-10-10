@@ -66,7 +66,7 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
             this.scrollText.getValue().render(font, lbl, this.getX(), this.getY(), this.getMaxWidth(), this.getHexColor());
 
         double width = widthNotLimited ? font.getWidthDouble(lbl) : this.getMaxWidth();
-        this.setBounds(width, font.getHeight());
+        this.setBounds(width, font.getStringHeight(lbl));
     }
 
     @Override

@@ -21,7 +21,9 @@ import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.loading.LoadingScreenRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shaders;
+import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
+import tritium.utils.alt.AltManager;
 import tritium.utils.i18n.Localizable;
 
 import java.util.ArrayList;
@@ -62,7 +64,7 @@ public class MainMenu extends BaseScreen {
             ),
             Tuple.of(
                     Localizable.of("mainmenu.altmanager"), () -> {
-
+                        SharedConstants.mc.displayGuiScreen(AltScreen.getInstance());
                     }
             ),
             Tuple.of(
@@ -164,7 +166,7 @@ public class MainMenu extends BaseScreen {
     }
 
     // colors
-    private int getColor(ColorType type) {
+    public int getColor(ColorType type) {
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
 
         switch (theme) {

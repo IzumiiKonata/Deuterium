@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.MathHelper;
 import tritium.management.WidgetsManager;
+import tritium.screens.altmanager.AltScreen;
 import tritium.widget.impl.PaperDoll;
 
 public class LayerCape implements LayerRenderer<AbstractClientPlayer> {
@@ -47,7 +48,11 @@ public class LayerCape implements LayerRenderer<AbstractClientPlayer> {
                 f1 = -5.0F;
             }
 
-            if (WidgetsManager.paperDoll.isEnabled() && PaperDoll.isRendering) {
+            if ((Minecraft.getMinecraft().currentScreen != null && Minecraft.getMinecraft().currentScreen instanceof AltScreen)) {
+                GlStateManager.rotate(20, 1.0F, 0.0F, 0.0F);
+//                GlStateManager.rotate(f3 / 2.0F, 0.0F, 0.0F, 1.0F);
+//                GlStateManager.rotate(-f3 / 2.0F, 0.0F, 1.0F, 0.0F);
+            } else if (WidgetsManager.paperDoll.isEnabled() && PaperDoll.isRendering) {
                 PaperDoll p = WidgetsManager.paperDoll;
 
                 d0 = entitylivingbaseIn.prevChasingPosX + (entitylivingbaseIn.chasingPosX - entitylivingbaseIn.prevChasingPosX) * (double) partialTicks - (entitylivingbaseIn.prevPosX + (entitylivingbaseIn.posX - entitylivingbaseIn.prevPosX) * (double) partialTicks);

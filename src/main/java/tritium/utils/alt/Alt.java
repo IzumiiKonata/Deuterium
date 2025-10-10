@@ -23,15 +23,15 @@ import java.awt.image.BufferedImage;
 @Getter
 public class Alt {
     @SerializedName("username")
-    private final String username;
+    public String username;
     @SerializedName("refreshToken")
-    private String refreshToken = "";
+    public String refreshToken = "";
 
     @SerializedName("accessToken")
-    private String accessToken = "";
+    public String accessToken = "";
 
     @SerializedName("userUUID")
-    private String userUUID = "";
+    public String userUUID = "";
 
     @Setter
     @SerializedName("lastRefreshedTime")
@@ -41,7 +41,6 @@ public class Alt {
 
     private transient Location skinLocation = null;
 
-    // 不要学习我！！不要把渲染用的field放到Bean类里头！！反面教材！！
     public transient float hoveredAlpha = 0.0f;
 
     public Alt(String crackedName) {
