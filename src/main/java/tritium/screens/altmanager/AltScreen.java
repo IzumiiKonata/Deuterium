@@ -77,7 +77,6 @@ public class AltScreen extends BaseScreen {
     private final Map<Alt, Object> infos = new HashMap<>();
     private final double spacing = 4;
     private ChangeCapeComponent component = null;
-    private Framebuffer playerPreviewFb = new Framebuffer(0, 0, true);
 
     // Status and UI state
     private String status = "";
@@ -287,28 +286,12 @@ public class AltScreen extends BaseScreen {
         Rect.draw(this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding() - 1, this.baseWidget.getY() - 1, this.getPanelWidth() + 2, this.baseWidget.getHeight() + 2, this.getColor(ColorType.CONTAINER_OUTLINE));
         Rect.draw(this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding(), this.baseWidget.getY(), this.getPanelWidth(), this.baseWidget.getHeight(), this.getColor(ColorType.CONTAINER_BACKGROUND));
 
-        playerPreviewFb = RenderSystem.createFrameBuffer(playerPreviewFb);
-        playerPreviewFb.bindFramebuffer(true);
-        playerPreviewFb.framebufferClearNoBinding();
         GlStateManager.pushMatrix();
         this.drawPlayer(mouseX, mouseY);
         GlStateManager.popMatrix();
 
-        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
-
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.bindTexture(playerPreviewFb.framebufferTexture);
-        ShaderUtil.drawQuads();
-
-        BLOOM.add(() -> {
-            GlStateManager.bindTexture(playerPreviewFb.framebufferTexture);
-            GlStateManager.color(0, 0, 0, 1);
-            ShaderUtil.drawQuads();
-        });
-
         double panelHeight = this.getHeight() - 9 - spacing - getScreenPadding() - getFrTitle().getHeight();
-        FontManager.pf40.drawCenteredString(Minecraft.getMinecraft().getSession().getUsername(), this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding() + width * 0.5, this.baseWidget.getY() + panelHeight * 3 / 4, this.getColor(ColorType.PRIMARY_TEXT));
+        FontManager.arial40bold.drawCenteredString(Minecraft.getMinecraft().getSession().getUsername(), this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding() + width * 0.5, this.baseWidget.getY() + panelHeight * 3 / 4, this.getColor(ColorType.PRIMARY_TEXT));
     }
 
     private void drawPlayer(double mouseX, double mouseY) {
@@ -565,55 +548,33 @@ public class AltScreen extends BaseScreen {
         GlStateManager.enableDepth();
         GlStateManager.enableAlpha();
         GlStateManager.enableColorMaterial();
-        //GlStateManager.pushMatrix();
         GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
-        GlStateManager.translate(posX, posY, 50.0f);
+        GlStateManager.translate(posX, posY, 50);
         GlStateManager.scale(-scale, scale, scale);
         GlStateManager.rotate(180.0f, 0.0f, 0.0f, 1.0f);
         final float f2 = ent.renderYawOffset;
         final float f3 = ent.rotationYaw;
         final float f4 = ent.rotationPitch;
-        final float f5 = ent.prevRotationYawHead;
         final float f6 = ent.rotationYawHead;
-        GlStateManager.pushMatrix();
-        GlStateManager.rotate(-30.0F, 0.0F, 1.0F, 0.0F);
-        GlStateManager.rotate(150.0F, 1.0F, 0.0F, 0.0F);
-//        RenderHelper.enableStandardItemLighting();
-        GlStateManager.popMatrix();
 
         GlStateManager.rotate(135.0F, 0.0F, 1.0F, 0.0F);
-//        RenderHelper.enableStandardItemLighting();
         RenderHelper.enablePaperDollLighting();
         GlStateManager.rotate(-135.0F, 0.0F, 1.0F, 0.0F);
 
-        ent.renderYawOffset = 0;
-        ent.rotationYaw = 0;
-        ent.rotationYawHead = 0;
-//        ent.prevRotationYawHead = 0;
-//        ent.prevRenderYawOffset = 0;
         ent.prevRotationPitch = ent.rotationPitch;
-//        ent.prevRotationYawHead = ent.rotationYaw;
-
         ent.renderYawOffset = ent.rotationYaw = ent.rotationYawHead = entRotYaw;
-//        ent.prevCameraYaw = ent.cameraYaw = 0.0F;
-//        ent.prevDistanceWalkedModified = ent.distanceWalkedModified = 0.0F;
-//        ent.prevChasingPosX = ent.chasingPosX = ent.prevChasingPosY = ent.chasingPosY = ent.prevChasingPosZ = ent.chasingPosZ = 0.0F;
 
         GlStateManager.translate(0.0f, 0.0f, 0.0f);
-        //try {
         final RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
         rendermanager.setPlayerViewY(180.0f);
         rendermanager.setRenderShadow(false);
         rendermanager.renderEntityWithPosYaw(ent, 0.0, 0.0, 0.0, 0.0f, Minecraft.getMinecraft().timer.renderPartialTicks);
         rendermanager.setRenderShadow(true);
-        //}
-        // finally {
         ent.renderYawOffset = f2;
         ent.rotationYaw = f3;
         ent.rotationPitch = f4;
         ent.prevRotationYawHead = ent.prevRenderYawOffset = entRotYaw;
         ent.rotationYawHead = f6;
-        // GlStateManager.popMatrix();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableRescaleNormal();
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
@@ -624,7 +585,6 @@ public class AltScreen extends BaseScreen {
         GlStateManager.disableDepth();
         GlStateManager.disableAlpha();
         GlStateManager.disableBlend();
-        //}
     }
 
     private double getScreenPadding() {

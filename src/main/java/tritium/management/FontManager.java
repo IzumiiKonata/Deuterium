@@ -3,7 +3,6 @@ package tritium.management;
 import lombok.SneakyThrows;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;
 import java.io.File;
@@ -12,7 +11,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -27,7 +25,7 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold;
     public static CFontRenderer pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40;
     public static CFontRenderer icon18, icon25, icon30, icon40, tritium24, tritium42;
-    public static CFontRenderer arial18bold, arial60bold;
+    public static CFontRenderer arial18bold, arial40bold, arial60bold;
 
     public static CFontRenderer getBySize(int size) {
         return getBySize(size, false);
@@ -62,7 +60,7 @@ public class FontManager extends AbstractManager {
                 pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold,
                 pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40,
                 icon18, icon25, icon30, icon40, tritium24, tritium42,
-                arial18bold, arial60bold
+                arial18bold, arial40bold, arial60bold
         );
 
         list.forEach(c -> {
@@ -112,6 +110,7 @@ public class FontManager extends AbstractManager {
         tritium24 = create(24, "tritium");
 
         arial18bold = create(18, "arialBold");
+        arial40bold = create(40, "arialBold");
     }
 
     @SneakyThrows
