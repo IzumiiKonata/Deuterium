@@ -1,6 +1,7 @@
 package tritium.command.impl;
 
 import lombok.SneakyThrows;
+import tech.konata.ncmplayer.music.CloudMusic;
 import tritium.command.Command;
 import tritium.management.ConfigManager;
 import tritium.management.ModuleManager;
@@ -47,6 +48,7 @@ public class Config extends Command {
 
                 client.getConfigManager().init();
                 ClientSettings.initialize();
+                CloudMusic.initNCM();
                 this.print("Config reloaded.");
                 break;
             }

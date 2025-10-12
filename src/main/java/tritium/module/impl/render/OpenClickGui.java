@@ -19,7 +19,7 @@ public class OpenClickGui extends Module {
     @Override
     public void onEnable() {
 
-        if (!(mc.currentScreen instanceof ClickGui))
+        if (!(mc.currentScreen instanceof ClickGui) && mc.thePlayer != null && mc.theWorld != null)
             mc.displayGuiScreen(ClickGui.getInstance());
 
         this.toggle();

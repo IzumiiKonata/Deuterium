@@ -22,7 +22,7 @@ public class OpenConsole extends Module {
     @Override
     public void onEnable() {
 
-        if (mc.thePlayer != null) {
+        if (mc.thePlayer != null && mc.theWorld != null) {
             mc.displayGuiScreen(ConsoleScreen.getInstance());
         }
 
