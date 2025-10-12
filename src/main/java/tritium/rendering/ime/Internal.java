@@ -10,9 +10,9 @@ import org.lwjglx.opengl.Display;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
+import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.Shaders;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 
@@ -91,14 +91,14 @@ public class Internal implements SharedRenderingConstants {
                 }
             }
 
-            Shaders.RQ_SHADER.draw(offsetX, offsetY, width, height, 4, ThemeManager.getAsColor(ThemeManager.ThemeColor.Surface));
+            Rect.draw(offsetX, offsetY, width, height, ThemeManager.get(ThemeManager.ThemeColor.Surface));
             offsetX += 4;
 
             for (Candidate candidate : candidates) {
 
                 if (candidate.selected) {
                     double offset = 2;
-                    Shaders.RQ_SHADER.draw(offsetX - offset, offsetY + 4 - offset, fr.getStringWidth(candidate.value) + offset * 2 + 1, fr.getHeight() + offset * 2, 4, RenderSystem.getOppositeColor(ThemeManager.getAsColor(ThemeManager.ThemeColor.OnSurface, 60)));
+                    Rect.draw(offsetX - offset, offsetY + 4 - offset, fr.getStringWidth(candidate.value) + offset * 2 + 1, fr.getHeight() + offset * 2, RenderSystem.getOppositeColorHex(ThemeManager.get(ThemeManager.ThemeColor.OnSurface, 60)));
                 }
 
                 fr.drawString(candidate.value, offsetX, offsetY + 4, ThemeManager.get(ThemeManager.ThemeColor.Text));

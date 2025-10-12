@@ -505,7 +505,7 @@ public class RenderSystem {
     }
 
     public static int getOppositeColorHex(int colorHex) {
-        return getOppositeColor(new Color(colorHex)).getRGB();
+        return getOppositeColor(new Color(colorHex, true)).getRGB();
     }
 
     public static int cRange(int c) {
