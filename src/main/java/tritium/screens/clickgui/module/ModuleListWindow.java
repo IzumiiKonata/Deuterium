@@ -52,7 +52,7 @@ public class ModuleListWindow extends Window {
         scrollPanel.setMargin(4);
         scrollPanel.setSpacing(4);
 
-        this.refreshModules();
+        this.refreshModules(0);
     }
 
     public void refreshModules() {
@@ -62,6 +62,10 @@ public class ModuleListWindow extends Window {
 
         int index = ClickGui.getInstance().getCategoriesWindow().getSelectedCategoryIndex();
 
+        this.refreshModules(index);
+    }
+
+    private void refreshModules(int index) {
         // modules
         if (index == 0) {
             for (Module module : ModuleManager.getModules()) {
