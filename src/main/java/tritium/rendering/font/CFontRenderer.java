@@ -1,14 +1,16 @@
 package tritium.rendering.font;
 
 import lombok.SneakyThrows;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
 import tritium.Tritium;
 import tritium.event.events.rendering.RenderTextEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.management.EventManager;
+import tritium.management.FontManager;
+import tritium.management.Localizer;
 import tritium.rendering.TexturedShadow;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.StringUtils;
@@ -17,6 +19,7 @@ import java.awt.*;
 import java.io.Closeable;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -30,13 +33,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     private final Map<String, Integer> stringWidthMap = new HashMap<>();
     public float sizePx;
 
-    private ProgressiveCacheRenderer pcr;
-
     public CFontRenderer(Font font, float sizePx) {
         this.sizePx = sizePx;
 
         init(font, sizePx);
-        this.pcr = new ProgressiveCacheRenderer(this);
     }
 
     @SneakyThrows
@@ -189,9 +189,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         s = call.getText();
 
-        if (true)
-            return pcr.drawStringOptimized(s, x, y, r, g, b, a);
-
         float r2 = r, g2 = g, b2 = b;
         GlStateManager.pushMatrix();
 
@@ -252,7 +249,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 c = ')';
 
             Glyph glyph = locateGlyph(c);
-            if (glyph != null && glyph.vboId != -1 && glyph.textureId != -1) {
+            if (glyph != null && glyph.callList != -1 && glyph.textureId != -1) {
                 xOffset += glyph.render(xOffset, yOffset, r2, g2, b2, a);
             } else {
                 bl = false;
@@ -462,11 +459,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     @Override
     public void close() {
-
-        if (pcr != null) {
-            pcr.cleanup();
-        }
-
         for (Glyph gly : allGlyphs) {
             if (gly != null) {
 
@@ -474,8 +466,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                     GlStateManager.deleteTexture(gly.textureId);
                 }
 
-                if (gly.vboId != -1 && !gly.cached) {
-                    GL15.glDeleteBuffers(gly.vboId);
+                if (gly.callList != -1 && !gly.cached) {
+                    GLAllocation.deleteDisplayLists(gly.callList);
                     GlyphCache.CALL_LIST_COUNTER.set(GlyphCache.CALL_LIST_COUNTER.get() - 1);
                 }
 

@@ -4,99 +4,72 @@ import lombok.RequiredArgsConstructor;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL15;
-import org.lwjgl.opengl.GL20;
-
-import java.nio.FloatBuffer;
 
 @RequiredArgsConstructor
 public class Glyph {
-
+    
     public final int width, height;
     public final char value;
     public int textureId = -1;
-
-    public int vboId = -1;
+    
+    public int callList = -1;
     public boolean cached = true;
 
-    private static final java.util.Map<GlyphCache.GlyphSize, Integer> VBO_CACHE = new java.util.HashMap<>();
-
     public void init() {
-        if (true)
-            return;
+
         GlyphCache.GlyphSize gs = new GlyphCache.GlyphSize(this.width, this.height);
 
-        // 检查缓存
-        Integer cachedVbo = VBO_CACHE.get(gs);
-        if (cachedVbo != null) {
-            vboId = cachedVbo;
+        Integer cachedCallList = GlyphCache.get(gs);
+        if (cachedCallList != null) {
+
+//            System.out.println("GlyphCache 命中: Width: " + gs.width + ", Height: " + gs.height);
+
+            callList = cachedCallList;
             cached = true;
             return;
         }
 
-        vboId = GL15.glGenBuffers();
+        callList = GLAllocation.generateDisplayLists(1);
         cached = false;
+        GlyphCache.CALL_LIST_COUNTER.set(GlyphCache.CALL_LIST_COUNTER.get() + 1);
+
+        GL11.glNewList(this.callList, GL11.GL_COMPILE);
 
         float w = this.width;
         float h = this.height;
 
-        // position (2) + texCoord (2) = 4 floats per vertex, 6 vertices (2 triangles)
-        float[] vertices = {
-                0, h,  0, 1,  // bottom-left
-                w, h,  1, 1,  // bottom-right
-                w, 0,  1, 0,  // top-right
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glTexCoord2f(0, 1);
+        GL11.glVertex2f(0, h);
+        GL11.glTexCoord2f(1, 1);
+        GL11.glVertex2f(w, h);
+        GL11.glTexCoord2f(1, 0);
+        GL11.glVertex2f(w, 0);
+        GL11.glTexCoord2f(0, 0);
+        GL11.glVertex2f(0, 0);
+        GL11.glEnd();
 
-                w, 0,  1, 0,  // top-right
-                0, 0,  0, 0,  // top-left
-                0, h,  0, 1   // bottom-left
-        };
+        GL11.glEndList();
 
-        FloatBuffer buffer = GLAllocation.createDirectFloatBuffer(vertices.length);
-        buffer.put(vertices);
-        buffer.flip();
+        GlyphCache.put(gs, callList);
 
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
-        GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
-        VBO_CACHE.put(gs, vboId);
     }
 
     public float render(float xOffset, float yOffset, float r2, float g2, float b2, float a) {
-        if (this.value != ' ' && this.vboId != -1 && textureId != -1) {
+        if (this.value != ' ' && this.callList != -1 && textureId != -1) {
+
             GlStateManager.bindTexture(textureId);
+
             GlStateManager.color(r2, g2, b2, a);
             GlStateManager.pushMatrix();
             GlStateManager.translate(xOffset, yOffset, 0);
-
-            // 使用 VBO 渲染
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vboId);
-
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
-            GL11.glEnableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-
-            GL11.glVertexPointer(2, GL11.GL_FLOAT, 16, 0);
-            GL11.glTexCoordPointer(2, GL11.GL_FLOAT, 16, 8);
-
-            GL11.glDrawArrays(GL11.GL_TRIANGLES, 0, 6);
-
-            GL11.glDisableClientState(GL11.GL_TEXTURE_COORD_ARRAY);
-            GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-
-            GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-
+            GlStateManager.callList(this.callList);
             GlStateManager.popMatrix();
+
+
         }
 
         return this.width;
     }
-
-    public void cleanup() {
-        if (vboId != -1 && !cached) {
-            GL15.glDeleteBuffers(vboId);
-        }
-        if (textureId != -1) {
-            GlStateManager.deleteTexture(textureId);
-        }
-    }
+    
 }
