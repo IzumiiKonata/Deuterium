@@ -7,9 +7,11 @@ import tritium.interfaces.IFontRenderer;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
+import tritium.management.WidgetsManager;
 import tritium.rendering.Stencil;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 
@@ -44,7 +46,7 @@ public class Key implements SharedRenderingConstants {
 
         NORMAL.add(() -> {
 
-            this.pressedAlpha = Interpolations.interpBezier(this.pressedAlpha, this.key.pressed ? 80 * RenderSystem.DIVIDE_BY_255 : 0, 0.2f);
+            this.pressedAlpha = Interpolations.interpBezier(this.pressedAlpha, this.key.pressed ? 120 * RenderSystem.DIVIDE_BY_255 : 0, 0.2f);
 
             Rect.draw(x + xOffset, y + yOffset, width, height, RenderSystem.hexColor(0, 0, 0, 50), Rect.RectType.EXPAND);
             Rect.draw(x + xOffset, y + yOffset, width, height, RenderSystem.hexColor(255, 255, 255, (int) (this.pressedAlpha * 255)), Rect.RectType.EXPAND);
@@ -70,40 +72,31 @@ public class Key implements SharedRenderingConstants {
 
             Stencil.dispose();
 
-//            if (!bFlagVanilla) {
-//
-//            } else {
-//
-//                float speed = 0.4f;
-//
-//                if (this.key.pressed) {
-//                    this.vR = Interpolations.interpBezier(this.vR, 1, speed);
-//                    this.vG = Interpolations.interpBezier(this.vG, 1, speed);
-//                    this.vB = Interpolations.interpBezier(this.vB, 1, speed);
-//                } else {
-//                    this.vR = Interpolations.interpBezier(this.vR, 0, speed);
-//                    this.vG = Interpolations.interpBezier(this.vG, 0, speed);
-//                    this.vB = Interpolations.interpBezier(this.vB, 0, speed);
-//                }
-//
-//                Rect.draw(x + xOffset, y + yOffset, width, height, hexColor((int) (this.vR * 255), (int) (this.vG * 255), (int) (this.vB * 255), 120), Rect.RectType.EXPAND);
-//
-////                Rect.draw(x + xOffset, y + yOffset, width, height, RenderSystem.hexColor(255, 255, 255, (int) (this.pressedAlpha * 255)), Rect.RectType.EXPAND);
-//
-//            }
-
             IFontRenderer fontRenderer = FontManager.pf18;
 
-
-
             if (this.key.getKeyCode() != 57) {
-                fontRenderer.drawCenteredString(this.getKeyName(), x + xOffset + width * .5, y + yOffset + height * .5 - fontRenderer.getHeight() / 2.0, hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255)));
+                boolean renderCPS = this.key.getKeyCode() <= -99 && WidgetsManager.keyStrokes.showCPS.getValue();
+                fontRenderer.drawCenteredString(
+                        this.getKeyName(),
+                        x + xOffset + width * .5 - (this.key.getKeyCode() == 31 ? 0.5 : 0),
+                        //                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        //                          何意味。？
+                        y + yOffset + height * .5 - fontRenderer.getHeight() / 2.0 - (renderCPS ? 4 : 0),
+                        hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255))
+                );
 
-//                fontRenderer.drawString(this.getKeyName(), x + xOffset + 4, y + yOffset + 3, hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255)));
+                if (renderCPS) {
+                    CFontRenderer fr = FontManager.pf12;
+                    fr.drawCenteredString(
+                            this.getCPS() + " CPS",
+                            x + xOffset + width * .5,
+                            y + yOffset + height * .5 - fr.getHeight() / 2.0 + 5,
+                            hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255))
+                    );
+                }
+            } else {
+                Rect.draw(x + xOffset + width * .2, y + yOffset + height * .5 - .5, width * .6, 1, -1);
             }
-//
-//            if (this.key.getKeyCode() <= -99) {
-//            }
 
         });
 
@@ -116,13 +109,7 @@ public class Key implements SharedRenderingConstants {
     private String getKeyName() {
 
         if (this.key.getKeyCode() <= -99) {
-
-            int cps = this.getCPS();
-            if (cps != 0) {
-                return cps + " CPS";
-            }
-
-            return this.key.getKeyCode() == -100 ? "LMB" : "RMB";
+            return this.key.getKeyCode() == -100 ? "L" : "R";
         }
 
         return Keyboard.getKeyName(this.key.getKeyCode());

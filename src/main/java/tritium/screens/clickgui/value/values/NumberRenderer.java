@@ -43,11 +43,25 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
         this.addChild(valueLabel);
 
         RectWidget background = new RectWidget() {
+
+            boolean clicking = false;
+
+            {
+                this.setOnClickCallback((x, y, i) -> {
+                    if (i == 0)
+                        clicking = true;
+                    return true;
+                });
+            }
+
             @Override
             public void onRender(double mouseX, double mouseY, int dWheel) {
                 super.onRender(mouseX, mouseY, dWheel);
 
-                if (this.isHovered(mouseX, mouseY, this.getX() - 2, this.getY() - 2, this.getWidth() + 4, this.getHeight() + 4) && Mouse.isButtonDown(0)) {
+                if (!Mouse.isButtonDown(0) && clicking)
+                    clicking = false;
+
+                if (this.isHovered(mouseX, mouseY, this.getX() - 2, this.getY() - 2, this.getWidth() + 4, this.getHeight() + 4) && clicking) {
                     double render = setting.getMinimum().doubleValue();
                     double max = setting.getMaximum().doubleValue();
                     double inc = setting.getIncrement().doubleValue();
@@ -62,6 +76,7 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
                 }
             }
         };
+
         background.setBounds(this.getWidth(), 2);
         background.setPosition(0, FontManager.pf14.getHeight() + 8);
         background.setColor(ClickGui.getColor(25));

@@ -82,11 +82,14 @@ public class Tritium {
 
         logger.debug("run() 方法 已被调用");
 
+        Version ver = Tritium.getVersion();
+
         Display.setTitle(
-                String.format(
-                        NAME + "-X %s",
-                        Tritium.getVersion().getType().toString()
-                )
+            String.format(
+                NAME + "-X %s%s",
+                ver.getType().toString(),
+                ver.getType() == Version.Type.Dev ? "" : " " + ver
+            )
         );
 
 //        if (Platform.get() == Platform.WINDOWS) {

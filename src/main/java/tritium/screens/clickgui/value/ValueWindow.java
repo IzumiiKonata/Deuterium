@@ -13,10 +13,7 @@ import tritium.screens.ClickGui;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.category.CategoriesWindow;
 import tritium.screens.clickgui.module.ModuleListWindow;
-import tritium.screens.clickgui.value.values.BooleanRenderer;
-import tritium.screens.clickgui.value.values.ColorRenderer;
-import tritium.screens.clickgui.value.values.ModeRenderer;
-import tritium.screens.clickgui.value.values.NumberRenderer;
+import tritium.screens.clickgui.value.values.*;
 import tritium.settings.*;
 
 /**
@@ -113,6 +110,8 @@ public class ValueWindow extends Window {
                     this.settingsPanel.addChild(new NumberRenderer((NumberSetting<?>) setting));
                 if (setting instanceof ModeSetting)
                     this.settingsPanel.addChild(new ModeRenderer((ModeSetting<?>) setting));
+                if (setting instanceof StringModeSetting)
+                    this.settingsPanel.addChild(new StringModeRenderer((StringModeSetting) setting));
                 if (setting instanceof ColorSetting)
                     this.settingsPanel.addChild(new ColorRenderer((ColorSetting) setting));
             }

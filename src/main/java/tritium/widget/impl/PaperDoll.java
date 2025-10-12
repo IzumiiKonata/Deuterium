@@ -28,7 +28,6 @@ public class PaperDoll extends Widget {
 
     public float prevRenderYawOffset = 0, renderYawOffset = 0, prevCameraYaw = 0, cameraYaw = 0;
 
-    public NumberSetting<Double> scale = new NumberSetting<>("Scale", 1.0, 0.1, 2.0, 0.1);
     public BooleanSetting customRotation = new BooleanSetting("Custom Rotation", false);
     public NumberSetting<Float> yaw = new NumberSetting<>("Yaw", 0f, 0f, 360f, 0.1f, () -> customRotation.getValue());
     public NumberSetting<Float> pitch = new NumberSetting<>("Pitch", 0f, -90f, 90f, 0.1f, () -> customRotation.getValue());
@@ -59,7 +58,7 @@ public class PaperDoll extends Widget {
                 fb.framebufferClearNoBinding();
 //                GlStateManager.pushMatrix();
 
-                drawEntityOnScreen(posX, posY, scale.getValue() * 100, mc.thePlayer);
+                drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
                 GlStateManager.popMatrix();
 
 //                GlStateManager.popMatrix();
@@ -88,26 +87,15 @@ public class PaperDoll extends Widget {
                 GlStateManager.pushMatrix();
                 this.doScale();
                 GlStateManager.color(1, 1, 1, 1);
-
-                fb = RenderSystem.createFrameBuffer(fb);
-
-                fb.bindFramebuffer(true);
-                fb.framebufferClearNoBinding();
-
-                drawEntityOnScreen(posX, posY, scale.getValue() * 100, mc.thePlayer);
+                drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
                 GlStateManager.popMatrix();
-
-                mc.getFramebuffer().bindFramebuffer(true);
-
-                GlStateManager.bindTexture(fb.framebufferTexture);
-                ShaderUtil.drawQuads();
             });
         }
 
 //        GlStateManager.popAttrib();
 
-        this.setWidth(115 * scale.getValue());
-        this.setHeight(210 * scale.getValue());
+        this.setWidth(115);
+        this.setHeight(210);
     }
 
     public void drawEntityOnScreen(double posX, double posY, double scale, AbstractClientPlayer ent) {

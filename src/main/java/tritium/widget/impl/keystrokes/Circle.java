@@ -8,7 +8,7 @@ import java.awt.*;
 public class Circle implements SharedRenderingConstants {
 
     public double length = 0;
-    public float alpha = 80 * RenderSystem.DIVIDE_BY_255;
+    public float alpha = 120 * RenderSystem.DIVIDE_BY_255;
 
     public void draw(double posX, double posY) {
 

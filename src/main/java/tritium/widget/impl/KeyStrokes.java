@@ -1,5 +1,6 @@
 package tritium.widget.impl;
 
+import tritium.settings.BooleanSetting;
 import tritium.settings.NumberSetting;
 import tritium.widget.Widget;
 import tritium.widget.impl.keystrokes.Key;
@@ -21,7 +22,7 @@ public class KeyStrokes extends Widget {
     double mouseWidth = keyWidth + spacing + keyWidth / 2.0 - spacing / 2.0;
     double mouseHeight = keyHeight;
 
-    public NumberSetting<Double> size = new NumberSetting<Double>("Size", 22d, 20d, 32d, 1d) {
+    public NumberSetting<Double> size = new NumberSetting<Double>("Size", 23d, 20d, 32d, 1d) {
         @Override
         public void onValueChanged(Double last, Double now) {
             keyWidth = keyHeight = now;
@@ -34,6 +35,8 @@ public class KeyStrokes extends Widget {
             initKeys();
         }
     };
+
+    public BooleanSetting showCPS = new BooleanSetting("Show CPS", false);
 
     public KeyStrokes() {
         super("Key Strokes");
@@ -51,7 +54,6 @@ public class KeyStrokes extends Widget {
         keys[4] = new Key(mc.gameSettings.keyBindJump, 0, (keyHeight + spacing) * 2, spaceWidth, spaceHeight);
         keys[5] = new Key(mc.gameSettings.keyBindAttack, 0, (keyHeight + spacing) * 2 + spaceHeight + spacing, mouseWidth, mouseHeight);
         keys[6] = new Key(mc.gameSettings.keyBindUseItem, mouseWidth + spacing, (keyHeight + spacing) * 2 + spaceHeight + spacing, mouseWidth, mouseHeight);
-
     }
 
 

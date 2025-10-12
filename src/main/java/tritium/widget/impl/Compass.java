@@ -54,7 +54,7 @@ public class Compass extends Widget {
             double axis2YOffset = 9;
             double degreeYOffset = 20;
 
-            Image.draw(Location.of(Tritium.NAME + "/textures/triangle.png"), this.getX() + width * 0.5 - 5, this.getY() + height - 7, 8, 4.5, Image.Type.Normal);
+            Image.draw(Location.of(Tritium.NAME + "/textures/triangle.png"), this.getX() + width * 0.5 - 5.5, this.getY() + height - 7, 8, 4.5, Image.Type.Normal);
 
             Stencil.write();
             double shrink = 2;

@@ -356,8 +356,8 @@ public class MusicSpectrumWidget extends Widget {
                 } else {
                     long timeStamp = indicatorTimeStamp.computeIfAbsent(i, k -> System.currentTimeMillis());
 
-                    if (System.currentTimeMillis() - timeStamp > 150) {
-                        renderSpectrumIndicator[i] = Interpolations.interpLinear(renderSpectrumIndicator[i], (float) 6, 4);
+                    if (System.currentTimeMillis() - timeStamp > 200) {
+                        renderSpectrumIndicator[i] = Interpolations.interpLinear(renderSpectrumIndicator[i], (float) 6, 8);
                     }
 
                 }

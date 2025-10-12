@@ -3,10 +3,12 @@ package tritium.settings;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.client.Minecraft;
 import org.lwjglx.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import tritium.Tritium;
 import tritium.management.ConfigManager;
+import tritium.screens.ClickGui;
 import tritium.utils.i18n.Localizable;
 import tritium.management.Localizer;
 import tritium.management.ThemeManager;
@@ -28,6 +30,11 @@ public class ClientSettings {
         @Override
         public void onModeChanged(String before, String now) {
             Localizer.setLang(now);
+
+            if (Minecraft.getMinecraft().currentScreen instanceof ClickGui) {
+                // 重新排序一下
+                ClickGui.getInstance().getModuleListWindow().refreshModules();
+            }
         }
     };
 
@@ -143,11 +150,7 @@ public class ClientSettings {
 
     };
 
-    public static final Module settingsModule = new Module("Setting", Module.Category.SETTING) {
-        {
-            super.setShouldRender(() -> false);
-        }
-    };
+    public static final Module settingsModule = new Module("Setting", Module.Category.SETTING);
 
     @Getter
     private static final List<Setting<?>> settings = new ArrayList<>();

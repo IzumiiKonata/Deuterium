@@ -22,7 +22,7 @@ public class Version {
 
     @Override
     public String toString() {
-        return String.format("%d.%d.%d %s", major, minor, patch, type);
+        return String.format("%s %d.%d.%d", type, major, minor, patch);
     }
 
     public enum Type {

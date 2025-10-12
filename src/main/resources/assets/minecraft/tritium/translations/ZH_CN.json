@@ -458,7 +458,7 @@
 
     "setting.video preset.name": "渲染质量",
     "mode.ExtremePerformance.name": "极致性能",
-    "mode.Performance.name": "性能优先",
+    "mode.Performance.name": "性能",
     "mode.Balanced.name": "均衡",
     "mode.Quality.name": "最佳品质",
 

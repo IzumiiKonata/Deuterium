@@ -34,6 +34,7 @@ public class PotionDisplay extends Widget {
         super("PotionDisplay");
     }
 
+    public BooleanSetting bg = new BooleanSetting("Background Rect", true);
     public BooleanSetting highlight = new BooleanSetting("Time reminder", true);
 
     final PotionEffect pe = new PotionEffect(16, 1000);
@@ -69,12 +70,11 @@ public class PotionDisplay extends Widget {
                 GlStateManager.pushMatrix();
                 this.doScale();
 
-                this.renderStyledBackground(x, finalY, width, height, 8);
+                if (this.bg.getValue())
+                    this.renderStyledBackground(x, finalY, width, height, 8);
 
                 if (!effect.getIsPotionDurationMax()) {
-
                     Rect.draw(x, finalY, width * ((double) effect.getDuration() / effect.totalDuration), height, hexColor(255, 255, 255, 80), Rect.RectType.EXPAND);
-
                 }
 
                 if (potion.hasStatusIcon()) {
@@ -87,7 +87,6 @@ public class PotionDisplay extends Widget {
 
                     this.mc.getTextureManager().bindTexture(Location.of("textures/gui/container/inventory.png"));
                     this.drawTexturedModalRect(x + spacing, finalY + spacing, texSize, texSize, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
-//                    GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 }
 
                 String potionName = I18n.format(potion.getName());
@@ -100,13 +99,12 @@ public class PotionDisplay extends Widget {
                     potionName = potionName + " " + I18n.format("enchantment.level.4");
                 }
 
-                IFontRenderer fr = true ? mc.fontRendererObj : FontManager.pf20bold;
+                IFontRenderer fr = mc.fontRendererObj;
 
-                fr.drawString(potionName, x + spacing + texSize + spacing, finalY + spacing * 2, -1);
+                fr.drawString(potionName, x + spacing + texSize + spacing, finalY + spacing * 2 + 2, -1);
                 String duration = Potion.getDurationString(effect);
 
                 fr.drawString(duration, x + spacing + texSize + spacing, finalY + spacing * 2 + fr.getHeight() + spacing, hexColor(255, 255, 255, 180));
-
 
                 if (highlight.getValue() && !effect.getIsPotionDurationMax()) {
                     int sec = effect.getDuration() / 20;

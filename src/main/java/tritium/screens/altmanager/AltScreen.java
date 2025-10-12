@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.*;
@@ -29,7 +28,6 @@ import tritium.settings.ClientSettings;
 import tritium.utils.alt.Alt;
 import tritium.utils.alt.AltManager;
 import tritium.utils.i18n.Localizable;
-import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
 import tritium.rendering.TransitionAnimation;
@@ -40,9 +38,6 @@ import tritium.rendering.fake.FakeNetHandlerPlayClient;
 import tritium.rendering.fake.FakeWorld;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.ShaderRenderType;
-import tritium.rendering.shader.ShaderUtil;
-import tritium.rendering.shader.Shaders;
 import tritium.screens.BaseScreen;
 import tritium.screens.MainMenu;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
@@ -74,7 +69,6 @@ public class AltScreen extends BaseScreen {
     private float entRotYaw = 0.0f;
 
     // UI rendering
-    private final Map<Alt, Object> infos = new HashMap<>();
     private final double spacing = 4;
     private ChangeCapeComponent component = null;
 
@@ -92,9 +86,7 @@ public class AltScreen extends BaseScreen {
             "trytodupe",
             "Eplor",
             "Real_Eplor",
-            "cubk",
-            "Nplus",
-            "Margele"
+            "cubk"
     );
 
     public void initFakePlayer() {
@@ -126,7 +118,6 @@ public class AltScreen extends BaseScreen {
 
     @Override
     public void initGui() {
-        infos.clear();
         this.component = null;
         this.initFakePlayer();
         this.layoutAlts();
@@ -149,20 +140,13 @@ public class AltScreen extends BaseScreen {
         renderAltsPanel(mouseX, mouseY, dWheel);
         renderPlayerPreview(mouseX, mouseY);
         renderCapesPanel(mouseX, mouseY, dWheel);
-        renderPostProcessingEffects();
         renderContextMenu(mouseX, mouseY);
     }
 
-    /**
-     * Render the background with blur effect
-     */
     private void renderBackground() {
         Rect.draw(0, 0, this.getWidth(), this.getHeight(), this.getColor(ColorType.BACKGROUND), Rect.RectType.EXPAND);
     }
 
-    /**
-     * Render status message if visible
-     */
     private void renderStatus() {
         if (statusAlpha > 0.02f) {
             getFrTitle().drawCenteredString(status, this.getWidth() * 0.5, spacing * 1.5, ThemeManager.get(ThemeManager.ThemeColor.Text, (int) (statusAlpha * 255)));
@@ -218,9 +202,6 @@ public class AltScreen extends BaseScreen {
         });
     }
 
-    /**
-     * Render the "Add Alt" button
-     */
     private void renderAddAltButton(double mouseX, double mouseY) {
         Rect.draw(this.buttonWidget.getX() - 1, this.buttonWidget.getY() - 1, this.buttonWidget.getWidth() + 2, this.buttonWidget.getHeight() + 2, this.getColor(ColorType.CONTAINER_OUTLINE));
         this.buttonWidget.renderWidget(mouseX, mouseY, 0);
@@ -235,9 +216,6 @@ public class AltScreen extends BaseScreen {
         );
     }
 
-    /**
-     * Render the alts panel
-     */
     private void renderAltsPanel(double mouseX, double mouseY, int dWheel) {
         this.renderAlts(mouseX, mouseY, dWheel);
     }
@@ -251,20 +229,6 @@ public class AltScreen extends BaseScreen {
         }
     }
 
-    /**
-     * Render post-processing effects
-     */
-    private void renderPostProcessingEffects() {
-        GlStateManager.pushMatrix();
-        Shaders.POST_BLOOM_SHADER.update();
-        Shaders.POST_BLOOM_SHADER.runNoCaching(ShaderRenderType.OVERLAY, BLOOM);
-        SharedRenderingConstants.clearRunnables();
-        GlStateManager.popMatrix();
-    }
-
-    /**
-     * Render context menu if exists
-     */
     private void renderContextMenu(double mouseX, double mouseY) {
         if (this.rightClickMenu != null) {
             if (this.rightClickMenu.shouldClose)

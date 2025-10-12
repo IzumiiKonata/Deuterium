@@ -67,7 +67,7 @@ public class CameraPositions extends Module {
 
     public void offsetCamera() {
 
-        if (!this.isEnabled() || Minecraft.getMinecraft().gameSettings.thirdPersonView != 1) {
+        if (!this.isEnabled()) {
             lastView = Minecraft.getMinecraft().gameSettings.thirdPersonView;
             return;
         }

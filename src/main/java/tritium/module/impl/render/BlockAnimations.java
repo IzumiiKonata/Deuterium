@@ -22,14 +22,14 @@ public class BlockAnimations extends Module {
 
     public BlockAnimations() {
         super("BlockAnimations", Category.RENDER);
-        super.addSubModules(new Vanilla(), new Remix(), new Lunar(), new Screw(), new Swing(), new Swong(), new Swang(), new Swank(), new SwAing(), new Gay(), new Punch(), new Winter(), new Rotate(), new DickPunch());
+        super.addSubModules(new Vanilla(), new Lunar(), new Swing(), new Swong(), new Swang(), new Swank(), new SwAing(), new Punch());
     }
 
     public NumberSetting<Double> x = new NumberSetting<>("X", 0.0, -1.0, 1.0, 0.05);
     public NumberSetting<Double> y = new NumberSetting<>("Y", 0.15, -1.0, 1.0, 0.05);
     public NumberSetting<Double> z = new NumberSetting<>("Z", 0.0, -1.0, 1.0, 0.05);
     public BooleanSetting leftHanded = new BooleanSetting("Left-Handed", false);
-    public BooleanSetting twoHanded = new BooleanSetting("Two-Handed", false);
+    public BooleanSetting twoHanded = new BooleanSetting("Two-Handed", false, () -> false);
     public ModeSetting<TwoHandedMode> twoHandedMode = new ModeSetting<>("Two Handed Mode", TwoHandedMode.Clone, () -> twoHanded.getValue());
 
     public enum TwoHandedMode {

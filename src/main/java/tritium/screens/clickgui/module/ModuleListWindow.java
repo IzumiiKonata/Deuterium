@@ -12,6 +12,8 @@ import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.category.CategoriesWindow;
 import tritium.widget.Widget;
 
+import java.util.Comparator;
+
 /**
  * @author IzumiiKonata
  * Date: 2025/9/30 16:30
@@ -50,10 +52,7 @@ public class ModuleListWindow extends Window {
         scrollPanel.setMargin(4);
         scrollPanel.setSpacing(4);
 
-        for (Module module : ModuleManager.getModules()) {
-            scrollPanel.addChild(new ModuleRect(module));
-        }
-
+        this.refreshModules();
     }
 
     public void refreshModules() {
@@ -76,6 +75,9 @@ public class ModuleListWindow extends Window {
                 scrollPanel.addChild(new ModuleRect(module));
             }
         }
+
+        // sorting
+        scrollPanel.getChildren().sort(Comparator.comparing(o -> ((ModuleRect) o).module.getName().get()));
     }
 
     @Override

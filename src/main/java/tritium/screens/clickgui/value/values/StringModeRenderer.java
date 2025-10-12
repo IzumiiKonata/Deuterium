@@ -11,17 +11,19 @@ import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
-import tritium.settings.ModeSetting;
+import tritium.settings.StringModeSetting;
+
+import java.util.List;
 
 /**
  * @author IzumiiKonata
  * Date: 2025/9/30 18:35
  */
-public class ModeRenderer extends AbstractWidget<ModeRenderer> {
+public class StringModeRenderer extends AbstractWidget<StringModeRenderer> {
 
-    private final ModeSetting<?> setting;
+    private final StringModeSetting setting;
 
-    public ModeRenderer(ModeSetting<?> setting) {
+    public StringModeRenderer(StringModeSetting setting) {
         this.setting = setting;
 
         CFontRenderer pf14 = FontManager.pf14;
@@ -56,20 +58,20 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
 
             @Override
             public void onRender(double mouseX, double mouseY, int dWheel) {
-                double targetW = (open ? this.getMaxEntryWidth() : pf14.getWidth(setting.getTranslation(setting.getValue()))) + 4;
-                double targetH = this.getEntryHeight() * (this.open ? (setting.getConstants().length + 1) : 1);
+                double targetW = (open ? this.getMaxEntryWidth() : pf14.getWidth(setting.getValue())) + 4;
+                double targetH = this.getEntryHeight() * (this.open ? (setting.getModes().size() + 1) : 1);
 
                 width = Interpolations.interpBezier(width, targetW, 0.2);
                 height = Interpolations.interpBezier(height, targetH, 0.2);
 
-                ModeRenderer.this.setHeight(height);
+                StringModeRenderer.this.setHeight(height);
 
                 this.setBounds(width, height);
-                this.setPosition(ModeRenderer.this.getWidth() - this.getWidth(), 0);
+                this.setPosition(StringModeRenderer.this.getWidth() - this.getWidth(), 0);
                 this.setColor(this.isHovering() ? ClickGui.getColor(24) : ClickGui.getColor(23));
 
                 super.onRender(mouseX, mouseY, dWheel);
-                FontManager.pf14.drawCenteredString(setting.getTranslation(setting.getValue()), this.getX() + this.getWidth() * .5, this.getY() + this.getEntryHeight() * .5 - pf14.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(20), this.getAlpha()));
+                FontManager.pf14.drawCenteredString(setting.getValue(), this.getX() + this.getWidth() * .5, this.getY() + this.getEntryHeight() * .5 - pf14.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(20), this.getAlpha()));
 
                 StencilClipManager.beginClip(() -> {
                     super.onRender(mouseX, mouseY, dWheel);
@@ -79,17 +81,17 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
 
                 if (shouldRender) {
 
-                    Enum<?>[] constants = setting.getConstants();
-                    for (int i = 0; i < constants.length; i++) {
-                        Enum<?> mode = constants[i];
+                    List<String> constants = setting.getModes();
+                    for (int i = 0; i < constants.size(); i++) {
+                        String mode = constants.get(i);
 
                         boolean hovered = this.isHovered(mouseX, mouseY, this.getX(), this.getY() + (i + 1) * this.getEntryHeight(), this.getMaxEntryWidth() + 4, this.getEntryHeight());
                         Rect.draw(this.getX(), this.getY() + (i + 1) * this.getEntryHeight(), this.getMaxEntryWidth() + 4, this.getEntryHeight(), hovered ? ClickGui.getColor(24) : ClickGui.getColor(23));
-                        FontManager.pf14.drawCenteredString(setting.getTranslation(mode), this.getX() + (this.getMaxEntryWidth() + 4) * .5, this.getY() + (i + 1) * this.getEntryHeight() + this.getEntryHeight() * .5 - pf14.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(20), this.getAlpha()));
+                        FontManager.pf14.drawCenteredString(mode, this.getX() + (this.getMaxEntryWidth() + 4) * .5, this.getY() + (i + 1) * this.getEntryHeight() + this.getEntryHeight() * .5 - pf14.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(20), this.getAlpha()));
 
                         if (hovered && Mouse.isButtonDown(0) && clickThisFrame) {
                             clickThisFrame = false;
-                            setting.loadValue(mode.name());
+                            setting.setValue(mode);
                             open = false;
                         }
                     }
@@ -101,8 +103,8 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
             private double getMaxEntryWidth() {
                 double maxWidth = 0;
 
-                for (Enum<?> mode : setting.getConstants()) {
-                    double width = pf14.getWidth(setting.getTranslation(mode));
+                for (String mode : setting.getModes()) {
+                    double width = pf14.getWidth(mode);
                     if (width > maxWidth) {
                         maxWidth = width;
                     }

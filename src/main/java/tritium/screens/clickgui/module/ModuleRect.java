@@ -16,7 +16,7 @@ import tritium.settings.ClientSettings;
  */
 public class ModuleRect extends AbstractWidget<ModuleRect> {
 
-    private Module module;
+    protected Module module;
 
     public ModuleRect(Module module) {
         this.module = module;
@@ -109,5 +109,10 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
         this.nameHoverAnimation = Interpolations.interpBezier(this.nameHoverAnimation, this.isHovering() ? 4 : 0, 0.3f);
 
         FontManager.pf18.drawString(this.module.getName().get(), this.getX() + 8 + this.nameHoverAnimation, this.getY() + this.getHeight() * .5 - FontManager.pf18.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(9), this.getAlpha()));
+    }
+
+    @Override
+    public boolean isHidden() {
+        return !this.module.getShouldRender().get();
     }
 }

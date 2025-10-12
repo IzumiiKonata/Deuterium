@@ -237,8 +237,7 @@ public class GuiOverlayDebug extends Gui {
                 String.format("Display: %dx%d (%s)", Display.getWidth(), Display.getHeight(), GL11.glGetString(GL11.GL_VENDOR)),
                 GL11.glGetString(GL11.GL_RENDERER),
                 GL11.glGetString(GL11.GL_VERSION),
-                "Base: MCP-1.8.9-Maven",
-                "Fully Optimized By IzumiiKonata"
+                ""
         );
 
         if (this.isReducedDebug()) {

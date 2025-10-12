@@ -12,7 +12,6 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.Location;
-import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
 import tritium.Tritium;
 import tritium.rendering.StencilClipManager;
@@ -21,17 +20,12 @@ import tritium.utils.alt.Alt;
 import tritium.utils.i18n.Localizable;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
-import tritium.rendering.animation.Animation;
-import tritium.rendering.animation.Easing;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.font.CFontRenderer;
-import tritium.rendering.shader.ShaderRenderType;
-import tritium.rendering.shader.Shaders;
 import tritium.rendering.texture.Textures;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.network.HttpUtils;
-import tritium.utils.timing.Timer;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -39,7 +33,6 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -73,8 +66,6 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
 
         GlStateManager.pushMatrix();
 
-//        Rect.draw(posX, posY, width, height, hexColor(0, 0, 0, 150));
-
         double startX = posX + 12;
         double startY = posY + 12 - realOffset;
         double capeWidth = 74;
@@ -82,14 +73,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
 
         double spacing = 9.5;
 
-        if (dWheel != 0 && isHovered(mouseX, mouseY, posX, posY, width, height)) {
-
-            double delta = 24;
-
-            targetOffset += delta * (dWheel > 0 ? -1 : 1);
-
-            targetOffset = Math.max(0, targetOffset);
-        }
+        handleScrolling(mouseX, mouseY, posX, posY, width, height, dWheel);
 
         realOffset = Interpolations.interpBezier(realOffset, targetOffset, 0.2f);
 
@@ -104,63 +88,11 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
                     startY += capeHeight + spacing;
                 }
 
-                Rect.draw(startX - 1, startY - 1, capeWidth + 2, capeHeight + 2, AltScreen.getInstance().getColor(AltScreen.ColorType.CONTAINER_OUTLINE));
-                Rect.draw(startX, startY, capeWidth, capeHeight, AltScreen.getInstance().getColor(AltScreen.ColorType.CONTAINER_ELEMENT_BACKGROUND));
+                drawCapeBox(startX, startY, capeWidth, capeHeight);
+                drawCapeImage(startX, startY, capeWidth, capeHeight, cape);
+                drawCapeText(startX, startY, capeWidth, capeHeight, cape);
 
-                double imgWidth = 60;
-                double imgHeight = 96;
-                if (!cape.id.isEmpty()) {
-                    Location capeLocation = this.getCapeLocation(cape.id);
-
-                    ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(capeLocation);
-                    if (texture != null && texture != TextureUtil.missingTexture) {
-                        GlStateManager.color(1, 1, 1, 1f);
-                        Image.draw(capeLocation, startX + capeWidth * 0.5 - imgWidth * 0.5, startY + 6, imgWidth, imgHeight, Image.Type.NoColor);
-                    }
-                } else {
-                    GlStateManager.color(1, 1, 1, 1f);
-                    Image.draw(Location.of(Tritium.NAME + "/textures/no_cape.png"), startX + capeWidth * 0.5 - imgWidth * 0.5, startY + 6, imgWidth, imgHeight, Image.Type.NoColor);
-                }
-
-                CFontRenderer fr = FontManager.pf18;
-
-                fr.drawCenteredString(cape.alias, startX + capeWidth * 0.5, startY + capeHeight - fr.getHeight() - 16, hexColor(233, 233, 233, 255));
-
-                if (cape.state) {
-                    FontManager.pf16.drawCenteredString(selected.get(), startX + capeWidth * 0.5, startY + capeHeight - FontManager.pf18.getHeight() - 3, hexColor(0, 255, 0, 255));
-                }
-
-                if (isHovered(mouseX, mouseY, startX, startY, capeWidth, capeHeight) && Mouse.isButtonDown(0) && !lmbPressed) {
-                    lmbPressed = true;
-
-                    if (cape.id.isEmpty()) {
-                        MultiThreadingUtil.runAsync(() -> {
-                            Map<String, String> checkProductHeaders = new HashMap<>();
-                            checkProductHeaders.put("Authorization", "Bearer " + this.accessToken);
-                            String s;
-                            try {
-                                s = HttpUtils.deleteString("https://api.minecraftservices.com/minecraft/profile/capes/active", null, checkProductHeaders);
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                            this.parse(s);
-                        });
-                    } else {
-                        MultiThreadingUtil.runAsync(() -> {
-                            Map<String, String> checkProductHeaders = new HashMap<>();
-                            checkProductHeaders.put("Authorization", "Bearer " + this.accessToken);
-
-                            ///*"https://api.minecraftservices.com/minecraft/profile/capes/active", putParams, checkProductHeaders*/
-                            String s = null;
-                            try {
-                                s = HttpUtils.readString(HttpUtils.request("https://api.minecraftservices.com/minecraft/profile/capes/active", "{\"capeId\": \"" + cape.id + "\"}", checkProductHeaders, "PUT"));
-                            } catch (IOException e) {
-                                throw new RuntimeException(e);
-                            }
-                            this.parse(s);
-                        });
-                    }
-                }
+                handleCapeSelection(mouseX, mouseY, startX, startY, capeWidth, capeHeight, cape);
 
                 startX += capeWidth + spacing;
             }
@@ -170,6 +102,77 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
 
         GlStateManager.popMatrix();
 
+        updateMouseState();
+    }
+
+    private void handleScrolling(double mouseX, double mouseY, double posX, double posY, double width, double height, int dWheel) {
+        if (dWheel != 0 && isHovered(mouseX, mouseY, posX, posY, width, height)) {
+
+            double delta = 24;
+
+            targetOffset += delta * (dWheel > 0 ? -1 : 1);
+
+            targetOffset = Math.max(0, targetOffset);
+        }
+    }
+
+    private void drawCapeBox(double startX, double startY, double capeWidth, double capeHeight) {
+        Rect.draw(startX - 1, startY - 1, capeWidth + 2, capeHeight + 2, AltScreen.getInstance().getColor(AltScreen.ColorType.CONTAINER_OUTLINE));
+        Rect.draw(startX, startY, capeWidth, capeHeight, AltScreen.getInstance().getColor(AltScreen.ColorType.CONTAINER_ELEMENT_BACKGROUND));
+    }
+
+    private void drawCapeImage(double startX, double startY, double capeWidth, double capeHeight, Cape cape) {
+        double imgWidth = 60;
+        double imgHeight = 96;
+        if (!cape.id.isEmpty()) {
+            Location capeLocation = this.getCapeLocation(cape.id);
+
+            ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(capeLocation);
+            if (texture != null && texture != TextureUtil.missingTexture) {
+                GlStateManager.color(1, 1, 1, 1f);
+                Image.draw(capeLocation, startX + capeWidth * 0.5 - imgWidth * 0.5, startY + 6, imgWidth, imgHeight, Image.Type.NoColor);
+            }
+        } else {
+            GlStateManager.color(1, 1, 1, 1f);
+            Image.draw(Location.of(Tritium.NAME + "/textures/no_cape.png"), startX + capeWidth * 0.5 - imgWidth * 0.5, startY + 6, imgWidth, imgHeight, Image.Type.NoColor);
+        }
+    }
+
+    private void drawCapeText(double startX, double startY, double capeWidth, double capeHeight, Cape cape) {
+        CFontRenderer fr = FontManager.pf18;
+
+        fr.drawCenteredString(cape.alias, startX + capeWidth * 0.5, startY + capeHeight - fr.getHeight() - 16, AltScreen.getInstance().getColor(AltScreen.ColorType.PRIMARY_TEXT));
+
+        if (cape.state) {
+            FontManager.pf16.drawCenteredString(selected.get(), startX + capeWidth * 0.5, startY + capeHeight - FontManager.pf18.getHeight() - 3, hexColor(0, 255, 0, 255));
+        }
+    }
+
+    private void handleCapeSelection(double mouseX, double mouseY, double startX, double startY, double capeWidth, double capeHeight, Cape cape) {
+        if (isHovered(mouseX, mouseY, startX, startY, capeWidth, capeHeight) && Mouse.isButtonDown(0) && !lmbPressed) {
+            lmbPressed = true;
+
+            MultiThreadingUtil.runAsync(() -> {
+                Map<String, String> checkProductHeaders = new HashMap<>();
+                checkProductHeaders.put("Authorization", "Bearer " + this.accessToken);
+                String s;
+                try {
+
+                    if (cape.id.isEmpty()) {
+                        s = HttpUtils.deleteString("https://api.minecraftservices.com/minecraft/profile/capes/active", null, checkProductHeaders);
+                    } else {
+                        s = HttpUtils.readString(HttpUtils.request("https://api.minecraftservices.com/minecraft/profile/capes/active", "{\"capeId\": \"" + cape.id + "\"}", checkProductHeaders, "PUT"));
+                    }
+
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+                this.parse(s);
+            });
+        }
+    }
+
+    private void updateMouseState() {
         if (!Mouse.isButtonDown(0) && lmbPressed) {
             lmbPressed = false;
         }
@@ -207,7 +210,6 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
 
                         Textures.loadTextureAsyncly(capeLocation, img);
                         Textures.loadTextureAsyncly(capeLocationFull, full);
-
                     }
                 });
             }
@@ -215,6 +217,10 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
             this.capes.add(new Cape(id, state.equals("ACTIVE"), url, alias));
         }
 
+        updatePlayerCape();
+    }
+
+    private void updatePlayerCape() {
         if (this.capes.size() > 1) {
             boolean hasActiveCape = false;
             for (int i = 1; i < this.capes.size(); i++) {

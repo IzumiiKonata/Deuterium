@@ -23,7 +23,7 @@ public abstract class SimpleTextWidget extends Widget {
 
         String text = this.getText();
 
-        double spacing = 6;
+        double spacing = 4;
 
         SharedRenderingConstants.NORMAL.add(() -> {
             GlStateManager.pushMatrix();
