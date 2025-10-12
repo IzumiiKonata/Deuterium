@@ -6,14 +6,19 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Location;
+import tritium.rendering.ResPackPreview;
+import tritium.rendering.entities.impl.Image;
+import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.loading.screens.NormalLoadingScreen;
+import tritium.rendering.rendersystem.RenderSystem;
 
 import java.util.List;
 
 public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListEntry {
     private static final Location RESOURCE_PACKS_TEXTURE = Location.of("textures/gui/resource_packs.png");
-    private static final IChatComponent field_183020_d = new ChatComponentTranslation("resourcePack.incompatible");
-    private static final IChatComponent field_183021_e = new ChatComponentTranslation("resourcePack.incompatible.old");
-    private static final IChatComponent field_183022_f = new ChatComponentTranslation("resourcePack.incompatible.new");
+    private static final IChatComponent RP_INCOMPATIBLE = new ChatComponentTranslation("resourcePack.incompatible");
+    private static final IChatComponent RP_INCOMPATIBLE_OLD = new ChatComponentTranslation("resourcePack.incompatible.old");
+    private static final IChatComponent RP_INCOMPATIBLE_NEW = new ChatComponentTranslation("resourcePack.incompatible.new");
     protected final Minecraft mc;
     protected final GuiScreenResourcePacks resourcePacksGUI;
 
@@ -23,42 +28,42 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
     }
 
     public void drawEntry(int slotIndex, int x, int y, int listWidth, int slotHeight, int mouseX, int mouseY, boolean isSelected) {
-        int i = this.func_183019_a();
+        int format = this.getPackFormat();
 
-        if (i != 1) {
+        if (format != 1) {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             Gui.drawRect(x - 1, y - 1, x + listWidth - 9, y + slotHeight + 1, -8978432);
         }
 
-        this.func_148313_c();
+        this.bindResourcePackIcon();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 0.0F, 32, 32, 32.0F, 32.0F);
-        String s = this.func_148312_b();
-        String s1 = this.func_148311_a();
+        String name = this.getName();
+        String desc = this.getDescription();
 
-        if ((this.mc.gameSettings.touchscreen || isSelected) && this.func_148310_d()) {
+        if ((this.mc.gameSettings.touchscreen || isSelected) && this.canBeMoved()) {
             this.mc.getTextureManager().bindTexture(RESOURCE_PACKS_TEXTURE);
             Gui.drawRect(x, y, x + 32, y + 32, -1601138544);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             int j = mouseX - x;
             int k = mouseY - y;
 
-            if (i < 1) {
-                s = field_183020_d.getFormattedText();
-                s1 = field_183021_e.getFormattedText();
-            } else if (i > 1) {
-                s = field_183020_d.getFormattedText();
-                s1 = field_183022_f.getFormattedText();
+            if (format < 1) {
+                name = RP_INCOMPATIBLE.getFormattedText();
+                desc = RP_INCOMPATIBLE_OLD.getFormattedText();
+            } else if (format > 1) {
+                name = RP_INCOMPATIBLE.getFormattedText();
+                desc = RP_INCOMPATIBLE_NEW.getFormattedText();
             }
 
-            if (this.func_148309_e()) {
+            if (this.canBeSelected()) {
                 if (j < 32) {
                     Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 32.0F, 32, 32, 256.0F, 256.0F);
                 } else {
                     Gui.drawModalRectWithCustomSizedTexture(x, y, 0.0F, 0.0F, 32, 32, 256.0F, 256.0F);
                 }
             } else {
-                if (this.func_148308_f()) {
+                if (this.canBeUnselected()) {
                     if (j < 16) {
                         Gui.drawModalRectWithCustomSizedTexture(x, y, 32.0F, 32.0F, 32, 32, 256.0F, 256.0F);
                     } else {
@@ -66,7 +71,7 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
                     }
                 }
 
-                if (this.func_148314_g()) {
+                if (this.canMoveUp()) {
                     if (j < 32 && j > 16 && k < 16) {
                         Gui.drawModalRectWithCustomSizedTexture(x, y, 96.0F, 32.0F, 32, 32, 256.0F, 256.0F);
                     } else {
@@ -74,7 +79,7 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
                     }
                 }
 
-                if (this.func_148307_h()) {
+                if (this.canMoveDown()) {
                     if (j < 32 && j > 16 && k > 16) {
                         Gui.drawModalRectWithCustomSizedTexture(x, y, 64.0F, 32.0F, 32, 32, 256.0F, 256.0F);
                     } else {
@@ -84,60 +89,91 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
             }
         }
 
-        int i1 = this.mc.fontRendererObj.getStringWidth(s);
+        int i1 = this.mc.fontRendererObj.getStringWidth(name);
 
         if (i1 > 157) {
-            s = this.mc.fontRendererObj.trimStringToWidth(s, 157 - this.mc.fontRendererObj.getStringWidth("...")) + "...";
+            name = this.mc.fontRendererObj.trimStringToWidth(name, 157 - this.mc.fontRendererObj.getStringWidth("...")) + "...";
         }
 
-        this.mc.fontRendererObj.drawStringWithShadow(s, (float) (x + 32 + 2), (float) (y + 1), 16777215);
-        List<String> list = this.mc.fontRendererObj.listFormattedStringToWidth(s1, 157);
+        this.mc.fontRendererObj.drawStringWithShadow(name, (float) (x + 32 + 2), (float) (y + 1), 16777215);
+        List<String> list = this.mc.fontRendererObj.listFormattedStringToWidth(desc, 157);
 
         for (int l = 0; l < 2 && l < list.size(); ++l) {
             this.mc.fontRendererObj.drawStringWithShadow(list.get(l), (float) (x + 32 + 2), (float) (y + 12 + 10 * l), 8421504);
         }
+
+        if (RenderSystem.isHovered(mouseX, mouseY, x - 1, y - 1, listWidth - 9, slotHeight + 1) && !(this instanceof ResourcePackListEntryDefault)) {
+
+            resourcePacksGUI.renderCalls.add(() -> {
+                double posX = mouseX + 4;
+                double posY = mouseY + 4;
+
+                Rect.draw(posX, posY, 143, 40, RenderSystem.hexColor(255, 255, 255, 50));
+
+                double startX = posX + 4;
+                double startY = posY + 4;
+
+                List<ResPackPreview> previewImages = ((ResourcePackListEntryFound) this).getEntry().getPreviewImages();
+                for (int i = 0; i < previewImages.size(); i++) {
+                    ResPackPreview previewImage = previewImages.get(i);
+                    previewImage.render(startX, startY, 16, 16);
+                    startX += 17;
+
+                    if (i == 7) {
+                        startX = posX + 4;
+                        startY += 17;
+                    }
+                }
+//
+//                Image.draw(((ResourcePackListEntryFound) this).getEntry().getLocationPreview(), posX + 4, posY + 4, 135, 33, Image.Type.Normal);
+
+                Rect.draw(posX + 4 + 135 + 4 - .5, posY + 4, 1, 32, -1);
+
+                mc.fontRendererObj.drawString("Res: 32x", posX + 4 + 135 + 4 + 4, posY + 4, -1);
+            });
+        }
     }
 
-    protected abstract int func_183019_a();
+    protected abstract int getPackFormat();
 
-    protected abstract String func_148311_a();
+    protected abstract String getDescription();
 
-    protected abstract String func_148312_b();
+    protected abstract String getName();
 
-    protected abstract void func_148313_c();
+    protected abstract void bindResourcePackIcon();
 
-    protected boolean func_148310_d() {
+    protected boolean canBeMoved() {
         return true;
     }
 
-    protected boolean func_148309_e() {
+    protected boolean canBeSelected() {
         return !this.resourcePacksGUI.hasResourcePackEntry(this);
     }
 
-    protected boolean func_148308_f() {
+    protected boolean canBeUnselected() {
         return this.resourcePacksGUI.hasResourcePackEntry(this);
     }
 
-    protected boolean func_148314_g() {
+    protected boolean canMoveUp() {
         List<ResourcePackListEntry> list = this.resourcePacksGUI.getListContaining(this);
         int i = list.indexOf(this);
-        return i > 0 && list.get(i - 1).func_148310_d();
+        return i > 0 && list.get(i - 1).canBeMoved();
     }
 
-    protected boolean func_148307_h() {
+    protected boolean canMoveDown() {
         List<ResourcePackListEntry> list = this.resourcePacksGUI.getListContaining(this);
         int i = list.indexOf(this);
-        return i >= 0 && i < list.size() - 1 && list.get(i + 1).func_148310_d();
+        return i >= 0 && i < list.size() - 1 && list.get(i + 1).canBeMoved();
     }
 
     /**
      * Returns true if the mouse has been pressed on this control.
      */
     public boolean mousePressed(int slotIndex, int p_148278_2_, int p_148278_3_, int p_148278_4_, int p_148278_5_, int p_148278_6_) {
-        if (this.func_148310_d() && p_148278_5_ <= 32) {
-            if (this.func_148309_e()) {
+        if (this.canBeMoved() && p_148278_5_ <= 32) {
+            if (this.canBeSelected()) {
                 this.resourcePacksGUI.markChanged();
-                int j = this.func_183019_a();
+                int j = this.getPackFormat();
 
                 if (j != 1) {
                     String s1 = I18n.format("resourcePack.incompatible.confirm.title");
@@ -161,14 +197,14 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
                 return true;
             }
 
-            if (p_148278_5_ < 16 && this.func_148308_f()) {
+            if (p_148278_5_ < 16 && this.canBeUnselected()) {
                 this.resourcePacksGUI.getListContaining(this).remove(this);
                 this.resourcePacksGUI.getAvailableResourcePacks().add(0, this);
                 this.resourcePacksGUI.markChanged();
                 return true;
             }
 
-            if (p_148278_5_ > 16 && p_148278_6_ < 16 && this.func_148314_g()) {
+            if (p_148278_5_ > 16 && p_148278_6_ < 16 && this.canMoveUp()) {
                 List<ResourcePackListEntry> list1 = this.resourcePacksGUI.getListContaining(this);
                 int k = list1.indexOf(this);
                 list1.remove(this);
@@ -177,7 +213,7 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
                 return true;
             }
 
-            if (p_148278_5_ > 16 && p_148278_6_ > 16 && this.func_148307_h()) {
+            if (p_148278_5_ > 16 && p_148278_6_ > 16 && this.canMoveDown()) {
                 List<ResourcePackListEntry> list = this.resourcePacksGUI.getListContaining(this);
                 int i = list.indexOf(this);
                 list.remove(this);

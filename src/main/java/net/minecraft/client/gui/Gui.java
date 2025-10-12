@@ -183,6 +183,18 @@ public class Gui {
         tessellator.draw();
     }
 
+    public static void drawModalRectWithCustomSizedTexture2(double x, double y, double u, double v, double width, double height, double textureWidth, double textureHeight) {
+        double f = 1.0F / width;
+        double f1 = 1.0F / height;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        worldrenderer.pos(x, y + height, 0.0D).tex(u, v + (textureHeight) * f1).endVertex();
+        worldrenderer.pos(x + width, y + height, 0.0D).tex(u + (textureWidth) * f, v + (textureHeight) * f1).endVertex();
+        worldrenderer.pos(x + width, y, 0.0D).tex(u + (textureWidth) * f, v).endVertex();
+        worldrenderer.pos(x, y, 0.0D).tex(u, v).endVertex();
+        tessellator.draw();
+    }
     /**
      * Draws a textured rectangle at z = 0. Args: x, y, u, v, width, height, textureWidth, textureHeight
      */

@@ -70,6 +70,28 @@ public class Image extends RenderableEntity {
         GlStateManager.enableAlpha();
     }
 
+    public static void drawNearest(Location img, double x, double y, double width, double height, Type type) {
+
+        if (type == Type.Normal) {
+            GlStateManager.color(1, 1, 1, 1);
+        }
+
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
+        if (textureObj != null && textureObj != TextureUtil.missingTexture) {
+            TextureUtils.bindTexture(textureObj.getGlTextureId());
+            RenderSystem.nearestFilter();
+            Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
+        } else if (textureObj != TextureUtil.missingTexture) {
+            textureObj = new SimpleTexture(img);
+            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+        }
+
+        GlStateManager.enableAlpha();
+    }
+
     public static void drawLinearRotate90R(Location img, double x, double y, double width, double height, Type type) {
 
         if (type == Type.Normal) {
@@ -243,6 +265,28 @@ public class Image extends RenderableEntity {
 
         GlStateManager.enableAlpha();
         
+    }
+
+    public static void draw(Location img, double x, double y, double width, double height, double tX, double tY, double tWidth, double tHeight, Type type) {
+
+        if (type == Type.Normal) {
+            GlStateManager.color(1, 1, 1, 1);
+        }
+
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
+        if (textureObj != null && textureObj != TextureUtil.missingTexture) {
+            TextureUtils.bindTexture(textureObj.getGlTextureId());
+            Gui.drawModalRectWithCustomSizedTexture2(x, y, tX, tY, width, height, tWidth, tHeight);
+        } else if (textureObj != TextureUtil.missingTexture) {
+            textureObj = new SimpleTexture(img);
+            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+        }
+
+        GlStateManager.enableAlpha();
+
     }
 
     public static void drawKeepBlend(Location img, double x, double y, double width, double height, Type type) {

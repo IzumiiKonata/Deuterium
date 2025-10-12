@@ -10,6 +10,7 @@ import tritium.utils.logging.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -42,20 +43,21 @@ public class GuiScreenResourcePacks extends GuiScreen {
         this.buttonList.add(new GuiOptionButton(2, this.width / 2 - 154, this.height - 48, I18n.format("resourcePack.openFolder")));
         this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 4, this.height - 48, I18n.format("gui.done")));
 
-        if (!this.changed) {
+        if (!this.changed || true) {
+            System.out.println("1");
             this.availableResourcePacks = Lists.newArrayList();
             this.selectedResourcePacks = Lists.newArrayList();
-            ResourcePackRepository resourcepackrepository = this.mc.getResourcePackRepository();
-            resourcepackrepository.updateRepositoryEntriesAll();
-            List<ResourcePackRepository.Entry> list = Lists.newArrayList(resourcepackrepository.getRepositoryEntriesAll());
-            list.removeAll(resourcepackrepository.getRepositoryEntries());
+            ResourcePackRepository repo = this.mc.getResourcePackRepository();
+            repo.updateRepositoryEntriesAll();
+            List<ResourcePackRepository.Entry> list = Lists.newArrayList(repo.getRepositoryEntriesAll());
+            list.removeAll(repo.getRepositoryEntries());
 
-            for (ResourcePackRepository.Entry resourcepackrepository$entry : list) {
-                this.availableResourcePacks.add(new ResourcePackListEntryFound(this, resourcepackrepository$entry));
+            for (ResourcePackRepository.Entry entry : list) {
+                this.availableResourcePacks.add(new ResourcePackListEntryFound(this, entry));
             }
 
-            for (ResourcePackRepository.Entry resourcepackrepository$entry1 : Lists.reverse(resourcepackrepository.getRepositoryEntries())) {
-                this.selectedResourcePacks.add(new ResourcePackListEntryFound(this, resourcepackrepository$entry1));
+            for (ResourcePackRepository.Entry entry : Lists.reverse(repo.getRepositoryEntries())) {
+                this.selectedResourcePacks.add(new ResourcePackListEntryFound(this, entry));
             }
 
             this.selectedResourcePacks.add(new ResourcePackListEntryDefault(this));
@@ -155,7 +157,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
 
                     for (ResourcePackListEntry resourcepacklistentry : this.selectedResourcePacks) {
                         if (resourcepacklistentry instanceof ResourcePackListEntryFound) {
-                            list.add(((ResourcePackListEntryFound) resourcepacklistentry).func_148318_i());
+                            list.add(((ResourcePackListEntryFound) resourcepacklistentry).getEntry());
                         }
                     }
 
@@ -167,7 +169,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
                     for (ResourcePackRepository.Entry resourcepackrepository$entry : list) {
                         this.mc.gameSettings.resourcePacks.add(resourcepackrepository$entry.getResourcePackName());
 
-                        if (resourcepackrepository$entry.func_183027_f() != 1) {
+                        if (resourcepackrepository$entry.getPackFormat() != 1) {
                             this.mc.gameSettings.incompatibleResourcePacks.add(resourcepackrepository$entry.getResourcePackName());
                         }
                     }
@@ -197,6 +199,8 @@ public class GuiScreenResourcePacks extends GuiScreen {
         super.mouseReleased(mouseX, mouseY, state);
     }
 
+    public List<Runnable> renderCalls = new ArrayList<>();
+
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
@@ -207,6 +211,9 @@ public class GuiScreenResourcePacks extends GuiScreen {
         this.drawCenteredString(this.fontRendererObj, I18n.format("resourcePack.title"), this.width / 2, 16, 16777215);
         this.drawCenteredString(this.fontRendererObj, I18n.format("resourcePack.folderInfo"), this.width / 2 - 77, this.height - 26, 8421504);
         super.drawScreen(mouseX, mouseY, partialTicks);
+
+        renderCalls.forEach(Runnable::run);
+        renderCalls.clear();
     }
 
     /**

@@ -31,11 +31,11 @@ public class ResourcePackListEntryDefault extends ResourcePackListEntry {
         this.resourcePackIcon = this.mc.getTextureManager().getDynamicTextureLocation("texturepackicon", dynamictexture);
     }
 
-    protected int func_183019_a() {
+    protected int getPackFormat() {
         return 1;
     }
 
-    protected String func_148311_a() {
+    protected String getDescription() {
         try {
             PackMetadataSection packmetadatasection = this.field_148320_d.getPackMetadata(this.mc.getResourcePackRepository().rprMetadataSerializer, "pack");
 
@@ -51,31 +51,31 @@ public class ResourcePackListEntryDefault extends ResourcePackListEntry {
         return EnumChatFormatting.RED + "Missing " + "pack.mcmeta" + " :(";
     }
 
-    protected boolean func_148309_e() {
+    protected boolean canBeSelected() {
         return false;
     }
 
-    protected boolean func_148308_f() {
+    protected boolean canBeUnselected() {
         return false;
     }
 
-    protected boolean func_148314_g() {
+    protected boolean canMoveUp() {
         return false;
     }
 
-    protected boolean func_148307_h() {
+    protected boolean canMoveDown() {
         return false;
     }
 
-    protected String func_148312_b() {
+    protected String getName() {
         return "Default";
     }
 
-    protected void func_148313_c() {
+    protected void bindResourcePackIcon() {
         this.mc.getTextureManager().bindTexture(this.resourcePackIcon);
     }
 
-    protected boolean func_148310_d() {
+    protected boolean canBeMoved() {
         return false;
     }
 }

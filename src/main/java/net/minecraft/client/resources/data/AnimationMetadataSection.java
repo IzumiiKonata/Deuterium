@@ -12,12 +12,12 @@ public class AnimationMetadataSection implements IMetadataSection {
     private final int frameTime;
     private final boolean interpolate;
 
-    public AnimationMetadataSection(List<AnimationFrame> p_i46088_1_, int p_i46088_2_, int p_i46088_3_, int p_i46088_4_, boolean p_i46088_5_) {
-        this.animationFrames = p_i46088_1_;
-        this.frameWidth = p_i46088_2_;
-        this.frameHeight = p_i46088_3_;
-        this.frameTime = p_i46088_4_;
-        this.interpolate = p_i46088_5_;
+    public AnimationMetadataSection(List<AnimationFrame> frames, int width, int height, int time, boolean interpolate) {
+        this.animationFrames = frames;
+        this.frameWidth = width;
+        this.frameHeight = height;
+        this.frameTime = time;
+        this.interpolate = interpolate;
     }
 
     public int getFrameHeight() {

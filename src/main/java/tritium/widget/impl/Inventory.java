@@ -117,7 +117,6 @@ public class Inventory extends Widget {
 
         ibakedmodel.getItemCameraTransforms().applyTransform(ItemCameraTransforms.TransformType.GUI);
 
-
         this.renderItem(stack, ibakedmodel, scale);
         GlStateManager.disableAlpha();
         GlStateManager.disableRescaleNormal();

@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.*;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreenWorking;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -15,19 +17,21 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.HttpUtil;
 import net.minecraft.util.Location;
+import net.minecraft.util.Tuple;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.TrueFileFilter;
+import tritium.rendering.ResPackPreview;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileFilter;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ResourcePackRepository {
@@ -63,7 +67,7 @@ public class ResourcePackRepository {
 
             for (ResourcePackRepository.Entry resourcepackrepository$entry : this.repositoryEntriesAll) {
                 if (resourcepackrepository$entry.getResourcePackName().equals(s)) {
-                    if (resourcepackrepository$entry.func_183027_f() == 1 || settings.incompatibleResourcePacks.contains(resourcepackrepository$entry.getResourcePackName())) {
+                    if (resourcepackrepository$entry.getPackFormat() == 1 || settings.incompatibleResourcePacks.contains(resourcepackrepository$entry.getResourcePackName())) {
                         this.repositoryEntries.add(resourcepackrepository$entry);
                         break;
                     }
@@ -92,9 +96,9 @@ public class ResourcePackRepository {
     public void updateRepositoryEntriesAll() {
 
         final Map<Integer, ResourcePackRepository.Entry> all = new HashMap<>();
-        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
-            all.put(entry.hashCode(), entry);
-        }
+//        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
+//            all.put(entry.hashCode(), entry);
+//        }
 
         final Set<ResourcePackRepository.Entry> newSet = new LinkedHashSet<>();
         for (File file : this.getResourcePackFiles()) {
@@ -284,6 +288,12 @@ public class ResourcePackRepository {
         private BufferedImage texturePackIcon;
         private Location locationTexturePackIcon;
 
+        @Getter
+        private List<ResPackPreview> previewImages = new ArrayList<>();
+
+        @Getter
+        private List<String> resPackInfo = new ArrayList<>();
+
         private Entry(File resourcePackFileIn) {
             this.resourcePackFile = resourcePackFileIn;
         }
@@ -301,7 +311,84 @@ public class ResourcePackRepository {
                 this.texturePackIcon = ResourcePackRepository.this.rprDefaultResourcePack.getPackImage();
             }
 
+            try {
+                this.genPreviewImages();
+                this.detectResPackInfo();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+
             this.closeResourcePack();
+        }
+
+        private void detectResPackInfo() {
+
+        }
+
+        /**
+         * 获取资源包中的图片
+         * @param loc 位置
+         * @return 图片, 是否从vanilla资源包中加载
+         */
+        @SneakyThrows
+        private Tuple<BufferedImage, Boolean> getTextureImg(Location loc) {
+            InputStream is = null;
+
+            try {
+                is = this.reResourcePack.getInputStream(loc);
+            } catch (IOException e) {
+            }
+
+            boolean fromDefault = false;
+
+            if (is == null) {
+                is = ResourcePackRepository.this.rprDefaultResourcePack.getInputStream(loc);
+                fromDefault = true;
+            }
+
+            assert is != null;
+
+            return Tuple.of(ImageIO.read(is), fromDefault);
+        }
+
+        private void genPreviewImages() {
+            List<String> listTextures = Arrays.asList(
+                    "textures/blocks/stone.png",
+                    "textures/blocks/cobblestone.png",
+                    "textures/blocks/log_oak.png",
+                    "textures/blocks/planks_oak.png",
+                    "textures/blocks/diamond_ore.png",
+                    "textures/items/bucket_water.png",
+                    "textures/items/bucket_lava.png",
+                    "textures/items/apple_golden.png",
+                    "textures/items/ender_pearl.png",
+                    "textures/items/bow_standby.png",
+                    "textures/items/diamond_sword.png",
+                    "textures/items/iron_sword.png",
+                    "textures/items/diamond_pickaxe.png",
+                    "textures/items/iron_pickaxe.png",
+                    "textures/items/diamond_chestplate.png",
+                    "textures/items/iron_chestplate.png"
+            );
+
+            int maxSize = -1;
+
+            for (String listTexture : listTextures) {
+                Tuple<BufferedImage, Boolean> tuple = this.getTextureImg(Location.of(listTexture));
+                BufferedImage img = tuple.getA();
+
+                if (!tuple.getB()) {
+                    if (img.getWidth() == img.getHeight())
+                        maxSize = Math.max(maxSize, img.getWidth());
+
+                    this.previewImages.add(new ResPackPreview(reResourcePack, img, listTexture));
+                }
+            }
+
+            if (maxSize != -1)
+                this.resPackInfo.add("Res: " + EnumChatFormatting.GREEN + maxSize);
+            else
+                this.resPackInfo.add("Res: " + EnumChatFormatting.YELLOW + "Unknown");
         }
 
         public void bindTexturePackIcon(TextureManager textureManagerIn) {
@@ -330,7 +417,7 @@ public class ResourcePackRepository {
             return this.rePackMetadataSection == null ? EnumChatFormatting.RED + "Invalid pack.mcmeta (or missing 'pack' section)" : this.rePackMetadataSection.getPackDescription().getFormattedText();
         }
 
-        public int func_183027_f() {
+        public int getPackFormat() {
             return this.rePackMetadataSection.getPackFormat();
         }
 
