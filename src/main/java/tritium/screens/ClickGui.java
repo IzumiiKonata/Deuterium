@@ -65,6 +65,7 @@ public class ClickGui extends BaseScreen {
     public void initGui() {
         this.closing = false;
 
+//        categoriesWindow.init();
         playlistsWindow.init();
     }
 

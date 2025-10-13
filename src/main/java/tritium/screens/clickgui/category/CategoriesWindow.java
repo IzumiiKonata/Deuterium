@@ -61,7 +61,10 @@ public class CategoriesWindow extends Window {
             Panel bannerPanel = new Panel();
 
             CFontRenderer arial18bold = FontManager.arial18bold;
-            bannerPanel.setBounds(12 + arial18bold.getWidth("Tritium"), arial18bold.getHeight());
+            bannerPanel.setBeforeRenderCallback(() -> {
+                bannerPanel.setBounds(12 + arial18bold.getWidth("Tritium"), arial18bold.getHeight());
+                bannerPanel.center();
+            });
 
             LabelWidget tritiumLogo = new LabelWidget("a", FontManager.tritium24)
                     .setPosition(0, -1)
@@ -82,8 +85,6 @@ public class CategoriesWindow extends Window {
             // END DBG
 
             this.topRect.addChild(bannerPanel);
-
-            bannerPanel.center();
         }
 
         this.bottomRect.setBeforeRenderCallback(() -> {

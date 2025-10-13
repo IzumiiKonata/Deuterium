@@ -99,9 +99,9 @@ public class ResourcePackRepository {
     public void updateRepositoryEntriesAll() {
 
         final Map<Integer, ResourcePackRepository.Entry> all = new HashMap<>();
-//        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
-//            all.put(entry.hashCode(), entry);
-//        }
+        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
+            all.put(entry.hashCode(), entry);
+        }
 
         final Set<ResourcePackRepository.Entry> newSet = new LinkedHashSet<>();
         for (File file : this.getResourcePackFiles()) {
