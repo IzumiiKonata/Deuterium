@@ -34,6 +34,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -295,7 +296,7 @@ public class ResourcePackRepository {
         private final List<ResPackPreview> previewImages = new ArrayList<>();
 
         @Getter
-        private final List<String> resPackInfo = new ArrayList<>();
+        private final List<String> resPackInfo = new CopyOnWriteArrayList<>();
 
         @Getter
         private final AtomicBoolean previewsLoaded = new AtomicBoolean(false);

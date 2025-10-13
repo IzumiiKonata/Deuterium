@@ -93,7 +93,7 @@ public class ResPackPreview {
             return;
 
         if (!isAnimated) {
-            Image.draw(this.locImg, x, y, width, height, Image.Type.Normal);
+            Image.drawNearest(this.locImg, x, y, width, height, Image.Type.Normal);
             return;
         }
 
