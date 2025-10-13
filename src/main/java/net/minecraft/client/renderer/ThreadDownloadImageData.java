@@ -1,6 +1,7 @@
 package net.minecraft.client.renderer;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
@@ -25,6 +26,7 @@ import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.Proxy.Type;
 import java.net.URL;
+import java.nio.file.Files;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ThreadDownloadImageData extends SimpleTexture {
@@ -78,30 +80,28 @@ public class ThreadDownloadImageData extends SimpleTexture {
     }
 
     public void loadTexture(IResourceManager resourceManager) throws IOException {
-        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-            if (this.bufferedImage == null && this.textureLocation != null) {
-                super.loadTexture(resourceManager);
-            }
+        if (this.bufferedImage == null && this.textureLocation != null) {
+            super.loadTexture(resourceManager);
+        }
 
-            if (this.imageThread == null) {
-                if (this.cacheFile != null && this.cacheFile.isFile()) {
-                    logger.debug("Loading http texture from local cache ({})", this.cacheFile);
+        if (this.imageThread == null) {
+            if (this.cacheFile != null && this.cacheFile.isFile()) {
+                logger.debug("Loading http texture from local cache ({})", this.cacheFile);
 
-                    try {
-                        this.bufferedImage = ImageIO.read(this.cacheFile);
+                try {
+                    this.bufferedImage = NativeBackedImage.make(Files.newInputStream(this.cacheFile.toPath()));
 
-                        if (this.imageBuffer != null) {
-                            this.setBufferedImage(this.imageBuffer.parseUserSkin(this.bufferedImage));
-                        }
-
-                        this.loadingFinished();
-                    } catch (IOException ioexception) {
-                        logger.error("Couldn't load skin " + this.cacheFile, ioexception);
-                        this.loadTextureFromServer();
+                    if (this.imageBuffer != null) {
+                        this.setBufferedImage(this.imageBuffer.parseUserSkin(this.bufferedImage));
                     }
-                } else {
+
+                    this.loadingFinished();
+                } catch (IOException ioexception) {
+                    logger.error("Couldn't load skin " + this.cacheFile, ioexception);
                     this.loadTextureFromServer();
                 }
+            } else {
+                this.loadTextureFromServer();
             }
         }
     }
@@ -133,7 +133,7 @@ public class ThreadDownloadImageData extends SimpleTexture {
 
                         if (ThreadDownloadImageData.this.cacheFile != null) {
                             FileUtils.copyInputStreamToFile(httpurlconnection.getInputStream(), ThreadDownloadImageData.this.cacheFile);
-                            bufferedimage = ImageIO.read(ThreadDownloadImageData.this.cacheFile);
+                            bufferedimage = NativeBackedImage.make(Files.newInputStream(ThreadDownloadImageData.this.cacheFile.toPath()));
                         } else {
                             bufferedimage = TextureUtil.readBufferedImage(httpurlconnection.getInputStream());
                         }

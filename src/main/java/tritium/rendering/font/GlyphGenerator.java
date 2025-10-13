@@ -86,14 +86,12 @@ public class GlyphGenerator {
 
         // okay this is complicated.....
         AsyncGLContext.submit(() -> {
-            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-                DynamicTexture dynamicTexture = new DynamicTexture(bi, true, false);
-                Minecraft.getMinecraft().getTextureManager().loadTexture(identifier, dynamicTexture);
+            DynamicTexture dynamicTexture = new DynamicTexture(bi, true, false);
+            Minecraft.getMinecraft().getTextureManager().loadTexture(identifier, dynamicTexture);
 
-                bi.flush();
-                glyph.textureId = dynamicTexture.getGlTextureId();
-                glyph.init();
-            }
+            bi.flush();
+            glyph.textureId = dynamicTexture.getGlTextureId();
+            glyph.init();
         });
 
     }

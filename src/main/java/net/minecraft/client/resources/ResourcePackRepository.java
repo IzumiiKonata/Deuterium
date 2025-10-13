@@ -10,6 +10,7 @@ import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreenWorking;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.client.resources.data.PackMetadataSection;
@@ -25,6 +26,7 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import tritium.rendering.ResPackPreview;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -32,6 +34,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class ResourcePackRepository {
@@ -96,9 +99,9 @@ public class ResourcePackRepository {
     public void updateRepositoryEntriesAll() {
 
         final Map<Integer, ResourcePackRepository.Entry> all = new HashMap<>();
-//        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
-//            all.put(entry.hashCode(), entry);
-//        }
+        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
+            all.put(entry.hashCode(), entry);
+        }
 
         final Set<ResourcePackRepository.Entry> newSet = new LinkedHashSet<>();
         for (File file : this.getResourcePackFiles()) {
@@ -289,10 +292,13 @@ public class ResourcePackRepository {
         private Location locationTexturePackIcon;
 
         @Getter
-        private List<ResPackPreview> previewImages = new ArrayList<>();
+        private final List<ResPackPreview> previewImages = new ArrayList<>();
 
         @Getter
-        private List<String> resPackInfo = new ArrayList<>();
+        private final List<String> resPackInfo = new ArrayList<>();
+
+        @Getter
+        private final AtomicBoolean previewsLoaded = new AtomicBoolean(false);
 
         private Entry(File resourcePackFileIn) {
             this.resourcePackFile = resourcePackFileIn;
@@ -311,18 +317,30 @@ public class ResourcePackRepository {
                 this.texturePackIcon = ResourcePackRepository.this.rprDefaultResourcePack.getPackImage();
             }
 
-            try {
-                this.genPreviewImages();
-                this.detectResPackInfo();
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
+            MultiThreadingUtil.runAsync(() -> {
+                try {
+                    this.genPreviewImages();
+                    this.detectResPackInfo();
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
 
-            this.closeResourcePack();
+                this.closeResourcePack();
+            });
         }
 
         private void detectResPackInfo() {
+            this.resPackInfo.add("Animations: " + (this.reResourcePack.hasAnimations() ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕"));
+            this.resPackInfo.add("Lightmap: " + (this.hasLightMap() ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕"));
+            this.resPackInfo.add("Sounds: " + (this.reResourcePack.hasSounds() ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕"));
+        }
 
+        private boolean hasLightMap() {
+            boolean b = this.reResourcePack.resourceExists(Location.of("mcpatcher/lightmap/world0.png"));
+            boolean b1 = this.reResourcePack.resourceExists(Location.of("mcpatcher/lightmap/world1.png"));
+            boolean b2 = this.reResourcePack.resourceExists(Location.of("mcpatcher/lightmap/world-1.png"));
+            
+            return b || b1 || b2;
         }
 
         /**
@@ -348,7 +366,7 @@ public class ResourcePackRepository {
 
             assert is != null;
 
-            return Tuple.of(ImageIO.read(is), fromDefault);
+            return Tuple.of(NativeBackedImage.make(is), fromDefault);
         }
 
         private void genPreviewImages() {
@@ -377,7 +395,8 @@ public class ResourcePackRepository {
                 Tuple<BufferedImage, Boolean> tuple = this.getTextureImg(Location.of(listTexture));
                 BufferedImage img = tuple.getA();
 
-                if (!tuple.getB()) {
+                boolean loadedFromDefaultRespack = tuple.getB();
+                if (!loadedFromDefaultRespack) {
                     if (img.getWidth() == img.getHeight())
                         maxSize = Math.max(maxSize, img.getWidth());
 
@@ -386,9 +405,11 @@ public class ResourcePackRepository {
             }
 
             if (maxSize != -1)
-                this.resPackInfo.add("Res: " + EnumChatFormatting.GREEN + maxSize);
+                this.resPackInfo.add("Res: " + EnumChatFormatting.GREEN + maxSize + "x");
             else
                 this.resPackInfo.add("Res: " + EnumChatFormatting.YELLOW + "Unknown");
+
+            previewsLoaded.set(true);
         }
 
         public void bindTexturePackIcon(TextureManager textureManagerIn) {
@@ -403,6 +424,10 @@ public class ResourcePackRepository {
             if (this.reResourcePack instanceof Closeable) {
                 IOUtils.closeQuietly((Closeable) this.reResourcePack);
             }
+        }
+
+        public void cleanUp() {
+            this.previewImages.forEach(ResPackPreview::cleanUp);
         }
 
         public IResourcePack getResourcePack() {

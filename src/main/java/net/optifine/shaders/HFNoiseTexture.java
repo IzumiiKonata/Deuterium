@@ -1,6 +1,7 @@
 package net.optifine.shaders;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjglx.BufferUtils;
@@ -8,7 +9,7 @@ import org.lwjglx.BufferUtils;
 import java.nio.ByteBuffer;
 
 public class HFNoiseTexture implements ICustomTexture {
-    private int texID = GL11.glGenTextures();
+    private int texID = TextureUtil.glGenTextures();
     private final int textureUnit = 15;
 
     public HFNoiseTexture(int width, int height) {

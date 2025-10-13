@@ -100,10 +100,8 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
     }
 
     public void loadTexture(IResourceManager resourceManager) throws IOException {
-        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-            if (this.iconCreator != null) {
-                this.loadSprites(resourceManager, this.iconCreator);
-            }
+        if (this.iconCreator != null) {
+            this.loadSprites(resourceManager, this.iconCreator);
         }
     }
 

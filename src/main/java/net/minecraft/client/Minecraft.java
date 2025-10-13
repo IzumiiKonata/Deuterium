@@ -14,6 +14,7 @@ import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import ingameime.IngameIMEJNI;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
 import tritium.rendering.StencilClipManager;
@@ -1168,7 +1169,7 @@ public class Minecraft implements IThreadListener {
         if (ClientSettings.FRAME_PREDICT.getValue()) {
 
             if (lastFrameTex == -1) {
-                lastFrameTex = GL11.glGenTextures();
+                lastFrameTex = GlStateManager.generateTexture();
                 GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
 
                 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, this.displayWidth, this.displayHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
@@ -1679,7 +1680,7 @@ public class Minecraft implements IThreadListener {
         if (lastFrameTex != -1) {
             GlStateManager.deleteTexture(lastFrameTex);
 
-            lastFrameTex = GL11.glGenTextures();
+            lastFrameTex = TextureUtil.glGenTextures();
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
 
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, this.displayWidth, this.displayHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);

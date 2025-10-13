@@ -1,6 +1,7 @@
 package tritium.screens.clickgui.music;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tech.konata.ncmplayer.music.CloudMusic;
@@ -85,7 +86,7 @@ public class PlaylistRect extends RectWidget {
                     MultiThreadingUtil.runAsync(() -> {
                         try (InputStream inputStream = HttpUtils.downloadStream(playlist.coverUrl + "?param=" + (int) (imgBg.getWidth() * 2) + "y" + (int) (imgBg.getHeight() * 2))) {
                             if (inputStream != null) {
-                                BufferedImage img = ImageIO.read(inputStream);
+                                BufferedImage img = NativeBackedImage.make(inputStream);
                                 AsyncGLContext.submit(() -> {
                                     if (textureManager.getTexture(coverLoc) != null) {
                                         textureManager.deleteTexture(coverLoc);

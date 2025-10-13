@@ -3,6 +3,8 @@ package net.minecraft.client.resources;
 import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import lombok.SneakyThrows;
+import tritium.rendering.ResPackPreview;
 
 import java.io.Closeable;
 import java.io.File;
@@ -94,5 +96,57 @@ public class FileResourcePack extends AbstractResourcePack implements Closeable 
             this.resourcePackZipFile.close();
             this.resourcePackZipFile = null;
         }
+    }
+
+    @Override
+    @SneakyThrows
+    public boolean hasAnimations() {
+        ZipFile zipfile;
+
+        try {
+            zipfile = this.getResourcePackZipFile();
+        } catch (IOException var8) {
+            return false;
+        }
+
+        Enumeration<? extends ZipEntry> enumeration = zipfile.entries();
+
+        while (enumeration.hasMoreElements()) {
+            ZipEntry zipentry = enumeration.nextElement();
+            String s = zipentry.getName();
+
+            if (s.startsWith("assets/minecraft/textures/items") && s.endsWith(".mcmeta")) {
+
+                if (ResPackPreview.metadataHasAnimationFrames(zipfile.getInputStream(zipentry)))
+                    return true;
+
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    public boolean hasSounds() {
+        ZipFile zipfile;
+
+        try {
+            zipfile = this.getResourcePackZipFile();
+        } catch (IOException var8) {
+            return false;
+        }
+
+        Enumeration<? extends ZipEntry> enumeration = zipfile.entries();
+
+        while (enumeration.hasMoreElements()) {
+            ZipEntry zipentry = enumeration.nextElement();
+            String s = zipentry.getName();
+
+            if (s.startsWith("assets/minecraft/sounds/") && s.endsWith(".ogg")) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

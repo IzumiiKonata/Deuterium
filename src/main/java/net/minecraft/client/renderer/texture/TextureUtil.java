@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.texture;
 
+import lombok.Cleanup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -233,11 +234,11 @@ public class TextureUtil {
         }
     }
 
-    public static BufferedImage readBufferedImage(InputStream imageStream) throws IOException {
+    public static NativeBackedImage readBufferedImage(InputStream imageStream) throws IOException {
         if (imageStream == null) {
             return null;
         } else {
-            BufferedImage bufferedimage;
+            NativeBackedImage bufferedimage;
 
             try {
                 bufferedimage = NativeBackedImage.make(imageStream);

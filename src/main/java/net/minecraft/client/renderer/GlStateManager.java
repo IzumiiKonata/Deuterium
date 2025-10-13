@@ -11,6 +11,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
 import tritium.rendering.FramebufferCaching;
+import tritium.rendering.async.AsyncGLContext;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -365,10 +366,18 @@ public class GlStateManager {
     }
 
     public static int generateTexture() {
-        return GL11.glGenTextures();
+        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+            return GL11.glGenTextures();
+        }
     }
 
-    public static void deleteTexture(int texture) {
+    public static void generateTextures(IntBuffer buffer) {
+        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+            GL11.glGenTextures(buffer);
+        }
+    }
+
+    public static synchronized void deleteTexture(int texture) {
         if (texture != 0) {
             GL11.glDeleteTextures(texture);
 

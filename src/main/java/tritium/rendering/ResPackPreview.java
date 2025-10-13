@@ -19,6 +19,7 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.Location;
 import net.optifine.util.TextureUtils;
 import org.lwjgl.opengl.GL11;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.timing.Timer;
@@ -54,11 +55,25 @@ public class ResPackPreview {
         this.frameWidth = img.getWidth();
         this.imgHeight = img.getHeight();
 
-        this.locImg = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("ResourcePackPreview", new DynamicTexture(img));
+        AsyncGLContext.submit(() -> {
+            this.locImg = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("ResourcePackPreview", new DynamicTexture(img));
+        });
         this.serializeMetadata(img);
     }
 
+    public void cleanUp() {
+        AsyncGLContext.submit(() -> {
+            ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(locImg);
+            if (textureObj != null) {
+                TextureUtil.deleteTexture(textureObj.getGlTextureId());
+            }
+        });
+    }
+
     public void render(double x, double y, double width, double height) {
+
+        if (this.locImg == null)
+            return;
 
         if (!isAnimated) {
             Image.draw(this.locImg, x, y, width, height, Image.Type.Normal);
@@ -80,10 +95,10 @@ public class ResPackPreview {
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
             int v = frame.origFrameIndex * frameWidth;
-            worldrenderer.pos(x, y + height, 0.0D)           .tex(0, (double) (v + frameWidth) / imgHeight).endVertex();
+            worldrenderer.pos(x,            y + height, 0.0D).tex(0, (double) (v + frameWidth) / imgHeight).endVertex();
             worldrenderer.pos(x + width, y + height, 0.0D).tex(1, (double) (v + frameWidth) / imgHeight).endVertex();
-            worldrenderer.pos(x + width, y, 0.0D)            .tex(1, (double) (v) / imgHeight).endVertex();
-            worldrenderer.pos(x, y, 0.0D)                       .tex(0, (double) (v) / imgHeight).endVertex();
+            worldrenderer.pos(x + width,    y, 0.0D)         .tex(1, (double) (v) / imgHeight).endVertex();
+            worldrenderer.pos(x,               y, 0.0D)         .tex(0, (double) (v) / imgHeight).endVertex();
             tessellator.draw();
             GlStateManager.enableAlpha();
         }
@@ -96,6 +111,53 @@ public class ResPackPreview {
             }
         }
 
+    }
+
+    public static boolean metadataHasAnimationFrames(InputStream is) {
+        Gson gson = new Gson();
+
+        JsonObject jObj = gson.fromJson(new InputStreamReader(is), JsonObject.class);
+
+        if (!jObj.isJsonObject())
+            return false;
+
+        if (!jObj.has("animation")) {
+            return false;
+        }
+
+        JsonElement animationElement = jObj.get("animation");
+
+        if (!animationElement.isJsonObject()) {
+            return false;
+        }
+
+        JsonObject animationObject = animationElement.getAsJsonObject();
+
+        int frameTime = JsonUtils.getInt(animationObject, "frametime", 1);
+
+        if (frameTime != 1) {
+            if (frameTime < 1)
+                frameTime = 1;
+        }
+
+        if (animationObject.has("frames")) {
+            try {
+                JsonArray framesArray = JsonUtils.getJsonArray(animationObject, "frames");
+
+                for (int j = 0; j < framesArray.size(); ++j) {
+                    JsonElement frameElement = framesArray.get(j);
+                    Frame animationframe = parseAnimationFrame(j, frameTime, frameElement);
+
+                    if (animationframe != null) {
+                        return true;
+                    }
+                }
+            } catch (ClassCastException classcastexception) {
+                throw new JsonParseException("Invalid animation->frames: expected array, was " + animationObject.get("frames"), classcastexception);
+            }
+        }
+
+        return false;
     }
 
     @SneakyThrows
@@ -213,7 +275,7 @@ public class ResPackPreview {
         }
     }
 
-    private Frame parseAnimationFrame(int frameIndex, int fixedFrameTime, JsonElement frameElement) {
+    private static Frame parseAnimationFrame(int frameIndex, int fixedFrameTime, JsonElement frameElement) {
         if (frameElement.isJsonPrimitive()) {
             return new Frame(JsonUtils.getInt(frameElement, "frames[" + frameIndex + "]"), fixedFrameTime);
         } else if (frameElement.isJsonObject()) {
@@ -234,7 +296,7 @@ public class ResPackPreview {
         }
     }
 
-    private class Frame {
+    private static class Frame {
         private int frameIndex;
         private int origFrameIndex;
         private double frameTime;

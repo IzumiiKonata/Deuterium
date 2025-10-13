@@ -95,7 +95,7 @@ public class ShadersTex {
             multitexid = multiTexMap.get(i);
 
             if (multitexid == null) {
-                multitexid = new MultiTexID(i, GL11.glGenTextures(), GL11.glGenTextures());
+                multitexid = new MultiTexID(i, TextureUtil.glGenTextures(), TextureUtil.glGenTextures());
                 multiTexMap.put(i, multitexid);
             }
 

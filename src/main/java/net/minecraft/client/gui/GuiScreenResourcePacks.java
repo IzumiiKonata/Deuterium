@@ -43,8 +43,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
         this.buttonList.add(new GuiOptionButton(2, this.width / 2 - 154, this.height - 48, I18n.format("resourcePack.openFolder")));
         this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 4, this.height - 48, I18n.format("gui.done")));
 
-        if (!this.changed || true) {
-            System.out.println("1");
+        if (!this.changed) {
             this.availableResourcePacks = Lists.newArrayList();
             this.selectedResourcePacks = Lists.newArrayList();
             ResourcePackRepository repo = this.mc.getResourcePackRepository();

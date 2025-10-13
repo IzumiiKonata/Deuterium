@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.Location;
@@ -205,7 +206,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
                     @SneakyThrows
                     public void run() {
                         InputStream is = HttpUtils.get(url, null);
-                        BufferedImage full = ImageIO.read(is);
+                        BufferedImage full = NativeBackedImage.make(is);
                         BufferedImage img = crop(full, 1, 1, 10, 16, 10, 16);
 
                         Textures.loadTextureAsyncly(capeLocation, img);

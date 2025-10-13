@@ -104,33 +104,42 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
 
         if (RenderSystem.isHovered(mouseX, mouseY, x - 1, y - 1, listWidth - 9, slotHeight + 1) && !(this instanceof ResourcePackListEntryDefault)) {
 
-            resourcePacksGUI.renderCalls.add(() -> {
-                double posX = mouseX + 4;
-                double posY = mouseY + 4;
+            ResourcePackRepository.Entry entry = ((ResourcePackListEntryFound) this).getEntry();
 
-                Rect.draw(posX, posY, 143, 40, RenderSystem.hexColor(255, 255, 255, 50));
+            if (entry.getPreviewsLoaded().get()) {
+                resourcePacksGUI.renderCalls.add(() -> {
+                    double posX = mouseX + 4;
+                    double posY = mouseY + 4;
 
-                double startX = posX + 4;
-                double startY = posY + 4;
+                    Rect.draw(posX, posY, 215, 40, RenderSystem.hexColor(255, 255, 255, 50));
 
-                List<ResPackPreview> previewImages = ((ResourcePackListEntryFound) this).getEntry().getPreviewImages();
-                for (int i = 0; i < previewImages.size(); i++) {
-                    ResPackPreview previewImage = previewImages.get(i);
-                    previewImage.render(startX, startY, 16, 16);
-                    startX += 17;
+                    double startX = posX + 4;
+                    double startY = posY + 4;
 
-                    if (i == 7) {
-                        startX = posX + 4;
-                        startY += 17;
+                    List<ResPackPreview> previewImages = entry.getPreviewImages();
+                    for (int i = 0; i < previewImages.size(); i++) {
+                        ResPackPreview previewImage = previewImages.get(i);
+                        previewImage.render(startX, startY, 16, 16);
+                        startX += 17;
+
+                        if (i == 7) {
+                            startX = posX + 4;
+                            startY += 17;
+                        }
                     }
-                }
 //
 //                Image.draw(((ResourcePackListEntryFound) this).getEntry().getLocationPreview(), posX + 4, posY + 4, 135, 33, Image.Type.Normal);
 
-                Rect.draw(posX + 4 + 135 + 4 - .5, posY + 4, 1, 32, -1);
+                    Rect.draw(posX + 4 + 135 + 4 - .5, posY + 4, 1, 32, -1);
 
-                mc.fontRendererObj.drawString("Res: 32x", posX + 4 + 135 + 4 + 4, posY + 4, -1);
-            });
+                    List<String> resPackInfo = entry.getResPackInfo();
+                    double yOffset = posY + 3;
+                    for (String s : resPackInfo) {
+                        mc.fontRendererObj.drawStringWithShadow(s, posX + 4 + 135 + 4 + 4, yOffset, 16777215);
+                        yOffset += mc.fontRendererObj.FONT_HEIGHT;
+                    }
+                });
+            }
         }
     }
 

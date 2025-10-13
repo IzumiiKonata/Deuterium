@@ -74,74 +74,71 @@ public class SimpleTexture extends AbstractTexture {
     }
     
     private void uploadTexture(int texID, BufferedImage bufferedimage, boolean linear, boolean clamp) {
+        TextureUtil.allocateTexture(this.getGlTextureId(), bufferedimage.getWidth(), bufferedimage.getHeight());
 
-        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-            TextureUtil.allocateTexture(this.getGlTextureId(), bufferedimage.getWidth(), bufferedimage.getHeight());
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
+        GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = this.getGlTextureId();
+        TextureUtil.setTextureBlurMipmap(linear, false);
+        TextureUtil.setTextureClamped(clamp);
 
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
-            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = this.getGlTextureId();
-            TextureUtil.setTextureBlurMipmap(linear, false);
-            TextureUtil.setTextureClamped(clamp);
+        Minecraft mc = Minecraft.getMinecraft();
 
-            Minecraft mc = Minecraft.getMinecraft();
+        int width = bufferedimage.getWidth();
+        int height = bufferedimage.getHeight();
+        int[] dynamicTextureData = new int[width * height];
+        bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), dynamicTextureData, 0, bufferedimage.getWidth());
 
-            int width = bufferedimage.getWidth();
-            int height = bufferedimage.getHeight();
-            int[] dynamicTextureData = new int[width * height];
-            bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), dynamicTextureData, 0, bufferedimage.getWidth());
+        if (dynamicTextureData.length < 4194304) {
 
-            if (dynamicTextureData.length < 4194304) {
+            int padd = 0;
 
-                int padd = 0;
-
-                if (dynamicTextureData.length % 4 != 0) {
-                    padd = (4 - dynamicTextureData.length % 4);
-                }
-
-                IntBuffer buffer = MemoryUtil.memAllocInt(dynamicTextureData.length + padd);
-                buffer.clear();
-                buffer.put(dynamicTextureData, 0, dynamicTextureData.length);
-                buffer.flip();
-
-                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
-
-                MemoryUtil.memFree(buffer);
-
-                if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ direct subImage2D")) {
-                    DevUtils.printCurrentInvokeStack();
-                }
-
-            } else {
-
-                // creates a 16 MB buffer
-                IntBuffer dataBuffer = MemoryUtil.memAllocInt(4194304);
-
-                int i = 4194304 / width;
-                int j;
-
-                int[] aint = dynamicTextureData;
-
-                if (mc.gameSettings.anaglyph) {
-                    aint = TextureUtil.updateAnaglyph(dynamicTextureData);
-                }
-
-                for (int k = 0; k < width * height; k += width * j) {
-                    int l = k / width;
-                    j = Math.min(i, height - l);
-                    int i1 = width * j;
-
-                    dataBuffer.clear();
-                    dataBuffer.put(aint, k, i1);
-                    dataBuffer.flip();
-
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
-                }
-
-                MemoryUtil.memFree(dataBuffer);
-
+            if (dynamicTextureData.length % 4 != 0) {
+                padd = (4 - dynamicTextureData.length % 4);
             }
 
-            GL11.glFlush();
+            IntBuffer buffer = MemoryUtil.memAllocInt(dynamicTextureData.length + padd);
+            buffer.clear();
+            buffer.put(dynamicTextureData, 0, dynamicTextureData.length);
+            buffer.flip();
+
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
+
+            MemoryUtil.memFree(buffer);
+
+            if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ direct subImage2D")) {
+                DevUtils.printCurrentInvokeStack();
+            }
+
+        } else {
+
+            // creates a 16 MB buffer
+            IntBuffer dataBuffer = MemoryUtil.memAllocInt(4194304);
+
+            int i = 4194304 / width;
+            int j;
+
+            int[] aint = dynamicTextureData;
+
+            if (mc.gameSettings.anaglyph) {
+                aint = TextureUtil.updateAnaglyph(dynamicTextureData);
+            }
+
+            for (int k = 0; k < width * height; k += width * j) {
+                int l = k / width;
+                j = Math.min(i, height - l);
+                int i1 = width * j;
+
+                dataBuffer.clear();
+                dataBuffer.put(aint, k, i1);
+                dataBuffer.flip();
+
+                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
+            }
+
+            MemoryUtil.memFree(dataBuffer);
+
         }
+
+        GL11.glFlush();
     }
 }

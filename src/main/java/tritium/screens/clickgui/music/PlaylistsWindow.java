@@ -3,6 +3,7 @@ package tritium.screens.clickgui.music;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import org.lwjglx.input.Keyboard;
@@ -118,7 +119,7 @@ public class PlaylistsWindow extends Window {
                         MultiThreadingUtil.runAsync(() -> {
                             try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.getAvatarUrl() + "?param=32y32")) {
                                 if (inputStream != null) {
-                                    BufferedImage img = ImageIO.read(inputStream);
+                                    BufferedImage img = NativeBackedImage.make(inputStream);
                                     AsyncGLContext.submit(() -> {
                                         if (textureManager.getTexture(avatarLoc) != null) {
                                             textureManager.deleteTexture(avatarLoc);

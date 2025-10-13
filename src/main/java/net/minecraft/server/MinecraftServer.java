@@ -14,6 +14,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.base64.Base64;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.command.*;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
@@ -41,8 +42,10 @@ import tritium.utils.logging.Logger;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Proxy;
+import java.nio.file.Files;
 import java.security.KeyPair;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -549,7 +552,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
             ByteBuf bytebuf = Unpooled.buffer();
 
             try {
-                BufferedImage bufferedimage = ImageIO.read(file1);
+                BufferedImage bufferedimage = NativeBackedImage.make(Files.newInputStream(file1.toPath()));
                 Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
                 Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
                 ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));

@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Location;
 import org.lwjgl.nanovg.NSVGImage;
@@ -188,7 +189,7 @@ public class SVGImage {
 
             nsvgDeleteRasterizer(rast);
 
-            texID = GL11.glGenTextures();
+            texID = TextureUtil.glGenTextures();
 
             glBindTexture(GL_TEXTURE_2D, texID);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -3066,8 +3066,8 @@ public class Shaders {
         }
 
         dfb = EXTFramebufferObject.glGenFramebuffersEXT();
-        GL11.glGenTextures((IntBuffer) dfbDepthTextures.clear().limit(usedDepthBuffers));
-        GL11.glGenTextures((IntBuffer) dfbColorTextures.clear().limit(16));
+        GlStateManager.generateTextures((IntBuffer) dfbDepthTextures.clear().limit(usedDepthBuffers));
+        GlStateManager.generateTextures((IntBuffer) dfbColorTextures.clear().limit(16));
         dfbDepthTextures.position(0);
         dfbColorTextures.position(0);
         EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
@@ -3165,8 +3165,8 @@ public class Shaders {
             EXTFramebufferObject.glBindFramebufferEXT(36160, sfb);
             GL11.glDrawBuffer(0);
             GL11.glReadBuffer(0);
-            GL11.glGenTextures((IntBuffer) sfbDepthTextures.clear().limit(usedShadowDepthBuffers));
-            GL11.glGenTextures((IntBuffer) sfbColorTextures.clear().limit(usedShadowColorBuffers));
+            GlStateManager.generateTextures((IntBuffer) sfbDepthTextures.clear().limit(usedShadowDepthBuffers));
+            GlStateManager.generateTextures((IntBuffer) sfbColorTextures.clear().limit(usedShadowColorBuffers));
             sfbDepthTextures.position(0);
             sfbColorTextures.position(0);
 

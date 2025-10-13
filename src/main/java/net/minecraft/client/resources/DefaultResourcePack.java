@@ -72,4 +72,14 @@ public class DefaultResourcePack implements IResourcePack {
     public String getPackName() {
         return "Default";
     }
+
+    @Override
+    public boolean hasAnimations() {
+        return false;
+    }
+
+    @Override
+    public boolean hasSounds() {
+        return true;
+    }
 }

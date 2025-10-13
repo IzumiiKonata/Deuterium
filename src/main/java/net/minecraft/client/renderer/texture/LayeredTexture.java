@@ -29,33 +29,31 @@ public class LayeredTexture extends AbstractTexture {
     }
 
     public void loadTexture(IResourceManager resourceManager) throws IOException {
-        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-            this.deleteGlTexture();
-            BufferedImage bufferedimage = null;
+        this.deleteGlTexture();
+        BufferedImage bufferedimage = null;
 
-            try {
-                for (String s : this.layeredTextureNames) {
-                    if (s != null) {
-                        InputStream inputstream = resourceManager.getResource(Location.of(s)).getInputStream();
-                        BufferedImage bufferedimage1 = ImageIO.read(inputstream);
+        try {
+            for (String s : this.layeredTextureNames) {
+                if (s != null) {
+                    InputStream inputstream = resourceManager.getResource(Location.of(s)).getInputStream();
+                    BufferedImage bufferedimage1 = ImageIO.read(inputstream);
 
-                        if (bufferedimage == null) {
-                            bufferedimage = new BufferedImage(bufferedimage1.getWidth(), bufferedimage1.getHeight(), 2);
-                        }
-
-                        bufferedimage.getGraphics().drawImage(bufferedimage1, 0, 0, null);
+                    if (bufferedimage == null) {
+                        bufferedimage = new BufferedImage(bufferedimage1.getWidth(), bufferedimage1.getHeight(), 2);
                     }
-                }
-            } catch (IOException ioexception) {
-                logger.error("Couldn't load layered image", ioexception);
-                return;
-            }
 
-            if (Config.isShaders()) {
-                ShadersTex.loadSimpleTexture(this.getGlTextureId(), bufferedimage, false, false, resourceManager, this.textureLocation, this.getMultiTexID());
-            } else {
-                TextureUtil.uploadTextureImage(this.getGlTextureId(), bufferedimage);
+                    bufferedimage.getGraphics().drawImage(bufferedimage1, 0, 0, null);
+                }
             }
+        } catch (IOException ioexception) {
+            logger.error("Couldn't load layered image", ioexception);
+            return;
+        }
+
+        if (Config.isShaders()) {
+            ShadersTex.loadSimpleTexture(this.getGlTextureId(), bufferedimage, false, false, resourceManager, this.textureLocation, this.getMultiTexID());
+        } else {
+            TextureUtil.uploadTextureImage(this.getGlTextureId(), bufferedimage);
         }
     }
 }

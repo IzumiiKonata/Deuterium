@@ -10,9 +10,7 @@ public class DefaultTexture extends AbstractTexture {
     }
 
     public void loadTexture(IResourceManager resourcemanager) {
-        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-            int[] aint = ShadersTex.createAIntImage(1, -1);
-            ShadersTex.setupTexture(this.getMultiTexID(), aint, 1, 1, false, false);
-        }
+        int[] aint = ShadersTex.createAIntImage(1, -1);
+        ShadersTex.setupTexture(this.getMultiTexID(), aint, 1, 1, false, false);
     }
 }

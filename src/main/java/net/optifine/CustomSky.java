@@ -3,6 +3,7 @@ package net.optifine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.src.Config;
@@ -72,7 +73,7 @@ public class CustomSky {
 
                             IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource(resourcelocation1);
                             inputstream = iresource.getInputStream();
-                            itextureobject = new DynamicTexture(ImageIO.read(inputstream));
+                            itextureobject = new DynamicTexture(NativeBackedImage.make(inputstream));
                             customskylayer.textureId = itextureobject.getGlTextureId();
                             list.add(customskylayer);
                             inputstream.close();

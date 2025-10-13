@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.util.Location;
 import net.minecraft.util.Tuple;
 import org.kc7bfi.jflac.FLACDecoder;
@@ -517,10 +518,10 @@ public class CloudMusic {
                 InputStream is = HttpUtils.downloadStream(music.getPicUrl(160), 5);
                 InputStream isSmall = HttpUtils.downloadStream(music.getPicUrl(44), 5);
 
-                BufferedImage read = ImageIO.read(is);
+                BufferedImage read = NativeBackedImage.make(is);
                 Textures.loadTextureAsyncly(musicCover, read);
 
-                BufferedImage readSmall = ImageIO.read(isSmall);
+                BufferedImage readSmall = NativeBackedImage.make(isSmall);
                 Textures.loadTextureAsyncly(musicCoverSmall, readSmall);
 
                 MultiThreadingUtil.runAsync(() -> {
@@ -544,7 +545,7 @@ public class CloudMusic {
                 @Cleanup
                 InputStream inputStream = HttpUtils.downloadStream(music.getPicUrl(size), 5);
 
-                Textures.loadTextureAsyncly(location, ImageIO.read(inputStream));
+                Textures.loadTextureAsyncly(location, NativeBackedImage.make(inputStream));
             }
         });
     }
@@ -774,7 +775,7 @@ public class CloudMusic {
                             @SneakyThrows
                             public void run() {
                                 try (InputStream is = HttpUtils.get(url, null)) {
-                                    BufferedImage img = ImageIO.read(is);
+                                    BufferedImage img = NativeBackedImage.make(is);
 
                                     Textures.loadTextureAsyncly(ClickGui.getInstance().getPlaylistsWindow().loginRenderer.tempAvatar, img);
 

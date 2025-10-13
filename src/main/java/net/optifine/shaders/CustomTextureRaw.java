@@ -1,5 +1,6 @@
 package net.optifine.shaders;
 
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.optifine.texture.InternalFormat;
 import net.optifine.texture.PixelFormat;
 import net.optifine.texture.PixelType;
@@ -17,7 +18,7 @@ public class CustomTextureRaw implements ICustomTexture {
     public CustomTextureRaw(TextureType type, InternalFormat internalFormat, int width, int height, int depth, PixelFormat pixelFormat, PixelType pixelType, ByteBuffer data, int textureUnit, boolean blur, boolean clamp) {
         this.type = type;
         this.textureUnit = textureUnit;
-        this.textureId = GL11.glGenTextures();
+        this.textureId = TextureUtil.glGenTextures();
         GL11.glBindTexture(this.getTarget(), this.textureId);
         int i = clamp ? 33071 : 10497;
         int j = blur ? 9729 : 9728;

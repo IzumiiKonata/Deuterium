@@ -22,20 +22,18 @@ public class SimpleShaderTexture extends AbstractTexture {
     }
 
     public void loadTexture(IResourceManager resourceManager) throws IOException {
-        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-            this.deleteGlTexture();
-            InputStream inputstream = Shaders.getShaderPackResourceStream(this.texturePath);
+        this.deleteGlTexture();
+        InputStream inputstream = Shaders.getShaderPackResourceStream(this.texturePath);
 
-            if (inputstream == null) {
-                throw new FileNotFoundException("Shader texture not found: " + this.texturePath);
-            } else {
-                try {
-                    BufferedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);
-                    TextureMetadataSection texturemetadatasection = loadTextureMetadataSection(this.texturePath, new TextureMetadataSection(false, false, new ArrayList()));
-                    TextureUtil.uploadTextureImageAllocate(this.getGlTextureId(), bufferedimage, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
-                } finally {
-                    IOUtils.closeQuietly(inputstream);
-                }
+        if (inputstream == null) {
+            throw new FileNotFoundException("Shader texture not found: " + this.texturePath);
+        } else {
+            try {
+                BufferedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);
+                TextureMetadataSection texturemetadatasection = loadTextureMetadataSection(this.texturePath, new TextureMetadataSection(false, false, new ArrayList()));
+                TextureUtil.uploadTextureImageAllocate(this.getGlTextureId(), bufferedimage, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
+            } finally {
+                IOUtils.closeQuietly(inputstream);
             }
         }
     }
