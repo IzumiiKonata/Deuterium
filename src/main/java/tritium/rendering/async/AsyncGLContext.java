@@ -11,6 +11,7 @@ import tritium.utils.logging.Logger;
 import tritium.utils.other.DevUtils;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -79,6 +80,9 @@ public class AsyncGLContext {
                         // execute the task
                         task.runnable.run();
 
+                        // complete the future
+                        task.future.complete(null);
+
                         // sync gl commands among all the threads
                         GL11.glFlush();
                         GL11.glFinish();
@@ -86,6 +90,8 @@ public class AsyncGLContext {
                         LOGGER.debug("ID: {} finished", task.id);
                         LOGGER.debug("ID: {}", task.id);
                     } catch (Exception e) {
+                        // complete the future exceptionally
+                        task.future.completeExceptionally(e);
                         // LEAVE ME ALONE
                         e.printStackTrace();
                     }
@@ -108,7 +114,14 @@ public class AsyncGLContext {
         public final int id;
         public final Runnable runnable;
         public final String callStack;
+        public CompletableFuture<Void> future;
 
+        public GLTask(int id, Runnable runnable, String callStack) {
+            this.id = id;
+            this.runnable = runnable;
+            this.callStack = callStack;
+            this.future = new CompletableFuture<>();
+        }
     }
 
     /**
@@ -130,34 +143,17 @@ public class AsyncGLContext {
 
     }
 
-    // 防止出现奇怪的问题导致线程没被踢醒 创建一个守护进程一秒遍历一次
-    private static void startDaemonThread() {
-        new Thread(
-                () -> {
-
-                    while (true) {
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                    }
-                },
-                "AsyncGLContentLoader Daemon Thread"
-        ).start();
-    }
-
     static int id = 0;
 
     @SneakyThrows
-    public static void submit(Runnable runnable) {
+    public static CompletableFuture<Void> submit(Runnable runnable) {
 
         if (runnable == null) {
             System.err.println("Got Null Runnable!");
             System.err.println(DevUtils.getCurrentInvokeStack());
-            return;
+            CompletableFuture<Void> future = new CompletableFuture<>();
+            future.completeExceptionally(new IllegalArgumentException("Runnable is null"));
+            return future;
         }
 
         GLTask task = new GLTask(id++, runnable, /*DevUtils.getCurrentInvokeStack()*/"");
@@ -173,6 +169,8 @@ public class AsyncGLContext {
                 }
 
         }
+        
+        return task.future;
     }
 
     public static boolean isAllTasksFinished() {

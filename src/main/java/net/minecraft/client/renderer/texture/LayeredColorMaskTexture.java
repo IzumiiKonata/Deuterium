@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer.texture;
 
+import lombok.Cleanup;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.item.EnumDyeColor;
@@ -41,7 +42,8 @@ public class LayeredColorMaskTexture extends AbstractTexture {
         BufferedImage bufferedimage;
 
         try {
-            BufferedImage bufferedimage1 = TextureUtil.readBufferedImage(resourceManager.getResource(this.textureLocation).getInputStream());
+            @Cleanup
+            NativeBackedImage bufferedimage1 = TextureUtil.readBufferedImage(resourceManager.getResource(this.textureLocation).getInputStream());
             int i = bufferedimage1.getType();
 
             if (i == 0) {
@@ -57,28 +59,29 @@ public class LayeredColorMaskTexture extends AbstractTexture {
                 MapColor mapcolor = this.field_174950_i.get(j).getMapColor();
 
                 if (s != null) {
+                    @Cleanup
                     InputStream inputstream = resourceManager.getResource(Location.of(s)).getInputStream();
-                    BufferedImage bufferedimage2 = TextureUtil.readBufferedImage(inputstream);
+                    try (NativeBackedImage bufferedimage2 = TextureUtil.readBufferedImage(inputstream)) {
+                        if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6) {
+                            for (int k = 0; k < bufferedimage2.getHeight(); ++k) {
+                                for (int l = 0; l < bufferedimage2.getWidth(); ++l) {
+                                    int i1 = bufferedimage2.getRGB(l, k);
 
-                    if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6) {
-                        for (int k = 0; k < bufferedimage2.getHeight(); ++k) {
-                            for (int l = 0; l < bufferedimage2.getWidth(); ++l) {
-                                int i1 = bufferedimage2.getRGB(l, k);
-
-                                if ((i1 & -16777216) != 0) {
-                                    int j1 = (i1 & 16711680) << 8 & -16777216;
-                                    int k1 = bufferedimage1.getRGB(l, k);
-                                    int l1 = MathHelper.func_180188_d(k1, mapcolor.colorValue) & 16777215;
-                                    bufferedimage2.setRGB(l, k, j1 | l1);
+                                    if ((i1 & -16777216) != 0) {
+                                        int j1 = (i1 & 16711680) << 8 & -16777216;
+                                        int k1 = bufferedimage1.getRGB(l, k);
+                                        int l1 = MathHelper.func_180188_d(k1, mapcolor.colorValue) & 16777215;
+                                        bufferedimage2.setRGB(l, k, j1 | l1);
+                                    }
                                 }
                             }
-                        }
 
-                        bufferedimage.getGraphics().drawImage(bufferedimage2, 0, 0, null);
+                            bufferedimage.getGraphics().drawImage(bufferedimage2, 0, 0, null);
+                        }
                     }
                 }
             }
-        } catch (IOException ioexception) {
+        } catch (Exception ioexception) {
             LOG.error("Couldn't load layered image", ioexception);
             return;
         }

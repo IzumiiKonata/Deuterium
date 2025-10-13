@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
@@ -185,76 +186,72 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
     }
 
     private void readFontTexture() {
-        BufferedImage bufferedimage;
+        try (NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(this.getResourceInputStream(this.locationFontTexture))) {
+            Properties properties = FontUtils.readFontProperties(this.locationFontTexture);
+            this.blend = FontUtils.readBoolean(properties, "blend", false);
+            int i = bufferedimage.getWidth();
+            int j = bufferedimage.getHeight();
+            int k = i / 16;
+            int l = j / 16;
+            float f = (float) i / 128.0F;
+            float f1 = Config.limit(f, 1.0F, 2.0F);
+            this.offsetBold = 1.0F / f1;
+            float f2 = FontUtils.readFloat(properties, "offsetBold", -1.0F);
 
-        try {
-            bufferedimage = TextureUtil.readBufferedImage(this.getResourceInputStream(this.locationFontTexture));
-        } catch (IOException ioexception1) {
-            throw new RuntimeException(ioexception1);
-        }
+            if (f2 >= 0.0F) {
+                this.offsetBold = f2;
+            }
 
-        Properties properties = FontUtils.readFontProperties(this.locationFontTexture);
-        this.blend = FontUtils.readBoolean(properties, "blend", false);
-        int i = bufferedimage.getWidth();
-        int j = bufferedimage.getHeight();
-        int k = i / 16;
-        int l = j / 16;
-        float f = (float) i / 128.0F;
-        float f1 = Config.limit(f, 1.0F, 2.0F);
-        this.offsetBold = 1.0F / f1;
-        float f2 = FontUtils.readFloat(properties, "offsetBold", -1.0F);
+            int[] aint = new int[i * j];
+            bufferedimage.getRGB(0, 0, i, j, aint, 0, i);
 
-        if (f2 >= 0.0F) {
-            this.offsetBold = f2;
-        }
+            for (int i1 = 0; i1 < 256; ++i1) {
+                int j1 = i1 % 16;
+                int k1 = i1 / 16;
+                int l1 = 0;
 
-        int[] aint = new int[i * j];
-        bufferedimage.getRGB(0, 0, i, j, aint, 0, i);
+                for (l1 = k - 1; l1 >= 0; --l1) {
+                    int i2 = j1 * k + l1;
+                    boolean flag = true;
 
-        for (int i1 = 0; i1 < 256; ++i1) {
-            int j1 = i1 % 16;
-            int k1 = i1 / 16;
-            int l1 = 0;
+                    for (int j2 = 0; j2 < l && flag; ++j2) {
+                        int k2 = (k1 * l + j2) * i;
+                        int l2 = aint[i2 + k2];
+                        int i3 = l2 >> 24 & 255;
 
-            for (l1 = k - 1; l1 >= 0; --l1) {
-                int i2 = j1 * k + l1;
-                boolean flag = true;
+                        if (i3 > 16) {
+                            flag = false;
+                            break;
+                        }
+                    }
 
-                for (int j2 = 0; j2 < l && flag; ++j2) {
-                    int k2 = (k1 * l + j2) * i;
-                    int l2 = aint[i2 + k2];
-                    int i3 = l2 >> 24 & 255;
-
-                    if (i3 > 16) {
-                        flag = false;
+                    if (!flag) {
                         break;
                     }
                 }
 
-                if (!flag) {
-                    break;
+                if (i1 == 65) {
+                    i1 = i1;
                 }
-            }
 
-            if (i1 == 65) {
-                i1 = i1;
-            }
-
-            if (i1 == 32) {
-                if (k <= 8) {
-                    l1 = (int) (2.0F * f);
-                } else {
-                    l1 = (int) (1.5F * f);
+                if (i1 == 32) {
+                    if (k <= 8) {
+                        l1 = (int) (2.0F * f);
+                    } else {
+                        l1 = (int) (1.5F * f);
+                    }
                 }
+
+                this.charWidthFloat[i1] = (float) (l1 + 1) / f + 1.0F;
             }
 
-            this.charWidthFloat[i1] = (float) (l1 + 1) / f + 1.0F;
-        }
+            FontUtils.readCustomCharWidths(properties, this.charWidthFloat);
 
-        FontUtils.readCustomCharWidths(properties, this.charWidthFloat);
-
-        for (int j3 = 0; j3 < this.charWidth.length; ++j3) {
-            this.charWidth[j3] = Math.round(this.charWidthFloat[j3]);
+            for (int j3 = 0; j3 < this.charWidth.length; ++j3) {
+                this.charWidth[j3] = Math.round(this.charWidthFloat[j3]);
+            }
+        } catch (Exception ioexception1) {
+            throw new RuntimeException(ioexception1);
         }
     }
 

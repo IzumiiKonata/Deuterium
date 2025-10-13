@@ -14,6 +14,7 @@ import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.base64.Base64;
+import lombok.Cleanup;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.command.*;
 import net.minecraft.crash.CrashReport;
@@ -552,7 +553,8 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
             ByteBuf bytebuf = Unpooled.buffer();
 
             try {
-                BufferedImage bufferedimage = NativeBackedImage.make(Files.newInputStream(file1.toPath()));
+                @Cleanup
+                NativeBackedImage bufferedimage = NativeBackedImage.make(Files.newInputStream(file1.toPath()));
                 Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
                 Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
                 ImageIO.write(bufferedimage, "PNG", new ByteBufOutputStream(bytebuf));

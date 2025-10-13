@@ -119,12 +119,13 @@ public class PlaylistsWindow extends Window {
                         MultiThreadingUtil.runAsync(() -> {
                             try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.getAvatarUrl() + "?param=32y32")) {
                                 if (inputStream != null) {
-                                    BufferedImage img = NativeBackedImage.make(inputStream);
+                                    NativeBackedImage img = NativeBackedImage.make(inputStream);
                                     AsyncGLContext.submit(() -> {
                                         if (textureManager.getTexture(avatarLoc) != null) {
                                             textureManager.deleteTexture(avatarLoc);
                                         }
                                         Textures.loadTexture(avatarLoc, img);
+                                        img.close();
                                     });
                                 }
                             } catch (Exception e) {

@@ -141,8 +141,9 @@ public class TextureAnimations {
                                 Config.warn("TextureAnimation: Target texture not found: " + s1);
                                 return null;
                             } else {
-                                final BufferedImage bufferedimage = readTextureImage(inputstream);
+                                final NativeBackedImage bufferedimage = readTextureImage(inputstream);
                                 if (i + k <= bufferedimage.getWidth() && j + l <= bufferedimage.getHeight()) {
+                                    bufferedimage.close();
                                     final TextureAnimation textureanimation = new TextureAnimation(s, abyte, s1, resourcelocation, i, j, k, l, props);
                                     return textureanimation;
                                 } else {
@@ -190,13 +191,20 @@ public class TextureAnimations {
                     if (targetWidth > 0 && bufferedimage.getWidth() != targetWidth) {
                         final double d0 = bufferedimage.getHeight() / bufferedimage.getWidth();
                         final int j = (int) (targetWidth * d0);
+                        BufferedImage orig = bufferedimage;
                         bufferedimage = scaleBufferedImage(bufferedimage, targetWidth, j);
+                        ((NativeBackedImage) orig).close();
                     }
                     final int k2 = bufferedimage.getWidth();
                     final int i = bufferedimage.getHeight();
                     final int[] aint = new int[k2 * i];
                     final byte[] abyte = new byte[k2 * i * 4];
                     bufferedimage.getRGB(0, 0, k2, i, aint, 0, k2);
+
+                    if (bufferedimage instanceof NativeBackedImage) {
+                        ((NativeBackedImage) bufferedimage).close();
+                    }
+
                     for (int k = 0; k < aint.length; ++k) {
                         final int l = aint[k] >> 24 & 255;
                         int i1 = aint[k] >> 16 & 255;
@@ -226,8 +234,8 @@ public class TextureAnimations {
         }
     }
 
-    private static BufferedImage readTextureImage(final InputStream par1InputStream) throws IOException {
-        final BufferedImage bufferedimage = NativeBackedImage.make(par1InputStream);
+    private static NativeBackedImage readTextureImage(final InputStream par1InputStream) throws IOException {
+        final NativeBackedImage bufferedimage = NativeBackedImage.make(par1InputStream);
         par1InputStream.close();
         return bufferedimage;
     }

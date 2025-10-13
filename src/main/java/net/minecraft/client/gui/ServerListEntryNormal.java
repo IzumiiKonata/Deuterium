@@ -10,6 +10,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
@@ -200,33 +201,37 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry {
         } else {
             ByteBuf bytebuf = Unpooled.copiedBuffer(this.server.getBase64EncodedIconData(), Charsets.UTF_8);
             ByteBuf bytebuf1 = Base64.decode(bytebuf);
-            BufferedImage bufferedimage;
-            label101:
-            {
-                try {
-                    bufferedimage = TextureUtil.readBufferedImage(new ByteBufInputStream(bytebuf1));
-                    Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
-                    Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
-                    break label101;
-                } catch (Throwable throwable) {
-                    logger.error("Invalid icon for server " + this.server.serverName + " (" + this.server.serverIP + ")", throwable);
-                    this.server.setBase64EncodedIconData(null);
-                } finally {
-                    bytebuf.release();
-                    bytebuf1.release();
+
+            try (NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(new ByteBufInputStream(bytebuf1))) {
+                label101:
+                {
+                    try {
+                        ;
+                        Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
+                        Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
+                        break label101;
+                    } catch (Throwable throwable) {
+                        logger.error("Invalid icon for server " + this.server.serverName + " (" + this.server.serverIP + ")", throwable);
+                        this.server.setBase64EncodedIconData(null);
+                    } finally {
+                        bytebuf.release();
+                        bytebuf1.release();
+                    }
+
+                    return;
                 }
 
-                return;
-            }
+                if (this.field_148305_h == null) {
+                    this.field_148305_h = new DynamicTexture(bufferedimage.getWidth(), bufferedimage.getHeight());
+                    this.field_148305_h.setClearable(false);
+                    this.mc.getTextureManager().loadTexture(this.serverIcon, this.field_148305_h);
+                }
 
-            if (this.field_148305_h == null) {
-                this.field_148305_h = new DynamicTexture(bufferedimage.getWidth(), bufferedimage.getHeight());
-                this.field_148305_h.setClearable(false);
-                this.mc.getTextureManager().loadTexture(this.serverIcon, this.field_148305_h);
+                bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), this.field_148305_h.getTextureData(), 0, bufferedimage.getWidth());
+                this.field_148305_h.updateDynamicTexture();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
-
-            bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), this.field_148305_h.getTextureData(), 0, bufferedimage.getWidth());
-            this.field_148305_h.updateDynamicTexture();
         }
     }
 

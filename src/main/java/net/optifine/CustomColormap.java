@@ -1,8 +1,10 @@
 package net.optifine;
 
+import lombok.Cleanup;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.src.Config;
 import net.minecraft.util.BlockPos;
@@ -152,26 +154,27 @@ public class CustomColormap implements CustomColors.IColorizer {
             if (inputstream == null) {
                 return;
             }
-            final BufferedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);
-            if (bufferedimage == null) {
-                return;
+            try (final NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);) {
+                if (bufferedimage == null) {
+                    return;
+                }
+                final int i = bufferedimage.getWidth();
+                final int j = bufferedimage.getHeight();
+                final boolean flag = this.width < 0 || this.width == i;
+                final boolean flag1 = this.height < 0 || this.height == j;
+                if (!flag || !flag1) {
+                    dbg("Non-standard palette size: " + i + "x" + j + ", should be: " + this.width + "x" + this.height + ", path: " + s);
+                }
+                this.width = i;
+                this.height = j;
+                if (this.width <= 0 || this.height <= 0) {
+                    warn("Invalid palette size: " + i + "x" + j + ", path: " + s);
+                    return;
+                }
+                this.colors = new int[i * j];
+                bufferedimage.getRGB(0, 0, i, j, this.colors, 0, i);
             }
-            final int i = bufferedimage.getWidth();
-            final int j = bufferedimage.getHeight();
-            final boolean flag = this.width < 0 || this.width == i;
-            final boolean flag1 = this.height < 0 || this.height == j;
-            if (!flag || !flag1) {
-                dbg("Non-standard palette size: " + i + "x" + j + ", should be: " + this.width + "x" + this.height + ", path: " + s);
-            }
-            this.width = i;
-            this.height = j;
-            if (this.width <= 0 || this.height <= 0) {
-                warn("Invalid palette size: " + i + "x" + j + ", path: " + s);
-                return;
-            }
-            this.colors = new int[i * j];
-            bufferedimage.getRGB(0, 0, i, j, this.colors, 0, i);
-        } catch (final IOException ioexception) {
+        } catch (final Exception ioexception) {
             ioexception.printStackTrace();
         }
     }

@@ -1,5 +1,6 @@
 package net.minecraft.src;
 
+import lombok.Cleanup;
 import net.minecraft.client.LoadingScreenRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -1469,7 +1470,8 @@ public class Config {
     }
 
     public static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException {
-        BufferedImage bufferedimage = NativeBackedImage.make(p_readIconImage_0_);
+        @Cleanup
+        NativeBackedImage bufferedimage = NativeBackedImage.make(p_readIconImage_0_);
         int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), null, 0, bufferedimage.getWidth());
         ByteBuffer bytebuffer = ByteBuffer.allocate(4 * aint.length);
 
@@ -1742,12 +1744,14 @@ public class Config {
             if (inputstream == null) {
                 return p_getMojangLogoTexture_0_;
             } else {
-                BufferedImage bufferedimage = NativeBackedImage.make(inputstream);
+                NativeBackedImage bufferedimage = NativeBackedImage.make(inputstream);
 
                 if (bufferedimage == null) {
                     return p_getMojangLogoTexture_0_;
                 } else {
-                    return new DynamicTexture(bufferedimage);
+                    DynamicTexture dynamicTexture = new DynamicTexture(bufferedimage);
+                    bufferedimage.close();
+                    return dynamicTexture;
                 }
             }
         } catch (Exception exception) {

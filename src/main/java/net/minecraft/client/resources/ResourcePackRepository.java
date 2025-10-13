@@ -99,9 +99,9 @@ public class ResourcePackRepository {
     public void updateRepositoryEntriesAll() {
 
         final Map<Integer, ResourcePackRepository.Entry> all = new HashMap<>();
-        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
-            all.put(entry.hashCode(), entry);
-        }
+//        for (ResourcePackRepository.Entry entry : this.getRepositoryEntriesAll()) {
+//            all.put(entry.hashCode(), entry);
+//        }
 
         final Set<ResourcePackRepository.Entry> newSet = new LinkedHashSet<>();
         for (File file : this.getResourcePackFiles()) {
@@ -300,6 +300,8 @@ public class ResourcePackRepository {
         @Getter
         private final AtomicBoolean previewsLoaded = new AtomicBoolean(false);
 
+        public boolean triggeredLoading = false;
+
         private Entry(File resourcePackFileIn) {
             this.resourcePackFile = resourcePackFileIn;
         }
@@ -317,16 +319,25 @@ public class ResourcePackRepository {
                 this.texturePackIcon = ResourcePackRepository.this.rprDefaultResourcePack.getPackImage();
             }
 
-            MultiThreadingUtil.runAsync(() -> {
-                try {
-                    this.genPreviewImages();
-                    this.detectResPackInfo();
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
+            this.closeResourcePack();
+        }
 
-                this.closeResourcePack();
-            });
+        public void loadPreviewsIfNotLoaded() {
+
+            if (!this.triggeredLoading) {
+                this.triggeredLoading = true;
+
+                MultiThreadingUtil.runAsync(() -> {
+                    try {
+                        this.genPreviewImages();
+                        this.detectResPackInfo();
+                    } catch (Throwable t) {
+                        t.printStackTrace();
+                    }
+                    this.closeResourcePack();
+                });
+            }
+
         }
 
         private void detectResPackInfo() {
@@ -349,7 +360,7 @@ public class ResourcePackRepository {
          * @return 图片, 是否从vanilla资源包中加载
          */
         @SneakyThrows
-        private Tuple<BufferedImage, Boolean> getTextureImg(Location loc) {
+        private Tuple<NativeBackedImage, Boolean> getTextureImg(Location loc) {
             InputStream is = null;
 
             try {
@@ -392,8 +403,8 @@ public class ResourcePackRepository {
             int maxSize = -1;
 
             for (String listTexture : listTextures) {
-                Tuple<BufferedImage, Boolean> tuple = this.getTextureImg(Location.of(listTexture));
-                BufferedImage img = tuple.getA();
+                Tuple<NativeBackedImage, Boolean> tuple = this.getTextureImg(Location.of(listTexture));
+                NativeBackedImage img = tuple.getA();
 
                 boolean loadedFromDefaultRespack = tuple.getB();
                 if (!loadedFromDefaultRespack) {
@@ -412,9 +423,12 @@ public class ResourcePackRepository {
             previewsLoaded.set(true);
         }
 
+        @SneakyThrows
         public void bindTexturePackIcon(TextureManager textureManagerIn) {
             if (this.locationTexturePackIcon == null) {
                 this.locationTexturePackIcon = textureManagerIn.getDynamicTextureLocation("texturepackicon", new DynamicTexture(this.texturePackIcon));
+                if (this.texturePackIcon instanceof AutoCloseable)
+                    ((AutoCloseable) this.texturePackIcon).close();
             }
 
             textureManagerIn.bindTexture(this.locationTexturePackIcon);

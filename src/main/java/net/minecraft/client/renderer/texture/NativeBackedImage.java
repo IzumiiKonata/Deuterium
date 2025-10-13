@@ -6,7 +6,7 @@ import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
-import java.awt.image.BufferedImage;
+import java.awt.image.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,13 +23,38 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
     private final int sizeBytes;
 
     private NativeBackedImage(int width, int height, long pointer) {
-        super(width, height, TYPE_INT_ARGB);
+        super(createMinimalColorModel(),
+                createNativeRaster(width, height),
+                false,
+                null);
         this.width = width;
         this.height = height;
         this.pointer = pointer;
 
         // 4 channels: RGBA
         this.sizeBytes = width * height * 4;
+    }
+
+    private static ColorModel createMinimalColorModel() {
+        return new DirectColorModel(32,
+                0x00FF0000,  // Red
+                0x0000FF00,  // Green
+                0x000000FF,  // Blue
+                0xFF000000   // Alpha
+        );
+    }
+
+    private static WritableRaster createNativeRaster(int width, int height) {
+        DataBuffer emptyBuffer = new DataBufferByte(0);
+
+        SampleModel sampleModel = new SinglePixelPackedSampleModel(
+                DataBuffer.TYPE_INT,
+                width,
+                height,
+                new int[]{0xFF0000, 0xFF00, 0xFF, 0xFF000000}
+        );
+
+        return Raster.createWritableRaster(sampleModel, emptyBuffer, null);
     }
 
     public int getWidth() {
@@ -86,7 +111,7 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() {
         if (this.pointer != 0) {
             STBImage.nstbi_image_free(this.pointer);
 
@@ -103,7 +128,6 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
 
     // Parsing
 
-    @SneakyThrows
     public static NativeBackedImage make(InputStream stream) {
         ByteBuffer imgBuf = null;
 
@@ -125,11 +149,15 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
                 return new NativeBackedImage(width.get(0), height.get(0), MemoryUtil.memAddress(buf));
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
         } finally {
             // free
             MemoryUtil.memFree(imgBuf);
             IOUtils.closeQuietly(stream);
         }
+
+        return null;
     }
 
     private static ByteBuffer readResource(InputStream inputStream) throws IOException {

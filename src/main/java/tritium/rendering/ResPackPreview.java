@@ -9,10 +9,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.SimpleTexture;
-import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.texture.*;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.JsonUtils;
@@ -22,6 +19,7 @@ import org.lwjgl.opengl.GL11;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
 
 import java.awt.*;
@@ -30,6 +28,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author IzumiiKonata
@@ -49,16 +48,34 @@ public class ResPackPreview {
     Timer timer = new Timer();
     int curFrame = 0;
 
-    public ResPackPreview(IResourcePack pack, BufferedImage img, String path) {
+    public ResPackPreview(IResourcePack pack, NativeBackedImage img, String path) {
         this.pack = pack;
         this.path = path;
         this.frameWidth = img.getWidth();
         this.imgHeight = img.getHeight();
 
-        AsyncGLContext.submit(() -> {
+        CompletableFuture<Void> textureUploadingTask = AsyncGLContext.submit(() -> {
             this.locImg = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("ResourcePackPreview", new DynamicTexture(img));
         });
-        this.serializeMetadata(img);
+
+        CompletableFuture<Void> serializeTask = MultiThreadingUtil.runAsync(() -> {
+            this.serializeMetadata(img);
+        });
+
+        CompletableFuture
+                .allOf(textureUploadingTask, serializeTask)
+                .whenComplete((result, ex) -> {
+
+                    if (ex != null) {
+                        ex.printStackTrace();
+                    }
+
+                    try {
+                        img.close();
+                    } catch (Exception e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
 
     public void cleanUp() {

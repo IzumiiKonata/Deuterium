@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.interfaces.SharedConstants;
@@ -38,11 +39,11 @@ public class Textures implements SharedConstants {
 
     public DynamicTexture loadTexture(Location location, BufferedImage img, boolean clearable, boolean linear) {
 
-            DynamicTexture dynamicTexture = new DynamicTexture(img, clearable, linear);
+        DynamicTexture dynamicTexture = new DynamicTexture(img, clearable, linear);
 
-            mc.getTextureManager().loadTexture(location, dynamicTexture);
+        mc.getTextureManager().loadTexture(location, dynamicTexture);
 
-            return dynamicTexture;
+        return dynamicTexture;
 
     }
 
@@ -54,6 +55,9 @@ public class Textures implements SharedConstants {
 
                     if (flush) {
                         img.flush();
+
+                        if (img instanceof NativeBackedImage)
+                            ((NativeBackedImage) img).close();
                     }
 
                     if (after != null) {

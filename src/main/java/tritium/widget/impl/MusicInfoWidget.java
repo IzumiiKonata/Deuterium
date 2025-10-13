@@ -232,7 +232,7 @@ public class MusicInfoWidget extends Widget {
 
                 double progressBarOffsetY = y + height - imgSpacing - 3 - FontManager.pf14bold.getHeight() - 8;
 
-                artists.render(FontManager.pf20, secondaryText, imgX + imgSize + imgSpacing, offsetY + FontManager.pf25bold.getHeight() + (progressBarOffsetY - (offsetY + 2 + FontManager.pf25bold.getHeight())) * 0.5 - FontManager.pf20bold.getHeight() * 0.5 + 2, progressBarWidth, new Color(1f, 1f, 1f, alpha * 0.8f).getRGB());
+                artists.render(FontManager.pf20, secondaryText, imgX + imgSize + imgSpacing, progressBarOffsetY - FontManager.pf20.getHeight() - 3, progressBarWidth, new Color(1f, 1f, 1f, alpha * 0.8f).getRGB());
 
                 this.roundedRect(imgX + imgSize + imgSpacing, progressBarOffsetY, progressBarWidth, 5, 1, 1f, 1f, 1f, alpha * 0.3f);
 

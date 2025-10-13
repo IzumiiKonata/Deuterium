@@ -74,11 +74,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         initialized = true;
         this.font = font.deriveFont(sizePx * 2);
 
-        // ascii chars
-        for (int i = 0; i < 256; i++) {
-            locateGlyph((char) i);
-        }
-
         if (this.sizePx == 9.0 && this.font.getFontName().equals(".萍方-简 正规体")) {
             for (char c : "单人游戏多设置账号管理".toCharArray()) {
                 locateGlyph(c);

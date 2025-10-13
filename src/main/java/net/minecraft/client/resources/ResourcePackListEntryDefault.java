@@ -1,6 +1,7 @@
 package net.minecraft.client.resources;
 
 import com.google.gson.JsonParseException;
+import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
@@ -10,6 +11,7 @@ import net.minecraft.util.Location;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 
+import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 public class ResourcePackListEntryDefault extends ResourcePackListEntry {
@@ -17,13 +19,18 @@ public class ResourcePackListEntryDefault extends ResourcePackListEntry {
     private final IResourcePack field_148320_d;
     private final Location resourcePackIcon;
 
+    @SneakyThrows
     public ResourcePackListEntryDefault(GuiScreenResourcePacks resourcePacksGUIIn) {
         super(resourcePacksGUIIn);
         this.field_148320_d = this.mc.getResourcePackRepository().rprDefaultResourcePack;
         DynamicTexture dynamictexture;
 
         try {
-            dynamictexture = new DynamicTexture(this.field_148320_d.getPackImage());
+            BufferedImage packImage = this.field_148320_d.getPackImage();
+            dynamictexture = new DynamicTexture(packImage);
+
+            if (packImage instanceof AutoCloseable)
+                ((AutoCloseable) packImage).close();
         } catch (IOException var4) {
             dynamictexture = TextureUtil.missingTexture;
         }

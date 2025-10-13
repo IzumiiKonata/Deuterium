@@ -298,6 +298,10 @@ public class ShadersTex {
             }
         }
 
+        if (bufferedimage instanceof NativeBackedImage) {
+            ((NativeBackedImage) bufferedimage).close();
+        }
+
         if (!flag) {
             Arrays.fill(aint1, defColor);
         }
@@ -576,14 +580,16 @@ public class ShadersTex {
         } else {
             try {
                 IResource iresource = manager.getResource(location);
-                BufferedImage bufferedimage = NativeBackedImage.make(iresource.getInputStream());
+                NativeBackedImage bufferedimage = NativeBackedImage.make(iresource.getInputStream());
 
                 if (bufferedimage == null) {
                     return false;
                 } else if (bufferedimage.getWidth() == width && bufferedimage.getHeight() == height) {
                     bufferedimage.getRGB(0, 0, width, height, aint, offset, width);
+                    bufferedimage.close();
                     return true;
                 } else {
+                    bufferedimage.close();
                     return false;
                 }
             } catch (IOException var8) {
@@ -623,7 +629,7 @@ public class ShadersTex {
                 try {
                     Location resourcelocation = Location.of(s);
                     InputStream inputstream = manager.getResource(resourcelocation).getInputStream();
-                    BufferedImage bufferedimage = NativeBackedImage.make(inputstream);
+                    NativeBackedImage bufferedimage = NativeBackedImage.make(inputstream);
 
                     if (k == 0) {
                         i = bufferedimage.getWidth();
@@ -634,6 +640,7 @@ public class ShadersTex {
 
                     int[] aint1 = new int[roundUpPOT(k * 3)];
                     bufferedimage.getRGB(0, 0, i, j, aint1, 0, i);
+                    bufferedimage.close();
                     loadNSMap(manager, resourcelocation, i, j, aint1);
 
                     for (int l = 0; l < k; ++l) {

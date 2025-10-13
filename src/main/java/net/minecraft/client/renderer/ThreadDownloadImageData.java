@@ -1,5 +1,6 @@
 package net.minecraft.client.renderer;
 
+import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.SimpleTexture;
@@ -48,6 +49,7 @@ public class ThreadDownloadImageData extends SimpleTexture {
         this.imageBuffer = imageBufferIn;
     }
 
+    @SneakyThrows
     private void checkTextureUploaded() {
         if (!this.textureUploaded && this.bufferedImage != null) {
             this.textureUploaded = true;
@@ -60,6 +62,10 @@ public class ThreadDownloadImageData extends SimpleTexture {
                 ShadersTex.loadSimpleTexture(super.getGlTextureId(), this.bufferedImage, false, false, Config.getResourceManager(), this.textureLocation, this.getMultiTexID());
             } else {
                 TextureUtil.uploadTextureImage(super.getGlTextureId(), this.bufferedImage);
+            }
+
+            if (this.bufferedImage instanceof NativeBackedImage) {
+                ((NativeBackedImage) this.bufferedImage).close();
             }
         }
     }

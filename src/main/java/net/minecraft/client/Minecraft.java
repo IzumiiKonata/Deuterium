@@ -295,6 +295,8 @@ public class Minecraft implements IThreadListener {
     private NetworkManager myNetworkManager;
     private boolean integratedServerIsRunning;
 
+    public boolean loaded = false;
+
     /**
      * The profiler instance
      */
@@ -629,6 +631,8 @@ public class Minecraft implements IThreadListener {
         InputEvents.addKeyboardListener(new McKeybindHandler());
 
         Tritium.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Main.startupTime) / 1000.0d);
+
+        loaded = true;
     }
 
     private void registerMetadataSerializers() {
@@ -1085,7 +1089,7 @@ public class Minecraft implements IThreadListener {
         this.mcProfiler.startSection("scheduledExecutables");
 
         synchronized (this.scheduledTasks) {
-            while (!this.scheduledTasks.isEmpty()) {
+            for (int task = 0; task < Math.min(16, this.scheduledTasks.size()); task++) {
                 Util.runTask((FutureTask<?>) this.scheduledTasks.poll(), logger);
             }
         }

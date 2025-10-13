@@ -13,6 +13,7 @@ import tritium.interfaces.SharedRenderingConstants;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.file.Files;
 import java.util.Random;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -35,7 +36,7 @@ public class StaticTextureWidget extends Widget {
         this.imgFile = imgFile;
         BufferedImage image = null;
         try {
-            image = NativeBackedImage.make(new FileInputStream(imgFile));
+            image = NativeBackedImage.make(Files.newInputStream(imgFile.toPath()));
         } catch (Exception e) {
             System.err.println("File \"" + imgFile.getAbsolutePath() + "\" is not an image!");
             e.printStackTrace();

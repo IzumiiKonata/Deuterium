@@ -1,5 +1,8 @@
 package net.minecraft.client.renderer;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import lombok.SneakyThrows;
+import net.minecraft.client.Minecraft;
 import net.minecraft.src.Config;
 import net.minecraft.util.Matrix4f;
 import net.optifine.SmartAnimations;
@@ -15,6 +18,10 @@ import tritium.rendering.async.AsyncGLContext;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
@@ -366,8 +373,28 @@ public class GlStateManager {
     }
 
     public static int generateTexture() {
-        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+
+        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
             return GL11.glGenTextures();
+        }
+
+        if (!Minecraft.getMinecraft().loaded) {
+            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+                int id = glGenTextures();
+
+//                System.out.println("Generated texture ID: " + id + " for thread " + Thread.currentThread().getName());
+
+                return id;
+            }
+        }
+
+        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> glGenTextures());
+        try {
+            return future.get(5, TimeUnit.SECONDS);  // 添加超时
+        } catch (TimeoutException e) {
+            throw new RuntimeException("Timeout waiting for texture ID", e);
+        } catch (ExecutionException | InterruptedException e) {
+            throw new RuntimeException(e);
         }
     }
 

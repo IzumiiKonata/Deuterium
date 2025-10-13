@@ -86,12 +86,13 @@ public class PlaylistRect extends RectWidget {
                     MultiThreadingUtil.runAsync(() -> {
                         try (InputStream inputStream = HttpUtils.downloadStream(playlist.coverUrl + "?param=" + (int) (imgBg.getWidth() * 2) + "y" + (int) (imgBg.getHeight() * 2))) {
                             if (inputStream != null) {
-                                BufferedImage img = NativeBackedImage.make(inputStream);
+                                NativeBackedImage img = NativeBackedImage.make(inputStream);
                                 AsyncGLContext.submit(() -> {
                                     if (textureManager.getTexture(coverLoc) != null) {
                                         textureManager.deleteTexture(coverLoc);
                                     }
                                     Textures.loadTexture(coverLoc, img);
+                                    img.close();
                                 });
                             }
                         } catch (Exception e) {

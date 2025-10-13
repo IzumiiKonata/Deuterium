@@ -106,6 +106,8 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
 
             ResourcePackRepository.Entry entry = ((ResourcePackListEntryFound) this).getEntry();
 
+            entry.loadPreviewsIfNotLoaded();
+
             if (entry.getPreviewsLoaded().get()) {
                 resourcePacksGUI.renderCalls.add(() -> {
                     double posX = mouseX + 4;

@@ -2,7 +2,9 @@ package net.optifine.shaders;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import lombok.Cleanup;
 import net.minecraft.client.renderer.texture.AbstractTexture;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.*;
@@ -29,9 +31,12 @@ public class SimpleShaderTexture extends AbstractTexture {
             throw new FileNotFoundException("Shader texture not found: " + this.texturePath);
         } else {
             try {
-                BufferedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);
-                TextureMetadataSection texturemetadatasection = loadTextureMetadataSection(this.texturePath, new TextureMetadataSection(false, false, new ArrayList()));
-                TextureUtil.uploadTextureImageAllocate(this.getGlTextureId(), bufferedimage, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
+                try (NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);) {
+                    TextureMetadataSection texturemetadatasection = loadTextureMetadataSection(this.texturePath, new TextureMetadataSection(false, false, new ArrayList()));
+                    TextureUtil.uploadTextureImageAllocate(this.getGlTextureId(), bufferedimage, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             } finally {
                 IOUtils.closeQuietly(inputstream);
             }

@@ -131,7 +131,7 @@ public class FontManager extends AbstractManager {
             if (count == 0)
                 break;
 
-            System.out.println(count + " remaining.");
+            System.out.println("Waiting for " + count + " font renderers to be initialized.");
         }
 
     }

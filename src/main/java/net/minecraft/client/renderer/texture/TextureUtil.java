@@ -221,20 +221,22 @@ public class TextureUtil {
     }
 
     public static int[] readImageData(IResourceManager resourceManager, Location imageLocation) throws IOException {
-        BufferedImage bufferedimage = readBufferedImage(resourceManager.getResource(imageLocation).getInputStream());
-
-        if (bufferedimage == null) {
-            return null;
-        } else {
-            int i = bufferedimage.getWidth();
-            int j = bufferedimage.getHeight();
-            int[] aint = new int[i * j];
-            bufferedimage.getRGB(0, 0, i, j, aint, 0, i);
-            return aint;
+        try (NativeBackedImage bufferedimage = readBufferedImage(resourceManager.getResource(imageLocation).getInputStream());) {
+            if (bufferedimage == null) {
+                return null;
+            } else {
+                int i = bufferedimage.getWidth();
+                int j = bufferedimage.getHeight();
+                int[] aint = new int[i * j];
+                bufferedimage.getRGB(0, 0, i, j, aint, 0, i);
+                return aint;
+            }
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static NativeBackedImage readBufferedImage(InputStream imageStream) throws IOException {
+    public static NativeBackedImage readBufferedImage(InputStream imageStream)  {
         if (imageStream == null) {
             return null;
         } else {

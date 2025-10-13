@@ -195,15 +195,13 @@ public class Music {
 
             }
 
-
-
             ++count;
         }
 
         if (artistsName.length() == 0)
             return "";
 
-        return artistsName.substring(0, artistsName.length() - 3);
+        return artistsName.substring(0, artistsName.length() - 3).replace("\n", "");
     }
 
     /**

@@ -9,6 +9,7 @@ import tritium.utils.other.DevUtils;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.*;
 
 /**
@@ -20,7 +21,7 @@ public class MultiThreadingUtil {
     public static final int THREAD_COUNT = 4;
 
     @Getter
-    private static final ConcurrentLinkedQueue<Runnable> TASK_QUEUE = new ConcurrentLinkedQueue<>();
+    private static final ConcurrentLinkedQueue<FutureTaskWrapper> TASK_QUEUE = new ConcurrentLinkedQueue<>();
 
     /**
      * threads list
@@ -52,7 +53,7 @@ public class MultiThreadingUtil {
             while (true) {
                 if (!TASK_QUEUE.isEmpty()) {
                     // poll the task from the queue
-                    Runnable task = TASK_QUEUE.poll();
+                    FutureTaskWrapper task = TASK_QUEUE.poll();
 
                     try {
                         // this shouldn't happen but in case it happens we'll just assert it is not null
@@ -102,54 +103,22 @@ public class MultiThreadingUtil {
 
     }
 
-    // 防止出现奇怪的问题导致线程没被踢醒 创建一个守护进程一秒遍历一次
-    // *Edit: okay i tested it, and it's not necessary
-    private static void startDaemonThread() {
-        new Thread(
-                () -> {
-
-                    while (true) {
-
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            throw new RuntimeException(e);
-                        }
-
-                        if (threads.isEmpty())
-                            continue;
-
-                        if (!TASK_QUEUE.isEmpty()) {
-                            for (WorkerThread thread : threads) {
-
-                                if (thread.getState() == Thread.State.WAITING)
-                                    synchronized (thread.lock) {
-                                        // change the thread's state (WAITING -> RUNNING) to continue loading tasks
-                                        thread.lock.notifyAll();
-                                    }
-
-                            }
-                        }
-
-
-                    }
-                },
-                "MTU Daemon Thread"
-        ).start();
-    }
-
     static int id = 0;
 
     @SneakyThrows
-    public static void runAsync(Runnable runnable) {
+    public static CompletableFuture<Void> runAsync(Runnable runnable) {
 
         if (runnable == null) {
             System.err.println("Got Null Runnable!");
             System.err.println(DevUtils.getCurrentInvokeStack());
-            return;
+            CompletableFuture<Void> future = new CompletableFuture<>();
+            future.completeExceptionally(new IllegalArgumentException("Runnable is null"));
+            return future;
         }
 
-        TASK_QUEUE.add(runnable);
+        CompletableFuture<Void> future = new CompletableFuture<>();
+        FutureTaskWrapper wrapper = new FutureTaskWrapper(runnable, future);
+        TASK_QUEUE.add(wrapper);
 
         for (MultiThreadingUtil.WorkerThread thread : threads) {
 
@@ -160,6 +129,27 @@ public class MultiThreadingUtil {
                 }
 
         }
+        
+        return future;
     }
 
+    private static class FutureTaskWrapper implements Runnable {
+        private final Runnable runnable;
+        private final CompletableFuture<Void> future;
+
+        public FutureTaskWrapper(Runnable runnable, CompletableFuture<Void> future) {
+            this.runnable = runnable;
+            this.future = future;
+        }
+
+        @Override
+        public void run() {
+            try {
+                runnable.run();
+                future.complete(null);
+            } catch (Throwable t) {
+                future.completeExceptionally(t);
+            }
+        }
+    }
 }

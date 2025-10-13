@@ -6,6 +6,7 @@ import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
@@ -44,6 +45,10 @@ public class PlayerItemModel {
             if (this.texture == null && this.textureImage != null) {
                 this.texture = new DynamicTexture(this.textureImage);
                 Minecraft.getMinecraft().getTextureManager().loadTexture(this.textureLocation, this.texture);
+
+                if (this.textureImage instanceof NativeBackedImage) {
+                    ((NativeBackedImage) this.textureImage).close();
+                }
             }
 
             texturemanager.bindTexture(this.textureLocation);

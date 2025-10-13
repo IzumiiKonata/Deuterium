@@ -518,7 +518,8 @@ public class CloudMusic {
                 InputStream is = HttpUtils.downloadStream(music.getPicUrl(160), 5);
                 InputStream isSmall = HttpUtils.downloadStream(music.getPicUrl(44), 5);
 
-                BufferedImage read = NativeBackedImage.make(is);
+                // 此处无法使用 NativeBackedImage, 底下那个 gaussianBlur 需要很多 ImageIO 狗屎才能工作
+                BufferedImage read = ImageIO.read(is);
                 Textures.loadTextureAsyncly(musicCover, read);
 
                 BufferedImage readSmall = NativeBackedImage.make(isSmall);
