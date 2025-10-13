@@ -209,8 +209,6 @@ public class ResPackPreview {
             return;
         }
 
-        this.isAnimated = true;
-
         JsonObject animationObject = animationElement.getAsJsonObject();
 
         int frameTime = JsonUtils.getInt(animationObject, "frametime", 1);
@@ -221,6 +219,9 @@ public class ResPackPreview {
         }
 
         if (animationObject.has("frames")) {
+
+            this.isAnimated = true;
+
             try {
                 JsonArray framesArray = JsonUtils.getJsonArray(animationObject, "frames");
 
