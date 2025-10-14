@@ -15,6 +15,7 @@ import tritium.utils.logging.Logger;
 import tritium.utils.other.DevUtils;
 import tritium.management.*;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,7 @@ import java.util.List;
 public class Tritium {
 
     @Getter
-    private static final Version version = new Version(Version.Type.Dev, 1, 1, 2);
+    private static final Version version = new Version(Version.Type.Release, 1, 1, 2);
 
     public static final String NAME = "Tritium";
 
@@ -151,7 +152,23 @@ public class Tritium {
 
         }
 
+        // delete all temp files
 
+        File musicCacheDir = new File("MusicCache");
+
+        if (!musicCacheDir.exists()) {
+            return;
+        }
+
+        File convertedDir = new File(musicCacheDir, "Converted");
+        if (!convertedDir.exists()) {
+            return;
+        }
+
+        for (File file : convertedDir.listFiles()) {
+            if (file.getName().endsWith(".wav"))
+                file.delete();
+        }
     }
 
 }

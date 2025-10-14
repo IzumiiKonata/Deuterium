@@ -141,7 +141,7 @@ public class Main {
         radonCfg.setTransformers(
             new ArrayList<>(
                 Arrays.asList(
-                        new ParameterHider(),
+//                        new ParameterHider(),
                         new CodeHider(),
                         new BlockSplitter(),
                         new ClassFolder(),
