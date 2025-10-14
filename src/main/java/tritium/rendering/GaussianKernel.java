@@ -18,7 +18,7 @@ public class GaussianKernel {
             }
 
             int center = size / 2;
-            float sigma = size / 3.0f; // 标准差，可以根据需要调整
+            float sigma = size / 3.0f;
             float kernelSum = 0.0f;
 
             float[][] kernel = new float[size][size];
@@ -31,7 +31,6 @@ public class GaussianKernel {
                 }
             }
 
-            // 归一化卷积核
             for (int i = 0; i < size; i++) {
                 for (int j = 0; j < size; j++) {
                     kernel[i][j] /= kernelSum;

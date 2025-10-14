@@ -431,7 +431,6 @@ public class Minecraft implements IThreadListener {
 
         while (true) {
             try {
-
                 while (this.running) {
                     if (!this.hasCrashed || this.crashReporter == null) {
                         try {
@@ -445,32 +444,25 @@ public class Minecraft implements IThreadListener {
                         this.displayCrashReport(this.crashReporter);
                     }
                 }
-
-                if (this.running && (!this.hasCrashed || this.crashReporter == null)) {
-                    continue;
-                }
-
             } catch (MinecraftError var12) {
-                this.shutdownMinecraftApplet();
                 break;
             } catch (ReportedException reportedexception) {
                 this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
-//                this.freeMemory();
-                logger.fatal("Reported exception thrown!", reportedexception);
+                this.freeMemory();
+                logger.fatal("Reported exception thrown!", (Throwable) reportedexception);
                 this.displayCrashReport(reportedexception.getCrashReport());
-                this.crashed(reportedexception.getCrashReport());
+                break;
             } catch (Throwable throwable1) {
                 CrashReport crashreport1 = this.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
-//                this.freeMemory();
+                this.freeMemory();
                 logger.fatal("Unreported exception thrown!", throwable1);
                 this.displayCrashReport(crashreport1);
-                this.crashed(crashreport1);
+                break;
             } finally {
-
                 this.shutdownMinecraftApplet();
             }
 
-            break;
+            return;
         }
     }
 

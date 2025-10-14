@@ -201,7 +201,7 @@ public interface SharedRenderingConstants {
 
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
-        // 性能优化魔法: 使用帧缓冲减少屏上内容渲染的次数
+        // 限制 render2D 渲染次数
         boolean shouldUseCaching = ClientSettings.RENDER2D_FRAMERATE.getValue() != 0;
 
         if (shouldUseCaching) {
@@ -237,7 +237,6 @@ public interface SharedRenderingConstants {
                 RenderSystem.setFrameDeltaTime(Math.max(deltaTime, delta));
 
                 try {
-                    // 这里是你 render2d 的内容
                     NORMAL.forEach(Runnable::run);
                 } catch (Throwable t) {
                     t.printStackTrace();

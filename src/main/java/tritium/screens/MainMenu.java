@@ -131,10 +131,28 @@ public class MainMenu extends BaseScreen {
 
         this.themeButton.draw(mouseX, mouseY);
 
+        this.renderInfos();
+
         // render loading screen outro
         LoadingScreenRenderer renderer = LoadingRenderer.loadingScreenRenderer;
         renderer.alpha = Interpolations.interpBezier(renderer.alpha, 0, .1f);
         renderer.render(RenderSystem.getWidth(), RenderSystem.getHeight());
+    }
+
+    private void renderInfos() {
+
+        List<String> infos = Arrays.asList(
+                "Tritium-X " + Tritium.getVersion()
+        );
+
+        CFontRenderer fr = FontManager.arial14;
+        double yOffset = RenderSystem.getHeight() - fr.getHeight() - 2;
+
+        for (String info : infos) {
+            fr.drawCenteredString(info, RenderSystem.getWidth() * .5, yOffset, this.getColor(ColorType.TEXT));
+            yOffset -= fr.getHeight();
+        }
+
     }
 
     private boolean refreshDeconvergeThisFrame = false;

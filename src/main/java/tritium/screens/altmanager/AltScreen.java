@@ -587,7 +587,6 @@ public class AltScreen extends BaseScreen {
         CONTAINER_ELEMENT_HOVERING
     }
 
-    // 对于白色和黑色，返回相应的ColorType中的颜色
     public int getColor(ColorType type) {
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
 

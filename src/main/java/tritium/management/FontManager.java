@@ -25,42 +25,14 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold;
     public static CFontRenderer pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40;
     public static CFontRenderer icon18, icon25, icon30, icon40, tritium24, tritium42;
-    public static CFontRenderer arial18bold, arial40bold, arial60bold;
-
-    public static CFontRenderer getBySize(int size) {
-        return getBySize(size, false);
-    }
-
-    public static CFontRenderer getBySize(int size, boolean bold) {
-
-        List<CFontRenderer> list = bold ? Arrays.asList(
-                pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold
-        ) : Arrays.asList(
-                pf14, pf16, pf18, pf20, pf25, pf28, pf32
-        );
-
-        CFontRenderer result = list.get(0);
-
-        for (int i = list.size() - 1; i >= 0; i--) {
-            CFontRenderer cFontRenderer = list.get(i);
-
-            int sz = (int) (cFontRenderer.sizePx * 2);
-
-            if (sz > size && i > 0) {
-                result = list.get(i - 1);
-            }
-
-        }
-
-        return result;
-    }
+    public static CFontRenderer arial14, arial18bold, arial40bold, arial60bold;
 
     public static void deleteLoadedTextures() {
         List<CFontRenderer> list = Arrays.asList(
                 pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold,
                 pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40,
                 icon18, icon25, icon30, icon40, tritium24, tritium42,
-                arial18bold, arial40bold, arial60bold
+                arial14, arial18bold, arial40bold, arial60bold
         );
 
         list.forEach(c -> {
@@ -109,6 +81,7 @@ public class FontManager extends AbstractManager {
 
         tritium24 = create(24, "tritium");
 
+        arial14 = create(14, "arial");
         arial18bold = create(18, "arialBold");
         arial40bold = create(40, "arialBold");
     }
@@ -121,7 +94,7 @@ public class FontManager extends AbstractManager {
                     pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold,
                     pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40,
                     icon18, icon25, icon30, icon40, tritium24, tritium42,
-                    arial18bold, arial60bold
+                    arial14, arial18bold, arial60bold
             );
 
             Thread.sleep(100);

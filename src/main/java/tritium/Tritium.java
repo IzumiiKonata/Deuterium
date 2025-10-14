@@ -22,7 +22,7 @@ import java.util.List;
 public class Tritium {
 
     @Getter
-    private static final Version version = new Version(Version.Type.Dev, 0, 0, 1);
+    private static final Version version = new Version(Version.Type.Dev, 1, 1, 2);
 
     public static final String NAME = "Tritium";
 

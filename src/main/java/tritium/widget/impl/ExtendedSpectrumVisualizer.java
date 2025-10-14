@@ -22,9 +22,7 @@ public class ExtendedSpectrumVisualizer {
     private final float[] bandMagnitudes;
     private final int maxBin;
 
-    // 低频增强参数
-    private final float lowFreqBoost = 2.0f; // 低频段频带数量倍增因子
-    private final float lowFreqCutoff = 500.0f; // 低频段分界点 (Hz)
+    private final float lowFreqCutoff = 500.0f;
 
     public ExtendedSpectrumVisualizer(int sampleRate, int fftSize, int numBands) {
         this(sampleRate, fftSize, numBands, FrequencyDistribution.BARK_ENHANCED);
@@ -136,16 +134,15 @@ public class ExtendedSpectrumVisualizer {
      * 增强的Bark分布 - 在低频区域提供更多细分
      */
     private void generateEnhancedBarkBands(float minFreq, float maxFreq) {
-        // 计算低频段应该占用的频带数量
         float lowFreqFactor = .3f;
-        int lowFreqBands = (int) (numBands * lowFreqFactor); // 40%的频带用于低频
+        int lowFreqBands = (int) (numBands * lowFreqFactor);
         int highFreqBands = numBands - lowFreqBands;
 
-        // 低频段使用更密集的分布
+
         float lowFreqMax = Math.min(lowFreqCutoff, maxFreq);
         generateDenseBarkBands(minFreq, lowFreqMax, lowFreqBands);
 
-        // 高频段使用标准Bark分布
+
         if (lowFreqMax < maxFreq) {
             float barkMin = freqToBark(lowFreqMax * .25f);
             float barkMax = freqToBark(maxFreq);
@@ -172,39 +169,39 @@ public class ExtendedSpectrumVisualizer {
         float barkMin = freqToBark(minFreq);
         float barkMax = freqToBark(maxFreq);
 
-        // 创建非均匀的Bark步长分布
+
         float[] barkSteps = new float[numBands];
         float totalWeight = 0;
 
         for (int i = 0; i < numBands; i++) {
             float progress = (float) i / (numBands - 1);
-            // 在低频区域使用更大的步长，增强低频表现
+
             float weight = (float) Math.exp(-progress * 1.2f) + 0.8f;
             barkSteps[i] = weight;
             totalWeight += weight;
         }
 
-        // 标准化步长
+
         float barkRange = barkMax - barkMin;
         float currentBark = barkMin;
-        float prevHighFreq = minFreq; // 记录前一个频带的高频值
+        float prevHighFreq = minFreq;
 
         for (int i = 0; i < numBands; i++) {
             float stepSize = (barkSteps[i] / totalWeight) * barkRange;
-            float lowFreq = Math.max(prevHighFreq, barkToFreq(currentBark)); // 确保不重叠
+            float lowFreq = Math.max(prevHighFreq, barkToFreq(currentBark));
             float highFreq = barkToFreq(currentBark + stepSize);
             float centerFreq = (lowFreq + highFreq) / 2;
 
-            // 确保频率不小于最小频率
+
             lowFreq = Math.max(lowFreq, minFreq);
-            highFreq = Math.max(highFreq, lowFreq + 1.0f); // 确保高低频不相等
+            highFreq = Math.max(highFreq, lowFreq + 1.0f);
 
             int lowBin = freqToBin(lowFreq);
             int highBin = freqToBin(highFreq);
             lowBin = Math.max(0, Math.min(maxBin, lowBin));
             highBin = Math.max(lowBin, Math.min(maxBin, highBin));
 
-            // 确保bin不重叠
+
             if (i > 0 && lowBin <= bands.get(i-1).highBin) {
                 lowBin = bands.get(i-1).highBin + 1;
             }
@@ -212,7 +209,7 @@ public class ExtendedSpectrumVisualizer {
 
             bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
             currentBark += stepSize;
-            prevHighFreq = highFreq; // 更新前一个频带的高频值
+            prevHighFreq = highFreq;
         }
     }
 
@@ -220,13 +217,13 @@ public class ExtendedSpectrumVisualizer {
      * 在指定频率范围内生成密集的Bark频带
      */
     private void generateDenseBarkBands(float minFreq, float maxFreq, int bandCount) {
-        // 在低频区域使用混合分布：部分线性 + 部分Bark
-        int linearBands = bandCount / 5; // 1/3使用线性分布
-        int barkBands = bandCount - linearBands; // 2/3使用Bark分布
+
+        int linearBands = bandCount / 5;
+        int barkBands = bandCount - linearBands;
 
         float midFreq = minFreq + (maxFreq - minFreq) * .35f;
 
-        // 线性分布部分（超低频）
+
         float linearStep = (midFreq - minFreq) / linearBands;
         for (int i = 0; i < linearBands; i++) {
             float lowFreq = minFreq + i * linearStep;
@@ -241,23 +238,6 @@ public class ExtendedSpectrumVisualizer {
             bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
         }
 
-//        // Bark分布部分（低频）
-//        float barkMin = freqToBark(midFreq);
-//        float barkMax = freqToBark(maxFreq);
-//        float barkStep = (barkMax - barkMin) / barkBands;
-//
-//        for (int i = 0; i < barkBands; i++) {
-//            float lowFreq = barkToFreq(barkMin + i * barkStep);
-//            float highFreq = barkToFreq(barkMin + (i + 1) * barkStep);
-//            float centerFreq = (lowFreq + highFreq) / 2;
-//
-//            int lowBin = freqToBin(lowFreq);
-//            int highBin = freqToBin(highFreq);
-//            lowBin = Math.max(0, Math.min(maxBin, lowBin));
-//            highBin = Math.max(lowBin, Math.min(maxBin, highBin));
-//
-//            bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
-//        }
     }
 
     private double freqToMel(double freq) {
@@ -317,7 +297,6 @@ public class ExtendedSpectrumVisualizer {
             double min = dBToLinear(-100);
             double value = dBToLinear(db) * 2;
 
-            // 对低频段应用额外的敏感度调整
             float sensitivity = 1.0f;
 
             float normalized = (float) Math.pow((value - min) / (max - min), 1 / (1.8 * sensitivity));
@@ -336,8 +315,8 @@ public class ExtendedSpectrumVisualizer {
         LOGARITHMIC,
         MEL_SCALE,
         BARK_SCALE,
-        BARK_ENHANCED,    // 增强的Bark分布（推荐）
-        ADAPTIVE_BARK     // 自适应Bark分布
+        BARK_ENHANCED,
+        ADAPTIVE_BARK
     }
 
     public static class FrequencyBand {
