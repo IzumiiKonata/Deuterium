@@ -1,6 +1,10 @@
 package tech.konata.obfuscator;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
+import tech.konata.commons.ncm.math.DigestUtils;
 import tech.konata.obfuscator.exclusions.Exclusion;
 import tech.konata.obfuscator.exclusions.ExclusionManager;
 import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
@@ -16,9 +20,12 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 public class Main {
 
@@ -154,6 +161,42 @@ public class Main {
 
         Obfuscator obfuscator = new Obfuscator(radonCfg);
         obfuscator.run();
+
+        File jsonOrig = new File(releasesDir, "Tritium.json");
+        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+
+        JsonObject jsonObject = gson.fromJson(new FileReader(jsonOrig), JsonObject.class);
+
+        JsonObject downloads = jsonObject.getAsJsonObject("downloads");
+        JsonObject client = downloads.getAsJsonObject("client");
+        String sha1 = DigestUtils.sha1Hex(Files.newInputStream(obfuscated.toPath()));
+        client.addProperty("sha-1", sha1);
+        client.addProperty("size", obfuscated.length());
+
+        File json = new File(workingDir, "Tritium.json");
+        try (FileWriter fw = new FileWriter(json)) {
+            gson.toJson(jsonObject, fw);
+            fw.flush();
+        }
+
+        File zip = new File(workingDir, "Tritium " + ver + ".zip");
+        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zip.toPath()))) {
+            zos.setLevel(9);
+            zos.putNextEntry(new ZipEntry("Tritium\\Tritium.jar"));
+            zos.write(Files.readAllBytes(obfuscated.toPath()));
+
+            zos.putNextEntry(new ZipEntry("Tritium\\Tritium.json"));
+            zos.write(Files.readAllBytes(json.toPath()));
+
+            List<String> comments = Arrays.asList(
+                    "Tritium " + ver,
+                    "Build Time: " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()),
+                    "Made with <3 by IzumiKonata",
+                    "https://space.bilibili.com/357605683"
+            );
+
+            zos.setComment(String.join("\n", comments));
+        }
     }
 
     private List<String> getProguardConfigTemplate() {

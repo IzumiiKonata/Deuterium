@@ -87,9 +87,8 @@ public class Tritium {
 
         Display.setTitle(
             String.format(
-                NAME + "-X %s%s",
-                ver.getType().toString(),
-                ver.getType() == Version.Type.Dev ? "" : " " + ver
+                NAME + "-X %s",
+                ver.toString()
             )
         );
 
