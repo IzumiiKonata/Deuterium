@@ -361,6 +361,93 @@ public class PlaylistsWindow extends Window {
             next.setColor(ClickGui.getColor(9));
         });
 
+        IconWidget playMode = new IconWidget(CloudMusic.playMode.getIcon(), FontManager.icon30,0, 0, 20, 20);
+        base.addChild(playMode);
+        playMode.center();
+        playMode.setPosition(prev.getRelativeX() * .5 - playMode.getWidth() * .5, playMode.getRelativeY() + progressBar.getHeight() * .5);
+
+        playMode.setOnClickCallback((x, y, i) -> {
+
+            int nextOrdinal;
+
+            if (i == 0) {
+                if (CloudMusic.playMode.ordinal() + 1 > CloudMusic.PlayMode.values().length - 1) {
+                    nextOrdinal = 0;
+                } else {
+                    nextOrdinal = CloudMusic.playMode.ordinal() + 1;
+                }
+
+                playMode.setIcon(CloudMusic.PlayMode.values()[nextOrdinal].getIcon());
+                CloudMusic.playMode = CloudMusic.PlayMode.values()[nextOrdinal];
+            } else if (i == 1) {
+                if (CloudMusic.playMode.ordinal() - 1 < 0) {
+                    nextOrdinal = CloudMusic.PlayMode.values().length - 1;
+                } else {
+                    nextOrdinal = CloudMusic.playMode.ordinal() - 1;
+                }
+
+                playMode.setIcon(CloudMusic.PlayMode.values()[nextOrdinal].getIcon());
+                CloudMusic.playMode = CloudMusic.PlayMode.values()[nextOrdinal];
+            }
+
+            return true;
+        });
+
+        playMode.setBeforeRenderCallback(() -> {
+            playMode.setColor(ClickGui.getColor(9));
+        });
+
+        RectWidget volumeBarBg = new RectWidget() {
+
+            boolean clicking = false;
+
+            {
+                this.setOnClickCallback((x, y, i) -> {
+                    if (i == 0)
+                        clicking = true;
+                    return true;
+                });
+            }
+
+            @Override
+            public void onRender(double mouseX, double mouseY, int dWheel) {
+                super.onRender(mouseX, mouseY, dWheel);
+
+                if (!Mouse.isButtonDown(0) && clicking)
+                    clicking = false;
+
+                if (this.testHovered(mouseX, mouseY, 1) && Mouse.isButtonDown(0) && clicking) {
+                    double xDelta = Math.max(0, Math.min(this.getWidth(), (mouseX - this.getX())));
+                    double percent = xDelta / this.getWidth();
+
+                    WidgetsManager.musicInfo.volume.setValue(percent);
+                }
+            }
+        };
+
+        base.addChild(volumeBarBg);
+        volumeBarBg.setBounds(20, 4);
+
+        volumeBarBg.setColor(Color.GRAY);
+
+        volumeBarBg.setBeforeRenderCallback(() -> {
+            double v = next.getRelativeX() + next.getWidth();
+            volumeBarBg.centerVertically();
+            volumeBarBg.setPosition(v + (base.getWidth() - v) * .5 - volumeBarBg.getWidth() * .5, volumeBarBg.getRelativeY() + progressBar.getHeight() * .5);
+        });
+
+        RectWidget volumeBar = new RectWidget();
+
+        volumeBarBg.addChild(volumeBar);
+        volumeBar.setMargin(0);
+        volumeBar.setColor(0xff0090ff);
+        volumeBar.setWidth(0);
+
+        volumeBar.setBeforeRenderCallback(() -> {
+            volumeBar.setWidth(WidgetsManager.musicInfo.volume.getValue() * volumeBarBg.getWidth());
+        });
+
+        volumeBar.setClickable(false);
     }
 
     @Override
