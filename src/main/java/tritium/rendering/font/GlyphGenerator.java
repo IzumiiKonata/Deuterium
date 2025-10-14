@@ -86,6 +86,14 @@ public class GlyphGenerator {
 
         // okay this is complicated.....
         AsyncGLContext.submit(() -> {
+
+            while (!Minecraft.getMinecraft().loaded) {
+                try {
+                    Thread.sleep(50L);
+                } catch (InterruptedException ignored) {
+                }
+            }
+
             DynamicTexture dynamicTexture = new DynamicTexture(bi, true, false);
             Minecraft.getMinecraft().getTextureManager().loadTexture(identifier, dynamicTexture);
 
