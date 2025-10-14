@@ -187,7 +187,7 @@ public class Obfuscator {
                     if (bTimeManipulator)
                         this.manipulateEntryTime(entry);
 
-                    ClassWriter cw = new CustomClassWriter(ClassWriter.COMPUTE_FRAMES);
+                    ClassWriter cw = new CustomClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
 //                    cw.newUTF8(Main.TRASH);
                     try {
                         classWrapper.classNode.accept(cw);

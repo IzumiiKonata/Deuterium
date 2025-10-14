@@ -390,7 +390,7 @@ public class GlStateManager {
 
         ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> glGenTextures());
         try {
-            return future.get(5, TimeUnit.SECONDS);  // 添加超时
+            return future.get(5, TimeUnit.SECONDS);
         } catch (TimeoutException e) {
             throw new RuntimeException("Timeout waiting for texture ID", e);
         } catch (ExecutionException | InterruptedException e) {

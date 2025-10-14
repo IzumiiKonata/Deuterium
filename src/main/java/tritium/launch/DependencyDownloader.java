@@ -6,16 +6,10 @@ import tritium.utils.network.HttpUtils;
 import tritium.utils.other.WrappedInputStream;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -26,29 +20,31 @@ public class DependencyDownloader {
     final File tritiumDir = new File("Tritium");
     final File depsDir = new File(tritiumDir, "deps");
 
-    public DependencyDownloader() {
 
+    public DependencyDownloader() {
     }
 
+
     public void run(String[] args) {
-
-        if (!tritiumDir.exists())
+        if (!tritiumDir.exists()) {
             tritiumDir.mkdirs();
+        }
 
-        if (!depsDir.exists())
+        if (!depsDir.exists()) {
             depsDir.mkdirs();
-
+        }
         DownloadProgressWindow window = new DownloadProgressWindow();
         window.setVisible(true);
-
         this.parseAndDownloadDeps(window);
+        
         window.dispose();
+        
+        // 重新启动一个 java 并且将依赖塞进去
         this.launch(args);
     }
 
     @SneakyThrows
     private void launch(String[] args) {
-
         StringBuilder libs = new StringBuilder();
 
         for (File file : depsDir.listFiles()) {
@@ -60,77 +56,89 @@ public class DependencyDownloader {
         ArrayList<String> jvmArgs = new ArrayList<>();
 
         String javaHome = System.getProperty("java.home");
-        File f = new File(javaHome);
-        f = new File(f, "bin");
-        File javaExecutable = new File(f, "java.exe");
+        File javaBinDir = new File(javaHome, "bin");
+        File javaExecutable = findJavaExecutable(javaBinDir);
 
-        if (!javaExecutable.exists()) {
-            javaExecutable = new File(f, "java");
-
-            if (!javaExecutable.exists()) {
-                javaExecutable = new File(f, "javaw.exe");
-
-                if (!javaExecutable.exists()) {
-                    javaExecutable = new File(f, "javaw");
-
-                    if (!javaExecutable.exists()) {
-                        System.err.println("无法找到java可执行文件，退出...");
-                        System.exit(-1);
-                    }
-                }
-            }
+        if (javaExecutable == null) {
+            System.err.println("无法找到Java可执行文件，退出...");
+            System.err.println("Cannot find Java executable, exiting...");
+            System.exit(-1);
         }
 
         jvmArgs.add(javaExecutable.getAbsolutePath());
+        
+        // dbg
         if (args == null || args.length == 0) {
-            args = new String[]{"--version", "mcp", "--accessToken", "0", "--assetsDir", "assets", "--assetIndex", "1.8", "--userProperties", "{}"};
+            args = new String[] {
+                "--version", "mcp", 
+                "--accessToken", "0", 
+                "--assetsDir", "assets", 
+                "--assetIndex", "1.8", 
+                "--userProperties", "{}"
+            };
         }
 
         jvmArgs.add("-Dfile.encoding=UTF-8");
-
         jvmArgs.add("-cp");
         jvmArgs.add(classPathBuilder);
         jvmArgs.add("tritium.launch.Launcher");
         jvmArgs.addAll(Arrays.asList(args));
 
-        System.out.println("启动参数: " + String.join(" ", jvmArgs));
+        System.out.println("Args: " + String.join(" ", jvmArgs));
+
         ProcessBuilder game = new ProcessBuilder(jvmArgs);
-        Process process = game.inheritIO().start();
+        game.inheritIO().start();
     }
 
+    /**
+     * 找 java 可执行程序
+     * @param javaBinDir Java的bin目录
+     * @return Java 可执行文件，如果找不到则返回 null
+     */
+    private File findJavaExecutable(File javaBinDir) {
+        String[] possibleExecutables = {"java.exe", "java", "javaw.exe", "javaw"};
+        
+        for (String executable : possibleExecutables) {
+            File file = new File(javaBinDir, executable);
+            if (file.exists()) {
+                return file;
+            }
+        }
+        
+        return null;
+    }
+
+    /**
+     * 从阿里云 maven 镜像仓库下载依赖
+     *
+     * @param window
+     */
     @SneakyThrows
     private void parseAndDownloadDeps(DownloadProgressWindow window) {
+        // read deps
         InputStream is = DependencyDownloader.class.getResourceAsStream("/deps.txt");
         byte[] byteArray = IOUtils.toByteArray(is);
         is.close();
-        String parse = new String(byteArray);
+        String depsContent = new String(byteArray);
 
-        String[] split = parse.split("\n");
+        String[] lines = depsContent.split("\n");
 
-        for (String s : split) {
-            if (s.startsWith("#"))
+        for (String line : lines) {
+            if (line.startsWith("#")) {
                 continue;
-
-            String[] sp = s.split(":");
-
-            String s1 = "";
-
-            if (sp.length > 3) {
-                s1 = "https://maven.aliyun.com/repository/central/" + sp[0].replaceAll("\\.", "/") + "/" + sp[1] + "/" + sp[3] + "/" + sp[1] + "-" + sp[3] + "-" + sp[2];
-            } else {
-                s1 = "https://maven.aliyun.com/repository/central/" + sp[0].replaceAll("\\.", "/") + "/" + sp[1] + "/" + sp[2] + "/" + sp[1] + "-" + sp[2];
             }
 
-            String downloadUrl = s1.replaceAll("\r", "") + ".jar";
-            String jarName = downloadUrl.substring(downloadUrl.lastIndexOf("/") + 1);
+            String fullDownloadUrl = buildDownloadUrl(line);
+            String jarName = fullDownloadUrl.substring(fullDownloadUrl.lastIndexOf("/") + 1);
 
             File jarFile = new File(depsDir, jarName);
 
             if (!jarFile.exists()) {
                 window.setStatusText(jarName);
-                System.out.println(downloadUrl);
+                System.out.println("URL: " + fullDownloadUrl);
+                
                 try {
-                    InputStream stream = new WrappedInputStream(HttpUtils.download(downloadUrl), new WrappedInputStream.ProgressListener() {
+                    InputStream stream = new WrappedInputStream(HttpUtils.download(fullDownloadUrl), new WrappedInputStream.ProgressListener() {
                         @Override
                         public void onProgress(double progress) {
                             window.setDownloadProgress((int) (progress * 100));
@@ -138,18 +146,42 @@ public class DependencyDownloader {
 
                         @Override
                         public void bytesRead(int bytesRead) {
-
+                            // nop
                         }
                     });
 
-                    OutputStream os = Files.newOutputStream(jarFile.toPath(), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+                    OutputStream os = Files.newOutputStream(
+                            jarFile.toPath(),
+                            StandardOpenOption.CREATE,
+                            StandardOpenOption.TRUNCATE_EXISTING,
+                            StandardOpenOption.WRITE
+                    );
 
                     writeTo(stream, os);
                 } catch (Exception e) {
                     window.setStatusText("下载失败: " + jarName);
+                    e.printStackTrace();
                 }
             }
         }
+    }
+
+    private static String buildDownloadUrl(String line) {
+        String[] parts = line.split(":");
+
+        String baseUrl = "https://maven.aliyun.com/repository/central/";
+        String downloadUrl;
+
+        if (parts.length > 3) {
+            // classifier
+            String groupIdPath = parts[0].replaceAll("\\.", "/");
+            downloadUrl = baseUrl + groupIdPath + "/" + parts[1] + "/" + parts[3] + "/" + parts[1] + "-" + parts[3] + "-" + parts[2];
+        } else {
+            String groupIdPath = parts[0].replaceAll("\\.", "/");
+            downloadUrl = baseUrl + groupIdPath + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-" + parts[2];
+        }
+
+        return downloadUrl.replaceAll("\r", "") + ".jar";
     }
 
     @SneakyThrows
@@ -165,5 +197,4 @@ public class DependencyDownloader {
     public static void main(String[] args) {
         new DependencyDownloader().run(args);
     }
-
 }
