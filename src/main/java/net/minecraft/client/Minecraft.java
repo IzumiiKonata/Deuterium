@@ -2498,7 +2498,11 @@ public class Minecraft implements IThreadListener {
                 if (!Display.isCreated()) {
                     return "Pre-start crash";
                 } else {
-                    return GL11.glGetString(GL11.GL_RENDERER) + " GL 版本 " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
+                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+                        return GL11.glGetString(GL11.GL_RENDERER) + " GL 版本 " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
+                    } else {
+                        return "不适用";
+                    }
                 }
             }
         });

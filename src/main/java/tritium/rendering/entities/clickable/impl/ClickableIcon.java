@@ -70,7 +70,7 @@ public class ClickableIcon extends ClickEntity {
         int w = fr.getStringWidth(icon);
         double h = fr.getHeight();
 
-        fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5, this.getY() + this.getHeight() * 0.5 - h * 0.5, ThemeManager.get(ThemeManager.ThemeColor.Text));
+        fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5, this.getY() + this.getHeight() * 0.5 - h * 0.5, ThemeManager.getActual(ThemeManager.ThemeColor.Text));
 
         super.tick(mouseX, mouseY);
     }
