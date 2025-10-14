@@ -157,6 +157,18 @@ public class Obfuscator {
                         this.fuckCRCHash(zos);
                     zos.closeEntry();
                 }
+
+                {
+                    ZipEntry entry = new ZipEntry("0000诶我去，怎么全是文件夹啊？！.class/");
+
+                    if (bTimeManipulator)
+                        this.manipulateEntryTime(entry);
+
+                    zos.putNextEntry(entry);
+                    if (bCRCFucker)
+                        this.fuckCRCHash(zos);
+                    zos.closeEntry();
+                }
             }
 
             this.classes.values().forEach(classWrapper -> {

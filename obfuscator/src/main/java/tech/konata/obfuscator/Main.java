@@ -8,6 +8,7 @@ import tech.konata.commons.ncm.math.DigestUtils;
 import tech.konata.obfuscator.exclusions.Exclusion;
 import tech.konata.obfuscator.exclusions.ExclusionManager;
 import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
+import tech.konata.obfuscator.transformers.obfuscators.flow.AggressiveBlockSplitter;
 import tech.konata.obfuscator.transformers.obfuscators.flow.BlockSplitter;
 import tech.konata.obfuscator.transformers.obfuscators.miscellaneous.*;
 import tech.konata.obfuscator.utils.IOUtils;
@@ -51,7 +52,7 @@ public class Main {
 
         int count = 2;
         while (workingDir.exists()) {
-            workingDir = new File(releasesDir, version.getMajor() + "." + version.getMinor() + "." + version.getPatch() + " (" + count + ")");
+            workingDir = new File(releasesDir, version.getMajor() + "." + version.getMinor() + "." + version.getPatch() + "_" + count);
             count++;
         }
 
@@ -150,7 +151,7 @@ public class Main {
                 Arrays.asList(
 //                        new ParameterHider(),
                         new CodeHider(),
-                        new BlockSplitter(),
+                        new AggressiveBlockSplitter(),
                         new ClassFolder(),
                         new CRCFucker(),
                         new TimeManipulator(),

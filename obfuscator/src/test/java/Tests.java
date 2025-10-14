@@ -8,8 +8,8 @@ import tech.konata.obfuscator.Obfuscator;
 import tech.konata.obfuscator.SessionInfo;
 import tech.konata.obfuscator.exclusions.Exclusion;
 import tech.konata.obfuscator.exclusions.ExclusionManager;
-import tech.konata.obfuscator.transformers.obfuscators.flow.AggressiveBlockSplitter;
-import tech.konata.obfuscator.transformers.obfuscators.flow.BlockSplitter;
+import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
+import tech.konata.obfuscator.transformers.obfuscators.flow.*;
 import tech.konata.obfuscator.transformers.obfuscators.miscellaneous.*;
 import tech.konata.obfuscator.utils.IOUtils;
 import tech.konata.utils.ObfDictGen;
@@ -40,19 +40,19 @@ public class Tests {
     public void run() {
         File base = new File(".");
 
-        File testsDir = new File(base, "Tests");
+        File testDir = new File(base, "Tests");
 
-        if (!testsDir.exists())
-            testsDir.mkdirs();
+        if (!testDir.exists())
+            testDir.mkdirs();
 
         Version version = Tritium.getVersion();
 
         String ver = version.getMajor() + "." + version.getMinor() + "." + version.getPatch();
-        File workingDir = new File(testsDir, ver);
+        File workingDir = new File(testDir, ver);
 
         int count = 2;
         while (workingDir.exists()) {
-            workingDir = new File(testsDir, version.getMajor() + "." + version.getMinor() + "." + version.getPatch() + " (" + count + ")");
+            workingDir = new File(testDir, version.getMajor() + "." + version.getMinor() + "." + version.getPatch() + "_" + count);
             count++;
         }
 
@@ -66,39 +66,40 @@ public class Tests {
         File input = new File(workingDir, "Tritium_input.jar");
         Files.copy(artifact.toPath(), input.toPath());
 
-//        File obfnames = new File(workingDir, "obfuscate_names.txt");
-//        List<String> strings = ObfDictGen.gen(20000);
-//
-//        Files.write(obfnames.toPath(), String.join("\n", strings).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW);
-//
-//        List<String> cfg = this.getProguardConfigTemplate();
-//
-//        File generatedCfg = new File(workingDir, "proguard.cfg");
-//        File mappings = new File(workingDir, "mappings_v" + ver + ".txt");
-//        File shrinked = new File(workingDir, "shrinked_v" + ver + ".txt");
-//
-//        if (generatedCfg.exists()) {
-//            try {
-//                generatedCfg.delete();
-//                generatedCfg.createNewFile();
-//            } catch (Exception e) {
-//                System.err.println("生成高级护卫配置失败。");
-//                e.printStackTrace();
-//            }
-//        }
-//
-//        File proguardObfuscated = new File(workingDir, "Tritium_proguard.jar");
-//
-//        if (proguardObfuscated.exists()) {
-//            proguardObfuscated.delete();
-//        }
-//
-//        PrintWriter pw;
-//        try {
-//            pw = new PrintWriter(generatedCfg, "utf-8");
-//        } catch (FileNotFoundException | UnsupportedEncodingException e) {
-//            throw new RuntimeException(e);
-//        }
+        File obfnames = new File(workingDir, "obfuscate_names.txt");
+        List<String> strings = ObfDictGen.gen(20000);
+
+        Files.write(obfnames.toPath(), String.join("\n", strings).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW);
+
+
+        List<String> cfg = this.getProguardConfigTemplate();
+
+        File generatedCfg = new File(workingDir, "proguard.cfg");
+        File mappings = new File(workingDir, "mappings_v" + ver + ".txt");
+        File shrinked = new File(workingDir, "shrinked_v" + ver + ".txt");
+
+        if (generatedCfg.exists()) {
+            try {
+                generatedCfg.delete();
+                generatedCfg.createNewFile();
+            } catch (Exception e) {
+                System.err.println("生成高级护卫配置失败。");
+                e.printStackTrace();
+            }
+        }
+
+        File proguardObfuscated = new File(workingDir, "Tritium_proguard.jar");
+
+        if (proguardObfuscated.exists()) {
+            proguardObfuscated.delete();
+        }
+
+        PrintWriter pw;
+        try {
+            pw = new PrintWriter(generatedCfg, "utf-8");
+        } catch (FileNotFoundException | UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
 
         List<File> dependencies = Stream.of("C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\rt.jar", "C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\jce.jar", "C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\ext\\jfxrt.jar").map(File::new).collect(Collectors.toList());
 
@@ -106,24 +107,24 @@ public class Tests {
 
         dependencies.addAll(Arrays.asList(depsDir.listFiles()));
 
-//        String depsString = dependencies.stream().map(f -> "-libraryjars '" + f.getAbsolutePath() + "'").collect(Collectors.joining("\n"));
-//
-//        for (String s : cfg) {
-//
-//            s = s.replace("(injar)", input.getName());
-//            s = s.replace("(outjar)", proguardObfuscated.getName());
-//            s = s.replace("(libraries)", depsString);
-//            s = s.replace("(repackage)", "catch_me_if_u_can");
-//            s = s.replace("(keepattributes)", "");
-//            s = s.replace("(mapping)", mappings.getName());
-//            s = s.replace("(shrinked)", shrinked.getName());
-//
-//            pw.print(s);
-//        }
-//        pw.flush();
-//        pw.close();
-//
-//        this.runProcessBlocking(workingDir, "E:\\Proguard\\bin\\proguard.bat", "@" + generatedCfg.getAbsolutePath(), "-forceprocessing");
+        String depsString = dependencies.stream().map(f -> "-libraryjars '" + f.getAbsolutePath() + "'").collect(Collectors.joining("\n"));
+
+        for (String s : cfg) {
+
+            s = s.replace("(injar)", input.getName());
+            s = s.replace("(outjar)", proguardObfuscated.getName());
+            s = s.replace("(libraries)", depsString);
+            s = s.replace("(repackage)", "catch_me_if_u_can");
+            s = s.replace("(keepattributes)", "*");
+            s = s.replace("(mapping)", mappings.getName());
+            s = s.replace("(shrinked)", shrinked.getName());
+
+            pw.print(s);
+        }
+        pw.flush();
+        pw.close();
+
+        this.runProcessBlocking(workingDir, "E:\\Proguard\\bin\\proguard.bat", "@" + generatedCfg.getAbsolutePath(), "-forceprocessing");
 
         SessionInfo radonCfg = new SessionInfo();
 
@@ -133,7 +134,11 @@ public class Tests {
             obfuscated.delete();
         }
 
-        radonCfg.setInput(input);
+        {
+
+        }
+
+        radonCfg.setInput(proguardObfuscated);
         radonCfg.setOutput(obfuscated);
 
         radonCfg.setLibraries(dependencies);
@@ -144,59 +149,25 @@ public class Tests {
 
         radonCfg.setDictionaryType(Dictionaries.ALPHANUMERIC);
 
+        radonCfg.setNoAnnotations(true);
 
         radonCfg.setTransformers(
-            new ArrayList<>(
-                Arrays.asList(
-//                        new ParameterHider(),
-                        new CodeHider(),
-                        new AggressiveBlockSplitter(),
-                        new ClassFolder(),
-                        new CRCFucker(),
-                        new TimeManipulator(),
-                        new LocalVariables(true)
+                new ArrayList<>(
+                        Arrays.asList(
+//                                new CodeHider(),
+//                                new AggressiveBlockSplitter(),
+//                                new IfConfuser(),
+                                new DaFlow(),
+                                new ClassFolder(),
+                                new CRCFucker(),
+                                new TimeManipulator(),
+                                new LocalVariables(true)
+                        )
                 )
-            )
         );
 
         Obfuscator obfuscator = new Obfuscator(radonCfg);
         obfuscator.run();
-
-        File jsonOrig = new File(testsDir, "Tritium.json");
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
-        JsonObject jsonObject = gson.fromJson(new FileReader(jsonOrig), JsonObject.class);
-
-        JsonObject downloads = jsonObject.getAsJsonObject("downloads");
-        JsonObject client = downloads.getAsJsonObject("client");
-        String sha1 = DigestUtils.sha1Hex(Files.newInputStream(obfuscated.toPath()));
-        client.addProperty("sha-1", sha1);
-        client.addProperty("size", obfuscated.length());
-
-        File json = new File(workingDir, "Tritium.json");
-        try (FileWriter fw = new FileWriter(json)) {
-            gson.toJson(jsonObject, fw);
-            fw.flush();
-        }
-
-        File zip = new File(workingDir, "Tritium " + ver + ".zip");
-        try (ZipOutputStream zos = new ZipOutputStream(Files.newOutputStream(zip.toPath()))) {
-            zos.setLevel(9);
-            zos.putNextEntry(new ZipEntry("Tritium\\Tritium.jar"));
-            zos.write(Files.readAllBytes(obfuscated.toPath()));
-
-            zos.putNextEntry(new ZipEntry("Tritium\\Tritium.json"));
-            zos.write(Files.readAllBytes(json.toPath()));
-
-            List<String> comments = Arrays.asList(
-                    "Tritium " + ver,
-                    "Build Time: " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()),
-                    "Made with <3 by IzumiKonata",
-                    "https://space.bilibili.com/357605683"
-            );
-
-            zos.setComment(String.join("\n", comments));
-        }
     }
 
     private List<String> getProguardConfigTemplate() {

@@ -48,6 +48,8 @@ public enum ExclusionType {
     SOURCE_DEBUG("SourceDebug"),
     STRING_POOL("StringPool"),
     EJECTOR("Ejector"),
+    IF_CONFUSER("IfConfuser"),
+    DAFLOW("DaFlow"),
     RENAMER("Renamer");
 
     private final String value;

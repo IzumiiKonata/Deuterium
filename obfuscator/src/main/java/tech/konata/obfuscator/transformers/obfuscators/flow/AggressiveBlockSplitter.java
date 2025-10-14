@@ -20,7 +20,7 @@ public class AggressiveBlockSplitter extends FlowObfuscation {
     // 最小块大小（指令数）
     private static final int MIN_BLOCK_SIZE = 3;
     // 最大拆分深度
-    private static final int MAX_DEPTH = 5;
+    private static final int MAX_DEPTH = 32768;
     // 是否添加虚假跳转
     private static final boolean ADD_FAKE_JUMPS = true;
 
@@ -42,7 +42,7 @@ public class AggressiveBlockSplitter extends FlowObfuscation {
                     aggressiveSplit(mw.methodNode, counter, blockCounter);
                     int blocksCreated = blockCounter.get() - before;
                     if (blocksCreated > 0) {
-                        Logger.stdOut("Method " + mw.methodNode.name + " split into " + blocksCreated + " blocks");
+                        Logger.stdOut("Method " + mw.methodNode.name + " @ Class " + cw.getName() + " split into " + blocksCreated + " blocks");
                     }
                 }));
 
@@ -140,22 +140,50 @@ public class AggressiveBlockSplitter extends FlowObfuscation {
     }
 
     /**
-     * 构建一个包含所有被 try-catch 块保护的指令的集合。
-     * 这是确定安全拆分点的关键。
+     * 构建一个包含所有被保护的、不可拆分指令的集合。 (V2)
+     * 这包括：
+     * 1. 所有在 try-catch 块内的指令。
+     * 2. 所有从 NEW 指令到其对应 <init> 构造函数调用之间的指令序列。
      * @param mn 方法节点
      * @return 一个包含所有受保护指令的 Set
      */
     private Set<AbstractInsnNode> getProtectedInstructions(MethodNode mn) {
         Set<AbstractInsnNode> protectedInsns = new HashSet<>();
-        if (mn.tryCatchBlocks == null || mn.tryCatchBlocks.isEmpty()) {
+        if (mn.instructions == null || mn.instructions.size() == 0) {
             return protectedInsns;
         }
 
-        for (TryCatchBlockNode tcb : mn.tryCatchBlocks) {
-            // 遍历从 start 到 end (不包括 end) 的所有节点
-            for (AbstractInsnNode current = tcb.start; current != tcb.end; current = current.getNext()) {
-                if (current == null) break; // 安全检查
-                protectedInsns.add(current);
+        // 1. 保留对 try-catch 块的保护
+        if (mn.tryCatchBlocks != null) {
+            for (TryCatchBlockNode tcb : mn.tryCatchBlocks) {
+                for (AbstractInsnNode current = tcb.start; current != tcb.end; current = current.getNext()) {
+                    if (current == null) break;
+                    protectedInsns.add(current);
+                }
+            }
+        }
+
+        // 2. 保护 NEW 和 <init> 之间的指令序列
+        for (AbstractInsnNode insn : mn.instructions) {
+            if (insn.getOpcode() == NEW) {
+                TypeInsnNode newInsn = (TypeInsnNode) insn;
+                AbstractInsnNode next = insn.getNext();
+                while (next != null) {
+                    // 将从 NEW 开始的所有指令都加入保护区
+                    protectedInsns.add(next);
+
+                    // 直到找到对应的构造函数调用
+                    if (next.getOpcode() == INVOKESPECIAL) {
+                        MethodInsnNode methodInsn = (MethodInsnNode) next;
+                        if (methodInsn.owner.equals(newInsn.desc) && methodInsn.name.equals("<init>")) {
+                            // 找到了，这个序列的保护结束
+                            break;
+                        }
+                    }
+                    // 如果在找到 <init> 之前遇到了另一个 NEW，可能意味着复杂的嵌套创建，
+                    // 为简单起见，我们继续扫描，当前逻辑能覆盖大多数情况。
+                    next = next.getNext();
+                }
             }
         }
         return protectedInsns;

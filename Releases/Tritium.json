@@ -148,6 +148,19 @@
                 }
             },
             "name": "org.apache.commons:commons-lang3:3.3.2"
+        },
+        {
+            "downloads":
+            {
+                "artifact":
+                {
+                    "path": "commons-codec/commons-codec/1.9/commons-codec-1.9.jar",
+                    "sha1": "9ce04e34240f674bc72680f8b843b1457383161a",
+                    "size": 263965,
+                    "url": "https://libraries.minecraft.net/commons-codec/commons-codec/1.9/commons-codec-1.9.jar"
+                }
+            },
+            "name": "commons-codec:commons-codec:1.9"
         }
     ],
     "logging":
