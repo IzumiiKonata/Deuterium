@@ -111,14 +111,4 @@ public class Iterator3d implements Iterator<BlockPos> {
         throw new RuntimeException("Not supported");
     }
 
-    public static void main(String[] args) {
-        BlockPos blockpos = new BlockPos(10, 20, 30);
-        BlockPos blockpos1 = new BlockPos(30, 40, 20);
-        Iterator3d iterator3d = new Iterator3d(blockpos, blockpos1, 1, 1);
-
-        while (iterator3d.hasNext()) {
-            BlockPos blockpos2 = iterator3d.next();
-            System.out.println("" + blockpos2);
-        }
-    }
 }

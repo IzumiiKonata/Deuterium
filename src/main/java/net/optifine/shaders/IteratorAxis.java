@@ -78,17 +78,4 @@ public class IteratorAxis implements Iterator<BlockPos> {
         throw new RuntimeException("Not implemented");
     }
 
-    public static void main(String[] args) throws Exception {
-        BlockPos blockpos = new BlockPos(-2, 10, 20);
-        BlockPos blockpos1 = new BlockPos(2, 12, 22);
-        double d0 = -0.5D;
-        double d1 = 0.5D;
-        IteratorAxis iteratoraxis = new IteratorAxis(blockpos, blockpos1, d0, d1);
-        System.out.println("Start: " + blockpos + ", end: " + blockpos1 + ", yDelta: " + d0 + ", zDelta: " + d1);
-
-        while (iteratoraxis.hasNext()) {
-            BlockPos blockpos2 = iteratoraxis.next();
-            System.out.println("" + blockpos2);
-        }
-    }
 }

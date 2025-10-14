@@ -9,13 +9,14 @@
 package ingameime;
 
 import net.minecraft.util.Util;
+import tech.konata.obfuscation.ExcludeThis;
 
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
+@ExcludeThis
 public class IngameIMEJNI {
     public static native void delete_PreEditCallbackImpl(long jarg1);
 

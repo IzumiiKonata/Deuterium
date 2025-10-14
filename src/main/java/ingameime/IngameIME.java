@@ -9,8 +9,9 @@
 package ingameime;
 
 
+import tech.konata.obfuscation.ExcludeThis;
 
-
+@ExcludeThis
 public class IngameIME {
     public static InputContext CreateInputContextWin32(long hWnd, API api, boolean uiLess) {
         long cPtr = IngameIMEJNI.CreateInputContextWin32__SWIG_0(hWnd, api.swigValue(), uiLess);

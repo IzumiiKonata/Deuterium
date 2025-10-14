@@ -9,8 +9,9 @@
 package ingameime;
 
 
+import tech.konata.obfuscation.ExcludeThis;
 
-
+@ExcludeThis
 public final class CandidateListState {
     public final static CandidateListState Begin = new CandidateListState("Begin");
     public final static CandidateListState Update = new CandidateListState("Update");
