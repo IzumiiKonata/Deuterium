@@ -11,7 +11,6 @@ import tritium.interfaces.IFontRenderer;
 import tritium.management.EventManager;
 import tritium.management.FontManager;
 import tritium.management.Localizer;
-import tritium.rendering.TexturedShadow;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.StringUtils;
 
@@ -561,11 +560,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         }
 
         return split.toArray(new String[0]);
-    }
-
-    public void drawCenteredStringWithBetterShadow(String text, double x, double y, int color) {
-        TexturedShadow.drawFontShadow(x - getStringWidth(text) / 2.0, y, this.getStringWidth(text) + 1, this.getHeight() - 1);
-        drawString(text, x - getStringWidth(text) / 2.0, y, color);
     }
 
     public void drawStringWithBetterShadow(String text, double x, double y, int color) {
