@@ -412,8 +412,8 @@ public class ResourcePackRepository {
                     if (img.getWidth() == img.getHeight())
                         maxSize = Math.max(maxSize, img.getWidth());
 
-                    this.previewImages.add(new ResPackPreview(reResourcePack, img, listTexture));
                 }
+                this.previewImages.add(new ResPackPreview(reResourcePack, img, listTexture));
             }
 
             if (maxSize != -1)

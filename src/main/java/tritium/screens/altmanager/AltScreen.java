@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.*;
@@ -16,6 +17,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
+import tritium.rendering.shader.ShaderUtil;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
@@ -71,6 +73,7 @@ public class AltScreen extends BaseScreen {
     // UI rendering
     private final double spacing = 4;
     private ChangeCapeComponent component = null;
+    private Framebuffer playerPreviewFb = new Framebuffer(0, 0, true);
 
     // Status and UI state
     private String status = "";
@@ -250,9 +253,20 @@ public class AltScreen extends BaseScreen {
         Rect.draw(this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding() - 1, this.baseWidget.getY() - 1, this.getPanelWidth() + 2, this.baseWidget.getHeight() + 2, this.getColor(ColorType.CONTAINER_OUTLINE));
         Rect.draw(this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding(), this.baseWidget.getY(), this.getPanelWidth(), this.baseWidget.getHeight(), this.getColor(ColorType.CONTAINER_BACKGROUND));
 
+        playerPreviewFb = RenderSystem.createFrameBuffer(playerPreviewFb);
+        playerPreviewFb.bindFramebuffer(true);
+        playerPreviewFb.framebufferClearNoBinding();
+
         GlStateManager.pushMatrix();
         this.drawPlayer(mouseX, mouseY);
         GlStateManager.popMatrix();
+
+        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.bindTexture(playerPreviewFb.framebufferTexture);
+        ShaderUtil.drawQuads();
 
         double panelHeight = this.getHeight() - 9 - spacing - getScreenPadding() - getFrTitle().getHeight();
         FontManager.arial40bold.drawCenteredString(Minecraft.getMinecraft().getSession().getUsername(), this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding() + width * 0.5, this.baseWidget.getY() + panelHeight * 3 / 4, this.getColor(ColorType.PRIMARY_TEXT));

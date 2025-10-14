@@ -95,7 +95,7 @@ public class ThreadDownloadImageData extends SimpleTexture {
                 logger.debug("Loading http texture from local cache ({})", this.cacheFile);
 
                 try {
-                    this.bufferedImage = NativeBackedImage.make(Files.newInputStream(this.cacheFile.toPath()));
+                    this.bufferedImage = ImageIO.read(Files.newInputStream(this.cacheFile.toPath()));
 
                     if (this.imageBuffer != null) {
                         this.setBufferedImage(this.imageBuffer.parseUserSkin(this.bufferedImage));
@@ -139,9 +139,9 @@ public class ThreadDownloadImageData extends SimpleTexture {
 
                         if (ThreadDownloadImageData.this.cacheFile != null) {
                             FileUtils.copyInputStreamToFile(httpurlconnection.getInputStream(), ThreadDownloadImageData.this.cacheFile);
-                            bufferedimage = NativeBackedImage.make(Files.newInputStream(ThreadDownloadImageData.this.cacheFile.toPath()));
+                            bufferedimage = ImageIO.read(Files.newInputStream(ThreadDownloadImageData.this.cacheFile.toPath()));
                         } else {
-                            bufferedimage = TextureUtil.readBufferedImage(httpurlconnection.getInputStream());
+                            bufferedimage = ImageIO.read(httpurlconnection.getInputStream());
                         }
 
                         if (ThreadDownloadImageData.this.imageBuffer != null) {
@@ -191,7 +191,7 @@ public class ThreadDownloadImageData extends SimpleTexture {
                 FileUtils.copyInputStreamToFile(bytearrayinputstream, this.cacheFile);
                 bufferedimage = ImageIO.read(this.cacheFile);
             } else {
-                bufferedimage = TextureUtil.readBufferedImage(bytearrayinputstream);
+                bufferedimage = ImageIO.read(bytearrayinputstream);
             }
 
             if (this.imageBuffer != null) {

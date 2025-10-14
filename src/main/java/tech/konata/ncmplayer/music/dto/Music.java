@@ -201,7 +201,7 @@ public class Music {
         if (artistsName.length() == 0)
             return "";
 
-        return artistsName.substring(0, artistsName.length() - 3).replace("\n", "");
+        return artistsName.substring(0, artistsName.length() - 3);
     }
 
     /**

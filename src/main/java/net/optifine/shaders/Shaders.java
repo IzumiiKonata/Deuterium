@@ -2593,6 +2593,8 @@ public class Shaders {
                 abyte[i - 1] = 10;
             }
 
+            MemoryUtil.memFree(bytebuffer);
+
             String s = new String(abyte, Charsets.US_ASCII);
             s = StrUtils.trim(s, " \n\r\t");
             SMCLog.info("Info log: " + name + "\n" + s);

@@ -338,7 +338,6 @@
     "module.jumpreset.name": "Jump Reset",
     "module.instantstop.name": "Instant Stop",
     "module.testspeed.name": "Test Speed",
-    "overview.welcome": "Welcome to Phosphate!",
     "overview.usage": "Usage",
     "overview.mem": "Memory",
     "overview.cpu": "CPU",

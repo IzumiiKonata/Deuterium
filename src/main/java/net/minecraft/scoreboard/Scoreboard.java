@@ -240,6 +240,10 @@ public class Scoreboard {
      * Removes the team from the scoreboard, updates all player memberships and broadcasts the deletion to all players
      */
     public void removeTeam(ScorePlayerTeam p_96511_1_) {
+
+        if (p_96511_1_ == null)
+            return;
+
         this.teams.remove(p_96511_1_.getRegisteredName());
 
         for (String s : p_96511_1_.getMembershipCollection()) {

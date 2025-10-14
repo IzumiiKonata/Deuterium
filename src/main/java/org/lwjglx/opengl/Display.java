@@ -570,6 +570,7 @@ public class Display {
             }
             GLFW.glfwSetWindowIcon(getWindow(), glfwImages);
         }
+
         glfwImages.free();
         return 0;
     }

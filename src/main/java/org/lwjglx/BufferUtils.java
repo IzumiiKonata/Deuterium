@@ -15,6 +15,8 @@
  */
 package org.lwjglx;
 
+import org.lwjgl.system.MemoryUtil;
+
 import java.nio.*;
 
 /**
@@ -32,8 +34,7 @@ public final class BufferUtils {
      * @return a ByteBuffer
      */
     public static ByteBuffer createByteBuffer(int size) {
-        return ByteBuffer.allocateDirect(size)
-                .order(ByteOrder.nativeOrder());
+        return MemoryUtil.memAlloc(size);
     }
 
     /**

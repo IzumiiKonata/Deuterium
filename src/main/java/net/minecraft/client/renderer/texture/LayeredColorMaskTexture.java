@@ -12,6 +12,7 @@ import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -42,8 +43,7 @@ public class LayeredColorMaskTexture extends AbstractTexture {
         BufferedImage bufferedimage;
 
         try {
-            @Cleanup
-            NativeBackedImage bufferedimage1 = TextureUtil.readBufferedImage(resourceManager.getResource(this.textureLocation).getInputStream());
+            BufferedImage bufferedimage1 = ImageIO.read(resourceManager.getResource(this.textureLocation).getInputStream());
             int i = bufferedimage1.getType();
 
             if (i == 0) {
@@ -61,23 +61,22 @@ public class LayeredColorMaskTexture extends AbstractTexture {
                 if (s != null) {
                     @Cleanup
                     InputStream inputstream = resourceManager.getResource(Location.of(s)).getInputStream();
-                    try (NativeBackedImage bufferedimage2 = TextureUtil.readBufferedImage(inputstream)) {
-                        if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6) {
-                            for (int k = 0; k < bufferedimage2.getHeight(); ++k) {
-                                for (int l = 0; l < bufferedimage2.getWidth(); ++l) {
-                                    int i1 = bufferedimage2.getRGB(l, k);
+                    BufferedImage bufferedimage2 = ImageIO.read(inputstream);
+                    if (bufferedimage2.getWidth() == bufferedimage.getWidth() && bufferedimage2.getHeight() == bufferedimage.getHeight() && bufferedimage2.getType() == 6) {
+                        for (int k = 0; k < bufferedimage2.getHeight(); ++k) {
+                            for (int l = 0; l < bufferedimage2.getWidth(); ++l) {
+                                int i1 = bufferedimage2.getRGB(l, k);
 
-                                    if ((i1 & -16777216) != 0) {
-                                        int j1 = (i1 & 16711680) << 8 & -16777216;
-                                        int k1 = bufferedimage1.getRGB(l, k);
-                                        int l1 = MathHelper.func_180188_d(k1, mapcolor.colorValue) & 16777215;
-                                        bufferedimage2.setRGB(l, k, j1 | l1);
-                                    }
+                                if ((i1 & -16777216) != 0) {
+                                    int j1 = (i1 & 16711680) << 8 & -16777216;
+                                    int k1 = bufferedimage1.getRGB(l, k);
+                                    int l1 = MathHelper.func_180188_d(k1, mapcolor.colorValue) & 16777215;
+                                    bufferedimage2.setRGB(l, k, j1 | l1);
                                 }
                             }
-
-                            bufferedimage.getGraphics().drawImage(bufferedimage2, 0, 0, null);
                         }
+
+                        bufferedimage.getGraphics().drawImage(bufferedimage2, 0, 0, null);
                     }
                 }
             }

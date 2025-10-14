@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.src.Config;
 import net.minecraft.util.EnumWorldBlockLayer;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.IntBuffer;
 
@@ -44,6 +45,7 @@ public class RenderList extends ChunkRenderContainer {
                         IntBuffer intbuffer = GLAllocation.createDirectIntBuffer(this.bufferLists.capacity() * 2);
                         this.bufferLists.flip();
                         intbuffer.put(this.bufferLists);
+                        MemoryUtil.memFree(this.bufferLists);
                         this.bufferLists = intbuffer;
                     }
 

@@ -27,6 +27,7 @@ import net.optifine.util.PropertiesOrdered;
 import net.optifine.util.TextureUtils;
 import net.optifine.util.TimedEvent;
 import org.apache.commons.io.IOUtils;
+import org.lwjgl.system.MemoryUtil;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 import org.lwjglx.LWJGLException;
@@ -42,6 +43,7 @@ import java.awt.image.BufferedImage;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.net.URI;
+import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -1457,7 +1459,12 @@ public class Config {
                     inputstream1 = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_32x32.png");
 
                     if (inputstream != null && inputstream1 != null) {
-                        Display.setIcon(new ByteBuffer[]{readIconImage(inputstream), readIconImage(inputstream1)});
+                        ByteBuffer[] icons = {readIconImage(inputstream), readIconImage(inputstream1)};
+                        Display.setIcon(icons);
+
+//                        for (ByteBuffer icon : icons) {
+//                            MemoryUtil.memFree(icon);
+//                        }
                     }
                 } catch (IOException ioexception) {
                     warn("Error setting window icon: " + ioexception.getClass().getName() + ": " + ioexception.getMessage());
@@ -1473,7 +1480,7 @@ public class Config {
         @Cleanup
         NativeBackedImage bufferedimage = NativeBackedImage.make(p_readIconImage_0_);
         int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), null, 0, bufferedimage.getWidth());
-        ByteBuffer bytebuffer = ByteBuffer.allocate(4 * aint.length);
+        ByteBuffer bytebuffer = ByteBuffer.allocateDirect(4 * aint.length);
 
         for (int i : aint) {
             bytebuffer.putInt(i << 8 | i >> 24 & 255);

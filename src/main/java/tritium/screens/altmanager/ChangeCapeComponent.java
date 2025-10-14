@@ -206,7 +206,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
                     @SneakyThrows
                     public void run() {
                         InputStream is = HttpUtils.get(url, null);
-                        BufferedImage full = NativeBackedImage.make(is);
+                        BufferedImage full = ImageIO.read(is);
                         BufferedImage img = crop(full, 1, 1, 10, 16, 10, 16);
 
                         Textures.loadTextureAsyncly(capeLocation, img);

@@ -13,14 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mipmaps {
-    private final int[][] mipmapDatas;
-    private IntBuffer[] mipmapBuffers;
     private final Dimension[] mipmapDimensions;
 
     public Mipmaps(final String iconName, final int width, final int height, final int[] data, final boolean direct) {
         this.mipmapDimensions = makeMipmapDimensions(width, height, iconName);
-        this.mipmapDatas = generateMipMapData(data, width, height, this.mipmapDimensions);
-        if (direct) this.mipmapBuffers = makeMipmapBuffers(this.mipmapDimensions, this.mipmapDatas);
     }
 
     public static Dimension[] makeMipmapDimensions(final int width, final int height, final String iconName) {

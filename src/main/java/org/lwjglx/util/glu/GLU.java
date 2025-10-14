@@ -329,23 +329,6 @@ public class GLU {
         return Registry.gluCheckExtension(extName, extString);
     }
 
-    /**
-     * Method gluBuild2DMipmaps
-     *
-     * @param target
-     * @param components
-     * @param width
-     * @param height
-     * @param format
-     * @param type
-     * @param data
-     * @return int
-     */
-    public static int gluBuild2DMipmaps(int target, int components, int width, int height, int format, int type,
-                                        ByteBuffer data) {
-
-        return MipMap.gluBuild2DMipmaps(target, components, width, height, format, type, data);
-    }
 
     /**
      * Method gluScaleImage.

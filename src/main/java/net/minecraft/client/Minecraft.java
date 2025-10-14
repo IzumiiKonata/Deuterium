@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
+import org.lwjgl.system.MemoryUtil;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.phosphor.api.ILightingEngineProvider;
 import net.minecraft.block.Block;
@@ -763,7 +764,12 @@ public class Minecraft implements IThreadListener {
                 inputstream1 = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_32x32.png");
 
                 if (inputstream != null && inputstream1 != null) {
-                    Display.setIcon(new ByteBuffer[]{ Config.readIconImage(inputstream), Config.readIconImage(inputstream1) });
+                    ByteBuffer[] icons = {Config.readIconImage(inputstream), Config.readIconImage(inputstream1)};
+                    Display.setIcon(icons);
+
+//                    for (ByteBuffer icon : icons) {
+//                        MemoryUtil.memFree(icon);
+//                    }
                 }
             } catch (IOException ioexception) {
                 logger.error("Couldn't set icon", ioexception);

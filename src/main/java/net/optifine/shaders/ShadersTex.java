@@ -24,11 +24,6 @@ import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 
 public class ShadersTex {
-    public static final int initialBufferSize = 1048576;
-    public static ByteBuffer byteBuffer = BufferUtils.createByteBuffer(4194304);
-    public static final int defBaseTexColor = 0;
-    public static final int defNormTexColor = -8421377;
-    public static final int defSpecTexColor = 0;
     public static Map<Integer, MultiTexID> multiTexMap = new HashMap();
 
     public static int roundUpPOT(int x) {

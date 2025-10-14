@@ -12,6 +12,7 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
+import org.lwjgl.system.MemoryUtil;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 
@@ -23,7 +24,6 @@ import java.nio.IntBuffer;
 public class TextureUtil {
 
     private static final Logger logger = LogManager.getLogger();
-    private static final IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(4194304);
     public static final DynamicTexture missingTexture = new DynamicTexture(16, 16);
     public static final int[] missingTextureData = missingTexture.getTextureData();
     private static final int[] mipmapBuffer;
@@ -37,16 +37,6 @@ public class TextureUtil {
 
     public static int uploadTextureImage(int p_110987_0_, BufferedImage p_110987_1_) {
         return uploadTextureImageAllocate(p_110987_0_, p_110987_1_, false, false);
-    }
-
-    public static void uploadTexture(int textureId, int[] texData, int width, int height) {
-        bindTexture(textureId);
-        uploadTextureSub(0, texData, width, height, 0, 0, false, false, false);
-    }
-
-    public static void uploadTexture(int textureId, int[] texData, int width, int height, boolean linear) {
-        bindTexture(textureId);
-        uploadTextureSub(0, texData, width, height, 0, 0, linear, false, false);
     }
 
     public static int[][] generateMipmapData(int p_147949_0_, int p_147949_1_, int[][] p_147949_2_) {
@@ -114,13 +104,17 @@ public class TextureUtil {
         setTextureClamped(clamp);
         int j;
 
+        IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(4194304);
+
         for (int k = 0; k < width * height; k += width * j) {
             int l = k / width;
             j = Math.min(i, height - l);
             int i1 = width * j;
-            copyToBufferPos(texData, k, i1);
+            copyToBufferPos(texData, k, i1, dataBuffer);
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, level, xOffset, yOffset + l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
         }
+
+        MemoryUtil.memFree(dataBuffer);
     }
 
     public static int uploadTextureImageAllocate(int p_110989_0_, BufferedImage p_110989_1_, boolean p_110989_2_, boolean p_110989_3_) {
@@ -163,14 +157,18 @@ public class TextureUtil {
         setTextureBlurred(p_110993_3_);
         setTextureClamped(p_110993_4_);
 
+        IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(4194304);
+
         for (int l = 0; l < i * j; l += i * k) {
             int i1 = l / i;
             int j1 = Math.min(k, j - i1);
             int k1 = i * j1;
             p_110993_0_.getRGB(0, i1, i, j1, aint, 0, i);
-            copyToBuffer(aint, k1);
+            copyToBuffer(aint, k1, dataBuffer);
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_110993_1_, p_110993_2_ + i1, i, j1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
         }
+
+        MemoryUtil.memFree(dataBuffer);
 
         aint = null;
     }
@@ -200,11 +198,11 @@ public class TextureUtil {
         }
     }
 
-    private static void copyToBuffer(int[] p_110990_0_, int p_110990_1_) {
-        copyToBufferPos(p_110990_0_, 0, p_110990_1_);
+    private static void copyToBuffer(int[] p_110990_0_, int p_110990_1_, IntBuffer dataBuffer) {
+        copyToBufferPos(p_110990_0_, 0, p_110990_1_, dataBuffer);
     }
 
-    private static void copyToBufferPos(int[] p_110994_0_, int p_110994_1_, int p_110994_2_) {
+    private static void copyToBufferPos(int[] p_110994_0_, int p_110994_1_, int p_110994_2_, IntBuffer dataBuffer) {
         int[] aint = p_110994_0_;
 
         if (Minecraft.getMinecraft().gameSettings.anaglyph) {

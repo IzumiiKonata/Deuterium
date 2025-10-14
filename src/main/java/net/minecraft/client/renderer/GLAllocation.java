@@ -1,6 +1,7 @@
 package net.minecraft.client.renderer;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.system.MemoryUtil;
 import org.lwjglx.util.glu.GLU;
 
 import java.nio.ByteBuffer;
@@ -42,7 +43,7 @@ public class GLAllocation {
      * Creates and returns a direct byte buffer with the specified capacity. Applies native ordering to speed up access.
      */
     public static synchronized ByteBuffer createDirectByteBuffer(int capacity) {
-        return ByteBuffer.allocateDirect(capacity).order(ByteOrder.nativeOrder());
+        return MemoryUtil.memAlloc(capacity);
     }
 
     /**
