@@ -7,7 +7,6 @@ import tritium.management.Localizer;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
 import tritium.module.Module;
-import tritium.rendering.entities.impl.SVGImage;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.shader.impl.*;
 import tritium.widget.Widget;
@@ -27,9 +26,6 @@ public class Reload extends Command {
     public void execute(String[] args) {
         Localizer.loadLang();
         this.print("Reloaded translations!");
-
-        SVGImage.map.clear();
-        this.print("Cleared SVG images!");
 
 //        PlayerAdapter.getInstances().clear();
 //        this.print("Reloaded Cloud!");

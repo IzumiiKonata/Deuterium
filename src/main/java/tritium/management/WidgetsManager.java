@@ -13,7 +13,6 @@ import tritium.event.events.rendering.DisplayResizedEvent;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.SVGImage;
 import tritium.rendering.rendersystem.RenderSystem;
 
 import tritium.screens.MoveWidgetsScreen;

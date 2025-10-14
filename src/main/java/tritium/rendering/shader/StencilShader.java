@@ -15,7 +15,7 @@ public class StencilShader {
 
     public static void render(int backgroundSource, int stencilSource) {
         if (stencilProgram == null) {
-            stencilProgram = new ShaderRenderer(Tritium.NAME + "/shaders/stencil.fsh");
+            stencilProgram = new ShaderRenderer("tritium/shaders/stencil.fsh");
         }
 
         GlStateManager.enableBlend();
@@ -44,7 +44,7 @@ public class StencilShader {
 
     public static void clear(int stencilSource, int originalSource, float factor, float alpha) {
         if (clearProgram == null) {
-            clearProgram = new ShaderRenderer(Tritium.NAME + "/shaders/clear.fsh");
+            clearProgram = new ShaderRenderer("tritium/shaders/clear.fsh");
         }
 
         GlStateManager.enableBlend();
@@ -75,7 +75,7 @@ public class StencilShader {
 
     public static void render(int backgroundSource, int originalSource, int stencilSource) {
         if (stencilProgram2 == null) {
-            stencilProgram2 = new ShaderRenderer(Tritium.NAME + "/shaders/stencil2.fsh");
+            stencilProgram2 = new ShaderRenderer("tritium/shaders/stencil2.fsh");
         }
 
         GlStateManager.enableBlend();
@@ -108,7 +108,7 @@ public class StencilShader {
 
     public static void render(int backgroundSource, int stencilSource, float brightness, float saturation, float contrast) {
         if (stencilProgram3 == null) {
-            stencilProgram3 = new ShaderRenderer(Tritium.NAME + "/shaders/blend.fsh");
+            stencilProgram3 = new ShaderRenderer("tritium/shaders/blend.fsh");
         }
 
         GlStateManager.enableBlend();

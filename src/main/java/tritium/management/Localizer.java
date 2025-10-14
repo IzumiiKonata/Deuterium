@@ -79,7 +79,7 @@ public class Localizer extends AbstractManager {
         resMng.reloadResources(list);
 
         for (String name : lang) {
-            Location loc = Location.of(Tritium.NAME + "/translations/" + name + ".json");
+            Location loc = Location.of("tritium/translations/" + name + ".json");
 
             try (
                     InputStream stream = resMng.getResource(loc).getInputStream();

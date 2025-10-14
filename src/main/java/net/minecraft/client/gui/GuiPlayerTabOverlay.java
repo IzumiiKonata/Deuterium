@@ -15,11 +15,8 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
-import tritium.Tritium;
-import tritium.rendering.entities.impl.SVGImage;
 
 import java.util.Comparator;
 import java.util.List;

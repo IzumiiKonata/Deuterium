@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
 import org.lwjgl.system.MemoryUtil;
+import tritium.launch.Launcher;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.phosphor.api.ILightingEngineProvider;
 import net.minecraft.block.Block;
@@ -449,7 +450,7 @@ public class Minecraft implements IThreadListener {
             } catch (ReportedException reportedexception) {
                 this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
                 this.freeMemory();
-                logger.fatal("Reported exception thrown!", (Throwable) reportedexception);
+                logger.fatal("Reported exception thrown!", reportedexception);
                 this.displayCrashReport(reportedexception.getCrashReport());
                 break;
             } catch (Throwable throwable1) {
@@ -623,7 +624,7 @@ public class Minecraft implements IThreadListener {
 
         InputEvents.addKeyboardListener(new McKeybindHandler());
 
-        Tritium.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Main.startupTime) / 1000.0d);
+        Tritium.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Launcher.startupTime) / 1000.0d);
 
         loaded = true;
     }

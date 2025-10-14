@@ -23,7 +23,6 @@ import tritium.Tritium;
 import tritium.management.ModuleManager;
 import tritium.module.impl.render.BlockAnimations;
 import tritium.module.impl.render.Perspective;
-import tritium.rendering.entities.impl.SVGImage;
 import tritium.rendering.waveycapes.layers.CustomCapeRenderLayer;
 import tritium.widget.impl.PaperDoll;
 

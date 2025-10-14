@@ -64,7 +64,7 @@ public class ShaderUtil implements SharedConstants {
 
     public static String getShaderResource(final String resource) {
         try {
-            final InputStream inputStream = RESOURCE_MANAGER.getResource(Location.of(Tritium.NAME + "/shaders/" + resource)).getInputStream();
+            final InputStream inputStream = RESOURCE_MANAGER.getResource(Location.of("tritium/shaders/" + resource)).getInputStream();
             final InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
             final BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
             String source = "";

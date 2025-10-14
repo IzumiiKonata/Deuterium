@@ -100,7 +100,7 @@ public class Alt {
 
                         String uuid = isMicrosoft() ? userUUID : EntityPlayer.getOfflineUUID(username).toString().replaceAll("-", "");
 
-                        Location loc = Location.of(Tritium.NAME + "/textures/skin/" + uuid);
+                        Location loc = Location.of("tritium/textures/skin/" + uuid);
 
                         Textures.loadTextureAsyncly(loc, combined, () -> skinLocation = loc);
                     }
@@ -109,7 +109,7 @@ public class Alt {
         }
 
         if (skinLocation == null) {
-            Location loc = Location.of(Tritium.NAME + "/textures/skin/" + uuid);
+            Location loc = Location.of("tritium/textures/skin/" + uuid);
 
             if (Minecraft.getMinecraft().getTextureManager().getTexture(loc) != null) {
                 skinLocation = loc;

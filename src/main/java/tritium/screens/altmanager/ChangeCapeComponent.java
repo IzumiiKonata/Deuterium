@@ -135,7 +135,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
             }
         } else {
             GlStateManager.color(1, 1, 1, 1f);
-            Image.draw(Location.of(Tritium.NAME + "/textures/no_cape.png"), startX + capeWidth * 0.5 - imgWidth * 0.5, startY + 6, imgWidth, imgHeight, Image.Type.NoColor);
+            Image.draw(Location.of("tritium/textures/no_cape.png"), startX + capeWidth * 0.5 - imgWidth * 0.5, startY + 6, imgWidth, imgHeight, Image.Type.NoColor);
         }
     }
 
@@ -327,11 +327,11 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
     }
 
     private Location getCapeLocation(String uuid) {
-        return Location.of(Tritium.NAME + "/textures/Cape" + uuid);
+        return Location.of("tritium/textures/Cape" + uuid);
     }
 
     private Location getCapeLocationFull(String uuid) {
-        return Location.of(Tritium.NAME + "/textures/CapeFull" + uuid);
+        return Location.of("tritium/textures/CapeFull" + uuid);
     }
 
     private static class Cape {

@@ -9,7 +9,7 @@ public class SkinUtils {
 
     private static final Gson gson = (new GsonBuilder()).create();
 
-    public static final Location ALEX_FACE = Location.of(Tritium.NAME + "/textures/alex.png");
-    public static final Location STEVE_FACE = Location.of(Tritium.NAME + "/textures/steve.png");
+    public static final Location ALEX_FACE = Location.of("tritium/textures/alex.png");
+    public static final Location STEVE_FACE = Location.of("tritium/textures/steve.png");
 
 }

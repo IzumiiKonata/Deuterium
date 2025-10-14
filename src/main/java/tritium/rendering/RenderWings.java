@@ -12,7 +12,7 @@ import tritium.management.ModuleManager;
 public class RenderWings
         extends ModelBase {
     private final Minecraft mc = Minecraft.getMinecraft();
-    private final Location location = Location.of(Tritium.NAME + "/textures/wings.png");
+    private final Location location = Location.of("tritium/textures/wings.png");
     private final ModelRenderer wing;
     private final ModelRenderer wingTip;
 

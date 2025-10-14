@@ -34,8 +34,6 @@ import tritium.event.events.player.UpdateEvent;
 import tritium.event.events.rendering.FovModifierEvent;
 import tritium.management.EventManager;
 
-import javax.vecmath.Vector3f;
-
 public class EntityPlayerSP extends AbstractClientPlayer {
     public final NetHandlerPlayClient sendQueue;
     private final StatFileWriter statWriter;
@@ -812,18 +810,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         double x = (-xz * MathHelper.sin((float) Math.toRadians(rotX)));
         double z = (xz * MathHelper.cos((float) Math.toRadians(rotX)));
         return new Vec3(x, y, z);
-
-    }
-
-    public Vector3f getDirectionVector3f() {
-
-        double rotX = this.rotationYaw;
-        double rotY = this.rotationPitch;
-        double y = (-MathHelper.sin((float) Math.toRadians(rotY)));
-        double xz = MathHelper.cos((float) Math.toRadians(rotY));
-        double x = (-xz * MathHelper.sin((float) Math.toRadians(rotX)));
-        double z = (xz * MathHelper.cos((float) Math.toRadians(rotX)));
-        return new Vector3f((float) x, (float) y, (float) z);
 
     }
 

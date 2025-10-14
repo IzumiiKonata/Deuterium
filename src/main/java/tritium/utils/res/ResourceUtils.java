@@ -22,7 +22,7 @@ public class ResourceUtils {
      * @return Location
      */
     public Location loadRes(String path) {
-        return Location.of(Tritium.NAME + "/" + path);
+        return Location.of("tritium/" + path);
     }
 
     @SneakyThrows

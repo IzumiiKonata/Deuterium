@@ -67,7 +67,7 @@ public class ClientSettings {
 
     public static final BooleanSetting FRAME_PREDICT = new BooleanSetting("Frame Predict", false);
 
-    public static final ModeSetting<ThemeManager.Theme> THEME = new ModeSetting<ThemeManager.Theme>("Theme", ThemeManager.Theme.Light) {
+    public static final ModeSetting<ThemeManager.Theme> THEME = new ModeSetting<ThemeManager.Theme>("Theme", ThemeManager.Theme.Dark) {
         @Override
         public void onModeChanged(ThemeManager.Theme before, ThemeManager.Theme now) {
             ThemeManager.setTheme(now);

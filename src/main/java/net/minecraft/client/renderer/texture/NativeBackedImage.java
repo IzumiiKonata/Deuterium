@@ -5,7 +5,9 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import sun.awt.image.ShortInterleavedRaster;
 
+import java.awt.*;
 import java.awt.image.*;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -20,19 +22,12 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
     private final int width;
     private final int height;
     private long pointer;
-    private final int sizeBytes;
 
     private NativeBackedImage(int width, int height, long pointer) {
-        super(createMinimalColorModel(),
-                createNativeRaster(width, height),
-                false,
-                null);
+        super(1, 1, TYPE_INT_ARGB);
         this.width = width;
         this.height = height;
         this.pointer = pointer;
-
-        // 4 channels: RGBA
-        this.sizeBytes = width * height * 4;
     }
 
     private static ColorModel createMinimalColorModel() {
@@ -42,19 +37,6 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
                 0x000000FF,  // Blue
                 0xFF000000   // Alpha
         );
-    }
-
-    private static WritableRaster createNativeRaster(int width, int height) {
-        DataBuffer emptyBuffer = new DataBufferByte(0);
-
-        SampleModel sampleModel = new SinglePixelPackedSampleModel(
-                DataBuffer.TYPE_INT,
-                width,
-                height,
-                new int[]{0xFF0000, 0xFF00, 0xFF, 0xFF000000}
-        );
-
-        return Raster.createWritableRaster(sampleModel, emptyBuffer, null);
     }
 
     public int getWidth() {

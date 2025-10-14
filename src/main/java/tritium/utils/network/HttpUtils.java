@@ -296,6 +296,49 @@ public class HttpUtils {
         };
     }
 
+    @SneakyThrows
+    public static InputStream download(String urlPath) {
+        // 统一资源
+        URL url = new URL(urlPath);
+
+        // 连接类的父类，抽象类
+        URLConnection urlConnection = url.openConnection();
+        // http的连接类
+        HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+        // 设定请求的方法，默认是GET
+        httpURLConnection.setRequestMethod("GET");
+        // 设置字符编码
+        httpURLConnection.setRequestProperty("Charset", "UTF-8");
+        // 打开到此 URL 引用的资源的通信链接（如果尚未建立这样的连接）。
+        httpURLConnection.connect();
+
+        // 文件大小
+        int fileLength = httpURLConnection.getContentLength();
+
+        // 文件名
+        String fileName = httpURLConnection.getURL().getFile();
+
+        InputStream inputStream = httpURLConnection.getInputStream();
+
+        return new InputStream() {
+
+            @Override
+            public int read() throws IOException {
+                return inputStream.read();
+            }
+
+            @Override
+            public int available() throws IOException {
+                return fileLength;
+            }
+
+            @Override
+            public void close() throws IOException {
+                inputStream.close();
+            }
+        };
+    }
+
     /**
      * 异步表单请求
      *

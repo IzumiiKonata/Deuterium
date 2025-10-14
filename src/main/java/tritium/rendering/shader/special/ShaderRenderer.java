@@ -43,7 +43,7 @@ public class ShaderRenderer {
     }
 
     public ShaderRenderer(String fragmentShaderLoc) {
-        this(fragmentShaderLoc, Tritium.NAME + "/shaders/vertex.vsh");
+        this(fragmentShaderLoc, "tritium/shaders/vertex.vsh");
     }
 
     public static void drawQuads(double x, double y, double width, double height) {
