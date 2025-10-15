@@ -17,6 +17,7 @@
 
 package tech.konata.obfuscator;
 
+import lombok.var;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,7 +34,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.zip.*;
 
 import lombok.SneakyThrows;
-import lombok.var;
 import org.objectweb.asm.tree.AnnotationNode;
 import tech.konata.obfuscator.asm.ClassTree;
 import tech.konata.obfuscator.asm.ClassWrapper;

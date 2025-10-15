@@ -67,7 +67,7 @@ public class Main {
         Files.copy(artifact.toPath(), input.toPath());
 
         File obfnames = new File(workingDir, "obfuscate_names.txt");
-        List<String> strings = ObfDictGen.gen(20000);
+        List<String> strings = ObfDictGen.gen();
 
         Files.write(obfnames.toPath(), String.join("\n", strings).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW);
 
@@ -145,6 +145,7 @@ public class Main {
 
         radonCfg.setDictionaryType(Dictionaries.ALPHANUMERIC);
 
+        radonCfg.setNoAnnotations(true);
 
         radonCfg.setTransformers(
             new ArrayList<>(

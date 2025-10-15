@@ -1,15 +1,10 @@
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
-import tech.konata.commons.ncm.math.DigestUtils;
 import tech.konata.obfuscator.Dictionaries;
 import tech.konata.obfuscator.Obfuscator;
 import tech.konata.obfuscator.SessionInfo;
 import tech.konata.obfuscator.exclusions.Exclusion;
 import tech.konata.obfuscator.exclusions.ExclusionManager;
-import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
-import tech.konata.obfuscator.transformers.obfuscators.flow.*;
+import tech.konata.obfuscator.transformers.obfuscators.flow.AggressiveBlockSplitter;
 import tech.konata.obfuscator.transformers.obfuscators.miscellaneous.*;
 import tech.konata.obfuscator.utils.IOUtils;
 import tech.konata.utils.ObfDictGen;
@@ -20,15 +15,11 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 public class Tests {
 
@@ -67,10 +58,13 @@ public class Tests {
         Files.copy(artifact.toPath(), input.toPath());
 
         File obfnames = new File(workingDir, "obfuscate_names.txt");
-        List<String> strings = ObfDictGen.gen(20000);
+        List<String> strings = ObfDictGen.gen();
 
         Files.write(obfnames.toPath(), String.join("\n", strings).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE_NEW);
 
+        List<File> dependencies = Stream.of("C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\rt.jar", "C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\jce.jar", "C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\ext\\jfxrt.jar").map(File::new).collect(Collectors.toList());
+        File depsDir = new File("target\\dependency");
+        dependencies.addAll(Arrays.asList(depsDir.listFiles()));
 
         List<String> cfg = this.getProguardConfigTemplate();
 
@@ -101,11 +95,6 @@ public class Tests {
             throw new RuntimeException(e);
         }
 
-        List<File> dependencies = Stream.of("C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\rt.jar", "C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\jce.jar", "C:\\Program Files\\Java\\jdk-1.8\\jre\\lib\\ext\\jfxrt.jar").map(File::new).collect(Collectors.toList());
-
-        File depsDir = new File("target\\dependency");
-
-        dependencies.addAll(Arrays.asList(depsDir.listFiles()));
 
         String depsString = dependencies.stream().map(f -> "-libraryjars '" + f.getAbsolutePath() + "'").collect(Collectors.joining("\n"));
 
@@ -115,7 +104,7 @@ public class Tests {
             s = s.replace("(outjar)", proguardObfuscated.getName());
             s = s.replace("(libraries)", depsString);
             s = s.replace("(repackage)", "catch_me_if_u_can");
-            s = s.replace("(keepattributes)", "*");
+            s = s.replace("(keepattributes)", "");
             s = s.replace("(mapping)", mappings.getName());
             s = s.replace("(shrinked)", shrinked.getName());
 
@@ -134,10 +123,6 @@ public class Tests {
             obfuscated.delete();
         }
 
-        {
-
-        }
-
         radonCfg.setInput(proguardObfuscated);
         radonCfg.setOutput(obfuscated);
 
@@ -152,19 +137,18 @@ public class Tests {
         radonCfg.setNoAnnotations(true);
 
         radonCfg.setTransformers(
-                new ArrayList<>(
-                        Arrays.asList(
-//                                new CodeHider(),
-//                                new AggressiveBlockSplitter(),
-//                                new IfConfuser(),
-                                new DaFlow(),
-                                new ClassFolder(),
-                                new CRCFucker(),
-                                new TimeManipulator(),
-                                new LocalVariables(true)
-                        )
+            new ArrayList<>(
+                Arrays.asList(
+                    new CodeHider(),
+                    new AggressiveBlockSplitter(),
+                    new ClassFolder(),
+                    new CRCFucker(),
+                    new TimeManipulator(),
+                    new LocalVariables(true)
                 )
+            )
         );
+
 
         Obfuscator obfuscator = new Obfuscator(radonCfg);
         obfuscator.run();

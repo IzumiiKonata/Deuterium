@@ -13,7 +13,7 @@ import java.util.Random;
 public class ObfDictGen {
 
     private static final List<String> list = Arrays.asList(
-            "T", "R", "I", "T", "U", "M"
+            "T", "R", "I", "U", "M"
     );
 
     private static final Random random = new SecureRandom();
@@ -28,13 +28,13 @@ public class ObfDictGen {
         return result.toString();
     }
 
-    public static List<String> gen(int size) {
+    public static List<String> gen() {
         List<String> used = new ArrayList<>();
         List<String> result = new ArrayList<>();
 
         int repeat = 48;
 
-        for (int i = 0; i < size; i++) {
+        for (int i = 0; i < 40000; i++) {
 
             String rand = genStr(repeat);
 

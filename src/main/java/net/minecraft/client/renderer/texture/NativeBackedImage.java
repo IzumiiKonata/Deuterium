@@ -5,7 +5,6 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
-import sun.awt.image.ShortInterleavedRaster;
 
 import java.awt.*;
 import java.awt.image.*;

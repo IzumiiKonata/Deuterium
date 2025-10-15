@@ -50,6 +50,10 @@ public class SequencedNameGenerator {
         return this.arrayToString();
     }
 
+    public String next() {
+        return this.nextSequencedString();
+    }
+
     private void growArrayAndClearAll() {
         this.charArray = Arrays.copyOf(this.charArray, this.charArray.length + 1);
 

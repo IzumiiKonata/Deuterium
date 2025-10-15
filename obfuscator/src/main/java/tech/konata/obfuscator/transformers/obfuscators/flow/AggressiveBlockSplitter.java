@@ -20,7 +20,7 @@ public class AggressiveBlockSplitter extends FlowObfuscation {
     // 最小块大小（指令数）
     private static final int MIN_BLOCK_SIZE = 3;
     // 最大拆分深度
-    private static final int MAX_DEPTH = 32768;
+    private static final int MAX_DEPTH = 256;
     // 是否添加虚假跳转
     private static final boolean ADD_FAKE_JUMPS = true;
 
@@ -314,6 +314,11 @@ public class AggressiveBlockSplitter extends FlowObfuscation {
             newInsns.add(currentBlock.instructions);
 
             if (nextLogicalBlock != null && !endsWithJumpOrReturn(currentBlock)) {
+
+//                if (ADD_FAKE_JUMPS && random.nextBoolean()) {
+//                    addFakeConditionalJump(newInsns);
+//                }
+
                 newInsns.add(new JumpInsnNode(GOTO, nextLogicalBlock.label));
             }
         }
@@ -356,6 +361,156 @@ public class AggressiveBlockSplitter extends FlowObfuscation {
         // 让 ASM 重新计算，这是关键
         mn.maxStack = 0;
         mn.maxLocals = 0;
+    }
+
+    /**
+     * 在块开始处添加虚假跳转（使用不透明谓词）
+     */
+    private void addFakeJumpAtStart(InsnList insns, LabelNode realTarget) {
+        LabelNode fakeTarget = new LabelNode();
+        LabelNode continueLabel = new LabelNode();
+
+        int predicateType = random.nextInt(5);
+
+        switch (predicateType) {
+            case 0: // (x ^ x) == 0 总是真
+                insns.add(getNumberInsn(random.nextInt(1000)));
+                insns.add(new InsnNode(DUP));
+                insns.add(new InsnNode(IXOR));
+                insns.add(new JumpInsnNode(IFNE, fakeTarget)); // 永远不跳转
+                break;
+
+            case 1: // (x & 1) < 2 总是真
+                insns.add(getNumberInsn(random.nextInt(1000)));
+                insns.add(getNumberInsn(1));
+                insns.add(new InsnNode(IAND));
+                insns.add(getNumberInsn(2));
+                insns.add(new JumpInsnNode(IF_ICMPGE, fakeTarget)); // 永远不跳转
+                break;
+
+            case 2: // x * x >= 0 总是真（对于int）
+                insns.add(getNumberInsn(random.nextInt(100)));
+                insns.add(new InsnNode(DUP));
+                insns.add(new InsnNode(IMUL));
+                insns.add(new JumpInsnNode(IFLT, fakeTarget)); // 永远不跳转
+                break;
+
+            case 3: // (x | 0) == x 总是真
+                int val = random.nextInt(1000);
+                insns.add(getNumberInsn(val));
+                insns.add(new InsnNode(DUP));
+                insns.add(getNumberInsn(0));
+                insns.add(new InsnNode(IOR));
+                insns.add(new JumpInsnNode(IF_ICMPNE, fakeTarget)); // 永远不跳转
+                break;
+
+            case 4: // 2 * x 总是偶数
+                insns.add(getNumberInsn(random.nextInt(100)));
+                insns.add(getNumberInsn(2));
+                insns.add(new InsnNode(IMUL));
+                insns.add(getNumberInsn(1));
+                insns.add(new InsnNode(IAND));
+                insns.add(new JumpInsnNode(IFNE, fakeTarget)); // 永远不跳转
+                break;
+        }
+
+        insns.add(new JumpInsnNode(GOTO, continueLabel));
+
+        // 虚假目标：添加一些垃圾代码然后跳回
+        insns.add(fakeTarget);
+        addGarbageCode(insns);
+        insns.add(new JumpInsnNode(GOTO, realTarget));
+
+        insns.add(continueLabel);
+    }
+
+    /**
+     * 添加虚假条件跳转到下一个块
+     */
+    private void addFakeConditionalJump(InsnList insns) {
+        LabelNode fakeTarget = new LabelNode();
+
+        int predicateType = random.nextInt(4);
+
+        switch (predicateType) {
+            case 0: // (x * 0) == 0 总是真
+                insns.add(getNumberInsn(random.nextInt(1000)));
+                insns.add(getNumberInsn(0));
+                insns.add(new InsnNode(IMUL));
+                insns.add(new JumpInsnNode(IFNE, fakeTarget)); // 永远不跳转
+                break;
+
+            case 1: // (x - x) == 0 总是真
+                int val = random.nextInt(1000);
+                insns.add(getNumberInsn(val));
+                insns.add(getNumberInsn(val));
+                insns.add(new InsnNode(ISUB));
+                insns.add(new JumpInsnNode(IFNE, fakeTarget)); // 永远不跳转
+                break;
+
+            case 2: // (x % 1) == 0 总是真
+                insns.add(getNumberInsn(random.nextInt(1000) + 1));
+                insns.add(getNumberInsn(1));
+                insns.add(new InsnNode(IREM));
+                insns.add(new JumpInsnNode(IFNE, fakeTarget)); // 永远不跳转
+                break;
+            default:
+                return; // 特殊情况，直接返回
+        }
+
+        // 虚假分支：添加垃圾代码
+        insns.add(fakeTarget);
+        addGarbageCode(insns);
+    }
+
+    /**
+     * 添加垃圾代码（永远不会执行）
+     */
+    private void addGarbageCode(InsnList insns) {
+        int garbageType = random.nextInt(4);
+
+        switch (garbageType) {
+            case 0: // 无意义的栈操作
+                insns.add(getNumberInsn(random.nextInt()));
+                insns.add(new InsnNode(POP));
+                break;
+
+            case 1: // 无意义的运算
+                insns.add(getNumberInsn(random.nextInt()));
+                insns.add(getNumberInsn(random.nextInt()));
+                insns.add(new InsnNode(IADD));
+                insns.add(new InsnNode(POP));
+                break;
+
+            case 2: // 创建和丢弃对象
+                insns.add(new InsnNode(ACONST_NULL));
+                insns.add(new InsnNode(POP));
+                break;
+
+            case 3: // 复杂的无意义运算
+                insns.add(getNumberInsn(random.nextInt(100)));
+                insns.add(new InsnNode(DUP));
+                insns.add(new InsnNode(IMUL));
+                insns.add(getNumberInsn(random.nextInt(100)));
+                insns.add(new InsnNode(IADD));
+                insns.add(new InsnNode(POP));
+                break;
+        }
+    }
+
+    /**
+     * 获取数字加载指令（支持大数字）
+     */
+    private AbstractInsnNode getNumberInsn(int num) {
+        if (num >= -1 && num <= 5) {
+            return new InsnNode(ICONST_0 + num);
+        } else if (num >= Byte.MIN_VALUE && num <= Byte.MAX_VALUE) {
+            return new IntInsnNode(BIPUSH, num);
+        } else if (num >= Short.MIN_VALUE && num <= Short.MAX_VALUE) {
+            return new IntInsnNode(SIPUSH, num);
+        } else {
+            return new LdcInsnNode(num);
+        }
     }
 
     /**
