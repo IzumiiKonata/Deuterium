@@ -407,17 +407,6 @@ public class Minecraft implements IThreadListener {
         Bootstrap.register();
     }
 
-    @SneakyThrows
-    public boolean isJvmShuttingDown() {
-        try {
-            Runtime.getRuntime().addShutdownHook(new Thread(() -> {}));
-        } catch (IllegalStateException e) {
-            return true;
-        }
-
-        return false;
-    }
-
     public void run() {
         this.running = true;
 
