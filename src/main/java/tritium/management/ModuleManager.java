@@ -53,6 +53,7 @@ public class ModuleManager extends AbstractManager {
     public static final BlockOverlay blockOverlay = new BlockOverlay();
     public static final BowZoom bowZoom = new BowZoom();
     public static final OldAnimation oldAnimation = new OldAnimation();
+    public static final OpenNCMScreen openNCMScreen = new OpenNCMScreen();
 
     // MOVEMENT
     public static final AutoSprint autoSprint = new AutoSprint();
