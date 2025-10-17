@@ -11,7 +11,6 @@ import org.lwjgl.opengl.GL13;
 import org.lwjglx.opengl.Display;
 import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
-import tritium.rendering.shader.ShaderRenderType;
 import tritium.rendering.shader.uniform.Uniform1f;
 import tritium.rendering.shader.uniform.Uniform1i;
 import tritium.rendering.shader.uniform.Uniform2f;
@@ -44,7 +43,7 @@ public class BloomShader extends Shader {
 
 
     @Override
-    public void run(final ShaderRenderType type, List<Runnable> runnable) {
+    public void run(List<Runnable> runnable) {
         // Prevent rendering
         if (!Display.isVisible()) {
             return;
@@ -61,13 +60,12 @@ public class BloomShader extends Shader {
             freq = Display.getDesktopDisplayMode().getFrequency();
         }
 
-        // 使用大神framebuffer缓冲优化
         if (useCaching) {
 
             if (updateTimer.isDelayed(1000 / freq)) {
                 updateTimer.reset();
                 cache = true;
-                this.runNoCaching(type, runnable);
+                this.runNoCaching(runnable);
                 cache = false;
             }
 
@@ -83,14 +81,13 @@ public class BloomShader extends Shader {
             ShaderProgram.drawQuad();
 
         } else {
-            this.runNoCaching(type, runnable);
+            this.runNoCaching(runnable);
         }
 
     }
 
-    // shader的逻辑在这里
     @Override
-    public void runNoCaching(ShaderRenderType type, List<Runnable> runnable) {
+    public void runNoCaching(List<Runnable> runnable) {
 
         // Prevent rendering
         if (!Display.isVisible()) {
@@ -101,103 +98,67 @@ public class BloomShader extends Shader {
 
         this.update();
 
-        switch (type) {
-            // Render3D
-            case CAMERA: {
-                this.setActive(!runnable.isEmpty());
+        this.setActive(this.isActive() || !runnable.isEmpty());
 
-                if (this.isActive()) {
-                    RendererLivingEntity.NAME_TAG_RANGE = 0;
-                    RendererLivingEntity.NAME_TAG_RANGE_SNEAK = 0;
+        if (this.isActive()) {
+            this.inputFramebuffer.bindFramebuffer(true);
+            this.inputFramebuffer.framebufferClearNoBinding();
+            runnable.forEach(Runnable::run);
 
-                    this.inputFramebuffer.bindFramebuffer(true);
-                    this.inputFramebuffer.framebufferClearNoBinding();
+            // TODO: make radius and other things as a setting
+            final int radius = 8;
+            final float compression = 2F;
+            final int programId = this.bloomProgram.getProgramId();
 
-                    runnable.forEach(Runnable::run);
+            this.outputFramebuffer.bindFramebuffer(true);
+            this.outputFramebuffer.framebufferClearNoBinding();
 
-                    if (cache) {
-                        cacheBuffer.bindFramebuffer(true);
-                        cacheBuffer.framebufferClearNoBinding();
-                    } else {
-                        mc.getFramebuffer().bindFramebuffer(true);
-                    }
+            GlStateManager.disableAlpha();
 
-                    RendererLivingEntity.NAME_TAG_RANGE = 64;
-                    RendererLivingEntity.NAME_TAG_RANGE_SNEAK = 32;
+            this.bloomProgram.start();
 
-                    RenderHelper.disableStandardItemLighting();
-                    mc.entityRenderer.disableLightmap();
-                }
-                break;
-            }
-            // Render2D
-            case OVERLAY: {
-                this.setActive(this.isActive() || !runnable.isEmpty());
+            if (this.gaussianKernel.getSize() != radius) {
+                this.gaussianKernel = new GaussianKernel(radius);
+                this.gaussianKernel.compute();
 
-                if (this.isActive()) {
-                    this.inputFramebuffer.bindFramebuffer(true);
-                    this.inputFramebuffer.framebufferClearNoBinding();
-                    runnable.forEach(Runnable::run);
+                final FloatBuffer buffer = BufferUtils.createFloatBuffer(radius);
+                buffer.put(this.gaussianKernel.getKernel());
+                buffer.flip();
 
-                    // TODO: make radius and other things as a setting
-                    final int radius = 8;
-                    final float compression = 2F;
-                    final int programId = this.bloomProgram.getProgramId();
-
-                    this.outputFramebuffer.bindFramebuffer(true);
-                    this.outputFramebuffer.framebufferClearNoBinding();
-
-                    GlStateManager.disableAlpha();
-
-                    this.bloomProgram.start();
-
-                    if (this.gaussianKernel.getSize() != radius) {
-                        this.gaussianKernel = new GaussianKernel(radius);
-                        this.gaussianKernel.compute();
-
-                        final FloatBuffer buffer = BufferUtils.createFloatBuffer(radius);
-                        buffer.put(this.gaussianKernel.getKernel());
-                        buffer.flip();
-
-                        u_radius.setValue(radius);
-                        u_kernel.setValue(buffer);
-                    }
-
-                    u_diffuse_sampler.setValue(0);
-                    u_other_sampler.setValue(20);
-                    u_texel_size.setValue(1.0F / mc.displayWidth, 1.0F / mc.displayHeight);
-                    u_direction.setValue(compression, 0.0F);
-
-                    GlStateManager.enableBlend();
-                    GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_SRC_ALPHA);
-                    GlStateManager.disableAlpha();
-
-                    inputFramebuffer.bindFramebufferTexture();
-                    ShaderProgram.drawQuad();
-
-                    if (cache) {
-                        cacheBuffer.bindFramebuffer(true);
-                        cacheBuffer.framebufferClearNoBinding();
-                        GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE , GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
-                    } else {
-                        mc.getFramebuffer().bindFramebuffer(true);
-                        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-                    }
-
-                    u_direction.setValue(0.0F, compression);
-                    outputFramebuffer.bindFramebufferTexture();
-                    GL13.glActiveTexture(GL13.GL_TEXTURE20);
-                    inputFramebuffer.bindFramebufferTexture();
-                    GL13.glActiveTexture(GL13.GL_TEXTURE0);
-                    ShaderProgram.drawQuad();
-                    GlStateManager.disableBlend();
-
-                    ShaderProgram.stop();
-                }
-
-                break;
+                u_radius.setValue(radius);
+                u_kernel.setValue(buffer);
             }
 
+            u_diffuse_sampler.setValue(0);
+            u_other_sampler.setValue(20);
+            u_texel_size.setValue(1.0F / mc.displayWidth, 1.0F / mc.displayHeight);
+            u_direction.setValue(compression, 0.0F);
+
+            GlStateManager.enableBlend();
+            GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_SRC_ALPHA);
+            GlStateManager.disableAlpha();
+
+            inputFramebuffer.bindFramebufferTexture();
+            ShaderProgram.drawQuad();
+
+            if (cache) {
+                cacheBuffer.bindFramebuffer(true);
+                cacheBuffer.framebufferClearNoBinding();
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE , GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
+            } else {
+                mc.getFramebuffer().bindFramebuffer(true);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            }
+
+            u_direction.setValue(0.0F, compression);
+            outputFramebuffer.bindFramebufferTexture();
+            GL13.glActiveTexture(GL13.GL_TEXTURE20);
+            inputFramebuffer.bindFramebufferTexture();
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            ShaderProgram.drawQuad();
+            GlStateManager.disableBlend();
+
+            ShaderProgram.stop();
         }
     }
 

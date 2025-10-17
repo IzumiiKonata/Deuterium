@@ -1,5 +1,6 @@
 package tritium.screens.ncm;
 
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.container.Panel;
 
 /**
@@ -11,7 +12,7 @@ public abstract class NCMPanel extends Panel {
     public abstract void onInit();
 
     protected int getColor(NCMScreen.ColorType type) {
-        return 0xFF000000 | NCMScreen.getInstance().getColor(type);
+        return 0xFF000000 | NCMScreen.getColor(type);
     }
 
 }

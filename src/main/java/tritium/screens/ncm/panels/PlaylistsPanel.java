@@ -1,0 +1,166 @@
+package tritium.screens.ncm.panels;
+
+import lombok.Getter;
+import lombok.Setter;
+import tech.konata.ncmplayer.music.CloudMusic;
+import tech.konata.ncmplayer.music.dto.PlayList;
+import tritium.management.FontManager;
+import tritium.rendering.ui.AbstractWidget;
+import tritium.rendering.ui.container.Panel;
+import tritium.rendering.ui.container.ScrollPanel;
+import tritium.rendering.ui.widgets.LabelWidget;
+import tritium.rendering.ui.widgets.RectWidget;
+import tritium.rendering.ui.widgets.RoundedRectWidget;
+import tritium.screens.ncm.NCMPanel;
+import tritium.screens.ncm.NCMScreen;
+
+import java.awt.*;
+import java.util.function.Supplier;
+
+/**
+ * @author IzumiiKonata
+ * Date: 2025/10/16 22:00
+ */
+public class PlaylistsPanel extends NCMPanel {
+
+    RoundedRectWidget searchBar = new RoundedRectWidget();
+    ScrollPanel playlistPanel = new ScrollPanel();
+
+    public PlaylistsPanel() {
+        this.layout();
+    }
+
+    private void layout() {
+        this.setBounds(NCMScreen.getInstance().getPanelWidth() * .15, NCMScreen.getInstance().getPanelHeight());
+
+        RectWidget bg = new RectWidget();
+        this.addChild(bg);
+
+        this.setBeforeRenderCallback(() -> {
+            this.setPosition(0, 0);
+
+            bg.setMargin(0);
+            bg.setColor(this.getColor(NCMScreen.ColorType.GENERIC_BACKGROUND));
+            bg.setAlpha(0.9f);
+        });
+
+        this.addChild(searchBar);
+
+        this.searchBar.setBeforeRenderCallback(() -> {
+            searchBar.setColor(0xFFFF1010);
+            searchBar.setMargin(8);
+            searchBar.setHeight(16);
+            searchBar.setRadius(4);
+        });
+
+        this.addChild(playlistPanel);
+        this.playlistPanel.setBeforeRenderCallback(() -> {
+            this.playlistPanel.setMargin(0);
+            this.playlistPanel.setPosition(this.playlistPanel.getRelativeX(), searchBar.getRelativeY() + searchBar.getHeight() + 8);
+            this.playlistPanel.setBounds(this.playlistPanel.getWidth(), this.playlistPanel.getHeight() - searchBar.getHeight() - 8);
+        });
+
+        this.playlistPanel.setSpacing(4);
+
+        LabelWidget lbl = new LabelWidget("Tritium Music", FontManager.pf14bold);
+        lbl.setBeforeRenderCallback(() -> {
+            lbl.setColor(Color.GRAY);
+            lbl.setPosition(6, lbl.getRelativeY());
+        });
+
+        this.playlistPanel.addChild(lbl);
+
+        for (PlayList playList : CloudMusic.playLists) {
+            PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
+                NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
+            });
+
+            this.playlistPanel.addChild(item);
+        }
+    }
+
+    @Override
+    public void onInit() {
+
+    }
+
+    private static class PlaylistItem extends Panel {
+
+        String icon;
+        Supplier<Integer> iconColorSupplier;
+        Supplier<String> label;
+        Runnable onClick;
+        RoundedRectWidget bg = new RoundedRectWidget();
+
+        @Getter
+        @Setter
+        boolean selected = false;
+
+        public PlaylistItem(String icon, Supplier<Integer> iconColorSupplier, Supplier<String> label, Runnable onClick) {
+            this.icon = icon;
+            this.iconColorSupplier = iconColorSupplier;
+            this.label = label;
+            this.onClick = onClick;
+
+            this.setBeforeRenderCallback(() -> {
+                this.setBounds(this.getParentWidth(), 16);
+                this.setPosition(4, this.getRelativeY());
+            });
+
+            bg.setClickable(false);
+
+            this.addChild(bg);
+            this.bg.setBeforeRenderCallback(() -> {
+                bg.setMargin(0);
+                bg.setHidden(!selected);
+                bg.setColor(Color.BLACK);
+                bg.setAlpha(selected ? 0.2f : 0f);
+                bg.setRadius(4);
+            });
+
+            LabelWidget lblIcon = new LabelWidget(icon, FontManager.music16);
+            this.addChild(lblIcon);
+            lblIcon.setBeforeRenderCallback(() -> {
+                lblIcon.setColor(iconColorSupplier.get());
+                lblIcon.centerVertically();
+                lblIcon.setPosition(8, lblIcon.getRelativeY());
+            });
+
+            lblIcon.setClickable(false);
+
+            LabelWidget lbl = new LabelWidget(label, FontManager.pf14bold);
+            this.addChild(lbl);
+
+            lbl.setBeforeRenderCallback(() -> {
+                lbl.centerVertically();
+                lbl.setPosition(lblIcon.getRelativeX() + lblIcon.getWidth() + 4, lbl.getRelativeY());
+                lbl.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+                lbl.setMaxWidth(this.getWidth() - 8 - lblIcon.getWidth() - 12);
+            });
+
+            lbl.setClickable(false);
+
+            this.setOnClickCallback(((relativeX, relativeY, mouseButton) -> {
+
+                if (mouseButton == 0) {
+                    this.selected = true;
+                    bg.setHidden(false);
+
+                    this.onClick.run();
+
+                    NCMScreen.getInstance().getPlaylistsPanel().playlistPanel.getChildren().stream()
+                            .filter(it -> it instanceof PlaylistItem && it != this)
+                            .forEach(it -> ((PlaylistItem) it).setSelected(false));
+                }
+
+                return true;
+            }));
+        }
+
+        @Override
+        public void onRender(double mouseX, double mouseY, int dWheel) {
+
+        }
+
+    }
+}

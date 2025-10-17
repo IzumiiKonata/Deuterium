@@ -4,12 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjglx.opengl.Display;
-import tritium.management.ThemeManager;
 import tritium.rendering.FramebufferCaching;
 import tritium.rendering.GLAction;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderProgram;
-import tritium.rendering.shader.ShaderRenderType;
 import tritium.rendering.shader.Shaders;
 import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
@@ -193,10 +191,10 @@ public interface SharedRenderingConstants {
         if (shaders) {
 
             if (ClientSettings.RENDER_BLUR.getValue() && !BLUR.isEmpty())
-                Shaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.OVERLAY, BLUR);
+                Shaders.GAUSSIAN_BLUR_SHADER.run(BLUR);
 
             if (ClientSettings.RENDER_GLOW.getValue() && !BLOOM.isEmpty())
-                Shaders.POST_BLOOM_SHADER.run(ShaderRenderType.OVERLAY, BLOOM);
+                Shaders.POST_BLOOM_SHADER.run(BLOOM);
         }
 
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
@@ -274,25 +272,6 @@ public interface SharedRenderingConstants {
     }
 
     Timer updateTimer = new Timer();
-
-    static void render3DRunnables() {
-
-        if (ClientSettings.RENDER_GLOW.getValue()) {
-
-            if (!BLOOM.isEmpty()) {
-                Shaders.POST_BLOOM_SHADER.run(ShaderRenderType.CAMERA, SharedRenderingConstants.BLOOM);
-
-            }
-
-            if (!UI_BLOOM_RUNNABLES.isEmpty()) {
-                Shaders.UI_BLOOM_SHADER.run(ShaderRenderType.CAMERA, SharedRenderingConstants.UI_BLOOM_RUNNABLES);
-
-            }
-
-        }
-        if (ClientSettings.RENDER_BLUR.getValue() && !BLUR.isEmpty())
-            Shaders.GAUSSIAN_BLUR_SHADER.run(ShaderRenderType.CAMERA, SharedRenderingConstants.BLUR);
-    }
 
     static void clearRunnables() {
         BLUR.clear();

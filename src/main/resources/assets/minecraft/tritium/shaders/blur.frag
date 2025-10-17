@@ -4,6 +4,7 @@ uniform sampler2D u_diffuse_sampler;
 uniform sampler2D u_other_sampler;
 uniform vec2 u_texel_size;
 uniform vec2 u_direction;
+uniform float u_alpha_multiplier;
 uniform float u_kernel[128];
 
 void main()
@@ -11,8 +12,8 @@ void main()
     vec2 uv = gl_TexCoord[0].st;
 
     // Early discard if alpha is 0 and direction is horizontal
-    float alpha = texture(u_other_sampler, uv).a;
-    if (u_direction.x == 0.0 && alpha == 0.0) {
+    float base_alpha = texture(u_other_sampler, uv).a;
+    if (u_direction.x == 0.0 && base_alpha == 0.0) {
         discard;
     }
 
@@ -39,5 +40,6 @@ void main()
     pixel_color += (texture(u_diffuse_sampler, uv - offset5) + texture(u_diffuse_sampler, uv + offset5)) * u_kernel[5];
 
     // Output final color
-    gl_FragColor = vec4(pixel_color.rgb, u_direction.x == 0.0 ? alpha : 1.0);
+    float final_alpha = u_direction.x == 0.0 ? base_alpha * u_alpha_multiplier : 1.0;
+    gl_FragColor = vec4(pixel_color.rgb, final_alpha);
 }

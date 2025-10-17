@@ -55,6 +55,7 @@ public class CloudMusic {
     @Getter
     private static final Map<String, String> headers = new HashMap<>();
     public static AudioPlayer player;
+    // 当前播放列表
     public static List<Music> playList = new ArrayList<>();
     public static int curIdx = 0;
     public static Music currentlyPlaying;

@@ -3,8 +3,6 @@ package tritium.rendering.shader.impl;
 import net.minecraft.client.Minecraft;
 import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
-import tritium.rendering.shader.ShaderRenderType;
-import tritium.rendering.shader.Shaders;
 import tritium.rendering.shader.uniform.Uniform1i;
 import tritium.rendering.shader.uniform.Uniform2f;
 import tritium.rendering.shader.uniform.Uniform3f;
@@ -16,7 +14,7 @@ import java.util.List;
  * @author IzumiiKonata
  * Date: 2025/9/30 09:57
  */
-public class Deconverge extends Shader {
+public class Deconverge {
 
     private final ShaderProgram deconvergeProgram = new ShaderProgram("deconverge.frag", "vertex.vsh");
 
@@ -51,18 +49,4 @@ public class Deconverge extends Shader {
         convY.setValue(red, green, blue);
     }
 
-    @Override
-    public void run(ShaderRenderType type, List<Runnable> runnable) {
-
-    }
-
-    @Override
-    public void runNoCaching(ShaderRenderType type, List<Runnable> runnable) {
-
-    }
-
-    @Override
-    public void update() {
-
-    }
 }

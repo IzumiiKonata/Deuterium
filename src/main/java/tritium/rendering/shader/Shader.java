@@ -10,9 +10,9 @@ import java.util.List;
 public abstract class Shader {
     private boolean active;
 
-    public abstract void run(ShaderRenderType type, List<Runnable> runnable);
+    public abstract void run(List<Runnable> runnable);
 
-    public abstract void runNoCaching(ShaderRenderType type, List<Runnable> runnable);
+    public abstract void runNoCaching(List<Runnable> runnable);
 
     public abstract void update();
 }

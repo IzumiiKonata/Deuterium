@@ -8,9 +8,11 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -25,17 +27,25 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold;
     public static CFontRenderer pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40;
     public static CFontRenderer icon18, icon25, icon30, icon40, tritium24, tritium42;
+    public static CFontRenderer music16, music18, music30, music36, music40, music42;
     public static CFontRenderer arial14, arial18bold, arial40bold, arial60bold;
 
-    public static void deleteLoadedTextures() {
-        List<CFontRenderer> list = Arrays.asList(
-                pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold,
-                pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40,
-                icon18, icon25, icon30, icon40, tritium24, tritium42,
-                arial14, arial18bold, arial40bold, arial60bold
-        );
+    private static List<CFontRenderer> getAllFontRenderers() {
 
-        list.forEach(c -> {
+        return Arrays.stream(FontManager.class.getDeclaredFields())
+                .filter(field -> field.getType() == CFontRenderer.class)
+                .map(method -> {
+            try {
+                return (CFontRenderer) method.get(null);
+            } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }).collect(Collectors.toList());
+
+    }
+
+    public static void deleteLoadedTextures() {
+        getAllFontRenderers().forEach(c -> {
             if (c != null) {
                 c.close();
             }
@@ -84,18 +94,20 @@ public class FontManager extends AbstractManager {
         arial14 = create(14, "arial");
         arial18bold = create(18, "arialBold");
         arial40bold = create(40, "arialBold");
+
+        music16 = create(16, "music");
+        music18 = create(18, "music");
+        music30 = create(30, "music");
+        music36 = create(36, "music");
+        music40 = create(40, "music");
+        music42 = create(42, "music");
     }
 
     @SneakyThrows
     public static void waitUntilAllLoaded() {
 
         while (true) {
-            List<CFontRenderer> list = Arrays.asList(
-                    pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold,
-                    pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40,
-                    icon18, icon25, icon30, icon40, tritium24, tritium42,
-                    arial14, arial18bold, arial60bold
-            );
+            List<CFontRenderer> list = getAllFontRenderers();
 
             Thread.sleep(100);
 

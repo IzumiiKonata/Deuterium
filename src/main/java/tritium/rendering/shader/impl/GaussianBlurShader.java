@@ -10,7 +10,6 @@ import org.lwjgl.opengl.GL13;
 import org.lwjglx.opengl.Display;
 import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
-import tritium.rendering.shader.ShaderRenderType;
 import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
 import tritium.rendering.shader.uniform.Uniform1f;
@@ -41,9 +40,10 @@ public class GaussianBlurShader extends Shader {
     private final Uniform1i u_other_sampler = new Uniform1i(blurProgram, "u_other_sampler");
     private final Uniform2f u_texel_size = new Uniform2f(blurProgram, "u_texel_size");
     private final Uniform2f u_direction = new Uniform2f(blurProgram, "u_direction");
+    public final Uniform1f u_alpha_multiplier = new Uniform1f(blurProgram, "u_alpha_multiplier");
 
     @Override
-    public void run(final ShaderRenderType type, List<Runnable> runnable) {
+    public void run(List<Runnable> runnable) {
         // Prevent rendering
         if (!Display.isVisible()) {
             return;
@@ -66,7 +66,7 @@ public class GaussianBlurShader extends Shader {
                 updateTimer.reset();
 
                 cache = true;
-                this.runNoCaching(type, runnable);
+                this.runNoCaching(runnable);
                 cache = false;
 
             }
@@ -84,11 +84,11 @@ public class GaussianBlurShader extends Shader {
             ShaderProgram.drawQuad();
 
         } else {
-            this.runNoCaching(type, runnable);
+            this.runNoCaching(runnable);
         }
     }
 
-    public void run(final ShaderRenderType type, List<Runnable> runnable, float alpha) {
+    public void run(List<Runnable> runnable, float alpha) {
         // Prevent rendering
         if (!Display.isVisible()) {
             return;
@@ -98,43 +98,71 @@ public class GaussianBlurShader extends Shader {
 
         this.update();
 
-        boolean useCaching = ClientSettings.SHADERS_FRAMERATE.getValue() != 0;
+        this.setActive(this.isActive() || !runnable.isEmpty());
 
-        int freq = ClientSettings.SHADERS_FRAMERATE.getValue();
-        if (freq == ClientSettings.SHADERS_FRAMERATE.getMaximum()) {
-            freq = Display.getDesktopDisplayMode().getFrequency();
-        }
+        if (this.isActive()) {
+            this.inputFramebuffer.bindFramebuffer(true);
+            this.inputFramebuffer.framebufferClearNoBinding();
+            runnable.forEach(Runnable::run);
 
-        if (useCaching) {
 
-            if (updateTimer.isDelayed(1000 / freq)) {
-                updateTimer.reset();
+            // TODO: make radius and other things as a setting
+            final int radius = 5;
+            final float compression = 2.0F;
+            final int programId = this.blurProgram.getProgramId();
 
-                cache = true;
-                this.runNoCaching(type, runnable);
-                cache = false;
+            this.outputFramebuffer.bindFramebuffer(true);
+            this.outputFramebuffer.framebufferClearNoBinding();
+            this.blurProgram.start();
 
+            if (this.gaussianKernel.getSize() != radius) {
+                this.gaussianKernel = new GaussianKernel(radius);
+                this.gaussianKernel.compute();
+
+                final FloatBuffer buffer = BufferUtils.createFloatBuffer(radius);
+                buffer.put(this.gaussianKernel.getKernel());
+                buffer.flip();
+
+                u_radius.setValue(radius);
+                u_kernel.setValue(buffer);
             }
-            mc.getFramebuffer().bindFramebuffer(true);
 
-
-            GlStateManager.disableAlpha();
-            GlStateManager.enableTexture2D();
-
-            GlStateManager.bindTexture(cacheBuffer.framebufferTexture);
+            u_alpha_multiplier.setValue(alpha);
+            u_diffuse_sampler.setValue(0);
+            u_other_sampler.setValue(20);
+            u_texel_size.setValue(1.0F / mc.displayWidth * 0.5f, 1.0F / mc.displayHeight * 0.5f);
+            u_direction.setValue(compression, 0.0F);
 
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GlStateManager.color(1.0F, 1.0F, 1.0F, alpha);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GlStateManager.disableAlpha();
+            mc.getFramebuffer().bindFramebufferTexture();
             ShaderProgram.drawQuad();
 
-        } else {
-            this.runNoCaching(type, runnable);
+            if (cache) {
+                cacheBuffer.bindFramebuffer(true);
+                cacheBuffer.framebufferClearNoBinding();
+            } else {
+                mc.getFramebuffer().bindFramebuffer(true);
+            }
+
+            u_direction.setValue(0.0F, compression);
+            outputFramebuffer.bindFramebufferTexture();
+            GL13.glActiveTexture(GL13.GL_TEXTURE20);
+            inputFramebuffer.bindFramebufferTexture();
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
+
+//                    GlStateManager.blendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+//
+            ShaderProgram.drawQuad();
+            GlStateManager.disableBlend();
+
+            ShaderProgram.stop();
         }
     }
 
     @Override
-    public void runNoCaching(ShaderRenderType type, List<Runnable> runnable) {
+    public void runNoCaching(List<Runnable> runnable) {
         // Prevent rendering
         if (!Display.isVisible()) {
             return;
@@ -144,91 +172,67 @@ public class GaussianBlurShader extends Shader {
 
         this.update();
 
-        switch (type) {
-            case CAMERA: {
+        this.setActive(this.isActive() || !runnable.isEmpty());
 
-                this.setActive(!runnable.isEmpty());
+        if (this.isActive()) {
+            this.inputFramebuffer.bindFramebuffer(true);
+            this.inputFramebuffer.framebufferClearNoBinding();
+            runnable.forEach(Runnable::run);
 
-                if (this.isActive()) {
-                    this.inputFramebuffer.bindFramebuffer(true);
-                    this.inputFramebuffer.framebufferClearNoBinding();
-                    runnable.forEach(Runnable::run);
-                    if (cache) {
-                        cacheBuffer.bindFramebuffer(true);
-                        cacheBuffer.framebufferClearNoBinding();
-                    } else {
-                        mc.getFramebuffer().bindFramebuffer(true);
-                    }
-                }
-                break;
+
+            // TODO: make radius and other things as a setting
+            final int radius = 5;
+            final float compression = 2.0F;
+            final int programId = this.blurProgram.getProgramId();
+
+            this.outputFramebuffer.bindFramebuffer(true);
+            this.outputFramebuffer.framebufferClearNoBinding();
+            this.blurProgram.start();
+
+            if (this.gaussianKernel.getSize() != radius) {
+                this.gaussianKernel = new GaussianKernel(radius);
+                this.gaussianKernel.compute();
+
+                final FloatBuffer buffer = BufferUtils.createFloatBuffer(radius);
+                buffer.put(this.gaussianKernel.getKernel());
+                buffer.flip();
+
+                u_radius.setValue(radius);
+                u_kernel.setValue(buffer);
             }
-            case OVERLAY: {
-                this.setActive(this.isActive() || !runnable.isEmpty());
 
-                if (this.isActive()) {
-                    this.inputFramebuffer.bindFramebuffer(true);
-                    this.inputFramebuffer.framebufferClearNoBinding();
-                    runnable.forEach(Runnable::run);
+            u_alpha_multiplier.setValue(1f);
+            u_diffuse_sampler.setValue(0);
+            u_other_sampler.setValue(20);
+            u_texel_size.setValue(1.0F / mc.displayWidth * 0.5f, 1.0F / mc.displayHeight * 0.5f);
+            u_direction.setValue(compression, 0.0F);
 
+            GlStateManager.enableBlend();
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GlStateManager.disableAlpha();
+            mc.getFramebuffer().bindFramebufferTexture();
+            ShaderProgram.drawQuad();
 
-                    // TODO: make radius and other things as a setting
-                    final int radius = 5;
-                    final float compression = 2.0F;
-                    final int programId = this.blurProgram.getProgramId();
+            if (cache) {
+                cacheBuffer.bindFramebuffer(true);
+                cacheBuffer.framebufferClearNoBinding();
+            } else {
+                mc.getFramebuffer().bindFramebuffer(true);
+            }
 
-                    this.outputFramebuffer.bindFramebuffer(true);
-                    this.outputFramebuffer.framebufferClearNoBinding();
-                    this.blurProgram.start();
-
-                    if (this.gaussianKernel.getSize() != radius) {
-                        this.gaussianKernel = new GaussianKernel(radius);
-                        this.gaussianKernel.compute();
-
-                        final FloatBuffer buffer = BufferUtils.createFloatBuffer(radius);
-                        buffer.put(this.gaussianKernel.getKernel());
-                        buffer.flip();
-
-                        u_radius.setValue(radius);
-                        u_kernel.setValue(buffer);
-                    }
-
-
-                    u_diffuse_sampler.setValue(0);
-                    u_other_sampler.setValue(20);
-                    u_texel_size.setValue(1.0F / mc.displayWidth * 0.5f, 1.0F / mc.displayHeight * 0.5f);
-                    u_direction.setValue(compression, 0.0F);
-
-                    GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-                    GlStateManager.disableAlpha();
-                    mc.getFramebuffer().bindFramebufferTexture();
-                    ShaderProgram.drawQuad();
-
-                    if (cache) {
-                        cacheBuffer.bindFramebuffer(true);
-                        cacheBuffer.framebufferClearNoBinding();
-                    } else {
-                        mc.getFramebuffer().bindFramebuffer(true);
-                    }
-
-                    u_direction.setValue(0.0F, compression);
-                    outputFramebuffer.bindFramebufferTexture();
-                    GL13.glActiveTexture(GL13.GL_TEXTURE20);
-                    inputFramebuffer.bindFramebufferTexture();
-                    GL13.glActiveTexture(GL13.GL_TEXTURE0);
+            u_direction.setValue(0.0F, compression);
+            outputFramebuffer.bindFramebufferTexture();
+            GL13.glActiveTexture(GL13.GL_TEXTURE20);
+            inputFramebuffer.bindFramebufferTexture();
+            GL13.glActiveTexture(GL13.GL_TEXTURE0);
 
 //                    GlStateManager.blendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 //
-                    ShaderProgram.drawQuad();
-                    GlStateManager.disableBlend();
+            ShaderProgram.drawQuad();
+            GlStateManager.disableBlend();
 
-                    ShaderProgram.stop();
-                }
-
-                break;
-            }
+            ShaderProgram.stop();
         }
-
     }
 
     @Override
