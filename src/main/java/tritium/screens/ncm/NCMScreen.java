@@ -1,7 +1,6 @@
 package tritium.screens.ncm;
 
 import lombok.Getter;
-import lombok.SneakyThrows;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
@@ -13,7 +12,8 @@ import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.BaseScreen;
-import tritium.screens.ncm.panels.PlaylistsPanel;
+import tritium.screens.ncm.panels.ControlsBar;
+import tritium.screens.ncm.panels.NavigateBar;
 
 import java.util.Collections;
 
@@ -32,13 +32,16 @@ public class NCMScreen extends BaseScreen {
     Panel basePanel = new Panel();
 
     @Getter
-    PlaylistsPanel playlistsPanel;
+    NavigateBar playlistsPanel;
 
     RectWidget currentPanelBg = new RectWidget();
 
     NCMPanel prevAnimatingPanel = null;
     NCMPanel currentPanel = null;
     float curPanelAlphaAnimation = 0f;
+
+    @Getter
+    ControlsBar controlsBar;
 
     @Override
     public void initGui() {
@@ -50,7 +53,7 @@ public class NCMScreen extends BaseScreen {
 
         this.layout();
 
-        this.playlistsPanel = new PlaylistsPanel();
+        this.playlistsPanel = new NavigateBar();
         this.basePanel.addChild(this.playlistsPanel);
 
         this.basePanel.addChild(this.currentPanelBg);
@@ -59,6 +62,9 @@ public class NCMScreen extends BaseScreen {
             this.currentPanelBg.setBounds(playlistsPanel.getWidth(), 0, this.currentPanelBg.getParentWidth() - playlistsPanel.getWidth(), this.getPanelHeight() * 0.93);
             this.currentPanelBg.setColor(getColor(ColorType.GENERIC_BACKGROUND));
         });
+
+        this.controlsBar = new ControlsBar();
+        this.controlsBar.onInit();
     }
 
     private void layout() {
@@ -132,6 +138,10 @@ public class NCMScreen extends BaseScreen {
             StencilClipManager.endClip();
         }
 
+        this.controlsBar.setAlpha(alpha);
+        this.controlsBar.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY() + this.currentPanelBg.getHeight(), this.currentPanelBg.getWidth(), this.getPanelHeight() - this.currentPanelBg.getHeight());
+        this.controlsBar.renderWidget(mouseX, mouseY, dWheel);
+
         GlStateManager.popMatrix();
     }
 
@@ -154,12 +164,19 @@ public class NCMScreen extends BaseScreen {
     @Override
     public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
         this.basePanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
+
+        if (this.currentPanel != null)
+            this.currentPanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
+
+        this.controlsBar.onMouseClickReceived(mouseX, mouseY, mouseButton);
 //        this.playlistsPanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
     }
 
     public enum ColorType {
 
         GENERIC_BACKGROUND,
+        ELEMENT_BACKGROUND,
+        ELEMENT_HOVER,
         PRIMARY_TEXT,
         SECONDARY_TEXT;
 
@@ -170,10 +187,14 @@ public class NCMScreen extends BaseScreen {
         switch (type) {
             case GENERIC_BACKGROUND:
                 return 0x1E1E1E;
+            case ELEMENT_BACKGROUND:
+                return 0x232323;
+            case ELEMENT_HOVER:
+                return 0x353535;
             case PRIMARY_TEXT:
                 return 0xFFFFFF;
             case SECONDARY_TEXT:
-                return 0x4B4B4B;
+                return 0x6B6B6B;
         }
 
         return 0;

@@ -1375,15 +1375,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                         GlStateManager.loadIdentity();
                         GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
-                        if (Tritium.getVersion().getType() == Version.Type.Dev) {
-                            try {
-                                ((BaseScreen) this.mc.currentScreen).drawScreen(k1, l1, partialTicks);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        } else {
-                            ((BaseScreen) this.mc.currentScreen).drawScreen(k1, l1, partialTicks);
-                        }
+                        ((BaseScreen) this.mc.currentScreen).drawScreen(k1, l1, partialTicks);
 
                         GlStateManager.popMatrix();
 

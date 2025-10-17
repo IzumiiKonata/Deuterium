@@ -2,31 +2,42 @@ package tritium.screens.ncm.panels;
 
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.NativeBackedImage;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.util.Location;
 import tech.konata.ncmplayer.music.CloudMusic;
 import tech.konata.ncmplayer.music.dto.PlayList;
 import tritium.management.FontManager;
-import tritium.rendering.ui.AbstractWidget;
+import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
+import tritium.rendering.ui.widgets.RoundedImageWidget;
 import tritium.rendering.ui.widgets.RoundedRectWidget;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
+import tritium.utils.network.HttpUtils;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;
+import java.io.InputStream;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
  * Date: 2025/10/16 22:00
  */
-public class PlaylistsPanel extends NCMPanel {
+public class NavigateBar extends NCMPanel {
 
     RoundedRectWidget searchBar = new RoundedRectWidget();
     ScrollPanel playlistPanel = new ScrollPanel();
 
-    public PlaylistsPanel() {
+    public NavigateBar() {
         this.layout();
     }
 
@@ -47,6 +58,7 @@ public class PlaylistsPanel extends NCMPanel {
         this.addChild(searchBar);
 
         this.searchBar.setBeforeRenderCallback(() -> {
+            searchBar.setAlpha(.2f);
             searchBar.setColor(0xFFFF1010);
             searchBar.setMargin(8);
             searchBar.setHeight(16);
@@ -57,7 +69,7 @@ public class PlaylistsPanel extends NCMPanel {
         this.playlistPanel.setBeforeRenderCallback(() -> {
             this.playlistPanel.setMargin(0);
             this.playlistPanel.setPosition(this.playlistPanel.getRelativeX(), searchBar.getRelativeY() + searchBar.getHeight() + 8);
-            this.playlistPanel.setBounds(this.playlistPanel.getWidth(), this.playlistPanel.getHeight() - searchBar.getHeight() - 8);
+            this.playlistPanel.setBounds(this.playlistPanel.getWidth(), this.playlistPanel.getHeight() - searchBar.getHeight() - 16);
         });
 
         this.playlistPanel.setSpacing(4);
@@ -70,13 +82,78 @@ public class PlaylistsPanel extends NCMPanel {
 
         this.playlistPanel.addChild(lbl);
 
-        for (PlayList playList : CloudMusic.playLists) {
-            PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
+        List<PlayList> playLists = CloudMusic.playLists.stream().filter(playList -> !playList.subscribed).collect(Collectors.toList());
+        for (int i = 0; i < playLists.size(); i++) {
+            PlayList playList = playLists.get(i);
+            PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
                 NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
             });
 
             this.playlistPanel.addChild(item);
         }
+
+        LabelWidget lblSubscribed = new LabelWidget("收藏歌单", FontManager.pf14bold);
+        lblSubscribed.setBeforeRenderCallback(() -> {
+            lblSubscribed.setColor(Color.GRAY);
+            lblSubscribed.setPosition(6, lblSubscribed.getRelativeY());
+        });
+
+        this.playlistPanel.addChild(lblSubscribed);
+        CloudMusic.playLists.stream().filter(playList -> playList.subscribed).forEach(playList -> {
+            PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
+                NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
+            });
+
+            this.playlistPanel.addChild(item);
+        });
+
+        RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
+        this.addChild(creatorAvatar);
+        creatorAvatar.fadeIn();
+
+        this.loadAvatar();
+
+        creatorAvatar.setBeforeRenderCallback(() -> {
+            creatorAvatar.setBounds(16, 16);
+            creatorAvatar.setPosition(12, this.getHeight() - 8 - creatorAvatar.getHeight());
+            creatorAvatar.setRadius(7.25);
+        });
+
+        LabelWidget lblCreator = new LabelWidget(CloudMusic.profile.name, FontManager.pf16bold);
+        this.addChild(lblCreator);
+
+        lblCreator.setBeforeRenderCallback(() -> {
+            lblCreator.setPosition(creatorAvatar.getRelativeX() + creatorAvatar.getWidth() + 4, creatorAvatar.getRelativeY() + creatorAvatar.getHeight() * .5 - lblCreator.getHeight() * .5);
+            lblCreator.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+        });
+    }
+
+    private void loadAvatar() {
+        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+        Location avatarLoc = this.getUserAvatarLocation();
+        if (textureManager.getTexture(avatarLoc) != null)
+            return;
+
+        MultiThreadingUtil.runAsync(() -> {
+            try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.avatarUrl + "?param=32y32")) {
+                if (inputStream != null) {
+                    NativeBackedImage img = NativeBackedImage.make(inputStream);
+                    AsyncGLContext.submit(() -> {
+                        if (textureManager.getTexture(avatarLoc) != null) {
+                            textureManager.deleteTexture(avatarLoc);
+                        }
+                        Textures.loadTexture(avatarLoc, img);
+                        img.close();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    private Location getUserAvatarLocation() {
+        return Location.of("tritium/textures/users/" + CloudMusic.profile.id + "/avatar.png");
     }
 
     @Override
@@ -123,7 +200,7 @@ public class PlaylistsPanel extends NCMPanel {
             lblIcon.setBeforeRenderCallback(() -> {
                 lblIcon.setColor(iconColorSupplier.get());
                 lblIcon.centerVertically();
-                lblIcon.setPosition(8, lblIcon.getRelativeY());
+                lblIcon.setPosition(8, lblIcon.getRelativeY() + .5);
             });
 
             lblIcon.setClickable(false);

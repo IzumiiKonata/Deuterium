@@ -4,11 +4,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
+import tech.konata.ncmplayer.music.CloudMusic;
+import tech.konata.ncmplayer.music.dto.Music;
 import tech.konata.ncmplayer.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
+import tritium.rendering.ui.container.Panel;
+import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.*;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
@@ -16,6 +20,11 @@ import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.InputStream;
+import java.sql.Array;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -33,19 +42,15 @@ public class PlaylistPanel extends NCMPanel {
     public void onInit() {
         RoundedImageWidget cover = new RoundedImageWidget(this.getCoverLocation(), 0, 0, 0, 0);
 
-        cover.setPosition(16, 16);
+        cover.setPosition(24, 24);
         cover.setBounds(128, 128);
-        cover.setAlpha(0);
+        cover.fadeIn();
 
         this.addChild(cover);
         this.loadCover();
 
         cover.setBeforeRenderCallback(() -> {
             cover.setRadius(4);
-            TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-            Location coverLoc = this.getCoverLocation();
-            if (textureManager.getTexture(coverLoc) != null)
-                cover.setAlpha(Interpolations.interpBezier(cover.getAlpha(), 1.0f, 0.2f));
         });
 
 //        LabelWidget lblPlaylistName = new LabelWidget(playList.name, FontManager.pf);
@@ -54,10 +59,21 @@ public class PlaylistPanel extends NCMPanel {
 
         btnPlay.setBeforeRenderCallback(() -> {
             btnPlay.setBounds(57, 17);
-            btnPlay.setPosition(cover.getRelativeX() + cover.getWidth() + 8, cover.getRelativeY() + cover.getHeight() - btnPlay.getHeight());
-            btnPlay.setRadius(4);
+            btnPlay.setPosition(cover.getRelativeX() + cover.getWidth() + 12, cover.getRelativeY() + cover.getHeight() - btnPlay.getHeight());
+            btnPlay.setRadius(3);
             btnPlay.setColor(0xFFd60017);
             btnPlay.setTextColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+        });
+
+        btnPlay.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+
+            if (mouseButton == 0) {
+                playList.loadMusicsWithCallback(musics -> {
+                    CloudMusic.play(musics, 0);
+                });
+            }
+
+            return true;
         });
 
         RoundedButtonWidget btnPlayRandomOrder = new RoundedButtonWidget("乱序播放歌单", FontManager.pf16);
@@ -65,13 +81,119 @@ public class PlaylistPanel extends NCMPanel {
 
         btnPlayRandomOrder.setBeforeRenderCallback(() -> {
             btnPlayRandomOrder.setBounds(57, 17);
-            btnPlayRandomOrder.setPosition(cover.getRelativeX() + cover.getWidth() + 8 + btnPlay.getWidth() + 8, cover.getRelativeY() + cover.getHeight() - btnPlayRandomOrder.getHeight());
-            btnPlayRandomOrder.setRadius(4);
+            btnPlayRandomOrder.setPosition(cover.getRelativeX() + cover.getWidth() + 12 + btnPlay.getWidth() + 8, cover.getRelativeY() + cover.getHeight() - btnPlayRandomOrder.getHeight());
+            btnPlayRandomOrder.setRadius(3);
             btnPlayRandomOrder.setColor(0xFFd60017);
             btnPlayRandomOrder.setTextColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
         });
 
-        RoundedRectWidget rrwCreatorPlaceholder = new RoundedRectWidget(0, 0, 0, 0);
+        btnPlayRandomOrder.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+
+            if (mouseButton == 0) {
+                playList.loadMusicsWithCallback(musics -> {
+                    ArrayList<Music> music = new ArrayList<>(musics);
+                    Collections.shuffle(music);
+                    CloudMusic.play(music, 0);
+                });
+            }
+
+            return true;
+        });
+
+        RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
+        this.addChild(creatorAvatar);
+        creatorAvatar.fadeIn();
+
+        this.loadAvatar();
+
+        creatorAvatar.setBeforeRenderCallback(() -> {
+            creatorAvatar.setBounds(16, 16);
+            creatorAvatar.setPosition(cover.getRelativeX() + cover.getWidth() + 12, btnPlay.getRelativeY() - 4 - creatorAvatar.getHeight());
+            creatorAvatar.setRadius(7.25);
+        });
+
+        LabelWidget lblCreator = new LabelWidget(playList.creator.name, FontManager.pf16bold);
+        this.addChild(lblCreator);
+
+        lblCreator.setBeforeRenderCallback(() -> {
+            lblCreator.setPosition(creatorAvatar.getRelativeX() + creatorAvatar.getWidth() + 4, creatorAvatar.getRelativeY() + creatorAvatar.getHeight() * .5 - lblCreator.getHeight() * .5);
+            lblCreator.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+        });
+
+        LabelWidget lblPlaylistInfo = new LabelWidget(() -> this.getPlayListInfo(), FontManager.pf12);
+        this.addChild(lblPlaylistInfo);
+
+        lblPlaylistInfo.setBeforeRenderCallback(() -> {
+            lblPlaylistInfo.setPosition(cover.getRelativeX() + cover.getWidth() + 12, creatorAvatar.getRelativeY() - 8 - lblPlaylistInfo.getHeight());
+            lblPlaylistInfo.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
+        });
+
+        LabelWidget lblPlaylistName = new LabelWidget(playList.name, FontManager.pf32);
+        this.addChild(lblPlaylistName);
+
+        lblPlaylistName.setBeforeRenderCallback(() -> {
+            lblPlaylistName.setPosition(cover.getRelativeX() + cover.getWidth() + 12, lblPlaylistInfo.getRelativeY() - 4 - lblPlaylistName.getHeight());
+            lblPlaylistName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+        });
+
+        Panel rwMusicsContainer = new Panel();
+
+        this.addChild(rwMusicsContainer);
+//        rwMusicsContainer.setColor(-1);
+
+        rwMusicsContainer.setBeforeRenderCallback(() -> {
+            rwMusicsContainer.setBounds(this.getWidth() - 36, this.getHeight() - (cover.getRelativeY() + cover.getHeight() + 24));
+            rwMusicsContainer.centerHorizontally();
+            rwMusicsContainer.setPosition(rwMusicsContainer.getRelativeX(), cover.getRelativeY() + cover.getHeight() + 24);
+        });
+
+        ScrollPanel musicsPanel = new ScrollPanel();
+
+        rwMusicsContainer.addChild(musicsPanel);
+        musicsPanel.setSpacing(0);
+
+        musicsPanel.setBeforeRenderCallback(() -> {
+            musicsPanel.setMargin(0);
+        });
+
+        playList.loadMusicsWithCallback(musics -> {
+            for (int i = 0; i < musics.size(); i++) {
+                Music music = musics.get(i);
+                MusicWidget musicWidget = new MusicWidget(music, playList, i);
+                musicsPanel.addChild(musicWidget);
+            }
+        });
+    }
+
+    private String formatDuration(long totalMillis) {
+        long totalSeconds = totalMillis / 1000;
+
+        long hours = totalSeconds / 3600;
+        long minutes = (totalSeconds % 3600) / 60;
+        long seconds = totalSeconds % 60;
+
+        StringBuilder sb = new StringBuilder();
+
+        if (hours > 0) {
+            sb.append(String.format("%02d时", hours));
+        }
+
+        if (minutes > 0) {
+            sb.append(String.format("%02d分", minutes));
+        }
+
+        sb.append(String.format("%02d秒", seconds));
+
+        return sb.toString();
+    }
+
+    private String getPlayListInfo() {
+
+        List<Music> musics = playList.getMusics();
+        if (musics.isEmpty())
+            return playList.count + "首歌曲";
+
+        return musics.size() + "首歌曲 · " + this.formatDuration(musics.stream().mapToLong(Music::getDuration).sum());
     }
 
     private void loadCover() {
@@ -100,7 +222,34 @@ public class PlaylistPanel extends NCMPanel {
 
     }
 
+    private void loadAvatar() {
+        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
+        Location avatarLoc = this.getUserAvatarLocation();
+        if (textureManager.getTexture(avatarLoc) != null)
+            return;
+        MultiThreadingUtil.runAsync(() -> {
+            try (InputStream inputStream = HttpUtils.downloadStream(playList.creator.avatarUrl + "?param=32y32")) {
+                if (inputStream != null) {
+                    NativeBackedImage img = NativeBackedImage.make(inputStream);
+                    AsyncGLContext.submit(() -> {
+                        if (textureManager.getTexture(avatarLoc) != null) {
+                            textureManager.deleteTexture(avatarLoc);
+                        }
+                        Textures.loadTexture(avatarLoc, img);
+                        img.close();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     private Location getCoverLocation() {
         return Location.of("tritium/textures/playlist/" + this.playList.id + "/cover.png");
+    }
+
+    private Location getUserAvatarLocation() {
+        return Location.of("tritium/textures/users/" + this.playList.creator.id + "/avatar.png");
     }
 }

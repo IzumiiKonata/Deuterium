@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.util.Location;
+import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.ui.AbstractWidget;
 
@@ -24,6 +25,8 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
     @Getter
     private double radius = 0;
 
+    boolean fadeIn = false;
+
     public RoundedImageWidget(Supplier<Location> locImg, double x, double y, double width, double height) {
         this.setBounds(x, y, width, height);
         this.locImg = locImg;
@@ -37,6 +40,12 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
         this(() -> null, x, y, width, height);
     }
 
+    public RoundedImageWidget fadeIn() {
+        fadeIn = true;
+        this.setAlpha(0);
+        return this;
+    }
+
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
         Location img = locImg.get();
@@ -48,6 +57,9 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
 
         if (textureObject == null)
             return;
+
+        if (fadeIn)
+            this.setAlpha(Interpolations.interpBezier(this.getAlpha(), 1.0f, 0.2f));
 
         GlStateManager.color(1, 1, 1, this.getAlpha());
         GlStateManager.bindTexture(textureObject.getGlTextureId());

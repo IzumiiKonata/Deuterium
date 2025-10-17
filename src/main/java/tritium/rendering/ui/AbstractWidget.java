@@ -8,6 +8,7 @@ import tritium.rendering.ui.container.ScrollPanel;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * 组件 base。
@@ -25,7 +26,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     AbstractWidget<?> parent = null;
-    List<AbstractWidget<?>> children = new ArrayList<>();
+    List<AbstractWidget<?>> children = new CopyOnWriteArrayList<>();
 
     public static class Bounds {
         /**

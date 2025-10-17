@@ -5,7 +5,6 @@ import com.google.gson.JsonObject;
 import lombok.Getter;
 import tech.konata.commons.ncm.RequestUtil;
 import tech.konata.commons.ncm.api.CloudMusicApi;
-import tech.konata.ncmplayer.music.IMusicList;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * 歌单对象
  */
-public class PlayList implements IMusicList {
+public class PlayList {
     public final long id;
     public String name;
     @Getter
@@ -29,15 +28,10 @@ public class PlayList implements IMusicList {
     //    public JsonArray tags;
     public final List<Music> musics = new CopyOnWriteArrayList<>();
 
-    public double scrollSmooth = 0;
-    public double scrollOffset = 0;
     public boolean searchMode = false;
     public JsonArray songs;
 
-    public boolean coverLoadedSmall = false;
-    public boolean coverLoaded = false;
-    public float coverLoadAlpha = .0f;
-    public float musicLoadAlpha = 1.0f;
+    public boolean musicsLoaded = false;
 
     public PlayList(JsonObject data) {
 
@@ -74,7 +68,6 @@ public class PlayList implements IMusicList {
         this.name = "Search";
     }
 
-    @Override
     public List<Music> getMusics() {
         if (!musics.isEmpty() && (this.songs != null || searchMode)) {
             return this.musics;
@@ -98,11 +91,45 @@ public class PlayList implements IMusicList {
                         this.musics.add(new Music(element.getAsJsonObject(), null));
                     });
                 }
+                musicsLoaded = true;
             });
 
         }
 
         return this.musics;
+    }
+
+    public void loadMusicsWithCallback(MusicsLoadedCallback callback) {
+        if (!musics.isEmpty()) {
+            callback.onMusicsLoaded(musics);
+            return;
+        }
+
+        if (!searchMode) {
+
+            MultiThreadingUtil.runAsync(() -> {
+                RequestUtil.RequestAnswer requestAnswer = null;
+                try {
+                    requestAnswer = CloudMusicApi.playlistTrackAll(id, 8);
+                } catch (Exception e) {
+                    this.songs = null;
+                    throw new RuntimeException(e);
+                }
+                this.songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
+                synchronized (this.musics) {
+                    this.songs.forEach(element -> {
+                        this.musics.add(new Music(element.getAsJsonObject(), null));
+                    });
+                }
+                musicsLoaded = true;
+                callback.onMusicsLoaded(musics);
+            });
+
+        }
+    }
+
+    public interface MusicsLoadedCallback {
+        void onMusicsLoaded(List<Music> musics);
     }
 
     public void updPlayCount() {

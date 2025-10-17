@@ -105,10 +105,10 @@ public class CategoriesWindow extends Window {
                     ),
                     Tuple.of(
                             "f", Localizable.of("category.widgets.name")
-                    ),
+                    )/*,
                     Tuple.of(
                             "f", Localizable.of("category.music.name")
-                    )
+                    )*/
             );
 
             List<Runnable> onClick = Arrays.asList(

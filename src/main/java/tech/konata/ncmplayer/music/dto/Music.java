@@ -9,8 +9,7 @@ import tech.konata.commons.ncm.api.CloudMusicApi;
 import tech.konata.ncmplayer.music.CloudMusic;
 
 import java.text.SimpleDateFormat;
-import java.util.Base64;
-import java.util.Date;
+import java.util.*;
 
 @Getter
 public class Music {
@@ -120,7 +119,7 @@ public class Music {
             this.artists = data.get("artists").getAsJsonArray();
         }
 
-        this.artistsName = this.getArtists(4);
+        this.artistsName = this.getArtists();
 
         if (this.artistsName == null || this.artistsName.isEmpty()) {
             this.artistsName = "Unknown";
@@ -163,45 +162,41 @@ public class Music {
 
     }
 
-    private String getArtists(int limit) {
-        StringBuilder artistsName = new StringBuilder();
-
-        int count = 0;
+    private String getArtists() {
+        List<String> artistsList = new ArrayList<>();
 
         for (JsonElement artistData : artists) {
 
             JsonObject jObj = artistData.getAsJsonObject();
 
-            if (count + 1 > limit)
-                return artistsName.substring(0, artistsName.length() - 3) + " ...";
-
             if (jObj.has("name")) {
-
                 JsonElement jName = jObj.get("name");
 
                 if (!jName.isJsonNull()) {
-                    artistsName.append(jName.getAsString());
-
-                    if (jObj.has("tns")) {
-                        JsonArray tns = jObj.getAsJsonArray("tns");
-
-                        if (tns.size() > 0) {
-                            artistsName.append(" (").append(tns.get(0).getAsString()).append(")");
-                        }
-                    }
-
-                    artistsName.append(" / ");
+                    artistsList.add(jName.getAsString());
                 }
-
             }
-
-            ++count;
         }
 
-        if (artistsName.length() == 0)
-            return "";
+        StringBuilder sb = new StringBuilder();
 
-        return artistsName.substring(0, artistsName.length() - 3);
+        for (int i = 0; i < artistsList.size(); i++) {
+            String artistName = artistsList.get(i);
+
+            if (i != artistsList.size() - 1) {
+                sb.append(artistName);
+
+                if (i != artistsList.size() - 2) {
+                    sb.append("& ");
+                }
+
+                sb.append(", ");
+            } else {
+                sb.append(artistName);
+            }
+        }
+
+        return sb.toString();
     }
 
     /**
