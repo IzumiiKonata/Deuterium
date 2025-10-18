@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Location;
 import org.lwjglx.input.Mouse;
 import tech.konata.ncmplayer.music.AudioPlayer;
@@ -18,10 +19,14 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.shader.Shader;
+import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.widget.impl.MusicInfoWidget;
 import tritium.widget.impl.MusicLyricsWidget;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -106,6 +111,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         double lyricsWidth = width * .4;
         this.updateLyricPositions(lyricsWidth);
 
+        List<Runnable> runnables = new ArrayList<>();
+
+        boolean hoveringLyrics = isHovered(mouseX, mouseY, posX + width * .5, posY, width * .5, height);
+
         for (LyricLine lyric : lyrics) {
 
             if (lyric.posY + lyric.height + 16 < posY) {
@@ -119,6 +128,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0.4f, 0.2f);
             boolean isHovering = isHovered(mouseX, mouseY, RenderSystem.getWidth() * .5, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? .2f : 0f, 0.2f);
+            lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics && lyric != currentDisplaying ? 1f : 0f, 0.1f);
             roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, 8, 8, 1, 1, 1, alpha * lyric.hoveringAlpha);
 
             double renderX = RenderSystem.getWidth() * .5;
@@ -171,8 +181,24 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             if (lyric.translationText != null) {
                 FontManager.pf34bold.drawString(lyric.translationText, RenderSystem.getWidth() * .5, renderY + FontManager.pf65bold.getHeight() * .85 + 8, hexColor(1, 1, 1, alpha * .75f * lyric.alpha));
             }
+
+            runnables.add(() -> Rect.draw(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
         }
+
+//        fbBlur = RenderSystem.createFrameBuffer(fbBlur);
+//
+//        fbBlur.bindFramebuffer(true);
+//        fbBlur.framebufferClearNoBinding();
+//
+//        runnables.forEach(Runnable::run);
+//
+//        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
+
+//        runnables.forEach(Runnable::run);
+        Shaders.GAUSSIAN_BLUR_SHADER.runNoCaching(runnables);
     }
+
+    Framebuffer fbBlur = null;
 
     private static double lyricFraction() {
         return .25;
@@ -190,7 +216,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 //
         double offsetY = RenderSystem.getHeight() * lyricFraction()/* - (idxCurrent > 0 ? lyrics.get(idxCurrent - 1).height : 0)*/;
         List<LyricLine> subList = lyrics.subList(0, idxCurrent);
-        float fraction = 0.15f;
+        float fraction = 0.1f;
         for (int i = subList.size() - 1; i >= 0; i--) {
             LyricLine lyric = subList.get(i);
 

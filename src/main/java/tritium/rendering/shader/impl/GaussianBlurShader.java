@@ -40,7 +40,6 @@ public class GaussianBlurShader extends Shader {
     private final Uniform1i u_other_sampler = new Uniform1i(blurProgram, "u_other_sampler");
     private final Uniform2f u_texel_size = new Uniform2f(blurProgram, "u_texel_size");
     private final Uniform2f u_direction = new Uniform2f(blurProgram, "u_direction");
-    public final Uniform1f u_alpha_multiplier = new Uniform1f(blurProgram, "u_alpha_multiplier");
 
     @Override
     public void run(List<Runnable> runnable) {
@@ -88,79 +87,6 @@ public class GaussianBlurShader extends Shader {
         }
     }
 
-    public void run(List<Runnable> runnable, float alpha) {
-        // Prevent rendering
-        if (!Display.isVisible()) {
-            return;
-        }
-
-        Minecraft mc = Minecraft.getMinecraft();
-
-        this.update();
-
-        this.setActive(this.isActive() || !runnable.isEmpty());
-
-        if (this.isActive()) {
-            this.inputFramebuffer.bindFramebuffer(true);
-            this.inputFramebuffer.framebufferClearNoBinding();
-            runnable.forEach(Runnable::run);
-
-
-            // TODO: make radius and other things as a setting
-            final int radius = 5;
-            final float compression = 2.0F;
-            final int programId = this.blurProgram.getProgramId();
-
-            this.outputFramebuffer.bindFramebuffer(true);
-            this.outputFramebuffer.framebufferClearNoBinding();
-            this.blurProgram.start();
-
-            if (this.gaussianKernel.getSize() != radius) {
-                this.gaussianKernel = new GaussianKernel(radius);
-                this.gaussianKernel.compute();
-
-                final FloatBuffer buffer = BufferUtils.createFloatBuffer(radius);
-                buffer.put(this.gaussianKernel.getKernel());
-                buffer.flip();
-
-                u_radius.setValue(radius);
-                u_kernel.setValue(buffer);
-            }
-
-            u_alpha_multiplier.setValue(alpha);
-            u_diffuse_sampler.setValue(0);
-            u_other_sampler.setValue(20);
-            u_texel_size.setValue(1.0F / mc.displayWidth * 0.5f, 1.0F / mc.displayHeight * 0.5f);
-            u_direction.setValue(compression, 0.0F);
-
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-            GlStateManager.disableAlpha();
-            mc.getFramebuffer().bindFramebufferTexture();
-            ShaderProgram.drawQuad();
-
-            if (cache) {
-                cacheBuffer.bindFramebuffer(true);
-                cacheBuffer.framebufferClearNoBinding();
-            } else {
-                mc.getFramebuffer().bindFramebuffer(true);
-            }
-
-            u_direction.setValue(0.0F, compression);
-            outputFramebuffer.bindFramebufferTexture();
-            GL13.glActiveTexture(GL13.GL_TEXTURE20);
-            inputFramebuffer.bindFramebufferTexture();
-            GL13.glActiveTexture(GL13.GL_TEXTURE0);
-
-//                    GlStateManager.blendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
-//
-            ShaderProgram.drawQuad();
-            GlStateManager.disableBlend();
-
-            ShaderProgram.stop();
-        }
-    }
-
     @Override
     public void runNoCaching(List<Runnable> runnable) {
         // Prevent rendering
@@ -176,13 +102,14 @@ public class GaussianBlurShader extends Shader {
 
         if (this.isActive()) {
             this.inputFramebuffer.bindFramebuffer(true);
+            this.inputFramebuffer.setFramebufferColor(1, 1, 1, 0);
             this.inputFramebuffer.framebufferClearNoBinding();
             runnable.forEach(Runnable::run);
 
 
             // TODO: make radius and other things as a setting
             final int radius = 5;
-            final float compression = 2.0F;
+            final float compression = 1.5F;
             final int programId = this.blurProgram.getProgramId();
 
             this.outputFramebuffer.bindFramebuffer(true);
@@ -201,7 +128,6 @@ public class GaussianBlurShader extends Shader {
                 u_kernel.setValue(buffer);
             }
 
-            u_alpha_multiplier.setValue(1f);
             u_diffuse_sampler.setValue(0);
             u_other_sampler.setValue(20);
             u_texel_size.setValue(1.0F / mc.displayWidth * 0.5f, 1.0F / mc.displayHeight * 0.5f);
