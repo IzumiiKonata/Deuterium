@@ -78,6 +78,7 @@
     "module.rainbow.name": "Rainbow",
     "module.chroma.name": "Chroma",
     "module.arraylistoutlinecolor.name": "Outline Color",
+    "module.ncm screen.name": "Music Player",
 
     "module.autosprint.name": "Auto Sprint",
     "module.autosprint.desc": "Makes you sprint automatically",
