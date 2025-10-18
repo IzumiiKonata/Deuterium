@@ -198,8 +198,6 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         Shaders.GAUSSIAN_BLUR_SHADER.runNoCaching(runnables);
     }
 
-    Framebuffer fbBlur = null;
-
     private static double lyricFraction() {
         return .25;
     }
@@ -237,7 +235,17 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
             double prevOffsetY = prev == null ? offsetY : offsetY - 16 - prev.height;
 
-            if (prev == null || Math.abs(prev.posY - prevOffsetY) / prev.height <= .75) {
+            if (prev != null) {
+                if (lyric.posY - (prev.posY + prev.height) >= 48)
+                    lyric.shouldUpdatePosition = true;
+            }
+
+            if (prev != null && lyric.posY - (prev.posY + prev.height) < 0) {
+                updateLyricPositionsImmediate(width);
+                break;
+            }
+
+            if (prev == null || lyric.shouldUpdatePosition) {
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
             }
 
@@ -286,6 +294,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
      * 更新当前显示的歌词行
      */
     private static void updateCurrentDisplayingLyric(float songProgress) {
+
+        LyricLine cur = currentDisplaying;
+
         for (int i = 0; i < lyrics.size(); i++) {
             LyricLine lyric = lyrics.get(i);
 
@@ -297,6 +308,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             } else if (i == lyrics.size() - 1) {
                 currentDisplaying = lyrics.get(i);
             }
+        }
+
+        if (cur != currentDisplaying) {
+            lyrics.forEach(l -> l.shouldUpdatePosition = false);
         }
     }
 
