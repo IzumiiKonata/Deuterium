@@ -166,8 +166,10 @@ public class ControlsBar extends NCMPanel {
                     double percent = xDelta / this.getWidth();
 
                     if (CloudMusic.player != null) {
-                        CloudMusic.player.setPlaybackTime((float) (percent * CloudMusic.player.getTotalTimeMillis()));
-                        MusicLyricsWidget.quickResetProgress((float) (percent * CloudMusic.player.getTotalTimeMillis()));
+                        float progress = (float) (percent * CloudMusic.player.getTotalTimeMillis());
+                        CloudMusic.player.setPlaybackTime(progress);
+                        MusicLyricsWidget.quickResetProgress(progress);
+                        FuckPussyPanel.resetProgress(progress);
                     }
                 }
             }

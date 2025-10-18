@@ -181,6 +181,22 @@ public class Interpolations {
         return new Color(animationr, animationg, animationb, finalStatea);
     }
 
+    public static double interpLinear(double now, double end, float interpolation) {
+        double add = RenderSystem.getFrameDeltaTime() * 0.1 * interpolation;
+        if (now < end) {
+            if (now + add < end)
+                now += add;
+            else
+                now = end;
+        } else {
+            if (now - add > end)
+                now -= add;
+            else
+                now = end;
+        }
+        return now;
+    }
+
     public static float interpLinear(float now, float end, float interpolation) {
         float add = (float) (RenderSystem.getFrameDeltaTime() * 0.1 * interpolation);
         if (now < end) {

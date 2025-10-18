@@ -30,6 +30,7 @@ import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.category.CategoriesWindow;
+import tritium.screens.ncm.FuckPussyPanel;
 import tritium.utils.i18n.Localizable;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
@@ -230,8 +231,10 @@ public class PlaylistsWindow extends Window {
                     double percent = xDelta / this.getWidth();
 
                     if (CloudMusic.player != null) {
-                        CloudMusic.player.setPlaybackTime((float) (percent * CloudMusic.player.getTotalTimeMillis()));
-                        MusicLyricsWidget.quickResetProgress((float) (percent * CloudMusic.player.getTotalTimeMillis()));
+                        float progress = (float) (percent * CloudMusic.player.getTotalTimeMillis());
+                        CloudMusic.player.setPlaybackTime(progress);
+                        MusicLyricsWidget.quickResetProgress(progress);
+                        FuckPussyPanel.resetProgress(progress);
                     }
                 }
             }
