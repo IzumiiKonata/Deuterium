@@ -1910,6 +1910,9 @@ public class Minecraft implements IThreadListener {
 
                         if (k == 20 && Keyboard.isKeyDown(61)) {
                             this.refreshResources();
+                        }
+
+                        if (k == Keyboard.KEY_Y && Keyboard.isKeyDown(61)) {
                             FontManager.loadFonts();
                         }
 

@@ -27,6 +27,7 @@ import tritium.rendering.GaussianKernel;
 import tritium.rendering.texture.Textures;
 import tritium.screens.ClickGui;
 import tritium.screens.ncm.FuckPussyPanel;
+import tritium.screens.ncm.NCMScreen;
 import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.WrappedInputStream;
@@ -766,14 +767,14 @@ public class CloudMusic {
 
             if (code == 802) {
                 if (json.has("nickname")) {
-                    ClickGui.getInstance().getPlaylistsWindow().loginRenderer.tempUsername = json.get("nickname").getAsString();
+                    NCMScreen.getInstance().loginRenderer.tempUsername = json.get("nickname").getAsString();
                 }
 
                 if (json.has("avatarUrl")) {
                     String url = json.get("avatarUrl").getAsString();
 
-                    if (!ClickGui.getInstance().getPlaylistsWindow().loginRenderer.avatarLoaded) {
-                        ClickGui.getInstance().getPlaylistsWindow().loginRenderer.avatarLoaded = true;
+                    if (!NCMScreen.getInstance().loginRenderer.avatarLoaded) {
+                        NCMScreen.getInstance().loginRenderer.avatarLoaded = true;
                         MultiThreadingUtil.runAsync(new Runnable() {
                             @Override
                             @SneakyThrows
@@ -781,7 +782,7 @@ public class CloudMusic {
                                 try (InputStream is = HttpUtils.get(url, null)) {
                                     BufferedImage img = NativeBackedImage.make(is);
 
-                                    Textures.loadTextureAsyncly(ClickGui.getInstance().getPlaylistsWindow().loginRenderer.tempAvatar, img);
+                                    Textures.loadTextureAsyncly(NCMScreen.getInstance().loginRenderer.tempAvatar, img);
 
                                 }
                             }

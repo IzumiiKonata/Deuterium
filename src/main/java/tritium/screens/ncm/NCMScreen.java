@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
+import tech.konata.commons.ncm.OptionsUtil;
 import tech.konata.ncmplayer.music.CloudMusic;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
@@ -13,6 +14,7 @@ import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.BaseScreen;
+import tritium.screens.clickgui.music.LoginRenderer;
 import tritium.screens.ncm.panels.ControlsBar;
 import tritium.screens.ncm.panels.NavigateBar;
 
@@ -156,8 +158,27 @@ public class NCMScreen extends BaseScreen {
                 this.fuckPussyPanel = null;
         }
 
+        boolean loggedIn = !OptionsUtil.getCookie().isEmpty();
+
+        if (!loggedIn && this.loginRenderer == null) {
+            this.loginRenderer = new LoginRenderer();
+        }
+
+        if (this.loginRenderer != null) {
+            this.loginRenderer.render(mouseX, mouseY, basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), basePanel.getAlpha());
+
+            if (this.loginRenderer.canClose() && !OptionsUtil.getCookie().isEmpty()) {
+                this.loginRenderer = null;
+                CloudMusic.loadNCM(OptionsUtil.getCookie());
+
+                this.initGui();
+            }
+        }
+
         GlStateManager.popMatrix();
     }
+
+    public LoginRenderer loginRenderer = null;
 
     public void setCurrentPanel(NCMPanel panel) {
         this.prevAnimatingPanel = this.currentPanel;

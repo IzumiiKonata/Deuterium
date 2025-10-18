@@ -217,43 +217,46 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             return;
 //
         double offsetY = RenderSystem.getHeight() * lyricFraction()/* - (idxCurrent > 0 ? lyrics.get(idxCurrent - 1).height : 0)*/;
-        List<LyricLine> subList = new ArrayList<>(lyrics.subList(0, idxCurrent));
-        float fraction = 0.1f;
-        for (int i = subList.size() - 1; i >= 0; i--) {
-            LyricLine lyric = subList.get(i);
 
-            lyric.computeHeight(width);
-            offsetY -= lyric.height + 16;
+        synchronized (lyrics) {
+            List<LyricLine> subList = lyrics.subList(0, idxCurrent);
+            float fraction = 0.1f;
+            for (int i = subList.size() - 1; i >= 0; i--) {
+                LyricLine lyric = subList.get(i);
 
-            lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
-        }
+                lyric.computeHeight(width);
+                offsetY -= lyric.height + 16;
 
-        offsetY = RenderSystem.getHeight() * lyricFraction();
-        List<LyricLine> list = new ArrayList<>(lyrics.subList(idxCurrent, lyrics.size()));
-        for (int i = 0; i < list.size(); i++) {
-            LyricLine lyric = list.get(i);
-            int j = lyrics.indexOf(lyric);
-
-            lyric.computeHeight(width);
-
-            LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
-            double prevOffsetY = prev == null ? offsetY : offsetY - 16 - prev.height;
-
-            if (prev != null) {
-                if (lyric.posY - (prev.posY + prev.height) >= 48)
-                    lyric.shouldUpdatePosition = true;
-            }
-
-            if (prev != null && lyric.posY - (prev.posY + prev.height) < 0) {
-                updateLyricPositionsImmediate(width);
-                break;
-            }
-
-            if (prev == null || lyric.shouldUpdatePosition) {
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
             }
 
-            offsetY += lyric.height + 16;
+            offsetY = RenderSystem.getHeight() * lyricFraction();
+            List<LyricLine> list = lyrics.subList(idxCurrent, lyrics.size());
+            for (int i = 0; i < list.size(); i++) {
+                LyricLine lyric = list.get(i);
+                int j = lyrics.indexOf(lyric);
+
+                lyric.computeHeight(width);
+
+                LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
+                double prevOffsetY = prev == null ? offsetY : offsetY - 16 - prev.height;
+
+                if (prev != null) {
+                    if (lyric.posY - (prev.posY + prev.height) >= 48)
+                        lyric.shouldUpdatePosition = true;
+                }
+
+                if (prev != null && lyric.posY - (prev.posY + prev.height) < 0) {
+                    updateLyricPositionsImmediate(width);
+                    break;
+                }
+
+                if (prev == null || lyric.shouldUpdatePosition) {
+                    lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
+                }
+
+                offsetY += lyric.height + 16;
+            }
         }
 
     }
@@ -269,27 +272,29 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         if (toIndex == -1 || toIndex >= lyrics.size())
             return;
 
-        List<LyricLine> subList = new ArrayList<>(lyrics.subList(0, toIndex));
-        for (int i = subList.size() - 1; i >= 0; i--) {
-            LyricLine lyric = subList.get(i);
+        synchronized (lyrics) {
+            List<LyricLine> subList = lyrics.subList(0, toIndex);
+            for (int i = subList.size() - 1; i >= 0; i--) {
+                LyricLine lyric = subList.get(i);
 
-            if (i == subList.size() - 1) {
+                if (i == subList.size() - 1) {
+                    lyric.computeHeight(width);
+                    offsetY -= lyric.height;
+                }
+
+                lyric.posY = offsetY;
+
                 lyric.computeHeight(width);
-                offsetY -= lyric.height;
+                offsetY -= lyric.height + 16;
             }
 
-            lyric.posY = offsetY;
+            offsetY = RenderSystem.getHeight() * lyricFraction();
+            for (LyricLine lyric : lyrics.subList(toIndex, lyrics.size())) {
+                lyric.posY = offsetY;
 
-            lyric.computeHeight(width);
-            offsetY -= lyric.height + 16;
-        }
-
-        offsetY = RenderSystem.getHeight() * lyricFraction();
-        for (LyricLine lyric : new ArrayList<>(lyrics.subList(toIndex, lyrics.size()))) {
-            lyric.posY = offsetY;
-
-            lyric.computeHeight(width);
-            offsetY += lyric.height + 16;
+                lyric.computeHeight(width);
+                offsetY += lyric.height + 16;
+            }
         }
 
     }

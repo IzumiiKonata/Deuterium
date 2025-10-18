@@ -82,14 +82,18 @@ public class NavigateBar extends NCMPanel {
 
         this.playlistPanel.addChild(lbl);
 
-        List<PlayList> playLists = CloudMusic.playLists.stream().filter(playList -> !playList.subscribed).collect(Collectors.toList());
-        for (int i = 0; i < playLists.size(); i++) {
-            PlayList playList = playLists.get(i);
-            PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
-                NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
-            });
+        List<PlayList> pl = CloudMusic.playLists;
 
-            this.playlistPanel.addChild(item);
+        if (pl != null) {
+            List<PlayList> playLists = pl.stream().filter(playList -> !playList.subscribed).collect(Collectors.toList());
+            for (int i = 0; i < playLists.size(); i++) {
+                PlayList playList = playLists.get(i);
+                PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
+                    NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
+                });
+
+                this.playlistPanel.addChild(item);
+            }
         }
 
         LabelWidget lblSubscribed = new LabelWidget("收藏歌单", FontManager.pf14bold);
@@ -99,13 +103,16 @@ public class NavigateBar extends NCMPanel {
         });
 
         this.playlistPanel.addChild(lblSubscribed);
-        CloudMusic.playLists.stream().filter(playList -> playList.subscribed).forEach(playList -> {
-            PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
-                NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
-            });
 
-            this.playlistPanel.addChild(item);
-        });
+        if (pl != null) {
+            pl.stream().filter(playList -> playList.subscribed).forEach(playList -> {
+                PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
+                    NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
+                });
+
+                this.playlistPanel.addChild(item);
+            });
+        }
 
         RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
         this.addChild(creatorAvatar);
@@ -119,7 +126,7 @@ public class NavigateBar extends NCMPanel {
             creatorAvatar.setRadius(7.25);
         });
 
-        LabelWidget lblCreator = new LabelWidget(CloudMusic.profile.name, FontManager.pf16bold);
+        LabelWidget lblCreator = new LabelWidget(() -> CloudMusic.profile == null ? "未登录" : CloudMusic.profile.name, FontManager.pf16bold);
         this.addChild(lblCreator);
 
         lblCreator.setBeforeRenderCallback(() -> {
@@ -129,6 +136,11 @@ public class NavigateBar extends NCMPanel {
     }
 
     private void loadAvatar() {
+
+        if (CloudMusic.profile == null) {
+            return;
+        }
+
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
         Location avatarLoc = this.getUserAvatarLocation();
         if (textureManager.getTexture(avatarLoc) != null)
@@ -153,6 +165,11 @@ public class NavigateBar extends NCMPanel {
     }
 
     private Location getUserAvatarLocation() {
+
+        if (CloudMusic.profile == null) {
+            return null;
+        }
+
         return Location.of("tritium/textures/users/" + CloudMusic.profile.id + "/avatar.png");
     }
 
