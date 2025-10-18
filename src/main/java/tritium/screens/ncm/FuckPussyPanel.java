@@ -125,11 +125,13 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 break;
             }
 
-            lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0.4f, 0.2f);
+            lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.2f);
             boolean isHovering = isHovered(mouseX, mouseY, RenderSystem.getWidth() * .5, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? .2f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics && lyric != currentDisplaying ? 1f : 0f, 0.1f);
-            roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, 8, 8, 1, 1, 1, alpha * lyric.hoveringAlpha);
+
+            if (lyric.hoveringAlpha >= .02f)
+                roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, 8, 8, 1, 1, 1, alpha * lyric.hoveringAlpha);
 
             double renderX = RenderSystem.getWidth() * .5;
             double renderY = lyric.posY;
@@ -163,6 +165,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                         FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
                         StencilClipManager.endClip();
+                    } else {
+                        FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * lyric.alpha));
                     }
 
                     renderX += wordWidth;
@@ -171,7 +175,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 String[] strings = FontManager.pf65bold.fitWidth(lyric.lyric, lyricsWidth);
 
                 for (String string : strings) {
-                    FontManager.pf65bold.drawString(string, renderX, renderY, hexColor(1, 1, 1, alpha * lyric.alpha));
+                    FontManager.pf65bold.drawString(string, renderX, renderY, hexColor(1, 1, 1, alpha * ((lyric.alpha * .6f) + .4f)));
                     renderY += FontManager.pf65bold.getHeight() * .85 + 4;
                 }
 
@@ -179,7 +183,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             }
 
             if (lyric.translationText != null) {
-                FontManager.pf34bold.drawString(lyric.translationText, RenderSystem.getWidth() * .5, renderY + FontManager.pf65bold.getHeight() * .85 + 8, hexColor(1, 1, 1, alpha * .75f * lyric.alpha));
+                FontManager.pf34bold.drawString(lyric.translationText, RenderSystem.getWidth() * .5, renderY + FontManager.pf65bold.getHeight() * .85 + 8, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
             }
 
             runnables.add(() -> Rect.draw(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
@@ -213,7 +217,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             return;
 //
         double offsetY = RenderSystem.getHeight() * lyricFraction()/* - (idxCurrent > 0 ? lyrics.get(idxCurrent - 1).height : 0)*/;
-        List<LyricLine> subList = lyrics.subList(0, idxCurrent);
+        List<LyricLine> subList = new ArrayList<>(lyrics.subList(0, idxCurrent));
         float fraction = 0.1f;
         for (int i = subList.size() - 1; i >= 0; i--) {
             LyricLine lyric = subList.get(i);
@@ -225,7 +229,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         }
 
         offsetY = RenderSystem.getHeight() * lyricFraction();
-        List<LyricLine> list = lyrics.subList(idxCurrent, lyrics.size());
+        List<LyricLine> list = new ArrayList<>(lyrics.subList(idxCurrent, lyrics.size()));
         for (int i = 0; i < list.size(); i++) {
             LyricLine lyric = list.get(i);
             int j = lyrics.indexOf(lyric);
@@ -265,7 +269,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         if (toIndex == -1 || toIndex >= lyrics.size())
             return;
 
-        List<LyricLine> subList = lyrics.subList(0, toIndex);
+        List<LyricLine> subList = new ArrayList<>(lyrics.subList(0, toIndex));
         for (int i = subList.size() - 1; i >= 0; i--) {
             LyricLine lyric = subList.get(i);
 
@@ -281,7 +285,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         }
 
         offsetY = RenderSystem.getHeight() * lyricFraction();
-        for (LyricLine lyric : lyrics.subList(toIndex, lyrics.size())) {
+        for (LyricLine lyric : new ArrayList<>(lyrics.subList(toIndex, lyrics.size()))) {
             lyric.posY = offsetY;
 
             lyric.computeHeight(width);
