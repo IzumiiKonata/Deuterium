@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
+import tech.konata.ncmplayer.music.CloudMusic;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
@@ -42,6 +43,8 @@ public class NCMScreen extends BaseScreen {
 
     @Getter
     ControlsBar controlsBar;
+
+    public FuckPussyPanel fuckPussyPanel = null;
 
     @Override
     public void initGui() {
@@ -142,6 +145,17 @@ public class NCMScreen extends BaseScreen {
         this.controlsBar.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY() + this.currentPanelBg.getHeight(), this.currentPanelBg.getWidth(), this.getPanelHeight() - this.currentPanelBg.getHeight());
         this.controlsBar.renderWidget(mouseX, mouseY, dWheel);
 
+        if (this.fuckPussyPanel != null) {
+            StencilClipManager.beginClip(() -> {
+                Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), -1);
+            });
+            this.fuckPussyPanel.onRender(mouseX, mouseY, basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), dWheel);
+            StencilClipManager.endClip();
+
+            if (this.fuckPussyPanel.shouldClose())
+                this.fuckPussyPanel = null;
+        }
+
         GlStateManager.popMatrix();
     }
 
@@ -157,19 +171,39 @@ public class NCMScreen extends BaseScreen {
 
     @Override
     public void onKeyTyped(char typedChar, int keyCode) {
-        if (keyCode == Keyboard.KEY_ESCAPE)
-            closing = true;
+        if (keyCode == Keyboard.KEY_ESCAPE) {
+
+            if (this.fuckPussyPanel != null)
+                this.fuckPussyPanel.close();
+            else
+                closing = true;
+
+        }
+
+        if (keyCode == Keyboard.KEY_SPACE && CloudMusic.currentlyPlaying != null && CloudMusic.player != null && !CloudMusic.player.isFinished()) {
+
+            if (CloudMusic.player.isPausing())
+                CloudMusic.player.unpause();
+            else
+                CloudMusic.player.pause();
+        }
+
     }
 
     @Override
     public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        this.basePanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
+        if (fuckPussyPanel == null) {
+            this.basePanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
 
-        if (this.currentPanel != null)
-            this.currentPanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
+            if (this.currentPanel != null)
+                this.currentPanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
 
-        this.controlsBar.onMouseClickReceived(mouseX, mouseY, mouseButton);
+            this.controlsBar.onMouseClickReceived(mouseX, mouseY, mouseButton);
+        } else {
+            this.fuckPussyPanel.mouseClicked(mouseX, mouseY, mouseButton);
+        }
 //        this.playlistsPanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
+
     }
 
     public enum ColorType {

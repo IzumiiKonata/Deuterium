@@ -26,6 +26,7 @@ import tritium.management.WidgetsManager;
 import tritium.rendering.GaussianKernel;
 import tritium.rendering.texture.Textures;
 import tritium.screens.ClickGui;
+import tritium.screens.ncm.FuckPussyPanel;
 import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.WrappedInputStream;
@@ -516,7 +517,7 @@ public class CloudMusic {
             public void run() {
 
                 @Cleanup
-                InputStream is = HttpUtils.downloadStream(music.getPicUrl(160), 5);
+                InputStream is = HttpUtils.downloadStream(music.getPicUrl(320), 5);
                 InputStream isSmall = HttpUtils.downloadStream(music.getPicUrl(44), 5);
 
                 // 此处无法使用 NativeBackedImage, 底下那个 gaussianBlur 需要很多 ImageIO 狗屎才能工作
@@ -735,6 +736,7 @@ public class CloudMusic {
                 JsonObject json = JsonUtils.jsonObjectFromString(string);
 
                 MusicLyricsWidget.initLyric(json, song);
+                FuckPussyPanel.initLyric(json);
 
             }
         });

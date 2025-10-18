@@ -150,6 +150,14 @@ public class RenderSystem {
         RenderSystem.color(-1);
     }
 
+    public static int hexColor(float r, float g, float b) {
+        return hexColor(r, g, b, 255);
+    }
+
+    public static int hexColor(float r, float g, float b, float a) {
+        return (int) (a * 255) << 24 | (int) (r * 255) << 16 | (int) (g * 255) << 8 | (int) (b * 255);
+    }
+
     public static int hexColor(int red, int green, int blue) {
         return hexColor(red, green, blue, 255);
     }

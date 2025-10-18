@@ -126,6 +126,14 @@ public interface SharedRenderingConstants {
         return alpha << 24 | red << 16 | green << 8 | blue;
     }
 
+    default int hexColor(float r, float g, float b) {
+        return hexColor(r, g, b, 255);
+    }
+
+    default int hexColor(float r, float g, float b, float a) {
+        return (int) (a * 255) << 24 | (int) (r * 255) << 16 | (int) (g * 255) << 8 | (int) (b * 255);
+    }
+
     default int reAlpha(int color, float alpha) {
         if (alpha > 1) {
             alpha = 1;

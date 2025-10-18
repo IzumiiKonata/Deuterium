@@ -24,7 +24,7 @@ public class FontManager extends AbstractManager {
         super("FontManager");
     }
 
-    public static CFontRenderer pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf40bold, pf50bold, pf100bold;
+    public static CFontRenderer pf14bold, pf16bold, pf18bold, pf20bold, pf25bold, pf28bold, pf34bold, pf40bold, pf65bold, pf50bold, pf100bold;
     public static CFontRenderer pf12, pf14, pf16, pf18, pf20, pf25, pf28, pf32, pf40;
     public static CFontRenderer icon18, icon25, icon30, icon40, tritium24, tritium42;
     public static CFontRenderer music16, music18, music30, music36, music40, music42;
@@ -70,8 +70,10 @@ public class FontManager extends AbstractManager {
         pf20bold = create(20, boldName);
         pf25bold = create(25, boldName);
         pf28bold = create(28, boldName);
+        pf34bold = create(34, boldName);
         pf40bold = create(40, boldName);
         pf50bold = create(50, boldName);
+        pf65bold = create(65, boldName);
         pf100bold = create(100, boldName);
 
 

@@ -6,6 +6,8 @@ import net.minecraft.util.Location;
 import tritium.rendering.async.AsyncGLContext;
 
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
@@ -32,7 +34,7 @@ public class GlyphGenerator {
 
     public static void generate(CFontRenderer fr, char ch, Font f, Location identifier, GlyphLoadedCallback onLoaded) {
 
-        int fontHeight = -1;
+        double fontHeight = -1;
 
         final BufferedImage fontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
@@ -41,6 +43,7 @@ public class GlyphGenerator {
 
         final FontMetrics fontMetrics = fontGraphics.getFontMetrics(font);
         final FontMetrics fontMetricsOrig = fontGraphics.getFontMetrics(f);
+        FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
         Rectangle2D stringBounds = fontMetrics.getStringBounds(String.valueOf(ch), fontGraphics);
 
         int width = (int) Math.ceil(stringBounds.getWidth());
@@ -70,7 +73,7 @@ public class GlyphGenerator {
         g2d.setFont(font);
 
         if (fontMetrics.getHeight() > fontHeight && font == f) {
-            fontHeight = fontMetrics.getHeight();
+            fontHeight = stringBounds.getHeight();
         }
 
         if (font == f) {
@@ -107,6 +110,6 @@ public class GlyphGenerator {
 
 
     public interface GlyphLoadedCallback {
-        void onLoaded(int fontHeight);
+        void onLoaded(double fontHeight);
     }
 }

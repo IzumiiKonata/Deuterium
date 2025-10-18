@@ -73,17 +73,19 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         initialized = true;
         this.font = font.deriveFont(sizePx * 2);
 
-        if (this.sizePx == 9.0 && this.font.getFontName().equals(".萍方-简 正规体")) {
-            for (char c : "单人游戏多设置账号管理".toCharArray()) {
-                locateGlyph(c);
-            }
-        }
+//        if (this.sizePx == 9.0 && this.font.getFontName().equals(".萍方-简 正规体")) {
+//            for (char c : "单人游戏多设置账号管理".toCharArray()) {
+//                locateGlyph(c);
+//            }
+//        }
+
+        locateGlyph('A');
 
     }
 
     List<Integer> loaded = new ArrayList<>();
 
-    public int fontHeight = -1;
+    public double fontHeight = -1;
 
     public interface GlyphLoaded {
         void loaded(Glyph glyph);
@@ -431,8 +433,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return currentLine + previous;
     }
 
-
-
     public int getHeight() {
 
 //        if (fontHeightObj == null) {
@@ -447,9 +447,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 //
 //        }
 
-        return (this.fontHeight - 8) / 2;
+        return (int) ((this.fontHeight - 8) * .5);
     }
 
+    public double getFontHeight() {
+        return (this.fontHeight - 8) * .5;
+    }
 
     @Override
     public void close() {

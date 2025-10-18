@@ -6,6 +6,7 @@ import tech.konata.ncmplayer.music.CloudMusic;
 import tritium.management.FontManager;
 import tritium.rendering.ui.widgets.*;
 import tritium.screens.ClickGui;
+import tritium.screens.ncm.FuckPussyPanel;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
 import tritium.widget.impl.MusicInfoWidget;
@@ -51,12 +52,20 @@ public class ControlsBar extends NCMPanel {
             playingCover.setRadius(2);
         });
 
+        playingCover.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+            if (CloudMusic.currentlyPlaying != null) {
+                NCMScreen.getInstance().fuckPussyPanel = new FuckPussyPanel(CloudMusic.currentlyPlaying);
+            }
+
+            return true;
+        });
+
         LabelWidget lblMusicName = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "未在播放" : CloudMusic.currentlyPlaying.getName(), FontManager.pf14bold);
         this.addChild(lblMusicName);
 
         lblMusicName.setBeforeRenderCallback(() -> {
             lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-            lblMusicName.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, playingCover.getRelativeY() + 4);
+            lblMusicName.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, playingCover.getRelativeY() + 3);
         });
         lblMusicName.setClickable(false);
 
@@ -65,7 +74,7 @@ public class ControlsBar extends NCMPanel {
 
         lblMusicArtist.setBeforeRenderCallback(() -> {
             lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
-            lblMusicArtist.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, playingCover.getRelativeY() + 4 + lblMusicName.getHeight() + 4);
+            lblMusicArtist.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, playingCover.getRelativeY() + 4 + lblMusicName.getHeight() + 2);
         });
 
         lblMusicArtist.setClickable(false);

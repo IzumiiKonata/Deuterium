@@ -22,7 +22,7 @@ public class IconWidget extends AbstractWidget<IconWidget> {
     @Setter
     private String icon;
 
-    private CFontRenderer fr;
+    public CFontRenderer fr;
 
     public IconWidget(String icon, CFontRenderer fr, double x, double y, double width, double height) {
         this.icon = icon;
@@ -31,6 +31,7 @@ public class IconWidget extends AbstractWidget<IconWidget> {
     }
 
     float alphaAnim = 0f, alphaAnim2 = 0f;
+    public double fontOffsetX = 0, fontOffsetY = 0;
 
     boolean run = false;
 
@@ -69,9 +70,9 @@ public class IconWidget extends AbstractWidget<IconWidget> {
         }
 
         int w = fr.getStringWidth(icon);
-        double h = fr.getHeight();
+        double h = fr.getFontHeight();
 
-        fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5, this.getY() + this.getHeight() * 0.5 - h * 0.5, ThemeManager.get(ThemeManager.ThemeColor.Text, alpha));
+        fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5 + fontOffsetX, this.getY() + this.getHeight() * 0.5 - h * 0.5 + fontOffsetY, ThemeManager.get(ThemeManager.ThemeColor.Text, alpha));
     }
 
     @Override
