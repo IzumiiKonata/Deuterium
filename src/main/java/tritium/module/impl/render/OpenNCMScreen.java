@@ -1,11 +1,7 @@
 package tritium.module.impl.render;
 
-import org.lwjglx.input.Keyboard;
-import tritium.Tritium;
 import tritium.module.Module;
-import tritium.screens.ClickGui;
 import tritium.screens.ncm.NCMScreen;
-import tritium.utils.other.info.Version;
 
 /**
  * @author IzumiiKonata
@@ -15,7 +11,6 @@ public class OpenNCMScreen extends Module {
 
     public OpenNCMScreen() {
         super("NCM Screen", Category.RENDER);
-        super.setKeyBind(Keyboard.KEY_L);
     }
 
     @Override

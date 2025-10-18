@@ -192,7 +192,7 @@ public class Main {
 
             List<String> comments = Arrays.asList(
                     "Tritium " + ver,
-                    "Build Time: " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()),
+                    "Build Time: " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " (" + System.currentTimeMillis() + ")",
                     "Made with <3 by IzumiKonata",
                     "https://space.bilibili.com/357605683"
             );
