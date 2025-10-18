@@ -20,7 +20,6 @@ public class LyricParser {
 
         // 解析主歌词
         List<LyricLine> lyricLines = new ArrayList<>();
-        List<LyricLine> origLyrics = parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString());
 
         // 处理逐字歌词(YRC)
         if (input.has("yrc")) {
@@ -29,22 +28,22 @@ public class LyricParser {
         }
 
         if (lyricLines.isEmpty()) {
-            lyricLines.addAll(origLyrics);
+            lyricLines.addAll(parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString()));
         } else {
 
         }
 
         // 处理翻译歌词
-        processTranslationLyrics(input, lyricLines, new ArrayList<>(origLyrics));
+        processTranslationLyrics(input, lyricLines);
 
         // 处理罗马音歌词
-        processRomanizationLyrics(input, lyricLines, new ArrayList<>(origLyrics));
+        processRomanizationLyrics(input, lyricLines);
 
         return lyricLines;
     }
 
     // 处理翻译歌词
-    private static void processTranslationLyrics(JsonObject input, List<LyricLine> lyricLines, List<LyricLine> origLyrics) {
+    private static void processTranslationLyrics(JsonObject input, List<LyricLine> lyricLines) {
         if (!input.has("tlyric")) return;
 
         String tLyric = input.getAsJsonObject("tlyric").get("lyric").getAsString();
@@ -52,62 +51,24 @@ public class LyricParser {
 
         List<LyricLine> translates = parseSingleLine(tLyric);
 
-        // 创建翻译映射
-        Map<Long, String> transMap = new HashMap<>();
-        for (LyricLine t : translates) {
-            transMap.put(t.timeStamp, t.lyric);
-        }
-
-//         匹配主歌词和翻译
-        for (LyricLine l : origLyrics) {
-            String translation = transMap.get(l.timeStamp);
-            if (translation != null && l.translationText == null) {
-                l.translationText = translation;
-            }
-        }
-
-        for (LyricLine l : lyricLines) {
-
-            for (LyricLine origLyric : origLyrics) {
-                if (l.lyric.equals(origLyric.lyric)) {
-                    l.translationText = origLyric.translationText;
-                }
-            }
-
+        for (int i = 0; i < lyricLines.size() && i < translates.size(); i++) {
+            LyricLine t = lyricLines.get(i);
+            t.translationText = translates.get(i).lyric;
         }
     }
 
     // 处理罗马音歌词
-    private static void processRomanizationLyrics(JsonObject input, List<LyricLine> lyricLines, List<LyricLine> origLyrics) {
+    private static void processRomanizationLyrics(JsonObject input, List<LyricLine> lyricLines) {
         if (!input.has("romalrc")) return;
 
         String romanization = input.getAsJsonObject("romalrc").get("lyric").getAsString();
         if (romanization.isEmpty()) return;
 
-        List<LyricLine> translates = parseSingleLine(romanization);
+        List<LyricLine> romanizations = parseSingleLine(romanization);
 
-        // 创建翻译映射
-        Map<Long, String> romanMap = new HashMap<>();
-        for (LyricLine t : translates) {
-            romanMap.put(t.timeStamp, t.lyric);
-        }
-
-//         匹配主歌词和翻译
-        for (LyricLine l : origLyrics) {
-            String translation = romanMap.get(l.timeStamp);
-            if (translation != null && l.romanizationText == null) {
-                l.romanizationText = translation;
-            }
-        }
-
-        for (LyricLine l : lyricLines) {
-
-            for (LyricLine origLyric : origLyrics) {
-                if (l.lyric.equals(origLyric.lyric)) {
-                    l.romanizationText = origLyric.romanizationText;
-                }
-            }
-
+        for (int i = 0; i < lyricLines.size() && i < romanizations.size(); i++) {
+            LyricLine t = lyricLines.get(i);
+            t.romanizationText = romanizations.get(i).lyric;
         }
     }
 
@@ -199,10 +160,6 @@ public class LyricParser {
             LyricLine l = new LyricLine(startDuration, "");
 
             parseWordTimings(l, line.substring(line.indexOf("]") + 1));
-
-            for (LyricLine.Word word : l.words) {
-                l.lyric += word.word;
-            }
 
             // 创建时间轴对象
 //            MusicLyricsWidget.ScrollTiming timing = new MusicLyricsWidget.ScrollTiming();
