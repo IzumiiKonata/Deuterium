@@ -19,12 +19,18 @@ public class LyricParser {
         }
 
         // 解析主歌词
-        List<LyricLine> lyricLines = parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString());
+        List<LyricLine> lyricLines = new ArrayList<>();
 
         // 处理逐字歌词(YRC)
         if (input.has("yrc")) {
             String yrc = input.getAsJsonObject("yrc").get("lyric").getAsString();
             parseYrc(yrc, lyricLines);
+        }
+
+        if (lyricLines.isEmpty()) {
+            lyricLines.addAll(parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString()));
+        } else {
+
         }
 
         // 处理翻译歌词

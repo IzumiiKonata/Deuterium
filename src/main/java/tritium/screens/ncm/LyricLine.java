@@ -31,12 +31,14 @@ public class LyricLine {
     public double posY = 0;
     public double height = 0;
     public float alpha = .4f;
+    public float hoveringAlpha = 0f;
 
     public final List<Word> words = new CopyOnWriteArrayList<>();
 
     public static class Word {
         public String word;
         public long timing;
+        public double emphasize = 0;
     }
 
     public void computeHeight(double width) {

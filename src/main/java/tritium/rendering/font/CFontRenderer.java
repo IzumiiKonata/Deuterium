@@ -190,7 +190,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         y -= 2.0f;
 
-        GlStateManager.translate(roundToDecimal(x), roundToDecimal(y), 0);
+        GlStateManager.translate(x, y, 0);
 
         GlStateManager.scale(0.5f, 0.5f, 1f);
 

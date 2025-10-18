@@ -99,13 +99,12 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
         double spacingToRight = 16;
 
-//        Rect.draw(posX + width * .5 - spacingToRight, posY, width * .5 + spacingToRight, height, -1);
-
         float songProgress = CloudMusic.player.getCurrentTimeMillis();
 
         updateCurrentDisplayingLyric(songProgress);
 
-        this.updateLyricPositions(width * .5);
+        double lyricsWidth = width * .4;
+        this.updateLyricPositions(lyricsWidth);
 
         for (LyricLine lyric : lyrics) {
 
@@ -118,8 +117,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             }
 
             lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0.4f, 0.2f);
-
-//            Rect.draw(RenderSystem.getWidth() * .5 - 8, lyric.posY - 7, width * .5, lyric.height + 14, 0xff0090ff);
+            boolean isHovering = isHovered(mouseX, mouseY, RenderSystem.getWidth() * .5, lyric.posY, lyricsWidth, lyric.height);
+            lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? .2f : 0f, 0.2f);
+            roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, 8, 8, 1, 1, 1, alpha * lyric.hoveringAlpha);
 
             double renderX = RenderSystem.getWidth() * .5;
             double renderY = lyric.posY;
@@ -130,34 +130,35 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                     LyricLine.Word word = words.get(i);
                     double wordWidth = FontManager.pf65bold.getStringWidthD(word.word);
 
-                    if (renderX + wordWidth > RenderSystem.getWidth() * .5 + width * .5) {
+                    if (renderX + wordWidth > RenderSystem.getWidth() * .5 + lyricsWidth) {
                         renderX = RenderSystem.getWidth() * .5;
                         renderY += FontManager.pf65bold.getHeight() * .85;
                     }
 
-                    FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
+                    FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * .5f));
 
                     if (lyric == currentDisplaying) {
                         LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
 
                         long prevTiming = i == 0 ? 0 : prev.timing;
-                        double progress = (songProgress - lyric.timeStamp - prevTiming) / (double) (word.timing - prevTiming);
+                        double progress = Math.max(0, Math.min(1, (songProgress - lyric.timeStamp - prevTiming) / (double) (word.timing - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
+                        word.emphasize = 0;
 
                         double finalRenderX = renderX;
                         double finalRenderY = renderY;
                         StencilClipManager.beginClip(() -> {
-                            Rect.draw(finalRenderX, finalRenderY, Math.max(0, Math.min(stringWidthD, progress * stringWidthD)), FontManager.pf65bold.getHeight(), -1);
+                            Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
                         });
 
-                        FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha));
+                        FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
                         StencilClipManager.endClip();
                     }
 
                     renderX += wordWidth;
                 }
             } else {
-                String[] strings = FontManager.pf65bold.fitWidth(lyric.lyric, width * .5);
+                String[] strings = FontManager.pf65bold.fitWidth(lyric.lyric, lyricsWidth);
 
                 for (String string : strings) {
                     FontManager.pf65bold.drawString(string, renderX, renderY, hexColor(1, 1, 1, alpha * lyric.alpha));
@@ -183,10 +184,13 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             return;
 
         int idxCurrent = lyrics.indexOf(currentDisplaying);
+
+        if (idxCurrent < 0 || idxCurrent >= lyrics.size())
+            return;
 //
         double offsetY = RenderSystem.getHeight() * lyricFraction()/* - (idxCurrent > 0 ? lyrics.get(idxCurrent - 1).height : 0)*/;
         List<LyricLine> subList = lyrics.subList(0, idxCurrent);
-        float fraction = 0.1f;
+        float fraction = 0.15f;
         for (int i = subList.size() - 1; i >= 0; i--) {
             LyricLine lyric = subList.get(i);
 
@@ -202,19 +206,15 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             LyricLine lyric = list.get(i);
             int j = lyrics.indexOf(lyric);
 
-            LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
+            lyric.computeHeight(width);
 
+            LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
             double prevOffsetY = prev == null ? offsetY : offsetY - 16 - prev.height;
 
-            if (prev != null) {
-//                prev.computeHeight(width);
-//                Rect.draw(RenderSystem.getWidth() * .5, prevOffsetY, RenderSystem.getWidth() * .5, prevOffsetY + prev.height - 4, 0xff0090ff);
+            if (prev == null || Math.abs(prev.posY - prevOffsetY) / prev.height <= .75) {
+                lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
             }
 
-            if (prev == null || Math.abs(prev.posY - prevOffsetY) <= 48)
-                lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
-
-            lyric.computeHeight(width);
             offsetY += lyric.height + 16;
         }
 
@@ -226,7 +226,12 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             return;
 
         double offsetY = RenderSystem.getHeight() * lyricFraction() - 16;
-        List<LyricLine> subList = lyrics.subList(0, lyrics.indexOf(currentDisplaying));
+        int toIndex = lyrics.indexOf(currentDisplaying);
+
+        if (toIndex == -1 || toIndex >= lyrics.size())
+            return;
+
+        List<LyricLine> subList = lyrics.subList(0, toIndex);
         for (int i = subList.size() - 1; i >= 0; i--) {
             LyricLine lyric = subList.get(i);
 
@@ -242,7 +247,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         }
 
         offsetY = RenderSystem.getHeight() * lyricFraction();
-        for (LyricLine lyric : lyrics.subList(lyrics.indexOf(currentDisplaying), lyrics.size())) {
+        for (LyricLine lyric : lyrics.subList(toIndex, lyrics.size())) {
             lyric.posY = offsetY;
 
             lyric.computeHeight(width);
@@ -477,13 +482,12 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
         if (texBg != null || prevBg != null) {
 
-//            this.musicBgAlpha = Interpolations.interpBezier(this.musicBgAlpha, 0.0f, 0.15f);
 
             if (prevBg != null && musicBgAlpha < 0.99f) {
                 GlStateManager.bindTexture(prevBg.getGlTextureId());
                 prevBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha);
-                Image.draw(posX, posY, width, height, Image.Type.NoColor);
+                Image.draw(posX, posY + height * .5 - width * .5, width, width, Image.Type.NoColor);
             }
 
             if (texBg != null) {
@@ -491,7 +495,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 GlStateManager.bindTexture(texBg.getGlTextureId());
                 texBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha * this.musicBgAlpha);
-                Image.draw(posX, posY, width, height, Image.Type.NoColor);
+                Image.draw(posX, posY + height * .5 - width * .5, width, width, Image.Type.NoColor);
             }
         }
 

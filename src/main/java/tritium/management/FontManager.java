@@ -58,7 +58,7 @@ public class FontManager extends AbstractManager {
         deleteLoadedTextures();
 
         String normalName = "pf_normal";
-        String boldName = "pf_middlebold";
+        String boldName = "pf_middleblack";
 
         tritium42 = create(42, "tritium");
         arial60bold = create(60, "arialBold");
