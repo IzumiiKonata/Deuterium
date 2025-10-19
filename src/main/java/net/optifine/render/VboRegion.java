@@ -30,7 +30,7 @@ public class VboRegion {
         this.bufferIndexVertex = GLAllocation.createDirectIntBuffer(this.capacity);
         this.bufferCountVertex = GLAllocation.createDirectIntBuffer(this.capacity);
         this.drawMode = 7;
-        this.vertexBytes = DefaultVertexFormats.BLOCK.getNextOffset();
+        this.vertexBytes = DefaultVertexFormats.BLOCK.getSize();
         this.layer = layer;
         this.bindBuffer();
         long i = this.toBytes(this.capacity);

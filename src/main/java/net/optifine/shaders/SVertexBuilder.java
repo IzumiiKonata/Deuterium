@@ -84,7 +84,7 @@ public class SVertexBuilder {
     public static void endSetVertexFormat(WorldRenderer wrr) {
         SVertexBuilder svertexbuilder = wrr.sVertexBuilder;
         VertexFormat vertexformat = wrr.getVertexFormat();
-        svertexbuilder.vertexSize = vertexformat.getNextOffset() / 4;
+        svertexbuilder.vertexSize = vertexformat.getSize() / 4;
         svertexbuilder.hasNormal = vertexformat.hasNormal();
         svertexbuilder.hasTangent = svertexbuilder.hasNormal;
         svertexbuilder.hasUV = vertexformat.hasUvOffset(0);
@@ -276,7 +276,7 @@ public class SVertexBuilder {
     public static void drawArrays(int drawMode, int first, int count, WorldRenderer wrr) {
         if (count != 0) {
             VertexFormat vertexformat = wrr.getVertexFormat();
-            int i = vertexformat.getNextOffset();
+            int i = vertexformat.getSize();
 
             if (i == 56) {
                 ByteBuffer bytebuffer = wrr.getByteBuffer();

@@ -31,7 +31,7 @@ public class VertexBuffer {
             this.bindBuffer();
             OpenGlHelper.glBufferData(OpenGlHelper.GL_ARRAY_BUFFER, p_181722_1_, 35044);
             this.unbindBuffer();
-            this.count = p_181722_1_.limit() / this.vertexFormat.getNextOffset();
+            this.count = p_181722_1_.limit() / this.vertexFormat.getSize();
         }
     }
 

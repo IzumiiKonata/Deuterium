@@ -124,11 +124,11 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public float drawString(String s, double x, double y, int color) {
-        float r = ((color >> 16) & 0xff) / 255f;
-        float g = ((color >> 8) & 0xff) / 255f;
-        float b = ((color) & 0xff) / 255f;
-        float a = ((color >> 24) & 0xff) / 255f;
-        drawString(s, (float) x, (float) y, r, g, b, a);
+        float r = ((color >> 16) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float g = ((color >> 8) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float b = ((color) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float a = ((color >> 24) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        drawString(s,  x,  y, r, g, b, a);
         return getStringWidth(s);
     }
 
@@ -144,10 +144,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public void drawString(String s, double x, double y, Color color) {
-        drawString(s, (float) x, (float) y, color.getRed() / 255f, color.getGreen() / 255f, color.getBlue() / 255f, color.getAlpha());
+        drawString(s,  x,  y, color.getRed() * RenderSystem.DIVIDE_BY_255, color.getGreen() * RenderSystem.DIVIDE_BY_255, color.getBlue() * RenderSystem.DIVIDE_BY_255, color.getAlpha());
     }
 
-    public boolean drawString(String s, float x, float y, float r, float g, float b, float a) {
+    public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
         return drawString(s, x, y, r, g, b, a, false, 0);
     }
 
@@ -174,7 +174,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         }
     }
 
-    public boolean drawString(String s, float x, float y, float r, float g, float b, float a, boolean gradient, int offset) {
+    public boolean drawString(String s, double x, double y, float r, float g, float b, float a, boolean gradient, int offset) {
 
         RenderTextEvent call = EventManager.call(new RenderTextEvent(s));
 
@@ -201,8 +201,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         boolean bl = true;
 
         char[] chars = s.toCharArray();
-        float xOffset = 0;
-        float yOffset = 0;
+        double xOffset = 0;
+        double yOffset = 0;
         boolean inSel = false;
         for (char aChar : chars) {
             char c = aChar;
@@ -219,9 +219,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                     if (colorCode != Integer.MIN_VALUE) {
                         int[] col = RGBIntToRGB(colorCode);
 
-                        r2 = col[0] / 255f;
-                        g2 = col[1] / 255f;
-                        b2 = col[2] / 255f;
+                        r2 = col[0] * RenderSystem.DIVIDE_BY_255;
+                        g2 = col[1] * RenderSystem.DIVIDE_BY_255;
+                        b2 = col[2] * RenderSystem.DIVIDE_BY_255;
                     }
                 }
                 continue;
@@ -262,27 +262,27 @@ public class CFontRenderer implements Closeable, IFontRenderer {
      * @return true if all the chars in the string are loaded
      */
     public boolean _drawCenteredString(String s, double x, double y, int color) {
-        float r = ((color >> 16) & 0xff) / 255f;
-        float g = ((color >> 8) & 0xff) / 255f;
-        float b = ((color) & 0xff) / 255f;
-        float a = ((color >> 24) & 0xff) / 255f;
+        float r = ((color >> 16) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float g = ((color >> 8) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float b = ((color) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float a = ((color >> 24) & 0xff) * RenderSystem.DIVIDE_BY_255;
 
-        return drawString(s, (float) (x - getStringWidth(s) / 2f), (float) y, r, g, b, a);
+        return drawString(s,  (x - getStringWidth(s) * .5),  y, r, g, b, a);
     }
 
     public void drawCenteredStringWithShadow(String s, double x, double y, int color) {
-        drawStringWithShadow(s, (float) (x - getStringWidth(s) / 2f), (float) y, color);
+        drawStringWithShadow(s,  (x - getStringWidth(s) * .5),  y, color);
     }
 
     public void drawCenteredStringMultiLine(String s, double x, double y, int color) {
-        float r = ((color >> 16) & 0xff) / 255f;
-        float g = ((color >> 8) & 0xff) / 255f;
-        float b = ((color) & 0xff) / 255f;
-        float a = ((color >> 24) & 0xff) / 255f;
+        float r = ((color >> 16) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float g = ((color >> 8) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float b = ((color) & 0xff) * RenderSystem.DIVIDE_BY_255;
+        float a = ((color >> 24) & 0xff) * RenderSystem.DIVIDE_BY_255;
 
         double offsetY = y;
         for (String string : s.split("\n")) {
-            drawString(string, (float) (x - getStringWidth(string) / 2f), (float) offsetY, r, g, b, a);
+            drawString(string,  (x - getStringWidth(string) / 2.0),  offsetY, r, g, b, a);
             offsetY += this.getStringHeight(string);
         }
 
@@ -490,12 +490,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return new int[]{red, green, blue};
     }
 
-    public void drawGradientString(String s, float x, float y, int offset) {
+    public void drawGradientString(String s, double x, double y, int offset) {
         drawString(s, x, y, 255, 255, 255, 255, true, offset);
     }
 
     public void drawGradientCenteredString(String s, float x, float y, int i) {
-        drawGradientString(s, x - getStringWidth(s) / 2f, y, i);
+        drawGradientString(s, x - getStringWidth(s) * .5, y, i);
     }
 
     double roundToDecimal(double n) {

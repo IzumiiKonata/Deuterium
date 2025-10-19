@@ -58,7 +58,7 @@ public class Glyph {
 
     }
 
-    public float render(float xOffset, float yOffset, float r2, float g2, float b2, float a) {
+    public float render(double xOffset, double yOffset, float r2, float g2, float b2, float a) {
         if (this.value != ' ' && this.callList != -1 && textureId != -1) {
 
             GlStateManager.bindTexture(textureId);
