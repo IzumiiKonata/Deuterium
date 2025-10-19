@@ -159,12 +159,19 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                         double finalRenderX = renderX;
                         double finalRenderY = renderY;
-                        StencilClipManager.beginClip(() -> {
-                            Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
-                        });
 
-                        FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
-                        StencilClipManager.endClip();
+                        boolean shouldClip = progress > 0 && progress < 1;
+
+                        if (shouldClip)
+                            StencilClipManager.beginClip(() -> {
+                                Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
+                            });
+
+                        if (progress > 0)
+                            FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
+
+                        if (shouldClip)
+                            StencilClipManager.endClip();
                     } else {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * lyric.alpha));
                     }
