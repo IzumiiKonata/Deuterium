@@ -31,6 +31,7 @@ import net.minecraft.world.WorldServer;
 import tritium.event.events.player.MoveEntityRotationEvent;
 import tritium.event.events.player.SafeWalkEvent;
 import tritium.management.EventManager;
+import tritium.rendering.EntityLighter;
 
 import java.util.List;
 import java.util.Random;
@@ -1112,8 +1113,9 @@ public abstract class Entity implements ICommandSender {
     }
 
     public int getBrightnessForRender(float partialTicks) {
-        BlockPos blockpos = new BlockPos(this.posX, this.posY + (double) this.getEyeHeight(), this.posZ);
-        return /*this.worldObj.isBlockLoaded(blockpos) ? */this.worldObj.getCombinedLight(blockpos, 0)/* : 0*/;
+        return EntityLighter.getBlendedLight(this, partialTicks);
+//        BlockPos blockpos = new BlockPos(this.posX, this.posY + (double) this.getEyeHeight(), this.posZ);
+//        return /*this.worldObj.isBlockLoaded(blockpos) ? */this.worldObj.getCombinedLight(blockpos, 0)/* : 0*/;
     }
 
     /**
