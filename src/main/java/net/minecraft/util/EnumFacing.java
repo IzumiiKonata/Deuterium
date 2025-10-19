@@ -286,20 +286,59 @@ public enum EnumFacing implements IStringSerializable {
         return values()[rand.nextInt(values().length)];
     }
 
-    public static EnumFacing getFacingFromVector(float p_176737_0_, float p_176737_1_, float p_176737_2_) {
-        EnumFacing enumfacing = NORTH;
-        float f = Float.MIN_VALUE;
+    public static EnumFacing getFacingFromVector(float x, float y, float z) {
+//        EnumFacing enumfacing = NORTH;
+//        float f = Float.MIN_VALUE;
+//
+//        for (EnumFacing enumfacing1 : values()) {
+//            float f1 = x * (float) enumfacing1.directionVec.getX() + y * (float) enumfacing1.directionVec.getY() + z * (float) enumfacing1.directionVec.getZ();
+//
+//            if (f1 > f) {
+//                f = f1;
+//                enumfacing = enumfacing1;
+//            }
+//        }
+//
+//        return enumfacing;
+        // Vanilla quirk: return NORTH if all entries are zero
+        if (x == 0 && y == 0 && z == 0)
+            return EnumFacing.NORTH;
 
-        for (EnumFacing enumfacing1 : values()) {
-            float f1 = p_176737_0_ * (float) enumfacing1.directionVec.getX() + p_176737_1_ * (float) enumfacing1.directionVec.getY() + p_176737_2_ * (float) enumfacing1.directionVec.getZ();
+        // First choice in ties: negative, positive; Y, Z, X
+        float yM = Math.abs(y);
+        float zM = Math.abs(z);
+        float xM = Math.abs(x);
 
-            if (f1 > f) {
-                f = f1;
-                enumfacing = enumfacing1;
+        if (yM >= zM) {
+            if (yM >= xM) {
+                // Y biggest
+                if (y <= 0) {
+                    return EnumFacing.DOWN;
+                } else /* y > 0 */ {
+                    return EnumFacing.UP;
+                }
+            } else /* zM <= yM < xM */ {
+                // X biggest, fall through
+            }
+        } else /* yM < zM */ {
+            if (zM >= xM) {
+                // Z biggest
+                if (z <= 0) {
+                    return EnumFacing.NORTH;
+                } else /* z > 0 */ {
+                    return EnumFacing.SOUTH;
+                }
+            } else /* yM < zM < xM */ {
+                // X biggest, fall through
             }
         }
 
-        return enumfacing;
+        // X biggest
+        if (x <= 0) {
+            return EnumFacing.WEST;
+        } else /* x > 0 */ {
+            return EnumFacing.EAST;
+        }
     }
 
     public String toString() {
