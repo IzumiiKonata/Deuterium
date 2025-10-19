@@ -2,6 +2,7 @@ package tritium.module.impl.render;
 
 import net.minecraft.client.Minecraft;
 import org.lwjglx.input.Keyboard;
+import org.lwjglx.input.Mouse;
 import org.lwjglx.opengl.Display;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.world.TickEvent;
@@ -35,8 +36,14 @@ public class Perspective extends Module {
                     Keyboard.enableRepeatEvents(false);
                 }
 
-                if (!Keyboard.isKeyDown(super.getKeyBind())) {
-                    super.setEnabled(false);
+                int keyBind = super.getKeyBind();
+                if (keyBind > 0) {
+                    if (!Keyboard.isKeyDown(keyBind)) {
+                        super.setEnabled(false);
+                    }
+                } else {
+                    if (!Mouse.isButtonDown(keyBind + 100))
+                        super.setEnabled(false);
                 }
             }
         }

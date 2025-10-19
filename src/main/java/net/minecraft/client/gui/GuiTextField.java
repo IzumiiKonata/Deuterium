@@ -472,7 +472,7 @@ public class GuiTextField extends Gui {
                 }
             }
 
-            if (!IngameIMEJNI.disable) {
+            if (!IngameIMEJNI.disable && this.isFocused()) {
                 if (updInputCTXPositionTimer.isDelayed(100)) {
                     updInputCTXPositionTimer.reset();
                     PreEditRect rect = new PreEditRect();
@@ -488,7 +488,8 @@ public class GuiTextField extends Gui {
             }
 
 //            SharedRenderingConstants.NORMAL.add(() -> {
-            Internal.draw(k1 * RenderSystem.getScaleFactor(), this.yPosition * RenderSystem.getScaleFactor(), true);
+            if (this.isFocused())
+                Internal.draw(k1 * RenderSystem.getScaleFactor(), this.yPosition * RenderSystem.getScaleFactor(), true);
 //            });
         }
     }

@@ -62,6 +62,17 @@ public class Bind extends Command {
 
         m.ifPresent(md -> {
             String keyName = args[1];
+
+            if (keyName.startsWith("mouse")) {
+                try {
+                    int i = Integer.parseInt(keyName.substring(5));
+                    md.setKeyBind(i - 101);
+                    this.print(EnumChatFormatting.GREEN + "Successfully bound module " + EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + " to mouse " + i + ".");
+                    return;
+                } catch (Exception e) {
+                }
+            }
+
             md.setKeyBind(Keyboard.getKeyIndex(keyName.toUpperCase()));
             this.print(EnumChatFormatting.GREEN + "Successfully bound module " + EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + " to key " + EnumChatFormatting.RESET + Keyboard.getKeyName(Keyboard.getKeyIndex(keyName.toUpperCase())) + ".");
         });

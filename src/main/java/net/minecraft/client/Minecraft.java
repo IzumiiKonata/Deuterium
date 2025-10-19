@@ -1755,6 +1755,16 @@ public class Minecraft implements IThreadListener {
 
             }
         }
+
+        if (theWorld != null && thePlayer != null) {
+
+            ModuleManager.getModules().stream()
+                    .filter(m -> m.getKeyBind() + 100 == button)
+                    .forEach(m -> {
+                        m.setEnabled(pressed);
+                    });
+
+        }
     }
 
     final List<Runnable> clickActions = new CopyOnWriteArrayList<>();
