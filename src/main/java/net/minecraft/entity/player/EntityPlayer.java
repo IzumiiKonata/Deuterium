@@ -9,6 +9,7 @@ import net.minecraft.block.BlockDirectional;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
@@ -1886,7 +1887,7 @@ public abstract class EntityPlayer extends EntityLivingBase {
     public IChatComponent getDisplayName() {
 
 //        PlayerAdapter adapter = PlayerAdapter.getInstance(this);
-        String name = this.getSpoofedName();
+        String name = (this instanceof EntityPlayerSP ? this.getSpoofedName() : this.getName());
 
 //        if (!adapter.getPrefix().isEmpty())
 //            name = adapter.getPrefix() + " " + name;

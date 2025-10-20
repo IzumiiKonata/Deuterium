@@ -1,6 +1,8 @@
 package net.minecraft.scoreboard;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import tritium.management.ModuleManager;
 
 import java.util.Comparator;
 import java.util.List;
@@ -13,7 +15,7 @@ public class Score {
     };
     private final Scoreboard theScoreboard;
     private final ScoreObjective theScoreObjective;
-    private final String scorePlayerName;
+    private String scorePlayerName;
     private int scorePoints;
     private boolean locked;
     private boolean forceUpdate;
@@ -22,6 +24,11 @@ public class Score {
         this.theScoreboard = theScoreboardIn;
         this.theScoreObjective = theScoreObjectiveIn;
         this.scorePlayerName = scorePlayerNameIn;
+
+        if (ModuleManager.nameSpoof.isEnabled() && scorePlayerName != null) {
+            scorePlayerName = scorePlayerName.replace(Minecraft.getMinecraft().getSession().getUsername(), ModuleManager.nameSpoof.getSpoofedName());
+        }
+
         this.forceUpdate = true;
     }
 

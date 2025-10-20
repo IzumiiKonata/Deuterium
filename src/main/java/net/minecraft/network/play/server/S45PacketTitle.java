@@ -4,6 +4,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.IChatComponent;
+import tritium.management.ModuleManager;
 
 import java.io.IOException;
 
@@ -41,6 +42,9 @@ public class S45PacketTitle implements Packet<INetHandlerPlayClient> {
 
         if (this.type == S45PacketTitle.Type.TITLE || this.type == S45PacketTitle.Type.SUBTITLE) {
             this.message = buf.readChatComponent();
+
+            if (ModuleManager.nameSpoof.isEnabled())
+                ModuleManager.nameSpoof.replaceChatComponent(this.message);
         }
 
         if (this.type == S45PacketTitle.Type.TIMES) {

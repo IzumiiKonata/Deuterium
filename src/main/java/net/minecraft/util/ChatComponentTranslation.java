@@ -2,6 +2,7 @@ package net.minecraft.util;
 
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Lists;
+import lombok.Getter;
 
 import java.util.Arrays;
 import java.util.IllegalFormatException;
@@ -15,6 +16,7 @@ public class ChatComponentTranslation extends ChatComponentStyle {
     private final Object[] formatArgs;
     private final Object syncLock = new Object();
     private long lastTranslationUpdateTimeInMilliseconds = -1L;
+    @Getter
     List<IChatComponent> children = Lists.newArrayList();
     public static final Pattern stringVariablePattern = Pattern.compile("%(?:(\\d+)\\$)?([A-Za-z%]|$)");
 

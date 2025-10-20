@@ -1,7 +1,11 @@
 package net.minecraft.util;
 
+import lombok.Setter;
+
 public class ChatComponentText extends ChatComponentStyle {
-    private final String text;
+
+    @Setter
+    private String text;
 
     public ChatComponentText(String msg) {
         this.text = msg;
