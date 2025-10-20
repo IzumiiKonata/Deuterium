@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.GLSync;
 import processing.sound.JSynFFT;
+import tech.konata.ncmplayer.music.AudioPlayer;
 import tech.konata.ncmplayer.music.CloudMusic;
 import tritium.management.WidgetsManager;
 import tritium.rendering.HSBColor;
@@ -29,7 +30,6 @@ import static tritium.widget.impl.MusicSpectrumWidget.Style.*;
  */
 public class MusicSpectrumWidget extends Widget {
 
-    float[] bandValues = new float[1];
     float[] renderSpectrum = new float[1];
     float[] renderSpectrumIndicator = new float[1];
 
@@ -80,22 +80,6 @@ public class MusicSpectrumWidget extends Widget {
         multiplier.setShouldRender(() -> style.getValue() == Rect || style.getValue() == Line);
     }
 
-    ExtendedSpectrumVisualizer visualizer;
-
-    public final JSynFFT.FFTCalcCallback callback = fft -> {
-
-        if (!this.isEnabled())
-            return;
-
-        if (visualizer == null || visualizer.getSampleRate() != CloudMusic.player.player.sampleRate() || visualizer.getFftSize() != JSynFFT.FFT_SIZE || true) {
-            visualizer = new ExtendedSpectrumVisualizer(CloudMusic.player.player.sampleRate(), JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
-        }
-
-        // 处理FFT数据
-
-        bandValues = visualizer.processFFT(fft);
-    };
-
     @Override
     public void onRender(boolean editing) {
         float offset = 170;
@@ -140,7 +124,7 @@ public class MusicSpectrumWidget extends Widget {
 
             if (rect || line) {
 
-                int leng = (int) (bandValues.length * .5);
+                int leng = (int) (AudioPlayer.bandValues.length * .5);
                 if (renderSpectrum.length != leng) {
                     renderSpectrum = Arrays.copyOf(renderSpectrum, leng);
                     renderSpectrumIndicator = new float[leng];
@@ -148,7 +132,7 @@ public class MusicSpectrumWidget extends Widget {
 
                 for (int i = 0; i < leng; i++) {
 
-                    float target = bandValues[i] * (compatMode ? 8 : 16);
+                    float target = AudioPlayer.bandValues[i] * (compatMode ? 8 : 16);
 
                     if (!Float.isFinite(target)) {
                         target = 0;

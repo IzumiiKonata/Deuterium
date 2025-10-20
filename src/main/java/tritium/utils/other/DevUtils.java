@@ -40,7 +40,7 @@ public class DevUtils {
 
     public static boolean isObfuscated() {
         try {
-            Class.forName(new String(Base64.getDecoder().decode("dGVjaC5rb25hdGEucGhvc3BoYXRlLlBob3NwaGF0ZQ==")));
+            Class.forName(new String(Base64.getDecoder().decode("dHJpdGl1bS5Ucml0aXVt")));
             return false;
         } catch (Exception ignored) {
             return true;

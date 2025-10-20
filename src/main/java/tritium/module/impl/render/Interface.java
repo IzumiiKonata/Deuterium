@@ -33,10 +33,10 @@ public class Interface extends Module {
         super.setEnabled(true);
     }
 
-    public BooleanSetting notifications = new BooleanSetting("Notifications", true);
-    public BooleanSetting waterMark = new BooleanSetting("Water Mark", false);
-    public StringSetting waterMarkValue = new StringSetting("Title", Tritium.NAME + "", () -> waterMark.getValue());
-    public NumberSetting<Double> pvScale = new NumberSetting<>("<..?> Scale", 1.5, 0.8, 3.0, 0.05);
+//    public BooleanSetting notifications = new BooleanSetting("Notifications", true);
+//    public BooleanSetting waterMark = new BooleanSetting("Water Mark", false);
+//    public StringSetting waterMarkValue = new StringSetting("Title", Tritium.NAME + "", () -> waterMark.getValue());
+//    public NumberSetting<Double> pvScale = new NumberSetting<>("<..?> Scale", 1.5, 0.8, 3.0, 0.05);
 
     @Override
     public void onEnable() {
@@ -46,12 +46,12 @@ public class Interface extends Module {
     @Handler
     public final void onRender2D(Render2DEvent.Render2DBeforeInventoryEvent e) {
 
-        if (this.notifications.getValue())
-            NotificationManager.doRender(RenderSystem.getWidth() * 0.5, 4);
-
-        if (this.waterMark.getValue()) {
-            this.renderWaterMark();
-        }
+//        if (this.notifications.getValue())
+//            NotificationManager.doRender(RenderSystem.getWidth() * 0.5, 4);
+//
+//        if (this.waterMark.getValue()) {
+//            this.renderWaterMark();
+//        }
 
         if (ClientSettings.DEBUG_MODE.getValue()) {
             x = 300;
@@ -93,20 +93,20 @@ public class Interface extends Module {
 
     final SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
 
-    private void renderWaterMark() {
-        double posX = 4, posY = 4 + (double) 0;
-
-        String text = mc.getSession().getUsername() + " | " + sdf.format(new Date());
-
-        if (!waterMarkValue.getValue().isEmpty()) {
-            text = waterMarkValue.getValue().replaceAll("&", "\247") + EnumChatFormatting.RESET + " | " + text;
-        }
-
-        CFontRenderer fr = FontManager.pf20bold;
-
-        roundedRect(posX, posY, fr.getStringWidth(text) + 8, fr.getHeight() + 8, 4, new Color(12, 12, 12, 60));
-
-        fr.drawString(text, posX + 4, posY + 4, -1);
-    }
+//    private void renderWaterMark() {
+//        double posX = 4, posY = 4 + (double) 0;
+//
+//        String text = mc.getSession().getUsername() + " | " + sdf.format(new Date());
+//
+//        if (!waterMarkValue.getValue().isEmpty()) {
+//            text = waterMarkValue.getValue().replaceAll("&", "\247") + EnumChatFormatting.RESET + " | " + text;
+//        }
+//
+//        CFontRenderer fr = FontManager.pf20bold;
+//
+//        roundedRect(posX, posY, fr.getStringWidth(text) + 8, fr.getHeight() + 8, 4, new Color(12, 12, 12, 60));
+//
+//        fr.drawString(text, posX + 4, posY + 4, -1);
+//    }
 
 }

@@ -34,6 +34,8 @@ public class LyricLine {
     public float hoveringAlpha = 0f;
     public float blurAlpha = 0f;
     public boolean shouldUpdatePosition = false;
+    public double reboundAnimation = 0;
+    public boolean reboundAnimationForward = true;
 
     public final List<Word> words = new CopyOnWriteArrayList<>();
 

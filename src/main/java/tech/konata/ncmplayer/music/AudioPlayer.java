@@ -2,14 +2,14 @@ package tech.konata.ncmplayer.music;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.client.Minecraft;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
-import processing.sound.Engine;
-import processing.sound.FFT;
-import processing.sound.SoundFile;
-import processing.sound.Waveform;
+import processing.sound.*;
 import tritium.management.WidgetsManager;
+import tritium.screens.ncm.NCMScreen;
 import tritium.settings.ModeSetting;
+import tritium.widget.impl.ExtendedSpectrumVisualizer;
 import tritium.widget.impl.MusicSpectrumWidget;
 
 import java.io.File;
@@ -45,7 +45,24 @@ public class AudioPlayer {
     }
 
     @Getter
-    FFT fft = new FFT(128, WidgetsManager.musicSpectrum.callback);
+    FFT fft = new FFT(128, callback);
+
+    public static float[] bandValues = new float[1];
+    public static ExtendedSpectrumVisualizer visualizer;
+
+    public static final JSynFFT.FFTCalcCallback callback = fft -> {
+
+        if (!WidgetsManager.musicSpectrum.isEnabled() && !(Minecraft.getMinecraft().currentScreen instanceof NCMScreen))
+            return;
+
+        if (visualizer == null || visualizer.getSampleRate() != CloudMusic.player.player.sampleRate() || visualizer.getFftSize() != JSynFFT.FFT_SIZE) {
+            visualizer = new ExtendedSpectrumVisualizer(CloudMusic.player.player.sampleRate(), JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
+        }
+
+        // 处理FFT数据
+
+        bandValues = visualizer.processFFT(fft);
+    };
 
     @Getter
     Waveform waveform = new Waveform(WidgetsManager.musicSpectrum.windowTime.getValue().floatValue() * 0.001f);

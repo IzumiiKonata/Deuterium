@@ -133,8 +133,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             if (lyric.hoveringAlpha >= .02f)
                 roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, 8, 8, 1, 1, 1, alpha * lyric.hoveringAlpha);
 
-            double renderX = RenderSystem.getWidth() * .5;
-            double renderY = lyric.posY;
+            double renderX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
+            double renderY = lyric.posY + lyric.reboundAnimation;
+
+            lyric.reboundAnimation = Interpolations.interpBezier(lyric.reboundAnimation, lyric == currentDisplaying ? 2f : 0f, 0.1f);
 
             List<LyricLine.Word> words = lyric.words;
             if (!words.isEmpty()) {
@@ -143,7 +145,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                     double wordWidth = FontManager.pf65bold.getStringWidthD(word.word);
 
                     if (renderX + wordWidth > RenderSystem.getWidth() * .5 + lyricsWidth) {
-                        renderX = RenderSystem.getWidth() * .5;
+                        renderX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
                         renderY += FontManager.pf65bold.getHeight() * .85;
                     }
 
@@ -190,7 +192,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             }
 
             if (lyric.translationText != null) {
-                FontManager.pf34bold.drawString(lyric.translationText, RenderSystem.getWidth() * .5, renderY + FontManager.pf65bold.getHeight() * .85 + 8, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
+                FontManager.pf34bold.drawString(lyric.translationText, RenderSystem.getWidth() * .5 + lyric.reboundAnimation, renderY + FontManager.pf65bold.getHeight() * .85 + 8, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
             }
 
             runnables.add(() -> Rect.draw(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
@@ -239,7 +241,6 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 lyric.computeHeight(width);
 
                 LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
-                double prevOffsetY = prev == null ? offsetY : offsetY - 16 - prev.height;
 
                 if (prev != null) {
                     if (lyric.posY - (prev.posY + prev.height) >= 48)
@@ -253,6 +254,14 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                 if (prev == null || lyric.shouldUpdatePosition) {
                     lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
+
+//                    if (Math.abs(lyric.posY - offsetY) <= 10f) {
+//                        boolean forward = lyric.reboundAnimationForward;
+//                        lyric.reboundAnimation = Interpolations.interpBezier(lyric.reboundAnimation, forward ? 2f : 0f, forward ? .1f : .2f);
+//
+//                        if (forward && lyric.reboundAnimation >= 1.5f)
+//                            lyric.reboundAnimationForward = false;
+//                    }
                 }
 
                 offsetY += lyric.height + 16;
@@ -320,7 +329,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         }
 
         if (cur != currentDisplaying) {
-            lyrics.forEach(l -> l.shouldUpdatePosition = false);
+            lyrics.forEach(l -> {
+                l.shouldUpdatePosition = false;
+                l.reboundAnimationForward = true;
+            });
         }
     }
 
@@ -516,6 +528,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
     float musicBgAlpha = 0.0f;
     ITextureObject prevBg = null, prevCover;
     static Music prevMusic = null;
+    double fftScale = 0;
 
     private void renderBackground(double posX, double posY, double width, double height, float alpha) {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
@@ -532,6 +545,22 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
         if (texBg != null || prevBg != null) {
 
+            GlStateManager.pushMatrix();
+
+            float max = 0;
+            for (int i = 0; i < Math.min(20, AudioPlayer.bandValues.length); i++) {
+                max = Math.max(max, AudioPlayer.bandValues[i]);
+            }
+
+            if (!Double.isFinite(fftScale))
+                fftScale = 0;
+
+            if (!Float.isFinite(max) || max <= .2f)
+                max = 0;
+
+            fftScale = Interpolations.interpBezier(fftScale, max * .1, .4f);
+
+            scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 + fftScale);
 
             if (prevBg != null && musicBgAlpha < 0.99f) {
                 GlStateManager.bindTexture(prevBg.getGlTextureId());
@@ -547,6 +576,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 GlStateManager.color(1, 1, 1, alpha * this.musicBgAlpha);
                 Image.draw(posX, posY + height * .5 - width * .5, width, width, Image.Type.NoColor);
             }
+
+            GlStateManager.popMatrix();
         }
 
         Rect.draw(posX, posY, width, height, hexColor(0, 0, 0, alpha * .3f));

@@ -157,9 +157,8 @@ public class PlaylistPanel extends NCMPanel {
         });
 
         playList.loadMusicsWithCallback(musics -> {
-            for (int i = 0; i < musics.size(); i++) {
-                Music music = musics.get(i);
-                MusicWidget musicWidget = new MusicWidget(music, playList, i);
+            for (Music music : musics) {
+                MusicWidget musicWidget = new MusicWidget(music, playList, musics.indexOf(music));
                 musicsPanel.addChild(musicWidget);
             }
         });

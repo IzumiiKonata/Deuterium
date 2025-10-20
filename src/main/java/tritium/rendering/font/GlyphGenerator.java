@@ -3,7 +3,11 @@ package tritium.rendering.font;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Location;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
+import org.lwjgl.opengl.GL11;
+import org.lwjglx.opengl.GLContext;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.rendersystem.RenderSystem;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
@@ -102,6 +106,14 @@ public class GlyphGenerator {
 
             bi.flush();
             glyph.textureId = dynamicTexture.getGlTextureId();
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, glyph.textureId);
+            RenderSystem.linearFilter();
+
+            if (GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
+                float maxAnisotropy = GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+                GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
+                        Math.min(16.0f, maxAnisotropy));
+            }
             glyph.init();
         });
 

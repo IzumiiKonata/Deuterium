@@ -303,6 +303,12 @@ public class ExtendedSpectrumVisualizer {
             bandMagnitudes[i] = normalized;
         }
 
+        for (int i = 0; i < bandMagnitudes.length; i++) {
+            if (!Float.isFinite(bandMagnitudes[i])) {
+                bandMagnitudes[i] = 0;
+            }
+        }
+
         return bandMagnitudes;
     }
 

@@ -22,9 +22,11 @@ import tritium.rendering.loading.LoadingScreenRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shaders;
 import tritium.screens.altmanager.AltScreen;
+import tritium.screens.ncm.NCMScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.alt.AltManager;
 import tritium.utils.i18n.Localizable;
+import tritium.utils.other.info.Version;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -51,28 +53,38 @@ public class MainMenu extends BaseScreen {
     @Override
     public void initGui() {
         // create buttons
-        List<Tuple<Localizable, Runnable>> tuples = Arrays.asList(
-            Tuple.of(
-                    Localizable.of("mainmenu.singleplayer"), () -> {
-                        SharedConstants.mc.displayGuiScreen(new GuiSelectWorld(MainMenu.this));
+        List<Tuple<Localizable, Runnable>> tuples = new ArrayList<>(Arrays.asList(
+                Tuple.of(
+                        Localizable.of("mainmenu.singleplayer"), () -> {
+                            SharedConstants.mc.displayGuiScreen(new GuiSelectWorld(MainMenu.this));
+                        }
+                ),
+                Tuple.of(
+                        Localizable.of("mainmenu.multiplayer"), () -> {
+                            SharedConstants.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.this));
+                        }
+                ),
+                Tuple.of(
+                        Localizable.of("mainmenu.altmanager"), () -> {
+                            SharedConstants.mc.displayGuiScreen(AltScreen.getInstance());
+                        }
+                ),
+                Tuple.of(
+                        Localizable.of("mainmenu.settings"), () -> {
+                            SharedConstants.mc.displayGuiScreen(new GuiOptions(MainMenu.this, SharedConstants.mc.gameSettings));
+                        }
+                )
+        ));
+
+        if (Tritium.getVersion().getType() == Version.Type.Dev) {
+            tuples.add(
+                Tuple.of(
+                    Localizable.ofUntranslatable("打开音乐播放器"), () -> {
+                        SharedConstants.mc.displayGuiScreen(NCMScreen.getInstance());
                     }
-            ),
-            Tuple.of(
-                    Localizable.of("mainmenu.multiplayer"), () -> {
-                        SharedConstants.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.this));
-                    }
-            ),
-            Tuple.of(
-                    Localizable.of("mainmenu.altmanager"), () -> {
-                        SharedConstants.mc.displayGuiScreen(AltScreen.getInstance());
-                    }
-            ),
-            Tuple.of(
-                    Localizable.of("mainmenu.settings"), () -> {
-                        SharedConstants.mc.displayGuiScreen(new GuiOptions(MainMenu.this, SharedConstants.mc.gameSettings));
-                    }
-            )
-        );
+                )
+            );
+        }
 
         double buttonWidth = 80;
         double buttonHeight = 30;
