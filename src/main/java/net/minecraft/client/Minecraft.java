@@ -17,7 +17,6 @@ import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
-import org.lwjgl.system.MemoryUtil;
 import tritium.launch.Launcher;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.phosphor.api.ILightingEngineProvider;
@@ -31,7 +30,6 @@ import net.minecraft.client.gui.achievement.GuiAchievement;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.main.GameConfiguration;
-import net.minecraft.client.main.Main;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.multiplayer.ServerData;
@@ -107,8 +105,7 @@ import tritium.event.events.game.KeyPressedEvent;
 import tritium.event.events.rendering.DisplayResizedEvent;
 import tritium.event.events.world.TickEvent;
 import tritium.event.events.world.WorldChangedEvent;
-import tritium.rendering.ime.Internal;
-import tritium.management.ConfigManager;
+import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.EventManager;
 import tritium.management.FontManager;
 import tritium.management.ModuleManager;
@@ -1602,8 +1599,8 @@ public class Minecraft implements IThreadListener {
      * Toggles fullscreen mode.
      */
     public void toggleFullscreen() {
-        if (!IngameIMEJNI.disable)
-            Internal.destroyInputCtx();
+        if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
+            IngameIMERenderer.destroyInputCtx();
 
         try {
             this.fullscreen = !this.fullscreen;
@@ -1639,9 +1636,9 @@ public class Minecraft implements IThreadListener {
             logger.error("Couldn't toggle fullscreen", exception);
         }
 
-        if (!IngameIMEJNI.disable) {
-            Internal.createInputCtx();
-            Internal.setActivated(this.fullscreen);
+        if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
+            IngameIMERenderer.createInputCtx();
+            IngameIMERenderer.setActivated(this.fullscreen);
         }
     }
 

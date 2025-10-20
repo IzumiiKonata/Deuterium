@@ -884,6 +884,8 @@
     "setting.waveform stereo.name": "Waveform Stereo",
     "setting.window time (ms).name": "Window Time (ms)",
 
+    "setting.in game ime.name": "In game IME",
+
     "clickgui.nosettingshere": "No Settings Here."
   }
 }

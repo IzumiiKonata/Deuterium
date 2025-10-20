@@ -214,7 +214,7 @@ public class IngameIMEJNI {
             return;
 
         if (Util.getOSType() == Util.EnumOS.OSX) {
-            disable = true;
+            supported = true;
             return;
         }
 
@@ -256,17 +256,17 @@ public class IngameIMEJNI {
             System.load(libFile.getAbsolutePath());
         } catch (UnsatisfiedLinkError wtf) {
             // disable ingameime
-            disable = true;
+            supported = false;
         }
     }
 
-    public static volatile boolean disable = false;
+    public static boolean supported = true;
 
     private static native void swig_module_init();
 
     static {
         loadNative();
-        if (!disable)
+        if (supported)
             swig_module_init();
     }
 }

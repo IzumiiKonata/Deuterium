@@ -10,7 +10,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
-import tritium.rendering.ime.Internal;
+import tritium.rendering.ime.IngameIMERenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.timing.Timer;
 
@@ -472,13 +472,13 @@ public class GuiTextField extends Gui {
                 }
             }
 
-            if (!IngameIMEJNI.disable && this.isFocused()) {
+            if (IngameIMERenderer.canRender() && this.isFocused()) {
                 if (updInputCTXPositionTimer.isDelayed(100)) {
                     updInputCTXPositionTimer.reset();
                     PreEditRect rect = new PreEditRect();
                     rect.setX((int) (k1 * RenderSystem.getScaleFactor()) * 2);
                     rect.setY((int) ((i1 + fontRendererInstance.FONT_HEIGHT) * RenderSystem.getScaleFactor()) * 2);
-                    Internal.InputCtx.setPreEditRect(rect);
+                    IngameIMERenderer.InputCtx.setPreEditRect(rect);
                 }
             }
 
@@ -488,8 +488,8 @@ public class GuiTextField extends Gui {
             }
 
 //            SharedRenderingConstants.NORMAL.add(() -> {
-            if (this.isFocused())
-                Internal.draw(k1 * RenderSystem.getScaleFactor(), this.yPosition * RenderSystem.getScaleFactor(), true);
+            if (this.isFocused() && IngameIMERenderer.canRender())
+                IngameIMERenderer.draw(k1 * RenderSystem.getScaleFactor(), this.yPosition * RenderSystem.getScaleFactor(), true);
 //            });
         }
     }

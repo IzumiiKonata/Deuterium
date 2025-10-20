@@ -7,7 +7,8 @@ import net.minecraft.util.*;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjglx.input.Keyboard;
 import org.lwjglx.input.Mouse;
-import tritium.rendering.ime.Internal;
+import tritium.rendering.ime.IngameIMERenderer;
+import tritium.settings.ClientSettings;
 
 import java.io.IOException;
 import java.util.List;
@@ -57,8 +58,8 @@ public class GuiChat extends GuiScreen {
         this.inputField.setText(this.defaultInputFieldText);
         this.inputField.setCanLoseFocus(false);
 
-        if (!IngameIMEJNI.disable)
-            Internal.setActivated(true);
+        if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
+            IngameIMERenderer.setActivated(true);
     }
 
     /**

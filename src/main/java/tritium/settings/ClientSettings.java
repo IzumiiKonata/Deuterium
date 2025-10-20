@@ -1,6 +1,7 @@
 package tritium.settings;
 
 import com.google.gson.JsonObject;
+import ingameime.IngameIMEJNI;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
@@ -8,6 +9,7 @@ import org.lwjglx.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import tritium.Tritium;
 import tritium.management.ConfigManager;
+import tritium.rendering.ime.IngameIMERenderer;
 import tritium.screens.ClickGui;
 import tritium.utils.i18n.Localizable;
 import tritium.management.Localizer;
@@ -91,6 +93,17 @@ public class ClientSettings {
     public static final BooleanSetting RENDER_GLOW = new BooleanSetting("Render Glow", true);
     public static final BooleanSetting RENDER_BLUR = new BooleanSetting("Render Blur", true);
     public static final BooleanSetting CENTER_INVENTORY = new BooleanSetting("Center the Inventory", true);
+    public static final BooleanSetting IN_GAME_IME = new BooleanSetting("In game IME", true) {
+        @Override
+        public void onToggle() {
+
+            if (this.getValue() && IngameIMEJNI.supported) {
+                IngameIMERenderer.destroyInputCtx();
+                IngameIMERenderer.createInputCtx();
+            }
+
+        }
+    };
 
     public static StringModeSetting FULL_SCREEN_RESOLUTION = new StringModeSetting("Fullscreen Resolution", "None?!", "None?!");
     public static StringModeSetting FULL_SCREEN_REFRESH_RATE = new StringModeSetting("Fullscreen Refresh Rate", "Auto", "Auto", "60", "90", "120", "144", "165", "200", "240", "360") {

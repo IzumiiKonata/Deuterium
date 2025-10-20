@@ -15,7 +15,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 import org.lwjglx.input.Keyboard;
-import tritium.rendering.ime.Internal;
+import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.FontManager;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.Stencil;
@@ -648,14 +648,14 @@ public class TextField extends GuiTextField {
                     if (!highlighting) {
                         RenderSystem.drawRect(xPosition + getFontRenderer().getStringWidth(text) + 4.5f - offse - 3f, var8 - 7, xPosition + getFontRenderer().getStringWidth(text) + 0.5f + 4.5f - offse - 4f, var8 + getFontRenderer().getHeight() - 3, RenderSystem.hexColor(80, 80, 80, (int) (alpha * 255)));
                     }
-                    if (!IngameIMEJNI.disable) {
+                    if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
                         if (updInputCTXPositionTimer.isDelayed(100)) {
                             updInputCTXPositionTimer.reset();
                             PreEditRect rect = new PreEditRect();
                             double v = (ClientSettings.FIXED_SCALE.getValue() ? 1 : RenderSystem.getScaleFactor()) * 2;
                             rect.setX((int) ((xPosition + getFontRenderer().getStringWidth(text) + 4.5f - offse - 3f) * v));
                             rect.setY((int) ((var8 + getFontRenderer().getHeight() - 3) * v));
-                            Internal.InputCtx.setPreEditRect(rect);
+                            IngameIMERenderer.InputCtx.setPreEditRect(rect);
                         }
                     }
                     GlStateManager.color(1, 1, 1, 1);
@@ -669,8 +669,8 @@ public class TextField extends GuiTextField {
             } else {
                 RenderSystem.endScissor();
             }
-            if (this.isFocused() && !IngameIMEJNI.disable)
-                Internal.draw(xPosition, yPosition, false);
+            if (this.isFocused() && IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
+                IngameIMERenderer.draw(xPosition, yPosition, false);
         }
     }
 
@@ -883,8 +883,8 @@ public class TextField extends GuiTextField {
             this.cursorCounter = 0;
             Keyboard.enableRepeatEvents(true);
 
-            if (!IngameIMEJNI.disable)
-                Internal.setActivated(true);
+            if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
+                IngameIMERenderer.setActivated(true);
         }
 
         this.isFocused = focused;

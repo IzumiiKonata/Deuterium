@@ -13,6 +13,7 @@ import tritium.management.ThemeManager;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 
@@ -25,7 +26,7 @@ import java.util.List;
  * @author IzumiiKonata
  * @since 2024/8/26 08:33
  */
-public class Internal implements SharedRenderingConstants {
+public class IngameIMERenderer implements SharedRenderingConstants {
 
     private static final Logger LOG = LogManager.getLogger("IngameIME");
 
@@ -46,9 +47,13 @@ public class Internal implements SharedRenderingConstants {
 
     static final List<Candidate> candidates = Collections.synchronizedList(new ArrayList<>());
 
+    public static boolean canRender() {
+        return IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue();
+    }
+
     public static void draw(double posX, double posY, boolean scale) {
 
-        if (IngameIMEJNI.disable) {
+        if (!IngameIMEJNI.supported) {
             return;
         }
 

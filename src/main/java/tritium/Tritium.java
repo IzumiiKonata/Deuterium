@@ -4,16 +4,16 @@ import ingameime.IngameIMEJNI;
 import lombok.Getter;
 import org.lwjglx.opengl.Display;
 import tritium.event.eventapi.Event;
-import tritium.rendering.ime.Internal;
+import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.*;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.settings.ClientSettings;
 import tritium.utils.other.info.Version;
 import tritium.utils.logging.LogLevel;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 import tritium.utils.other.DevUtils;
-import tritium.management.*;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.List;
 public class Tritium {
 
     @Getter
-    private static final Version version = new Version(Version.Type.Release, 1, 2, 1);
+    private static final Version version = new Version(Version.Type.Release, 1, 2, 2);
 
     public static final String NAME = "Tritium";
 
@@ -126,8 +126,8 @@ public class Tritium {
 
         // init ingame ime
         IngameIMEJNI.loadNative();
-        if (!IngameIMEJNI.disable)
-            Internal.createInputCtx();
+        if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
+            IngameIMERenderer.createInputCtx();
 
         LoadingRenderer.setProgress(100, NAME + " - Finish");
 

@@ -707,6 +707,8 @@
     "setting.waveform stereo.name": "波形双声道",
     "setting.window time (ms).name": "窗口大小 (毫秒)",
 
+    "setting.in game ime.name": "全屏时游戏内输入法",
+
     "clickgui.nosettingshere": "这里没有设置."
   }
 }
