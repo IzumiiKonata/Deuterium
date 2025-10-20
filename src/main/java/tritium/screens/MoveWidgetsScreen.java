@@ -321,11 +321,13 @@ public class MoveWidgetsScreen extends BaseScreen {
                 widget.setMoveX(mouseX - widget.getX());
                 widget.setMoveY(mouseY - widget.getY());
             } else {
-                double x = mouseX - widget.getMoveX();
-                double y = mouseY - widget.getMoveY();
 
                 double widgetWidth = widget.getWidth();
                 double widgetHeight = widget.getHeight();
+
+                double x = Math.max(0, Math.min(RenderSystem.getWidth() - widgetWidth, mouseX - widget.getMoveX()));
+                double y = Math.max(0, Math.min(RenderSystem.getHeight() - widgetHeight, mouseY - widget.getMoveY()));
+
                 double widgetX = widget.getX();
                 double widgetY = widget.getY();
 

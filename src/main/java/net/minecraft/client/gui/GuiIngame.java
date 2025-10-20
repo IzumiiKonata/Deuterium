@@ -846,6 +846,10 @@ public class GuiIngame extends Gui {
      * Renders dragon's (boss) health on the HUD
      */
     private void renderBossHealth() {
+
+        if (WidgetsManager.bossBar.isEnabled())
+            return;
+
         if (BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
             --BossStatus.statusBarTime;
             FontRenderer fontrenderer = this.mc.fontRendererObj;

@@ -885,6 +885,10 @@
     "setting.window time (ms).name": "Window Time (ms)",
 
     "setting.in game ime.name": "In game IME",
+    "widget.bossbar.name": "BossBar",
+    "setting.hide.name": "Hide",
+    "setting.use vanilla font for widgets rendering.name": "Use vanilla font for widgets rendering",
+    "setting.hide red points.name": "Hide Red Points",
 
     "clickgui.nosettingshere": "No Settings Here."
   }
