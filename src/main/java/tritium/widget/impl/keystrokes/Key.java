@@ -83,8 +83,8 @@ public class Key implements SharedRenderingConstants {
                 boolean renderCPS = this.key.getKeyCode() <= -99 && WidgetsManager.keyStrokes.showCPS.getValue();
                 fontRenderer.drawCenteredString(
                         this.getKeyName(),
-                        x + xOffset + width * .5 - (this.key.getKeyCode() == 31 && fontRenderer != FontManager.vanilla ? 0.5 : -.5),
-                        //                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        x + xOffset + width * .5 - (fontRenderer != FontManager.vanilla ? 0.25 : -.5),
+                        //                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                         //                          何意味。？
                         y + yOffset + height * .5 - fontRenderer.getHeight() / 2.0 - (renderCPS ? 4 : (fontRenderer == FontManager.vanilla ? 0 : .5)),
                         hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255))

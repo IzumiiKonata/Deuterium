@@ -37,7 +37,7 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
             public void onRender(double mouseX, double mouseY, int dWheel) {
                 super.onRender(mouseX, mouseY, dWheel);
 
-                cr.render(this.getX(), this.getY(), this.getWidth(), 2, setting.getValue(), ClickGui.getColor(20));
+                cr.render(this.getX(), this.getY(), this.getWidth(), 2, setting.getValue(), reAlpha(ClickGui.getColor(20), this.getAlpha()));
             }
         };
 

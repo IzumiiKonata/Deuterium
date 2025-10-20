@@ -18,6 +18,7 @@ import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.Shaders;
@@ -350,6 +351,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
     float coverAlpha = .0f;
     boolean prevMouse = false;
 
+    ScrollText stMusicName = new ScrollText(), stArtists = new ScrollText();
+
     private void renderControlsPart(double mouseX, double mouseY, double posX, double posY, double width, double height, float alpha) {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
@@ -373,8 +376,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         double elementsXOffset = center - this.getCoverSizeMax() * .5;
         double elementsYOffset = center + this.getCoverSizeMax() * .5 + 16;
 
-        FontManager.pf28bold.drawString(CloudMusic.currentlyPlaying.getName(), elementsXOffset, elementsYOffset, RenderSystem.hexColor(1, 1, 1, alpha));
-        FontManager.pf20bold.drawString(CloudMusic.currentlyPlaying.getArtistsName(), elementsXOffset, elementsYOffset + FontManager.pf20bold.getHeight() + 8, RenderSystem.hexColor(1, 1, 1, alpha * .8f));
+        stMusicName.render(FontManager.pf28bold, CloudMusic.currentlyPlaying.getName(), elementsXOffset, elementsYOffset, this.getCoverSizeMax(), RenderSystem.hexColor(1, 1, 1, alpha));
+        stArtists.render(FontManager.pf20bold, CloudMusic.currentlyPlaying.getArtistsName(), elementsXOffset, elementsYOffset + FontManager.pf20bold.getHeight() + 8, this.getCoverSizeMax(), RenderSystem.hexColor(1, 1, 1, alpha * .8f));
 
         // progressbar 背景
         double progressBarYOffset = elementsYOffset + FontManager.pf20bold.getHeight() + 8 + FontManager.pf20bold.getHeight() + 12;
