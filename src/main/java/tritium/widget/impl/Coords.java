@@ -30,7 +30,7 @@ public class Coords extends Widget {
 
     @Override
     public void onRender(boolean editing) {
-        IFontRenderer fr = FontManager.pf25;
+        IFontRenderer fr = ClientSettings.WIDGETS_USE_VANILLA_FONT_RENDERER.getValue() ? FontManager.vanilla : FontManager.pf25;
 
         List<String> text = this.getText();
 
@@ -42,7 +42,7 @@ public class Coords extends Widget {
             GlStateManager.pushMatrix();
             this.doScale();
 
-            double textWidth = 100;
+            double textWidth = fr == FontManager.vanilla ? 80 : 100;
             double offsetY = this.getY() + spacing;
 
             for (String s : text) {

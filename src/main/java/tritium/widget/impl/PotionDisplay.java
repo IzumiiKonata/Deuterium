@@ -99,7 +99,7 @@ public class PotionDisplay extends Widget {
                     potionName = potionName + " " + I18n.format("enchantment.level.4");
                 }
 
-                IFontRenderer fr = mc.fontRendererObj;
+                IFontRenderer fr = FontManager.vanilla;
 
                 fr.drawString(potionName, x + spacing + texSize + spacing, finalY + spacing * 2 + 2, -1);
                 String duration = Potion.getDurationString(effect);

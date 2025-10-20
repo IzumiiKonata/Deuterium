@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
-public class FontRenderer implements IResourceManagerReloadListener, IFontRenderer {
+public class FontRenderer implements IResourceManagerReloadListener {
     private static final Location[] unicodePageLocations = new Location[256];
 
     /**
@@ -357,7 +357,6 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         return this.drawString(text, x, y, color, true);
     }
 
-    @Override
     public float drawString(String text, double x, double y, int color) {
         return drawString(text, (float) x, (float) y, color, true);
     }
@@ -366,7 +365,6 @@ public class FontRenderer implements IResourceManagerReloadListener, IFontRender
         return this.drawString(text, (float) x, (float) y, color, true);
     }
 
-    @Override
     public int getHeight() {
         return FONT_HEIGHT;
     }

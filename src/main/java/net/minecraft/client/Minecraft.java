@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
+import tritium.interfaces.IFontRenderer;
 import tritium.launch.Launcher;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.phosphor.api.ILightingEngineProvider;
@@ -503,6 +504,33 @@ public class Minecraft implements IThreadListener {
             this.fontRendererObj.setUnicodeFlag(this.isUnicode());
             this.fontRendererObj.setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
+
+        FontManager.vanilla = new IFontRenderer() {
+            @Override
+            public float drawString(String text, double x, double y, int color) {
+                return fontRendererObj.drawString(text, x + .5, y + 1, color);
+            }
+
+            @Override
+            public int drawStringWithShadow(String text, double x, double y, int color) {
+                return fontRendererObj.drawStringWithShadow(text, x + .5, y + 1, color);
+            }
+
+            @Override
+            public int getHeight() {
+                return fontRendererObj.FONT_HEIGHT;
+            }
+
+            @Override
+            public int getStringWidth(String text) {
+                return fontRendererObj.getStringWidth(text);
+            }
+
+            @Override
+            public void drawCenteredString(String text, double x, double y, int color) {
+                fontRendererObj.drawCenteredString(text, x + .5, y + 1, color);
+            }
+        };
 
         LoadingRenderer.setProgress(20, "Minecraft - FontRenderer");
 

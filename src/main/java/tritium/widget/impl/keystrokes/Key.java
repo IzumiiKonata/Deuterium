@@ -1,6 +1,7 @@
 package tritium.widget.impl.keystrokes;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.KeyBinding;
 import org.lwjglx.input.Keyboard;
 import tritium.interfaces.IFontRenderer;
@@ -46,6 +47,10 @@ public class Key implements SharedRenderingConstants {
 
         NORMAL.add(() -> {
 
+            GlStateManager.pushMatrix();
+
+            WidgetsManager.keyStrokes.doScale();
+
             this.pressedAlpha = Interpolations.interpBezier(this.pressedAlpha, this.key.pressed ? 120 * RenderSystem.DIVIDE_BY_255 : 0, 0.2f);
 
             Rect.draw(x + xOffset, y + yOffset, width, height, RenderSystem.hexColor(0, 0, 0, 50), Rect.RectType.EXPAND);
@@ -72,25 +77,26 @@ public class Key implements SharedRenderingConstants {
 
             Stencil.dispose();
 
-            IFontRenderer fontRenderer = FontManager.pf18;
+            IFontRenderer fontRenderer = ClientSettings.WIDGETS_USE_VANILLA_FONT_RENDERER.getValue() ? FontManager.vanilla : FontManager.pf18;
 
             if (this.key.getKeyCode() != 57) {
                 boolean renderCPS = this.key.getKeyCode() <= -99 && WidgetsManager.keyStrokes.showCPS.getValue();
                 fontRenderer.drawCenteredString(
                         this.getKeyName(),
-                        x + xOffset + width * .5 - (this.key.getKeyCode() == 31 ? 0.5 : 0),
-                        //                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+                        x + xOffset + width * .5 - (this.key.getKeyCode() == 31 && fontRenderer != FontManager.vanilla ? 0.5 : -.5),
+                        //                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
                         //                          何意味。？
-                        y + yOffset + height * .5 - fontRenderer.getHeight() / 2.0 - (renderCPS ? 4 : 0),
+                        y + yOffset + height * .5 - fontRenderer.getHeight() / 2.0 - (renderCPS ? 4 : (fontRenderer == FontManager.vanilla ? 0 : .5)),
                         hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255))
                 );
 
                 if (renderCPS) {
-                    CFontRenderer fr = FontManager.pf12;
+                    IFontRenderer fr = ClientSettings.WIDGETS_USE_VANILLA_FONT_RENDERER.getValue() ? FontManager.vanilla : FontManager.pf12;
                     fr.drawCenteredString(
                             this.getCPS() + " CPS",
                             x + xOffset + width * .5,
                             y + yOffset + height * .5 - fr.getHeight() / 2.0 + 5,
+                            fr == FontManager.vanilla ? .8 : 1,
                             hexColor(255 - (int) (this.vR * 255), 255 - (int) (this.vG * 255), 255 - (int) (this.vB * 255))
                     );
                 }
@@ -98,6 +104,7 @@ public class Key implements SharedRenderingConstants {
                 Rect.draw(x + xOffset + width * .2, y + yOffset + height * .5 - .5, width * .6, 1, -1);
             }
 
+            GlStateManager.popMatrix();
         });
 
     }

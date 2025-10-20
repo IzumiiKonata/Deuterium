@@ -104,6 +104,7 @@ public class ClientSettings {
 
         }
     };
+    public static final BooleanSetting WIDGETS_USE_VANILLA_FONT_RENDERER = new BooleanSetting("Use Vanilla Font for Widgets Rendering", false);
 
     public static StringModeSetting FULL_SCREEN_RESOLUTION = new StringModeSetting("Fullscreen Resolution", "None?!", "None?!");
     public static StringModeSetting FULL_SCREEN_REFRESH_RATE = new StringModeSetting("Fullscreen Refresh Rate", "Auto", "Auto", "60", "90", "120", "144", "165", "200", "240", "360") {

@@ -1,6 +1,7 @@
 package tritium.management;
 
 import lombok.SneakyThrows;
+import tritium.interfaces.IFontRenderer;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
 
@@ -29,6 +30,8 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer icon18, icon25, icon30, icon40, tritium24, tritium42;
     public static CFontRenderer music16, music18, music30, music36, music40, music42;
     public static CFontRenderer arial14, arial18bold, arial40bold, arial60bold;
+
+    public static IFontRenderer vanilla;
 
     private static List<CFontRenderer> getAllFontRenderers() {
 

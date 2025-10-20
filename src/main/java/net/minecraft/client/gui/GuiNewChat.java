@@ -37,7 +37,7 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
 
     public GuiNewChat(Minecraft mcIn) {
         this.mc = mcIn;
-        this.fontRenderer = mcIn.fontRendererObj;
+        this.fontRenderer = FontManager.vanilla;
     }
 
     //CLIENT
@@ -57,7 +57,7 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
             int j = 0;
             int chatSize = this.drawnChatLines.size();
             float chatOpacity = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
-            fontRenderer = chat.isEnabled() && chat.clientChat.getValue() ? FontManager.pf25 : mc.fontRendererObj;
+            fontRenderer = chat.isEnabled() && chat.clientChat.getValue() ? FontManager.pf25 : FontManager.vanilla;
 
             if (chatSize > 0) {
                 if (this.getChatOpen()) {
@@ -133,9 +133,8 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
 
-                                if (fontRenderer instanceof FontRenderer) {
+                                if (fontRenderer == FontManager.vanilla) {
                                     fontRenderer.drawStringWithShadow(s, (float) xOffset, chat.isEnabled() ? (chat.animation.getValue() && updateTicksLeft < 200 ? chatline.textY : chatLineY - 8) : chatLineY - 8, 16777215 + (alpha << 24));
-
                                 } else {
                                     GlStateManager.pushMatrix();
 

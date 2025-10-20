@@ -27,6 +27,7 @@ public class ScoreBoard extends Widget {
     }
 
     public BooleanSetting clientChat = new BooleanSetting("Use client font renderer", false);
+    public BooleanSetting hidePoints = new BooleanSetting("Hide red points", false);
 
     @Override
     public void onRender(boolean editing) {
@@ -74,19 +75,19 @@ public class ScoreBoard extends Widget {
         int finalMaxWidth = maxWidth;
         List<Score> finalCollection = collection;
 
-        SharedRenderingConstants.BLUR.add(() -> {
-            GlStateManager.pushMatrix();
-            this.doScale();
-            Rect.draw(x - 1, y, finalMaxWidth + 3, (this.getFontRenderer().getHeight() + 2) * (finalCollection.size() + 1) - 2, -1, Rect.RectType.EXPAND);
-            GlStateManager.popMatrix();
-        });
-
-        SharedRenderingConstants.BLOOM.add(() -> {
-            GlStateManager.pushMatrix();
-            this.doScale();
-            Rect.draw(x - 1, y, finalMaxWidth + 3, (this.getFontRenderer().getHeight() + 2) * (finalCollection.size() + 1) - 2, hexColor(0, 0, 0, 80), Rect.RectType.EXPAND);
-            GlStateManager.popMatrix();
-        });
+//        SharedRenderingConstants.BLUR.add(() -> {
+//            GlStateManager.pushMatrix();
+//            this.doScale();
+//            Rect.draw(x - 1, y, finalMaxWidth + 3, (this.getFontRenderer().getHeight() + 2) * (finalCollection.size() + 1) - 2, -1, Rect.RectType.EXPAND);
+//            GlStateManager.popMatrix();
+//        });
+//
+//        SharedRenderingConstants.BLOOM.add(() -> {
+//            GlStateManager.pushMatrix();
+//            this.doScale();
+//            Rect.draw(x - 1, y, finalMaxWidth + 3, (this.getFontRenderer().getHeight() + 2) * (finalCollection.size() + 1) - 2, hexColor(0, 0, 0, 80), Rect.RectType.EXPAND);
+//            GlStateManager.popMatrix();
+//        });
 
         final double[] offsetY = {this.getFontRenderer().getHeight()};
         List<Score> finalCollection1 = collection;
@@ -102,7 +103,7 @@ public class ScoreBoard extends Widget {
 //                    GlStateManager.enableAlpha();
 //                    GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0f);
 
-                    Rect.draw(x - 1, y, finalMaxWidth + 3, this.getFontRenderer().getHeight() + 2, hexColor(0, 0, 0, 80), Rect.RectType.EXPAND);
+                    Rect.draw(x - 1, y, finalMaxWidth + 3, this.getFontRenderer().getHeight(), hexColor(0, 0, 0, 96), Rect.RectType.EXPAND);
 
                     String name = objective.getDisplayName();
                     this.drawString(name, x + finalMaxWidth1 * 0.5 - this.getFontRenderer().getStringWidth(name) * 0.5, y, RenderSystem.hexColor(255, 255, 255, 255));
@@ -117,7 +118,9 @@ public class ScoreBoard extends Widget {
                 String right = EnumChatFormatting.RED + String.valueOf(score1.getScorePoints());
 
                 this.drawString(left, x + 2, y + offsetY[0], RenderSystem.hexColor(255, 255, 255, 255));
-                this.drawString(right, x + finalMaxWidth1 - this.getFontRenderer().getStringWidth(right), y + offsetY[0], RenderSystem.hexColor(255, 255, 255, 255));
+
+                if (!hidePoints.getValue())
+                    this.drawString(right, x + finalMaxWidth1 - this.getFontRenderer().getStringWidth(right), y + offsetY[0], RenderSystem.hexColor(255, 255, 255, 255));
                 offsetY[0] += this.getFontRenderer().getHeight() + 2;
 
             }
@@ -137,6 +140,6 @@ public class ScoreBoard extends Widget {
     }
 
     private IFontRenderer getFontRenderer() {
-        return this.clientChat.getValue() ? FontManager.pf25 : mc.fontRendererObj;
+        return this.clientChat.getValue() ? FontManager.pf25 : FontManager.vanilla;
     }
 }
