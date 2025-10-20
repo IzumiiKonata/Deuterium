@@ -196,17 +196,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             runnables.add(() -> Rect.draw(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
         }
 
-//        fbBlur = RenderSystem.createFrameBuffer(fbBlur);
-//
-//        fbBlur.bindFramebuffer(true);
-//        fbBlur.framebufferClearNoBinding();
-//
-//        runnables.forEach(Runnable::run);
-//
-//        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
-
-//        runnables.forEach(Runnable::run);
+        GlStateManager.pushMatrix();
+        this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
         Shaders.GAUSSIAN_BLUR_SHADER.runNoCaching(runnables);
+        GlStateManager.popMatrix();
     }
 
     private static double lyricFraction() {
