@@ -112,7 +112,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         double lyricsWidth = width * .4;
         this.updateLyricPositions(lyricsWidth);
 
-        List<Runnable> runnables = new ArrayList<>();
+        List<Runnable> blurRects = new ArrayList<>();
+//        List<Runnable> bloomRunnables = new ArrayList<>();
 
         boolean hoveringLyrics = isHovered(mouseX, mouseY, posX + width * .5, posY, width * .5, height);
 
@@ -158,7 +159,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                         long prevTiming = i == 0 ? 0 : prev.timing;
                         double progress = Math.max(0, Math.min(1, (songProgress - lyric.timeStamp - prevTiming) / (double) (word.timing - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
-                        word.emphasize = 0;
+                        word.emphasize = progress;
 
                         double finalRenderX = renderX;
                         double finalRenderY = renderY;
@@ -170,8 +171,13 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                                 Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
                             });
 
-                        if (progress > 0)
+                        if (progress > 0) {
                             FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
+
+//                            bloomRunnables.add(() -> {
+//                                FontManager.pf65bold.drawString(word.word, finalRenderX, finalRenderY - word.emphasize, hexColor(1, 1, 1, (float) (alpha * progress * .5f)));
+//                            });
+                        }
 
                         if (shouldClip)
                             StencilClipManager.endClip();
@@ -193,15 +199,24 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             }
 
             if (lyric.translationText != null) {
-                FontManager.pf34bold.drawString(lyric.translationText, RenderSystem.getWidth() * .5 + lyric.reboundAnimation, renderY + FontManager.pf65bold.getHeight() * .85 + 8, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
+                double translationX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
+                double translationY = renderY + FontManager.pf65bold.getHeight() * .85 + 8;
+
+                String[] strings = FontManager.pf34bold.fitWidth(lyric.translationText, lyricsWidth);
+                for (String string : strings) {
+                    FontManager.pf34bold.drawString(string, translationX, translationY, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
+                    translationY += FontManager.pf34bold.getHeight()+ 4;
+                }
+//                FontManager.pf34bold.drawString(lyric.translationText, translationX, translationY, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
             }
 
-            runnables.add(() -> Rect.draw(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
+            blurRects.add(() -> Rect.draw(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
         }
 
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
-        Shaders.GAUSSIAN_BLUR_SHADER.runNoCaching(runnables);
+        Shaders.GAUSSIAN_BLUR_SHADER.runNoCaching(blurRects);
+//        Shaders.UI_BLOOM_SHADER.runNoCaching(bloomRunnables);
         GlStateManager.popMatrix();
     }
 
@@ -370,6 +385,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         if (tex != null) {
             coverAlpha = Interpolations.interpBezier(coverAlpha, 1.0f, 0.2f);
             GlStateManager.bindTexture(tex.getGlTextureId());
+            tex.linearFilter();
             this.roundedRectTextured(center - coverSize * .5, center - coverSize * .5, coverSize, coverSize, 3, alpha * coverAlpha);
         }
 

@@ -135,7 +135,7 @@ public class BloomShader extends Shader {
             u_direction.setValue(compression, 0.0F);
 
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.disableAlpha();
 
             inputFramebuffer.bindFramebufferTexture();
@@ -147,7 +147,7 @@ public class BloomShader extends Shader {
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE , GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
             } else {
                 mc.getFramebuffer().bindFramebuffer(true);
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             }
 
             u_direction.setValue(0.0F, compression);
