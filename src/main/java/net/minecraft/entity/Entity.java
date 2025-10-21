@@ -1,5 +1,6 @@
 package net.minecraft.entity;
 
+import lombok.Getter;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -28,6 +29,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import tritium.bridge.entity.EntityWrapper;
 import tritium.event.events.player.MoveEntityRotationEvent;
 import tritium.event.events.player.SafeWalkEvent;
 import tritium.management.EventManager;
@@ -288,6 +290,9 @@ public abstract class Entity implements ICommandSender {
         this.setDead();
     }
 
+    @Getter
+    private final EntityWrapper wrapper;
+
     public Entity(World worldIn) {
         this.entityId = nextEntityID++;
         this.renderDistanceWeight = 1.0D;
@@ -314,6 +319,8 @@ public abstract class Entity implements ICommandSender {
         this.dataWatcher.addObject(2, "");
         this.dataWatcher.addObject(4, (byte) 0);
         this.entityInit();
+
+        this.wrapper = new EntityWrapper(this);
     }
 
     protected abstract void entityInit();
