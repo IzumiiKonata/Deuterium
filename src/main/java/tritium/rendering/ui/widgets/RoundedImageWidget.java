@@ -27,6 +27,10 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
 
     boolean fadeIn = false;
 
+    @Getter
+    @Setter
+    boolean linearFilter = false;
+
     public RoundedImageWidget(Supplier<Location> locImg, double x, double y, double width, double height) {
         this.setBounds(x, y, width, height);
         this.locImg = locImg;
@@ -63,6 +67,12 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
 
         GlStateManager.color(1, 1, 1, this.getAlpha());
         GlStateManager.bindTexture(textureObject.getGlTextureId());
+
+        if (this.isLinearFilter())
+            textureObject.linearFilter();
+        else
+            textureObject.nearestFilter();
+
         this.roundedRectTextured(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.getRadius(), this.getAlpha());
     }
 

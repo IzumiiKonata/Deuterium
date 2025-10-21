@@ -161,6 +161,13 @@ public class LyricParser {
 
             parseWordTimings(l, line.substring(line.indexOf("]") + 1));
 
+            StringBuilder sb = new StringBuilder();
+            for (LyricLine.Word word : l.words) {
+                sb.append(word.word);
+            }
+
+            l.lyric = sb.toString();
+
             // 创建时间轴对象
 //            MusicLyricsWidget.ScrollTiming timing = new MusicLyricsWidget.ScrollTiming();
 //            timing.start = startDuration;

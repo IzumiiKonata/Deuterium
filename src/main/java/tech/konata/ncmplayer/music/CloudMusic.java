@@ -737,7 +737,7 @@ public class CloudMusic {
                 JsonObject json = JsonUtils.jsonObjectFromString(string);
 
                 MusicLyricsWidget.initLyric(json, song);
-                FuckPussyPanel.initLyric(json);
+                FuckPussyPanel.initLyric(json, song);
 
             }
         });

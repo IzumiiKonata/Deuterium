@@ -23,6 +23,8 @@ import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
+import tritium.utils.network.HttpUtils;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicInfoWidget;
 import tritium.widget.impl.MusicLyricsWidget;
 
@@ -43,18 +45,58 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
     public static final List<LyricLine> lyrics = new CopyOnWriteArrayList<>();
 
-    public static void initLyric(JsonObject lyric) {
+    public static void initLyric(JsonObject lyric, Music music) {
         // reset states
 
         List<LyricLine> parsed = LyricParser.parse(lyric);
 
+        fetchTTMLLyrics(music, parsed);
+
+        addLyrics(parsed);
+    }
+
+    private static void addLyrics(List<LyricLine> lyricLines) {
         synchronized (lyrics) {
             lyrics.clear();
-            lyrics.addAll(parsed);
+            lyrics.addAll(lyricLines);
 
             currentDisplaying = lyrics.get(0);
             updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .5);
         }
+    }
+
+    private static void fetchTTMLLyrics(Music music, List<LyricLine> parsed) {
+
+        MultiThreadingUtil.runAsync(() -> {
+            try {
+                String lrc = HttpUtils.getString(
+                        "https://gitee.com/IzumiiKonata/amll-ttml-db/raw/main/ncm-lyrics/" + music.getId() + ".yrc",
+                        null
+                );
+//                System.out.println("歌曲 " + music.getName() + " 存在 ttml 歌词, 获取中...");
+
+                ArrayList<LyricLine> lyricLines = new ArrayList<>();
+                LyricParser.parseYrc(lrc, lyricLines);
+
+                for (LyricLine bean : lyricLines) {
+
+//                    System.out.println(bean.words.size());
+
+                    for (LyricLine lyricLine : parsed) {
+                        if (lyricLine.getLyric().toLowerCase().replace(" ", "").equals(bean.lyric.toLowerCase().replace(" ", ""))) {
+                            bean.romanizationText = lyricLine.romanizationText;
+                            bean.translationText = lyricLine.translationText;
+                            break;
+                        }
+                    }
+
+                }
+
+                addLyrics(lyricLines);
+            } catch (Exception ignored) {
+                // 获取失败，使用普通歌词
+            }
+        });
     }
 
     public static void resetProgress(float progress) {
@@ -132,6 +174,13 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? .2f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics && lyric != currentDisplaying ? 1f : 0f, 0.1f);
 
+            if (isHovering && Mouse.isButtonDown(0) && !prevMouse) {
+                prevMouse = true;
+                CloudMusic.player.setPlaybackTime(lyric.timeStamp);
+//                MusicLyricsWidget.quickResetProgress(lyric.timeStamp);
+//                FuckPussyPanel.resetProgress(lyric.timeStamp);
+            }
+
             if (lyric.hoveringAlpha >= .02f)
                 roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, 8, 8, 1, 1, 1, alpha * lyric.hoveringAlpha);
 
@@ -146,9 +195,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                     LyricLine.Word word = words.get(i);
                     double wordWidth = FontManager.pf65bold.getStringWidthD(word.word);
 
-                    if (renderX + wordWidth > RenderSystem.getWidth() * .5 + lyricsWidth) {
+                    if (renderX + wordWidth > RenderSystem.getWidth() * .5 + lyricsWidth + lyric.reboundAnimation) {
                         renderX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
-                        renderY += FontManager.pf65bold.getHeight() * .85;
+                        renderY += FontManager.pf65bold.getHeight() * .85 + 4;
                     }
 
                     FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * .5f));
@@ -205,7 +254,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 String[] strings = FontManager.pf34bold.fitWidth(lyric.translationText, lyricsWidth);
                 for (String string : strings) {
                     FontManager.pf34bold.drawString(string, translationX, translationY, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
-                    translationY += FontManager.pf34bold.getHeight()+ 4;
+                    translationY += FontManager.pf34bold.getHeight() + 4;
                 }
 //                FontManager.pf34bold.drawString(lyric.translationText, translationX, translationY, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
             }
@@ -259,7 +308,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
 
                 if (prev != null) {
-                    if (lyric.posY - (prev.posY + prev.height) >= 48)
+                    if (lyric.posY - (prev.posY + prev.height) >= 50)
                         lyric.shouldUpdatePosition = true;
                 }
 

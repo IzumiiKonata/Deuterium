@@ -45,6 +45,7 @@ public class PlaylistPanel extends NCMPanel {
         cover.setPosition(24, 24);
         cover.setBounds(128, 128);
         cover.fadeIn();
+        cover.setLinearFilter(true);
 
         this.addChild(cover);
         this.loadCover();

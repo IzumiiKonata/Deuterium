@@ -65,7 +65,7 @@ public class LyricLine {
             this.height = height;
         } else {
             int length = FontManager.pf65bold.fitWidth(lyric, (float) width).length;
-            this.height = length * FontManager.pf65bold.getHeight() * .85 + (length - 1) * 4;
+            this.height = length * FontManager.pf65bold.getHeight() * .85 + length * 4;
 //
 //            if (translationText != null) {
 //                this.height += FontManager.pf34bold.getHeight() + 4;
@@ -75,6 +75,8 @@ public class LyricLine {
         if (translationText != null) {
             String[] strings = FontManager.pf34bold.fitWidth(translationText, width);
             height += FontManager.pf34bold.getHeight() * strings.length + 4 * (strings.length - 1)/* + 8*/;
+        } else {
+            height -= 4;
         }
     }
 

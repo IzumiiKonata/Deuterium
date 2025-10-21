@@ -66,6 +66,7 @@ public class MusicWidget extends RoundedRectWidget {
         RoundedImageWidget cover = new RoundedImageWidget(this.getCover(), 0, 0, 0, 0);
         this.addChild(cover);
         cover.fadeIn();
+        cover.setLinearFilter(true);
         cover.setBeforeRenderCallback(() -> {
             cover.setRadius(2);
             cover.setBounds(24, 24);
@@ -78,7 +79,7 @@ public class MusicWidget extends RoundedRectWidget {
         this.addChild(lblMusicIndex);
 
         lblMusicIndex.setBeforeRenderCallback(() -> {
-            if (CloudMusic.currentlyPlaying == music)
+            if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying.getId() == music.getId())
                 lblMusicIndex.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
             else
                 lblMusicIndex.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
