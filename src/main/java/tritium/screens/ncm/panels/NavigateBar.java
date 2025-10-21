@@ -117,6 +117,7 @@ public class NavigateBar extends NCMPanel {
         RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
         this.addChild(creatorAvatar);
         creatorAvatar.fadeIn();
+        creatorAvatar.setLinearFilter(true);
 
         this.loadAvatar();
 

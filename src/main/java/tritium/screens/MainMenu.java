@@ -158,7 +158,7 @@ public class MainMenu extends BaseScreen {
         );
 
         CFontRenderer fr = FontManager.arial14;
-        double yOffset = RenderSystem.getHeight() - fr.getHeight() - 2;
+        double yOffset = RenderSystem.getHeight() - fr.getHeight() - 4;
 
         for (String info : infos) {
             fr.drawCenteredString(info, RenderSystem.getWidth() * .5, yOffset, this.getColor(ColorType.TEXT));
@@ -182,9 +182,11 @@ public class MainMenu extends BaseScreen {
             fbConverge.bindFramebuffer(true);
             fbConverge.framebufferClearNoBinding();
 
-            CFontRenderer titleFr = FontManager.arial60bold;
-            boolean bl = titleFr._drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
+            boolean dev = Tritium.getVersion().getType() == Version.Type.Dev;
+            CFontRenderer titleFr = dev ? FontManager.pf65bold : FontManager.arial60bold;
+            boolean bl = titleFr._drawCenteredString(dev ? "所有人操大逼" : "Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
 
+            // 如果有字形未加载完则下一帧要重新绘制
             if (!bl)
                 refreshDeconvergeThisFrame = true;
 
