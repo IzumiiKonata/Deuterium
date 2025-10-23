@@ -1,6 +1,7 @@
 package tritium.screens.ncm;
 
 import com.google.gson.JsonObject;
+import tritium.widget.impl.MusicLyricsWidget;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -17,22 +18,63 @@ public class LyricParser {
             return new ArrayList<>();
         }
 
-        List<LyricLine> lyricLines = new ArrayList<>();
+        List<LyricLine> lyricLines = new ArrayList<>(parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString()));
+
+        processTranslationLyrics(input, lyricLines);
+        processRomanizationLyrics(input, lyricLines);
 
         if (input.has("yrc")) {
             String yrc = input.getAsJsonObject("yrc").get("lyric").getAsString();
             parseYrc(yrc, lyricLines);
+            processTranslationLyricsYRC(input, lyricLines);
+            processRomanizationLyricsYRC(input, lyricLines);
         }
-
-        if (lyricLines.isEmpty()) {
-            lyricLines.addAll(parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString()));
-        }
-
-        processTranslationLyrics(input, lyricLines);
-
-        processRomanizationLyrics(input, lyricLines);
 
         return lyricLines;
+    }
+
+    private static void processTranslationLyricsYRC(JsonObject input, List<LyricLine> lyricLines) {
+        if (!input.has("ytlrc")) return;
+
+        String tLyric = input.getAsJsonObject("ytlrc").get("lyric").getAsString();
+        if (tLyric.trim().isEmpty()) return;
+
+        List<LyricLine> translates = parseSingleLine(tLyric);
+
+        Map<Long, String> transMap = new HashMap<>();
+        for (LyricLine t : translates) {
+            transMap.put(t.timeStamp, t.lyric);
+        }
+
+        for (LyricLine l : lyricLines) {
+            String translation = transMap.get(l.timeStamp);
+            if (translation != null && l.translationText == null) {
+                l.translationText = translation;
+            } else {
+                System.out.println("Translation not found for " + l.lyric + " at " + l.timeStamp);
+            }
+        }
+    }
+
+    private static void processRomanizationLyricsYRC(JsonObject input, List<LyricLine> lyricLines) {
+        if (!input.has("yromalrc")) return;
+
+        String romanization = input.getAsJsonObject("yromalrc").get("lyric").getAsString();
+        if (romanization.isEmpty()) return;
+
+        List<LyricLine> romanizations = parseSingleLine(romanization);
+
+        Map<Long, String> romaMap = new HashMap<>();
+        for (LyricLine r : romanizations) {
+            romaMap.put(r.timeStamp, r.lyric);
+        }
+
+        for (LyricLine l : lyricLines) {
+            String roma = romaMap.get(l.timeStamp);
+            if (roma != null && l.romanizationText == null) {
+                l.romanizationText = roma;
+            }
+        }
     }
 
     private static void processTranslationLyrics(JsonObject input, List<LyricLine> lyricLines) {
@@ -43,9 +85,16 @@ public class LyricParser {
 
         List<LyricLine> translates = parseSingleLine(tLyric);
 
-        for (int i = 0; i < lyricLines.size() && i < translates.size(); i++) {
-            LyricLine t = lyricLines.get(i);
-            t.translationText = translates.get(i).lyric;
+        Map<Long, String> transMap = new HashMap<>();
+        for (LyricLine t : translates) {
+            transMap.put(t.timeStamp, t.lyric);
+        }
+
+        for (LyricLine l : lyricLines) {
+            String translation = transMap.get(l.timeStamp);
+            if (translation != null && l.translationText == null) {
+                l.translationText = translation;
+            }
         }
     }
 
@@ -57,9 +106,16 @@ public class LyricParser {
 
         List<LyricLine> romanizations = parseSingleLine(romanization);
 
-        for (int i = 0; i < lyricLines.size() && i < romanizations.size(); i++) {
-            LyricLine t = lyricLines.get(i);
-            t.romanizationText = romanizations.get(i).lyric;
+        Map<Long, String> romaMap = new HashMap<>();
+        for (LyricLine r : romanizations) {
+            romaMap.put(r.timeStamp, r.lyric);
+        }
+
+        for (LyricLine l : lyricLines) {
+            String roma = romaMap.get(l.timeStamp);
+            if (roma != null && l.romanizationText == null) {
+                l.romanizationText = roma;
+            }
         }
     }
 
@@ -97,25 +153,30 @@ public class LyricParser {
             alt = true;
         }
         String times = lineMatcher.group(1);
-//        System.out.println("times = " + times);
         String text = lineMatcher.group(2).trim();
         if (text.isEmpty()) {
             return null;
-        }/* else {
-            System.out.println("text = " + text);
-        }*/
+        }
 
         List<LyricLine> entryList = new ArrayList<>();
         Matcher timeMatcher = Pattern.compile(alt ? "\\[(\\d\\d):(\\d\\d):(\\d{2,3})]" : "\\[(\\d\\d):(\\d\\d)\\.(\\d{2,3})]").matcher(times);
         while (timeMatcher.find()) {
-            long min = Long.parseLong(timeMatcher.group(1));// 分
-            long sec = Long.parseLong(timeMatcher.group(2));// 秒
-            long mil = Long.parseLong(timeMatcher.group(3));// 毫秒
-            int scale_mil = mil > 100 ? 1 : 10;
+            long min = Long.parseLong(timeMatcher.group(1));
+            long sec = Long.parseLong(timeMatcher.group(2));
+            String milStr = timeMatcher.group(3);
+            
+            long mil;
+            if (milStr.length() == 3) {
+                mil = Long.parseLong(milStr);
+            } else {
+                mil = Long.parseLong(milStr) * 10;
+            }
+            
             long time =
                     min * 60000 +
                             sec * 1000 +
-                            mil * scale_mil;
+                            mil;
+
             entryList.add(new LyricLine(time, text));
         }
         return entryList;

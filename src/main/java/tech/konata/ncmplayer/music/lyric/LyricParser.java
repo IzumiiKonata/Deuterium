@@ -21,15 +21,60 @@ public class LyricParser {
         List<LyricLine> lyricLines = parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString());
 
         processTranslationLyrics(input, lyricLines);
-
         processRomanizationLyrics(input, lyricLines);
 
         if (input.has("yrc")) {
             String yrc = input.getAsJsonObject("yrc").get("lyric").getAsString();
             parseYrc(yrc);
+            processTranslationLyricsYRC(input, lyricLines);
+            processRomanizationLyricsYRC(input, lyricLines);
         }
 
         return lyricLines;
+    }
+
+    private static void processTranslationLyricsYRC(JsonObject input, List<LyricLine> lyricLines) {
+        if (!input.has("ytlrc")) return;
+
+        String tLyric = input.getAsJsonObject("ytlrc").get("lyric").getAsString();
+        if (tLyric.trim().isEmpty()) return;
+
+        List<LyricLine> translates = parseSingleLine(tLyric);
+
+        Map<Long, String> transMap = new HashMap<>();
+        for (LyricLine t : translates) {
+            transMap.put(t.timeStamp, t.lyric);
+        }
+
+        for (LyricLine l : lyricLines) {
+            String translation = transMap.get(l.timeStamp);
+            if (translation != null && l.translationText == null) {
+                l.translationText = translation;
+            } else {
+                System.out.println("Translation not found for " + l.lyric + " at " + l.timeStamp);
+            }
+        }
+    }
+
+    private static void processRomanizationLyricsYRC(JsonObject input, List<LyricLine> lyricLines) {
+        if (!input.has("yromalrc")) return;
+
+        String romanization = input.getAsJsonObject("yromalrc").get("lyric").getAsString();
+        if (romanization.isEmpty()) return;
+
+        List<LyricLine> romanizations = parseSingleLine(romanization);
+
+        Map<Long, String> romaMap = new HashMap<>();
+        for (LyricLine r : romanizations) {
+            romaMap.put(r.timeStamp, r.lyric);
+        }
+
+        for (LyricLine l : lyricLines) {
+            String roma = romaMap.get(l.timeStamp);
+            if (roma != null && l.romanizationText == null) {
+                l.romanizationText = roma;
+            }
+        }
     }
 
     private static void processTranslationLyrics(JsonObject input, List<LyricLine> lyricLines) {
