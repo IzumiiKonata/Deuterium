@@ -44,13 +44,13 @@ public class IconWidget extends AbstractWidget<IconWidget> {
         double size = this.getWidth() * .5;
 
         if (alphaAnim != 0f) {
-            int a = Math.min((int) (alphaAnim * 255), alpha);
-            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, this.getColor());
+            float a = Math.min(alphaAnim, alpha);
+            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, reAlpha(this.getHexColor(), a));
         }
 
         if (alphaAnim2 != 0f) {
-            int a = Math.min((int) (alphaAnim2 * 255), alpha);
-            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, this.getColor());
+            float a = Math.min(alphaAnim2, alpha);
+            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, reAlpha(this.getHexColor(), a));
         }
 
         if (run) {
