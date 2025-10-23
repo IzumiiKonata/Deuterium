@@ -131,6 +131,7 @@ public class MainMenu extends BaseScreen {
          );
 
         startTime = System.currentTimeMillis();
+        alphas.clear();
     }
 
     @Override
@@ -205,22 +206,40 @@ public class MainMenu extends BaseScreen {
     }
 
     long startTime = System.currentTimeMillis();
+    List<Float> alphas = new ArrayList<>();
 
     private void renderDevDeconverge() {
 
         CFontRenderer fr = FontManager.pf65bold;
 
-        String str = "所有人操大逼";
+        boolean obfuscatedDev = Tritium.getInstance().isObfuscated();
+        String str = obfuscatedDev ? "你他妈在干什么" : "所有人操大逼";
 
         char[] charArray = str.toCharArray();
+
+        if (alphas.size() != str.length()) {
+            alphas = new ArrayList<>(str.length());
+
+            for (int i = 0; i < charArray.length; i++) {
+                alphas.add(0f);
+            }
+        }
 
         for (int i = 0; i < charArray.length; i++) {
             char c = charArray[i];
 
-            double x = Math.sin(-Math.toRadians(((System.currentTimeMillis() - startTime) * .125 - (i * 30)) % 360.0f)) * 128;
-            double y = Math.sin(-Math.toRadians(((System.currentTimeMillis() - startTime) * .25 + (360.0f / charArray.length * i)) % 360.0f)) * 36;
+            long time = System.currentTimeMillis() - startTime;
 
-            fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 3.0d + y, this.getColor(ColorType.TEXT));
+            double angX = time * .125 - (i * 30);
+            double angY = time * .25 - (360.0f / charArray.length * i);
+
+            double x = angX <= 0 ? 0 : Math.sin(-Math.toRadians(angX % 360.0f)) * 128;
+            double y = angY <= 0 ? 0 : Math.sin(-Math.toRadians(angY % 360.0f)) * 36;
+
+            float alpha = alphas.get(i);
+            alphas.set(i, Interpolations.interpBezier(alpha, angX > 0 && angY > 0 ? 1 : 0, .1f));
+
+            fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 3.5d + y, reAlpha(this.getColor(ColorType.TEXT), alpha));
         }
 
     }
