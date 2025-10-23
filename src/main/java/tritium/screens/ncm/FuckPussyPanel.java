@@ -29,6 +29,7 @@ import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicInfoWidget;
 import tritium.widget.impl.MusicLyricsWidget;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -539,6 +540,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         playPauseButton.setHeight(32);
         playPauseButton.setPosition(volumeBarXOffset + volumeBarWidth * .5 - playPauseButton.getWidth() * .5, progressBarYOffset + (volumeBarYOffset - progressBarYOffset) * .5 - playPauseButton.getHeight() * .5);
         playPauseButton.renderWidget(mouseX, mouseY, 0);
+        playPauseButton.setColor(Color.WHITE);
 
         playPauseButton.setBeforeRenderCallback(() -> {
             if (CloudMusic.player == null || CloudMusic.player.isPausing()) {
@@ -570,6 +572,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         prev.renderWidget(mouseX, mouseY, 0);
         prev.fr = FontManager.music40;
         prev.fontOffsetY = 1;
+        prev.setColor(Color.WHITE);
 
         prev.setOnClickCallback((x, y, i) -> {
             if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
@@ -585,6 +588,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         next.renderWidget(mouseX, mouseY, 0);
         next.fr = FontManager.music40;
         next.fontOffsetY = 1;
+        next.setColor(Color.WHITE);
 
         next.setOnClickCallback((x, y, i) -> {
             if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
