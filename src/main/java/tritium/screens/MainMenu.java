@@ -129,6 +129,8 @@ public class MainMenu extends BaseScreen {
 
                 }
          );
+
+        startTime = System.currentTimeMillis();
     }
 
     @Override
@@ -174,27 +176,53 @@ public class MainMenu extends BaseScreen {
         int prevHeight = fbConverge != null ? fbConverge.framebufferHeight : 0;
         fbConverge = RenderSystem.createFrameBuffer(fbConverge);
 
-        boolean shouldUpdate = refreshDeconvergeThisFrame || prevWidth != fbConverge.framebufferWidth || prevHeight != fbConverge.framebufferHeight;
+        boolean dev = Tritium.getVersion().getType() == Version.Type.Dev;
+        boolean shouldUpdate = refreshDeconvergeThisFrame || prevWidth != fbConverge.framebufferWidth || prevHeight != fbConverge.framebufferHeight || dev;
 
         if (shouldUpdate) {
+
             refreshDeconvergeThisFrame = false;
             fbConverge.setFramebufferColor(this.getColor(ColorType.BACKGROUND), 0.0F);
             fbConverge.bindFramebuffer(true);
             fbConverge.framebufferClearNoBinding();
 
-            boolean dev = Tritium.getVersion().getType() == Version.Type.Dev;
-            CFontRenderer titleFr = dev ? FontManager.pf65bold : FontManager.arial60bold;
-            boolean bl = titleFr._drawCenteredString(dev ? "所有人操大逼" : "Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
+            if (dev) {
+                this.renderDevDeconverge();
+            } else {
+                CFontRenderer titleFr = FontManager.arial60bold;
+                boolean bl = titleFr._drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
 
-            // 如果有字形未加载完则下一帧要重新绘制
-            if (!bl)
-                refreshDeconvergeThisFrame = true;
+                // 如果有字形未加载完则下一帧要重新绘制
+                if (!bl)
+                    refreshDeconvergeThisFrame = true;
+            }
 
             Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
         }
 
         GlStateManager.bindTexture(fbConverge.framebufferTexture);
         Shaders.DECONVERGE.render();
+    }
+
+    long startTime = System.currentTimeMillis();
+
+    private void renderDevDeconverge() {
+
+        CFontRenderer fr = FontManager.pf65bold;
+
+        String str = "所有人操大逼";
+
+        char[] charArray = str.toCharArray();
+
+        for (int i = 0; i < charArray.length; i++) {
+            char c = charArray[i];
+
+            double x = Math.sin(-Math.toRadians(((System.currentTimeMillis() - startTime) * .125 - (i * 30)) % 360.0f)) * 128;
+            double y = Math.sin(-Math.toRadians(((System.currentTimeMillis() - startTime) * .25 + (360.0f / charArray.length * i)) % 360.0f)) * 36;
+
+            fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 3.0d + y, this.getColor(ColorType.TEXT));
+        }
+
     }
 
     // colors

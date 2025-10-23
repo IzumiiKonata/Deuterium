@@ -21,6 +21,7 @@ import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shader;
+import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.utils.network.HttpUtils;
@@ -94,7 +95,6 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                 addLyrics(lyricLines);
             } catch (Exception ignored) {
-                // 获取失败，使用普通歌词
             }
         });
     }
@@ -139,6 +139,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
     }
 
     public static LyricLine currentDisplaying = null;
+
+    Framebuffer baseFb, stencilFb;
 
     private void renderLyrics(double mouseX, double mouseY, double posX, double posY, double width, double height, float alpha) {
 
@@ -208,28 +210,56 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                         long prevTiming = i == 0 ? 0 : prev.timing;
                         double progress = Math.max(0, Math.min(1, (songProgress - lyric.timeStamp - prevTiming) / (double) (word.timing - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
-                        word.emphasize = progress;
-
-                        double finalRenderX = renderX;
-                        double finalRenderY = renderY;
+                        word.emphasize = Interpolations.interpBezier(word.emphasize, progress > 0 ? 1 : 0, 0.05f);
 
                         boolean shouldClip = progress > 0 && progress < 1;
 
-                        if (shouldClip)
-                            StencilClipManager.beginClip(() -> {
-                                Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
-                            });
-
-                        if (progress > 0) {
+                        if (progress == 1) {
                             FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
+                        }
 
-//                            bloomRunnables.add(() -> {
-//                                FontManager.pf65bold.drawString(word.word, finalRenderX, finalRenderY - word.emphasize, hexColor(1, 1, 1, (float) (alpha * progress * .5f)));
+                        if (shouldClip) {
+
+                            stencilFb = RenderSystem.createFrameBuffer(stencilFb);
+                            stencilFb.bindFramebuffer(true);
+                            stencilFb.setFramebufferColor(1, 1, 1, 0);
+                            stencilFb.framebufferClearNoBinding();
+
+                            GlStateManager.pushMatrix();
+                            this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
+                            Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
+                            RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 8, FontManager.pf65bold.getHeight(), -1, 0);
+                            GlStateManager.popMatrix();
+
+                            baseFb = RenderSystem.createFrameBuffer(baseFb);
+                            baseFb.bindFramebuffer(true);
+                            baseFb.setFramebufferColor(1, 1, 1, 0);
+                            baseFb.framebufferClearNoBinding();
+
+                            GlStateManager.pushMatrix();
+                            this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
+                            FontManager.pf65bold.drawString(word.word, 0, 0, hexColor(1, 1, 1, alpha));
+                            GlStateManager.popMatrix();
+
+                            Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
+
+                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture,  renderX, renderY - word.emphasize);
+
+//                            FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
+//                            FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
+//
+//                            GlStateManager.bindTexture(stencilFb.framebufferTexture);
+//                            ShaderProgram.drawQuad(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+//                            GlStateManager.bindTexture(baseFb.framebufferTexture);
+//                            ShaderProgram.drawQuad(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+
+//                            Image.draw(stencilFb.framebufferTexture, 50, 72, stencilFb.framebufferTextureWidth, stencilFb.framebufferTextureHeight, Image.Type.Normal);
+//                            Image.draw(baseFb.framebufferTexture, 50, 128, baseFb.framebufferTextureWidth, baseFb.framebufferTextureHeight, Image.Type.Normal);
+//                            StencilClipManager.beginClip(() -> {
+//                                Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
 //                            });
                         }
 
-                        if (shouldClip)
-                            StencilClipManager.endClip();
                     } else {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * lyric.alpha));
                     }
