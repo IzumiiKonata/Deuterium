@@ -45,12 +45,12 @@ public class IconWidget extends AbstractWidget<IconWidget> {
 
         if (alphaAnim != 0f) {
             int a = Math.min((int) (alphaAnim * 255), alpha);
-            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, ClientSettings.THEME.getValue() == ThemeManager.Theme.Light ? new Color(0, 0, 0, a) : new Color(255, 255, 255, a));
+            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, this.getColor());
         }
 
         if (alphaAnim2 != 0f) {
             int a = Math.min((int) (alphaAnim2 * 255), alpha);
-            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, ClientSettings.THEME.getValue() == ThemeManager.Theme.Light ? new Color(0, 0, 0, a) : new Color(255, 255, 255, a));
+            roundedRect(this.getX() + this.getWidth() * 0.5 - size, this.getY() + this.getHeight() * 0.5 - size, size * 2, size * 2, size - 0.5, this.getColor());
         }
 
         if (run) {
@@ -72,7 +72,7 @@ public class IconWidget extends AbstractWidget<IconWidget> {
         int w = fr.getStringWidth(icon);
         double h = fr.getFontHeight();
 
-        fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5 + fontOffsetX, this.getY() + this.getHeight() * 0.5 - h * 0.5 + fontOffsetY, ThemeManager.get(ThemeManager.ThemeColor.Text, alpha));
+        fr.drawString(icon, this.getX() + this.getWidth() * 0.5 - w * 0.5 + fontOffsetX, this.getY() + this.getHeight() * 0.5 - h * 0.5 + fontOffsetY, this.getHexColor());
     }
 
     @Override
