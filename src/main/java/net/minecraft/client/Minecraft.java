@@ -1948,7 +1948,7 @@ public class Minecraft implements IThreadListener {
                         }
 
                         if (k == Keyboard.KEY_Y && Keyboard.isKeyDown(61)) {
-                            FontManager.loadFonts();
+                            FontManager.deleteLoadedTextures();
                         }
 
                         if (k == 33 && Keyboard.isKeyDown(61)) {

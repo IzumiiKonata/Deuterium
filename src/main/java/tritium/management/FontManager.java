@@ -55,11 +55,10 @@ public class FontManager extends AbstractManager {
         });
 
         GlyphCache.clear();
+        GlyphCache.CALL_LIST_COUNTER.set(0);
     }
 
     public static void loadFonts() {
-        deleteLoadedTextures();
-
         String normalName = "pf_normal";
         String boldName = "pf_middleblack";
 

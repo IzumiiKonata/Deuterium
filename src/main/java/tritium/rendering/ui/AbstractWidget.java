@@ -2,8 +2,10 @@ package tritium.rendering.ui;
 
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.interfaces.SharedRenderingConstants;
+import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.container.ScrollPanel;
+import tritium.settings.ClientSettings;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -118,6 +120,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
             child.renderWidget(mouseX, mouseY, dWheel);
 
+            if (ClientSettings.DEBUG_MODE.getValue()) {
+                child.renderDebugLayout();
+            }
+
             if (child.isClickable() && child.testHovered(mouseX, mouseY)) {
                 childHovering = true;
             }
@@ -156,6 +162,30 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
             this.children.add(child);
             child.setParent(this);
         }
+    }
+
+    protected void renderDebugLayout() {
+        // show layout
+        RenderSystem.drawOutLine(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0.5, reAlpha(0x00FF0000, this.getAlpha()));
+
+        double lineLength = Math.min(8, Math.min(this.getWidth() * .25, this.getHeight() * .25));
+        double lineSize = 1;
+        int lineColor = reAlpha(0x000090FF, this.getAlpha());
+        // left top
+        Rect.draw(this.getX(), this.getY(), lineLength, lineSize, lineColor);
+        Rect.draw(this.getX(), this.getY(), lineSize, lineLength, lineColor);
+
+        // right top
+        Rect.draw(this.getX() + this.getWidth() - lineLength, this.getY(), lineLength, lineSize, lineColor);
+        Rect.draw(this.getX() + this.getWidth() - lineSize, this.getY(), lineSize, lineLength, lineColor);
+
+        // left bottom
+        Rect.draw(this.getX(), this.getY() + this.getHeight() - lineLength, lineSize, lineLength, lineColor);
+        Rect.draw(this.getX(), this.getY() + this.getHeight() - lineSize, lineLength, lineSize, lineColor);
+
+        // right bottom
+        Rect.draw(this.getX() + this.getWidth() - lineLength, this.getY() + this.getHeight() - lineSize, lineLength, lineSize, lineColor);
+        Rect.draw(this.getX() + this.getWidth() - lineSize, this.getY() + this.getHeight() - lineLength, lineSize, lineLength, lineColor);
     }
 
     /**

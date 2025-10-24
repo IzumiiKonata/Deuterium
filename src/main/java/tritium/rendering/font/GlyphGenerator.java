@@ -52,13 +52,13 @@ public class GlyphGenerator {
 //        Rectangle2D stringBounds = fontMetrics.getStringBounds(String.valueOf(ch), fontGraphics);
 
         GlyphVector gv = font.createGlyphVector(frc, String.valueOf(ch));
-        Rectangle2D bounds = gv.getVisualBounds();
+//        Rectangle2D bounds = gv.getVisualBounds();
         int width = (int) Math.ceil(gv.getGlyphMetrics(0).getAdvance());
         int height = fontMetrics.getAscent() + fontMetrics.getDescent();
 
         Glyph glyph = new Glyph(width, height, ch);
 
-        fr.allGlyphs[glyph.value] = glyph;
+        fr.allGlyphs[ch] = glyph;
 
         if (width == 0) {
             return;
@@ -68,9 +68,8 @@ public class GlyphGenerator {
                 BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = bi.createGraphics();
-        g2d.setColor(new Color(255, 255, 255, 0));
-        g2d.fillRect(0, 0, bi.getWidth(), bi.getHeight());
-        g2d.setColor(Color.WHITE);
+        g2d.setColor(new Color(255, 255, 255, 255));
+        g2d.setComposite(AlphaComposite.Src);
 
         g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -93,6 +92,16 @@ public class GlyphGenerator {
         }
 
         g2d.dispose();
+        fontImage.flush();
+
+        for (int x = 0; x < bi.getWidth(); x++) {
+            for (int y = 0; y < bi.getHeight(); y++) {
+                int rgb = bi.getRGB(x, y);
+                int alpha = (rgb >> 24) & 0xFF;
+                // 将 RGB 设为白色，保留 Alpha
+                bi.setRGB(x, y, (alpha << 24) | 0xFFFFFF);
+            }
+        }
 
         onLoaded.onLoaded(fontHeight);
 

@@ -563,7 +563,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             return true;
         });
 
-        playPauseButton.fontOffsetY = 1;
+        playPauseButton.fontOffsetY = 0;
 
         prev.setAlpha(alpha);
         prev.setWidth(32);
@@ -571,7 +571,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         prev.setPosition(volumeBarXOffset + volumeBarWidth * .5 - playPauseButton.getWidth() * .5 - 16 - prev.getWidth(), playPauseButton.getY());
         prev.renderWidget(mouseX, mouseY, 0);
         prev.fr = FontManager.music40;
-        prev.fontOffsetY = 1;
+        prev.fontOffsetY = 0;
         prev.setColor(Color.WHITE);
 
         prev.setOnClickCallback((x, y, i) -> {
@@ -587,7 +587,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         next.setPosition(volumeBarXOffset + volumeBarWidth * .5 + playPauseButton.getWidth() * .5 + 16, playPauseButton.getY());
         next.renderWidget(mouseX, mouseY, 0);
         next.fr = FontManager.music40;
-        next.fontOffsetY = 1;
+        next.fontOffsetY = 0;
         next.setColor(Color.WHITE);
 
         next.setOnClickCallback((x, y, i) -> {
