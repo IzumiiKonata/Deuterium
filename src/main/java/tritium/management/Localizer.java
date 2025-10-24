@@ -65,6 +65,10 @@ public class Localizer extends AbstractManager {
         }
     }
 
+    public static String format(String translateKey, Object... args) {
+        return String.format(Tritium.getInstance().getLocalizer().translate(translateKey), args);
+    }
+
     @SneakyThrows
     public static void loadLang() {
 

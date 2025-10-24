@@ -713,6 +713,11 @@
     "setting.use vanilla font for widgets rendering.name": "小组件使用 MC 字体",
     "setting.hide red points.name": "隐藏红色分数点",
 
+    "command.bind.module not found": "未找到模块 %s!",
+    "command.bind.module bound to key": "已将模块 %s 绑定到按键 %s.",
+    "command.bind.module bound to mouse button": "已将模块 %s 绑定到鼠标按键 %s.",
+    "command.command not found": "未找到命令 %s!",
+
     "clickgui.nosettingshere": "这里没有设置."
   }
 }

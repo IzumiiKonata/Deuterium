@@ -890,6 +890,11 @@
     "setting.use vanilla font for widgets rendering.name": "Use vanilla font for widgets rendering",
     "setting.hide red points.name": "Hide Red Points",
 
+    "command.bind.module not found": "Module %s not found!",
+    "command.bind.module bound to key": "Bound module %s to key %s.",
+    "command.bind.module bound to mouse button": "Bound module %s to mouse button %s.",
+    "command.command not found": "Command %s not found!",
+
     "clickgui.nosettingshere": "No Settings Here."
   }
 }

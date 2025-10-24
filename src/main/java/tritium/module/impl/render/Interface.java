@@ -44,7 +44,7 @@ public class Interface extends Module {
     }
 
     @Handler
-    public final void onRender2D(Render2DEvent.Render2DBeforeInventoryEvent e) {
+    public final void onRender2D(Render2DEvent e) {
 
 //        if (this.notifications.getValue())
 //            NotificationManager.doRender(RenderSystem.getWidth() * 0.5, 4);
@@ -54,31 +54,33 @@ public class Interface extends Module {
 //        }
 
         if (ClientSettings.DEBUG_MODE.getValue()) {
-            x = 300;
-            y = 100;
+            NORMAL.add(() -> {
+                x = 300;
+                y = 100;
 
-            debug("MultiThreadingUtil:");
-            debug("Tasks: " + MultiThreadingUtil.getTASK_QUEUE().size());
+                debug("MultiThreadingUtil:");
+                debug("Tasks: " + MultiThreadingUtil.getTASK_QUEUE().size());
 
-            for (int i = 0; i < MultiThreadingUtil.getThreads().size(); i++) {
-                MultiThreadingUtil.WorkerThread workerThread = MultiThreadingUtil.getThreads().get(i);
+                for (int i = 0; i < MultiThreadingUtil.getThreads().size(); i++) {
+                    MultiThreadingUtil.WorkerThread workerThread = MultiThreadingUtil.getThreads().get(i);
 
-                debug("Thread #" + i + ": " + workerThread.getState());
-            }
+                    debug("Thread #" + i + ": " + workerThread.getState());
+                }
 
-            debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
+                debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
 
-            x = 500;
-            y = 100;
+                x = 500;
+                y = 100;
 
-            debug("AsyncGLContext:");
-            debug("Tasks: " + AsyncGLContext.getTASK_QUEUE().size());
+                debug("AsyncGLContext:");
+                debug("Tasks: " + AsyncGLContext.getTASK_QUEUE().size());
 
-            for (int i = 0; i < AsyncGLContext.getThreads().size(); i++) {
-                AsyncGLContext.Context workerThread = AsyncGLContext.getThreads().get(i);
+                for (int i = 0; i < AsyncGLContext.getThreads().size(); i++) {
+                    AsyncGLContext.Context workerThread = AsyncGLContext.getThreads().get(i);
 
-                debug("Thread #" + i + ": " + workerThread.getState());
-            }
+                    debug("Thread #" + i + ": " + workerThread.getState());
+                }
+            });
         }
 
 //        Rect.draw(0, RenderSystem.getHeight() * .5 - .5, RenderSystem.getWidth(), 1, -1);
