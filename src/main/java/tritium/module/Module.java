@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.lwjglx.input.Keyboard;
+import tritium.bridge.module.PresetModuleWrapper;
 import tritium.management.Localizer;
 import tritium.module.submodule.SubModule;
 import tritium.utils.i18n.Localizable;
@@ -56,6 +57,9 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     @Getter
     private final List<SubModule<?>> subModules = new ArrayList<>();
 
+    @Getter
+    private final PresetModuleWrapper wrapper;
+
     public Module(String internalName, Category category) {
 
         this.internalName = internalName;
@@ -65,6 +69,8 @@ public class Module implements SharedConstants, SharedRenderingConstants {
 
         this.name = Localizable.of("module." + lowerCase + ".name");
         this.description = Localizable.of("module." + lowerCase + ".desc");
+
+        this.wrapper = new PresetModuleWrapper(this);
 
 //        if (!internalName.equals("Setting") && category != Category.WIDGET)
 //            ModuleManager.getModules().add(this);

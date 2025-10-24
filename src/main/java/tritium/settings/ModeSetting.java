@@ -1,6 +1,7 @@
 package tritium.settings;
 
 import lombok.NonNull;
+import tritium.bridge.settings.ModeValueWrapper;
 import tritium.utils.i18n.Localizable;
 
 import java.util.HashMap;
@@ -26,6 +27,11 @@ public class ModeSetting<T extends Enum<T>> extends Setting<T> {
         for (Enum<?> constant : constants) {
             translationMap.put(constant, Localizable.of("mode." + constant.name() + ".name"));
         }
+    }
+
+    @Override
+    protected void createValueWrapper() {
+        wrapper = new ModeValueWrapper(this);
     }
 
     final Map<Enum<?>, Localizable> translationMap = new HashMap<>();

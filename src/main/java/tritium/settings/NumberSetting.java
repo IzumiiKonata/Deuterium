@@ -55,7 +55,7 @@ public class NumberSetting<T extends Number> extends Setting<T> {
     @Override
     public void setValue(T value) {
         double precision = 1 / increment.doubleValue();
-        this.value = cast((Class<T>) this.value.getClass(), /*Math.round( * precision) / precision*/value.doubleValue());
+        super.setValue(cast((Class<T>) this.value.getClass(), /*Math.round( * precision) / precision*/value.doubleValue()));
         if (!this.lastValue.equals(this.value)) {
             this.onValueChanged(lastValue, this.value);
         }

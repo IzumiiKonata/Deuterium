@@ -2,6 +2,7 @@ package tritium.bridge;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
+import net.minecraft.util.IChatComponent;
 import today.opai.api.OpenAPI;
 import today.opai.api.enums.EnumNotificationType;
 import today.opai.api.features.ExtensionScreen;
@@ -58,12 +59,26 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public void printMessage(String message) {
-        
+
+        if (Minecraft.getMinecraft().thePlayer != null) {
+            Minecraft.getMinecraft().thePlayer.addChatMessage(message);
+        }
+
     }
 
     @Override
     public void printChatComponent(String json) {
-        
+
+        try {
+            if (Minecraft.getMinecraft().thePlayer != null) {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(IChatComponent.Serializer.jsonToComponent(json));
+            }
+        } catch (Exception e) {
+            if (Minecraft.getMinecraft().thePlayer != null) {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(e.getMessage());
+            }
+        }
+
     }
 
     @Override

@@ -2,10 +2,12 @@ package tritium.settings;
 
 import lombok.Getter;
 import lombok.Setter;
+import tritium.bridge.settings.ValueWrapper;
 import tritium.utils.i18n.Localizable;
 import tritium.module.Module;
 import tritium.widget.Widget;
 
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -25,11 +27,16 @@ public abstract class Setting<T> {
     private final T defaultValue;
 
     @Getter
-    @Setter
     protected T value;
+
     @Getter
     @Setter
     private Supplier<Boolean> shouldRender = () -> true;
+
+    @Getter
+    protected ValueWrapper wrapper;
+
+    public Consumer valueChangedCallback = val -> {};
 
     public Setting(String internalName, T value) {
         this.internalName = internalName;
@@ -40,6 +47,12 @@ public abstract class Setting<T> {
 
         this.name = Localizable.of("setting." + lowerCase + ".name");
         this.description = Localizable.of("setting." + lowerCase + ".desc");
+
+        this.createValueWrapper();
+    }
+
+    protected void createValueWrapper() {
+        this.wrapper = new ValueWrapper<>(this);
     }
 
     public T buildDefaultValue(T value) {
@@ -60,6 +73,11 @@ public abstract class Setting<T> {
 
     public String getValueForConfig() {
         return this.getValue().toString();
+    }
+
+    public void setValue(T value) {
+        this.value = value;
+        this.valueChangedCallback.accept(value);
     }
 
     public void reset() {

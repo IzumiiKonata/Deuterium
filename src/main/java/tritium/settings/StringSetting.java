@@ -28,9 +28,4 @@ public class StringSetting extends Setting<String> {
             this.setValue(value);
         }
     }
-
-    @Override
-    public void setValue(String value) {
-        super.setValue(value);
-    }
 }

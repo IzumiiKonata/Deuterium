@@ -17,6 +17,7 @@ import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
+import tritium.event.events.game.GameLoopEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.launch.Launcher;
 import tritium.rendering.StencilClipManager;
@@ -1080,6 +1081,8 @@ public class Minecraft implements IThreadListener {
             lastScaleFactor = gameSettings.guiScale;
         }
 
+        EventManager.call(new GameLoopEvent());
+
         //CLIENT
         Interpolations.calcFrameDelta();
         //END CLIENT
@@ -1109,9 +1112,6 @@ public class Minecraft implements IThreadListener {
 
         this.mcProfiler.endSection();
         long l = System.nanoTime();
-
-        // dummy call for aimassist etc.
-        this.entityRenderer.onMouseEvent(0, 0);
 
         this.mcProfiler.startSection("tick");
 
