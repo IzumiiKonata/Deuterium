@@ -895,6 +895,9 @@
     "command.bind.module bound to mouse button": "Bound module %s to mouse button %s.",
     "command.command not found": "Command %s not found!",
 
+    "setting.remove view bobbing.name": "Remove View Bobbing",
+    "setting.remove hand view bobbing.name": "Remove Hand View Bobbing",
+
     "clickgui.nosettingshere": "No Settings Here."
   }
 }

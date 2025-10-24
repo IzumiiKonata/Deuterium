@@ -718,6 +718,9 @@
     "command.bind.module bound to mouse button": "已将模块 %s 绑定到鼠标按键 %s.",
     "command.command not found": "未找到命令 %s!",
 
+    "setting.remove view bobbing.name": "移除视角摇晃",
+    "setting.remove hand view bobbing.name": "移除手臂摇晃",
+
     "clickgui.nosettingshere": "这里没有设置."
   }
 }
