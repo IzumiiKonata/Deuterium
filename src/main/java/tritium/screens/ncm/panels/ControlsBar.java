@@ -45,6 +45,7 @@ public class ControlsBar extends NCMPanel {
 
         this.addChild(playingCover);
         playingCover.fadeIn();
+        playingCover.setLinearFilter(true);
 
         playingCover.setBeforeRenderCallback(() -> {
             playingCover.setMargin(5);
@@ -65,7 +66,8 @@ public class ControlsBar extends NCMPanel {
 
         lblMusicName.setBeforeRenderCallback(() -> {
             lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-            lblMusicName.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, playingCover.getRelativeY() + 3);
+            lblMusicName.centerVertically();
+            lblMusicName.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2);
         });
         lblMusicName.setClickable(false);
 
@@ -74,7 +76,8 @@ public class ControlsBar extends NCMPanel {
 
         lblMusicArtist.setBeforeRenderCallback(() -> {
             lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
-            lblMusicArtist.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, playingCover.getRelativeY() + 4 + lblMusicName.getHeight() + 2);
+            lblMusicArtist.centerVertically();
+            lblMusicArtist.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2);
         });
 
         lblMusicArtist.setClickable(false);

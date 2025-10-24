@@ -11,6 +11,7 @@ import tritium.rendering.rendersystem.RenderSystem;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -25,7 +26,7 @@ public class GlyphGenerator {
             if (fallBackFonts != null) {
                 for (Font fallBackFont : fallBackFonts) {
                     if (fallBackFont != null && fallBackFont.canDisplay(ch)) {
-                        System.out.println("Can't display " + ch);
+//                        System.out.println("Can't display " + ch);
                         return fallBackFont;
                     }
                 }
@@ -48,10 +49,12 @@ public class GlyphGenerator {
         final FontMetrics fontMetrics = fontGraphics.getFontMetrics(font);
         final FontMetrics fontMetricsOrig = fontGraphics.getFontMetrics(f);
         FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
-        Rectangle2D stringBounds = fontMetrics.getStringBounds(String.valueOf(ch), fontGraphics);
+//        Rectangle2D stringBounds = fontMetrics.getStringBounds(String.valueOf(ch), fontGraphics);
 
-        int width = (int) Math.ceil(stringBounds.getWidth());
-        int height = (int) Math.ceil(stringBounds.getHeight() * 1.3f);
+        GlyphVector gv = font.createGlyphVector(frc, String.valueOf(ch));
+        Rectangle2D bounds = gv.getVisualBounds();
+        int width = (int) Math.ceil(gv.getGlyphMetrics(0).getAdvance());
+        int height = fontMetrics.getAscent() + fontMetrics.getDescent();
 
         Glyph glyph = new Glyph(width, height, ch);
 
@@ -79,7 +82,7 @@ public class GlyphGenerator {
         g2d.setFont(font);
 
         if (fontMetrics.getHeight() > fontHeight && font == f) {
-            fontHeight = stringBounds.getHeight();
+            fontHeight = fontMetrics.getAscent() + fontMetrics.getDescent();
         }
 
         if (font == f) {

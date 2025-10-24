@@ -48,10 +48,14 @@ public class LyricParser {
 
         for (LyricLine l : lyricLines) {
             String translation = transMap.get(l.timeStamp);
-            if (translation != null && l.translationText == null) {
-                l.translationText = translation;
-            } else {
+
+            if (translation == null) {
                 System.out.println("Translation not found for " + l.lyric + " at " + l.timeStamp);
+                continue;
+            }
+
+            if (l.translationText == null) {
+                l.translationText = translation;
             }
         }
     }

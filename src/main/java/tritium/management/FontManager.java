@@ -151,6 +151,16 @@ public class FontManager extends AbstractManager {
 
         Font font = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/" + name + ".ttf"));
 
+        if (name.equals("pf_normal")) {
+            Font main = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/sfregular.otf"));
+            return new CFontRenderer(main, size * 0.5f, font);
+        }
+
+        if (name.equals("pf_middleblack")) {
+            Font main = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/sfbold.otf"));
+            return new CFontRenderer(main, size * 0.5f, font);
+        }
+
         return new CFontRenderer(font, size * 0.5f, font);
     }
 
