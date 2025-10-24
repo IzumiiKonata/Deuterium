@@ -25,6 +25,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -159,10 +160,7 @@ public class PlaylistPanel extends NCMPanel {
         });
 
         playList.loadMusicsWithCallback(musics -> {
-            for (Music music : musics) {
-                MusicWidget musicWidget = new MusicWidget(music, playList, musics.indexOf(music));
-                musicsPanel.addChild(musicWidget);
-            }
+            musicsPanel.addChild(playList.getMusics().stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music))).toArray(MusicWidget[]::new));
         });
     }
 
@@ -189,8 +187,10 @@ public class PlaylistPanel extends NCMPanel {
     }
 
     private String getPlayListInfo() {
+        if (!playList.musicsLoaded)
+            return "";
 
-        List<Music> musics = playList.getMusics();
+        List<Music> musics = playList.musics;
         if (musics.isEmpty())
             return playList.count + "首歌曲";
 

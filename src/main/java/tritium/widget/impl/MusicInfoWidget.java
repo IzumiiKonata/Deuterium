@@ -276,7 +276,7 @@ public class MusicInfoWidget extends Widget {
     }
 
     public static Location getMusicCoverSmall(Music music) {
-        return Location.of("tritium/textures/MusicCoverSmall" + music.getId() + ".png");
+        return Location.of("tritium/textures/music/" + music.getId() + "/cover.png");
     }
 
 }
