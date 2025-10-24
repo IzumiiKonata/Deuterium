@@ -25,7 +25,6 @@ import tritium.settings.NumberSetting;
 public class Chat extends Module {
 
     public BooleanSetting fastChat = new BooleanSetting("Fast Chat", false);
-    public BooleanSetting blur = new BooleanSetting("Blur", false, () -> !fastChat.getValue());
     public BooleanSetting animation = new BooleanSetting("Chat Animation", false);
     public BooleanSetting noChatClear = new BooleanSetting("No Chat Clear", false);
     public BooleanSetting noLengthLimit = new BooleanSetting("No Length Limit", false);
@@ -114,18 +113,7 @@ public class Chat extends Module {
 
                                 if (!this.fastChat.getValue()) {
                                     GlStateManager.resetColor();
-
-                                    if (this.blur.getValue()) {
-
-                                        int finalAlpha = alpha;
-                                        int finalChatLineLength = chatLineLength;
-                                        BLUR.add(() -> {
-                                            Rect.draw(xOffset, chatLineYTop, finalChatLineLength + 4, chatLineYBottom - chatLineYTop, hexColor(255, 255, 255, finalAlpha / 2), Rect.RectType.EXPAND);
-                                        });
-
-                                    } else {
-                                        RenderSystem.drawRect(xOffset, chatLineYTop, xOffset + chatLineLength + 4, chatLineYBottom, alpha / 2 << 24);
-                                    }
+                                    RenderSystem.drawRect(xOffset, chatLineYTop, xOffset + chatLineLength + 4, chatLineYBottom, alpha / 2 << 24);
                                 }
 
 
@@ -135,7 +123,7 @@ public class Chat extends Module {
                                 GlStateManager.pushMatrix();
 
                                 double v = ((this.animation.getValue() && updateTicksLeft < 200) ? chatline.textY : (chatLineY - chatLineHeight * 0.5 - fontRenderer.getHeight() * 0.5));
-                                GlStateManager.translate((float) xOffset, v + 0.5, 0);
+                                GlStateManager.translate((float) xOffset, v - .5, 0);
 
                                 String font = s.replaceAll("，", ",").replaceAll("：", ":").replaceAll("；", ";").replaceAll("？", "?");
 

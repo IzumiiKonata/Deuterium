@@ -35,31 +35,61 @@ public class DynamicTexture extends AbstractTexture {
     protected boolean clearable = true;
 
     public DynamicTexture(BufferedImage bufferedImage) {
-        this(bufferedImage.getWidth(), bufferedImage.getHeight());
-        bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), this.dynamicTextureData, 0, bufferedImage.getWidth());
+        this(bufferedImage.getWidth(), bufferedImage.getHeight(), bufferedImage.getType());
+        if (alphaTexture)
+            extractAlphaData(bufferedImage);
+        else
+            bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), this.dynamicTextureData, 0, bufferedImage.getWidth());
         this.updateDynamicTexture();
     }
 
     public DynamicTexture(BufferedImage bufferedImage, boolean clearable) {
-        this(bufferedImage.getWidth(), bufferedImage.getHeight());
-        bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), this.dynamicTextureData, 0, bufferedImage.getWidth());
+        this(bufferedImage.getWidth(), bufferedImage.getHeight(), bufferedImage.getType());
+        if (alphaTexture)
+            extractAlphaData(bufferedImage);
+        else
+            bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), this.dynamicTextureData, 0, bufferedImage.getWidth());
         this.clearable = clearable;
         this.updateDynamicTexture();
     }
 
     public DynamicTexture(BufferedImage bufferedImage, boolean clearable, boolean linear) {
-        this(bufferedImage.getWidth(), bufferedImage.getHeight());
-        bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), this.dynamicTextureData, 0, bufferedImage.getWidth());
+        this(bufferedImage.getWidth(), bufferedImage.getHeight(), bufferedImage.getType());
+        if (alphaTexture)
+            extractAlphaData(bufferedImage);
+        else
+            bufferedImage.getRGB(0, 0, bufferedImage.getWidth(), bufferedImage.getHeight(), this.dynamicTextureData, 0, bufferedImage.getWidth());
         this.clearable = clearable;
         this.linear = linear;
         this.updateDynamicTexture();
     }
 
+    private boolean alphaTexture = false;
+
     public DynamicTexture(int textureWidth, int textureHeight) {
+        this(textureWidth, textureHeight, BufferedImage.TYPE_INT_ARGB);
+    }
+
+    public DynamicTexture(int textureWidth, int textureHeight, int imgType) {
         this.width = textureWidth;
         this.height = textureHeight;
         this.dynamicTextureData = new int[textureWidth * textureHeight];
+
+        if (imgType == BufferedImage.TYPE_BYTE_GRAY)
+            alphaTexture = true;
+
         this.allocateTexture(textureWidth, textureHeight);
+    }
+
+    private void extractAlphaData(BufferedImage img) {
+        for (int y = 0; y < height; y++) {
+            for (int x = 0; x < width; x++) {
+                int pixel = img.getRGB(x, y);
+                // 提取 Alpha 通道（或者用白色的亮度作为 Alpha）
+                int alpha = (pixel >> 24) & 0xFF;
+                dynamicTextureData[y * width + x] = (byte) alpha;
+            }
+        }
     }
 
     public void allocateTexture(int textureWidth, int textureHeight) {
@@ -79,7 +109,11 @@ public class DynamicTexture extends AbstractTexture {
         }
 
         for (int i = 0; i <= levels; ++i) {
-            GL11.glTexImage2D(GL11.GL_TEXTURE_2D, i, GL11.GL_RGBA, width >> i, height >> i, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer) null);
+            if (alphaTexture) {
+                GL11.glTexImage2D(GL11.GL_TEXTURE_2D, i, GL11.GL_ALPHA, width >> i, height >> i, 0, GL11.GL_ALPHA, GL12.GL_UNSIGNED_BYTE, (IntBuffer) null);
+            } else {
+                GL11.glTexImage2D(GL11.GL_TEXTURE_2D, i, GL11.GL_RGBA, width >> i, height >> i, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (IntBuffer) null);
+            }
         }
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
@@ -151,7 +185,10 @@ public class DynamicTexture extends AbstractTexture {
                 buffer.put(this.dynamicTextureData, 0, this.dynamicTextureData.length);
                 buffer.flip();
 
-                GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
+                if (alphaTexture)
+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL11.GL_ALPHA, GL12.GL_UNSIGNED_BYTE, buffer);
+                else
+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
 
                 MemoryUtil.memFree(buffer);
 
@@ -182,7 +219,10 @@ public class DynamicTexture extends AbstractTexture {
                     dataBuffer.put(aint, k, i1);
                     dataBuffer.flip();
 
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
+                    if (alphaTexture)
+                        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL11.GL_ALPHA, GL12.GL_UNSIGNED_BYTE, dataBuffer);
+                    else
+                        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
                 }
 
                 if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ indirect subImage2D")) {

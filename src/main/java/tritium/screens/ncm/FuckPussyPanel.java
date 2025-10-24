@@ -21,6 +21,7 @@ import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shader;
+import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.utils.network.HttpUtils;
@@ -28,6 +29,7 @@ import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicInfoWidget;
 import tritium.widget.impl.MusicLyricsWidget;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +96,6 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                 addLyrics(lyricLines);
             } catch (Exception ignored) {
-                // 获取失败，使用普通歌词
             }
         });
     }
@@ -140,6 +141,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
     public static LyricLine currentDisplaying = null;
 
+    Framebuffer baseFb, stencilFb;
+
     private void renderLyrics(double mouseX, double mouseY, double posX, double posY, double width, double height, float alpha) {
 
         if (lyrics.isEmpty())
@@ -169,7 +172,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 break;
             }
 
-            lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.2f);
+            lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.1f);
             boolean isHovering = isHovered(mouseX, mouseY, RenderSystem.getWidth() * .5, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? .2f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics && lyric != currentDisplaying ? 1f : 0f, 0.1f);
@@ -208,28 +211,56 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                         long prevTiming = i == 0 ? 0 : prev.timing;
                         double progress = Math.max(0, Math.min(1, (songProgress - lyric.timeStamp - prevTiming) / (double) (word.timing - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
-                        word.emphasize = progress;
-
-                        double finalRenderX = renderX;
-                        double finalRenderY = renderY;
+                        word.emphasize = Interpolations.interpBezier(word.emphasize, progress > 0 ? 1 : 0, 0.05f);
 
                         boolean shouldClip = progress > 0 && progress < 1;
 
-                        if (shouldClip)
-                            StencilClipManager.beginClip(() -> {
-                                Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
-                            });
-
-                        if (progress > 0) {
+                        if (progress == 1) {
                             FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
+                        }
 
-//                            bloomRunnables.add(() -> {
-//                                FontManager.pf65bold.drawString(word.word, finalRenderX, finalRenderY - word.emphasize, hexColor(1, 1, 1, (float) (alpha * progress * .5f)));
+                        if (shouldClip) {
+
+                            stencilFb = RenderSystem.createFrameBuffer(stencilFb);
+                            stencilFb.bindFramebuffer(true);
+                            stencilFb.setFramebufferColor(1, 1, 1, 0);
+                            stencilFb.framebufferClearNoBinding();
+
+                            GlStateManager.pushMatrix();
+                            this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
+                            Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
+                            RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 8, FontManager.pf65bold.getHeight(), -1, 0);
+                            GlStateManager.popMatrix();
+
+                            baseFb = RenderSystem.createFrameBuffer(baseFb);
+                            baseFb.bindFramebuffer(true);
+                            baseFb.setFramebufferColor(1, 1, 1, 0);
+                            baseFb.framebufferClearNoBinding();
+
+                            GlStateManager.pushMatrix();
+                            this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
+                            FontManager.pf65bold.drawString(word.word, 0, 0, hexColor(1, 1, 1, alpha));
+                            GlStateManager.popMatrix();
+
+                            Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
+
+                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture,  renderX, renderY - word.emphasize);
+
+//                            FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
+//                            FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
+//
+//                            GlStateManager.bindTexture(stencilFb.framebufferTexture);
+//                            ShaderProgram.drawQuad(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+//                            GlStateManager.bindTexture(baseFb.framebufferTexture);
+//                            ShaderProgram.drawQuad(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+
+//                            Image.draw(stencilFb.framebufferTexture, 50, 72, stencilFb.framebufferTextureWidth, stencilFb.framebufferTextureHeight, Image.Type.Normal);
+//                            Image.draw(baseFb.framebufferTexture, 50, 128, baseFb.framebufferTextureWidth, baseFb.framebufferTextureHeight, Image.Type.Normal);
+//                            StencilClipManager.beginClip(() -> {
+//                                Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
 //                            });
                         }
 
-                        if (shouldClip)
-                            StencilClipManager.endClip();
                     } else {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * lyric.alpha));
                     }
@@ -409,7 +440,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         return getCoverSizeMax() * .8;
     }
 
-    double coverSize = CloudMusic.player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax();
+    double coverSize = (CloudMusic.player == null || CloudMusic.player.isPausing()) ? this.getCoverSizeMin() : this.getCoverSizeMax();
     double progressBarHeight = 8, volumeBarHeight = 8;
 
     float coverAlpha = .0f;
@@ -509,6 +540,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         playPauseButton.setHeight(32);
         playPauseButton.setPosition(volumeBarXOffset + volumeBarWidth * .5 - playPauseButton.getWidth() * .5, progressBarYOffset + (volumeBarYOffset - progressBarYOffset) * .5 - playPauseButton.getHeight() * .5);
         playPauseButton.renderWidget(mouseX, mouseY, 0);
+        playPauseButton.setColor(Color.WHITE);
 
         playPauseButton.setBeforeRenderCallback(() -> {
             if (CloudMusic.player == null || CloudMusic.player.isPausing()) {
@@ -531,7 +563,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             return true;
         });
 
-        playPauseButton.fontOffsetY = 1;
+        playPauseButton.fontOffsetY = 0;
 
         prev.setAlpha(alpha);
         prev.setWidth(32);
@@ -539,7 +571,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         prev.setPosition(volumeBarXOffset + volumeBarWidth * .5 - playPauseButton.getWidth() * .5 - 16 - prev.getWidth(), playPauseButton.getY());
         prev.renderWidget(mouseX, mouseY, 0);
         prev.fr = FontManager.music40;
-        prev.fontOffsetY = 1;
+        prev.fontOffsetY = 0;
+        prev.setColor(Color.WHITE);
 
         prev.setOnClickCallback((x, y, i) -> {
             if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
@@ -554,7 +587,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         next.setPosition(volumeBarXOffset + volumeBarWidth * .5 + playPauseButton.getWidth() * .5 + 16, playPauseButton.getY());
         next.renderWidget(mouseX, mouseY, 0);
         next.fr = FontManager.music40;
-        next.fontOffsetY = 1;
+        next.fontOffsetY = 0;
+        next.setColor(Color.WHITE);
 
         next.setOnClickCallback((x, y, i) -> {
             if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)

@@ -2,6 +2,7 @@ package tritium.rendering.shader;
 
 import tritium.rendering.shader.impl.*;
 import tritium.rendering.shader.impl.*;
+import tritium.rendering.shader.impl.StencilShader;
 
 public class Shaders {
     public static Shader POST_BLOOM_SHADER = new BloomShader();
@@ -21,4 +22,6 @@ public class Shaders {
     public static RQGShader RQG_SHADER = new RQGShader();
 
     public static Deconverge DECONVERGE = new Deconverge();
+
+    public static StencilShader STENCIL = new StencilShader();
 }

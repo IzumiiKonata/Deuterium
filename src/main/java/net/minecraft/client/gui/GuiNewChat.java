@@ -78,10 +78,10 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
 
                         if (chat.isEnabled() && chat.noLengthLimit.getValue()) {
 
-                            if (fontRenderer instanceof CFontRenderer) {
-                                chatLineLength = (int) Math.min(chatLineLength, fontRenderer.getStringWidth(chatline.getChatComponent().getFormattedText()) / 1.5f - 3);
-                            } else {
+                            if (fontRenderer == FontManager.vanilla) {
                                 chatLineLength = Math.min(chatLineLength, fontRenderer.getStringWidth(chatline.getChatComponent().getFormattedText()) - 3);
+                            } else {
+                                chatLineLength = (int) Math.min(chatLineLength, fontRenderer.getStringWidth(chatline.getChatComponent().getFormattedText()) / 1.5f - 3);
                             }
 
                             chatLineLength = Math.max(MathHelper.ceiling_float_int((float) calculateChatboxWidth(this.mc.gameSettings.chatWidth) / chatScale), chatLineLength);
@@ -116,19 +116,8 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
                                 if (!chat.fastChat.getValue() || !chat.isEnabled()) {
                                     GlStateManager.resetColor();
 
-                                    if (chat.isEnabled() && chat.blur.getValue()) {
-
-                                        int finalAlpha = alpha;
-                                        int finalChatLineLength = chatLineLength;
-                                        BLUR.add(() -> {
-                                            Rect.draw(xOffset, chatLineYTop, finalChatLineLength + 4, chatLineYBottom - chatLineYTop, hexColor(255, 255, 255, finalAlpha / 2), Rect.RectType.EXPAND);
-                                        });
-
-                                    } else {
-                                        RenderSystem.drawRect(xOffset, chatLineYTop, xOffset + chatLineLength + 4, chatLineYBottom, alpha / 2 << 24);
-                                    }
+                                    RenderSystem.drawRect(xOffset, chatLineYTop + 1, xOffset + chatLineLength + 4, chatLineYBottom + 1, alpha / 2 << 24);
                                 }
-
 
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();

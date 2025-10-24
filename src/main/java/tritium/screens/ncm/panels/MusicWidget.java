@@ -94,7 +94,8 @@ public class MusicWidget extends RoundedRectWidget {
 
         lblMusicName.setBeforeRenderCallback(() -> {
             lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-            lblMusicName.setPosition(cover.getRelativeX() + cover.getWidth() + 4, cover.getRelativeY() + 4);
+            lblMusicName.centerVertically();
+            lblMusicName.setPosition(cover.getRelativeX() + cover.getWidth() + 4, lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2);
         });
         lblMusicName.setClickable(false);
 
@@ -106,7 +107,8 @@ public class MusicWidget extends RoundedRectWidget {
                 lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
             else
                 lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
-            lblMusicArtist.setPosition(cover.getRelativeX() + cover.getWidth() + 4, cover.getRelativeY() + 4 + lblMusicName.getHeight() + 4);
+            lblMusicArtist.centerVertically();
+            lblMusicArtist.setPosition(cover.getRelativeX() + cover.getWidth() + 4, lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2);
         });
 
         lblMusicArtist.setClickable(false);

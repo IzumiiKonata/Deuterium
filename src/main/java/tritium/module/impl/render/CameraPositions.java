@@ -38,6 +38,8 @@ public class CameraPositions extends Module {
     public NumberSetting<Double> z = new NumberSetting<>("Z", 0.0, -5.0, 5.0, 0.1);
     public NumberSetting<Double> scale = new NumberSetting<>("Scale", 1.0, 0.1, 2.0, 0.05);
 
+    public final BooleanSetting removeViewBobbing = new BooleanSetting("Remove View Bobbing", false);
+    public final BooleanSetting removeHandViewBobbing = new BooleanSetting("Remove Hand View Bobbing", false);
     public final BooleanSetting smoothThirdPerson = new BooleanSetting("Smooth Third Person", false);
     public NumberSetting<Double> smooth = new NumberSetting<>("Speed", 1.0, 1.0, 4.0, 0.1, this.smoothThirdPerson::getValue);
 

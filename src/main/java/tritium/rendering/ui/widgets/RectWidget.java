@@ -3,6 +3,7 @@ package tritium.rendering.ui.widgets;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
+import tritium.settings.ClientSettings;
 
 /**
  * @author IzumiiKonata
@@ -20,6 +21,8 @@ public class RectWidget extends AbstractWidget<RectWidget> {
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
         Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.getHexColor());
+
+
     }
 
 }

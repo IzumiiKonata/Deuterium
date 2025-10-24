@@ -69,7 +69,7 @@ public class NavigateBar extends NCMPanel {
         this.playlistPanel.setBeforeRenderCallback(() -> {
             this.playlistPanel.setMargin(0);
             this.playlistPanel.setPosition(this.playlistPanel.getRelativeX(), searchBar.getRelativeY() + searchBar.getHeight() + 8);
-            this.playlistPanel.setBounds(this.playlistPanel.getWidth(), this.playlistPanel.getHeight() - searchBar.getHeight() - 16);
+            this.playlistPanel.setBounds(this.playlistPanel.getWidth(), this.playlistPanel.getHeight() - searchBar.getHeight() - 16 - 32);
         });
 
         this.playlistPanel.setSpacing(4);

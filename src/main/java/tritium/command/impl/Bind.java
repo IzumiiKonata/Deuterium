@@ -3,6 +3,7 @@ package tritium.command.impl;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjglx.input.Keyboard;
 import tritium.command.Command;
+import tritium.management.Localizer;
 import tritium.management.ModuleManager;
 import tritium.module.Module;
 
@@ -43,9 +44,8 @@ public class Bind extends Command {
                 });
 
                 if (!m.isPresent()) {
-                    this.print(EnumChatFormatting.RED + "Module " + EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED + " not found!");
+                    this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED));
                 }
-
 
             }
 
@@ -67,19 +67,29 @@ public class Bind extends Command {
                 try {
                     int i = Integer.parseInt(keyName.substring(5));
                     md.setKeyBind(i - 101);
-                    this.print(EnumChatFormatting.GREEN + "Successfully bound module " + EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + " to mouse " + i + ".");
+                    this.print(
+                            EnumChatFormatting.GREEN +
+                            Localizer.format(
+                            "command.bind.module bound to mouse button",
+                             EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN,
+                                    EnumChatFormatting.RESET + String.valueOf(i) + EnumChatFormatting.GREEN
+                            )
+                    );
                     return;
                 } catch (Exception e) {
                 }
             }
 
             md.setKeyBind(Keyboard.getKeyIndex(keyName.toUpperCase()));
-            this.print(EnumChatFormatting.GREEN + "Successfully bound module " + EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + " to key " + EnumChatFormatting.RESET + Keyboard.getKeyName(Keyboard.getKeyIndex(keyName.toUpperCase())) + ".");
+
+            this.print(EnumChatFormatting.GREEN + Localizer.format("command.bind.module bound to key",
+                    EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN,
+                    EnumChatFormatting.RESET + Keyboard.getKeyName(Keyboard.getKeyIndex(keyName.toUpperCase())
+                    )));
         });
 
         if (!m.isPresent()) {
-            this.print(EnumChatFormatting.RED + "Module " + EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED + " not found!");
-
+            this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED));
         }
     }
 }

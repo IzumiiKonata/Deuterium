@@ -71,7 +71,14 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     }
 
     public boolean nameEquals(String another) {
-        return this.getInternalName().equalsIgnoreCase(another) || this.getName().get().equalsIgnoreCase(another);
+
+        if (this.getInternalName().equalsIgnoreCase(another) || this.getInternalName().replace(" ", "").equalsIgnoreCase(another))
+            return true;
+
+        if (this.getName().get().equalsIgnoreCase(another) || this.getName().get().replace(" ", "").equalsIgnoreCase(another))
+            return true;
+
+        return false;
     }
 
     public void onEnable() {

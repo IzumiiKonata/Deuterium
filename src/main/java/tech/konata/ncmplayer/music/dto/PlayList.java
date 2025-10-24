@@ -86,11 +86,9 @@ public class PlayList {
                     throw new RuntimeException(e);
                 }
                 this.songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
-                synchronized (this.musics) {
-                    this.songs.forEach(element -> {
-                        this.musics.add(new Music(element.getAsJsonObject(), null));
-                    });
-                }
+                this.songs.forEach(element -> {
+                    this.musics.add(new Music(element.getAsJsonObject(), null));
+                });
                 musicsLoaded = true;
             });
 

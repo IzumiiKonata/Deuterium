@@ -28,7 +28,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     public Font font;
     public Font[] fallBackFonts;
-    private boolean initialized;
     private final Map<String, Integer> stringWidthMap = new HashMap<>();
     public float sizePx;
 
@@ -67,8 +66,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     private void init(Font font, float sizePx) {
-        if (initialized) throw new IllegalStateException("Double call to init()");
-        initialized = true;
         this.font = font.deriveFont(sizePx * 2);
 
 //        if (this.sizePx == 9.0 && this.font.getFontName().equals(".萍方-简 正规体")) {
@@ -78,7 +75,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 //        }
 
         locateGlyph('A');
-
     }
 
     List<Integer> loaded = new ArrayList<>();
@@ -456,7 +452,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     public void close() {
         for (Glyph gly : allGlyphs) {
             if (gly != null) {
-
                 if (gly.textureId != -1) {
                     GlStateManager.deleteTexture(gly.textureId);
                 }
@@ -465,12 +460,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                     GLAllocation.deleteDisplayLists(gly.callList);
                     GlyphCache.CALL_LIST_COUNTER.set(GlyphCache.CALL_LIST_COUNTER.get() - 1);
                 }
-
             }
         }
 
         allGlyphs = new Glyph['\uFFFF' + 1];
-        initialized = false;
     }
 
     public static Location randomIdentifier() {

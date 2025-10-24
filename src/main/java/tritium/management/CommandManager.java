@@ -93,7 +93,7 @@ public class CommandManager extends AbstractManager {
         }
 
         if (!foundCommand) {
-            this.print(String.format("%sCommand %s%s%s not found!", EnumChatFormatting.RED, EnumChatFormatting.GOLD, commandName, EnumChatFormatting.RED));
+            this.print(EnumChatFormatting.RED + Localizer.format("command.command not found", EnumChatFormatting.GOLD + commandName + EnumChatFormatting.RED));
         }
     }
 

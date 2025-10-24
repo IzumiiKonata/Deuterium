@@ -172,7 +172,7 @@ public class Main {
         JsonObject downloads = jsonObject.getAsJsonObject("downloads");
         JsonObject client = downloads.getAsJsonObject("client");
         String sha1 = DigestUtils.sha1Hex(Files.newInputStream(obfuscated.toPath()));
-        client.addProperty("sha-1", sha1);
+        client.addProperty("sha1", sha1);
         client.addProperty("size", obfuscated.length());
 
         File json = new File(workingDir, "Tritium.json");
@@ -193,6 +193,7 @@ public class Main {
             List<String> comments = Arrays.asList(
                     "Tritium " + ver,
                     "Build Time: " + new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date()) + " (" + System.currentTimeMillis() + ")",
+                    "Tritium.jar SHA1: " + sha1,
                     "Made with <3 by IzumiKonata",
                     "https://space.bilibili.com/357605683"
             );

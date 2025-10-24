@@ -842,7 +842,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         if (this.mc.gameSettings.viewBobbing) {
 
-            if (!ModuleManager.cameraPositions.isEnabled() || !ModuleManager.cameraPositions.movementCamera.getValue())
+            if (!ModuleManager.cameraPositions.isEnabled() || (!ModuleManager.cameraPositions.movementCamera.getValue() && !ModuleManager.cameraPositions.removeViewBobbing.getValue()))
                 this.setupViewBobbing(partialTicks);
 
         }
@@ -926,7 +926,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 this.hurtCameraEffect(p_renderHand_1_);
 
                 if (this.mc.gameSettings.viewBobbing) {
-                    this.setupViewBobbing(p_renderHand_1_);
+                    if (!ModuleManager.cameraPositions.isEnabled() || !ModuleManager.cameraPositions.removeHandViewBobbing.getValue())
+                        this.setupViewBobbing(p_renderHand_1_);
                 }
 
                 flag = this.mc.getRenderViewEntity() instanceof EntityLivingBase && ((EntityLivingBase) this.mc.getRenderViewEntity()).isPlayerSleeping();
@@ -955,10 +956,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             if (this.mc.gameSettings.thirdPersonView == 0 && !flag) {
                 this.itemRenderer.renderOverlays(p_renderHand_1_);
                 this.hurtCameraEffect(p_renderHand_1_);
-            }
-
-            if (this.mc.gameSettings.viewBobbing) {
-                this.setupViewBobbing(p_renderHand_1_);
             }
         }
     }
@@ -1867,7 +1864,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             Shaders.endRender();
         }
 
-        // I need this here, else there will be bugs
         GlStateManager.pushMatrix();
 //        GlStateManager.pushAttrib();
         setupCameraTransform(partialTicks, 2);

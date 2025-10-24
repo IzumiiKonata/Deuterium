@@ -38,6 +38,10 @@ public class GlyphCache {
         CALL_LIST_MAP.put(size, value);
     }
 
+    public void remove(final GlyphSize size) {
+        CALL_LIST_MAP.remove(size);
+    }
+
     @AllArgsConstructor
     public class GlyphSize {
         public final int width, height;
