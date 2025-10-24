@@ -1,6 +1,7 @@
 package tritium.bridge;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import today.opai.api.OpenAPI;
 import today.opai.api.enums.EnumNotificationType;
 import today.opai.api.features.ExtensionScreen;
@@ -77,12 +78,12 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public boolean isFriend(String ign) {
-        
+        return false;
     }
 
     @Override
     public boolean isTarget(String ign) {
-        
+        return false;
     }
 
     @Override
@@ -102,7 +103,7 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public boolean isNull() {
-        
+        return Minecraft.getMinecraft().theWorld == null || Minecraft.getMinecraft().thePlayer == null;
     }
 
     @Override
@@ -132,12 +133,13 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public LocalPlayer getLocalPlayer() {
-        return null;
+        return (LocalPlayer) Minecraft.getMinecraft().thePlayer.getWrapper();
     }
 
     @Override
     public World getWorld() {
-        return null;
+        WorldClient theWorld = Minecraft.getMinecraft().theWorld;
+        return theWorld == null ? null : theWorld.getWrapper();
     }
 
     @Override

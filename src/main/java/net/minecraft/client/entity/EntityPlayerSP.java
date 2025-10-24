@@ -25,6 +25,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.IInteractionObject;
 import net.minecraft.world.World;
 import org.lwjglx.util.vector.Vector2f;
+import tritium.bridge.entity.LocalPlayerWrapper;
 import tritium.event.eventapi.State;
 import tritium.event.events.game.ChatEvent;
 import tritium.event.events.player.MoveEvent;
@@ -122,6 +123,11 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         this.statWriter = statFile;
         this.mc = mcIn;
         this.dimension = 0;
+    }
+
+    @Override
+    protected void createWrapper() {
+        this.wrapper = new LocalPlayerWrapper<>(this);
     }
 
     /**
@@ -830,6 +836,35 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         if (this.isPotionActive(Potion.moveSpeed))
             baseSpeed *= 1.0D + 0.2D * (mc.thePlayer.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1);
         return baseSpeed;
+    }
+
+    public void setMotion(double speed) {
+        double forward = mc.thePlayer.movementInput.moveForward;
+        double strafe = mc.thePlayer.movementInput.moveStrafe;
+        float yaw = mc.thePlayer.rotationYaw;
+
+        if ((forward == 0.0D) && (strafe == 0.0D)) {
+            mc.thePlayer.motionX = 0;
+            mc.thePlayer.motionZ = 0;
+        } else {
+            if (forward != 0.0D) {
+                if (strafe > 0.0D) {
+                    yaw += (forward > 0.0D ? -45 : 45);
+                } else if (strafe < 0.0D) {
+                    yaw += (forward > 0.0D ? 45 : -45);
+                }
+                strafe = 0.0D;
+                if (forward > 0.0D) {
+                    forward = 1;
+                } else if (forward < 0.0D) {
+                    forward = -1;
+                }
+            }
+            double cos = Math.cos(Math.toRadians(yaw + 90));
+            double sin = Math.sin(Math.toRadians(yaw + 90));
+            mc.thePlayer.motionX = forward * speed * cos + strafe * speed * sin;
+            mc.thePlayer.motionZ = forward * speed * sin - strafe * speed * cos;
+        }
     }
 
 }

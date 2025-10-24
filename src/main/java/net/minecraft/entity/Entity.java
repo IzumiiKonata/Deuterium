@@ -291,7 +291,7 @@ public abstract class Entity implements ICommandSender {
     }
 
     @Getter
-    private final EntityWrapper wrapper;
+    protected EntityWrapper wrapper;
 
     public Entity(World worldIn) {
         this.entityId = nextEntityID++;
@@ -320,6 +320,10 @@ public abstract class Entity implements ICommandSender {
         this.dataWatcher.addObject(4, (byte) 0);
         this.entityInit();
 
+        this.createWrapper();
+    }
+
+    protected void createWrapper() {
         this.wrapper = new EntityWrapper(this);
     }
 

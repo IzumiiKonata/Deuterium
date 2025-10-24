@@ -1,6 +1,5 @@
 package tritium.bridge.entity;
 
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import today.opai.api.interfaces.game.entity.LivingEntity;
 import today.opai.api.interfaces.game.item.ItemStack;
@@ -8,82 +7,81 @@ import today.opai.api.interfaces.game.item.PotionEffect;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
  * Date: 2025/10/21 22:44
  */
-public class LivingEntityWrapper extends EntityWrapper implements LivingEntity {
+public class LivingEntityWrapper<T extends EntityLivingBase> extends EntityWrapper<EntityLivingBase> implements LivingEntity {
 
-    public LivingEntityWrapper(EntityLivingBase mcEntity) {
+    public LivingEntityWrapper(T mcEntity) {
         super(mcEntity);
     }
 
     @Override
     public float getAbsorption() {
-        return ((EntityLivingBase) mcEntity).getAbsorption();
+        return mcEntity.getAbsorption();
     }
 
     @Override
     public float getMoveForward() {
-        return ((EntityLivingBase) mcEntity).moveForward;
+        return mcEntity.moveForward;
     }
 
     @Override
     public float getMoveStrafing() {
-        return ((EntityLivingBase) mcEntity).moveStrafing;
+        return mcEntity.moveStrafing;
     }
 
     @Override
     public void setMoveForward(float forward) {
-        ((EntityLivingBase) mcEntity).moveForward = forward;
+        mcEntity.moveForward = forward;
     }
 
     @Override
     public void setMoveStrafing(float strafing) {
-        ((EntityLivingBase) mcEntity).moveStrafing = strafing;
+        mcEntity.moveStrafing = strafing;
     }
 
     @Override
     public float getHealth() {
-        return ((EntityLivingBase) mcEntity).getHealth();
+        return mcEntity.getHealth();
     }
 
     @Override
     public float getMaxHealth() {
-        return ((EntityLivingBase) mcEntity).getMaxHealth();
+        return mcEntity.getMaxHealth();
     }
 
     @Override
     public boolean isOnLadder() {
-        return ((EntityLivingBase) mcEntity).isOnLadder();
+        return mcEntity.isOnLadder();
     }
 
     @Override
     public int getHurtTime() {
-        return ((EntityLivingBase) mcEntity).hurtTime;
+        return mcEntity.hurtTime;
     }
 
     @Override
     public void setJumpMovementFactor(float factor) {
-        ((EntityLivingBase) mcEntity).jumpMovementFactor = factor;
+        mcEntity.jumpMovementFactor = factor;
     }
 
     @Override
     public float getJumpMovementFactor() {
-        return ((EntityLivingBase) mcEntity).jumpMovementFactor;
+        return mcEntity.jumpMovementFactor;
     }
 
     @Override
     public ItemStack getArmorSlot(int slot) {
-        // TODO
-        return null;
+        return this.mcEntity.getCurrentArmor(slot).getWrapper();
     }
 
     @Override
     public ItemStack getHeldItem() {
-        // TODO
-        return null;
+        return this.mcEntity.getHeldItem().getWrapper();
     }
 
     @Override
@@ -93,12 +91,11 @@ public class LivingEntityWrapper extends EntityWrapper implements LivingEntity {
 
     @Override
     public List<PotionEffect> getPotionEffects() {
-        // TODO
-        return Collections.emptyList();
+        return this.mcEntity.getActivePotionEffects().stream().map(net.minecraft.potion.PotionEffect::getWrapper).collect(Collectors.toList());
     }
 
     @Override
     public float getSwingProgress() {
-        return ((EntityLiving) mcEntity).getSwingProgress();
+        return mcEntity.getSwingProgress();
     }
 }

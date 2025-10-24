@@ -18,11 +18,11 @@ import java.util.UUID;
  * @author IzumiiKonata
  * Date: 2025/10/21 22:31
  */
-public class EntityWrapper implements Entity {
+public class EntityWrapper<T extends net.minecraft.entity.Entity> implements Entity {
 
-    protected final net.minecraft.entity.Entity mcEntity;
+    protected final T mcEntity;
 
-    public EntityWrapper(net.minecraft.entity.Entity mcEntity) {
+    public EntityWrapper(T mcEntity) {
         this.mcEntity = mcEntity;
     }
 
