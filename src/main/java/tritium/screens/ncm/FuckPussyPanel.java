@@ -440,7 +440,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         return getCoverSizeMax() * .8;
     }
 
-    double coverSize = CloudMusic.player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax();
+    double coverSize = (CloudMusic.player == null || CloudMusic.player.isPausing()) ? this.getCoverSizeMin() : this.getCoverSizeMax();
     double progressBarHeight = 8, volumeBarHeight = 8;
 
     float coverAlpha = .0f;
