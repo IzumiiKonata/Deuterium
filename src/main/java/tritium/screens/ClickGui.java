@@ -55,8 +55,8 @@ public class ClickGui extends BaseScreen {
         this.windows.add(categoriesWindow);
         this.windows.add(moduleListWindow);
         this.windows.add(valueWindow);
-        this.windows.add(playlistsWindow);
-        this.windows.add(musicsWindow);
+//        this.windows.add(playlistsWindow);
+//        this.windows.add(musicsWindow);
 
         this.windows.forEach(Window::init);
     }
@@ -66,7 +66,7 @@ public class ClickGui extends BaseScreen {
         this.closing = false;
 
 //        categoriesWindow.init();
-        playlistsWindow.init();
+//        playlistsWindow.init();
     }
 
     @Override
