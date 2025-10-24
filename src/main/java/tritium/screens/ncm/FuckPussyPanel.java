@@ -657,10 +657,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             if (!Double.isFinite(fftScale))
                 fftScale = 0;
 
-            if (!Float.isFinite(max) || max <= .2f)
+            if (!Float.isFinite(max) || max <= .1f)
                 max = 0;
 
-            fftScale = Interpolations.interpBezier(fftScale, max * .1, .4f);
+            fftScale = Interpolations.interpBezier(fftScale, max * .05, .4f);
 
             scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 + fftScale);
 
