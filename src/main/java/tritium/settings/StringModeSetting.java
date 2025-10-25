@@ -2,6 +2,8 @@ package tritium.settings;
 
 import lombok.Getter;
 import lombok.NonNull;
+import tritium.bridge.settings.StringModeValueWrapper;
+import tritium.bridge.settings.ValueWrapper;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -46,6 +48,11 @@ public class StringModeSetting extends Setting<String> {
         }
 
         return false;
+    }
+
+    @Override
+    protected void createValueWrapper() {
+        this.wrapper = new StringModeValueWrapper(this);
     }
 
     public void setMode(String mode) {

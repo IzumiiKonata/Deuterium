@@ -1,5 +1,7 @@
 package tritium.bridge;
 
+import lombok.Getter;
+import net.minecraft.network.play.server.S02PacketChat;
 import today.opai.api.enums.EnumEventStage;
 import today.opai.api.enums.EnumNotificationType;
 import today.opai.api.events.*;
@@ -7,9 +9,11 @@ import today.opai.api.interfaces.EventHandler;
 import today.opai.api.interfaces.modules.PresetModule;
 import tritium.event.eventapi.Handler;
 import tritium.event.eventapi.State;
+import tritium.event.events.game.ChatEvent;
 import tritium.event.events.game.GameLoopEvent;
-import tritium.event.events.player.PlayerUpdateEvent;
-import tritium.event.events.player.UpdateEvent;
+import tritium.event.events.game.KeyPressedEvent;
+import tritium.event.events.packet.ReceivePacketEvent;
+import tritium.event.events.player.*;
 import tritium.event.events.rendering.RenderNameTagEvent;
 import tritium.event.events.world.TickEvent;
 import tritium.event.events.world.WorldChangedEvent;
@@ -24,6 +28,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BridgeEventHandler {
 
+    @Getter
     private static final Map<EventHandler, BridgeEventHandler> handlers = new ConcurrentHashMap<>();
 
     public static void register(EventHandler handler) {
@@ -114,6 +119,7 @@ public class BridgeEventHandler {
     }
 
     public void onModuleToggle(PresetModule module, boolean state) {
+        handler.onModuleToggle(module, state);
     }
 
     /**
@@ -130,7 +136,15 @@ public class BridgeEventHandler {
      *
      * @param event The move event.
      */
-    public void onMoveInput(EventMoveInput event) {
+    @Handler
+    public void onMoveInput(MovementInputEvent event) {
+
+        EventMoveInput evt = new EventMoveInput(event.getForward(), event.getStrafe());
+        handler.onMoveInput(evt);
+
+        event.setForward(evt.getForward());
+        event.setStrafe(evt.getStrafe());
+
     }
 
     /**
@@ -138,7 +152,13 @@ public class BridgeEventHandler {
      *
      * @param event The move event.
      */
-    public void onMove(EventMove event) {
+    @Handler
+    public void onMove(MoveEvent event) {
+        EventMove evt = new EventMove(event.getX(), event.getY(), event.getZ());
+        handler.onMove(evt);
+        event.setX(evt.getX());
+        event.setY(evt.getY());
+        event.setZ(evt.getZ());
     }
 
     /**
@@ -147,7 +167,11 @@ public class BridgeEventHandler {
      *
      * @param keyCode The code of the key that was pressed.
      */
-    public void onKey(int keyCode) {
+    @Handler
+    public void onKey(KeyPressedEvent event) {
+
+        handler.onKey(event.getKeyCode());
+
     }
 
     /**
@@ -156,7 +180,17 @@ public class BridgeEventHandler {
      *
      * @param event The slowdown event.
      */
-    public void onSlowdown(EventSlowdown event) {}
+    @Handler
+    public void onSlowdown(SlowDownEvent event) {
+
+        EventSlowdown evt = new EventSlowdown();
+
+        handler.onSlowdown(evt);
+
+        if (evt.isCancelled())
+            event.setCancelled();
+
+    }
 
     /**
      * Called when a jump occurs.
@@ -164,7 +198,15 @@ public class BridgeEventHandler {
      *
      * @param event The jump event.
      */
-    public void onJump(EventJump event) {
+    @Handler
+    public void onJump(JumpEvent event) {
+
+        EventJump evt = new EventJump();
+        handler.onJump(evt);
+
+        if (evt.isCancelled())
+            event.setCancelled();
+
     }
 
     /**
@@ -173,7 +215,20 @@ public class BridgeEventHandler {
      *
      * @param event The chat received event.
      */
-    public void onChat(EventChatReceived event) {
+    @Handler
+    public void onChat(ReceivePacketEvent event) {
+
+        if (event.getPacket() instanceof S02PacketChat) {
+            S02PacketChat packet = (S02PacketChat) event.getPacket();
+
+            if (packet.isChat()) {
+                EventChatReceived evt = new EventChatReceived(packet.getChatComponent().getUnformattedText());
+
+                handler.onChat(evt);
+            }
+
+        }
+
     }
 
     /**
@@ -182,7 +237,17 @@ public class BridgeEventHandler {
      *
      * @param event The chat send event.
      */
-    public void onChat(EventChatSend event) {
+    @Handler
+    public void onChat(ChatEvent event) {
+
+        EventChatSend evt = new EventChatSend(event.getMsg());
+
+        handler.onChat(evt);
+        event.setMsg(evt.getMessage());
+
+        if (evt.isCancelled())
+            event.setCancelled();
+
     }
 
     /**

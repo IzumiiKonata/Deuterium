@@ -20,6 +20,13 @@ import today.opai.api.interfaces.managers.RotationManager;
 import today.opai.api.interfaces.managers.ValueManager;
 import today.opai.api.interfaces.render.*;
 import tritium.Tritium;
+import tritium.bridge.game.data.OptionsImpl;
+import tritium.bridge.management.GameStateManagerImpl;
+import tritium.bridge.management.ModuleManagerImpl;
+import tritium.bridge.management.RotationManagerImpl;
+import tritium.bridge.management.ValueManagerImpl;
+import tritium.event.events.game.ChatEvent;
+import tritium.management.CommandManager;
 
 /**
  * @author IzumiiKonata
@@ -34,12 +41,12 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public void registerEvent(EventHandler eventHandler) {
-        
+        BridgeEventHandler.register(eventHandler);
     }
 
     @Override
     public void unregisterEvent(EventHandler eventHandler) {
-        
+        BridgeEventHandler.unregister(eventHandler);
     }
 
     @Override
@@ -49,7 +56,7 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public void runCommand(String clientCommand) {
-        
+        Tritium.getInstance().getCommandManager().onChat(new ChatEvent(clientCommand));
     }
 
     @Override
@@ -159,27 +166,27 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public Options getOptions() {
-        return null;
+        return OptionsImpl.getInstance();
     }
 
     @Override
     public ValueManager getValueManager() {
-        return null;
+        return ValueManagerImpl.getInstance();
     }
 
     @Override
     public ModuleManager getModuleManager() {
-        return null;
+        return ModuleManagerImpl.getInstance();
     }
 
     @Override
     public RotationManager getRotationManager() {
-        return null;
+        return RotationManagerImpl.getInstance();
     }
 
     @Override
     public GameStateManager getGameStateManager() {
-        return null;
+        return GameStateManagerImpl.getInstance();
     }
 
     @Override

@@ -38,6 +38,7 @@ public class ModeValueWrapper extends ValueWrapper<String> implements ModeValue 
 
     @Override
     public int getModeCount() {
+        // TODO 这是当前选中的模式的 index 还是所有模式的数量?
         return ((ModeSetting<?>) setting).getConstants().length;
     }
 

@@ -1358,6 +1358,9 @@ public abstract class EntityLivingBase extends Entity {
 
             EventManager.call(jumpEvent);
 
+            if (jumpEvent.isCancelled())
+                return;
+
             yaw = jumpEvent.getRotationYaw();
         }
 

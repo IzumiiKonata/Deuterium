@@ -29,7 +29,13 @@ public class ColorValueWrapper extends ValueWrapper<Color> implements ColorValue
     }
 
     @Override
+    public Color getValue() {
+        return ((HSBColor) super.getValue()).getColor();
+    }
+
+    @Override
     public void setValue(Color value) {
-        this.setting.setValue(new HSBColor(value.getRed(), value.getGreen(), value.getBlue(), value.getAlpha()));
+        float[] hsb = Color.RGBtoHSB(value.getRed(), value.getGreen(), value.getBlue(), null);
+        this.setting.loadValue(hsb[0] + ":" + hsb[1] + ":" + hsb[2] + ":" + value.getAlpha());
     }
 }

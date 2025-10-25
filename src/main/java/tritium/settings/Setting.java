@@ -34,9 +34,9 @@ public abstract class Setting<T> {
     private Supplier<Boolean> shouldRender = () -> true;
 
     @Getter
-    protected ValueWrapper wrapper;
+    protected ValueWrapper<?> wrapper;
 
-    public Consumer valueChangedCallback = val -> {};
+    public Consumer<T> valueChangedCallback = val -> {};
 
     public Setting(String internalName, T value) {
         this.internalName = internalName;

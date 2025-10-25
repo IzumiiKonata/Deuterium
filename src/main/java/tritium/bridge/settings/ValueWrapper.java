@@ -1,5 +1,6 @@
 package tritium.bridge.settings;
 
+import lombok.Getter;
 import today.opai.api.interfaces.modules.Value;
 import tritium.settings.Setting;
 
@@ -12,9 +13,10 @@ import java.util.function.Consumer;
  */
 public class ValueWrapper<T> implements Value<T> {
 
+    @Getter
     final Setting setting;
 
-    public ValueWrapper(Setting setting) {
+    public ValueWrapper(Setting<?> setting) {
         this.setting = setting;
     }
 
