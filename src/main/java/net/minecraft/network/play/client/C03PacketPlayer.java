@@ -3,9 +3,18 @@ package net.minecraft.network.play.client;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
+import today.opai.api.dataset.PositionData;
+import today.opai.api.dataset.RotationData;
+import today.opai.api.interfaces.dataset.Vector3d;
+import today.opai.api.interfaces.game.network.client.CPacket03Player;
+import today.opai.api.interfaces.game.network.client.CPacket04Position;
+import today.opai.api.interfaces.game.network.client.CPacket05Rotation;
+import today.opai.api.interfaces.game.network.client.CPacket06PositionRotation;
+import tritium.bridge.misc.math.Vector3dImpl;
+
 import java.io.IOException;
 
-public class C03PacketPlayer implements Packet<INetHandlerPlayServer> {
+public class C03PacketPlayer implements Packet<INetHandlerPlayServer>, CPacket03Player {
     protected double x;
     public double y;
     protected double z;
@@ -83,7 +92,7 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer> {
         this.onGround = onGround;
     }
 
-    public static class C04PacketPlayerPosition extends C03PacketPlayer {
+    public static class C04PacketPlayerPosition extends C03PacketPlayer implements CPacket04Position {
         public C04PacketPlayerPosition() {
             this.moving = true;
         }
@@ -129,9 +138,21 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer> {
         public void setZ(double z) {
             this.z = z;
         }
+
+        @Override
+        public Vector3d getPosition() {
+            return new Vector3dImpl(x, y, z);
+        }
+
+        @Override
+        public void setPosition(PositionData positionData) {
+            this.x = positionData.getX();
+            this.y = positionData.getY();
+            this.z = positionData.getZ();
+        }
     }
 
-    public static class C05PacketPlayerLook extends C03PacketPlayer {
+    public static class C05PacketPlayerLook extends C03PacketPlayer implements CPacket05Rotation {
         public C05PacketPlayerLook() {
             this.rotating = true;
         }
@@ -166,9 +187,19 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer> {
             this.yaw = yaw;
             this.pitch = pitch;
         }
+
+        @Override
+        public RotationData getRotation() {
+            return new RotationData(yaw, pitch);
+        }
+
+        @Override
+        public void setRotation(RotationData rotation) {
+            setRotation(rotation.getYaw(), rotation.getPitch());
+        }
     }
 
-    public static class C06PacketPlayerPosLook extends C03PacketPlayer {
+    public static class C06PacketPlayerPosLook extends C03PacketPlayer implements CPacket06PositionRotation {
         public C06PacketPlayerPosLook() {
             this.moving = true;
             this.rotating = true;
@@ -232,6 +263,28 @@ public class C03PacketPlayer implements Packet<INetHandlerPlayServer> {
         public void setRotation(float yaw, float pitch) {
             this.yaw = yaw;
             this.pitch = pitch;
+        }
+
+        @Override
+        public Vector3d getPosition() {
+            return new Vector3dImpl(x, y, z);
+        }
+
+        @Override
+        public void setPosition(PositionData positionData) {
+            this.x = positionData.getX();
+            this.y = positionData.getY();
+            this.z = positionData.getZ();
+        }
+
+        @Override
+        public RotationData getRotation() {
+            return new RotationData(yaw, pitch);
+        }
+
+        @Override
+        public void setRotation(RotationData rotation) {
+            setRotation(rotation.getYaw(), rotation.getPitch());
         }
     }
 }

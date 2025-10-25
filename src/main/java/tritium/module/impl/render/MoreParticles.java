@@ -15,7 +15,7 @@ public class MoreParticles extends Module {
 
     @Handler
     public void onSendPacket(SendPacketEvent e) {
-        if (e.getPacket() instanceof C02PacketUseEntity && ((C02PacketUseEntity) e.getPacket()).getAction() == C02PacketUseEntity.Action.ATTACK) {
+        if (e.getPacket() instanceof C02PacketUseEntity && ((C02PacketUseEntity) e.getPacket()).getPacketAction() == C02PacketUseEntity.Action.ATTACK) {
             for (int index = 0; index < CrackSize.getValue().intValue(); ++index) {
                 if (Crit.getValue()) {
                     mc.effectRenderer.emitParticleAtEntity(((C02PacketUseEntity) e.getPacket()).getEntityFromWorld(mc.theWorld), EnumParticleTypes.CRIT);
