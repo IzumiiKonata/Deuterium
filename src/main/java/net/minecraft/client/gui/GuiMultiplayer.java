@@ -8,7 +8,7 @@ import net.minecraft.client.multiplayer.ServerList;
 import net.minecraft.client.network.LanServerDetector;
 import net.minecraft.client.network.OldServerPinger;
 import net.minecraft.client.resources.I18n;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 

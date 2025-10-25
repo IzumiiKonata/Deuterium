@@ -6,7 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;

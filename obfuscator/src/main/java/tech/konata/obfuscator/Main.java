@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
+import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
 import tritium.ncm.math.DigestUtils;
 import tech.konata.obfuscator.exclusions.Exclusion;
 import tech.konata.obfuscator.exclusions.ExclusionManager;
@@ -28,6 +29,7 @@ import java.util.zip.ZipOutputStream;
 public class Main {
 
     public static final String PROPAGANDA_GARBAGE = "BiliBili @ IzumiKonata";
+    public static final String REPACKAGE_NAME = "MatrixShield";
 
     public Main() {
 
@@ -111,7 +113,7 @@ public class Main {
             s = s.replace("(injar)", input.getName());
             s = s.replace("(outjar)", proguardObfuscated.getName());
             s = s.replace("(libraries)", depsString);
-            s = s.replace("(repackage)", "catch_me_if_u_can");
+            s = s.replace("(repackage)", Main.REPACKAGE_NAME);
             s = s.replace("(keepattributes)", "");
             s = s.replace("(mapping)", mappings.getName());
             s = s.replace("(shrinked)", shrinked.getName());
@@ -138,6 +140,8 @@ public class Main {
 
         ExclusionManager ex = new ExclusionManager();
         ex.addExclusion(new Exclusion("ingameime.*"));
+        ex.addExclusion(new Exclusion("org.lwjgl.*"));
+        ex.addExclusion(new Exclusion("today.opai.api.*"));
         radonCfg.setExclusions(ex);
 
         radonCfg.setDictionaryType(Dictionaries.ALPHANUMERIC);
@@ -148,7 +152,7 @@ public class Main {
             new ArrayList<>(
                 Arrays.asList(
 //                        new ParameterHider(),
-                        new CodeHider(),
+//                        new CodeHider(),
                         new AggressiveBlockSplitter(),
                         new ClassFolder(),
                         new CRCFucker(),

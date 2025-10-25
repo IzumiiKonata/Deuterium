@@ -50,7 +50,7 @@ public final class Display {
     public static DisplayMode[] getAvailableDisplayModes(int minWidth, int minHeight, int maxWidth, int maxHeight,
                                                          int minBPP, int maxBPP, int minFreq, int maxFreq) throws LWJGLException {
         // First get the available display modes
-        DisplayMode[] modes = org.lwjglx.opengl.Display.getAvailableDisplayModes();
+        DisplayMode[] modes = org.lwjgl.opengl.Display.getAvailableDisplayModes();
 
         if (LWJGLUtil.DEBUG || DEBUG) {
             System.out.println("Available screen modes:");
@@ -200,7 +200,7 @@ public final class Display {
         for (DisplayMode aDm : dm) {
             try {
                 if (LWJGLUtil.DEBUG || DEBUG) System.out.println("Attempting to set displaymode: " + aDm);
-                org.lwjglx.opengl.Display.setDisplayMode(aDm);
+                org.lwjgl.opengl.Display.setDisplayMode(aDm);
                 return aDm;
             } catch (Exception e) {
                 if (LWJGLUtil.DEBUG || DEBUG) {

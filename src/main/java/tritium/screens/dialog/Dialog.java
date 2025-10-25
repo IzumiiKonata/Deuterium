@@ -2,13 +2,12 @@ package tritium.screens.dialog;
 
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.RenderableEntity;
 import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.entities.impl.RoundedRect;
 import tritium.rendering.rendersystem.RenderSystem;
 
 public abstract class Dialog implements SharedRenderingConstants {

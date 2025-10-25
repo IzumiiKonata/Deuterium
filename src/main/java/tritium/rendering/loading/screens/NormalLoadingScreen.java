@@ -2,11 +2,9 @@ package tritium.rendering.loading.screens;
 
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
-import org.lwjgl.opengl.GL11;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
@@ -17,8 +15,6 @@ import tritium.rendering.loading.LoadingScreenRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
-
-import java.awt.*;
 
 /**
  * @author IzumiiKonata

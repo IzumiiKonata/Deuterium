@@ -2,7 +2,7 @@ package tritium.utils.cursor;
 
 import lombok.experimental.UtilityClass;
 import org.lwjgl.glfw.GLFW;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 
 /**
  * @author IzumiiKonata

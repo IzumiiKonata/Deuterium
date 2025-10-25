@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Location;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.ncm.music.AudioPlayer;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.Music;

@@ -1,8 +1,8 @@
 package tritium.screens;
 
 import lombok.Getter;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -77,7 +77,7 @@ public class ClickGui extends BaseScreen {
         if (this.alpha <= .05f && this.closing)
             mc.displayGuiScreen(null);
 
-        this.dWheel = Mouse.getDWheel2();
+        this.dWheel = Mouse.getDWheel();
 
         this.windows.forEach(window -> {
             window.setAlpha(this.alpha);

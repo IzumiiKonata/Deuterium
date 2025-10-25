@@ -1,6 +1,6 @@
 package tritium.screens.ncm.panels;
 
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.ncm.music.AudioPlayer;
 import tritium.ncm.music.CloudMusic;
 import tritium.management.FontManager;

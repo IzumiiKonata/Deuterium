@@ -13,7 +13,7 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjglx.opengl;
+package org.lwjgl.opengl;
 
 /**
  * This is the Display implementation interface. Display delegates to implementors of this interface. There is one
@@ -23,6 +23,10 @@ package org.lwjglx.opengl;
  */
 
 import org.lwjglx.LWJGLException;
+import org.lwjglx.opengl.ContextAttribs;
+import org.lwjglx.opengl.DisplayMode;
+import org.lwjglx.opengl.InputImplementation;
+import org.lwjglx.opengl.PixelFormat;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -31,11 +35,11 @@ import java.nio.IntBuffer;
 
 interface DisplayImplementation extends InputImplementation {
 
-    void createWindow(DrawableLWJGL drawable, DisplayMode mode, Canvas parent, int x, int y) throws LWJGLException;
+    void createWindow(DrawableLWJGL drawable, org.lwjglx.opengl.DisplayMode mode, Canvas parent, int x, int y) throws LWJGLException;
 
     void destroyWindow();
 
-    void switchDisplayMode(DisplayMode mode) throws LWJGLException;
+    void switchDisplayMode(org.lwjglx.opengl.DisplayMode mode) throws LWJGLException;
 
     /**
      * Reset the display mode to whatever it was when LWJGL was initialized. Fails silently.
@@ -73,7 +77,7 @@ interface DisplayImplementation extends InputImplementation {
     /**
      * Initialize and return the current display mode.
      */
-    DisplayMode init() throws LWJGLException;
+    org.lwjglx.opengl.DisplayMode init() throws LWJGLException;
 
     /**
      * Implementation of setTitle(). This will read the window's title member and stash it in the native title of the

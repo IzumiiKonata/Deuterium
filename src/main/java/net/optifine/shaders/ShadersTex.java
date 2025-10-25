@@ -3,7 +3,6 @@ package net.optifine.shaders;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -12,7 +11,6 @@ import java.util.Map;
 
 import net.minecraft.client.renderer.texture.*;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjglx.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 

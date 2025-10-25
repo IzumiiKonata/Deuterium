@@ -1,9 +1,8 @@
 package tritium.module.impl.render;
 
-import net.minecraft.client.Minecraft;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.world.TickEvent;
 import tritium.module.Module;

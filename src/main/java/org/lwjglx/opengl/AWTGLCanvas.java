@@ -15,6 +15,8 @@
  */
 package org.lwjglx.opengl;
 
+import org.lwjgl.opengl.ContextGL;
+import org.lwjgl.opengl.Drawable;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.PointerBuffer;
 

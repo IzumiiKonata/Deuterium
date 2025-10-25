@@ -5,8 +5,8 @@ import ingameime.IngameIMEJNI;
 import net.minecraft.network.play.client.C14PacketTabComplete;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.settings.ClientSettings;
 

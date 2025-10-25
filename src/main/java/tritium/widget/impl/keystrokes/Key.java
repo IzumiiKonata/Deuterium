@@ -1,18 +1,15 @@
 package tritium.widget.impl.keystrokes;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.KeyBinding;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.interfaces.IFontRenderer;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
-import tritium.management.ThemeManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.Stencil;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 

@@ -38,6 +38,10 @@ public class ExtensionManager extends AbstractManager {
             return;
         }
 
+        System.out.println("Looking for folder " + extensionsDir.getAbsolutePath() + " for extensions...");
+
+        System.out.println("Files: " + Arrays.toString(extensionsDir.listFiles()));
+
         for (File file : extensionsDir.listFiles()) {
             if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
                 tryLoadJar(file);
@@ -65,7 +69,9 @@ public class ExtensionManager extends AbstractManager {
                         // stop scanning
                         return false;
                     }
-                } catch (Throwable ignored) {
+                } catch (Throwable t) {
+                    System.err.println("Cannot load extension: " + jar.getName() + ", iterating class " + className);
+                    t.printStackTrace();
                 }
                 return true;
             }, cl);

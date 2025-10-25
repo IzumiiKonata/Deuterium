@@ -14,7 +14,7 @@ import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.FontManager;
 import tritium.rendering.rendersystem.RenderSystem;

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2011 LWJGL Project All rights reserved. Redistribution and use in source and binary forms, with or
+ * Copyright (c) 2002-2008 LWJGL Project All rights reserved. Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following conditions are met: * Redistributions of source code
  * must retain the above copyright notice, this list of conditions and the following disclaimer. * Redistributions in
  * binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the
@@ -13,21 +13,27 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjglx.opengl;
+package org.lwjgl.opengl;
 
 import org.lwjglx.LWJGLException;
 
 /**
  * @author Spasi
- * @since 14/5/2011
  */
-interface Context {
 
-    boolean isCurrent() throws LWJGLException;
+/**
+ * A Drawable implementation that shares its context with another Drawable. This is useful for background loading of
+ * resources. See org.lwjgl.test.opengl.multithread.BackgroundLoad for an example.
+ *
+ * @author Spasi
+ */
+public final class SharedDrawable extends DrawableGL {
 
-    void makeCurrent() throws LWJGLException;
+    public SharedDrawable(final Drawable drawable) throws LWJGLException {
+        this.context = (ContextGL) ((DrawableLWJGL) drawable).createSharedContext();
+    }
 
-    void releaseCurrent() throws LWJGLException;
-
-    void releaseDrawable() throws LWJGLException;
+    public ContextGL createSharedContext() {
+        throw new UnsupportedOperationException();
+    }
 }

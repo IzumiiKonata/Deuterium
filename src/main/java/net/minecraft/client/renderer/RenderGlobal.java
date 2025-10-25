@@ -66,7 +66,7 @@ import net.optifine.shaders.gui.GuiShaderOptions;
 import net.optifine.util.ChunkUtils;
 import net.optifine.util.RenderChunkUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import org.lwjglx.util.vector.Vector3f;
 import org.lwjglx.util.vector.Vector4f;
 import tritium.event.events.rendering.BlockOverlayEvent;

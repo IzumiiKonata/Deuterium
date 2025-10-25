@@ -1,11 +1,10 @@
 package tritium.screens.contextmenu.entities;
 
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.font.CFontRenderer;
-import tritium.screens.ClickGui;
 import tritium.screens.contextmenu.ContextEntity;
 import tritium.screens.contextmenu.ContextMenu;
 

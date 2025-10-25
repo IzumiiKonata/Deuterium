@@ -1,10 +1,11 @@
-package org.lwjglx.input;
+package org.lwjgl.input;
 
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.GLFW;
 import org.lwjglx.LWJGLException;
-import org.lwjglx.opengl.Display;
+import org.lwjglx.input.Cursor;
+import org.lwjgl.opengl.Display;
 import tritium.rendering.loading.LoadingRenderer;
 
 public class Mouse {
@@ -16,15 +17,21 @@ public class Mouse {
     private static double latestX = 0;
     private static double latestY = 0;
 
-    @Getter
     private static double x = 0;
-    @Getter
     private static double y = 0;
 
     private static int dwheel = 0;
 
     private static int ignoreNextDelta = 0;
     private static int ignoreNextMove = 0;
+
+    public static int getX() {
+        return (int) x;
+    }
+
+    public static int getY() {
+        return (int) y;
+    }
 
     public static void addMoveEvent(double mouseX, double mouseY) {
         if (ignoreNextMove > 0) {
@@ -105,7 +112,7 @@ public class Mouse {
     }
 
 
-    public static int getDWheel2() {
+    public static int getDWheel() {
         int value = dwheel;
         dwheel = 0;
         return value;

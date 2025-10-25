@@ -2,33 +2,24 @@ package tritium.management;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import net.minecraft.client.gui.GuiChat;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.Location;
-import org.lwjglx.input.Mouse;
-import tritium.Tritium;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.DisplayResizedEvent;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.interfaces.SharedRenderingConstants;
-import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
 
 import tritium.screens.MoveWidgetsScreen;
-import tritium.settings.ClientSettings;
 import tritium.settings.Setting;
 import tritium.widget.Widget;
 import tritium.widget.direction.HorizontalDirection;
 import tritium.widget.direction.VerticalDirection;
 import tritium.widget.impl.*;
 
-import java.awt.*;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -143,18 +134,16 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
 //        widgets.clear();
 //        widgets.addAll(collect);
 //
-//        for (Widget widget : widgets) {
-//            // clear settings for reload command
-//            widget.getSettings().clear();
-//
-//            for (Field f : widget.getClass().getDeclaredFields()) {
-//                f.setAccessible(true);
-//
-//                if (Setting.class.isAssignableFrom(f.getType())) {
-//                    widget.addSettings((Setting<?>) f.get(widget));
-//                }
-//            }
-//        }
+        for (Widget widget : widgets) {
+
+            for (Field f : widget.getClass().getDeclaredFields()) {
+                f.setAccessible(true);
+
+                if (Setting.class.isAssignableFrom(f.getType())) {
+                    widget.addSettings((Setting<?>) f.get(widget));
+                }
+            }
+        }
 
     }
 

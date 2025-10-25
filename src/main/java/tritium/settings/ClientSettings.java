@@ -5,7 +5,7 @@ import ingameime.IngameIMEJNI;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import tritium.Tritium;
 import tritium.management.ConfigManager;

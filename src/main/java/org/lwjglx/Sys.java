@@ -3,7 +3,7 @@ package org.lwjglx;
 import org.lwjgl.Version;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.Platform;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 
 import javax.swing.*;
 import java.awt.*;

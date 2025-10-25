@@ -112,8 +112,10 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public void displayScreen(ExtensionScreen extensionScreen) {
-        if (extensionScreen == null)
+        if (extensionScreen == null) {
             Minecraft.getMinecraft().displayGuiScreen(null);
+            return;
+        }
 
         Minecraft.getMinecraft().displayGuiScreen(new ExtensionScreenWrapper(extensionScreen));
     }

@@ -22,8 +22,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.Location;
 import net.minecraft.util.Timer;
 import org.lwjgl.opengl.GL11;
-import org.lwjglx.input.Mouse;
-import tritium.rendering.FramebufferCaching;
+import org.lwjgl.input.Mouse;
 import tritium.rendering.entities.impl.Rect;
 import tritium.settings.ClientSettings;
 import tritium.utils.res.skin.PlayerSkinTextureCache;
@@ -32,7 +31,6 @@ import java.awt.*;
 import java.util.UUID;
 
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 /**
  * @author IzumiiKonata

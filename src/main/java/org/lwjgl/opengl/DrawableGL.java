@@ -13,12 +13,16 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjglx.opengl;
+package org.lwjgl.opengl;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.LWJGLUtil;
 import org.lwjglx.PointerBuffer;
+import org.lwjglx.opengl.ContextAttribs;
+import org.lwjglx.opengl.PixelFormat;
+import org.lwjglx.opengl.PixelFormatLWJGL;
+import org.lwjglx.opengl.Util;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;

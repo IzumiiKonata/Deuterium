@@ -147,7 +147,7 @@ public class Obfuscator {
             if (bClassFolder) {
                 // lmao
                 {
-                    ZipEntry entry = new ZipEntry("catch_me_if_u_can/0000诶我去，怎么全是文件夹啊？！.class/");
+                    ZipEntry entry = new ZipEntry(Main.REPACKAGE_NAME + "/0000诶我去，怎么全是文件夹啊？！.class/");
 
                     if (bTimeManipulator)
                         this.manipulateEntryTime(entry);

@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import today.opai.api.enums.EnumModuleCategory;
 import today.opai.api.interfaces.modules.PresetModule;
 import tritium.bridge.BridgeEventHandler;
@@ -118,7 +118,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     }
 
     public void toggle() {
-        this.enabled = !this.enabled;
+        this.setEnabled(!this.isEnabled());
 
         SubModule<?> subModule = this.getCurrentSubModule();
         if (this.isEnabled()) {
@@ -128,18 +128,12 @@ public class Module implements SharedConstants, SharedRenderingConstants {
                 subModule.onEnable();
             }
 
-            EventManager.register(this);
-            this.onEnable();
-
         } else {
 
             if (subModule != null) {
                 EventManager.unregister(subModule);
                 subModule.onDisable();
             }
-
-            EventManager.unregister(this);
-            this.onDisable();
 
         }
 
@@ -250,7 +244,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
         JsonObject directory = new JsonObject();
         directory.addProperty("Key", this.getKeyBind());
         directory.addProperty("Enabled", this.isEnabled());
-        this.settings.forEach(val -> {
+        this.getSettings().forEach(val -> {
             directory.addProperty(val.getInternalName(), val.getValueForConfig());
         });
 
@@ -258,8 +252,8 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     }
 
     public Setting<?> find(final String term) {
-        for (Setting<?> setting : this.settings) {
-            if (setting.getInternalName().equalsIgnoreCase(term)) {
+        for (Setting<?> setting : this.getSettings()) {
+            if (setting.getInternalName().equals(term)) {
                 return setting;
             }
         }

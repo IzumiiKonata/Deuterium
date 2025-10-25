@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002-2011 LWJGL Project All rights reserved. Redistribution and use in source and binary forms, with or
+ * Copyright (c) 2002-2008 LWJGL Project All rights reserved. Redistribution and use in source and binary forms, with or
  * without modification, are permitted provided that the following conditions are met: * Redistributions of source code
  * must retain the above copyright notice, this list of conditions and the following disclaimer. * Redistributions in
  * binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the
@@ -13,42 +13,12 @@
  * LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
  * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
-package org.lwjglx.opengl;
-
-import org.lwjglx.LWJGLException;
+package org.lwjgl.opengl;
 
 /**
- * [INTERNAL USE ONLY]
- *
- * @author Spasi
+ * This class contains the global lock that LWJGL will use to synchronize access to Display.
  */
-interface DrawableLWJGL extends Drawable {
+final class GlobalLock {
 
-    void setPixelFormat(PixelFormatLWJGL pf) throws LWJGLException;
-
-    void setPixelFormat(PixelFormatLWJGL pf, ContextAttribs attribs) throws LWJGLException;
-
-    PixelFormatLWJGL getPixelFormat();
-
-    /**
-     * [INTERNAL USE ONLY] Returns the Drawable's Context.
-     *
-     * @return the Drawable's Context
-     */
-    Context getContext();
-
-    /**
-     * [INTERNAL USE ONLY] Creates a new Context that is shared with the Drawable's Context.
-     *
-     * @return a Context shared with the Drawable's Context.
-     */
-    Context createSharedContext() throws LWJGLException;
-
-    void checkGLError();
-
-    void setSwapInterval(int swap_interval);
-
-    void swapBuffers() throws LWJGLException;
-
-    void initContext(final float r, final float g, final float b);
+    static final Object lock = new Object();
 }

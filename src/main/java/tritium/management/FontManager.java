@@ -163,7 +163,8 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer create(float size, InputStream fontStream) {
         Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream);
 
-        return new CFontRenderer(font, size * 0.5f, font);
+        Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_normal.ttf"));
+        return new CFontRenderer(font, size * 0.5f, fallback);
     }
 
     @SneakyThrows
@@ -179,12 +180,22 @@ public class FontManager extends AbstractManager {
 
         Font font = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/" + name + ".ttf"));
 
-        if (name.equals("pf_normal") || name.equals("googlesans") || name.equals("product") || name.equals("tahoma")) {
+        if (name.equals("googlesans") || name.equals("product") || name.equals("tahoma")) {
+            Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_normal.ttf"));
+            return new CFontRenderer(font, size * 0.5f, fallback);
+        }
+
+        if (name.equals("googlesansbold")) {
+            Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_middleblack.ttf"));
+            return new CFontRenderer(font, size * 0.5f, fallback);
+        }
+
+        if (name.equals("pf_normal")) {
             Font main = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/sfregular.otf"));
             return new CFontRenderer(main, size * 0.5f, font);
         }
 
-        if (name.equals("pf_middleblack") || name.equals("googlesansbold")) {
+        if (name.equals("pf_middleblack")) {
             Font main = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/sfbold.otf"));
             return new CFontRenderer(main, size * 0.5f, font);
         }
@@ -194,7 +205,6 @@ public class FontManager extends AbstractManager {
 
     @SneakyThrows
     public static CFontRenderer createFromExternalFile(float size, File path, String fallBackName) {
-
         Font fallBack = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/" + fallBackName + ".ttf")));
 
         return new CFontRenderer(Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(path)), size * 0.5f, fallBack);

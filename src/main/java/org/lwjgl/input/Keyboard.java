@@ -1,10 +1,11 @@
-package org.lwjglx.input;
+package org.lwjgl.input;
 
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.Sys;
-import org.lwjglx.opengl.Display;
+import org.lwjglx.input.KeyCodes;
+import org.lwjgl.opengl.Display;
 import tritium.Tritium;
 
 import java.lang.reflect.Field;

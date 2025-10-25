@@ -1,6 +1,6 @@
 package tritium.bridge.settings;
 
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import today.opai.api.interfaces.modules.values.BindValue;
 import tritium.settings.BindSetting;
 
