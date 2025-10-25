@@ -21,10 +21,13 @@ import today.opai.api.interfaces.managers.ValueManager;
 import today.opai.api.interfaces.render.*;
 import tritium.Tritium;
 import tritium.bridge.game.data.OptionsImpl;
+import tritium.bridge.game.data.network.PacketUtilImpl;
+import tritium.bridge.game.item.ItemUtilImpl;
 import tritium.bridge.management.*;
+import tritium.bridge.rendering.FontUtilImpl;
+import tritium.bridge.rendering.RenderUtilImpl;
+import tritium.bridge.rendering.ShaderUtilImpl;
 import tritium.event.events.game.ChatEvent;
-import tritium.management.CommandManager;
-import tritium.rendering.rendersystem.RenderSystem;
 
 /**
  * @author IzumiiKonata
@@ -209,12 +212,12 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public PacketUtil getPacketUtil() {
-        return null;
+        return PacketUtilImpl.getInstance();
     }
 
     @Override
     public ItemUtil getItemUtil() {
-        return null;
+        return ItemUtilImpl.getInstance();
     }
 
 }

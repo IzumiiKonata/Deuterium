@@ -1,23 +1,31 @@
 package tritium.bridge;
 
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.network.play.server.S02PacketChat;
 import today.opai.api.enums.EnumEventStage;
 import today.opai.api.enums.EnumNotificationType;
 import today.opai.api.events.*;
 import today.opai.api.interfaces.EventHandler;
 import today.opai.api.interfaces.modules.PresetModule;
+import today.opai.api.interfaces.render.WindowResolution;
 import tritium.event.eventapi.Handler;
 import tritium.event.eventapi.State;
 import tritium.event.events.game.ChatEvent;
 import tritium.event.events.game.GameLoopEvent;
 import tritium.event.events.game.KeyPressedEvent;
 import tritium.event.events.packet.ReceivePacketEvent;
+import tritium.event.events.packet.SendPacketEvent;
 import tritium.event.events.player.*;
+import tritium.event.events.rendering.Render2DEvent;
+import tritium.event.events.rendering.Render3DEvent;
 import tritium.event.events.rendering.RenderNameTagEvent;
 import tritium.event.events.world.TickEvent;
 import tritium.event.events.world.WorldChangedEvent;
+import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.EventManager;
+import tritium.rendering.rendersystem.RenderSystem;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -257,7 +265,14 @@ public class BridgeEventHandler {
      *
      * @param event The packet send event.
      */
-    public void onPacketSend(EventPacketSend event) {
+    @Handler
+    public void onPacketSend(SendPacketEvent event) {
+
+        EventPacketSend evt = new EventPacketSend(event.getPacket());
+        handler.onPacketSend(evt);
+
+        if (evt.isCancelled())
+            event.setCancelled();
     }
 
     /**
@@ -267,20 +282,57 @@ public class BridgeEventHandler {
      *
      * @param event The packet receive event.
      */
-    public void onPacketReceive(EventPacketReceive event) {}
+    @Handler
+    public void onPacketReceive(ReceivePacketEvent event) {
+
+        EventPacketReceive evt = new EventPacketReceive(event.getPacket());
+        handler.onPacketReceive(evt);
+
+        if (evt.isCancelled())
+            event.setCancelled();
+
+    }
+
+    static final WindowResolution windowResolution = new WindowResolution() {
+        @Override
+        public int getWidth() {
+            return ScaledResolution.get().getScaledWidth();
+        }
+
+        @Override
+        public int getHeight() {
+            return ScaledResolution.get().getScaledHeight();
+        }
+
+        @Override
+        public int getScaleFactor() {
+            return ScaledResolution.get().getScaleFactor();
+        }
+    };
 
     /**
      * Called when rendering in 2D.
      *
      * @param event The 2D render event.
      */
-    public void onRender2D(EventRender2D event) {}
+    @Handler
+    public void onRender2D(Render2DEvent event) {
+
+        EventRender2D evt = new EventRender2D(windowResolution, Minecraft.getMinecraft().timer.renderPartialTicks);
+
+        SharedRenderingConstants.NORMAL.add(() -> handler.onRender2D(evt));
+    }
 
     /**
      * Called when rendering in 3D.
      *
      * @param event The 3D render event.
      */
-    public void onRender3D(EventRender3D event) {}
+    @Handler
+    public void onRender3D(Render3DEvent event) {
+        EventRender3D evt = new EventRender3D(event.partialTicks);
+
+        handler.onRender3D(evt);
+    }
 
 }

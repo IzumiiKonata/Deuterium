@@ -77,7 +77,7 @@ public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient>, 
 
     @Override
     public void setItemStack(today.opai.api.interfaces.game.item.ItemStack itemStack) {
-        this.itemStack = new ItemStack(Item.getFromUnlocalizedName(itemStack.getName()), itemStack.getStackSize(), itemStack.getMetadata());
+        this.itemStack = ItemStack.fromOpai(itemStack);
     }
 
     @Override

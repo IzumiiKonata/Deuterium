@@ -88,6 +88,6 @@ public class S2FPacketSetSlot implements Packet<INetHandlerPlayClient>, SPacket2
 
     @Override
     public void setItemStack(today.opai.api.interfaces.game.item.ItemStack itemStack) {
-        this.item = new ItemStack(Item.getFromUnlocalizedName(itemStack.getName()), itemStack.getStackSize(), itemStack.getMetadata());
+        this.item = ItemStack.fromOpai(itemStack);
     }
 }

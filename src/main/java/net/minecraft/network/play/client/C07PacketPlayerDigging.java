@@ -94,6 +94,25 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CP
                     throw new IllegalArgumentException("Unknown action " + this);
             }
         }
+
+        public static Action fromEnumDiggingAction(EnumDiggingAction action) {
+            switch (action) {
+                case START_DESTROY_BLOCK:
+                    return START_DESTROY_BLOCK;
+                case ABORT_DESTROY_BLOCK:
+                    return ABORT_DESTROY_BLOCK;
+                case STOP_DESTROY_BLOCK:
+                    return STOP_DESTROY_BLOCK;
+                case DROP_ALL_ITEMS:
+                    return DROP_ALL_ITEMS;
+                case DROP_ITEM:
+                    return DROP_ITEM;
+                case RELEASE_USE_ITEM:
+                    return RELEASE_USE_ITEM;
+                default:
+                    throw new IllegalArgumentException("Unknown action " + action);
+            }
+        }
     }
 
     @Override

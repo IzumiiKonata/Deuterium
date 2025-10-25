@@ -920,4 +920,9 @@ public final class ItemStack {
         return ItemStack.this.getTooltip(null, true);
     }
 
+    public static ItemStack fromOpai(today.opai.api.interfaces.game.item.ItemStack stack) {
+        Item item = Item.getFromUnlocalizedName(stack.getName());
+        return new ItemStack(item, stack.getStackSize(), stack.getMetadata());
+    }
+
 }

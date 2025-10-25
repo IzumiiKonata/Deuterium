@@ -1,4 +1,4 @@
-package tritium.bridge.management;
+package tritium.bridge.rendering;
 
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
+import org.lwjgl.opengl.GL11;
 import today.opai.api.dataset.BlockPosition;
 import today.opai.api.dataset.BoundingBox;
 import today.opai.api.features.ExtensionWidget;
@@ -16,11 +17,9 @@ import today.opai.api.interfaces.game.entity.Player;
 import today.opai.api.interfaces.game.item.ItemStack;
 import today.opai.api.interfaces.render.Image;
 import today.opai.api.interfaces.render.RenderUtil;
-import tritium.bridge.rendering.ImageImpl;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
-import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
@@ -90,7 +89,14 @@ public class RenderUtilImpl implements RenderUtil, SharedRenderingConstants {
 
     @Override
     public void drawLine(float x1, float y1, float x2, float y2, float width, Color color) {
-
+        RenderSystem.color(color.getRGB());
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glLineWidth(width);
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex2f(x1, y1);
+        GL11.glVertex2f(x2, y2);
+        GL11.glEnd();
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
     }
 
     @Override

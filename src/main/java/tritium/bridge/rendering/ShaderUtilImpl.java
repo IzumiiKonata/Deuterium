@@ -1,4 +1,4 @@
-package tritium.bridge.management;
+package tritium.bridge.rendering;
 
 import lombok.Getter;
 import today.opai.api.interfaces.render.ShaderUtil;

@@ -1,16 +1,14 @@
-package tritium.bridge.management;
+package tritium.bridge.rendering;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
 import today.opai.api.interfaces.render.Font;
 import today.opai.api.interfaces.render.FontUtil;
-import tritium.bridge.rendering.FontWrapper;
 import tritium.management.FontManager;
 import tritium.rendering.font.CFontRenderer;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.nio.file.Files;
 
