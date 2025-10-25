@@ -138,23 +138,23 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
             }
         }
 
-        List<Widget> collect = widgets.stream().distinct().collect(Collectors.toList());
-
-        widgets.clear();
-        widgets.addAll(collect);
-
-        for (Widget widget : widgets) {
-            // clear settings for reload command
-            widget.getSettings().clear();
-
-            for (Field f : widget.getClass().getDeclaredFields()) {
-                f.setAccessible(true);
-
-                if (Setting.class.isAssignableFrom(f.getType())) {
-                    widget.addSettings((Setting<?>) f.get(widget));
-                }
-            }
-        }
+//        List<Widget> collect = widgets.stream().distinct().collect(Collectors.toList());
+//
+//        widgets.clear();
+//        widgets.addAll(collect);
+//
+//        for (Widget widget : widgets) {
+//            // clear settings for reload command
+//            widget.getSettings().clear();
+//
+//            for (Field f : widget.getClass().getDeclaredFields()) {
+//                f.setAccessible(true);
+//
+//                if (Setting.class.isAssignableFrom(f.getType())) {
+//                    widget.addSettings((Setting<?>) f.get(widget));
+//                }
+//            }
+//        }
 
     }
 

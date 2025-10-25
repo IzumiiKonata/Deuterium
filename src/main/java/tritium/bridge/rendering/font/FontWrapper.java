@@ -1,4 +1,4 @@
-package tritium.bridge.rendering;
+package tritium.bridge.rendering.font;
 
 import today.opai.api.interfaces.render.Font;
 import tritium.rendering.font.CFontRenderer;

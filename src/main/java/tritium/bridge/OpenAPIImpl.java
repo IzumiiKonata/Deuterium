@@ -1,11 +1,16 @@
 package tritium.bridge;
 
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.IChatComponent;
+import today.opai.api.Extension;
 import today.opai.api.OpenAPI;
 import today.opai.api.enums.EnumNotificationType;
+import today.opai.api.features.ExtensionCommand;
+import today.opai.api.features.ExtensionModule;
 import today.opai.api.features.ExtensionScreen;
+import today.opai.api.features.ExtensionWidget;
 import today.opai.api.interfaces.EventHandler;
 import today.opai.api.interfaces.Registerable;
 import today.opai.api.interfaces.client.HypixelAPI;
@@ -24,9 +29,10 @@ import tritium.bridge.game.data.OptionsImpl;
 import tritium.bridge.game.data.network.PacketUtilImpl;
 import tritium.bridge.game.item.ItemUtilImpl;
 import tritium.bridge.management.*;
-import tritium.bridge.rendering.FontUtilImpl;
+import tritium.bridge.rendering.font.FontUtilImpl;
 import tritium.bridge.rendering.RenderUtilImpl;
 import tritium.bridge.rendering.ShaderUtilImpl;
+import tritium.bridge.rendering.screen.ExtensionScreenWrapper;
 import tritium.event.events.game.ChatEvent;
 
 /**
@@ -35,9 +41,24 @@ import tritium.event.events.game.ChatEvent;
  */
 public class OpenAPIImpl implements OpenAPI {
 
+    @Getter
+    private static OpenAPI instance = new OpenAPIImpl();
+
     @Override
     public void registerFeature(Registerable registerable) {
-        
+
+        if (registerable instanceof ExtensionModule) {
+            tritium.management.ModuleManager.getModules().add(new ExtensionModuleWrapper((ExtensionModule) registerable));
+        }
+
+        if (registerable instanceof ExtensionWidget) {
+            tritium.management.WidgetsManager.getWidgets().add(new ExtensionWidgetWrapper((ExtensionWidget) registerable));
+        }
+
+        if (registerable instanceof ExtensionCommand) {
+            tritium.management.CommandManager.getCommands().add(new ExtensionCommandWrapper((ExtensionCommand) registerable));
+        }
+
     }
 
     @Override
@@ -91,7 +112,10 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public void displayScreen(ExtensionScreen extensionScreen) {
-        
+        if (extensionScreen == null)
+            Minecraft.getMinecraft().displayGuiScreen(null);
+
+        Minecraft.getMinecraft().displayGuiScreen(new ExtensionScreenWrapper(extensionScreen));
     }
 
     @Override

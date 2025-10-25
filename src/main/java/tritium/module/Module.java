@@ -6,6 +6,7 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import org.lwjglx.input.Keyboard;
 import today.opai.api.enums.EnumModuleCategory;
+import today.opai.api.interfaces.modules.PresetModule;
 import tritium.bridge.BridgeEventHandler;
 import tritium.bridge.module.PresetModuleWrapper;
 import tritium.management.Localizer;
@@ -60,7 +61,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     private final List<SubModule<?>> subModules = new ArrayList<>();
 
     @Getter
-    private final PresetModuleWrapper wrapper;
+    protected PresetModule wrapper;
 
     public Module(String internalName, Category category) {
 
@@ -72,10 +73,14 @@ public class Module implements SharedConstants, SharedRenderingConstants {
         this.name = Localizable.of("module." + lowerCase + ".name");
         this.description = Localizable.of("module." + lowerCase + ".desc");
 
-        this.wrapper = new PresetModuleWrapper(this);
+        this.createWrapper();
 
 //        if (!internalName.equals("Setting") && category != Category.WIDGET)
 //            ModuleManager.getModules().add(this);
+    }
+
+    protected void createWrapper() {
+        this.wrapper = new PresetModuleWrapper(this);
     }
 
     public boolean nameEquals(String another) {
@@ -323,14 +328,10 @@ public class Module implements SharedConstants, SharedRenderingConstants {
                     return MOVEMENT;
                 case PLAYER:
                     return OTHER;
-                case COMBAT:
-                    return OTHER;
-                case MISC:
-                    return OTHER;
                 case VISUAL:
                     return RENDER;
                 default:
-                    return null;
+                    return getByName(category.name());
             }
         }
 

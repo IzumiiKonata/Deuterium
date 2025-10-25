@@ -1,4 +1,4 @@
-package tritium.bridge.rendering;
+package tritium.bridge.rendering.font;
 
 import lombok.Getter;
 import lombok.SneakyThrows;

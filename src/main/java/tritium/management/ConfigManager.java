@@ -46,9 +46,6 @@ public class ConfigManager extends AbstractManager {
         }, 1000 * 60 * 5, 1000 * 60 * 5);
     }
 
-    @Getter
-    private boolean firstTime = false;
-
     @Override
     @SneakyThrows
     public void init() {
@@ -56,7 +53,6 @@ public class ConfigManager extends AbstractManager {
         if (!configDir.exists()) {
             //创建文件夹
             configDir.mkdir();
-            firstTime = true;
         }
 
         this.loadConfig();

@@ -57,6 +57,9 @@ public class Tritium {
     private CommandManager commandManager;
 
     @Getter
+    private ExtensionManager extensionManager;
+
+    @Getter
     private ConfigManager configManager;
 
     @Getter
@@ -106,11 +109,12 @@ public class Tritium {
         this.moduleManager = new ModuleManager();
         this.widgetsManager = new WidgetsManager();
         this.commandManager = new CommandManager();
+        this.extensionManager = new ExtensionManager();
         this.configManager = new ConfigManager();
         this.themeManager = new ThemeManager();
         this.ncmManager = new NCMManager();
 
-        managers.addAll(Arrays.asList(this.fontManager, this.eventManager, this.localizer, this.moduleManager, widgetsManager, commandManager, configManager, themeManager, ncmManager));
+        managers.addAll(Arrays.asList(this.fontManager, this.eventManager, this.localizer, this.moduleManager, widgetsManager, extensionManager, commandManager, configManager, themeManager, ncmManager));
 
         for (AbstractManager manager : this.managers) {
 

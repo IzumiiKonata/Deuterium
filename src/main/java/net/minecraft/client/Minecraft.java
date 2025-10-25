@@ -18,7 +18,6 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
 import today.opai.api.interfaces.render.Font;
-import tritium.bridge.rendering.FontWrapper;
 import tritium.event.events.game.GameLoopEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.launch.Launcher;

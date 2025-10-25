@@ -31,6 +31,7 @@
 |-------------------------------------------------------------------|------------------------|
 | `addFriend` / `removeFriend` / `isFriend`                         | `Won't be implemented` |
 | `addTarget` / `removeTarget` / `isTarget`                         | `Won't be implemented` |
+| `OpenAPI.loadConfig(String)`                                      | `Won't be implemented` |
 | `IRC`                                                             | `Won't be implemented` |
 | `HypixelAPI`                                                      | `Won't be implemented` |
 | `GameStateManager`                                                | `Won't be implemented` |

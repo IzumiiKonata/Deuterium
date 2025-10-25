@@ -2,7 +2,7 @@ package tritium.management;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
-import tritium.bridge.rendering.FontWrapper;
+import tritium.bridge.rendering.font.FontWrapper;
 import tritium.interfaces.IFontRenderer;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
@@ -11,7 +11,6 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
