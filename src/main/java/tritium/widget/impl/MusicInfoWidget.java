@@ -5,12 +5,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
-import tech.konata.ncmplayer.music.CloudMusic;
-import tech.konata.ncmplayer.music.Quality;
-import tech.konata.ncmplayer.music.dto.Music;
-import tech.konata.ncmplayer.music.lyric.LyricLine;
+import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.Quality;
+import tritium.ncm.music.dto.Music;
+import tritium.ncm.music.lyric.LyricLine;
 import tritium.management.FontManager;
-import tritium.rendering.Stencil;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
@@ -24,9 +23,7 @@ import tritium.widget.Widget;
 
 import java.awt.*;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata

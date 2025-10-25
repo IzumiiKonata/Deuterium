@@ -4,11 +4,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
-import tech.konata.ncmplayer.music.CloudMusic;
-import tech.konata.ncmplayer.music.dto.Music;
-import tech.konata.ncmplayer.music.dto.PlayList;
+import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.dto.Music;
+import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
-import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.container.Panel;
@@ -20,12 +19,9 @@ import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.InputStream;
-import java.sql.Array;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata

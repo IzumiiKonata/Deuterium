@@ -2,10 +2,8 @@ package tritium.widget.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
-import org.lwjglx.opengl.GLSync;
-import processing.sound.JSynFFT;
-import tech.konata.ncmplayer.music.AudioPlayer;
-import tech.konata.ncmplayer.music.CloudMusic;
+import tritium.ncm.music.AudioPlayer;
+import tritium.ncm.music.CloudMusic;
 import tritium.management.WidgetsManager;
 import tritium.rendering.HSBColor;
 import tritium.rendering.animation.Interpolations;

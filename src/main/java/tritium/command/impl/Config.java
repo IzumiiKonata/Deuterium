@@ -1,17 +1,12 @@
 package tritium.command.impl;
 
 import lombok.SneakyThrows;
-import tech.konata.ncmplayer.music.CloudMusic;
+import tritium.ncm.music.CloudMusic;
 import tritium.command.Command;
-import tritium.management.ConfigManager;
 import tritium.management.ModuleManager;
 import tritium.module.Module;
 import tritium.settings.ClientSettings;
 import tritium.settings.Setting;
-
-
-import java.io.File;
-import java.io.FileWriter;
 
 public class Config extends Command {
 

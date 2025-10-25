@@ -4,16 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
-import tech.konata.commons.ncm.math.DigestUtils;
+import tritium.ncm.math.DigestUtils;
 import tech.konata.obfuscator.exclusions.Exclusion;
 import tech.konata.obfuscator.exclusions.ExclusionManager;
-import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
 import tech.konata.obfuscator.transformers.obfuscators.flow.AggressiveBlockSplitter;
-import tech.konata.obfuscator.transformers.obfuscators.flow.BlockSplitter;
 import tech.konata.obfuscator.transformers.obfuscators.miscellaneous.*;
 import tech.konata.obfuscator.utils.IOUtils;
 import tech.konata.utils.ObfDictGen;
-import tech.konata.utils.logging.ConsoleColors;
 import tritium.Tritium;
 import tritium.utils.other.info.Version;
 
