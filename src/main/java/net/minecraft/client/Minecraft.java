@@ -17,6 +17,8 @@ import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
+import today.opai.api.interfaces.render.Font;
+import tritium.bridge.rendering.FontWrapper;
 import tritium.event.events.game.GameLoopEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.launch.Launcher;
@@ -530,6 +532,44 @@ public class Minecraft implements IThreadListener {
             @Override
             public void drawCenteredString(String text, double x, double y, int color) {
                 fontRendererObj.drawCenteredString(text, x + .5, y + 1, color);
+            }
+        };
+
+        FontManager.vanillaWrapper = new Font() {
+            @Override
+            public void close() {
+
+            }
+
+            @Override
+            public float drawString(String text, double x, double y, int color) {
+                return fontRendererObj.drawString(text, x + .5, y + 1, color);
+            }
+
+            @Override
+            public float drawStringWithShadow(String text, double x, double y, int color) {
+                return fontRendererObj.drawStringWithShadow(text, x + .5, y + 1, color);
+            }
+
+            @Override
+            public float drawCenteredString(String text, double x, double y, int color) {
+                fontRendererObj.drawCenteredString(text, x + .5, y + 1, color);
+                return fontRendererObj.getStringWidth(text);
+            }
+
+            @Override
+            public void drawCenteredStringWithShadow(String text, double x, double y, int color) {
+                fontRendererObj.drawStringWithShadow(text, x + .5 - fontRendererObj.getStringWidth(text) * .5, y + 1, color);
+            }
+
+            @Override
+            public int getWidth(String text) {
+                return fontRendererObj.getWidth(text);
+            }
+
+            @Override
+            public int getHeight() {
+                return fontRendererObj.FONT_HEIGHT;
             }
         };
 

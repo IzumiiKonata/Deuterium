@@ -21,12 +21,10 @@ import today.opai.api.interfaces.managers.ValueManager;
 import today.opai.api.interfaces.render.*;
 import tritium.Tritium;
 import tritium.bridge.game.data.OptionsImpl;
-import tritium.bridge.management.GameStateManagerImpl;
-import tritium.bridge.management.ModuleManagerImpl;
-import tritium.bridge.management.RotationManagerImpl;
-import tritium.bridge.management.ValueManagerImpl;
+import tritium.bridge.management.*;
 import tritium.event.events.game.ChatEvent;
 import tritium.management.CommandManager;
+import tritium.rendering.rendersystem.RenderSystem;
 
 /**
  * @author IzumiiKonata
@@ -191,22 +189,22 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public RenderUtil getRenderUtil() {
-        return null;
+        return RenderUtilImpl.getInstance();
     }
 
     @Override
     public ShaderUtil getShaderUtil() {
-        return null;
+        return ShaderUtilImpl.getInstance();
     }
 
     @Override
     public FontUtil getFontUtil() {
-        return null;
+        return FontUtilImpl.getInstance();
     }
 
     @Override
     public GLStateManager getGLStateManager() {
-        return null;
+        return GlStateManagerImpl.getInstance();
     }
 
     @Override

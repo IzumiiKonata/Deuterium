@@ -30,13 +30,15 @@ public class StencilClipManager {
         GL11.glEnable(GL11.GL_STENCIL_TEST);
     }
 
-    public static void beginClip(Runnable drawClipShape) {
+    static boolean depthMask = false;
+
+    public static void beginClip() {
         if (currentStencilValue == 0) {
             initialize();
         }
 
         boolean colorMask = GL11.glGetBoolean(GL11.GL_COLOR_WRITEMASK);
-        boolean depthMask = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
+        depthMask = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
         stencilStack.push(new StencilState(currentStencilValue, colorMask, depthMask));
 
         GL11.glColorMask(false, false, false, false);
@@ -49,9 +51,9 @@ public class StencilClipManager {
         }
 
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
+    }
 
-        drawClipShape.run();
-
+    public static void updateClip() {
         currentStencilValue++;
 
         GL11.glColorMask(true, true, true, true);
@@ -59,6 +61,14 @@ public class StencilClipManager {
 
         GL11.glStencilFunc(GL11.GL_EQUAL, currentStencilValue, 0xFF);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+    }
+
+    public static void beginClip(Runnable drawClipShape) {
+        beginClip();
+
+        drawClipShape.run();
+
+        updateClip();
     }
 
     public static void endClip() {
