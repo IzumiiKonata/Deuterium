@@ -1,13 +1,15 @@
 package net.minecraft.network.play.server;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
+import today.opai.api.interfaces.game.network.server.SPacket04Equipment;
 
 import java.io.IOException;
 
-public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient> {
+public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient>, SPacket04Equipment {
     private int entityID;
     private int equipmentSlot;
     private ItemStack itemStack;
@@ -46,7 +48,7 @@ public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient> {
         handler.handleEntityEquipment(this);
     }
 
-    public ItemStack getItemStack() {
+    public ItemStack getStack() {
         return this.itemStack;
     }
 
@@ -56,5 +58,30 @@ public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient> {
 
     public int getEquipmentSlot() {
         return this.equipmentSlot;
+    }
+
+    @Override
+    public int getEntityId() {
+        return this.getEntityID();
+    }
+
+    @Override
+    public int getSlot() {
+        return this.getEquipmentSlot();
+    }
+
+    @Override
+    public today.opai.api.interfaces.game.item.ItemStack getItemStack() {
+        return this.getStack().getWrapper();
+    }
+
+    @Override
+    public void setItemStack(today.opai.api.interfaces.game.item.ItemStack itemStack) {
+        this.itemStack = new ItemStack(Item.getFromUnlocalizedName(itemStack.getName()), itemStack.getStackSize(), itemStack.getMetadata());
+    }
+
+    @Override
+    public void setSlot(int slot) {
+        this.equipmentSlot = slot;
     }
 }

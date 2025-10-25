@@ -6,34 +6,37 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import today.opai.api.interfaces.dataset.Vector3d;
+import today.opai.api.interfaces.game.network.server.SPacket27Explosion;
+import tritium.bridge.misc.math.Vector3dImpl;
 
 import java.io.IOException;
 import java.util.List;
 
-public class S27PacketExplosion implements Packet<INetHandlerPlayClient> {
+public class S27PacketExplosion implements Packet<INetHandlerPlayClient>, SPacket27Explosion {
     private double posX;
     private double posY;
     private double posZ;
     private float strength;
     private List<BlockPos> affectedBlockPositions;
-    private float field_149152_f;
-    private float field_149153_g;
-    private float field_149159_h;
+    private float motionX;
+    private float motionY;
+    private float motionZ;
 
     public S27PacketExplosion() {
     }
 
-    public S27PacketExplosion(double p_i45193_1_, double y, double z, float strengthIn, List<BlockPos> affectedBlocksIn, Vec3 p_i45193_9_) {
-        this.posX = p_i45193_1_;
+    public S27PacketExplosion(double x, double y, double z, float strengthIn, List<BlockPos> affectedBlocksIn, Vec3 motionVector) {
+        this.posX = x;
         this.posY = y;
         this.posZ = z;
         this.strength = strengthIn;
         this.affectedBlockPositions = Lists.newArrayList(affectedBlocksIn);
 
-        if (p_i45193_9_ != null) {
-            this.field_149152_f = (float) p_i45193_9_.xCoord;
-            this.field_149153_g = (float) p_i45193_9_.yCoord;
-            this.field_149159_h = (float) p_i45193_9_.zCoord;
+        if (motionVector != null) {
+            this.motionX = (float) motionVector.xCoord;
+            this.motionY = (float) motionVector.yCoord;
+            this.motionZ = (float) motionVector.zCoord;
         }
     }
 
@@ -58,9 +61,9 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient> {
             this.affectedBlockPositions.add(new BlockPos(j1, k1, l1));
         }
 
-        this.field_149152_f = buf.readFloat();
-        this.field_149153_g = buf.readFloat();
-        this.field_149159_h = buf.readFloat();
+        this.motionX = buf.readFloat();
+        this.motionY = buf.readFloat();
+        this.motionZ = buf.readFloat();
     }
 
     /**
@@ -85,9 +88,9 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient> {
             buf.writeByte(j1);
         }
 
-        buf.writeFloat(this.field_149152_f);
-        buf.writeFloat(this.field_149153_g);
-        buf.writeFloat(this.field_149159_h);
+        buf.writeFloat(this.motionX);
+        buf.writeFloat(this.motionY);
+        buf.writeFloat(this.motionZ);
     }
 
     /**
@@ -98,15 +101,15 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient> {
     }
 
     public float func_149149_c() {
-        return this.field_149152_f;
+        return this.motionX;
     }
 
     public float func_149144_d() {
-        return this.field_149153_g;
+        return this.motionY;
     }
 
     public float func_149147_e() {
-        return this.field_149159_h;
+        return this.motionZ;
     }
 
     public double getX() {
@@ -139,4 +142,15 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient> {
         this.posZ = z;
     }
 
+    @Override
+    public Vector3d getMotion() {
+        return new Vector3dImpl(this.motionX, this.motionY, this.motionZ);
+    }
+
+    @Override
+    public void setMotion(Vector3d vector3d) {
+        this.motionX = (float) vector3d.getX();
+        this.motionY = (float) vector3d.getY();
+        this.motionZ = (float) vector3d.getZ();
+    }
 }

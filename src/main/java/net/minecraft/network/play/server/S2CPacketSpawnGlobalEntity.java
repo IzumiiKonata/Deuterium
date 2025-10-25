@@ -6,10 +6,11 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.MathHelper;
+import today.opai.api.interfaces.game.network.server.SPacket2CEntitySpawn;
 
 import java.io.IOException;
 
-public class S2CPacketSpawnGlobalEntity implements Packet<INetHandlerPlayClient> {
+public class S2CPacketSpawnGlobalEntity implements Packet<INetHandlerPlayClient>, SPacket2CEntitySpawn {
     private int entityId;
     private int x;
     private int y;
@@ -77,5 +78,55 @@ public class S2CPacketSpawnGlobalEntity implements Packet<INetHandlerPlayClient>
 
     public int func_149053_g() {
         return this.type;
+    }
+
+    @Override
+    public int getEntityId() {
+        return this.entityId;
+    }
+
+    @Override
+    public int getX() {
+        return this.x;
+    }
+
+    @Override
+    public int getY() {
+        return this.y;
+    }
+
+    @Override
+    public int getZ() {
+        return this.z;
+    }
+
+    @Override
+    public int getType() {
+        return this.type;
+    }
+
+    @Override
+    public void setEntityId(int entityId) {
+        this.entityId = entityId;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public void setZ(int z) {
+        this.z = z;
+    }
+
+    @Override
+    public void setType(int type) {
+        this.type = type;
     }
 }

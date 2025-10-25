@@ -4,11 +4,12 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.IChatComponent;
+import today.opai.api.interfaces.game.network.server.SPacket45Title;
 import tritium.management.ModuleManager;
 
 import java.io.IOException;
 
-public class S45PacketTitle implements Packet<INetHandlerPlayClient> {
+public class S45PacketTitle implements Packet<INetHandlerPlayClient>, SPacket45Title {
     private S45PacketTitle.Type type;
     private IChatComponent message;
     private int fadeInTime;
@@ -78,11 +79,11 @@ public class S45PacketTitle implements Packet<INetHandlerPlayClient> {
         handler.handleTitle(this);
     }
 
-    public S45PacketTitle.Type getType() {
+    public S45PacketTitle.Type getTitleType() {
         return this.type;
     }
 
-    public IChatComponent getMessage() {
+    public IChatComponent getComponent() {
         return this.message;
     }
 
@@ -125,5 +126,40 @@ public class S45PacketTitle implements Packet<INetHandlerPlayClient> {
 
             return astring;
         }
+    }
+
+    @Override
+    public String getMessage() {
+        return IChatComponent.Serializer.componentToJson(this.message);
+    }
+
+    @Override
+    public String getType() {
+        return this.type.name();
+    }
+
+    @Override
+    public void setType(String type) {
+        this.type = S45PacketTitle.Type.byName(type);
+    }
+
+    @Override
+    public void setMessage(String message) {
+        this.message = IChatComponent.Serializer.jsonToComponent(message);
+    }
+
+    @Override
+    public void setFadeInTime(int fadeInTime) {
+        this.fadeInTime = fadeInTime;
+    }
+
+    @Override
+    public void setDisplayTime(int displayTime) {
+        this.displayTime = displayTime;
+    }
+
+    @Override
+    public void setFadeOutTime(int fadeOutTime) {
+        this.fadeOutTime = fadeOutTime;
     }
 }

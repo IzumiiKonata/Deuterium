@@ -3,10 +3,11 @@ package net.minecraft.network.play.server;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
+import today.opai.api.interfaces.game.network.server.SPacket48ResourcePacket;
 
 import java.io.IOException;
 
-public class S48PacketResourcePackSend implements Packet<INetHandlerPlayClient> {
+public class S48PacketResourcePackSend implements Packet<INetHandlerPlayClient>, SPacket48ResourcePacket {
     private String url;
     private String hash;
 
@@ -51,5 +52,20 @@ public class S48PacketResourcePackSend implements Packet<INetHandlerPlayClient> 
 
     public String getHash() {
         return this.hash;
+    }
+
+    @Override
+    public String getUrl() {
+        return this.url;
+    }
+
+    @Override
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    @Override
+    public void setHash(String hash) {
+        this.hash = hash;
     }
 }
