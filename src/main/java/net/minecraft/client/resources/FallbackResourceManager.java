@@ -5,10 +5,12 @@ import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.util.Location;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import tritium.utils.optimization.InputStreamLeakageTracker;
 
 import java.io.*;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class FallbackResourceManager implements IResourceManager {
     private static final Logger logger = LogManager.getLogger("FallbackResourceManager");
@@ -39,10 +41,17 @@ public class FallbackResourceManager implements IResourceManager {
             }
 
             if (iresourcepack1.resourceExists(location)) {
-                InputStream inputstream = null;
+                Supplier<InputStream> inputstream = null;
 
                 if (iresourcepack != null) {
-                    inputstream = this.getInputStream(resourcelocation, iresourcepack);
+                    IResourcePack finalIresourcepack = iresourcepack;
+                    inputstream = () -> {
+                        try {
+                            return this.getInputStream(resourcelocation, finalIresourcepack);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    };
                 }
 
                 return new SimpleResource(iresourcepack1.getPackName(), location, this.getInputStream(location, iresourcepack1), inputstream, this.frmMetadataSerializer);
@@ -53,7 +62,7 @@ public class FallbackResourceManager implements IResourceManager {
     }
 
     protected InputStream getInputStream(Location location, IResourcePack resourcePack) throws IOException {
-        InputStream inputstream = resourcePack.getInputStream(location);
+        InputStream inputstream = InputStreamLeakageTracker.wrap(resourcePack.getInputStream(location));
         return /*logger.isDebugEnabled() ? new InputStreamLeakedResourceLogger(inputstream, location, resourcePack.getPackName()) : */inputstream;
     }
 
@@ -63,7 +72,13 @@ public class FallbackResourceManager implements IResourceManager {
 
         for (IResourcePack iresourcepack : this.resourcePacks) {
             if (iresourcepack.resourceExists(location)) {
-                InputStream inputstream = iresourcepack.resourceExists(resourcelocation) ? this.getInputStream(resourcelocation, iresourcepack) : null;
+                Supplier<InputStream> inputstream = () -> {
+                    try {
+                        return iresourcepack.resourceExists(resourcelocation) ? this.getInputStream(resourcelocation, iresourcepack) : null;
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                };
                 list.add(new SimpleResource(iresourcepack.getPackName(), location, this.getInputStream(location, iresourcepack), inputstream, this.frmMetadataSerializer));
             }
         }

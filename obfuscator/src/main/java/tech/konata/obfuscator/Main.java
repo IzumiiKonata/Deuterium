@@ -157,7 +157,9 @@ public class Main {
                         new ClassFolder(),
                         new CRCFucker(),
                         new TimeManipulator(),
-                        new LocalVariables(true)
+                        new LocalVariables(true),
+                        new LineNumbers(),
+                        new SourceDebug(true)
                 )
             )
         );

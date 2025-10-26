@@ -748,6 +748,11 @@ public class Config {
     public static boolean hasResource(IResourceManager p_hasResource_0_, Location p_hasResource_1_) {
         try {
             IResource iresource = p_hasResource_0_.getResource(p_hasResource_1_);
+
+            if (iresource != null) {
+                iresource.getInputStream().close();
+            }
+
             return iresource != null;
         } catch (IOException var3) {
             return false;

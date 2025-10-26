@@ -74,6 +74,8 @@ public class ShaderUtil implements SharedConstants {
             } catch (final IOException ignored) {
             }
 
+            inputStream.close();
+
             return source;
         } catch (final IOException | NullPointerException e) {
             System.out.println("An error occurred while getting a shader resource");
