@@ -163,12 +163,12 @@
             <classifier>${lwjgl.natives}</classifier>
             <scope>runtime</scope>
         </dependency>
-        <dependency>
-            <groupId>org.lwjgl</groupId>
-            <artifactId>lwjgl-glfw</artifactId>
-            <classifier>${lwjgl.natives}</classifier>
-            <scope>runtime</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.lwjgl</groupId>-->
+<!--            <artifactId>lwjgl-glfw</artifactId>-->
+<!--            <classifier>${lwjgl.natives}</classifier>-->
+<!--            <scope>runtime</scope>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-openal</artifactId>
