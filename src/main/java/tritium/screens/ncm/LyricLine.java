@@ -36,6 +36,7 @@ public class LyricLine {
     public boolean shouldUpdatePosition = false;
     public double reboundAnimation = 0;
     public boolean reboundAnimationForward = true;
+    public Timer delayTimer = new Timer();
 
     public final List<Word> words = new CopyOnWriteArrayList<>();
 
@@ -64,7 +65,7 @@ public class LyricLine {
 
             this.height = height;
         } else {
-            int length = FontManager.pf65bold.fitWidth(lyric, (float) width).length;
+            int length = FontManager.pf65bold.fitWidth(lyric, (float) width - 12).length;
             this.height = length * FontManager.pf65bold.getHeight() * .85 + length * 4;
 //
 //            if (translationText != null) {

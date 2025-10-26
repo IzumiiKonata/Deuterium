@@ -1,8 +1,8 @@
 package net.minecraft.world.gen.layer;
 
 import net.minecraft.world.biome.BiomeGenBase;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class GenLayerHills extends GenLayer {
     private static final Logger logger = LogManager.getLogger("GenLayerHills");

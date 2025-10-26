@@ -73,8 +73,8 @@ import tritium.event.events.rendering.BlockOverlayEvent;
 import tritium.management.EventManager;
 import tritium.management.ModuleManager;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.*;

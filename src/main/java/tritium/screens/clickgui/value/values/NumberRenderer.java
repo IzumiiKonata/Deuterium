@@ -53,6 +53,11 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
             }
 
             @Override
+            protected boolean testHovered(double mouseX, double mouseY) {
+                return super.testHovered(mouseX, mouseY, 2);
+            }
+
+            @Override
             public void onRender(double mouseX, double mouseY, int dWheel) {
                 super.onRender(mouseX, mouseY, dWheel);
 

@@ -104,7 +104,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        if (this.isEnabled()) {
+        if (enabled) {
 
             EventManager.register(this);
             this.onEnable();

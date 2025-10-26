@@ -3,8 +3,8 @@ package net.minecraft.client.resources;
 import com.google.common.collect.Lists;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.util.Location;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.util.List;

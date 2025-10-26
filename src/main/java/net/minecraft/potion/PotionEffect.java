@@ -4,8 +4,8 @@ import lombok.Getter;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
 import tritium.bridge.game.data.PotionEffectWrapper;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PotionEffect {
     private static final Logger LOGGER = LogManager.getLogger("PotionEffect");

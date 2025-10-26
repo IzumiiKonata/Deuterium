@@ -42,19 +42,23 @@ public class ExtensionModuleWrapper extends Module {
 
     @Override
     public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
         module.setEnabled(enabled);
     }
 
     @Override
     public void onEnable() {
-        module.onEnabled();
         BridgeEventHandler.register(module.getEventHandler());
     }
 
     @Override
     public void onDisable() {
-        module.onDisabled();
         BridgeEventHandler.unregister(module.getEventHandler());
+    }
+
+    @Override
+    public void setKeyBind(int keyBind) {
+        module.setKey(keyBind);
     }
 
     @Override

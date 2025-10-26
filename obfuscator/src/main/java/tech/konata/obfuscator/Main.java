@@ -153,7 +153,7 @@ public class Main {
                 Arrays.asList(
 //                        new ParameterHider(),
 //                        new CodeHider(),
-                        new AggressiveBlockSplitter(),
+//                        new AggressiveBlockSplitter(),
                         new ClassFolder(),
                         new CRCFucker(),
                         new TimeManipulator(),

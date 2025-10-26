@@ -25,8 +25,8 @@ import tritium.event.events.packet.ReceivePacketEvent;
 import tritium.event.events.packet.SendPacketEvent;
 import tritium.management.EventManager;
 import tritium.utils.timing.Counter;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.SecretKey;
 import java.net.InetAddress;

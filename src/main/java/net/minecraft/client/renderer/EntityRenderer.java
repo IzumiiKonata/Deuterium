@@ -87,8 +87,8 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.BaseScreen;
 import tritium.settings.ClientSettings;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tritium.utils.other.info.Version;
 
 import java.io.IOException;
@@ -114,7 +114,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     /**
      * A reference to the Minecraft object.
      */
-    private final Minecraft mc;
+    private Minecraft mc;
     private final IResourceManager resourceManager;
     private final Random random = new Random();
     private float farPlaneDistance;

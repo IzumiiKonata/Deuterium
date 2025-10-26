@@ -13,7 +13,7 @@ public class NightVision extends Module {
         if (mc.thePlayer == null || mc.theWorld == null)
             return;
         if (!mc.thePlayer.isPotionActive(Potion.nightVision.id)) {
-            PotionEffect effect = new PotionEffect(Potion.nightVision.id, 1000000, 255, false, false);
+            PotionEffect effect = new PotionEffect(Potion.nightVision.id, 1000000, 1, false, false);
             effect.setPotionDurationMax(true);
             mc.thePlayer.addPotionEffect(effect);
         }

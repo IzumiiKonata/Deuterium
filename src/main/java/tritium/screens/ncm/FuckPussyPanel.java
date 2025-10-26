@@ -104,7 +104,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
     public FuckPussyPanel(Music music) {
         this.music = music;
-        updateCurrentDisplayingLyric(CloudMusic.player.getCurrentTimeMillis());
+        float currentTimeMillis = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
+        updateCurrentDisplayingLyric(currentTimeMillis);
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .5);
     }
 
@@ -147,7 +148,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
         double spacingToRight = 16;
 
-        float songProgress = CloudMusic.player.getCurrentTimeMillis();
+        float songProgress = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
 
         updateCurrentDisplayingLyric(songProgress);
 
@@ -176,7 +177,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
             if (isHovering && Mouse.isButtonDown(0) && !prevMouse) {
                 prevMouse = true;
-                CloudMusic.player.setPlaybackTime(lyric.timeStamp);
+                if (CloudMusic.player != null)
+                    CloudMusic.player.setPlaybackTime(lyric.timeStamp);
 //                MusicLyricsWidget.quickResetProgress(lyric.timeStamp);
 //                FuckPussyPanel.resetProgress(lyric.timeStamp);
             }
@@ -265,7 +267,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                     renderX += wordWidth;
                 }
             } else {
-                String[] strings = FontManager.pf65bold.fitWidth(lyric.lyric, lyricsWidth);
+                String[] strings = FontManager.pf65bold.fitWidth(lyric.lyric, lyricsWidth - 12);
 
                 for (String string : strings) {
                     FontManager.pf65bold.drawString(string, renderX, renderY, hexColor(1, 1, 1, alpha * ((lyric.alpha * .6f) + .4f)));
@@ -336,8 +338,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
 
                 if (prev != null) {
-                    if (lyric.posY - (prev.posY + prev.height) >= 50)
+                    if (prev.delayTimer.isDelayed(75))
                         lyric.shouldUpdatePosition = true;
+//                    if (lyric.posY - (prev.posY) >= prev.height * 1.5)
+//                        lyric.shouldUpdatePosition = true;
                 }
 
                 if (prev != null && lyric.posY - (prev.posY + prev.height) < 0) {
@@ -345,18 +349,12 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                     break;
                 }
 
-                if (prev == null || lyric.shouldUpdatePosition) {
-                    lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
-
-//                    if (Math.abs(lyric.posY - offsetY) <= 10f) {
-//                        boolean forward = lyric.reboundAnimationForward;
-//                        lyric.reboundAnimation = Interpolations.interpBezier(lyric.reboundAnimation, forward ? 2f : 0f, forward ? .1f : .2f);
-//
-//                        if (forward && lyric.reboundAnimation >= 1.5f)
-//                            lyric.reboundAnimationForward = false;
-//                    }
+                if (prev != null && !lyric.shouldUpdatePosition) {
+                    lyric.delayTimer.reset();
+                    break;
                 }
 
+                lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
                 offsetY += lyric.height + 16;
             }
         }
@@ -425,6 +423,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             lyrics.forEach(l -> {
                 l.shouldUpdatePosition = false;
                 l.reboundAnimationForward = true;
+                l.delayTimer.reset();
             });
         }
     }
@@ -448,8 +447,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
     private void renderControlsPart(double mouseX, double mouseY, double posX, double posY, double width, double height, float alpha) {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
+        AudioPlayer player = CloudMusic.player;
+
         double center = this.getCoverSizeMin();
-        coverSize = Interpolations.interpBezier(coverSize, CloudMusic.player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
+        coverSize = Interpolations.interpBezier(coverSize, player == null || player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
 
         if (prevCover != null && coverAlpha <= .99f) {
             GlStateManager.bindTexture(prevCover.getGlTextureId());
@@ -478,8 +479,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
         roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha * .5f));
 
-        AudioPlayer player = CloudMusic.player;
-        float perc = player.getCurrentTimeMillis() / player.getTotalTimeMillis();
+        float currentTimeMillis = player == null ? 0 : player.getCurrentTimeMillis();
+        float totalTimeMillis = player == null ? 0.01f : player.getTotalTimeMillis();
+        float perc = player == null ? 0 : currentTimeMillis / totalTimeMillis;
 
         StencilClipManager.beginClip(() -> {
             Rect.draw(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth * perc, progressBarHeight, -1);
@@ -496,17 +498,17 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             double xDelta = Math.max(0, Math.min(progressBarWidth, (mouseX - elementsXOffset)));
             double percent = xDelta / progressBarWidth;
 
-            if (CloudMusic.player != null) {
-                float progress = (float) (percent * CloudMusic.player.getTotalTimeMillis());
-                CloudMusic.player.setPlaybackTime(progress);
+            if (player != null) {
+                float progress = (float) (percent * totalTimeMillis);
+                player.setPlaybackTime(progress);
                 MusicLyricsWidget.quickResetProgress(progress);
                 FuckPussyPanel.resetProgress(progress);
             }
         }
 
         // curTime
-        FontManager.pf12.drawString(formatDuration(CloudMusic.player.getCurrentTimeMillis()), elementsXOffset, progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
-        String remainingTime = "-" + formatDuration(CloudMusic.player.getTotalTimeMillis() - CloudMusic.player.getCurrentTimeMillis());
+        FontManager.pf12.drawString(formatDuration(currentTimeMillis), elementsXOffset, progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
+        String remainingTime = "-" + formatDuration(totalTimeMillis - currentTimeMillis);
         FontManager.pf12.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12.getStringWidth(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
 
         FontManager.music40.drawString("I", elementsXOffset - 8, height - 32, hexColor(1, 1, 1, alpha * .5f));
@@ -518,7 +520,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidth("I") - 2;
         roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha * .5f));
         StencilClipManager.beginClip(() -> {
-            Rect.draw(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth * CloudMusic.player.getVolume(), volumeBarHeight, -1);
+            Rect.draw(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth * (player == null ? 0 : player.getVolume()), volumeBarHeight, -1);
         });
         roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha));
         StencilClipManager.endClip();
