@@ -4,7 +4,11 @@ import com.google.gson.JsonObject;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
+import today.opai.api.enums.EnumModuleCategory;
+import today.opai.api.interfaces.modules.PresetModule;
+import tritium.bridge.BridgeEventHandler;
+import tritium.bridge.module.PresetModuleWrapper;
 import tritium.management.Localizer;
 import tritium.module.submodule.SubModule;
 import tritium.utils.i18n.Localizable;
@@ -56,6 +60,9 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     @Getter
     private final List<SubModule<?>> subModules = new ArrayList<>();
 
+    @Getter
+    protected PresetModule wrapper;
+
     public Module(String internalName, Category category) {
 
         this.internalName = internalName;
@@ -66,8 +73,14 @@ public class Module implements SharedConstants, SharedRenderingConstants {
         this.name = Localizable.of("module." + lowerCase + ".name");
         this.description = Localizable.of("module." + lowerCase + ".desc");
 
+        this.createWrapper();
+
 //        if (!internalName.equals("Setting") && category != Category.WIDGET)
 //            ModuleManager.getModules().add(this);
+    }
+
+    protected void createWrapper() {
+        this.wrapper = new PresetModuleWrapper(this);
     }
 
     public boolean nameEquals(String another) {
@@ -91,7 +104,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
-        if (this.isEnabled()) {
+        if (enabled) {
 
             EventManager.register(this);
             this.onEnable();
@@ -105,7 +118,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     }
 
     public void toggle() {
-        this.enabled = !this.enabled;
+        this.setEnabled(!this.isEnabled());
 
         SubModule<?> subModule = this.getCurrentSubModule();
         if (this.isEnabled()) {
@@ -115,9 +128,6 @@ public class Module implements SharedConstants, SharedRenderingConstants {
                 subModule.onEnable();
             }
 
-            EventManager.register(this);
-            this.onEnable();
-
         } else {
 
             if (subModule != null) {
@@ -125,10 +135,11 @@ public class Module implements SharedConstants, SharedRenderingConstants {
                 subModule.onDisable();
             }
 
-            EventManager.unregister(this);
-            this.onDisable();
-
         }
+
+        BridgeEventHandler.getHandlers().values().forEach(
+                handler -> handler.onModuleToggle(this.getWrapper(), this.isEnabled())
+        );
 
     }
 
@@ -233,7 +244,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
         JsonObject directory = new JsonObject();
         directory.addProperty("Key", this.getKeyBind());
         directory.addProperty("Enabled", this.isEnabled());
-        this.settings.forEach(val -> {
+        this.getSettings().forEach(val -> {
             directory.addProperty(val.getInternalName(), val.getValueForConfig());
         });
 
@@ -241,8 +252,8 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     }
 
     public Setting<?> find(final String term) {
-        for (Setting<?> setting : this.settings) {
-            if (setting.getInternalName().equalsIgnoreCase(term)) {
+        for (Setting<?> setting : this.getSettings()) {
+            if (setting.getInternalName().equals(term)) {
                 return setting;
             }
         }
@@ -263,37 +274,60 @@ public class Module implements SharedConstants, SharedRenderingConstants {
         }
     }
 
-    // This class used to be an enum class...
     @Getter
-    public static enum Category {
-        ALL("All"),
-        MOVEMENT("Movement"),
-        RENDER("Visual"),
-        OTHER("Misc"),
-        SETTING("Settings"),
-        WIDGET("Widget");
+    public static class Category {
+//        ALL("All"),
+//        MOVEMENT("Movement"),
+//        RENDER("Visual"),
+//        OTHER("Misc"),
+//        SETTING("Settings"),
+//        WIDGET("Widget");
 
-//        private static final List<Category> categories = new ArrayList<>();
-//
-//        public static final Category ALL = new Category("All");
-//        public static final Category MOVEMENT = new Category("Movement");
-//        public static final Category RENDER = new Category("Visual");
-//        public static final Category OTHER = new Category("Misc");
-//        public static final Category SETTING = new Category("Settings");
-//        public static final Category WIDGET = new Category("Widget");
+        private static final List<Category> categories = new ArrayList<>();
 
-        public float alpha = 0.0f, hoverAlpha = 0.0f;
+        public static final Category ALL = new Category("All");
+        public static final Category MOVEMENT = new Category("Movement");
+        public static final Category RENDER = new Category("Visual");
+        public static final Category OTHER = new Category("Misc");
+        public static final Category SETTING = new Category("Settings");
+        public static final Category WIDGET = new Category("Widget");
 
         private final String internalName;
-
         public Localizable name;
 
-        /*public */Category(String internalName) {
+        public Category(String internalName) {
             this.internalName = internalName;
 
             this.name = Localizable.of("category." + this.internalName.toLowerCase() + ".name");
 
-//            categories.add(this);
+            categories.add(this);
         }
+
+        public static Category getByName(String name) {
+            for (Category category : categories) {
+                if (category.internalName.equalsIgnoreCase(name)) {
+                    return category;
+                }
+            }
+
+            Category newCategory = new Category(name);
+            newCategory.name = Localizable.ofUntranslatable(name);
+            categories.add(newCategory);
+            return newCategory;
+        }
+
+        public static Category fromEnumCategory(EnumModuleCategory category) {
+            switch (category) {
+                case MOVEMENT:
+                    return MOVEMENT;
+                case PLAYER:
+                    return OTHER;
+                case VISUAL:
+                    return RENDER;
+                default:
+                    return getByName(category.name());
+            }
+        }
+
     }
 }

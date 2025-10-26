@@ -29,6 +29,7 @@ import lombok.SneakyThrows;
 import obfuscated.by.IzumiKonata.KonataShieldTrashClasses;
 import org.objectweb.asm.*;
 import org.objectweb.asm.tree.*;
+import tech.konata.obfuscator.Main;
 import tech.konata.obfuscator.exclusions.ExclusionType;
 import tech.konata.obfuscator.transformers.Transformer;
 import tech.konata.obfuscator.Logger;
@@ -61,7 +62,7 @@ public class TrashClasses extends Transformer {
 
     @Override
     public void transform() {
-        ArrayList<String> classNames = getClassPath().keySet().stream().filter(cp -> cp.startsWith("catch_me_if_u_can")).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<String> classNames = getClassPath().keySet().stream().filter(cp -> cp.startsWith(Main.REPACKAGE_NAME)).collect(Collectors.toCollection(ArrayList::new));
         for (int i = 0; i < classNames.size() % 20; i++) {
             String s = classNames.get(RandomUtils.getRandomIntNoOrigin(classNames.size()));
             DESCRIPTORS.add("L" + s + ";");

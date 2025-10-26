@@ -13,8 +13,8 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import org.lwjgl.opengl.GL11;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.utils.alt.Alt;
 import tritium.utils.alt.AltLoginThread;
 import tritium.utils.alt.AltManager;
@@ -100,7 +100,7 @@ public class GuiAltManager
     @Override
     public void drawScreen(int par1, int par2, float par3) {
         this.drawDefaultBackground();
-        int wheel = Mouse.getDWheel2();
+        int wheel = Mouse.getDWheel();
         if (wheel < 0) {
             this.offset += 26;
             if (this.offset < 0) {

@@ -39,8 +39,8 @@ import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
 import net.minecraft.world.WorldServer;
 import org.apache.commons.lang3.StringUtils;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -390,7 +390,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
     public void processPlayerDigging(C07PacketPlayerDigging packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
         WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
-        BlockPos blockpos = packetIn.getPosition();
+        BlockPos blockpos = packetIn.getPos();
         this.playerEntity.markPlayerActive();
 
         switch (packetIn.getStatus()) {
@@ -459,7 +459,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
         WorldServer worldserver = this.serverController.worldServerForDimension(this.playerEntity.dimension);
         ItemStack itemstack = this.playerEntity.inventory.getCurrentItem();
         boolean flag = false;
-        BlockPos blockpos = packetIn.getPosition();
+        BlockPos blockpos = packetIn.getPos();
         EnumFacing enumfacing = EnumFacing.getFront(packetIn.getPlacedBlockDirection());
         this.playerEntity.markPlayerActive();
 
@@ -736,11 +736,11 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
             }
 
             if (this.playerEntity.getDistanceSqToEntity(entity) < d0) {
-                if (packetIn.getAction() == C02PacketUseEntity.Action.INTERACT) {
+                if (packetIn.getPacketAction() == C02PacketUseEntity.Action.INTERACT) {
                     this.playerEntity.interactWith(entity);
-                } else if (packetIn.getAction() == C02PacketUseEntity.Action.INTERACT_AT) {
-                    entity.interactAt(this.playerEntity, packetIn.getHitVec());
-                } else if (packetIn.getAction() == C02PacketUseEntity.Action.ATTACK) {
+                } else if (packetIn.getPacketAction() == C02PacketUseEntity.Action.INTERACT_AT) {
+                    entity.interactAt(this.playerEntity, packetIn.getVec());
+                } else if (packetIn.getPacketAction() == C02PacketUseEntity.Action.ATTACK) {
                     if (entity instanceof EntityItem || entity instanceof EntityXPOrb || entity instanceof EntityArrow || entity == this.playerEntity) {
                         this.kickPlayerFromServer("Attempting to attack an invalid entity");
                         this.serverController.logWarning("Player " + this.playerEntity.getName() + " tried to attack an invalid entity");
@@ -824,14 +824,14 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
                 ItemStack itemstack = this.playerEntity.openContainer.slotClick(packetIn.getSlotId(), packetIn.getUsedButton(), packetIn.getMode(), this.playerEntity);
 
                 if (ItemStack.areItemStacksEqual(packetIn.getClickedItem(), itemstack)) {
-                    this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(packetIn.getWindowId(), packetIn.getActionNumber(), true));
+                    this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(packetIn.getWindowId(), (short) packetIn.getActionNumber(), true));
                     this.playerEntity.isChangingQuantityOnly = true;
                     this.playerEntity.openContainer.detectAndSendChanges();
                     this.playerEntity.updateHeldItem();
                     this.playerEntity.isChangingQuantityOnly = false;
                 } else {
-                    this.field_147372_n.addKey(this.playerEntity.openContainer.windowId, packetIn.getActionNumber());
-                    this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(packetIn.getWindowId(), packetIn.getActionNumber(), false));
+                    this.field_147372_n.addKey(this.playerEntity.openContainer.windowId, (short) packetIn.getActionNumber());
+                    this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(packetIn.getWindowId(), (short) packetIn.getActionNumber(), false));
                     this.playerEntity.openContainer.setCanCraft(this.playerEntity, false);
                     List<ItemStack> list1 = Lists.newArrayList();
 

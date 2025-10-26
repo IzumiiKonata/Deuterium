@@ -2,7 +2,7 @@ package tritium.rendering.entities.clickable.impl;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.rendering.entities.RenderableEntity;
 
 public class ClickEntity extends RenderableEntity {

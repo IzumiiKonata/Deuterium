@@ -1,11 +1,10 @@
 package tritium.screens.ncm.panels;
 
-import org.lwjglx.input.Mouse;
-import tech.konata.ncmplayer.music.AudioPlayer;
-import tech.konata.ncmplayer.music.CloudMusic;
+import org.lwjgl.input.Mouse;
+import tritium.ncm.music.AudioPlayer;
+import tritium.ncm.music.CloudMusic;
 import tritium.management.FontManager;
 import tritium.rendering.ui.widgets.*;
-import tritium.screens.ClickGui;
 import tritium.screens.ncm.FuckPussyPanel;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;

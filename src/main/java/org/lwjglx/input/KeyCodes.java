@@ -1,6 +1,7 @@
 package org.lwjglx.input;
 
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.input.Keyboard;
 
 public class KeyCodes {
 

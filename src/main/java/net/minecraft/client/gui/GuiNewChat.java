@@ -19,8 +19,8 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.Iterator;
 import java.util.List;

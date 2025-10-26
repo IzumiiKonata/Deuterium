@@ -29,15 +29,6 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         this.pointer = pointer;
     }
 
-    private static ColorModel createMinimalColorModel() {
-        return new DirectColorModel(32,
-                0x00FF0000,  // Red
-                0x0000FF00,  // Green
-                0x000000FF,  // Blue
-                0xFF000000   // Alpha
-        );
-    }
-
     public int getWidth() {
         return width;
     }

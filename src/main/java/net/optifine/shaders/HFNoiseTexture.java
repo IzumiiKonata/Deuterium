@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjglx.BufferUtils;
 
 import java.nio.ByteBuffer;
 

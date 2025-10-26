@@ -3,10 +3,11 @@ package net.minecraft.network.play.client;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
+import today.opai.api.interfaces.game.network.client.CPacket09SlotChange;
 
 import java.io.IOException;
 
-public class C09PacketHeldItemChange implements Packet<INetHandlerPlayServer> {
+public class C09PacketHeldItemChange implements Packet<INetHandlerPlayServer>, CPacket09SlotChange {
     private int slotId;
 
     public C09PacketHeldItemChange() {

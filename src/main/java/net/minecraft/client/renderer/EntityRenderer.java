@@ -26,7 +26,6 @@ import net.minecraft.client.resources.I18n;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.ShaderGroup;
 import net.minecraft.client.shader.ShaderLinkHelper;
 import net.minecraft.crash.CrashReport;
@@ -63,9 +62,9 @@ import net.optifine.util.MemoryMonitor;
 import net.optifine.util.TimedEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
 import tritium.Tritium;
@@ -88,8 +87,8 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.BaseScreen;
 import tritium.settings.ClientSettings;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tritium.utils.other.info.Version;
 
 import java.io.IOException;
@@ -115,7 +114,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     /**
      * A reference to the Minecraft object.
      */
-    private final Minecraft mc;
+    private Minecraft mc;
     private final IResourceManager resourceManager;
     private final Random random = new Random();
     private float farPlaneDistance;

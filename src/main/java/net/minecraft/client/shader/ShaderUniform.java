@@ -1,10 +1,10 @@
 package net.minecraft.client.shader;
 
 import net.minecraft.client.renderer.OpenGlHelper;
-import org.lwjgl.BufferUtils;
+import org.lwjglx.BufferUtils;
 import org.lwjglx.util.vector.Matrix4f;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;

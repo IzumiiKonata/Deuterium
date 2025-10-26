@@ -9,7 +9,7 @@ import net.minecraft.util.Matrix4f;
 import net.optifine.entity.model.anim.ModelUpdater;
 import net.optifine.model.ModelSprite;
 import net.optifine.shaders.Shaders;
-import org.lwjgl.BufferUtils;
+import org.lwjglx.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.util.vector.Vector3f;
 

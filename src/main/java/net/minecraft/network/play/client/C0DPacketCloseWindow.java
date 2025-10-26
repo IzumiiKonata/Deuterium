@@ -3,10 +3,11 @@ package net.minecraft.network.play.client;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
+import today.opai.api.interfaces.game.network.client.CPacket0DCloseWindow;
 
 import java.io.IOException;
 
-public class C0DPacketCloseWindow implements Packet<INetHandlerPlayServer> {
+public class C0DPacketCloseWindow implements Packet<INetHandlerPlayServer>, CPacket0DCloseWindow {
     private int windowId;
 
     public C0DPacketCloseWindow() {

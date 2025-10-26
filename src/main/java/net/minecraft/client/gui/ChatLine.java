@@ -1,7 +1,7 @@
 package net.minecraft.client.gui;
 
 import net.minecraft.util.IChatComponent;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 
 public class ChatLine {
     /**

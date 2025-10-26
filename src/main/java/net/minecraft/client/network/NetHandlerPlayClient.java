@@ -68,8 +68,8 @@ import tritium.event.events.player.EntityVelocityEvent;
 import tritium.event.events.player.RespawnEvent;
 import tritium.management.EventManager;
 import tritium.screens.MainMenu;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -975,7 +975,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         Entity entity = this.clientWorldController.getEntityByID(packetIn.getEntityID());
 
         if (entity != null) {
-            entity.setCurrentItemOrArmor(packetIn.getEquipmentSlot(), packetIn.getItemStack());
+            entity.setCurrentItemOrArmor(packetIn.getEquipmentSlot(), packetIn.getStack());
         }
     }
 
@@ -1166,10 +1166,10 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
     @SuppressWarnings("incomplete-switch")
     public void handleTitle(S45PacketTitle packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        S45PacketTitle.Type s45packettitle$type = packetIn.getType();
+        S45PacketTitle.Type s45packettitle$type = packetIn.getTitleType();
         String s = null;
         String s1 = null;
-        String s2 = packetIn.getMessage() != null ? packetIn.getMessage().getFormattedText() : "";
+        String s2 = packetIn.getComponent() != null ? packetIn.getComponent().getFormattedText() : "";
 
         switch (s45packettitle$type) {
             case TITLE:

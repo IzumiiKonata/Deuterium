@@ -1,7 +1,6 @@
 package tritium.screens.contextmenu;
 
-import net.minecraft.client.Minecraft;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.ThemeManager;
 import tritium.rendering.Stencil;
@@ -10,7 +9,6 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
-import tritium.screens.ClickGui;
 import tritium.settings.ClientSettings;
 
 import java.awt.*;

@@ -1,7 +1,7 @@
 package net.optifine.shaders;
 
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public abstract class SMCLog {
     private static final Logger LOGGER = LogManager.getLogger("SMCLog");

@@ -15,6 +15,8 @@
  */
 package org.lwjglx.opengl;
 
+import org.lwjgl.opengl.Display;
+
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 
@@ -54,7 +56,7 @@ public final class DisplayMode {
         this(width, height, glfwGetVideoMode(glfwGetPrimaryMonitor()).redBits() + glfwGetVideoMode(glfwGetPrimaryMonitor()).greenBits() + glfwGetVideoMode(glfwGetPrimaryMonitor()).blueBits(), glfwGetVideoMode(glfwGetPrimaryMonitor()).refreshRate(), false);
     }
 
-    DisplayMode(int width, int height, int bpp, int freq) {
+    public DisplayMode(int width, int height, int bpp, int freq) {
         this(width, height, bpp, freq, true);
     }
 

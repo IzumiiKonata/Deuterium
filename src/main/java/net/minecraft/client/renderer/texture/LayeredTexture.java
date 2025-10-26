@@ -6,8 +6,8 @@ import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.optifine.shaders.ShadersTex;
 import tritium.rendering.async.AsyncGLContext;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;

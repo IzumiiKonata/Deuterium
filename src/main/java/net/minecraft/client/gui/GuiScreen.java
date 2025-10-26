@@ -25,12 +25,12 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.StringUtils;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.event.events.game.RawKeyInputEvent;
 import tritium.management.EventManager;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tritium.utils.timing.Timer;
 
 import java.awt.*;

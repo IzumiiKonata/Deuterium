@@ -2,6 +2,7 @@ package tritium.settings;
 
 import com.google.common.primitives.Primitives;
 import lombok.Getter;
+import tritium.bridge.settings.NumberValueWrapper;
 
 import java.text.DecimalFormat;
 import java.util.function.Supplier;
@@ -30,6 +31,11 @@ public class NumberSetting<T extends Number> extends Setting<T> {
         this.lastValue = value;
     }
 
+    @Override
+    protected void createValueWrapper() {
+        this.wrapper = new NumberValueWrapper(this);
+    }
+
     public float getFloatValue() {
         return this.getValue().floatValue();
     }
@@ -55,7 +61,7 @@ public class NumberSetting<T extends Number> extends Setting<T> {
     @Override
     public void setValue(T value) {
         double precision = 1 / increment.doubleValue();
-        this.value = cast((Class<T>) this.value.getClass(), /*Math.round( * precision) / precision*/value.doubleValue());
+        super.setValue(cast((Class<T>) this.value.getClass(), /*Math.round( * precision) / precision*/value.doubleValue()));
         if (!this.lastValue.equals(this.value)) {
             this.onValueChanged(lastValue, this.value);
         }

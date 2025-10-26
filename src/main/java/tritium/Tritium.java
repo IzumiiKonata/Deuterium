@@ -2,7 +2,7 @@ package tritium;
 
 import ingameime.IngameIMEJNI;
 import lombok.Getter;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 import tritium.event.eventapi.Event;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.*;
@@ -23,7 +23,7 @@ import java.util.List;
 public class Tritium {
 
     @Getter
-    private static final Version version = new Version(Version.Type.Release, 1, 2, 4);
+    private static final Version version = new Version(Version.Type.Dev, 1, 2, 4);
 
     public static final String NAME = "Tritium";
 
@@ -55,6 +55,9 @@ public class Tritium {
 
     @Getter
     private CommandManager commandManager;
+
+    @Getter
+    private ExtensionManager extensionManager;
 
     @Getter
     private ConfigManager configManager;
@@ -106,11 +109,12 @@ public class Tritium {
         this.moduleManager = new ModuleManager();
         this.widgetsManager = new WidgetsManager();
         this.commandManager = new CommandManager();
+        this.extensionManager = new ExtensionManager();
         this.configManager = new ConfigManager();
         this.themeManager = new ThemeManager();
         this.ncmManager = new NCMManager();
 
-        managers.addAll(Arrays.asList(this.fontManager, this.eventManager, this.localizer, this.moduleManager, widgetsManager, commandManager, configManager, themeManager, ncmManager));
+        managers.addAll(Arrays.asList(this.fontManager, this.eventManager, this.localizer, this.moduleManager, widgetsManager, extensionManager, commandManager, configManager, themeManager, ncmManager));
 
         for (AbstractManager manager : this.managers) {
 

@@ -114,6 +114,12 @@ public class ValueWindow extends Window {
                     this.settingsPanel.addChild(new StringModeRenderer((StringModeSetting) setting));
                 if (setting instanceof ColorSetting)
                     this.settingsPanel.addChild(new ColorRenderer((ColorSetting) setting));
+                if (setting instanceof LabelSetting)
+                    this.settingsPanel.addChild(new LabelRenderer((LabelSetting) setting));
+                if (setting instanceof StringSetting)
+                    this.settingsPanel.addChild(new StringRenderer((StringSetting) setting));
+                if (setting instanceof BindSetting)
+                    this.settingsPanel.addChild(new BindRenderer((BindSetting) setting));
             }
         }
 

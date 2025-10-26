@@ -3,7 +3,7 @@ package tritium.screens.clickgui.category;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Tuple;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.management.FontManager;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.container.Panel;

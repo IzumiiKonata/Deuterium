@@ -105,15 +105,8 @@ public class ModuleManager extends AbstractManager {
             }
         }
 
-        List<Module> collect = modules.stream().distinct().collect(Collectors.toList());
-
-        modules.clear();
-        modules.addAll(collect);
-
+        // 设置自动装配
         for (Module module : modules) {
-
-            // clear settings for reload command
-            module.getSettings().removeIf(s -> !(module.getSettings().indexOf(s) == 0 && s instanceof StringModeSetting && s.getInternalName().equalsIgnoreCase("Mode")));
 
             for (Field moduleField : module.getClass().getDeclaredFields()) {
                 moduleField.setAccessible(true);
@@ -124,7 +117,6 @@ public class ModuleManager extends AbstractManager {
             }
 
             List<SubModule<?>> subModules = module.getSubModules();
-
             if (!subModules.isEmpty()) {
                 for (SubModule<?> subModule : subModules) {
                     for (Field declaredField : subModule.getClass().getDeclaredFields()) {

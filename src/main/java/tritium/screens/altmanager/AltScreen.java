@@ -15,8 +15,8 @@ import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.util.*;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.rendering.shader.ShaderUtil;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.ImageWidget;
@@ -135,7 +135,7 @@ public class AltScreen extends BaseScreen {
 
     @Override
     public void drawScreen(double mouseX, double mouseY) {
-        int dWheel = Mouse.getDWheel2();
+        int dWheel = Mouse.getDWheel();
 
         renderBackground();
         renderStatus();

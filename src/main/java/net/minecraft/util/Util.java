@@ -1,6 +1,6 @@
 package net.minecraft.util;
 
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;

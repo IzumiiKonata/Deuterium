@@ -15,8 +15,8 @@ import net.optifine.shaders.SVertexBuilder;
 import net.optifine.util.TextureUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.*;
 import java.util.Arrays;

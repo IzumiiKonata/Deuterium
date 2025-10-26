@@ -1,5 +1,7 @@
 package org.lwjglx.input;
 
+import org.lwjgl.input.Keyboard;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
@@ -25,7 +27,7 @@ public class InputEvents {
     public static class KeyEvent {
 
         /**
-         * The mapped LWJGL2 key code, e.g. {@link org.lwjglx.input.Keyboard#KEY_A}
+         * The mapped LWJGL2 key code, e.g. {@link Keyboard#KEY_A}
          */
         public final int lwjgl2KeyCode;
         /**

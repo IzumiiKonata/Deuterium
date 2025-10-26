@@ -2,7 +2,7 @@ package tritium.screens.dialog;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.utils.i18n.Localizable;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;

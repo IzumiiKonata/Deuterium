@@ -439,6 +439,15 @@ public class Item {
         return HashMultimap.create();
     }
 
+    public static Item getFromUnlocalizedName(String unlocalizedName) {
+        for (Item item : itemRegistry) {
+            if (item.getUnlocalizedName().equals(unlocalizedName)) {
+                return item;
+            }
+        }
+        return null;
+    }
+
     public static void registerItems() {
         registerItemBlock(Blocks.stone, (new ItemMultiTexture(Blocks.stone, Blocks.stone, new Function<ItemStack, String>() {
             public String apply(ItemStack p_apply_1_) {

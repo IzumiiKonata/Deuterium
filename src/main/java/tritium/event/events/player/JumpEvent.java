@@ -2,6 +2,7 @@ package tritium.event.events.player;
 
 import lombok.*;
 import tritium.event.eventapi.Event;
+import tritium.event.eventapi.EventCancellable;
 
 /**
  * @author IzumiiKonata
@@ -10,7 +11,7 @@ import tritium.event.eventapi.Event;
 @Setter
 @Getter
 @AllArgsConstructor
-public class JumpEvent extends Event {
+public class JumpEvent extends EventCancellable {
 
     private float rotationYaw;
 }

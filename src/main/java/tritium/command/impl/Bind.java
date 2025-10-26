@@ -1,7 +1,7 @@
 package tritium.command.impl;
 
 import net.minecraft.util.EnumChatFormatting;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.command.Command;
 import tritium.management.Localizer;
 import tritium.management.ModuleManager;

@@ -17,6 +17,8 @@ import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
+import today.opai.api.interfaces.render.Font;
+import tritium.event.events.game.GameLoopEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.launch.Launcher;
 import tritium.rendering.StencilClipManager;
@@ -95,8 +97,8 @@ import org.lwjgl.opengl.GL12;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.Sys;
 import org.lwjglx.input.InputEvents;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import org.lwjglx.opengl.OpenGLException;
 import org.lwjglx.opengl.PixelFormat;
@@ -117,8 +119,8 @@ import tritium.rendering.loading.LoadingRenderer;
 import tritium.screens.MainMenu;
 import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.optimization.Deduplicator;
 import tritium.widget.impl.keystrokes.CPSUtils;
@@ -529,6 +531,44 @@ public class Minecraft implements IThreadListener {
             @Override
             public void drawCenteredString(String text, double x, double y, int color) {
                 fontRendererObj.drawCenteredString(text, x + .5, y + 1, color);
+            }
+        };
+
+        FontManager.vanillaWrapper = new Font() {
+            @Override
+            public void close() {
+
+            }
+
+            @Override
+            public float drawString(String text, double x, double y, int color) {
+                return fontRendererObj.drawString(text, x + .5, y + 1, color);
+            }
+
+            @Override
+            public float drawStringWithShadow(String text, double x, double y, int color) {
+                return fontRendererObj.drawStringWithShadow(text, x + .5, y + 1, color);
+            }
+
+            @Override
+            public float drawCenteredString(String text, double x, double y, int color) {
+                fontRendererObj.drawCenteredString(text, x + .5, y + 1, color);
+                return fontRendererObj.getStringWidth(text);
+            }
+
+            @Override
+            public void drawCenteredStringWithShadow(String text, double x, double y, int color) {
+                fontRendererObj.drawStringWithShadow(text, x + .5 - fontRendererObj.getStringWidth(text) * .5, y + 1, color);
+            }
+
+            @Override
+            public int getWidth(String text) {
+                return fontRendererObj.getWidth(text);
+            }
+
+            @Override
+            public int getHeight() {
+                return fontRendererObj.FONT_HEIGHT;
             }
         };
 
@@ -1080,6 +1120,8 @@ public class Minecraft implements IThreadListener {
             lastScaleFactor = gameSettings.guiScale;
         }
 
+        EventManager.call(new GameLoopEvent());
+
         //CLIENT
         Interpolations.calcFrameDelta();
         //END CLIENT
@@ -1109,9 +1151,6 @@ public class Minecraft implements IThreadListener {
 
         this.mcProfiler.endSection();
         long l = System.nanoTime();
-
-        // dummy call for aimassist etc.
-        this.entityRenderer.onMouseEvent(0, 0);
 
         this.mcProfiler.startSection("tick");
 

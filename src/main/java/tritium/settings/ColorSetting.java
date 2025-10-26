@@ -1,5 +1,6 @@
 package tritium.settings;
 
+import tritium.bridge.settings.ColorValueWrapper;
 import tritium.rendering.HSBColor;
 import tritium.utils.i18n.Localizable;
 import tritium.module.Module;
@@ -9,7 +10,7 @@ import tritium.widget.Widget;
 import java.awt.*;
 import java.util.function.Supplier;
 
-public class ColorSetting extends Setting<HSBColor> {
+public class ColorSetting extends Setting<Color> {
 
     private final int chromaCount = 0;
     public BooleanSetting rainbow = new BooleanSetting(this.getInternalName() + " Rainbow", false, this.getShouldRender()) {
@@ -65,6 +66,10 @@ public class ColorSetting extends Setting<HSBColor> {
         }
     };
 
+    @Override
+    protected void createValueWrapper() {
+        this.wrapper = new ColorValueWrapper(this);
+    }
 
     public ColorSetting(String label, HSBColor value) {
         super(label, value);
@@ -83,8 +88,8 @@ public class ColorSetting extends Setting<HSBColor> {
     }
 
     @Override
-    public HSBColor buildDefaultValue(HSBColor value) {
-        return value.clone();
+    public Color buildDefaultValue(Color value) {
+        return ((HSBColor) value).clone();
     }
 
     @Override
@@ -134,16 +139,16 @@ public class ColorSetting extends Setting<HSBColor> {
             double v = (1 - speed / (this.chromaSpeed.getMaximum() + 0.1)) * 6000;
             float hue = (float) ((System.currentTimeMillis() + (count * value)) % (int) v);
             hue /= (int) v;
-            super.getValue().setHue(hue);
+            ((HSBColor) super.getValue()).setHue(hue);
         } else if (this.rainbow.getValue()) {
             float speed = this.rainbowSpeed.getValue().floatValue();
             double v = (1 - speed / (this.rainbowSpeed.getMaximum() + 0.1)) * 6000;
             float hue = System.currentTimeMillis() % (int) v;
             hue /= (int) v;
-            super.getValue().setHue(hue);
+            ((HSBColor) super.getValue()).setHue(hue);
         }
 
-        return super.getValue();
+        return ((HSBColor) super.getValue());
     }
 
     @Override
@@ -158,11 +163,6 @@ public class ColorSetting extends Setting<HSBColor> {
 
     public void draw(float mouseX, float mouseY, double positionX, double positionY) {
 
-    }
-
-    @Override
-    public void setValue(HSBColor value) {
-        super.setValue(value);
     }
 
 }

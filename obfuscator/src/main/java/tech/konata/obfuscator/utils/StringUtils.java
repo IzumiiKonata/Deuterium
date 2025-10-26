@@ -17,6 +17,7 @@
 
 package tech.konata.obfuscator.utils;
 
+import tech.konata.obfuscator.Main;
 import tech.konata.obfuscator.asm.ClassWrapper;
 import tech.konata.obfuscator.asm.MethodWrapper;
 
@@ -109,7 +110,7 @@ public class StringUtils {
     }
 
     public static String randomClassNameFromBase(Collection<String> classNames) {
-        ArrayList<String> list = classNames.stream().filter(cp -> cp.startsWith("catch_me_if_u_can")).collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<String> list = classNames.stream().filter(cp -> cp.startsWith(Main.REPACKAGE_NAME)).collect(Collectors.toCollection(ArrayList::new));
 
         String first = list.get(RandomUtils.getRandomIntNoOrigin(list.size()));
         first = first.substring(first.indexOf("/") + 1);
@@ -120,7 +121,7 @@ public class StringUtils {
         String packageName = "";
 
         for (String string : list) {
-            if (string.startsWith("catch_me_if_u_can")) {
+            if (string.startsWith(Main.REPACKAGE_NAME)) {
                 packageName = string.substring(0, string.indexOf("/") + 1);
             }
         }

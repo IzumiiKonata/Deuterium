@@ -13,8 +13,8 @@ import net.optifine.CustomGuis;
 import net.optifine.EmissiveTextures;
 import net.optifine.RandomEntities;
 import net.optifine.shaders.ShadersTex;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.HashSet;

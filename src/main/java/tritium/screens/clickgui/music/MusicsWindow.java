@@ -1,7 +1,7 @@
 package tritium.screens.clickgui.music;
 
-import tech.konata.ncmplayer.music.dto.Music;
-import tech.konata.ncmplayer.music.dto.PlayList;
+import tritium.ncm.music.dto.Music;
+import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;

@@ -1,13 +1,16 @@
 package net.minecraft.network.play.server;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.BlockPos;
+import today.opai.api.interfaces.game.network.server.SPacket25BlockBreak;
+import today.opai.api.interfaces.game.world.Block;
 
 import java.io.IOException;
 
-public class S25PacketBlockBreakAnim implements Packet<INetHandlerPlayClient> {
+public class S25PacketBlockBreakAnim implements Packet<INetHandlerPlayClient>, SPacket25BlockBreak {
     private int breakerId;
     private BlockPos position;
     private int progress;
@@ -56,5 +59,15 @@ public class S25PacketBlockBreakAnim implements Packet<INetHandlerPlayClient> {
 
     public int getProgress() {
         return this.progress;
+    }
+
+    @Override
+    public Block getBlock() {
+        return Minecraft.getMinecraft().theWorld.getBlockState(this.position).getBlock().getWrapper();
+    }
+
+    @Override
+    public int getEntityId() {
+        return this.breakerId;
     }
 }

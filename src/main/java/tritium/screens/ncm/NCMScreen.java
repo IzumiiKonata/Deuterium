@@ -2,10 +2,10 @@ package tritium.screens.ncm;
 
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
-import tech.konata.commons.ncm.OptionsUtil;
-import tech.konata.ncmplayer.music.CloudMusic;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import tritium.ncm.OptionsUtil;
+import tritium.ncm.music.CloudMusic;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
@@ -106,7 +106,7 @@ public class NCMScreen extends BaseScreen {
             Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), hexColor(1, 1, 1, alpha));
         }));
 
-        int dWheel = Mouse.getDWheel2();
+        int dWheel = Mouse.getDWheel();
 
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 0.9 + (alpha * 0.1));

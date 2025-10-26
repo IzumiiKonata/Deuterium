@@ -1,5 +1,6 @@
 package net.minecraft.entity.player;
 
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
@@ -14,6 +15,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
+import tritium.bridge.game.item.InventoryWrapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,8 +49,12 @@ public class InventoryPlayer implements IInventory {
      */
     public boolean inventoryChanged;
 
+    @Getter
+    private final InventoryWrapper wrapper;
+
     public InventoryPlayer(EntityPlayer playerIn) {
         this.player = playerIn;
+        this.wrapper = new InventoryWrapper(this);
     }
 
     /**

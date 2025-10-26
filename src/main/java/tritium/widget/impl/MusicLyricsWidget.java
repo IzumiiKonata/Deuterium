@@ -2,10 +2,10 @@ package tritium.widget.impl;
 
 import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.GlStateManager;
-import tech.konata.ncmplayer.music.CloudMusic;
-import tech.konata.ncmplayer.music.dto.Music;
-import tech.konata.ncmplayer.music.lyric.LyricLine;
-import tech.konata.ncmplayer.music.lyric.LyricParser;
+import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.dto.Music;
+import tritium.ncm.music.lyric.LyricLine;
+import tritium.ncm.music.lyric.LyricParser;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.StencilClipManager;

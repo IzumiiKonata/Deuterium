@@ -2,10 +2,8 @@ package tritium.widget.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
-import org.lwjglx.opengl.GLSync;
-import processing.sound.JSynFFT;
-import tech.konata.ncmplayer.music.AudioPlayer;
-import tech.konata.ncmplayer.music.CloudMusic;
+import tritium.ncm.music.AudioPlayer;
+import tritium.ncm.music.CloudMusic;
 import tritium.management.WidgetsManager;
 import tritium.rendering.HSBColor;
 import tritium.rendering.animation.Interpolations;
@@ -49,7 +47,7 @@ public class MusicSpectrumWidget extends Widget {
     public final ColorSetting rectColor = new ColorSetting("Rect Color", new HSBColor(125, 125, 125, 200));
 
     public final NumberSetting<Double> multiplier = new NumberSetting<>("Multiplier", 1.0, 0.1, 3.0, 0.1);
-    public final BooleanSetting absVol = new BooleanSetting("Absolute Volume", false);
+    public final BooleanSetting absVol = new BooleanSetting("Absolute Volume", true);
     public final BooleanSetting stereo = new BooleanSetting("Waveform Stereo", false);
 
     public final NumberSetting<Float> windowTime = new NumberSetting<Float>("Window Time (ms)", 16.0f, 4.0f, 256.0f, 0.1f) {

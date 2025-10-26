@@ -3,10 +3,11 @@ package net.minecraft.network.play.server;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
+import today.opai.api.interfaces.game.network.server.SPacket3ATabComplete;
 
 import java.io.IOException;
 
-public class S3APacketTabComplete implements Packet<INetHandlerPlayClient> {
+public class S3APacketTabComplete implements Packet<INetHandlerPlayClient>, SPacket3ATabComplete {
     private String[] matches;
 
     public S3APacketTabComplete() {
@@ -47,5 +48,15 @@ public class S3APacketTabComplete implements Packet<INetHandlerPlayClient> {
 
     public String[] func_149630_c() {
         return this.matches;
+    }
+
+    @Override
+    public String[] getText() {
+        return this.matches;
+    }
+
+    @Override
+    public void setText(String[] text) {
+        this.matches = text;
     }
 }

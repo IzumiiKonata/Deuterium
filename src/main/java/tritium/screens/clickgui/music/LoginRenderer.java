@@ -6,9 +6,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
-import tech.konata.commons.ncm.OptionsUtil;
-import tech.konata.ncmplayer.music.CloudMusic;
-import tech.konata.ncmplayer.music.QRCodeGenerator;
+import tritium.ncm.OptionsUtil;
+import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.QRCodeGenerator;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
@@ -17,8 +17,6 @@ import tritium.rendering.entities.impl.Image;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.i18n.Localizable;
-
-import java.awt.*;
 
 /**
  * @author IzumiiKonata

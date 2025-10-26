@@ -1,7 +1,7 @@
 package tritium.screens;
 
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.input.FileDroppedEvent;
 import tritium.management.EventManager;
@@ -67,7 +67,7 @@ public class MoveWidgetsScreen extends BaseScreen {
 
     @Override
     public void drawScreen(double mouseX, double mouseY) {
-        int dWheel = Mouse.getDWheel2();
+        int dWheel = Mouse.getDWheel();
 
         hoveredWidget = null;
 

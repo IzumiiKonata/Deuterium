@@ -1,9 +1,11 @@
 package net.minecraft.potion;
 
+import lombok.Getter;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.nbt.NBTTagCompound;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import tritium.bridge.game.data.PotionEffectWrapper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class PotionEffect {
     private static final Logger LOGGER = LogManager.getLogger("PotionEffect");
@@ -52,6 +54,9 @@ public class PotionEffect {
         this(id, effectDuration, effectAmplifier, false, true);
     }
 
+    @Getter
+    private final PotionEffectWrapper wrapper;
+
     public PotionEffect(int id, int effectDuration, int effectAmplifier, boolean ambient, boolean showParticles) {
         this.potionID = id;
         this.duration = effectDuration;
@@ -59,6 +64,7 @@ public class PotionEffect {
         this.amplifier = effectAmplifier;
         this.isAmbient = ambient;
         this.showParticles = showParticles;
+        this.wrapper = new PotionEffectWrapper(this);
     }
 
     public PotionEffect(PotionEffect other) {
@@ -68,6 +74,7 @@ public class PotionEffect {
         this.amplifier = other.amplifier;
         this.isAmbient = other.isAmbient;
         this.showParticles = other.showParticles;
+        this.wrapper = new PotionEffectWrapper(this);
     }
 
     /**

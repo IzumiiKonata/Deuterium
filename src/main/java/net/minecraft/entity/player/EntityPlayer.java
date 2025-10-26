@@ -42,6 +42,7 @@ import net.minecraft.stats.StatBase;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
+import tritium.bridge.entity.PlayerWrapper;
 import tritium.management.ModuleManager;
 import tritium.rendering.waveycapes.simulation.StickSimulation;
 
@@ -176,6 +177,11 @@ public abstract class EntityPlayer extends EntityLivingBase {
         this.setLocationAndAngles((double) blockpos.getX() + 0.5D, blockpos.getY() + 1, (double) blockpos.getZ() + 0.5D, 0.0F, 0.0F);
         this.unused180 = 180.0F;
         this.fireResistance = 20;
+    }
+
+    @Override
+    protected void createWrapper() {
+        this.wrapper = new PlayerWrapper<>(this);
     }
 
     protected void applyEntityAttributes() {

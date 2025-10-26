@@ -4,16 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
-import tech.konata.commons.ncm.math.DigestUtils;
+import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
+import tritium.ncm.math.DigestUtils;
 import tech.konata.obfuscator.exclusions.Exclusion;
 import tech.konata.obfuscator.exclusions.ExclusionManager;
-import tech.konata.obfuscator.transformers.obfuscators.ParameterHider;
 import tech.konata.obfuscator.transformers.obfuscators.flow.AggressiveBlockSplitter;
-import tech.konata.obfuscator.transformers.obfuscators.flow.BlockSplitter;
 import tech.konata.obfuscator.transformers.obfuscators.miscellaneous.*;
 import tech.konata.obfuscator.utils.IOUtils;
 import tech.konata.utils.ObfDictGen;
-import tech.konata.utils.logging.ConsoleColors;
 import tritium.Tritium;
 import tritium.utils.other.info.Version;
 
@@ -31,6 +29,7 @@ import java.util.zip.ZipOutputStream;
 public class Main {
 
     public static final String PROPAGANDA_GARBAGE = "BiliBili @ IzumiKonata";
+    public static final String REPACKAGE_NAME = "MatrixShield";
 
     public Main() {
 
@@ -114,7 +113,7 @@ public class Main {
             s = s.replace("(injar)", input.getName());
             s = s.replace("(outjar)", proguardObfuscated.getName());
             s = s.replace("(libraries)", depsString);
-            s = s.replace("(repackage)", "catch_me_if_u_can");
+            s = s.replace("(repackage)", Main.REPACKAGE_NAME);
             s = s.replace("(keepattributes)", "");
             s = s.replace("(mapping)", mappings.getName());
             s = s.replace("(shrinked)", shrinked.getName());
@@ -141,6 +140,8 @@ public class Main {
 
         ExclusionManager ex = new ExclusionManager();
         ex.addExclusion(new Exclusion("ingameime.*"));
+        ex.addExclusion(new Exclusion("org.lwjgl.*"));
+        ex.addExclusion(new Exclusion("today.opai.api.*"));
         radonCfg.setExclusions(ex);
 
         radonCfg.setDictionaryType(Dictionaries.ALPHANUMERIC);
@@ -151,8 +152,8 @@ public class Main {
             new ArrayList<>(
                 Arrays.asList(
 //                        new ParameterHider(),
-                        new CodeHider(),
-                        new AggressiveBlockSplitter(),
+//                        new CodeHider(),
+//                        new AggressiveBlockSplitter(),
                         new ClassFolder(),
                         new CRCFucker(),
                         new TimeManipulator(),

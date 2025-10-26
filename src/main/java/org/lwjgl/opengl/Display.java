@@ -1,0 +1,746 @@
+package org.lwjgl.opengl;
+
+import org.lwjgl.glfw.*;
+import org.lwjgl.system.Configuration;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.system.Platform;
+import org.lwjglx.Sys;
+import org.lwjglx.input.InputEvents;
+import org.lwjglx.input.KeyCodes;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import org.lwjglx.opengl.ContextAttribs;
+import org.lwjglx.opengl.DisplayMode;
+import org.lwjglx.opengl.PixelFormat;
+
+import java.awt.*;
+import java.nio.ByteBuffer;
+import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.system.MemoryUtil.NULL;
+
+public class Display {
+
+    private static String windowTitle = "Game";
+
+    private static boolean displayCreated = false;
+    private static boolean displayFocused = false;
+    private static boolean displayVisible = true;
+    private static boolean displayDirty = false;
+    private static boolean displayResizable = false;
+    private static boolean startFullscreen = false;
+
+    private static org.lwjglx.opengl.DisplayMode mode = new org.lwjglx.opengl.DisplayMode(1600, 900);
+    private static org.lwjglx.opengl.DisplayMode desktopDisplayMode = new org.lwjglx.opengl.DisplayMode(854, 480);
+
+    private static final int latestEventKey = 0;
+
+    private static int displayX = 0;
+    private static int displayY = 0;
+
+    private static boolean displayResized = false;
+    private static int displayWidth = 0;
+    private static int displayHeight = 0;
+    private static int displayFramebufferWidth = 0;
+    private static int displayFramebufferHeight = 0;
+
+    private static boolean latestResized = false;
+    private static int latestWidth = 0;
+    private static int latestHeight = 0;
+    private static boolean cancelNextChar = false;
+    private static Keyboard.KeyEvent ingredientKeyEvent;
+    private static ByteBuffer[] savedIcons;
+    private static boolean lastAltIsRightAlt = false;
+
+    static {
+        Sys.initialize(); // init using dummy sys method
+
+        long monitor = glfwGetPrimaryMonitor();
+        GLFWVidMode vidmode = glfwGetVideoMode(monitor);
+
+        int monitorWidth = vidmode.width();
+        int monitorHeight = vidmode.height();
+        int monitorBitPerPixel = vidmode.redBits() + vidmode.greenBits() + vidmode.blueBits();
+        int monitorRefreshRate = vidmode.refreshRate();
+
+        desktopDisplayMode = new org.lwjglx.opengl.DisplayMode(monitorWidth, monitorHeight, monitorBitPerPixel, monitorRefreshRate);
+    }
+
+    /**
+     * Create the OpenGL context with the given minimum parameters. If isFullscreen() is true or if windowed context are
+     * not supported on the platform, the display mode will be switched to the mode returned by getDisplayMode(), and a
+     * fullscreen context will be created. If isFullscreen() is false, a windowed context will be created with the
+     * dimensions given in the mode returned by getDisplayMode(). If a context can't be created with the given
+     * parameters, a LWJGLException will be thrown.
+     * <p/>
+     * <p>
+     * The window created will be set up in orthographic 2D projection, with 1:1 pixel ratio with GL coordinates.
+     *
+     * @param pixel_format    Describes the minimum specifications the context must fulfill.
+     * @param shared_drawable The Drawable to share context with. (optional, may be null)
+     * @throws org.lwjglx.LWJGLException
+     */
+    public static void create(PixelFormat pixel_format, Drawable shared_drawable) {
+//        System.out.println("TODO: Implement Display.create(PixelFormat, Drawable)"); // TODO
+        create();
+    }
+
+    public static void create(PixelFormat pixel_format, ContextAttribs attribs) {
+//        System.out.println("TODO: Implement Display.create(PixelFormat, ContextAttribs)"); // TODO
+        create();
+    }
+
+    public static void create(PixelFormat pixel_format) {
+//        System.out.println("TODO: Implement Display.create(PixelFormat)"); // TODO
+        create();
+    }
+
+    public static void create() {
+        if (displayCreated) {
+            return;
+        }
+
+        Configuration.DEBUG.set(true);
+
+        long monitor = glfwGetPrimaryMonitor();
+        GLFWVidMode vidmode = glfwGetVideoMode(monitor);
+
+        int monitorWidth = vidmode.width();
+        int monitorHeight = vidmode.height();
+        int monitorBitPerPixel = vidmode.redBits() + vidmode.greenBits() + vidmode.blueBits();
+        int monitorRefreshRate = vidmode.refreshRate();
+
+        desktopDisplayMode = new org.lwjglx.opengl.DisplayMode(monitorWidth, monitorHeight, monitorBitPerPixel, monitorRefreshRate);
+
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+
+        glfwWindowHint(GLFW_MAXIMIZED, GLFW_FALSE);
+        glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
+        displayFocused = true;
+        glfwWindowHint(GLFW_ICONIFIED, GLFW_FALSE);
+        displayVisible = true;
+        glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+
+        glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
+        glfwWindowHint(GLFW_CONTEXT_NO_ERROR, GLFW_FALSE);
+        glfwWindowHint(
+                GLFW_OPENGL_DEBUG_CONTEXT,
+                GLFW_FALSE);
+
+        glfwWindowHintString(GLFW_X11_CLASS_NAME, "minecraft");
+        glfwWindowHintString(GLFW_COCOA_FRAME_NAME, "minecraft");
+
+        glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE); // request a non-hidpi framebuffer on Retina displays
+        // on MacOS
+
+        glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, GLFW_FALSE);
+
+        Window.handle = glfwCreateWindow(mode.getWidth(), mode.getHeight(), windowTitle, NULL, NULL);
+        if (Window.handle == 0L) {
+            throw new IllegalStateException("Failed to create Display window");
+        }
+
+        glfwMakeContextCurrent(Window.handle);
+        drawable = new DrawableGL();
+        GL.createCapabilities(false);
+
+        GL11.glClearColor(0, 0, 0, 1);
+        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        update();
+
+        Window.keyCallback = new GLFWKeyCallback() {
+
+            public InputEvents.KeyAction parse(int action) {
+                switch (action) {
+                    case GLFW_PRESS:
+                        return InputEvents.KeyAction.PRESSED;
+                    case GLFW_RELEASE:
+                        return InputEvents.KeyAction.RELEASED;
+                    case GLFW_REPEAT:
+                        return InputEvents.KeyAction.REPEATED;
+                    default:
+                        return InputEvents.KeyAction.PRESSED;
+                }
+            }
+
+            @Override
+            public void invoke(long window, int key, int scancode, int action, int mods) {
+                final InputEvents.KeyAction enumAction = parse(action);
+                InputEvents.injectKeyEvent(
+                        new InputEvents.KeyEvent(
+                                KeyCodes.glfwToLwjgl(key),
+                                key,
+                                scancode,
+                                enumAction,
+                                (mods & GLFW_MOD_CONTROL) != 0,
+                                (mods & GLFW_MOD_SHIFT) != 0,
+                                (mods & GLFW_MOD_ALT) != 0,
+                                (mods & GLFW_MOD_SUPER) != 0));
+                cancelNextChar = false;
+                if (action == GLFW_PRESS) {
+                    if (key == GLFW_KEY_LEFT_ALT) {
+                        lastAltIsRightAlt = false;
+                    } else if (key == GLFW_KEY_RIGHT_ALT) {
+                        lastAltIsRightAlt = true;
+                    }
+                }
+                if (key > GLFW_KEY_SPACE && key <= GLFW_KEY_GRAVE_ACCENT) { // Handle keys have a char. Exclude space to
+                    // avoid extra input when switching IME
+
+                    /*
+                     * AltGr and LAlt require special consideration.
+                     * On Windows, AltGr and Ctrl+Alt send the same `mods` value of ALT|CTRL in this event.
+                     * This means that to distinguish potential text input from special key combos we have to look at
+                     * the last pressed Alt key side.
+                     * Ctrl combos have to send a (key & 0x1f) ASCII Escape code to work correctly with a lot of older
+                     * mods, but this obviously breaks text input.
+                     * Therefore, we assume text input with AltGr, and control combination input with Left Alt, but both
+                     * can be switched in the config if the player desires.
+                     */
+                    final boolean isAlt = (GLFW_MOD_ALT & mods) != 0;
+                    final boolean isAltGr = lastAltIsRightAlt;
+                    final boolean ctrlGraphicalMode;
+                    if (isAlt) {
+                        // is left alt
+                        ctrlGraphicalMode = isAltGr;
+                        if (ctrlGraphicalMode) {
+                            Keyboard.addGlfwKeyEvent(window, key, scancode, action, mods, (char) (key & 0x1f));
+                        }
+                    } else {
+                        ctrlGraphicalMode = false;
+                    }
+
+                    if ((GLFW_MOD_SUPER & mods) != 0) {
+                        Keyboard.addGlfwKeyEvent(window, key, scancode, action, mods, (char) key);
+                        if (Platform.get() != Platform.MACOSX) {
+                            // MacOS doesn't send a char event for Cmd+KEY presses, but other platforms do.
+                            cancelNextChar = true;
+                        }
+                    } else if ((GLFW_MOD_CONTROL & mods) != 0 && !ctrlGraphicalMode) { // Handle ctrl + x/c/v.
+                        Keyboard.addGlfwKeyEvent(window, key, scancode, action, mods, (char) (key & 0x1f));
+                        cancelNextChar = true; // Cancel char event from ctrl key since its already handled here
+                    } else if (action > 0) { // Delay press and repeat key event to actual char input. There is ALWAYS a
+                        // char after them
+                        ingredientKeyEvent = new Keyboard.KeyEvent(
+                                KeyCodes.glfwToLwjgl(key),
+                                '\0',
+                                action > 1 ? Keyboard.KeyState.REPEAT : Keyboard.KeyState.PRESS,
+                                Sys.getNanoTime());
+                    } else { // Release event
+                        if (ingredientKeyEvent != null && ingredientKeyEvent.key == KeyCodes.glfwToLwjgl(key)) {
+                            ingredientKeyEvent.queueOutOfOrderRelease = true;
+                        }
+                        Keyboard.addGlfwKeyEvent(window, key, scancode, action, mods, '\0');
+                    }
+                } else { // Other key with no char event associated
+                    char mappedChar = mapChar(key);
+                    Keyboard.addGlfwKeyEvent(window, key, scancode, action, mods, mappedChar);
+                }
+            }
+
+            public char mapChar(int key) {
+                switch (key) {
+                    case GLFW_KEY_ENTER:
+                        return 0x0D;
+                    case GLFW_KEY_ESCAPE:
+                        return 0x1B;
+                    case GLFW_KEY_TAB:
+                        return 0x09;
+                    case GLFW_KEY_BACKSPACE:
+                        return 0x08;
+                    default:
+                        return '\0';
+                }
+            }
+        };
+
+        Window.charCallback = new GLFWCharCallback() {
+
+            @Override
+            public void invoke(long window, int codepoint) {
+                if (cancelNextChar) { // Char event being cancelled
+                    cancelNextChar = false;
+                } else if (ingredientKeyEvent != null) {
+                    ingredientKeyEvent.aChar = (char) codepoint; // Send char with ASCII key event here
+                    Keyboard.addRawKeyEvent(ingredientKeyEvent);
+                    if (ingredientKeyEvent.queueOutOfOrderRelease) {
+                        ingredientKeyEvent = ingredientKeyEvent.copy();
+                        ingredientKeyEvent.state = Keyboard.KeyState.RELEASE;
+                        Keyboard.addRawKeyEvent(ingredientKeyEvent);
+                    }
+                    ingredientKeyEvent = null;
+                } else {
+                    Keyboard.addCharEvent(0, (char) codepoint); // Non-ASCII chars
+                }
+            }
+        };
+
+        Window.cursorPosCallback = new GLFWCursorPosCallback() {
+
+            @Override
+            public void invoke(long window, double xpos, double ypos) {
+                Mouse.addMoveEvent(xpos, ypos);
+            }
+        };
+
+        Window.mouseButtonCallback = new GLFWMouseButtonCallback() {
+
+            @Override
+            public void invoke(long window, int button, int action, int mods) {
+                Mouse.addButtonEvent(button, action == GLFW.GLFW_PRESS);
+            }
+        };
+
+        Window.scrollCallback = new GLFWScrollCallback() {
+
+            @Override
+            public void invoke(long window, double xoffset, double yoffset) {
+                Mouse.addWheelEvent(yoffset == 0 ? (xoffset) : yoffset);
+            }
+        };
+
+        Window.windowFocusCallback = new GLFWWindowFocusCallback() {
+
+            @Override
+            public void invoke(long window, boolean focused) {
+                displayFocused = focused;
+            }
+        };
+
+        Window.windowIconifyCallback = new GLFWWindowIconifyCallback() {
+
+            @Override
+            public void invoke(long window, boolean iconified) {
+                displayVisible = !iconified;
+            }
+        };
+
+        Window.windowSizeCallback = new GLFWWindowSizeCallback() {
+
+            @Override
+            public void invoke(long window, int width, int height) {
+                latestResized = true;
+                latestWidth = width;
+                latestHeight = height;
+            }
+        };
+
+        Window.windowPosCallback = new GLFWWindowPosCallback() {
+
+            @Override
+            public void invoke(long window, int xpos, int ypos) {
+                displayX = xpos;
+                displayY = ypos;
+            }
+        };
+
+        Window.windowRefreshCallback = new GLFWWindowRefreshCallback() {
+
+            @Override
+            public void invoke(long window) {
+                displayDirty = true;
+            }
+        };
+
+        Window.framebufferSizeCallback = new GLFWFramebufferSizeCallback() {
+
+            @Override
+            public void invoke(long window, int width, int height) {
+                displayFramebufferWidth = width;
+                displayFramebufferHeight = height;
+            }
+        };
+
+        Window.setCallbacks();
+
+        displayWidth = mode.getWidth();
+        displayHeight = mode.getHeight();
+
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer fbw = stack.mallocInt(1);
+            IntBuffer fbh = stack.mallocInt(1);
+            GLFW.glfwGetFramebufferSize(Window.handle, fbw, fbh);
+            displayFramebufferWidth = fbw.get(0);
+            displayFramebufferHeight = fbh.get(0);
+        }
+
+        displayX = (monitorWidth - mode.getWidth()) / 2;
+        displayY = (monitorHeight - mode.getHeight()) / 2;
+
+        glfwSetWindowPos(Window.handle, displayX, displayY);
+
+        if (savedIcons != null) {
+            setIcon(savedIcons);
+            savedIcons = null;
+        }
+
+        glfwSwapInterval(1);
+
+        displayCreated = true;
+
+        if (startFullscreen) {
+            setFullscreen(true);
+        }
+
+        int[] x = new int[1], y = new int[1];
+        GLFW.glfwGetWindowSize(Window.handle, x, y);
+        Window.windowSizeCallback.invoke(Window.handle, x[0], y[0]);
+        GLFW.glfwGetFramebufferSize(Window.handle, x, y);
+        Window.framebufferSizeCallback.invoke(Window.handle, x[0], y[0]);
+
+    }
+
+    public static boolean isCreated() {
+        return displayCreated;
+    }
+
+    public static boolean isActive() {
+        return displayFocused;
+    }
+
+    public static boolean isVisible() {
+        return displayVisible;
+    }
+
+    public static void setLocation(int new_x, int new_y) {
+        System.out.println("TODO: Implement Display.setLocation(int, int)");
+    }
+
+    public static void setVSyncEnabled(boolean sync) {
+        glfwSwapInterval(sync ? 1 : 0);
+    }
+
+    public static long getWindow() {
+        return Window.handle;
+    }
+
+    public static void update() {
+        update(true);
+    }
+
+    public static void update(boolean processMessages) {
+        swapBuffers();
+        displayDirty = false;
+
+        if (processMessages) processMessages();
+    }
+
+    public static void processMessages() {
+
+        glfwPollEvents();
+        Keyboard.poll();
+        Mouse.poll();
+
+        if (latestResized) {
+            latestResized = false;
+            displayResized = true;
+            displayWidth = latestWidth;
+            displayHeight = latestHeight;
+        } else {
+            displayResized = false;
+        }
+
+    }
+
+    public static void swapBuffers() {
+        glfwSwapBuffers(Window.handle);
+    }
+
+    public static void destroy() {
+        Window.releaseCallbacks();
+        glfwMakeContextCurrent(0L);
+        glfwDestroyWindow(Window.handle);
+
+//        try { glfwTerminate(); if (!glfwInit()) throw new RuntimeException("GLFWInit"); } catch (Throwable t) { t.printStackTrace(); }
+        displayCreated = false;
+        recreated = true;
+    }
+
+    public static boolean recreated = false;
+
+    public static void setDisplayMode(org.lwjglx.opengl.DisplayMode dm) {
+        mode = dm;
+    }
+
+    public static org.lwjglx.opengl.DisplayMode getDisplayMode() {
+        return mode;
+    }
+
+    public static org.lwjglx.opengl.DisplayMode[] getAvailableDisplayModes() {
+//        IntBuffer count = BufferUtils.createIntBuffer(1);
+        GLFWVidMode.Buffer modes = GLFW.glfwGetVideoModes(glfwGetPrimaryMonitor());
+
+        List<org.lwjglx.opengl.DisplayMode> result = new ArrayList<>();
+
+        for (int i = 0; i < modes.capacity(); i++) {
+            modes.position(i);
+
+            int w = modes.width();
+            int h = modes.height();
+            int b = modes.redBits() + modes.greenBits() + modes.blueBits();
+            int r = modes.refreshRate();
+
+            result.add(new org.lwjglx.opengl.DisplayMode(w, h, b, r));
+        }
+
+        return result.toArray(new org.lwjglx.opengl.DisplayMode[0]);
+    }
+
+    public static org.lwjglx.opengl.DisplayMode getDesktopDisplayMode() {
+        return desktopDisplayMode;
+    }
+
+    public static boolean wasResized() {
+        return displayResized;
+    }
+
+    public static int getX() {
+        return displayX;
+    }
+
+    public static int getY() {
+        return displayY;
+    }
+
+    public static int getWidth() {
+        return displayWidth;
+    }
+
+    public static int getHeight() {
+        return displayHeight;
+    }
+
+    public static int getFramebufferWidth() {
+        return displayFramebufferWidth;
+    }
+
+    public static int getFramebufferHeight() {
+        return displayFramebufferHeight;
+    }
+
+    public static void setTitle(String title) {
+        windowTitle = title;
+        if (isCreated()) {
+            glfwSetWindowTitle(getWindow(), title);
+        }
+    }
+
+    public static boolean isCloseRequested() {
+        final boolean saved = glfwWindowShouldClose(Window.handle);
+        glfwSetWindowShouldClose(Window.handle, false);
+        return saved;
+    }
+
+    public static boolean isDirty() {
+        return displayDirty;
+    }
+
+    public static void setInitialBackground(float red, float green, float blue) {
+        // no-op
+    }
+
+    public static int setIcon(ByteBuffer[] icons) {
+        if (getWindow() == 0) {
+            savedIcons = icons;
+            return 0;
+        }
+        GLFWImage.Buffer glfwImages = GLFWImage.calloc(icons.length);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            ByteBuffer[] nativeBuffers = new ByteBuffer[icons.length];
+            for (int icon = 0; icon < icons.length; icon++) {
+                nativeBuffers[icon] = stack.malloc(icons[icon].capacity());
+                nativeBuffers[icon].put(icons[icon]);
+                nativeBuffers[icon].flip();
+                int dimension = (int) Math.sqrt(nativeBuffers[icon].limit() / 4D);
+                if (dimension * dimension * 4 != nativeBuffers[icon].limit()) {
+                    throw new IllegalStateException();
+                }
+                glfwImages.put(
+                        icon,
+                        GLFWImage.create()
+                                .set(dimension, dimension, nativeBuffers[icon]));
+            }
+            GLFW.glfwSetWindowIcon(getWindow(), glfwImages);
+        }
+
+        glfwImages.free();
+        return 0;
+    }
+
+    public static void setResizable(boolean resizable) {
+        displayResizable = resizable;
+        // Ignore the request because why would you make the game window non-resizable
+    }
+
+    public static boolean isResizable() {
+        return displayResizable;
+    }
+
+    public static void setDisplayModeAndFullscreen(DisplayMode mode) {
+        // TODO
+        System.out.println("TODO: Implement Display.setDisplayModeAndFullscreen(DisplayMode)");
+    }
+
+    private static final int[] savedX = new int[1];
+    private static final int[] savedY = new int[1];
+    private static final int[] savedW = new int[1];
+    private static final int[] savedH = new int[1];
+
+    public static void setFullscreen(boolean fullscreen) {
+        final long window = getWindow();
+        if (window == 0) {
+            startFullscreen = fullscreen;
+            return;
+        }
+        final boolean currentState = isFullscreen();
+        if (currentState == fullscreen) {
+            return;
+        }
+        if (fullscreen) {
+            glfwGetWindowPos(window, savedX, savedY);
+            glfwGetWindowSize(window, savedW, savedH);
+            long monitorId = glfwGetPrimaryMonitor();
+            final GLFWVidMode vidMode = glfwGetVideoMode(monitorId);
+            glfwSetWindowMonitor(window, monitorId, 0, 0, getDisplayMode().getWidth(), getDisplayMode().getHeight(), getDisplayMode().getFrequency());
+        } else {
+            glfwSetWindowMonitor(window, NULL, savedX[0], savedY[0], savedW[0], savedH[0], 0);
+        }
+    }
+
+    public static boolean isFullscreen() {
+        if (getWindow() != 0) {
+            return glfwGetWindowMonitor(getWindow()) != NULL;
+        }
+        return false;
+    }
+
+    public static void setParent(Canvas parent) {
+        // Do nothing as set parent not supported
+    }
+
+    public static void releaseContext() {
+        glfwMakeContextCurrent(0);
+    }
+
+    public static boolean isCurrent() {
+        return true;
+    }
+
+    public static void makeCurrent() {
+        glfwMakeContextCurrent(Window.handle);
+    }
+
+    public static String getAdapter() {
+        if (isCreated()) {
+            return GL11.glGetString(GL11.GL_VENDOR);
+        }
+        return "Unknown";
+    }
+
+    public static String getVersion() {
+        if (isCreated()) {
+            return GL11.glGetString(GL11.GL_VERSION);
+        }
+        return "Unknown";
+    }
+
+    public static String getTitle() {
+        return windowTitle;
+    }
+
+    public static Canvas getParent() {
+        return null;
+    }
+
+    public static float getPixelScaleFactor() {
+        if (!isCreated()) {
+            return 1.0f;
+        }
+        float[] xScale = new float[1];
+        float[] yScale = new float[1];
+        glfwGetWindowContentScale(getWindow(), xScale, yScale);
+        return Math.max(xScale[0], yScale[0]);
+    }
+
+    public static void setSwapInterval(int value) {
+        glfwSwapInterval(value);
+    }
+
+    public static void setDisplayConfiguration(float gamma, float brightness, float contrast) {
+        // ignore
+    }
+
+    /**
+     * An accurate sync method that will attempt to run at a constant frame rate. It should be called once every frame.
+     *
+     * @param fps - the desired frame rate, in frames per second
+     */
+    public static void sync(int fps) {
+        Sync.sync(fps);
+    }
+
+    protected static DrawableGL drawable = null;
+
+    public static Drawable getDrawable() {
+        return drawable;
+    }
+
+    static DisplayImplementation getImplementation() {
+        return null;
+    }
+
+    private static class Window {
+
+        static long handle;
+
+        static GLFWKeyCallback keyCallback;
+        static GLFWCharCallback charCallback;
+        static GLFWCursorPosCallback cursorPosCallback;
+        static GLFWMouseButtonCallback mouseButtonCallback;
+        static GLFWScrollCallback scrollCallback;
+        static GLFWWindowFocusCallback windowFocusCallback;
+        static GLFWWindowIconifyCallback windowIconifyCallback;
+        static GLFWWindowSizeCallback windowSizeCallback;
+        static GLFWWindowPosCallback windowPosCallback;
+        static GLFWWindowRefreshCallback windowRefreshCallback;
+        static GLFWFramebufferSizeCallback framebufferSizeCallback;
+
+        public static void setCallbacks() {
+            GLFW.glfwSetKeyCallback(handle, keyCallback);
+            GLFW.glfwSetCharCallback(handle, charCallback);
+            GLFW.glfwSetCursorPosCallback(handle, cursorPosCallback);
+            GLFW.glfwSetMouseButtonCallback(handle, mouseButtonCallback);
+            GLFW.glfwSetScrollCallback(handle, scrollCallback);
+            GLFW.glfwSetWindowFocusCallback(handle, windowFocusCallback);
+            GLFW.glfwSetWindowIconifyCallback(handle, windowIconifyCallback);
+            GLFW.glfwSetWindowSizeCallback(handle, windowSizeCallback);
+            GLFW.glfwSetWindowPosCallback(handle, windowPosCallback);
+            GLFW.glfwSetWindowRefreshCallback(handle, windowRefreshCallback);
+            GLFW.glfwSetFramebufferSizeCallback(handle, framebufferSizeCallback);
+
+        }
+
+        public static void releaseCallbacks() {
+            keyCallback.free();
+            charCallback.free();
+            cursorPosCallback.free();
+            mouseButtonCallback.free();
+            scrollCallback.free();
+            windowFocusCallback.free();
+            windowIconifyCallback.free();
+            windowSizeCallback.free();
+            windowPosCallback.free();
+            windowRefreshCallback.free();
+            framebufferSizeCallback.free();
+        }
+    }
+}

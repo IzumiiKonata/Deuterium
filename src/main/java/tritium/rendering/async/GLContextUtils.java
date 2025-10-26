@@ -2,7 +2,7 @@ package tritium.rendering.async;
 
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.system.MemoryUtil;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 
 import static org.lwjgl.glfw.GLFW.*;
 

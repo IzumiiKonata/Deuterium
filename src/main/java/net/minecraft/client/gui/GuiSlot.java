@@ -6,8 +6,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 

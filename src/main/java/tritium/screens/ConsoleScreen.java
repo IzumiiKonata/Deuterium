@@ -1,8 +1,8 @@
 package tritium.screens;
 
 import lombok.Getter;
-import org.lwjglx.input.Keyboard;
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import tritium.management.FontManager;
 import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.font.CFontRenderer;
@@ -63,7 +63,7 @@ public class ConsoleScreen extends BaseScreen {
         width -= subSpacing * 2;
         height -= subSpacing * 2;
 
-        int dWheel2 = Mouse.getDWheel2();
+        int dWheel2 = Mouse.getDWheel();
 
         int step = 4;
 

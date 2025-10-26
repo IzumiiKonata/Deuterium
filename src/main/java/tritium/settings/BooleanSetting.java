@@ -1,5 +1,7 @@
 package tritium.settings;
 
+import tritium.bridge.settings.BooleanValueWrapper;
+
 import java.util.function.Supplier;
 
 public class BooleanSetting extends Setting<Boolean>  {
@@ -10,6 +12,11 @@ public class BooleanSetting extends Setting<Boolean>  {
 
     public BooleanSetting(String name, boolean enabled, Supplier<Boolean> show) {
         super(name, enabled, show);
+    }
+
+    @Override
+    protected void createValueWrapper() {
+        this.wrapper = new BooleanValueWrapper(this);
     }
 
     @Override

@@ -20,6 +20,8 @@ import net.minecraft.world.World;
 import net.optifine.entity.model.IEntityRenderer;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
+import tritium.event.events.rendering.RenderNameTagEvent;
+import tritium.management.EventManager;
 import tritium.module.impl.render.Perspective;
 import tritium.widget.impl.PaperDoll;
 
@@ -58,6 +60,11 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
 
     protected void renderName(T entity, double x, double y, double z) {
         if (this.canRenderName(entity)) {
+            RenderNameTagEvent event = EventManager.call(new RenderNameTagEvent());
+
+            if (event.isCancelled())
+                return;
+
             this.renderLivingLabel(entity, entity.getDisplayName().getFormattedText(), x, y, z, 64);
         }
     }

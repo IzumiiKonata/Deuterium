@@ -3,6 +3,7 @@ package net.minecraft.item;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentDurability;
@@ -21,6 +22,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import tritium.bridge.game.item.ItemStackWrapper;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -77,6 +79,9 @@ public final class ItemStack {
         this(itemIn, amount, 0);
     }
 
+    @Getter
+    private final ItemStackWrapper wrapper;
+
     public ItemStack(Item itemIn, int amount, int meta) {
         this.canDestroyCacheBlock = null;
         this.canDestroyCacheResult = false;
@@ -89,6 +94,8 @@ public final class ItemStack {
         if (this.itemDamage < 0) {
             this.itemDamage = 0;
         }
+
+        this.wrapper = new ItemStackWrapper(this);
     }
 
     public static ItemStack loadItemStackFromNBT(NBTTagCompound nbt) {
@@ -102,6 +109,8 @@ public final class ItemStack {
         this.canDestroyCacheResult = false;
         this.canPlaceOnCacheBlock = null;
         this.canPlaceOnCacheResult = false;
+
+        this.wrapper = new ItemStackWrapper(this);
     }
 
     /**
@@ -909,6 +918,11 @@ public final class ItemStack {
 
     public List<String> getLore() {
         return ItemStack.this.getTooltip(null, true);
+    }
+
+    public static ItemStack fromOpai(today.opai.api.interfaces.game.item.ItemStack stack) {
+        Item item = Item.getFromUnlocalizedName(stack.getName());
+        return new ItemStack(item, stack.getStackSize(), stack.getMetadata());
     }
 
 }

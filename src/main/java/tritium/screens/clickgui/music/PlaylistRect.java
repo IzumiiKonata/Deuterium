@@ -4,28 +4,21 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
-import tech.konata.ncmplayer.music.CloudMusic;
-import tech.konata.ncmplayer.music.dto.Music;
-import tech.konata.ncmplayer.music.dto.PlayList;
+import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
-import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
-import tritium.screens.clickgui.module.ModuleListWindow;
-import tritium.utils.math.RandomUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
-import java.util.List;
 import java.util.function.Supplier;
 
 /**

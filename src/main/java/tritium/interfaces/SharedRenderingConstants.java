@@ -3,7 +3,7 @@ package tritium.interfaces;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
-import org.lwjglx.opengl.Display;
+import org.lwjgl.opengl.Display;
 import tritium.rendering.FramebufferCaching;
 import tritium.rendering.GLAction;
 import tritium.rendering.rendersystem.RenderSystem;

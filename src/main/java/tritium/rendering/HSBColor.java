@@ -1,14 +1,19 @@
 package tritium.rendering;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.SneakyThrows;
 
 import java.awt.*;
 
-public class HSBColor implements Cloneable {
+@Getter
+@Setter
+public class HSBColor extends Color implements Cloneable {
     float hue, saturation, brightness;
     int alpha;
 
     public HSBColor(float hue, float saturation, float brightness, int alpha) {
+        super(alpha << 24 | Color.HSBtoRGB(hue, saturation, brightness), true);
         this.hue = hue;
         this.saturation = saturation;
         this.brightness = brightness;
@@ -16,6 +21,7 @@ public class HSBColor implements Cloneable {
     }
 
     public HSBColor(int red, int green, int blue, int alpha) {
+        super(red, green, blue, alpha);
         float[] hsb = Color.RGBtoHSB(red, green, blue, null);
         this.hue = hsb[0];
         this.saturation = hsb[1];
@@ -42,39 +48,8 @@ public class HSBColor implements Cloneable {
         return hue + ":" + saturation + ":" + brightness + ":" + alpha;
     }
 
-    public float getHue() {
-        return hue;
-    }
-
-    public void setHue(float hue) {
-        this.hue = hue;
-    }
-
-    public float getSaturation() {
-        return saturation;
-    }
-
-    public void setSaturation(float saturation) {
-        this.saturation = saturation;
-    }
-
-    public float getBrightness() {
-        return brightness;
-    }
-
-    public void setBrightness(float brightness) {
-        this.brightness = brightness;
-    }
-
     private Color resetAlpha(Color color, int alpha) {
         return new Color(color.getRed(), color.getGreen(), color.getBlue(), alpha);
     }
 
-    public int getAlpha() {
-        return alpha;
-    }
-
-    public void setAlpha(int alpha) {
-        this.alpha = alpha;
-    }
 }

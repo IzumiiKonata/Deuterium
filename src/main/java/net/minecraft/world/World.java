@@ -4,6 +4,8 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
+import lombok.Getter;
+import tritium.bridge.game.WorldWrapper;
 import tritium.rendering.phosphor.api.ILightingEngineProvider;
 import tritium.rendering.phosphor.mod.world.lighting.LightingEngine;
 import net.minecraft.block.*;
@@ -155,6 +157,9 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
      */
     int[] lightUpdateBlockList;
 
+    @Getter
+    private final WorldWrapper wrapper;
+
     protected World(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client) {
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.spawnHostileMobs = true;
@@ -167,6 +172,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         this.isRemote = client;
         this.worldBorder = providerIn.getWorldBorder();
         this.lightingEngine = new LightingEngine(this);
+        this.wrapper = new WorldWrapper(this);
     }
 
     public World init() {

@@ -1,6 +1,6 @@
 package tritium.management;
 
-import tech.konata.ncmplayer.music.CloudMusic;
+import tritium.ncm.music.CloudMusic;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 /**

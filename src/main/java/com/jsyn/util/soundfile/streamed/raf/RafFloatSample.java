@@ -62,6 +62,7 @@ public class RafFloatSample extends FloatSample {
 
         closed = true;
 
-        this.reader.parser.raf.close();
+        if (this.reader != null)
+            this.reader.parser.raf.close();
     }
 }

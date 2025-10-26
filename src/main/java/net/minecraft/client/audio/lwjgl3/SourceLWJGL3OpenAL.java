@@ -1,6 +1,6 @@
 package net.minecraft.client.audio.lwjgl3;
 
-import org.lwjgl.BufferUtils;
+import org.lwjglx.BufferUtils;
 import org.lwjgl.openal.AL10;
 import paulscode.sound.*;
 

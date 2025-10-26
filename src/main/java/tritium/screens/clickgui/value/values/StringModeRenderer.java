@@ -1,6 +1,6 @@
 package tritium.screens.clickgui.value.values;
 
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;

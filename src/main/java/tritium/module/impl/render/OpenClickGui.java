@@ -1,6 +1,6 @@
 package tritium.module.impl.render;
 
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.module.Module;
 import tritium.screens.ClickGui;
 

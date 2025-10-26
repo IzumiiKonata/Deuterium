@@ -1,6 +1,6 @@
 package tritium.screens.clickgui.value.values;
 
-import org.lwjglx.input.Mouse;
+import org.lwjgl.input.Mouse;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -9,8 +9,6 @@ import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
 import tritium.settings.NumberSetting;
-
-import java.awt.*;
 
 /**
  * @author IzumiiKonata
@@ -52,6 +50,11 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
                         clicking = true;
                     return true;
                 });
+            }
+
+            @Override
+            protected boolean testHovered(double mouseX, double mouseY) {
+                return super.testHovered(mouseX, mouseY, 2);
             }
 
             @Override

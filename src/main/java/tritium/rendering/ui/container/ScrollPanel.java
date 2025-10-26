@@ -1,10 +1,9 @@
 package tritium.rendering.ui.container;
 
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 
 import java.util.List;

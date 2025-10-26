@@ -31,7 +31,7 @@
  */
 package org.lwjglx.util.glu;
 
-import org.lwjgl.BufferUtils;
+import org.lwjglx.BufferUtils;
 
 import java.nio.IntBuffer;
 

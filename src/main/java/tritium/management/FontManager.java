@@ -1,6 +1,8 @@
 package tritium.management;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
+import tritium.bridge.rendering.font.FontWrapper;
 import tritium.interfaces.IFontRenderer;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
@@ -9,10 +11,10 @@ import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +33,14 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer music16, music18, music30, music36, music40, music42;
     public static CFontRenderer arial14, arial18bold, arial40bold, arial60bold;
 
+    public static CFontRenderer googleSans16, googleSans18, googleSans16Bold, googleSans18Bold, product18, tahoma18;
+    public static FontWrapper googleSans16W, googleSans18W, googleSans16BoldW, googleSans18BoldW, product18W, tahoma18W;
+
     public static IFontRenderer vanilla;
+    public static today.opai.api.interfaces.render.Font vanillaWrapper;
+
+    @Getter
+    private static final List<CFontRenderer> extensionCreatedFontRenderers = new CopyOnWriteArrayList<>();
 
     private static List<CFontRenderer> getAllFontRenderers() {
 
@@ -49,6 +58,12 @@ public class FontManager extends AbstractManager {
 
     public static void deleteLoadedTextures() {
         getAllFontRenderers().forEach(c -> {
+            if (c != null) {
+                c.close();
+            }
+        });
+
+        getExtensionCreatedFontRenderers().forEach(c -> {
             if (c != null) {
                 c.close();
             }
@@ -105,6 +120,20 @@ public class FontManager extends AbstractManager {
         music36 = create(36, "music");
         music40 = create(40, "music");
         music42 = create(42, "music");
+
+        googleSans16 = create(16, "googlesans");
+        googleSans18 = create(18, "googlesans");
+        googleSans16Bold = create(16, "googlesansbold");
+        googleSans18Bold = create(18, "googlesansbold");
+        product18 = create(18, "product");
+        tahoma18 = create(18, "tahoma");
+
+        googleSans16W = new FontWrapper(googleSans16);
+        googleSans18W = new FontWrapper(googleSans18);
+        googleSans16BoldW = new FontWrapper(googleSans16Bold);
+        googleSans18BoldW = new FontWrapper(googleSans18Bold);
+        product18W = new FontWrapper(product18);
+        tahoma18W = new FontWrapper(tahoma18);
     }
 
     @SneakyThrows
@@ -134,7 +163,8 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer create(float size, InputStream fontStream) {
         Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream);
 
-        return new CFontRenderer(font, size * 0.5f, font);
+        Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_normal.ttf"));
+        return new CFontRenderer(font, size * 0.5f, fallback);
     }
 
     @SneakyThrows
@@ -149,6 +179,16 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer create(float size, String name) {
 
         Font font = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/" + name + ".ttf"));
+
+        if (name.equals("googlesans") || name.equals("product") || name.equals("tahoma")) {
+            Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_normal.ttf"));
+            return new CFontRenderer(font, size * 0.5f, fallback);
+        }
+
+        if (name.equals("googlesansbold")) {
+            Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_middleblack.ttf"));
+            return new CFontRenderer(font, size * 0.5f, fallback);
+        }
 
         if (name.equals("pf_normal")) {
             Font main = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/sfregular.otf"));
@@ -165,7 +205,6 @@ public class FontManager extends AbstractManager {
 
     @SneakyThrows
     public static CFontRenderer createFromExternalFile(float size, File path, String fallBackName) {
-
         Font fallBack = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/" + fallBackName + ".ttf")));
 
         return new CFontRenderer(Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(path)), size * 0.5f, fallBack);

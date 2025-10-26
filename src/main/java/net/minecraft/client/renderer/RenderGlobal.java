@@ -66,15 +66,15 @@ import net.optifine.shaders.gui.GuiShaderOptions;
 import net.optifine.util.ChunkUtils;
 import net.optifine.util.RenderChunkUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjglx.input.Keyboard;
+import org.lwjgl.input.Keyboard;
 import org.lwjglx.util.vector.Vector3f;
 import org.lwjglx.util.vector.Vector4f;
 import tritium.event.events.rendering.BlockOverlayEvent;
 import tritium.management.EventManager;
 import tritium.management.ModuleManager;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.logging.LogManager;
-import tritium.utils.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.*;
