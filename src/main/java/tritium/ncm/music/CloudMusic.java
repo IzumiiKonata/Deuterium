@@ -325,6 +325,11 @@ public class CloudMusic {
                     playing.set(false);
                 });
 
+                // load next music's cover
+                if (curIdx + 1 < playList.size()) {
+                    loadMusicCover(playList.get(curIdx + 1));
+                }
+
                 while (playing.get()) {
 
                     if (this.isInterrupted() || doBreak)

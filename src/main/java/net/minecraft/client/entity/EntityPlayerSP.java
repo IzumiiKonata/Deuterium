@@ -36,7 +36,7 @@ import tritium.event.events.rendering.FovModifierEvent;
 import tritium.management.EventManager;
 
 public class EntityPlayerSP extends AbstractClientPlayer {
-    public final NetHandlerPlayClient sendQueue;
+    public NetHandlerPlayClient sendQueue;
     private final StatFileWriter statWriter;
 
     /**
@@ -105,7 +105,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
     public float prevRenderArmYaw;
     public float prevRenderArmPitch;
     private int horseJumpPowerCounter;
-    private float horseJumpPower;
+    public float horseJumpPower;
 
     /**
      * The amount of time an entity has been in a Portal

@@ -89,6 +89,8 @@ public class OpenAPIImpl implements OpenAPI {
     @Override
     public void printMessage(String message) {
 
+        System.out.println(message);
+
         if (Minecraft.getMinecraft().thePlayer != null) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(message);
         }

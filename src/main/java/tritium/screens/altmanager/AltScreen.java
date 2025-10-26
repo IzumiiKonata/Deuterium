@@ -35,7 +35,6 @@ import tritium.management.ThemeManager;
 import tritium.rendering.TransitionAnimation;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.fake.FakeEntityPlayerSP;
 import tritium.rendering.fake.FakeNetHandlerPlayClient;
 import tritium.rendering.fake.FakeWorld;
 import tritium.rendering.font.CFontRenderer;
@@ -102,7 +101,7 @@ public class AltScreen extends BaseScreen {
                 final WorldSettings worldSettings = new WorldSettings(0L, WorldSettings.GameType.NOT_SET, true, false, WorldType.DEFAULT);
                 final FakeNetHandlerPlayClient netHandler = new FakeNetHandlerPlayClient(Minecraft.getMinecraft());
                 this.world = new FakeWorld(worldSettings, netHandler);
-                this.player = new FakeEntityPlayerSP(Minecraft.getMinecraft(), this.world, netHandler, null);
+                this.player = new EntityPlayerSP(Minecraft.getMinecraft(), this.world, netHandler, null);
                 int modelParts = 0;
                 for (EnumPlayerModelParts enumplayermodelparts : Minecraft.getMinecraft().gameSettings.getModelParts()) {
                     modelParts |= enumplayermodelparts.getPartMask();
