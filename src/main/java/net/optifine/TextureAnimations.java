@@ -183,7 +183,7 @@ public class TextureAnimations {
             if (inputstream == null) {
                 return null;
             } else {
-                BufferedImage bufferedimage = readTextureImage(inputstream);
+                BufferedImage bufferedimage = ImageIO.read(inputstream);
                 inputstream.close();
                 if (bufferedimage == null) {
                     return null;
@@ -191,9 +191,9 @@ public class TextureAnimations {
                     if (targetWidth > 0 && bufferedimage.getWidth() != targetWidth) {
                         final double d0 = bufferedimage.getHeight() / bufferedimage.getWidth();
                         final int j = (int) (targetWidth * d0);
-                        BufferedImage orig = bufferedimage;
+//                        BufferedImage orig = bufferedimage;
                         bufferedimage = scaleBufferedImage(bufferedimage, targetWidth, j);
-                        ((NativeBackedImage) orig).close();
+//                        ((NativeBackedImage) orig).close();
                     }
                     final int k2 = bufferedimage.getWidth();
                     final int i = bufferedimage.getHeight();

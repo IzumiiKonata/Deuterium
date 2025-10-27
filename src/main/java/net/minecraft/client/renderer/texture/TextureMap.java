@@ -171,9 +171,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                     try {
                         IResource iresource = resourceManager.getResource(resourcelocation2);
                         BufferedImage[] abufferedimage = new BufferedImage[1 + this.mipmapLevels];
-                        BufferedInputStream bis = new BufferedInputStream(iresource.getInputStream());
-                        bis.mark(0);
-                        abufferedimage[0] = TextureUtil.readBufferedImageNoClosing(bis);
+                        abufferedimage[0] = ImageIO.read(iresource.getInputStream());
                         int k3 = abufferedimage[0].getWidth();
                         int l3 = abufferedimage[0].getHeight();
 
@@ -193,12 +191,9 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                                 }
 
                                 int j1 = l3 * i4 / k3;
-                                bis.reset();
-                                abufferedimage[0] = TextureUtils.scaleImage(ImageIO.read(bis), i4);
+                                abufferedimage[0] = TextureUtils.scaleImage(abufferedimage[0], i4);
                             }
                         }
-
-                        bis.close();
 
                         TextureMetadataSection texturemetadatasection = iresource.getMetadata("texture");
 
