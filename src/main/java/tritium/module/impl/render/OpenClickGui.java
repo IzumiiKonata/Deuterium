@@ -23,7 +23,7 @@ public class OpenClickGui extends Module {
         if (!(mc.currentScreen instanceof ClickGui) && mc.thePlayer != null && mc.theWorld != null) {
 
             if (Keyboard.isKeyDown(Keyboard.KEY_Z)) {
-                mc.displayGuiScreen(NSFScreen.getInstance());
+                mc.displayGuiScreen(new NSFScreen());
             } else
                 mc.displayGuiScreen(ClickGui.getInstance());
 
