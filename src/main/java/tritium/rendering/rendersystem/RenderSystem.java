@@ -406,6 +406,10 @@ public class RenderSystem {
 
     }
 
+    public static void drawOutLine(double x, double y, double width, double height, double thickness, double expand, int color) {
+        drawOutLine(x - expand, y - expand, width + expand * 2, height + expand * 2, thickness, color);
+    }
+
     public static void drawOutLine(double x, double y, double width, double height, double thickness, int color) {
 //        RenderSystem.color(color);
 
