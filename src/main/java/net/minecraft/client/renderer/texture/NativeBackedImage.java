@@ -132,6 +132,37 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         return null;
     }
 
+    public static NativeBackedImage makeNoClosing(InputStream stream) {
+        ByteBuffer imgBuf = null;
+
+        try {
+            imgBuf = readResource(stream);
+            imgBuf.rewind();
+
+            try (MemoryStack memoryStack = MemoryStack.stackPush()) {
+                IntBuffer width = memoryStack.mallocInt(1);
+                IntBuffer height = memoryStack.mallocInt(1);
+                IntBuffer channels = memoryStack.mallocInt(1);
+
+                // 4 channels: RGBA
+                ByteBuffer buf = STBImage.stbi_load_from_memory(imgBuf, width, height, channels, 4);
+                if (buf == null) {
+                    throw new RuntimeException("Could not load image: " + STBImage.stbi_failure_reason());
+                }
+
+                return new NativeBackedImage(width.get(0), height.get(0), MemoryUtil.memAddress(buf));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            // free
+            MemoryUtil.memFree(imgBuf);
+        }
+
+        return null;
+    }
+
     private static ByteBuffer readResource(InputStream inputStream) throws IOException {
         ByteBuffer byteBuffer;
         if (inputStream instanceof FileInputStream) {

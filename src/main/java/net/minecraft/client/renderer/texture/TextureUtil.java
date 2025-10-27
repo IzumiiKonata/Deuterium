@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer.texture;
 
-import lombok.Cleanup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -244,6 +243,22 @@ public class TextureUtil {
                 bufferedimage = NativeBackedImage.make(imageStream);
             } finally {
                 IOUtils.closeQuietly(imageStream);
+            }
+
+            return bufferedimage;
+        }
+    }
+
+    public static NativeBackedImage readBufferedImageNoClosing(InputStream imageStream)  {
+        if (imageStream == null) {
+            return null;
+        } else {
+            NativeBackedImage bufferedimage;
+
+            try {
+                bufferedimage = NativeBackedImage.makeNoClosing(imageStream);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
             }
 
             return bufferedimage;

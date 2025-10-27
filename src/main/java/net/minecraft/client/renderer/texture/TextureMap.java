@@ -18,12 +18,13 @@ import net.optifine.*;
 import net.optifine.shaders.ShadersTex;
 import net.optifine.util.CounterInt;
 import net.optifine.util.TextureUtils;
-import tritium.rendering.async.AsyncGLContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -170,7 +171,9 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                     try {
                         IResource iresource = resourceManager.getResource(resourcelocation2);
                         BufferedImage[] abufferedimage = new BufferedImage[1 + this.mipmapLevels];
-                        abufferedimage[0] = TextureUtil.readBufferedImage(iresource.getInputStream());
+                        BufferedInputStream bis = new BufferedInputStream(iresource.getInputStream());
+                        bis.mark(0);
+                        abufferedimage[0] = TextureUtil.readBufferedImageNoClosing(bis);
                         int k3 = abufferedimage[0].getWidth();
                         int l3 = abufferedimage[0].getHeight();
 
@@ -190,9 +193,12 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                                 }
 
                                 int j1 = l3 * i4 / k3;
-                                abufferedimage[0] = TextureUtils.scaleImage(abufferedimage[0], i4);
+                                bis.reset();
+                                abufferedimage[0] = TextureUtils.scaleImage(ImageIO.read(bis), i4);
                             }
                         }
+
+                        bis.close();
 
                         TextureMetadataSection texturemetadatasection = iresource.getMetadata("texture");
 
