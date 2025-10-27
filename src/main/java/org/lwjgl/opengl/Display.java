@@ -12,6 +12,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjglx.opengl.ContextAttribs;
 import org.lwjglx.opengl.DisplayMode;
 import org.lwjglx.opengl.PixelFormat;
+import tritium.settings.ClientSettings;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -160,7 +161,9 @@ public class Display {
         update();
 
 //        System.out.println("GLFW.glfwRawMouseMotionSupported() = " + glfwRawMouseMotionSupported());
-        GLFW.glfwSetInputMode(Window.handle, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+
+        if (ClientSettings.RAW_INPUT.getValue() && glfwRawMouseMotionSupported())
+            GLFW.glfwSetInputMode(Display.getWindow(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
         Window.keyCallback = new GLFWKeyCallback() {
 

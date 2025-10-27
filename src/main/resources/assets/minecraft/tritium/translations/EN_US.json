@@ -898,6 +898,8 @@
     "setting.remove view bobbing.name": "Remove View Bobbing",
     "setting.remove hand view bobbing.name": "Remove Hand View Bobbing",
 
+    "setting.raw input.name": "Raw Input",
+
     "clickgui.nosettingshere": "No Settings Here."
   }
 }

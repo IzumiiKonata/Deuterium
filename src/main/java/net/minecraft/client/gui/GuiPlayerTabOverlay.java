@@ -17,6 +17,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
+import tritium.management.ModuleManager;
 
 import java.util.Comparator;
 import java.util.List;
@@ -54,6 +55,8 @@ public class GuiPlayerTabOverlay extends Gui {
 //        PlayerAdapter adapter = PlayerAdapter.getInstance(profile);
         String name = profile.getName();
 
+        if (ModuleManager.nameSpoof.isEnabled() && profile.equals(Minecraft.getMinecraft().thePlayer.getGameProfile()))
+            return ModuleManager.nameSpoof.getSpoofedName();
 //        if (!adapter.getPrefix().isEmpty())
 //            name = adapter.getPrefix() + " " + profile.getName();
 

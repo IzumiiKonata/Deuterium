@@ -133,7 +133,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
         // 更新组件悬停状态
         // 如果所有的子组件都没有被选中, 且这个组件被选中, 才设置这个组件的 hovering 为 true.
-        this.hovering = !childHovering && this.testHovered(mouseX, mouseY + 2);
+        this.hovering = !childHovering && this.testHovered(mouseX, mouseY);
     }
 
     public SELF setOnTick(Runnable onTick) {

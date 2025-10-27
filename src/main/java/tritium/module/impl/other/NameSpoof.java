@@ -25,7 +25,7 @@ public class NameSpoof extends Module {
     }
 
     private void replaceChatComponentText(ChatComponentText text) {
-        text.setText(text.getChatComponentText_TextValue().replace(mc.getSession().getUsername(), name));
+        text.setText(text.getChatComponentText_TextValue().replace(mc.getSession().getUsername(), this.getSpoofedName()));
     }
 
     @Handler

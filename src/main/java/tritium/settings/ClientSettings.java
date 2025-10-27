@@ -5,6 +5,7 @@ import ingameime.IngameIMEJNI;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import tritium.Tritium;
@@ -21,6 +22,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static org.lwjgl.glfw.GLFW.GLFW_RAW_MOUSE_MOTION;
+import static org.lwjgl.glfw.GLFW.GLFW_TRUE;
 
 /**
  * @author IzumiiKonata
@@ -68,6 +72,26 @@ public class ClientSettings {
     };
 
     public static final BooleanSetting FRAME_PREDICT = new BooleanSetting("Frame Predict", false);
+    public static final BooleanSetting RAW_INPUT = new BooleanSetting("Raw Input", false) {
+
+        @Override
+        public void onToggle() {
+
+            if (this.getValue()) {
+
+                if (!GLFW.glfwRawMouseMotionSupported()) {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage("系统不支持原始鼠标输入!");
+                    this.setValue(false);
+                    return;
+                }
+
+                GLFW.glfwSetInputMode(Display.getWindow(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+            } else {
+                GLFW.glfwSetInputMode(Display.getWindow(), GLFW_RAW_MOUSE_MOTION, GLFW.GLFW_FALSE);
+            }
+
+        }
+    };
 
     public static final ModeSetting<ThemeManager.Theme> THEME = new ModeSetting<ThemeManager.Theme>("Theme", ThemeManager.Theme.Dark) {
         @Override

@@ -12,6 +12,7 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Location;
 import net.minecraft.world.WorldSettings;
+import tritium.management.ModuleManager;
 
 import java.awt.image.BufferedImage;
 
@@ -50,6 +51,9 @@ public class NetworkPlayerInfo {
         this.gameType = p_i46295_1_.getGameMode();
         this.responseTime = p_i46295_1_.getPing();
         this.displayName = p_i46295_1_.getDisplayName();
+
+        if (ModuleManager.nameSpoof.isEnabled())
+            ModuleManager.nameSpoof.replaceChatComponent(this.displayName);
     }
 
     /**

@@ -13,7 +13,6 @@ import tritium.module.impl.render.*;
 import tritium.module.submodule.SubModule;
 import tritium.settings.ClientSettings;
 import tritium.settings.Setting;
-import tritium.settings.StringModeSetting;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
