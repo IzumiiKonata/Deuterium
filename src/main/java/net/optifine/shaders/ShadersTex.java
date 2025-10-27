@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.renderer.texture.*;
@@ -62,14 +61,6 @@ public class ShadersTex {
         }
 
         return i;
-    }
-
-    public static int[] createAIntImage(int size) {
-        int[] aint = new int[size * 3];
-        Arrays.fill(aint, 0, size, 0);
-        Arrays.fill(aint, size, size * 2, -8421377);
-        Arrays.fill(aint, size * 2, size * 3, 0);
-        return aint;
     }
 
     public static int[] createAIntImage(int size, int color) {
@@ -128,18 +119,6 @@ public class ShadersTex {
         bindNSTextures(multiTex.norm, multiTex.spec);
     }
 
-    public static void bindTextures(int baseTex, int normTex, int specTex) {
-        if (Shaders.isRenderingWorld && GlStateManager.getActiveTextureUnit() == 33984) {
-            GlStateManager.setActiveTexture(33986);
-            GlStateManager.bindTexture(normTex);
-            GlStateManager.setActiveTexture(33987);
-            GlStateManager.bindTexture(specTex);
-            GlStateManager.setActiveTexture(33984);
-        }
-
-        GlStateManager.bindTexture(baseTex);
-    }
-
     public static void bindTextures(MultiTexID multiTex) {
         if (Shaders.isRenderingWorld && GlStateManager.getActiveTextureUnit() == 33984) {
             if (Shaders.configNormalMap) {
@@ -179,41 +158,6 @@ public class ShadersTex {
             }
         }
     }
-
-    public static void bindTextures(int baseTex) {
-        MultiTexID multitexid = multiTexMap.get(baseTex);
-        bindTextures(multitexid);
-    }
-
-    public static void initDynamicTexture(int texID, int width, int height, DynamicTexture tex) {
-        MultiTexID multitexid = tex.getMultiTexID();
-        int[] aint = tex.getTextureData();
-        int i = width * height;
-        Arrays.fill(aint, i, i * 2, -8421377);
-        Arrays.fill(aint, i * 2, i * 3, 0);
-        TextureUtil.allocateTexture(multitexid.base, width, height);
-        TextureUtil.setTextureBlurMipmap(false, false);
-        TextureUtil.setTextureClamped(false);
-        TextureUtil.allocateTexture(multitexid.norm, width, height);
-        TextureUtil.setTextureBlurMipmap(false, false);
-        TextureUtil.setTextureClamped(false);
-        TextureUtil.allocateTexture(multitexid.spec, width, height);
-        TextureUtil.setTextureBlurMipmap(false, false);
-        TextureUtil.setTextureClamped(false);
-        GlStateManager.bindTexture(multitexid.base);
-    }
-
-    public static void updateDynamicTexture(int texID, int[] src, int width, int height, DynamicTexture tex) {
-        MultiTexID multitexid = tex.getMultiTexID();
-        GlStateManager.bindTexture(multitexid.base);
-        updateDynTexSubImage1(src, width, height, 0, 0, 0);
-        GlStateManager.bindTexture(multitexid.norm);
-        updateDynTexSubImage1(src, width, height, 0, 0, 1);
-        GlStateManager.bindTexture(multitexid.spec);
-        updateDynTexSubImage1(src, width, height, 0, 0, 2);
-        GlStateManager.bindTexture(multitexid.base);
-    }
-
     public static void updateDynTexSubImage1(int[] src, int width, int height, int posX, int posY, int page) {
         int i = width * height;
         IntBuffer intbuffer = MemoryUtil.memAllocInt(roundUpPOT(i) * 4);
@@ -344,168 +288,9 @@ public class ShadersTex {
         return data;
     }
 
-    public static int blend4Alpha(int c0, int c1, int c2, int c3) {
-        int i = c0 >>> 24 & 255;
-        int j = c1 >>> 24 & 255;
-        int k = c2 >>> 24 & 255;
-        int l = c3 >>> 24 & 255;
-        int i1 = i + j + k + l;
-        int j1 = (i1 + 2) / 4;
-        int k1;
-
-        if (i1 != 0) {
-            k1 = i1;
-        } else {
-            k1 = 4;
-            i = 1;
-            j = 1;
-            k = 1;
-            l = 1;
-        }
-
-        int l1 = (k1 + 1) / 2;
-        int i2 = j1 << 24 | ((c0 >>> 16 & 255) * i + (c1 >>> 16 & 255) * j + (c2 >>> 16 & 255) * k + (c3 >>> 16 & 255) * l + l1) / k1 << 16 | ((c0 >>> 8 & 255) * i + (c1 >>> 8 & 255) * j + (c2 >>> 8 & 255) * k + (c3 >>> 8 & 255) * l + l1) / k1 << 8 | ((c0 >>> 0 & 255) * i + (c1 >>> 0 & 255) * j + (c2 >>> 0 & 255) * k + (c3 >>> 0 & 255) * l + l1) / k1 << 0;
-        return i2;
-    }
-
     public static int blend4Simple(int c0, int c1, int c2, int c3) {
         int i = ((c0 >>> 24 & 255) + (c1 >>> 24 & 255) + (c2 >>> 24 & 255) + (c3 >>> 24 & 255) + 2) / 4 << 24 | ((c0 >>> 16 & 255) + (c1 >>> 16 & 255) + (c2 >>> 16 & 255) + (c3 >>> 16 & 255) + 2) / 4 << 16 | ((c0 >>> 8 & 255) + (c1 >>> 8 & 255) + (c2 >>> 8 & 255) + (c3 >>> 8 & 255) + 2) / 4 << 8 | ((c0 >>> 0 & 255) + (c1 >>> 0 & 255) + (c2 >>> 0 & 255) + (c3 >>> 0 & 255) + 2) / 4 << 0;
         return i;
-    }
-
-    public static void genMipmapAlpha(int[] aint, int offset, int width, int height) {
-        Math.min(width, height);
-        int o2 = offset;
-        int w2 = width;
-        int h2 = height;
-        int o1 = 0;
-        int w1 = 0;
-        int h1 = 0;
-        int i;
-
-        for (i = 0; w2 > 1 && h2 > 1; o2 = o1) {
-            o1 = o2 + w2 * h2;
-            w1 = w2 / 2;
-            h1 = h2 / 2;
-
-            for (int l1 = 0; l1 < h1; ++l1) {
-                int i2 = o1 + l1 * w1;
-                int j2 = o2 + l1 * 2 * w2;
-
-                for (int k2 = 0; k2 < w1; ++k2) {
-                    aint[i2 + k2] = blend4Alpha(aint[j2 + k2 * 2], aint[j2 + k2 * 2 + 1], aint[j2 + w2 + k2 * 2], aint[j2 + w2 + k2 * 2 + 1]);
-                }
-            }
-
-            ++i;
-            w2 = w1;
-            h2 = h1;
-        }
-
-        while (i > 0) {
-            --i;
-            w2 = width >> i;
-            h2 = height >> i;
-            o2 = o1 - w2 * h2;
-            int l2 = o2;
-
-            for (int i3 = 0; i3 < h2; ++i3) {
-                for (int j3 = 0; j3 < w2; ++j3) {
-                    if (aint[l2] == 0) {
-                        aint[l2] = aint[o1 + i3 / 2 * w1 + j3 / 2] & 16777215;
-                    }
-
-                    ++l2;
-                }
-            }
-
-            o1 = o2;
-            w1 = w2;
-        }
-    }
-
-    public static void genMipmapSimple(int[] aint, int offset, int width, int height) {
-        Math.min(width, height);
-        int o2 = offset;
-        int w2 = width;
-        int h2 = height;
-        int o1 = 0;
-        int w1 = 0;
-        int h1 = 0;
-        int i;
-
-        for (i = 0; w2 > 1 && h2 > 1; o2 = o1) {
-            o1 = o2 + w2 * h2;
-            w1 = w2 / 2;
-            h1 = h2 / 2;
-
-            for (int l1 = 0; l1 < h1; ++l1) {
-                int i2 = o1 + l1 * w1;
-                int j2 = o2 + l1 * 2 * w2;
-
-                for (int k2 = 0; k2 < w1; ++k2) {
-                    aint[i2 + k2] = blend4Simple(aint[j2 + k2 * 2], aint[j2 + k2 * 2 + 1], aint[j2 + w2 + k2 * 2], aint[j2 + w2 + k2 * 2 + 1]);
-                }
-            }
-
-            ++i;
-            w2 = w1;
-            h2 = h1;
-        }
-
-        while (i > 0) {
-            --i;
-            w2 = width >> i;
-            h2 = height >> i;
-            o2 = o1 - w2 * h2;
-            int l2 = o2;
-
-            for (int i3 = 0; i3 < h2; ++i3) {
-                for (int j3 = 0; j3 < w2; ++j3) {
-                    if (aint[l2] == 0) {
-                        aint[l2] = aint[o1 + i3 / 2 * w1 + j3 / 2] & 16777215;
-                    }
-
-                    ++l2;
-                }
-            }
-
-            o1 = o2;
-            w1 = w2;
-        }
-    }
-
-    public static boolean isSemiTransparent(int[] aint, int width, int height) {
-        int i = width * height;
-
-        if (aint[0] >>> 24 == 255 && aint[i - 1] == 0) {
-            return true;
-        } else {
-            for (int j = 0; j < i; ++j) {
-                int k = aint[j] >>> 24;
-
-                if (k != 0 && k != 255) {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-    }
-
-    public static void updateSubTex1(int[] src, int width, int height, int posX, int posY) {
-        int i = 0;
-        int j = width;
-        int k = height;
-        int l = posX;
-
-        for (int i1 = posY; j > 0 && k > 0; i1 /= 2) {
-            GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, i, l, i1, 0, 0, j, k);
-            ++i;
-            j /= 2;
-            k /= 2;
-            l /= 2;
-        }
     }
 
     public static void setupTexture(MultiTexID multiTex, int[] src, int width, int height, boolean linear, boolean clamp) {
@@ -603,56 +388,6 @@ public class ShadersTex {
         return textureID;
     }
 
-    public static void mergeImage(int[] aint, int dstoff, int srcoff, int size) {
-    }
-
-    public static int blendColor(int color1, int color2, int factor1) {
-        int i = 255 - factor1;
-        return ((color1 >>> 24 & 255) * factor1 + (color2 >>> 24 & 255) * i) / 255 << 24 | ((color1 >>> 16 & 255) * factor1 + (color2 >>> 16 & 255) * i) / 255 << 16 | ((color1 >>> 8 & 255) * factor1 + (color2 >>> 8 & 255) * i) / 255 << 8 | ((color1 >>> 0 & 255) * factor1 + (color2 >>> 0 & 255) * i) / 255 << 0;
-    }
-
-    public static void loadLayeredTexture(LayeredTexture tex, IResourceManager manager, List<String> list) {
-        int i = 0;
-        int j = 0;
-        int k = 0;
-        int[] aint = null;
-
-        for (String s : list) {
-            if (s != null) {
-                try {
-                    Location resourcelocation = Location.of(s);
-                    InputStream inputstream = manager.getResource(resourcelocation).getInputStream();
-                    NativeBackedImage bufferedimage = NativeBackedImage.make(inputstream);
-
-                    if (k == 0) {
-                        i = bufferedimage.getWidth();
-                        j = bufferedimage.getHeight();
-                        k = i * j;
-                        aint = createAIntImage(k, 0);
-                    }
-
-                    int[] aint1 = new int[roundUpPOT(k * 3)];
-                    bufferedimage.getRGB(0, 0, i, j, aint1, 0, i);
-                    bufferedimage.close();
-                    loadNSMap(manager, resourcelocation, i, j, aint1);
-
-                    for (int l = 0; l < k; ++l) {
-                        int i1 = aint1[l] >>> 24 & 255;
-                        aint[0 + l] = blendColor(aint1[0 + l], aint[0 + l], i1);
-                        aint[k + l] = blendColor(aint1[k + l], aint[k + l], i1);
-                        aint[k * 2 + l] = blendColor(aint1[k * 2 + l], aint[k * 2 + l], i1);
-                    }
-
-                    aint1 = null;
-                } catch (IOException ioexception) {
-                    ioexception.printStackTrace();
-                }
-            }
-        }
-
-        setupTexture(tex.getMultiTexID(), aint, i, j, false, false);
-    }
-
     public static void updateTextureMinMagFilter() {
         TextureManager texturemanager = Minecraft.getMinecraft().getTextureManager();
         ITextureObject itextureobject = texturemanager.getTexture(TextureMap.locationBlocksTexture);
@@ -672,38 +407,4 @@ public class ShadersTex {
         }
     }
 
-    public static int[][] getFrameTexData(int[][] src, int width, int height, int frameIndex) {
-        int i = src.length;
-        int[][] aint = new int[i][];
-
-        for (int j = 0; j < i; ++j) {
-            int[] aint1 = src[j];
-
-            if (aint1 != null) {
-                int k = (width >> j) * (height >> j);
-                int[] aint2 = new int[k * 3];
-                aint[j] = aint2;
-                int l = aint1.length / 3;
-                int i1 = k * frameIndex;
-                int j1 = 0;
-                System.arraycopy(aint1, i1, aint2, j1, k);
-                i1 = i1 + l;
-                j1 = j1 + k;
-                System.arraycopy(aint1, i1, aint2, j1, k);
-                i1 = i1 + l;
-                j1 = j1 + k;
-                System.arraycopy(aint1, i1, aint2, j1, k);
-            }
-        }
-
-        return aint;
-    }
-
-    public static int[][] prepareAF(TextureAtlasSprite tas, int[][] src, int width, int height) {
-        boolean flag = true;
-        return src;
-    }
-
-    public static void fixTransparentColor(TextureAtlasSprite tas, int[] aint) {
-    }
 }

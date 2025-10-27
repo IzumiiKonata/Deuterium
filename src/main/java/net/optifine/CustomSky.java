@@ -73,9 +73,9 @@ public class CustomSky {
 
                             IResource iresource = Minecraft.getMinecraft().getResourceManager().getResource(resourcelocation1);
                             inputstream = iresource.getInputStream();
-                            NativeBackedImage img = NativeBackedImage.make(inputstream);
-                            itextureobject = new DynamicTexture(img);
-                            img.close();
+//                            NativeBackedImage img = NativeBackedImage.make(inputstream);
+                            itextureobject = new DynamicTexture(ImageIO.read(inputstream));
+//                            img.close();
                             customskylayer.textureId = itextureobject.getGlTextureId();
                             list.add(customskylayer);
                             inputstream.close();

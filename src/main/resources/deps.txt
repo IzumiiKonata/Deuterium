@@ -15,7 +15,7 @@ org.lwjgl:lwjgl-opengl:3.3.3
 org.lwjgl:lwjgl-stb:3.3.3
 org.lwjgl:lwjgl:3.3.3
 org.lwjgl:lwjgl:natives-windows:3.3.3
-org.lwjgl:lwjgl-glfw:natives-windows:3.3.3
+# org.lwjgl:lwjgl-glfw:natives-windows:3.3.3
 org.lwjgl:lwjgl-openal:natives-windows:3.3.3
 org.lwjgl:lwjgl-opengl:natives-windows:3.3.3
 org.lwjgl:lwjgl-stb:natives-windows:3.3.3

@@ -41,7 +41,6 @@ import org.objectweb.asm.tree.LineNumberNode;
  */
 public class LineNumbers extends Transformer {
 
-
     @Override
     public void transform() {
         AtomicInteger counter = new AtomicInteger();
@@ -49,16 +48,14 @@ public class LineNumbers extends Transformer {
         this.getClassWrappers().parallelStream().filter(classWrapper -> !excluded(classWrapper)).forEach(classWrapper ->
                 classWrapper.classNode.methods.parallelStream().filter(this::hasInstructions).forEach(methodNode -> {
                     Stream.of(methodNode.instructions.toArray()).filter(insn -> insn instanceof LineNumberNode).forEach(insn -> {
-                        ((LineNumberNode) insn).line = counter.get();
+                        ((LineNumberNode) insn).line = 0;
                         counter.incrementAndGet();
-
-                        mappings.put(String.valueOf(((LineNumberNode) insn).line), String.valueOf(counter.get()));
                     });
                 }));
 
         Logger.stdOut(String.format("Obfuscated %d line numbers.", counter.get()));
 
-        this.dumpMappings();
+//        this.dumpMappings();
     }
 
     private final Map<String, String> mappings = new HashMap<>();

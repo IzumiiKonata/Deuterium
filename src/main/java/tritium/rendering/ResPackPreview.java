@@ -219,7 +219,6 @@ public class ResPackPreview {
         }
 
         if (animationObject.has("frames")) {
-
             this.isAnimated = true;
 
             try {
@@ -227,7 +226,7 @@ public class ResPackPreview {
 
                 for (int j = 0; j < framesArray.size(); ++j) {
                     JsonElement frameElement = framesArray.get(j);
-                    Frame animationframe = this.parseAnimationFrame(j, frameTime, frameElement);
+                    Frame animationframe = ResPackPreview.parseAnimationFrame(j, frameTime, frameElement);
 
                     if (animationframe != null) {
                         frames.add(animationframe);
@@ -235,6 +234,14 @@ public class ResPackPreview {
                 }
             } catch (ClassCastException classcastexception) {
                 throw new JsonParseException("Invalid animation->frames: expected array, was " + animationObject.get("frames"), classcastexception);
+            }
+        } else {
+            this.isAnimated = true;
+
+            int numFrames = img.getHeight() / img.getWidth();
+
+            for (int i = 0; i < numFrames; ++i) {
+                this.frames.add(new Frame(i, frameTime));
             }
         }
 

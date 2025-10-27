@@ -12,18 +12,19 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Map;
+import java.util.function.Supplier;
 
 public class SimpleResource implements IResource {
     private final Map<String, IMetadataSection> mapMetadataSections = Maps.newHashMap();
     private final String resourcePackName;
     private final Location srResourceLocation;
     private final InputStream resourceInputStream;
-    private final InputStream mcmetaInputStream;
+    private final Supplier<InputStream> mcmetaInputStream;
     private final IMetadataSerializer srMetadataSerializer;
     private boolean mcmetaJsonChecked;
     private JsonObject mcmetaJson;
 
-    public SimpleResource(String resourcePackNameIn, Location srResourceLocationIn, InputStream resourceInputStreamIn, InputStream mcmetaInputStreamIn, IMetadataSerializer srMetadataSerializerIn) {
+    public SimpleResource(String resourcePackNameIn, Location srResourceLocationIn, InputStream resourceInputStreamIn, Supplier<InputStream> mcmetaInputStreamIn, IMetadataSerializer srMetadataSerializerIn) {
         this.resourcePackName = resourcePackNameIn;
         this.srResourceLocation = srResourceLocationIn;
         this.resourceInputStream = resourceInputStreamIn;
@@ -52,7 +53,7 @@ public class SimpleResource implements IResource {
                 BufferedReader bufferedreader = null;
 
                 try {
-                    bufferedreader = new BufferedReader(new InputStreamReader(this.mcmetaInputStream));
+                    bufferedreader = new BufferedReader(new InputStreamReader(this.mcmetaInputStream.get()));
                     this.mcmetaJson = (new JsonParser()).parse(bufferedreader).getAsJsonObject();
                 } finally {
                     IOUtils.closeQuietly(bufferedreader);

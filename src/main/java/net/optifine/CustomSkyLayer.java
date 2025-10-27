@@ -17,6 +17,7 @@ import net.optifine.render.Blender;
 import net.optifine.util.NumUtils;
 import net.optifine.util.SmoothFloat;
 import net.optifine.util.TextureUtils;
+import tritium.rendering.rendersystem.RenderSystem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -263,6 +264,7 @@ public class CustomSkyLayer {
 
         if (f3 >= 1.0E-4F) {
             GlStateManager.bindTexture(this.textureId);
+            RenderSystem.nearestFilter();
             Blender.setupBlend(this.blend, f3);
             GlStateManager.pushMatrix();
 

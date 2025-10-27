@@ -647,21 +647,21 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                     IResource iresource = p_detectMinimumSpriteSize_2_.getResource(resourcelocation1);
 
                     if (iresource != null) {
-                        InputStream inputstream = iresource.getInputStream();
+                        try (InputStream inputstream = iresource.getInputStream()) {
+                            if (inputstream != null) {
+                                Dimension dimension = TextureUtils.getImageSize(inputstream, "png");
+                                inputstream.close();
 
-                        if (inputstream != null) {
-                            Dimension dimension = TextureUtils.getImageSize(inputstream, "png");
-                            inputstream.close();
+                                if (dimension != null) {
+                                    int i = dimension.width;
+                                    int j = MathHelper.roundUpToPowerOfTwo(i);
 
-                            if (dimension != null) {
-                                int i = dimension.width;
-                                int j = MathHelper.roundUpToPowerOfTwo(i);
-
-                                if (!map.containsKey(j)) {
-                                    map.put(j, 1);
-                                } else {
-                                    int k = ((Integer) map.get(j)).intValue();
-                                    map.put(j, k + 1);
+                                    if (!map.containsKey(j)) {
+                                        map.put(j, 1);
+                                    } else {
+                                        int k = (Integer) map.get(j);
+                                        map.put(j, k + 1);
+                                    }
                                 }
                             }
                         }

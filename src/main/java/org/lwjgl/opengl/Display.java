@@ -148,6 +148,8 @@ public class Display {
             throw new IllegalStateException("Failed to create Display window");
         }
 
+//        System.out.println("window = " + Long.toHexString(Window.handle).toUpperCase());
+
         glfwMakeContextCurrent(Window.handle);
         drawable = new DrawableGL();
         GL.createCapabilities(false);
@@ -156,6 +158,9 @@ public class Display {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         update();
+
+//        System.out.println("GLFW.glfwRawMouseMotionSupported() = " + glfwRawMouseMotionSupported());
+        GLFW.glfwSetInputMode(Window.handle, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
         Window.keyCallback = new GLFWKeyCallback() {
 
@@ -285,7 +290,6 @@ public class Display {
         };
 
         Window.cursorPosCallback = new GLFWCursorPosCallback() {
-
             @Override
             public void invoke(long window, double xpos, double ypos) {
                 Mouse.addMoveEvent(xpos, ypos);

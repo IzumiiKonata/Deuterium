@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -158,12 +159,28 @@ public class FontManager extends AbstractManager {
     public void init() {
 
     }
+    
+    private static final HashMap<String, Font> fonts = new HashMap<>();
+    
+    private static Font readFont(String path) {
+        return fonts.computeIfAbsent(path, p -> {
+            try {
+                InputStream resourceAsStream = FontManager.class.getResourceAsStream(p);
+                Font font = Font.createFont(Font.TRUETYPE_FONT, resourceAsStream);
+                resourceAsStream.close();
+                return font;
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
+    }
 
     @SneakyThrows
     public static CFontRenderer create(float size, InputStream fontStream) {
         Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream);
 
-        Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_normal.ttf"));
+        Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_normal.ttf");
         return new CFontRenderer(font, size * 0.5f, fallback);
     }
 
@@ -178,26 +195,30 @@ public class FontManager extends AbstractManager {
     @SneakyThrows
     public static CFontRenderer create(float size, String name) {
 
-        Font font = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/" + name + ".ttf"));
+        Font font = readFont("/assets/minecraft/tritium/fonts/" + name + ".ttf");
 
-        if (name.equals("googlesans") || name.equals("product") || name.equals("tahoma")) {
-            Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_normal.ttf"));
-            return new CFontRenderer(font, size * 0.5f, fallback);
-        }
+        switch (name) {
+            case "googlesans":
+            case "product":
+            case "tahoma": {
+                Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_normal.ttf");
+                return new CFontRenderer(font, size * 0.5f, fallback);
+            }
 
-        if (name.equals("googlesansbold")) {
-            Font fallback = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/pf_middleblack.ttf"));
-            return new CFontRenderer(font, size * 0.5f, fallback);
-        }
+            case "googlesansbold": {
+                Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_middleblack.ttf");
+                return new CFontRenderer(font, size * 0.5f, fallback);
+            }
 
-        if (name.equals("pf_normal")) {
-            Font main = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/sfregular.otf"));
-            return new CFontRenderer(main, size * 0.5f, font);
-        }
+            case "pf_normal": {
+                Font main = readFont("/assets/minecraft/tritium/fonts/sfregular.otf");
+                return new CFontRenderer(main, size * 0.5f, font);
+            }
 
-        if (name.equals("pf_middleblack")) {
-            Font main = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/sfbold.otf"));
-            return new CFontRenderer(main, size * 0.5f, font);
+            case "pf_middleblack": {
+                Font main = readFont("/assets/minecraft/tritium/fonts/sfbold.otf");
+                return new CFontRenderer(main, size * 0.5f, font);
+            }
         }
 
         return new CFontRenderer(font, size * 0.5f, font);

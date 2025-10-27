@@ -10,6 +10,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -115,6 +116,9 @@ public class DependencyDownloader {
      */
     @SneakyThrows
     private void parseAndDownloadDeps(DownloadProgressWindow window) {
+
+        List<String> validFileNames = new ArrayList<>();
+
         // read deps
         InputStream is = DependencyDownloader.class.getResourceAsStream("/deps.txt");
         byte[] byteArray = IOUtils.toByteArray(is);
@@ -132,6 +136,7 @@ public class DependencyDownloader {
             String jarName = fullDownloadUrl.substring(fullDownloadUrl.lastIndexOf("/") + 1);
 
             File jarFile = new File(depsDir, jarName);
+            validFileNames.add(jarName);
 
             if (!jarFile.exists()) {
                 window.setStatusText(jarName);
@@ -161,6 +166,15 @@ public class DependencyDownloader {
                 } catch (Exception e) {
                     window.setStatusText("下载失败: " + jarName);
                     e.printStackTrace();
+                }
+            }
+        }
+
+        for (File file : depsDir.listFiles()) {
+            if (file.isFile() && !validFileNames.contains(file.getName())) {
+                try {
+                    file.delete();
+                } catch (Exception ignored) {
                 }
             }
         }
