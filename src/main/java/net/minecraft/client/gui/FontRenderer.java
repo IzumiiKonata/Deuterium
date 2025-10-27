@@ -22,10 +22,12 @@ import tritium.event.events.rendering.RenderTextEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.management.EventManager;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.List;
 
 public class FontRenderer implements IResourceManagerReloadListener {
     private static final Location[] unicodePageLocations = new Location[256];
@@ -183,6 +185,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
         this.readFontTexture();
         this.readGlyphSizes();
+        stringWidthMap.clear();
     }
 
     private void readFontTexture() {
@@ -453,6 +456,18 @@ public class FontRenderer implements IResourceManagerReloadListener {
         this.strikethroughStyle = false;
     }
 
+    private final String listOfRandomChars = "  !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡£ª«¬®°±²·º»¼½¿ÀÁÂÄÅÆÇÈÉÊËÍÑÓÔÕÖ×ØÚÜßàáâãäåæçèéêëìíîïñòóôõö÷øùúûüÿğİıŒœŞşŴŵžƒȇΓΘΣΦΩαβδμπστⁿ∅∈∙√∞∩≈≡≤≥⌠⌡─│┌┐└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▄█▌▐░▒▓■";
+    private final char[] randomChars = listOfRandomChars.toCharArray();
+    private int[] randomCharMap = new int['\uFFFF' + 1];
+
+    {
+        Arrays.fill(randomCharMap, -1);
+        for (char c : listOfRandomChars.toCharArray()) {
+            randomCharMap[c] = 0;
+        }
+    }
+
+
     /**
      * Render a single line string at the current (posX,posY) and update posX
      */
@@ -515,16 +530,15 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
                 ++i;
             } else {
-                int j = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".indexOf(c0);
+                int j = randomCharMap[c0];
 
                 if (this.randomStyle && j != -1) {
                     int k = this.getCharWidth(c0);
                     char c1;
 
                     do {
-                        j = this.fontRandom.nextInt("ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".length());
-                        c1 = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".charAt(j);
-
+                        j = this.fontRandom.nextInt(randomChars.length);
+                        c1 = randomChars[j];
                     } while (k != this.getCharWidth(c1));
 
                     c0 = c1;
@@ -635,7 +649,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
         }
     }
 
-    private final Map<String, Integer> stringWidthMap = new HashMap<>();
+    public final Map<String, Integer> stringWidthMap = new HashMap<>();
 
     /**
      * Returns the width of this string. Equivalent of FontMetrics.stringWidth(String s).

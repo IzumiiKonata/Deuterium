@@ -137,6 +137,7 @@ public class GuiLanguage extends GuiScreen {
                         int i = scaledresolution.getScaledWidth();
                         int j = scaledresolution.getScaledHeight();
                         this.setWorldAndResolution(this.mc, i, j);
+                        mc.fontRendererObj.stringWidthMap.clear();
                     }
 
                     break;
