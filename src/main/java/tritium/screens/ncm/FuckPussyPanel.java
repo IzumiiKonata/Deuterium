@@ -507,9 +507,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         }
 
         // curTime
-        FontManager.pf12.drawString(formatDuration(currentTimeMillis), elementsXOffset, progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
+        FontManager.pf12bold.drawString(formatDuration(currentTimeMillis), elementsXOffset, progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
         String remainingTime = "-" + formatDuration(totalTimeMillis - currentTimeMillis);
-        FontManager.pf12.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12.getStringWidth(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
+        FontManager.pf12bold.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12bold.getStringWidth(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
 
         FontManager.music40.drawString("I", elementsXOffset - 8, height - 32, hexColor(1, 1, 1, alpha * .5f));
         FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidth("J") + 4, height - 32, hexColor(1, 1, 1, alpha * .5f));
