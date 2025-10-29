@@ -38,6 +38,16 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
     }
 
     @Override
+    public int getWidth(ImageObserver observer) {
+        return width;
+    }
+
+    @Override
+    public int getHeight(ImageObserver observer) {
+        return height;
+    }
+
+    @Override
     public int[] getRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize) {
 
         if (rgbArray == null) {

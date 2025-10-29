@@ -21,10 +21,8 @@ import net.optifine.util.TextureUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -171,7 +169,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                     try {
                         IResource iresource = resourceManager.getResource(resourcelocation2);
                         BufferedImage[] abufferedimage = new BufferedImage[1 + this.mipmapLevels];
-                        abufferedimage[0] = ImageIO.read(iresource.getInputStream());
+                        abufferedimage[0] = TextureUtil.readBufferedImage(iresource.getInputStream());
                         int k3 = abufferedimage[0].getWidth();
                         int l3 = abufferedimage[0].getHeight();
 
@@ -180,20 +178,22 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                             continue;
                         }
 
-                        if (k3 < j || this.mipmapLevels > 0) {
-                            int i4 = this.mipmapLevels > 0 ? TextureUtils.scaleToGrid(k3, j) : TextureUtils.scaleToMin(k3, j);
-
-                            if (i4 != k3) {
-                                if (!TextureUtils.isPowerOfTwo(k3)) {
-                                    Config.log("Scaled non power of 2: " + textureatlassprite3.getIconName() + ", " + k3 + " -> " + i4);
-                                } else {
-                                    Config.log("Scaled too small texture: " + textureatlassprite3.getIconName() + ", " + k3 + " -> " + i4);
-                                }
-
-                                int j1 = l3 * i4 / k3;
-                                abufferedimage[0] = TextureUtils.scaleImage(abufferedimage[0], i4);
-                            }
-                        }
+//                        if (k3 < j || this.mipmapLevels > 0) {
+//                            int i4 = this.mipmapLevels > 0 ? TextureUtils.scaleToGrid(k3, j) : TextureUtils.scaleToMin(k3, j);
+//
+//                            if (i4 != k3) {
+//                                if (!TextureUtils.isPowerOfTwo(k3)) {
+//                                    Config.log("Scaled non power of 2: " + textureatlassprite3.getIconName() + ", " + k3 + " -> " + i4);
+//                                } else {
+//                                    Config.log("Scaled too small texture: " + textureatlassprite3.getIconName() + ", " + k3 + " -> " + i4);
+//                                }
+//
+//                                int j1 = l3 * i4 / k3;
+//                                BufferedImage bufferedImage = abufferedimage[0];
+//                                abufferedimage[0] = TextureUtils.scaleImage(abufferedimage[0], i4);
+//                                ((NativeBackedImage) bufferedImage).close();
+//                            }
+//                        }
 
                         TextureMetadataSection texturemetadatasection = iresource.getMetadata("texture");
 
@@ -209,11 +209,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                                 }
                             }
 
-                            Iterator iterator1 = list1.iterator();
-
-                            while (iterator1.hasNext()) {
-                                int j4 = ((Integer) iterator1.next()).intValue();
-
+                            for (int j4 : list1) {
                                 if (j4 > 0 && j4 < abufferedimage.length - 1 && abufferedimage[j4] == null) {
                                     Location resourcelocation = this.completeResourceLocation(resourcelocation1, j4);
 
