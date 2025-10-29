@@ -102,9 +102,9 @@ public class NCMScreen extends BaseScreen {
 
         alpha = Interpolations.interpBezier(alpha, closing ? 0f : 1f, 0.4f);
 
-        Shaders.GAUSSIAN_BLUR_SHADER.run(Collections.singletonList(() -> {
-            Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), hexColor(1, 1, 1, alpha));
-        }));
+//        Shaders.GAUSSIAN_BLUR_SHADER.run(Collections.singletonList(() -> {
+//            Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), hexColor(1, 1, 1, alpha));
+//        }));
 
         int dWheel = Mouse.getDWheel();
 

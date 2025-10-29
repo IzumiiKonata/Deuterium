@@ -211,12 +211,16 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                     double emphasizeSpeed = 0.075;
 
                     if (lyric == currentDisplaying) {
-                        double x = renderX;
-                        for (int j = 0; j < charArray.length; j++) {
-                            char c = charArray[j];
+                        if (charArray.length > 1) {
+                            double x = renderX;
+                            for (int j = 0; j < charArray.length; j++) {
+                                char c = charArray[j];
 
-                            FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha * .5f));
-                            x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                                FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha * .5f));
+                                x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                            }
+                        } else {
+                            FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasizes[0], hexColor(1, 1, 1, alpha * .5f));
                         }
                     } else {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
