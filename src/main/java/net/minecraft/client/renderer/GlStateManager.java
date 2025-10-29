@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
 import tritium.rendering.FramebufferCaching;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.other.DevUtils;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -388,7 +389,15 @@ public class GlStateManager {
             }
         }
 
-        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> glGenTextures());
+        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> {
+
+            int texId = glGenTextures();
+            GL11.glFlush();
+            GL11.glFinish();
+
+            return texId;
+
+        });
         try {
             return future.get(5, TimeUnit.SECONDS);
         } catch (TimeoutException e) {

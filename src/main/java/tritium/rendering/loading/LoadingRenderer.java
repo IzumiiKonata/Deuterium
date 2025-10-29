@@ -154,9 +154,9 @@ public class LoadingRenderer {
                         if (mc == null)
                             mc = Minecraft.getMinecraft();
 
-                        mc.displayWidth = Display.getWidth();
-                        mc.displayHeight = Display.getHeight();
-                        mc.resize(mc.displayWidth, mc.displayHeight);
+//                        mc.displayWidth = Display.getWidth();
+//                        mc.displayHeight = Display.getHeight();
+//                        mc.resize(mc.displayWidth, mc.displayHeight);
                         glClearColor(1, 1, 1, 1);
                         glEnable(GL_DEPTH_TEST);
                         glDepthFunc(GL_LEQUAL);
