@@ -237,11 +237,9 @@ public class LyricParser {
             String metadata = group.substring(0, group.indexOf(")") + 1);
             String[] metadataParts = metadata.split(",");
             String lyric = group.substring(group.indexOf(")") + 1);
-
-            LyricLine.Word wordTiming = new LyricLine.Word();
-            wordTiming.word = lyric;
             sumDuration += Long.parseLong(metadataParts[1]);  // 累加持续时间
-            wordTiming.timing = sumDuration;
+
+            LyricLine.Word wordTiming = new LyricLine.Word(lyric, sumDuration);
             l.words.add(wordTiming);
         }
     }

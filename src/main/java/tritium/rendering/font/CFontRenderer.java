@@ -172,12 +172,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     public boolean drawString(String s, double x, double y, float r, float g, float b, float a, boolean gradient, int offset) {
 
-        RenderTextEvent call = EventManager.call(new RenderTextEvent(s));
+//        RenderTextEvent call = EventManager.call(new RenderTextEvent(s));
 
-        if (call.isCancelled())
-            return false;
+//        if (call.isCancelled())
+//            return false;
 
-        s = call.getText();
+//        s = call.getText();
 
         float r2 = r, g2 = g, b2 = b;
         GlStateManager.pushMatrix();
@@ -306,9 +306,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     public int getStringWidth(String text) {
 
-        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
+//        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
 
-        text = call.getText();
+//        text = call.getText();
 
         Integer i = this.stringWidthMap.get(text);
         if (i != null)

@@ -29,6 +29,7 @@ import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -202,7 +203,24 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                         renderY += FontManager.pf65bold.getHeight() * .85 + 4;
                     }
 
-                    FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * .5f));
+                    double emphasizeWholeWord = word.emphasizes[0];
+
+                    char[] charArray = word.word.toCharArray();
+
+                    double emphasizeTarget = 1.5;
+                    double emphasizeSpeed = 0.075;
+
+                    if (lyric == currentDisplaying) {
+                        double x = renderX;
+                        for (int j = 0; j < charArray.length; j++) {
+                            char c = charArray[j];
+
+                            FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha * .5f));
+                            x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                        }
+                    } else {
+                        FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
+                    }
 
                     if (lyric == currentDisplaying) {
                         LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
@@ -210,12 +228,20 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                         long prevTiming = i == 0 ? 0 : prev.timing;
                         double progress = Math.max(0, Math.min(1, (songProgress - lyric.timeStamp - prevTiming) / (double) (word.timing - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
-                        word.emphasize = Interpolations.interpBezier(word.emphasize, progress > 0 ? 1 : 0, 0.05f);
 
                         boolean shouldClip = progress > 0 && progress < 1;
 
                         if (progress == 1) {
-                            FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha));
+
+                            double x = renderX;
+                            for (int j = 0; j < charArray.length; j++) {
+                                char c = charArray[j];
+
+                                word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
+
+                                FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha));
+                                x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                            }
                         }
 
                         if (shouldClip) {
@@ -227,8 +253,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                             GlStateManager.pushMatrix();
                             this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
-                            Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight() + 4, -1);
-                            RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 8, FontManager.pf65bold.getHeight(), -1, 0);
+                            Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight() + 6, -1);
+                            RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 8, FontManager.pf65bold.getHeight() + 6, -1, 0);
                             GlStateManager.popMatrix();
 
                             baseFb = RenderSystem.createFrameBuffer(baseFb);
@@ -238,12 +264,25 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                             GlStateManager.pushMatrix();
                             this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
-                            FontManager.pf65bold.drawString(word.word, 0, 0, hexColor(1, 1, 1, alpha));
+
+                            int prog = (int) (progress * charArray.length);
+
+                            double x = 0;
+                            for (int j = 0; j < charArray.length; j++) {
+                                char c = charArray[j];
+
+                                if (j <= prog)
+                                    word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
+
+                                FontManager.pf65bold.drawString(String.valueOf(c), x, 2 - word.emphasizes[j], hexColor(1, 1, 1, alpha));
+                                x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                            }
+
                             GlStateManager.popMatrix();
 
                             Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
-                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture,  renderX, renderY - word.emphasize);
+                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture,  renderX, renderY - 2);
 
 //                            FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
 //                            FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
@@ -261,7 +300,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                         }
 
                     } else {
-                        FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasize, hexColor(1, 1, 1, alpha * lyric.alpha));
+                        FontManager.pf65bold.drawString(word.word, renderX, renderY - emphasizeWholeWord, hexColor(1, 1, 1, alpha * lyric.alpha));
                     }
 
                     renderX += wordWidth;
@@ -424,6 +463,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 l.shouldUpdatePosition = false;
                 l.reboundAnimationForward = true;
                 l.delayTimer.reset();
+                for (LyricLine.Word word : l.words) {
+                    Arrays.fill(word.emphasizes, 0);
+                }
             });
         }
     }

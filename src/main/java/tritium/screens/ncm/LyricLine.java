@@ -41,9 +41,16 @@ public class LyricLine {
     public final List<Word> words = new CopyOnWriteArrayList<>();
 
     public static class Word {
-        public String word;
-        public long timing;
-        public double emphasize = 0;
+        public final String word;
+        public final long timing;
+        public final double[] emphasizes;
+
+        public Word(String word, long timing) {
+            this.word = word;
+            this.timing = timing;
+            this.emphasizes = new double[word.length()];
+        }
+
     }
 
     public void computeHeight(double width) {
