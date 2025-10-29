@@ -1,6 +1,8 @@
 package net.minecraft.client.gui;
 
 import com.google.common.collect.Lists;
+import lombok.SneakyThrows;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.*;
 import net.minecraft.util.Util;
 import org.lwjglx.Sys;
@@ -10,6 +12,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +46,60 @@ public class GuiScreenResourcePacks extends GuiScreen {
         this.buttonList.add(new GuiOptionButton(2, this.width / 2 - 154, this.height - 48, I18n.format("resourcePack.openFolder")));
         this.buttonList.add(new GuiOptionButton(1, this.width / 2 + 4, this.height - 48, I18n.format("gui.done")));
 
+        this.refreshPacks();
+        this.createWatchService();
+    }
+
+    private WatchService watchService = null;
+
+    @SneakyThrows
+    private void createWatchService() {
+
+        if (watchService != null)
+            return;
+
+        watchService = FileSystems.getDefault().newWatchService();
+        File fileResourcepacks = Minecraft.getMinecraft().getFileResourcepacks();
+        System.out.println("REGISTER: " + fileResourcepacks.getAbsolutePath());
+        Path path = fileResourcepacks.toPath();
+        path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
+    }
+
+    @Override
+    public void updateScreen() {
+
+        if (watchService == null)
+            return;
+
+        WatchKey key = watchService.poll();
+
+        if (key == null)
+            return;
+
+        List<WatchEvent<?>> events = key.pollEvents();
+
+        if (!events.isEmpty()) {
+            this.refreshPacks();
+        }
+
+        key.reset();
+    }
+
+    @Override
+    public void onGuiClosed() {
+
+        if (watchService != null) {
+            try {
+                watchService.close();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            watchService = null;
+        }
+
+    }
+
+    private void refreshPacks() {
         if (!this.changed) {
             this.availableResourcePacks = Lists.newArrayList();
             this.selectedResourcePacks = Lists.newArrayList();

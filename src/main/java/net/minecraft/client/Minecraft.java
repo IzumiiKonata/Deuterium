@@ -150,6 +150,7 @@ public class Minecraft implements IThreadListener {
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
 
     private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode(2560, 1600), new DisplayMode(2880, 1800));
+    @Getter
     private final File fileResourcepacks;
     private final PropertyMap twitchDetails;
 
