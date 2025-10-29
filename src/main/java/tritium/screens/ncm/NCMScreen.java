@@ -110,42 +110,45 @@ public class NCMScreen extends BaseScreen {
 
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 0.9 + (alpha * 0.1));
-        this.basePanel.setAlpha(alpha);
-        this.basePanel.renderWidget(mouseX, mouseY, dWheel);
 
-        float alphaInterpolateSpeed = 0.4f;
-        if (this.prevAnimatingPanel != null) {
-            this.prevAnimatingPanel.setAlpha(Interpolations.interpBezier(this.prevAnimatingPanel.getAlpha(), 0f, alphaInterpolateSpeed));
-            this.prevAnimatingPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
+        if (this.fuckPussyPanel == null || this.fuckPussyPanel.alpha <= .975f) {
+            this.basePanel.setAlpha(alpha);
+            this.basePanel.renderWidget(mouseX, mouseY, dWheel);
 
-            GlStateManager.pushMatrix();
-            this.scaleAtPos(this.currentPanelBg.getX() + this.currentPanelBg.getWidth() * .5, this.currentPanelBg.getY() + this.currentPanelBg.getHeight() * .5, 0.9 + (this.prevAnimatingPanel.getAlpha() * 0.1));
-            this.prevAnimatingPanel.renderWidget(mouseX, mouseY, dWheel);
-            GlStateManager.popMatrix();
+            float alphaInterpolateSpeed = 0.4f;
+            if (this.prevAnimatingPanel != null) {
+                this.prevAnimatingPanel.setAlpha(Interpolations.interpBezier(this.prevAnimatingPanel.getAlpha(), 0f, alphaInterpolateSpeed));
+                this.prevAnimatingPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
 
-            if (this.prevAnimatingPanel.getAlpha() <= 0.02f)
-                this.prevAnimatingPanel = null;
-        } else if (this.currentPanel != null) {
-            curPanelAlphaAnimation = Interpolations.interpBezier(curPanelAlphaAnimation, 1f, alphaInterpolateSpeed);
-            this.currentPanel.setAlpha(Math.min(this.basePanel.getAlpha(), curPanelAlphaAnimation));
-            this.currentPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
+                GlStateManager.pushMatrix();
+                this.scaleAtPos(this.currentPanelBg.getX() + this.currentPanelBg.getWidth() * .5, this.currentPanelBg.getY() + this.currentPanelBg.getHeight() * .5, 0.9 + (this.prevAnimatingPanel.getAlpha() * 0.1));
+                this.prevAnimatingPanel.renderWidget(mouseX, mouseY, dWheel);
+                GlStateManager.popMatrix();
 
-            StencilClipManager.beginClip(() -> {
-                Rect.draw(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight(), -1);
-            });
+                if (this.prevAnimatingPanel.getAlpha() <= 0.02f)
+                    this.prevAnimatingPanel = null;
+            } else if (this.currentPanel != null) {
+                curPanelAlphaAnimation = Interpolations.interpBezier(curPanelAlphaAnimation, 1f, alphaInterpolateSpeed);
+                this.currentPanel.setAlpha(Math.min(this.basePanel.getAlpha(), curPanelAlphaAnimation));
+                this.currentPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
 
-            GlStateManager.pushMatrix();
-            this.scaleAtPos(this.currentPanelBg.getX() + this.currentPanelBg.getWidth() * .5, this.currentPanelBg.getY() + this.currentPanelBg.getHeight() * .5, 1.1 - (curPanelAlphaAnimation * 0.1));
+                StencilClipManager.beginClip(() -> {
+                    Rect.draw(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight(), -1);
+                });
 
-            this.currentPanel.renderWidget(mouseX, mouseY, dWheel);
-            GlStateManager.popMatrix();
+                GlStateManager.pushMatrix();
+                this.scaleAtPos(this.currentPanelBg.getX() + this.currentPanelBg.getWidth() * .5, this.currentPanelBg.getY() + this.currentPanelBg.getHeight() * .5, 1.1 - (curPanelAlphaAnimation * 0.1));
 
-            StencilClipManager.endClip();
+                this.currentPanel.renderWidget(mouseX, mouseY, dWheel);
+                GlStateManager.popMatrix();
+
+                StencilClipManager.endClip();
+            }
+
+            this.controlsBar.setAlpha(alpha);
+            this.controlsBar.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY() + this.currentPanelBg.getHeight(), this.currentPanelBg.getWidth(), this.getPanelHeight() - this.currentPanelBg.getHeight());
+            this.controlsBar.renderWidget(mouseX, mouseY, dWheel);
         }
-
-        this.controlsBar.setAlpha(alpha);
-        this.controlsBar.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY() + this.currentPanelBg.getHeight(), this.currentPanelBg.getWidth(), this.getPanelHeight() - this.currentPanelBg.getHeight());
-        this.controlsBar.renderWidget(mouseX, mouseY, dWheel);
 
         if (this.fuckPussyPanel != null) {
             StencilClipManager.beginClip(() -> {

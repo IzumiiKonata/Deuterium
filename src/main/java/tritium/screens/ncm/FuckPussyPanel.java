@@ -154,7 +154,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         updateCurrentDisplayingLyric(songProgress);
 
         double lyricsWidth = width * .4;
-        this.updateLyricPositions(lyricsWidth);
+        this.updateLyricPositions(posY, height, lyricsWidth);
 
         List<Runnable> blurRects = new ArrayList<>();
 //        List<Runnable> bloomRunnables = new ArrayList<>();
@@ -167,7 +167,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 continue;
             }
 
-            if (lyric.posY > posX + height) {
+            if (lyric.posY > posY + height) {
                 break;
             }
 
@@ -342,7 +342,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         return .25;
     }
 
-    private void updateLyricPositions(double width) {
+    private void updateLyricPositions(double posY, double height, double width) {
 
         if (currentDisplaying == null)
             return;
@@ -362,6 +362,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                 lyric.computeHeight(width);
                 offsetY -= lyric.height + 16;
+
+                if (lyric.posY + lyric.height + 18 < posY)
+                    break;
 
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
             }
@@ -394,6 +397,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 }
 
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
+
+                if (offsetY > posY + height)
+                    break;
+
                 offsetY += lyric.height + 16;
             }
         }
@@ -668,8 +675,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         return sb.toString();
     }
 
-    float musicBgAlpha = 0.0f;
-    ITextureObject prevBg = null, prevCover;
+    float musicBgAlpha = 1.0f;
+    static ITextureObject prevBg = null, prevCover;
     static Music prevMusic = null;
     double fftScale = 0;
 
