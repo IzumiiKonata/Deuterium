@@ -41,15 +41,15 @@ public class Glyph {
         float w = this.width;
         float h = this.height;
 
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glTexCoord2f(0, 1);
-        GL11.glVertex2f(0, h);
-        GL11.glTexCoord2f(1, 1);
-        GL11.glVertex2f(w, h);
-        GL11.glTexCoord2f(1, 0);
-        GL11.glVertex2f(w, 0);
+        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
         GL11.glTexCoord2f(0, 0);
         GL11.glVertex2f(0, 0);
+        GL11.glTexCoord2f(0, 1);
+        GL11.glVertex2f(0, h);
+        GL11.glTexCoord2f(1, 0);
+        GL11.glVertex2f(w, 0);
+        GL11.glTexCoord2f(1, 1);
+        GL11.glVertex2f(w, h);
         GL11.glEnd();
 
         GL11.glEndList();
@@ -64,10 +64,11 @@ public class Glyph {
             GlStateManager.bindTexture(textureId);
 
             GlStateManager.color(r2, g2, b2, a);
-            GlStateManager.pushMatrix();
+//            GlStateManager.pushMatrix();
             GlStateManager.translate(xOffset, yOffset, 0);
             GlStateManager.callList(this.callList);
-            GlStateManager.popMatrix();
+            GlStateManager.translate(-xOffset, -yOffset, 0);
+//            GlStateManager.popMatrix();
 
 
         }
