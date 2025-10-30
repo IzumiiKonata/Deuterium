@@ -176,13 +176,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         boolean bl = true;
 
-        char[] chars = s.toCharArray();
         double xOffset = 0;
         double yOffset = 0;
         boolean inSel = false;
 
-        for (char aChar : chars) {
-            char c = aChar;
+        for (int i = 0; i < s.length(); i++) {
+            char c = s.charAt(i);
 
             if (inSel) {
                 inSel = false;
@@ -472,17 +471,16 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         StringBuilder sb = new StringBuilder();
         double w = 0;
-        char[] charArray = text.toCharArray();
-        for (int i = 0; i < charArray.length; i++) {
-            char c = charArray[i];
+        for (int i = 0; i < text.length(); i++) {
+            char c = text.charAt(i);
             String s = Character.toString(c);
 
             if (c == '\247') {
                 i += 1;
                 sb.append(c);
 
-                if (i < charArray.length) {
-                    sb.append(charArray[i]);
+                if (i < text.length()) {
+                    sb.append(text.charAt(i));
                 }
 
                 continue;
