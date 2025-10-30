@@ -6,11 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
 import tritium.Tritium;
-import tritium.event.events.rendering.RenderTextEvent;
 import tritium.interfaces.IFontRenderer;
-import tritium.management.EventManager;
-import tritium.management.FontManager;
-import tritium.management.Localizer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.StringUtils;
 
@@ -18,7 +14,6 @@ import java.awt.*;
 import java.io.Closeable;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -143,10 +138,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         drawString(s,  x,  y, color.getRed() * RenderSystem.DIVIDE_BY_255, color.getGreen() * RenderSystem.DIVIDE_BY_255, color.getBlue() * RenderSystem.DIVIDE_BY_255, color.getAlpha());
     }
 
-    public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
-        return drawString(s, x, y, r, g, b, a, false, 0);
-    }
-
     private int getColorCode(char c) {
         switch (c) {
             case '0': return 0x000000;
@@ -170,14 +161,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         }
     }
 
-    public boolean drawString(String s, double x, double y, float r, float g, float b, float a, boolean gradient, int offset) {
-
-//        RenderTextEvent call = EventManager.call(new RenderTextEvent(s));
-
-//        if (call.isCancelled())
-//            return false;
-
-//        s = call.getText();
+    public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
 
         float r2 = r, g2 = g, b2 = b;
         GlStateManager.pushMatrix();
@@ -185,13 +169,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         y -= 2.0f;
 
         GlStateManager.translate(x, y, 0);
-
         GlStateManager.scale(0.5f, 0.5f, 1f);
-
         GlStateManager.enableBlend();
-
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
         GlStateManager.enableTexture2D();
 
         boolean bl = true;
@@ -200,8 +180,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         double xOffset = 0;
         double yOffset = 0;
         boolean inSel = false;
+
         for (char aChar : chars) {
             char c = aChar;
+
             if (inSel) {
                 inSel = false;
                 char c1 = Character.toUpperCase(c);
@@ -226,7 +208,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (c == '§') {
                 inSel = true;
                 continue;
-            } else if (c == '\n') {
+            }
+            if (c == '\n') {
                 yOffset += this.getHeight() * 2 + 4;
                 xOffset = 0;
                 continue;
@@ -481,18 +464,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         int green = in >> 8 & 0xFF;
         int blue = in & 0xFF;
         return new int[]{red, green, blue};
-    }
-
-    public void drawGradientString(String s, double x, double y, int offset) {
-        drawString(s, x, y, 255, 255, 255, 255, true, offset);
-    }
-
-    public void drawGradientCenteredString(String s, float x, float y, int i) {
-        drawGradientString(s, x - getStringWidth(s) * .5, y, i);
-    }
-
-    double roundToDecimal(double n) {
-        return Math.round(n * 10.0) / 10.0;
     }
 
     public String[] fitWidth(String text, double width) {

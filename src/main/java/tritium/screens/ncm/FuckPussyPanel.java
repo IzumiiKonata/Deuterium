@@ -207,8 +207,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
                     char[] charArray = word.word.toCharArray();
 
-                    double emphasizeTarget = 1.5;
-                    double emphasizeSpeed = 0.075;
+                    double emphasizeTarget = 1;
+                    double emphasizeSpeed = 0.05;
 
                     if (lyric == currentDisplaying) {
                         if (charArray.length > 1) {
