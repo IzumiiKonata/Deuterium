@@ -162,7 +162,7 @@ public class MusicInfoWidget extends Widget {
                     StencilClipManager.endClip();
                 }
 
-                this.roundedRect(this.getX(), this.getY(), width, height + downloadProgHeight, bgRound + 1.5, 1, 0, 0, 0, alpha * 0.25f);
+                this.roundedRect(this.getX(), this.getY(), width, height + downloadProgHeight, coverRound, 1, 0, 0, 0, alpha * 0.25f);
 
                 if (prevBg != null) {
                     GlStateManager.bindTexture(prevBg.getGlTextureId());

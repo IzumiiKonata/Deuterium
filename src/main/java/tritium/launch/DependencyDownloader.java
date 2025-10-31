@@ -208,7 +208,4 @@ public class DependencyDownloader {
         dest.flush();
     }
 
-    public static void main(String[] args) {
-        new DependencyDownloader().run(args);
-    }
 }

@@ -15,6 +15,7 @@ import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.StencilClipManager;
+import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.Image;
 import tritium.rendering.entities.impl.Rect;
@@ -50,6 +51,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
         List<LyricLine> parsed = LyricParser.parse(lyric);
 
+        if (parsed.isEmpty()) {
+            parsed.add(new LyricLine(0L, "暂无歌词"));
+        }
+
         fetchTTMLLyrics(music, parsed);
 
         addLyrics(parsed);
@@ -61,7 +66,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             lyrics.addAll(lyricLines);
 
             currentDisplaying = lyrics.get(0);
-            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .4);
+            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
         }
     }
 
@@ -100,14 +105,14 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
     public static void resetProgress(float progress) {
         updateCurrentDisplayingLyric(progress);
-        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .4);
+        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
     public FuckPussyPanel(Music music) {
         this.music = music;
         float currentTimeMillis = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
         updateCurrentDisplayingLyric(currentTimeMillis);
-        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .4);
+        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
     public void onInit() {
@@ -120,6 +125,10 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
     public boolean shouldClose() {
         return closing && alpha <= 0.02f;
+    }
+
+    private static double getLyricWidthFactor() {
+        return .475;
     }
 
     public void onRender(double mouseX, double mouseY, double posX, double posY, double width, double height, int dWheel) {
@@ -142,18 +151,20 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
     Framebuffer baseFb, stencilFb;
 
+    private static double getLyricLineSpacing() {
+        return 24;
+    }
+
     private void renderLyrics(double mouseX, double mouseY, double posX, double posY, double width, double height, float alpha) {
 
         if (lyrics.isEmpty())
             return;
 
-        double spacingToRight = 16;
-
         float songProgress = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
 
         updateCurrentDisplayingLyric(songProgress);
 
-        double lyricsWidth = width * .4;
+        double lyricsWidth = width * getLyricWidthFactor();
         this.updateLyricPositions(posY, height, lyricsWidth);
 
         List<Runnable> blurRects = new ArrayList<>();
@@ -163,7 +174,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
         for (LyricLine lyric : lyrics) {
 
-            if (lyric.posY + lyric.height + 16 < posY) {
+            if (lyric.posY + lyric.height + getLyricLineSpacing() < posY) {
                 continue;
             }
 
@@ -173,7 +184,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
             lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.1f);
             boolean isHovering = isHovered(mouseX, mouseY, RenderSystem.getWidth() * .5, lyric.posY, lyricsWidth, lyric.height);
-            lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? .2f : 0f, 0.2f);
+            lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics && lyric != currentDisplaying ? 1f : 0f, 0.1f);
 
             if (isHovering && Mouse.isButtonDown(0) && !prevMouse) {
@@ -185,7 +196,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             }
 
             if (lyric.hoveringAlpha >= .02f)
-                roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth, lyric.height + 8, 8, 8, 1, 1, 1, alpha * lyric.hoveringAlpha);
+                roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY, lyricsWidth + lyric.reboundAnimation, lyric.height + 8, 8, 4 + 2 * Easing.EASE_IN_OUT_QUAD.getFunction().apply((double) lyric.hoveringAlpha), 1, 1, 1, alpha * lyric.hoveringAlpha * .15f);
 
             double renderX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
             double renderY = lyric.posY + lyric.reboundAnimation;
@@ -365,9 +376,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 LyricLine lyric = subList.get(i);
 
                 lyric.computeHeight(width);
-                offsetY -= lyric.height + 16;
+                offsetY -= lyric.height + getLyricLineSpacing();
 
-                if (lyric.posY + lyric.height + 18 < posY)
+                if (lyric.posY + lyric.height + getLyricLineSpacing() + 2 < posY)
                     break;
 
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
@@ -405,7 +416,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 if (offsetY > posY + height)
                     break;
 
-                offsetY += lyric.height + 16;
+                offsetY += lyric.height + getLyricLineSpacing();
             }
         }
 
@@ -416,7 +427,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         if (currentDisplaying == null)
             return;
 
-        double offsetY = RenderSystem.getHeight() * lyricFraction() - 16;
+        double offsetY = RenderSystem.getHeight() * lyricFraction() - getLyricLineSpacing();
         int toIndex = lyrics.indexOf(currentDisplaying);
 
         if (toIndex == -1 || toIndex >= lyrics.size())
@@ -435,7 +446,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 lyric.posY = offsetY;
 
                 lyric.computeHeight(width);
-                offsetY -= lyric.height + 16;
+                offsetY -= lyric.height + getLyricLineSpacing();
             }
 
             offsetY = RenderSystem.getHeight() * lyricFraction();
@@ -443,7 +454,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 lyric.posY = offsetY;
 
                 lyric.computeHeight(width);
-                offsetY += lyric.height + 16;
+                offsetY += lyric.height + getLyricLineSpacing();
             }
         }
 
