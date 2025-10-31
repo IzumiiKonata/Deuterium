@@ -20,7 +20,7 @@ public class ColorShader {
         textureIn.setValue(0);
         color.setValue(r, g, b, a);
 
-        ShaderProgram.drawQuad();
+        ShaderProgram.drawQuadFlipped();
         ShaderProgram.stop();
     }
 

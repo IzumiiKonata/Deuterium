@@ -3,10 +3,8 @@ package tritium.rendering.shader.impl;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
-import org.lwjgl.opengl.GL20;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderProgram;
-import tritium.rendering.shader.special.ShaderRenderer;
 import tritium.rendering.shader.uniform.Uniform1i;
 
 /**
@@ -36,7 +34,7 @@ public class StencilShader {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableAlpha();
-        ShaderProgram.drawQuad(x, y, RenderSystem.getWidth(), RenderSystem.getHeight());
+        ShaderProgram.drawQuadFlipped(x, y, RenderSystem.getWidth(), RenderSystem.getHeight());
         ShaderProgram.stop();
 
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE16);

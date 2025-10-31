@@ -84,33 +84,4 @@ public class ShaderUtil implements SharedConstants {
         }
     }
 
-    public static void drawQuads() {
-        if (Minecraft.getMinecraft().gameSettings.ofFastRender) return;
-        final float width = (float) RenderSystem.getWidth();
-        final float height = (float) RenderSystem.getHeight();
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex2f(0, 0);
-        glTexCoord2f(0, 0);
-        glVertex2f(0, height);
-        glTexCoord2f(1, 0);
-        glVertex2f(width, height);
-        glTexCoord2f(1, 1);
-        glVertex2f(width, 0);
-        glEnd();
-    }
-
-    public static void drawQuads(float width, float height) {
-        if (Minecraft.getMinecraft().gameSettings.ofFastRender) return;
-        glBegin(GL_QUADS);
-        glTexCoord2f(0, 1);
-        glVertex2f(0, 0);
-        glTexCoord2f(0, 0);
-        glVertex2f(0, height);
-        glTexCoord2f(1, 0);
-        glVertex2f(width, height);
-        glTexCoord2f(1, 1);
-        glVertex2f(width, 0);
-        glEnd();
-    }
 }

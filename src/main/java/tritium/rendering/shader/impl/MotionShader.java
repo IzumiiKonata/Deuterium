@@ -31,7 +31,7 @@ public class MotionShader {
         GL13.glActiveTexture(GL13.GL_TEXTURE20);
         GlStateManager.bindTexture(prev);
         GL13.glActiveTexture(GL13.GL_TEXTURE0);
-        ShaderProgram.drawQuad(0, 0, w, h);
+        ShaderProgram.drawQuadFlipped(0, 0, w, h);
         ShaderProgram.stop();
     }
 

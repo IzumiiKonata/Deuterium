@@ -45,7 +45,7 @@ public class ROQShader {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableAlpha();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
-        ShaderProgram.drawQuad(x, y, width, height);
+        ShaderProgram.drawQuadFlipped(x, y, width, height);
 //        GlStateManager.disableBlend();
         ShaderProgram.stop();
     }

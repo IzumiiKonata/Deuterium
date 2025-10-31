@@ -49,6 +49,7 @@ public class RenderArrow extends Render<EntityArrow> {
 
         GlStateManager.rotate(45.0F, 1.0F, 0.0F, 0.0F);
         GlStateManager.scale(f8, f8, f8);
+        GlStateManager.enableAlpha();
         GlStateManager.translate(-4.0F, 0.0F, 0.0F);
         GL11.glNormal3f(f8, 0.0F, 0.0F);
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);

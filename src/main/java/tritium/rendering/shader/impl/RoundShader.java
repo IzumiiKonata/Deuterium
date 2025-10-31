@@ -31,7 +31,7 @@ public class RoundShader {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableAlpha();
-        ShaderProgram.drawQuad(x, y, radius * 2, radius * 2);
+        ShaderProgram.drawQuadFlipped(x, y, radius * 2, radius * 2);
         ShaderProgram.stop();
     }
 

@@ -9,7 +9,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.GL11;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.ShaderUtil;
+import tritium.rendering.shader.ShaderProgram;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ClientSettings;
 import tritium.settings.NumberSetting;
@@ -66,7 +66,7 @@ public class PaperDoll extends Widget {
                 mc.getFramebuffer().bindFramebuffer(true);
 
                 GlStateManager.bindTexture(fb.framebufferTexture);
-                ShaderUtil.drawQuads();
+                ShaderProgram.drawQuadFlipped();
             });
 
             SharedRenderingConstants.BLOOM.add(() -> {
@@ -78,7 +78,7 @@ public class PaperDoll extends Widget {
                 OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 GlStateManager.bindTexture(fb.framebufferTexture);
                 GlStateManager.color(0, 0, 0, 1);
-                ShaderUtil.drawQuads();
+                ShaderProgram.drawQuadFlipped();
                 GlStateManager.bindTexture(0);
 //                GlStateManager.popMatrix();
             });

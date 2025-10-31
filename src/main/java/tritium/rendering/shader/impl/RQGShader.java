@@ -61,7 +61,7 @@ public class RQGShader {
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableAlpha();
-        ShaderProgram.drawQuad(x, y, width, height);
+        ShaderProgram.drawQuadFlipped(x, y, width, height);
         ShaderProgram.stop();
     }
 

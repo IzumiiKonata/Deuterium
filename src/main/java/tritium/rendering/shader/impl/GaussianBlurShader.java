@@ -80,7 +80,7 @@ public class GaussianBlurShader extends Shader {
             GlStateManager.enableBlend();
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            ShaderProgram.drawQuad();
+            ShaderProgram.drawQuadFlipped();
 
         } else {
             this.runNoCaching(runnable);
@@ -137,7 +137,7 @@ public class GaussianBlurShader extends Shader {
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.disableAlpha();
             mc.getFramebuffer().bindFramebufferTexture();
-            ShaderProgram.drawQuad();
+            ShaderProgram.drawQuadFlipped();
 
             if (cache) {
                 cacheBuffer.bindFramebuffer(true);
@@ -154,7 +154,7 @@ public class GaussianBlurShader extends Shader {
 
 //                    GlStateManager.blendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 //
-            ShaderProgram.drawQuad();
+            ShaderProgram.drawQuadFlipped();
             GlStateManager.disableBlend();
 
             ShaderProgram.stop();

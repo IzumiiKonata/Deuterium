@@ -42,12 +42,11 @@ public class NavigateBar extends NCMPanel {
     }
 
     private void layout() {
-        this.setBounds(NCMScreen.getInstance().getPanelWidth() * .15, NCMScreen.getInstance().getPanelHeight());
-
         RectWidget bg = new RectWidget();
         this.addChild(bg);
 
         this.setBeforeRenderCallback(() -> {
+            this.setBounds(NCMScreen.getInstance().getPanelWidth() * .15, NCMScreen.getInstance().getPanelHeight());
             this.setPosition(0, 0);
 
             bg.setMargin(0);

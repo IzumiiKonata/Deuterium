@@ -266,7 +266,7 @@ public interface SharedRenderingConstants {
             GlStateManager.blendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
             GlStateManager.bindTexture(buf.framebufferTexture);
-            ShaderProgram.drawQuad();
+            ShaderProgram.drawQuadFlipped();
 
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 

@@ -18,8 +18,10 @@ package com.jsyn.util;
 
 import com.jsyn.data.FloatSample;
 import com.jsyn.util.soundfile.CustomSampleLoader;
+import com.jsyn.util.soundfile.IFFParser;
 import com.jsyn.util.soundfile.streamed.buffered.BufferedSampleLoader;
 import com.jsyn.util.soundfile.streamed.raf.RafSampleLoader;
+import javazoom.jl.converter.Converter;
 import lombok.SneakyThrows;
 
 import java.io.*;
@@ -79,6 +81,9 @@ public class SampleLoader {
             return new BufferedSampleLoader().loadFromFlacStream(new BufferedInputStream(Files.newInputStream(fileIn.toPath())));
         } else if (name.endsWith(".wav")) {
             return new RafSampleLoader().loadFloatSample(new RandomAccessFile(fileIn, "r"));
+        } else if (name.endsWith(".mp3")) {
+            Converter converter = new Converter();
+            return loadFloatSample(new ByteArrayInputStream(converter.convert(Files.newInputStream(fileIn.toPath()), null, null)));
         } else {
             throw new RuntimeException("Extension not supported: " + name.substring(name.lastIndexOf(".")));
         }

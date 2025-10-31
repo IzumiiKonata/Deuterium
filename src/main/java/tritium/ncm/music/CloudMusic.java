@@ -379,19 +379,9 @@ public class CloudMusic {
                 musicCacheDir.mkdir();
             }
 
-            File convertedDir = new File(musicCacheDir, "Converted");
-            if (!convertedDir.exists()) {
-                convertedDir.mkdir();
-            }
-
             String extension = "_" + quality.getQuality() + "." + type;
 
-            boolean isFlac = type.equals("flac");
-            boolean isMp3 = type.equals("mp3");
-
             File music = new File(musicCacheDir, song.getId() + extension);
-
-            File converted = new File(convertedDir, song.getId() + ".wav");
 
             if (!music.exists()) {
                 downloadMusic(playUrl, music);
@@ -409,20 +399,6 @@ public class CloudMusic {
                     }
 
                 });
-            } else {
-
-                if (isFlac) {
-                    return music;
-//                return convertFlacToWav(music, converted);
-                }
-
-                if (converted.exists()) {
-                    return converted;
-                }
-            }
-
-            if (isMp3) {
-                return convertMp3ToWav(music, converted);
             }
 
             return music;

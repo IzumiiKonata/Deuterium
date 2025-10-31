@@ -1,11 +1,8 @@
 package tritium.rendering.shader.impl;
 
 
-import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.uniform.Uniform1i;
-
-import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -22,7 +19,7 @@ public class BlendShader {
         this.blendProgram.start();
         textureIn.setValue(0);
 
-        ShaderProgram.drawQuad();
+        ShaderProgram.drawQuadFlipped();
 //        GlStateManager.disableBlend();
 
         ShaderProgram.stop();

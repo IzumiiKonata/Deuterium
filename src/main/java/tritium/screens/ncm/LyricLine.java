@@ -81,7 +81,7 @@ public class LyricLine {
         }
 
         if (translationText != null) {
-            String[] strings = FontManager.pf34bold.fitWidth(translationText, width);
+            String[] strings = FontManager.pf34bold.fitWidth(translationText, width - 12);
             height += FontManager.pf34bold.getHeight() * strings.length + 4 * (strings.length - 1)/* + 8*/;
         } else {
             height -= 4;

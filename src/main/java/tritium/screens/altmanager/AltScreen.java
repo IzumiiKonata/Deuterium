@@ -17,7 +17,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import tritium.rendering.shader.ShaderUtil;
+import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
@@ -265,7 +265,7 @@ public class AltScreen extends BaseScreen {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.bindTexture(playerPreviewFb.framebufferTexture);
-        ShaderUtil.drawQuads();
+        ShaderProgram.drawQuadFlipped();
 
         double panelHeight = this.getHeight() - 9 - spacing - getScreenPadding() - getFrTitle().getHeight();
         FontManager.arial40bold.drawCenteredString(Minecraft.getMinecraft().getSession().getUsername(), this.baseWidget.getX() + this.getPanelWidth() + this.getScreenPadding() + width * 0.5, this.baseWidget.getY() + panelHeight * 3 / 4, this.getColor(ColorType.PRIMARY_TEXT));

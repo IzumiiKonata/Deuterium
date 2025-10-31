@@ -48,15 +48,28 @@ public class NCMScreen extends BaseScreen {
 
     public FuckPussyPanel fuckPussyPanel = null;
 
+    public NCMScreen() {
+
+    }
+
     @Override
     public void initGui() {
-
         alpha = 0f;
         closing = false;
 
+        if (this.playlistsPanel == null)
+            this.layout();
+    }
+
+    private void layout() {
         this.basePanel.getChildren().clear();
 
-        this.layout();
+        RectWidget bg = new RectWidget();
+        this.basePanel.addChild(bg);
+
+        this.basePanel.setBeforeRenderCallback(() -> {
+            this.basePanel.center();
+        });
 
         this.playlistsPanel = new NavigateBar();
         this.basePanel.addChild(this.playlistsPanel);
@@ -70,17 +83,6 @@ public class NCMScreen extends BaseScreen {
 
         this.controlsBar = new ControlsBar();
         this.controlsBar.onInit();
-    }
-
-    private void layout() {
-        this.basePanel.setBounds(this.getPanelWidth(), this.getPanelHeight());
-
-        RectWidget bg = new RectWidget();
-        this.basePanel.addChild(bg);
-
-        this.basePanel.setBeforeRenderCallback(() -> {
-            this.basePanel.center();
-        });
     }
 
     public double getSpacing() {
@@ -110,6 +112,8 @@ public class NCMScreen extends BaseScreen {
 
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 0.9 + (alpha * 0.1));
+
+        this.basePanel.setBounds(this.getPanelWidth(), this.getPanelHeight());
 
         if (this.fuckPussyPanel == null || this.fuckPussyPanel.alpha <= .975f) {
             this.basePanel.setAlpha(alpha);
@@ -174,7 +178,7 @@ public class NCMScreen extends BaseScreen {
                 this.loginRenderer = null;
                 CloudMusic.loadNCM(OptionsUtil.getCookie());
 
-                this.initGui();
+                this.layout();
             }
         }
 

@@ -151,6 +151,88 @@ public class Converter {
         }
     }
 
+    public synchronized byte[] convert(InputStream sourceStream,
+                                     ProgressListener progressListener,
+                                     Decoder.Params decoderParams) throws JavaLayerException {
+        if (progressListener == null)
+            progressListener = PrintWriterProgressListener.newStdOut(PrintWriterProgressListener.NO_DETAIL);
+        try {
+            if (!(sourceStream instanceof BufferedInputStream))
+                sourceStream = new BufferedInputStream(sourceStream);
+            int frameCount = -1;
+            if (sourceStream.markSupported()) {
+                sourceStream.mark(-1);
+                frameCount = countFrames(sourceStream);
+                sourceStream.reset();
+            }
+            progressListener.converterUpdate(ProgressListener.UPDATE_FRAME_COUNT, frameCount, 0);
+
+            WaveStreamObuffer output = null;
+            Decoder decoder = new Decoder(decoderParams);
+            Bitstream stream = new Bitstream(sourceStream);
+
+            if (frameCount == -1)
+                frameCount = Integer.MAX_VALUE;
+
+            int frame = 0;
+            long startTime = System.currentTimeMillis();
+
+            try {
+                for (; frame < frameCount; frame++) {
+                    try {
+                        Header header = stream.readFrame();
+                        if (header == null)
+                            break;
+
+                        progressListener.readFrame(frame, header);
+
+                        if (output == null) {
+                            // REVIEW: Incorrect functionality.
+                            // the decoder should provide decoded
+                            // frequency and channels output as it may differ from
+                            // the source (e.g. when downmixing stereo to mono.)
+                            int channels = (header.mode() == Header.SINGLE_CHANNEL) ? 1 : 2;
+                            int freq = header.frequency();
+                            output = new WaveStreamObuffer(channels, freq);
+                            decoder.setOutputBuffer(output);
+                        }
+
+                        Obuffer decoderOutput = decoder.decodeFrame(header, stream);
+
+                        // REVIEW: the way the output buffer is set
+                        // on the decoder is a bit dodgy. Even though
+                        // this exception should never happen, we test to be sure.
+                        if (decoderOutput != output)
+                            throw new InternalError("Output buffers are different.");
+
+                        progressListener.decodedFrame(frame, header, output);
+
+                        stream.closeFrame();
+
+                    } catch (Exception ex) {
+                        boolean stop = !progressListener.converterException(ex);
+
+                        if (stop) {
+                            throw new JavaLayerException(ex.getLocalizedMessage(), ex);
+                        }
+                    }
+                }
+
+            } finally {
+
+                if (output != null)
+                    output.close();
+            }
+
+            int time = (int) (System.currentTimeMillis() - startTime);
+            progressListener.converterUpdate(ProgressListener.UPDATE_CONVERT_COMPLETE, time, frame);
+
+            return output.getOutWave().getStream().toByteArray();
+        } catch (IOException ex) {
+            throw new JavaLayerException(ex.getLocalizedMessage(), ex);
+        }
+    }
+
     protected int countFrames(InputStream in) {
         return -1;
     }

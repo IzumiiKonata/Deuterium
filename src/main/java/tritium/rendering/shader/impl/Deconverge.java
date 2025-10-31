@@ -1,14 +1,11 @@
 package tritium.rendering.shader.impl;
 
 import net.minecraft.client.Minecraft;
-import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.uniform.Uniform1i;
 import tritium.rendering.shader.uniform.Uniform2f;
 import tritium.rendering.shader.uniform.Uniform3f;
 import tritium.utils.math.RandomUtils;
-
-import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -37,7 +34,7 @@ public class Deconverge {
         this.setConvergeY(RandomUtils.nextFloat(-3, 3), RandomUtils.nextFloat(-3, 3),
                 RandomUtils.nextFloat(-3, 3));
 
-        ShaderProgram.drawQuad();
+        ShaderProgram.drawQuadFlipped();
         ShaderProgram.stop();
     }
 

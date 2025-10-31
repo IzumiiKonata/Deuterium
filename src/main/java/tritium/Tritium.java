@@ -162,16 +162,6 @@ public class Tritium {
         if (!musicCacheDir.exists()) {
             return;
         }
-
-        File convertedDir = new File(musicCacheDir, "Converted");
-        if (!convertedDir.exists()) {
-            return;
-        }
-
-        for (File file : convertedDir.listFiles()) {
-            if (file.getName().endsWith(".wav"))
-                file.delete();
-        }
     }
 
 }

@@ -76,7 +76,7 @@ public class BloomShader extends Shader {
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-            ShaderProgram.drawQuad();
+            ShaderProgram.drawQuadFlipped();
 
         } else {
             this.runNoCaching(runnable);
@@ -137,7 +137,7 @@ public class BloomShader extends Shader {
             GlStateManager.disableAlpha();
 
             inputFramebuffer.bindFramebufferTexture();
-            ShaderProgram.drawQuad();
+            ShaderProgram.drawQuadFlipped();
 
             if (cache) {
                 cacheBuffer.bindFramebuffer(true);
@@ -153,7 +153,7 @@ public class BloomShader extends Shader {
             GL13.glActiveTexture(GL13.GL_TEXTURE20);
             inputFramebuffer.bindFramebufferTexture();
             GL13.glActiveTexture(GL13.GL_TEXTURE0);
-            ShaderProgram.drawQuad();
+            ShaderProgram.drawQuadFlipped();
             GlStateManager.disableBlend();
 
             ShaderProgram.stop();

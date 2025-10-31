@@ -35,7 +35,7 @@ import org.lwjgl.opengl.GL11;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.ShaderUtil;
+import tritium.rendering.shader.ShaderProgram;
 import tritium.settings.ClientSettings;
 
 import java.util.Collection;
@@ -358,7 +358,7 @@ public class GuiIngame extends Gui {
             GlStateManager.enableTexture2D();
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            ShaderUtil.drawQuads(scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight() - 0.5f);
+            ShaderProgram.drawQuadFlipped(0, 0, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
         }
 
         GlStateManager.pushMatrix();

@@ -61,7 +61,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
             lyrics.addAll(lyricLines);
 
             currentDisplaying = lyrics.get(0);
-            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .5);
+            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .4);
         }
     }
 
@@ -100,14 +100,14 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
     public static void resetProgress(float progress) {
         updateCurrentDisplayingLyric(progress);
-        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .5);
+        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .4);
     }
 
     public FuckPussyPanel(Music music) {
         this.music = music;
         float currentTimeMillis = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
         updateCurrentDisplayingLyric(currentTimeMillis);
-        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .5);
+        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * .4);
     }
 
     public void onInit() {
@@ -292,9 +292,9 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 //                            FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
 //
 //                            GlStateManager.bindTexture(stencilFb.framebufferTexture);
-//                            ShaderProgram.drawQuad(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+//                            ShaderProgram.drawQuadFlipped(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
 //                            GlStateManager.bindTexture(baseFb.framebufferTexture);
-//                            ShaderProgram.drawQuad(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+//                            ShaderProgram.drawQuadFlipped(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
 
 //                            Image.draw(stencilFb.framebufferTexture, 50, 72, stencilFb.framebufferTextureWidth, stencilFb.framebufferTextureHeight, Image.Type.Normal);
 //                            Image.draw(baseFb.framebufferTexture, 50, 128, baseFb.framebufferTextureWidth, baseFb.framebufferTextureHeight, Image.Type.Normal);
@@ -324,7 +324,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 double translationX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
                 double translationY = renderY + FontManager.pf65bold.getHeight() * .85 + 8;
 
-                String[] strings = FontManager.pf34bold.fitWidth(lyric.translationText, lyricsWidth);
+                String[] strings = FontManager.pf34bold.fitWidth(lyric.translationText, lyricsWidth - 12);
                 for (String string : strings) {
                     FontManager.pf34bold.drawString(string, translationX, translationY, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
                     translationY += FontManager.pf34bold.getHeight() + 4;
