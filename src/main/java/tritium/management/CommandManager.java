@@ -29,22 +29,6 @@ public class CommandManager extends AbstractManager {
         super("CommandManager");
     }
 
-//    List<String> turnOn = Arrays.asList(
-//            "我爱玩原神",
-//            "我是神里绫华的狗",
-//            "我想玩原神",
-//            "我爱原神",
-//            "打开原神",
-//            "安装原神"
-//    );
-//
-//    List<String> turnOff = Arrays.asList(
-//            "我不爱玩原神",
-//            "我不想玩原神了",
-//            "关闭原神",
-//            "删除原神"
-//    );
-
     @Handler
     public final void onChat(ChatEvent event) {
         String unformatted = event.getMsg();

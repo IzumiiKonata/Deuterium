@@ -98,7 +98,6 @@ public class GlyphGenerator {
             for (int y = 0; y < bi.getHeight(); y++) {
                 int rgb = bi.getRGB(x, y);
                 int alpha = (rgb >> 24) & 0xFF;
-                // 将 RGB 设为白色，保留 Alpha
                 bi.setRGB(x, y, (alpha << 24) | 0xFFFFFF);
             }
         }

@@ -57,8 +57,6 @@ public class AudioPlayer {
             visualizer = new ExtendedSpectrumVisualizer(CloudMusic.player.player.sampleRate(), JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
         }
 
-        // 处理FFT数据
-
         bandValues = visualizer.processFFT(fft);
     };
 
@@ -71,14 +69,12 @@ public class AudioPlayer {
     public ByteBuffer waveVertexesBufferBackend, waveRightVertexesBufferBackend;
     public FloatBuffer waveVertexesBuffer, waveRightVertexesBuffer;
 
-    // Oscilloscope相关变量
     public float[] oscilloscopeL, oscilloscopeR;
     public float[] oscilloscopeVertexesL, oscilloscopeVertexesR;
     public ByteBuffer oscilloscopeVertexesBufferBackendL, oscilloscopeVertexesBufferBackendR;
     public FloatBuffer oscilloscopeVertexesBufferL, oscilloscopeVertexesBufferR;
     public volatile boolean oscilloscopeDataLFilled = false, oscilloscopeDataRFilled = false;
 
-    // Oscilloscope稳定性处理变量
     private int lastZeroCrossingIndexL = 0, lastZeroCrossingIndexR = 0;
     private float smoothedZeroCrossingIndexL = 0, smoothedZeroCrossingIndexR = 0;
 
@@ -380,29 +376,23 @@ public class AudioPlayer {
      * @return 零交叉点的索引
      */
     private int findZeroCrossing(float[] data) {
-        // 为了稳定显示，我们寻找一个稳定的零交叉点
-        // 在数据的前1/4部分寻找第一个从负到正的零交叉点
         int searchStart = data.length / 4;
         int searchEnd = data.length / 2;
         
         for (int i = searchStart + 1; i < searchEnd; i++) {
             if (data[i - 1] < 0 && data[i] >= 0) {
-                // 线性插值以更精确地找到零交叉点
                 float fraction = -data[i - 1] / (data[i] - data[i - 1]);
                 return (int) (i - 1 + fraction);
             }
         }
         
-        // 如果在前1/4到1/2部分没有找到，尝试在其他区域找
         for (int i = 1; i < data.length; i++) {
             if (data[i - 1] < 0 && data[i] >= 0) {
-                // 线性插值以更精确地找到零交叉点
                 float fraction = -data[i - 1] / (data[i] - data[i - 1]);
                 return (int) (i - 1 + fraction);
             }
         }
         
-        // 如果没有找到零交叉点，返回0
         return 0;
     }
 

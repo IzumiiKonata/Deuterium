@@ -332,6 +332,39 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     private final Map<String, Double> stringWidthMapD = new HashMap<>();
 
+    public boolean areGlyphsLoaded(String text) {
+
+        for (char c : text.toCharArray()) {
+
+            if (c == '（')
+                c = '(';
+
+            if (c == '）')
+                c = ')';
+
+            if (c == '\n')
+                continue;
+
+            if (c == ' ')
+                continue;
+
+            if (c == '\r')
+                continue;
+
+            if (c == '\t')
+                continue;
+
+            if (c == '\247')
+                continue;
+
+            Glyph gly = allGlyphs[c];
+            if (gly == null || gly.textureId == -1 || gly.callList == -1)
+                return false;
+        }
+
+        return true;
+    }
+
     public double getStringWidthD(String text) {
         Double f = this.stringWidthMapD.get(text);
         if (f != null)

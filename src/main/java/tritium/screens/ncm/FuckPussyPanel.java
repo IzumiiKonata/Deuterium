@@ -191,8 +191,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 prevMouse = true;
                 if (CloudMusic.player != null)
                     CloudMusic.player.setPlaybackTime(lyric.timeStamp);
-//                MusicLyricsWidget.quickResetProgress(lyric.timeStamp);
-//                FuckPussyPanel.resetProgress(lyric.timeStamp);
+
+                resetLyricStatus();
             }
 
             if (lyric.hoveringAlpha >= .02f)
@@ -378,7 +378,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 lyric.computeHeight(width);
                 offsetY -= lyric.height + getLyricLineSpacing();
 
-                if (lyric.posY + lyric.height + getLyricLineSpacing() + 2 < posY)
+                if ((subList.size() - 1 - i) >= 3 && lyric.posY + lyric.height + getLyricLineSpacing() + 2 < posY)
                     break;
 
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
@@ -386,8 +386,8 @@ public class FuckPussyPanel implements SharedRenderingConstants {
 
             offsetY = RenderSystem.getHeight() * lyricFraction();
             List<LyricLine> list = lyrics.subList(idxCurrent, lyrics.size());
-            for (int i = 0; i < list.size(); i++) {
-                LyricLine lyric = list.get(i);
+            int oobCounter = 0;
+            for (LyricLine lyric : list) {
                 int j = lyrics.indexOf(lyric);
 
                 lyric.computeHeight(width);
@@ -395,26 +395,33 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
 
                 if (prev != null) {
-                    if (prev.delayTimer.isDelayed(75))
+                    if (prev.delayTimer.isDelayed(getLyricInterpolationWaitTimeMillis()))
                         lyric.shouldUpdatePosition = true;
 //                    if (lyric.posY - (prev.posY) >= prev.height * 1.5)
 //                        lyric.shouldUpdatePosition = true;
                 }
 
-                if (prev != null && lyric.posY - (prev.posY + prev.height) < 0) {
-                    updateLyricPositionsImmediate(width);
-                    break;
-                }
+//                if (prev != null && lyric.posY - (prev.posY + prev.height) < 0) {
+//                    updateLyricPositionsImmediate(width);
+//                    break;
+//                }
 
                 if (prev != null && !lyric.shouldUpdatePosition) {
                     lyric.delayTimer.reset();
                     break;
                 }
 
+                if (prev == null && !lyric.delayTimer.isDelayed(getLyricInterpolationWaitTimeMillis()))
+                    break;
+
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
 
-                if (offsetY > posY + height)
-                    break;
+                if (offsetY > posY + height) {
+                    oobCounter += 1;
+
+                    if (oobCounter >= 4)
+                        break;
+                }
 
                 offsetY += lyric.height + getLyricLineSpacing();
             }
@@ -481,15 +488,24 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         }
 
         if (cur != currentDisplaying) {
-            lyrics.forEach(l -> {
-                l.shouldUpdatePosition = false;
-                l.reboundAnimationForward = true;
-                l.delayTimer.reset();
-                for (LyricLine.Word word : l.words) {
-                    Arrays.fill(word.emphasizes, 0);
-                }
-            });
+            resetLyricStatus();
         }
+    }
+
+    private static long getLyricInterpolationWaitTimeMillis() {
+        return 75;
+    }
+
+    private static void resetLyricStatus() {
+        lyrics.forEach(l -> {
+            l.shouldUpdatePosition = false;
+
+            l.delayTimer.reset();
+
+            for (LyricLine.Word word : l.words) {
+                Arrays.fill(word.emphasizes, 0);
+            }
+        });
     }
 
     private double getCoverSizeMax() {

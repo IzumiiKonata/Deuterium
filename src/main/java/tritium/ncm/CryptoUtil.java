@@ -140,7 +140,6 @@ public class CryptoUtil {
     public static WeapiResult weapi(Object data) {
         String text = gson.toJson(data);
 
-        // 生成16位随机秘钥
         StringBuilder secretKey = new StringBuilder();
         for (int i = 0; i < 16; i++) {
             secretKey.append(BASE62.charAt(random.nextInt(62)));
@@ -149,7 +148,6 @@ public class CryptoUtil {
         String firstEncrypt = aesEncrypt(text, "cbc", PRESET_KEY, IV);
         String params = aesEncrypt(firstEncrypt, "cbc", secretKey.toString(), IV);
         
-        // 反转秘钥并RSA加密
         String reversedKey = new StringBuilder(secretKey.toString()).reverse().toString();
         String encSecKey = rsaEncrypt(reversedKey, PUBLIC_KEY);
         
@@ -200,7 +198,6 @@ public class CryptoUtil {
     public static DecryptResult eapiReqDecrypt(String encryptedParams) {
         String decryptedData = aesDecrypt(encryptedParams, EAPI_KEY, "", "hex");
         
-        // 使用正则表达式解析URL和数据
         String pattern = "(.*?)-36cd479b6b5-(.*?)-36cd479b6b5-(.*)";
         java.util.regex.Pattern regex = java.util.regex.Pattern.compile(pattern);
         java.util.regex.Matcher matcher = regex.matcher(decryptedData);

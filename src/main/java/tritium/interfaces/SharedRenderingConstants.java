@@ -207,7 +207,6 @@ public interface SharedRenderingConstants {
 
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
-        // 限制 render2D 渲染次数
         boolean shouldUseCaching = ClientSettings.RENDER2D_FRAMERATE.getValue() != 0;
 
         if (shouldUseCaching) {

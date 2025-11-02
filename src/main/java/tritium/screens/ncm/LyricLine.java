@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import tritium.management.FontManager;
+import tritium.rendering.font.CFontRenderer;
 import tritium.utils.timing.Timer;
 
 import java.util.List;
@@ -35,7 +36,6 @@ public class LyricLine {
     public float blurAlpha = 0f;
     public boolean shouldUpdatePosition = false;
     public double reboundAnimation = 0;
-    public boolean reboundAnimationForward = true;
     public Timer delayTimer = new Timer();
 
     public final List<Word> words = new CopyOnWriteArrayList<>();
@@ -50,20 +50,32 @@ public class LyricLine {
             this.timing = timing;
             this.emphasizes = new double[word.length()];
         }
-
     }
+
+    private boolean heightComputed = false;
 
     public void computeHeight(double width) {
 
+        if (heightComputed) return;
+
+        CFontRenderer fr = FontManager.pf65bold;
+
+        boolean canSetComputed = true;
+
         if (!this.words.isEmpty()) {
-            double height = FontManager.pf65bold.getHeight();
+            double height = fr.getHeight();
 
             double w = 0;
             for (Word word : words) {
-                double wordWidth = FontManager.pf65bold.getStringWidthD(word.word);
+
+                if (!fr.areGlyphsLoaded(word.word)) {
+                    canSetComputed = false;
+                }
+
+                double wordWidth = fr.getStringWidthD(word.word);
 
                 if (w + wordWidth > width) {
-                    height += FontManager.pf65bold.getHeight() * .85 + 4;
+                    height += fr.getHeight() * .85 + 4;
                     w = wordWidth;
                 } else {
                     w += wordWidth;
@@ -72,20 +84,29 @@ public class LyricLine {
 
             this.height = height;
         } else {
-            int length = FontManager.pf65bold.fitWidth(lyric, (float) width - 12).length;
-            this.height = length * FontManager.pf65bold.getHeight() * .85 + length * 4;
-//
-//            if (translationText != null) {
-//                this.height += FontManager.pf34bold.getHeight() + 4;
-//            }
+
+            if (!fr.areGlyphsLoaded(lyric)) {
+                canSetComputed = false;
+            }
+
+            int length = fr.fitWidth(lyric, (float) width - 12).length;
+            this.height = length * fr.getHeight() * .85 + length * 4;
         }
 
         if (translationText != null) {
-            String[] strings = FontManager.pf34bold.fitWidth(translationText, width - 12);
-            height += FontManager.pf34bold.getHeight() * strings.length + 4 * (strings.length - 1)/* + 8*/;
+
+            if (!fr.areGlyphsLoaded(translationText)) {
+                canSetComputed = false;
+            }
+
+            CFontRenderer frTranslation = FontManager.pf34bold;
+            String[] strings = frTranslation.fitWidth(translationText, width - 12);
+            height += frTranslation.getHeight() * strings.length + 4 * (strings.length - 1)/* + 8*/;
         } else {
             height -= 4;
         }
+
+        heightComputed = canSetComputed;
     }
 
 }
