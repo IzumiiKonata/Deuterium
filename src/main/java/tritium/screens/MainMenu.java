@@ -157,6 +157,7 @@ public class MainMenu extends BaseScreen {
     private void renderInfos() {
 
         List<String> infos = Arrays.asList(
+                "https://github.com/IzumiiKonata/Deuterium",
                 "Tritium-X " + Tritium.getVersion()
         );
 
@@ -165,7 +166,7 @@ public class MainMenu extends BaseScreen {
 
         for (String info : infos) {
             fr.drawCenteredString(info, RenderSystem.getWidth() * .5, yOffset, this.getColor(ColorType.TEXT));
-            yOffset -= fr.getHeight();
+            yOffset -= fr.getHeight() + 4;
         }
 
     }
