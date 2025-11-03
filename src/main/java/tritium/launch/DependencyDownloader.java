@@ -186,12 +186,11 @@ public class DependencyDownloader {
         String baseUrl = "https://maven.aliyun.com/repository/central/";
         String downloadUrl;
 
+        String groupIdPath = parts[0].replaceAll("\\.", "/");
         if (parts.length > 3) {
             // classifier
-            String groupIdPath = parts[0].replaceAll("\\.", "/");
             downloadUrl = baseUrl + groupIdPath + "/" + parts[1] + "/" + parts[3] + "/" + parts[1] + "-" + parts[3] + "-" + parts[2];
         } else {
-            String groupIdPath = parts[0].replaceAll("\\.", "/");
             downloadUrl = baseUrl + groupIdPath + "/" + parts[1] + "/" + parts[2] + "/" + parts[1] + "-" + parts[2];
         }
 
