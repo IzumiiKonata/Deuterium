@@ -152,7 +152,8 @@ public class Music {
         }
 
 //        System.out.println(this.album);
-        this.albumName = this.album.get("name").isJsonNull() ? "None" : this.album.get("name").getAsString();
+        JsonElement nameElement = this.album.get("name");
+        this.albumName = (nameElement == null || nameElement.isJsonNull()) ? "None" : nameElement.getAsString();
 
         if (this.album.has("picUrl")) {
             this.picUrl = this.album.get("picUrl").getAsString();
@@ -172,7 +173,7 @@ public class Music {
             if (jObj.has("name")) {
                 JsonElement jName = jObj.get("name");
 
-                if (!jName.isJsonNull()) {
+                if (jName != null && !jName.isJsonNull()) {
                     artistsList.add(jName.getAsString());
                 }
             }

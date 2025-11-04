@@ -1,6 +1,7 @@
 package tritium.ncm.music.dto;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import tritium.ncm.RequestUtil;
@@ -47,13 +48,32 @@ public class PlayList {
         }
         this.id = playlist.get("id").getAsLong();
         this.name = playlist.get("name").getAsString();
-        this.coverUrl = playlist.get("coverImgUrl").getAsString();
+        JsonElement coverElement = playlist.get("coverImgUrl");
+
+        if (coverElement != null && !coverElement.isJsonNull()) {
+            this.coverUrl = coverElement.getAsString();
+        } else if ((coverElement = playlist.get("picUrl")) != null && !coverElement.isJsonNull()) {
+            this.coverUrl = coverElement.getAsString();
+        } else {
+            this.coverUrl = "";
+        }
+
         this.count = playlist.get("trackCount").getAsInt();
-        this.playCount = playlist.get("playCount").getAsLong();
+        JsonElement playCountElement = playlist.get("playCount");
+
+        if (playCountElement != null && !playCountElement.isJsonNull()) {
+            this.playCount = playCountElement.getAsLong();
+        } else if ((playCountElement = playlist.get("playcount")) != null && !playCountElement.isJsonNull()) {
+            this.playCount = playCountElement.getAsLong();
+        } else {
+            this.playCount = 0;
+        }
+
         this.creator = new User(playlist.get("creator").getAsJsonObject());
         this.createTime = playlist.get("createTime").getAsLong();
-        if (!playlist.get("description").isJsonNull()) {
-            this.description = playlist.get("description").getAsString().split("\n");
+        JsonElement desc = playlist.get("description");
+        if (desc != null && !desc.isJsonNull()) {
+            this.description = desc.getAsString().split("\n");
         } else {
             this.description = null;
         }

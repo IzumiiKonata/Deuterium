@@ -9,6 +9,7 @@ import tritium.management.WidgetsManager;
 import tritium.module.Module;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.shader.impl.*;
+import tritium.screens.ncm.NCMScreen;
 import tritium.widget.Widget;
 import tritium.rendering.shader.impl.*;
 
@@ -53,6 +54,8 @@ public class Reload extends Command {
         Shaders.RQG_SHADER = new RQGShader();
 
         this.print("Reloaded shaders!");
+
+        NCMScreen.getInstance().layout();
 
     }
 

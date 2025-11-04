@@ -1,5 +1,6 @@
 package tritium.ncm.music.dto;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import lombok.Getter;
 import tritium.ncm.api.CloudMusicApi;
@@ -28,16 +29,18 @@ public class User {
         try {
             this.id = profile.get("userId").getAsLong();
 
-            if (profile.get("nickname").isJsonNull()) {
+            JsonElement nickname = profile.get("nickname");
+            if (nickname == null || nickname.isJsonNull()) {
                 this.name = "N/A";
             } else {
-                this.name = profile.get("nickname").getAsString();
+                this.name = nickname.getAsString();
             }
 
-            if (profile.get("signature").isJsonNull()) {
+            JsonElement sign = profile.get("signature");
+            if (sign == null || sign.isJsonNull()) {
                 this.signature = "N/A";
             } else {
-                this.signature = profile.get("signature").getAsString();
+                this.signature = sign.getAsString();
             }
 
             this.vip = profile.get("vipType").getAsInt();

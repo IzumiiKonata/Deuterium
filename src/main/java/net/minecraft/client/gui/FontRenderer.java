@@ -458,11 +458,18 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
     private final String listOfRandomChars = "  !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡£ª«¬®°±²·º»¼½¿ÀÁÂÄÅÆÇÈÉÊËÍÑÓÔÕÖ×ØÚÜßàáâãäåæçèéêëìíîïñòóôõö÷øùúûüÿğİıŒœŞşŴŵžƒȇΓΘΣΦΩαβδμπστⁿ∅∈∙√∞∩≈≡≤≥⌠⌡─│┌┐└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▄█▌▐░▒▓■";
     private final char[] randomChars = listOfRandomChars.toCharArray();
-    private int[] randomCharMap = new int['\uFFFF' + 1];
+    private final int[] randomCharMap;
 
     {
+        char max = 0;
+
+        for (char c : randomChars) {
+            max = (char) Math.max(max, c);
+        }
+
+        randomCharMap = new int[max + 1];
         Arrays.fill(randomCharMap, -1);
-        for (char c : listOfRandomChars.toCharArray()) {
+        for (char c : randomChars) {
             randomCharMap[c] = 0;
         }
     }
@@ -530,9 +537,9 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
                 ++i;
             } else {
-                int j = randomCharMap[c0];
+                int j = -1;
 
-                if (this.randomStyle && j != -1) {
+                if (this.randomStyle && c0 < randomCharMap.length && (j = randomCharMap[c0]) != -1) {
                     int k = this.getCharWidth(c0);
                     char c1;
 

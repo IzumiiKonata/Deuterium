@@ -1,5 +1,6 @@
 package tritium.rendering.ui.container;
 
+import lombok.Getter;
 import org.lwjgl.input.Keyboard;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
@@ -17,6 +18,32 @@ public class ScrollPanel extends Panel {
 
     private double spacing = 0;
     public double actualScrollOffset = 0, targetScrollOffset = 0;
+
+    @Getter
+    private Alignment alignment = Alignment.VERTICAL;
+
+    /**
+     * 子组件的排列方式
+     */
+    public enum Alignment {
+        /**
+         * 仅垂直排列 (默认)
+         */
+        VERTICAL,
+        /**
+         * 仅水平排列
+         */
+        HORIZONTAL,
+        /**
+         * 垂直排列并水平填充
+         */
+        VERTICAL_WITH_HORIZONTAL_FILL;
+    }
+
+    public ScrollPanel setAlignment(Alignment alignment) {
+        this.alignment = alignment;
+        return this;
+    }
 
     @Override
     public void onRender(double mouseX, double mouseY, int dWheel) {
@@ -47,27 +74,62 @@ public class ScrollPanel extends Panel {
         }
 
         this.targetScrollOffset = Math.max(this.targetScrollOffset, 0);
-        double childrenHeightSum = this.getChildrenHeightSum();
-        if (childrenHeightSum > this.getHeight())
-            this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
-        else
-            this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+
+        if (this.alignment == Alignment.VERTICAL) {
+            double childrenHeightSum = this.getChildrenHeightSum();
+            if (childrenHeightSum > this.getHeight())
+                this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
+            else
+                this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+        } else if (this.alignment == Alignment.HORIZONTAL) {
+            double childrenWidthSum = this.getChildrenWidthSum();
+            if (childrenWidthSum > this.getWidth())
+                this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenWidthSum - this.getWidth());
+            else
+                this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+        } else if (this.alignment == Alignment.VERTICAL_WITH_HORIZONTAL_FILL) {
+            double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
+            if (childrenHeightSum > this.getHeight())
+                this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
+            else
+                this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+        }
 
         this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
     }
 
     private void alignChildren() {
-        double offsetY = -this.actualScrollOffset;
+        double offsetX = 0;
+        double offsetY = 0;
+
+        if (this.alignment == Alignment.VERTICAL || this.alignment == Alignment.VERTICAL_WITH_HORIZONTAL_FILL)
+            offsetY = -this.actualScrollOffset;
+        else
+            offsetX = -this.actualScrollOffset;
 
         for (AbstractWidget<?> child : this.getChildren()) {
 
+            double width = child.getWidth();
             double height = child.getHeight();
 
             if (child.isHidden())
                 continue;
 
-            child.setPosition(child.getRelativeX(), offsetY);
-            offsetY += height + spacing;
+            if (this.alignment == Alignment.VERTICAL) {
+                child.setPosition(child.getRelativeX(), offsetY);
+                offsetY += height + spacing;
+            } else if (this.alignment == Alignment.HORIZONTAL) {
+                child.setPosition(offsetX, child.getRelativeY());
+                offsetX += width + spacing;
+            } else if (this.alignment == Alignment.VERTICAL_WITH_HORIZONTAL_FILL) {
+                if (offsetX + width > this.getWidth()) {
+                    offsetX = 0;
+                    offsetY += height + spacing;
+                }
+
+                child.setPosition(offsetX, offsetY);
+                offsetX += width + spacing;
+            }
         }
     }
 
@@ -78,12 +140,61 @@ public class ScrollPanel extends Panel {
 
         for (AbstractWidget<?> child : children) {
 
+            double width = child.getWidth();
             double height = child.getHeight();
 
             if (child.isHidden())
                 continue;
 
             result += height + this.spacing;
+        }
+
+        if (result > 0)
+            result -= this.spacing;
+
+        return result;
+    }
+
+    private double getChildrenWidthSum() {
+        double result = 0;
+
+        List<AbstractWidget<?>> children = this.getChildren();
+
+        for (AbstractWidget<?> child : children) {
+
+            double width = child.getWidth();
+            double height = child.getHeight();
+
+            if (child.isHidden())
+                continue;
+
+            result += width + this.spacing;
+        }
+
+        if (result > 0)
+            result -= this.spacing;
+
+        return result;
+    }
+
+    private double getChildrenHeightSumHorizontalFill() {
+        double result = 0;
+        double offsetX = 0;
+
+        List<AbstractWidget<?>> children = this.getChildren();
+
+        for (AbstractWidget<?> child : children) {
+
+            double width = child.getWidth();
+            double height = child.getHeight();
+
+            if (child.isHidden())
+                continue;
+
+            if (offsetX + width > this.getWidth()) {
+                offsetX = 0;
+                result += height + spacing;
+            }
         }
 
         if (result > 0)

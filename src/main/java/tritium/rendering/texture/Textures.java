@@ -33,17 +33,20 @@ public class Textures implements SharedConstants {
         return Optional.ofNullable(texture);
     }
 
-    public DynamicTexture loadTexture(Location location, BufferedImage img) {
-        return Textures.loadTexture(location, img, true, false);
+    public void loadTexture(Location location, BufferedImage img) {
+        /*return */Textures.loadTexture(location, img, true, false);
     }
 
-    public DynamicTexture loadTexture(Location location, BufferedImage img, boolean clearable, boolean linear) {
+    public void loadTexture(Location location, BufferedImage img, boolean clearable, boolean linear) {
+
+        if (img == null)
+            return;
 
         DynamicTexture dynamicTexture = new DynamicTexture(img, clearable, linear);
 
         mc.getTextureManager().loadTexture(location, dynamicTexture);
 
-        return dynamicTexture;
+//        return dynamicTexture;
 
     }
 

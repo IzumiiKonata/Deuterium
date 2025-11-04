@@ -81,6 +81,22 @@ public class NavigateBar extends NCMPanel {
 
         this.playlistPanel.addChild(lbl);
 
+        {
+            PlaylistItem item = new PlaylistItem("A", () -> 0xFFC30218, () -> "主页", () -> {
+                NCMScreen.getInstance().setCurrentPanel(new HomePanel());
+            });
+
+            this.playlistPanel.addChild(item);
+        }
+
+        LabelWidget lblPlaylists = new LabelWidget("我的歌单", FontManager.pf14bold);
+        lblPlaylists.setBeforeRenderCallback(() -> {
+            lblPlaylists.setColor(Color.GRAY);
+            lblPlaylists.setPosition(6, lblPlaylists.getRelativeY());
+        });
+
+        this.playlistPanel.addChild(lblPlaylists);
+
         List<PlayList> pl = CloudMusic.playLists;
 
         if (pl != null) {
@@ -212,12 +228,12 @@ public class NavigateBar extends NCMPanel {
                 bg.setRadius(4);
             });
 
-            LabelWidget lblIcon = new LabelWidget(icon, FontManager.music16);
+            LabelWidget lblIcon = new LabelWidget(icon, FontManager.music18);
             this.addChild(lblIcon);
             lblIcon.setBeforeRenderCallback(() -> {
                 lblIcon.setColor(iconColorSupplier.get());
                 lblIcon.centerVertically();
-                lblIcon.setPosition(8, lblIcon.getRelativeY() + .5);
+                lblIcon.setPosition(8, lblIcon.getRelativeY());
             });
 
             lblIcon.setClickable(false);

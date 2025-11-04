@@ -91,24 +91,30 @@ public class MusicWidget extends RoundedRectWidget {
         LabelWidget lblMusicName = new LabelWidget(music.getName(), FontManager.pf14bold);
         this.addChild(lblMusicName);
 
-        lblMusicName.setBeforeRenderCallback(() -> {
-            lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-            lblMusicName.centerVertically();
-            lblMusicName.setPosition(cover.getRelativeX() + cover.getWidth() + 4, lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2);
-        });
+        lblMusicName
+                .setWidthLimitType(LabelWidget.WidthLimitType.TRIM_TO_WIDTH)
+                .setBeforeRenderCallback(() -> {
+                    lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+                    lblMusicName.centerVertically();
+                    lblMusicName.setPosition(cover.getRelativeX() + cover.getWidth() + 4, lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2);
+                    lblMusicName.setMaxWidth(this.getWidth() - (cover.getRelativeX() + cover.getWidth() + 4 + 32));
+                });
         lblMusicName.setClickable(false);
 
         LabelWidget lblMusicArtist = new LabelWidget(music.getArtistsName() + " - " + music.getAlbumName(), FontManager.pf14bold);
         this.addChild(lblMusicArtist);
 
-        lblMusicArtist.setBeforeRenderCallback(() -> {
-            if (CloudMusic.currentlyPlaying == music)
-                lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-            else
-                lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
-            lblMusicArtist.centerVertically();
-            lblMusicArtist.setPosition(cover.getRelativeX() + cover.getWidth() + 4, lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2);
-        });
+        lblMusicArtist
+                .setWidthLimitType(LabelWidget.WidthLimitType.TRIM_TO_WIDTH)
+                .setBeforeRenderCallback(() -> {
+                    if (CloudMusic.currentlyPlaying == music)
+                        lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+                    else
+                        lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
+                    lblMusicArtist.centerVertically();
+                    lblMusicArtist.setPosition(cover.getRelativeX() + cover.getWidth() + 4, lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2);
+                    lblMusicArtist.setMaxWidth(this.getWidth() - (cover.getRelativeX() + cover.getWidth() + 4 + 32));
+                });
 
         lblMusicArtist.setClickable(false);
 
@@ -155,13 +161,16 @@ public class MusicWidget extends RoundedRectWidget {
             try (InputStream inputStream = HttpUtils.downloadStream(music.getPicUrl(64))) {
                 if (inputStream != null) {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
-                    AsyncGLContext.submit(() -> {
-                        if (textureManager.getTexture(coverLoc) != null) {
-                            textureManager.deleteTexture(coverLoc);
-                        }
-                        Textures.loadTexture(coverLoc, img);
-                        img.close();
-                    });
+
+                    if (img != null) {
+                        AsyncGLContext.submit(() -> {
+                            if (textureManager.getTexture(coverLoc) != null) {
+                                textureManager.deleteTexture(coverLoc);
+                            }
+                            Textures.loadTexture(coverLoc, img);
+                            img.close();
+                        });
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

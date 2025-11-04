@@ -28,7 +28,6 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
     boolean fadeIn = false;
 
     @Getter
-    @Setter
     boolean linearFilter = false;
 
     public RoundedImageWidget(Supplier<Location> locImg, double x, double y, double width, double height) {
@@ -78,6 +77,11 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
 
     public RoundedImageWidget setRadius(double radius) {
         this.radius = radius;
+        return this;
+    }
+
+    public RoundedImageWidget setLinearFilter(boolean linearFilter) {
+        this.linearFilter = linearFilter;
         return this;
     }
 }

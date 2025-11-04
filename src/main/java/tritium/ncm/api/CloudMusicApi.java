@@ -353,4 +353,18 @@ public class CloudMusicApi {
         return RequestUtil.createRequest("/api/v3/song/detail", data, OptionsUtil.createOptions("weapi"));
     }
 
+    /**
+     * 每日推荐歌单接口
+     */
+    public RequestUtil.RequestAnswer recommendResource() {
+        return RequestUtil.createRequest("/api/v1/discovery/recommend/resource", null, OptionsUtil.createOptions("weapi"));
+    }
+
+    /**
+     * 每日推荐歌曲
+     */
+    public RequestUtil.RequestAnswer recommendSongs() {
+        return RequestUtil.createRequest("/api/v3/discovery/recommend/songs", null, OptionsUtil.createOptions("weapi"));
+    }
+
 }

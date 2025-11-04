@@ -47,7 +47,6 @@ public class MultiThreadingUtil {
         }
 
         @Override
-        @SneakyThrows
         public void run() {
 
             while (true) {
@@ -76,7 +75,11 @@ public class MultiThreadingUtil {
                         LOGGER.debug("Thread {} started waiting!", Thread.currentThread().getName());
 
                         // let the thread waits if there aren't any tasks to load
-                        lock.wait();
+                        try {
+                            lock.wait();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
                     }
                 }
             }

@@ -25,6 +25,14 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
     @Setter
     double maxWidth = -1;
 
+    @Getter
+    private WidthLimitType widthLimitType = WidthLimitType.SCROLL;
+
+    public enum WidthLimitType {
+        SCROLL,
+        TRIM_TO_WIDTH;
+    }
+
     LazyLoadBase<ScrollText> scrollText = new LazyLoadBase<ScrollText>() {
         @Override
         protected ScrollText load() {
@@ -62,8 +70,15 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
 
         if (widthNotLimited)
             font.drawString(lbl, this.getX(), this.getY(), this.getHexColor());
-        else
-            this.scrollText.getValue().render(font, lbl, this.getX(), this.getY(), this.getMaxWidth(), this.getHexColor());
+        else {
+
+            if (this.widthLimitType == WidthLimitType.SCROLL) {
+                this.scrollText.getValue().render(font, lbl, this.getX(), this.getY(), this.getMaxWidth(), this.getHexColor());
+            } else {
+                font.drawString(font.trim(lbl, this.getMaxWidth()), this.getX(), this.getY(), this.getHexColor());
+            }
+
+        }
 
         double width = widthNotLimited ? font.getWidthDouble(lbl) : this.getMaxWidth();
         this.setBounds(width, font.getStringHeight(lbl));
@@ -72,6 +87,11 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
     @Override
     public void addChild(AbstractWidget<?>... child) {
         throw new UnsupportedOperationException("LabelWidget 不应该拥有子组件。");
+    }
+
+    public LabelWidget setWidthLimitType(WidthLimitType widthLimitType) {
+        this.widthLimitType = widthLimitType;
+        return this;
     }
 
     public LabelWidget setFont(CFontRenderer font) {

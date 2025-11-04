@@ -560,6 +560,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return (SELF) this;
     }
 
+    public SELF setBounds(double size) {
+        return this.setBounds(size, size);
+    }
+
     public SELF setBounds(double width, double height) {
         this.getBounds().width = width;
         this.getBounds().height = height;

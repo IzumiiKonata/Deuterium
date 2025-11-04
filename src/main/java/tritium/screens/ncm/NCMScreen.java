@@ -61,7 +61,7 @@ public class NCMScreen extends BaseScreen {
             this.layout();
     }
 
-    private void layout() {
+    public void layout() {
         this.basePanel.getChildren().clear();
 
         RectWidget bg = new RectWidget();

@@ -65,7 +65,7 @@ public class Album {
 
                 JsonElement jName = jObj.get("name");
 
-                if (!jName.isJsonNull()) {
+                if (jName != null && !jName.isJsonNull()) {
                     artistsName.append(jName.getAsString());
 
                     if (jObj.has("tns")) {
