@@ -183,7 +183,7 @@ public class LyricParser {
                             sec * 1000 +
                             mil * scale_mil;
             
-            entryList.add(new LyricLine(time, times, text));
+            entryList.add(new LyricLine(time, times, text.replace("　", " ")));
         }
         return entryList;
     }

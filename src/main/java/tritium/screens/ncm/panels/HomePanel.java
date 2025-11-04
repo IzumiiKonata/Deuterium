@@ -129,7 +129,7 @@ public class HomePanel extends NCMPanel {
             double size = 100;
             double emphasizeAnimMax = 5;
 
-            this.setBounds(size + emphasizeAnimMax, size + emphasizeAnimMax + 8);
+            this.setBounds(size + emphasizeAnimMax, size + emphasizeAnimMax + 16);
 
             RoundedImageWidget cover = new RoundedImageWidget(this::getCoverLocation, 0, 0, size, size);
 
@@ -146,7 +146,8 @@ public class HomePanel extends NCMPanel {
                         cover
                                 .setBounds(size + this.emphasizeAnim)
                                 .setRadius(4)
-                                .center();
+                                .centerHorizontally()
+                                .setBounds(cover.getRelativeX(), this.getWidth() * .5 - size * .5 - emphasizeAnim * .5, cover.getWidth(), cover.getHeight());
                     });
 
             this.loadCover();

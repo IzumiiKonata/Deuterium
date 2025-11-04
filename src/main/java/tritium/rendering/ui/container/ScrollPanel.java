@@ -191,10 +191,16 @@ public class ScrollPanel extends Panel {
             if (child.isHidden())
                 continue;
 
+            if (offsetX == 0 && result == 0) {
+                result += height + spacing;
+            }
+
             if (offsetX + width > this.getWidth()) {
                 offsetX = 0;
                 result += height + spacing;
             }
+
+            offsetX += width + spacing;
         }
 
         if (result > 0)

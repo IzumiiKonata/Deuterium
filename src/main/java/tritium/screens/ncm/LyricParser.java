@@ -181,7 +181,7 @@ public class LyricParser {
                             sec * 1000 +
                             mil;
 
-            entryList.add(new LyricLine(time, text));
+            entryList.add(new LyricLine(time, text.replace("　", " ")));
         }
         return entryList;
     }
