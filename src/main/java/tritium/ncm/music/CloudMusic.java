@@ -499,7 +499,7 @@ public class CloudMusic {
 
                 @Cleanup
                 InputStream is = HttpUtils.downloadStream(music.getPicUrl(320), 5);
-                InputStream isSmall = HttpUtils.downloadStream(music.getPicUrl(64), 5);
+                InputStream isSmall = HttpUtils.downloadStream(music.getPicUrl(128), 5);
 
                 // 此处无法使用 NativeBackedImage, 底下那个 gaussianBlur 需要很多 ImageIO 狗屎才能工作
                 BufferedImage read = ImageIO.read(is);

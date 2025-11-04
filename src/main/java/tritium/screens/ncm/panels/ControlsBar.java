@@ -39,7 +39,7 @@ public class ControlsBar extends NCMPanel {
             if (CloudMusic.currentlyPlaying == null)
                 return null;
 
-            return MusicInfoWidget.getMusicCover(CloudMusic.currentlyPlaying);
+            return MusicInfoWidget.getMusicCoverSmall(CloudMusic.currentlyPlaying);
         }, 0 , 0, 0, 0);
 
         this.addChild(playingCover);

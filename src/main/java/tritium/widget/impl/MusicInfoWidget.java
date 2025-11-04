@@ -85,7 +85,7 @@ public class MusicInfoWidget extends Widget {
 
         if (playingMusic != null) {
 
-            Location cover = getMusicCover(playingMusic);
+            Location cover = getMusicCoverSmall(playingMusic);
 
             ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(cover);
 
