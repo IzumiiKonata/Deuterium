@@ -18,7 +18,9 @@ import tritium.screens.clickgui.music.LoginRenderer;
 import tritium.screens.ncm.panels.ControlsBar;
 import tritium.screens.ncm.panels.NavigateBar;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -39,6 +41,7 @@ public class NCMScreen extends BaseScreen {
 
     RectWidget currentPanelBg = new RectWidget();
 
+    float prevAnimatingPanelAlpha = 0f;
     NCMPanel prevAnimatingPanel = null;
     NCMPanel currentPanel = null;
     float curPanelAlphaAnimation = 0f;
@@ -121,7 +124,7 @@ public class NCMScreen extends BaseScreen {
 
             float alphaInterpolateSpeed = 0.4f;
             if (this.prevAnimatingPanel != null) {
-                this.prevAnimatingPanel.setAlpha(Interpolations.interpBezier(this.prevAnimatingPanel.getAlpha(), 0f, alphaInterpolateSpeed));
+                this.prevAnimatingPanel.setAlpha(this.prevAnimatingPanelAlpha = Interpolations.interpBezier(this.prevAnimatingPanelAlpha, 0f, alphaInterpolateSpeed));
                 this.prevAnimatingPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
 
                 GlStateManager.pushMatrix();
@@ -129,7 +132,7 @@ public class NCMScreen extends BaseScreen {
                 this.prevAnimatingPanel.renderWidget(mouseX, mouseY, dWheel);
                 GlStateManager.popMatrix();
 
-                if (this.prevAnimatingPanel.getAlpha() <= 0.02f)
+                if (this.prevAnimatingPanelAlpha <= 0.02f)
                     this.prevAnimatingPanel = null;
             } else if (this.currentPanel != null) {
                 curPanelAlphaAnimation = Interpolations.interpBezier(curPanelAlphaAnimation, 1f, alphaInterpolateSpeed);
@@ -187,11 +190,40 @@ public class NCMScreen extends BaseScreen {
 
     public LoginRenderer loginRenderer = null;
 
+    int currentActionPointer = 0;
+    List<Runnable> actions = new ArrayList<>();
+
     public void setCurrentPanel(NCMPanel panel) {
+        this.innerSetCurrentPanel(panel, true);
+
+        if (panel != null) {
+            Runnable action = () -> this.innerSetCurrentPanel(panel, false);
+
+            if (actions.isEmpty()) {
+                currentActionPointer = 0;
+                actions.add(action);
+            } else {
+                ++ currentActionPointer;
+
+                while (actions.size() > currentActionPointer + 1)
+                    actions.remove(actions.size() - 1);
+
+                if (currentActionPointer < actions.size()) {
+                    actions.set(currentActionPointer, action);
+                } else {
+                    actions.add(action);
+                }
+            }
+        }
+    }
+
+    private void innerSetCurrentPanel(NCMPanel panel, boolean shouldCallInit) {
         this.prevAnimatingPanel = this.currentPanel;
+        this.prevAnimatingPanelAlpha = 1.0f;
         this.currentPanel = panel;
         if (panel != null) {
-            this.currentPanel.onInit();
+            if (shouldCallInit)
+                this.currentPanel.onInit();
             this.currentPanel.setAlpha(0);
             this.curPanelAlphaAnimation = 0f;
         }
@@ -227,10 +259,31 @@ public class NCMScreen extends BaseScreen {
                 this.currentPanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
 
             this.controlsBar.onMouseClickReceived(mouseX, mouseY, mouseButton);
+
+            // forward
+            if (mouseButton == 4) {
+
+                // is last
+                if (currentActionPointer >= actions.size() - 1) {
+                    currentActionPointer = actions.size() - 1;
+                    return;
+                } else {
+                    currentActionPointer ++;
+                    actions.get(currentActionPointer).run();
+                }
+
+            }
+            // go back
+            else if (mouseButton == 3) {
+                if (currentActionPointer > 0) {
+                    -- currentActionPointer;
+                    actions.get(currentActionPointer).run();
+                }
+            }
+
         } else {
             this.fuckPussyPanel.mouseClicked(mouseX, mouseY, mouseButton);
         }
-//        this.playlistsPanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
 
     }
 
