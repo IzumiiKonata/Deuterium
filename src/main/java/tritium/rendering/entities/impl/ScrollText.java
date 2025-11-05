@@ -97,6 +97,8 @@ public class ScrollText {
 //                }
 //            }
 
+        } else {
+            scrollOffset = 0;
         }
 
 
