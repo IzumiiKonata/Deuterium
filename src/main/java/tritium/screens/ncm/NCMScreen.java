@@ -118,7 +118,7 @@ public class NCMScreen extends BaseScreen {
 
         this.basePanel.setBounds(this.getPanelWidth(), this.getPanelHeight());
 
-        if (this.fuckPussyPanel == null || this.fuckPussyPanel.alpha <= .975f) {
+        if (this.fuckPussyPanel == null || this.fuckPussyPanel.alpha <= .9f) {
             this.basePanel.setAlpha(alpha);
             this.basePanel.renderWidget(mouseX, mouseY, dWheel);
 
@@ -161,6 +161,7 @@ public class NCMScreen extends BaseScreen {
             StencilClipManager.beginClip(() -> {
                 Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), -1);
             });
+            Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), getColor(ColorType.GENERIC_BACKGROUND) | ((int) (this.fuckPussyPanel.alpha * 255)) << 24);
             this.fuckPussyPanel.onRender(mouseX, mouseY, basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), dWheel);
             StencilClipManager.endClip();
 

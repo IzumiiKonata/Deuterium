@@ -717,11 +717,14 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         ITextureObject texBg = CloudMusic.currentlyPlaying == null ? null : textureManager.getTexture(musicCoverBlured);
 
         if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying != prevMusic) {
-//            System.out.println("SWITCH, " + (prevMusic == null ? "NULL" : prevMusic.getName()) + " -> " + CloudMusic.currentlyPlaying.getName());
+
+            if (prevMusic != null)
+                musicBgAlpha = 0.0f;
+
             prevBg = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCoverBlurred(prevMusic));
             prevCover = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCover(prevMusic));
             prevMusic = CloudMusic.currentlyPlaying;
-            musicBgAlpha = coverAlpha = 0.0f;
+            coverAlpha = 0.0f;
         }
 
         if (texBg != null || prevBg != null) {
