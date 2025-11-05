@@ -1,26 +1,6 @@
-<style>
-.logo-container {
-  text-align: center;
-}
-
-.logo-image {
-  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  width: 40%;
-}
-
-.logo-title {
-  text-align: center;
-  font-size: 60px;
-  font-weight: bold;
-  margin-top: 0;
-}
-</style>
-
-<div class="logo-container">
- <img class="logo-image" src="src/main/resources/assets/minecraft/tritium/textures/logo_white.png" alt="Tritium Logo">
- <p class="logo-title">Tritium</p>
+<div align="center">
+ <img src="src/main/resources/assets/minecraft/tritium/textures/logo_white.png" alt="Tritium Logo">
+ <h1>Tritium-X</h1>
 </div>
 
 > **WARNING**\
