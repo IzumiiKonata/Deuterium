@@ -141,6 +141,7 @@ public class MusicInfoWidget extends Widget {
                     }
                 }
 
+                this.roundedRect(this.getX(), this.getY(), width, height + downloadProgHeight, coverRound, 1, 0, 0, 0, alpha * 0.25f);
 
                 // render download panel
 
@@ -161,8 +162,6 @@ public class MusicInfoWidget extends Widget {
 
                     StencilClipManager.endClip();
                 }
-
-                this.roundedRect(this.getX(), this.getY(), width, height + downloadProgHeight, coverRound, 1, 0, 0, 0, alpha * 0.25f);
 
                 if (prevBg != null) {
                     GlStateManager.bindTexture(prevBg.getGlTextureId());
