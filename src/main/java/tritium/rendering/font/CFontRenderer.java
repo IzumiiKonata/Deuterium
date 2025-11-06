@@ -479,6 +479,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         }
 
         allGlyphs = new Glyph['\uFFFF' + 1];
+        stringHeightMap.clear();
+        stringWidthMap.clear();
+        stringWidthMapD.clear();
     }
 
     public static Location randomIdentifier() {

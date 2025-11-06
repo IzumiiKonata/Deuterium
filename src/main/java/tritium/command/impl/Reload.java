@@ -7,9 +7,11 @@ import tritium.management.Localizer;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
 import tritium.module.Module;
+import tritium.ncm.music.CloudMusic;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.shader.impl.*;
 import tritium.screens.ncm.NCMScreen;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.Widget;
 import tritium.rendering.shader.impl.*;
 
@@ -55,8 +57,11 @@ public class Reload extends Command {
 
         this.print("Reloaded shaders!");
 
-        NCMScreen.getInstance().layout();
-
+        MultiThreadingUtil.runAsync(() -> {
+            CloudMusic.initNCM();
+            NCMScreen.getInstance().layout();
+            this.print("Reloaded NCM!");
+        });
     }
 
     private void reloadModules() {

@@ -2,6 +2,7 @@ package tritium.ncm.music;
 
 import com.google.gson.*;
 import com.jsyn.exceptions.ChannelMismatchException;
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import javazoom.jl.converter.Converter;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -11,6 +12,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.util.Location;
 import net.minecraft.util.Tuple;
+import org.apache.commons.io.IOUtils;
 import org.kc7bfi.jflac.FLACDecoder;
 import org.kc7bfi.jflac.PCMProcessor;
 import org.kc7bfi.jflac.metadata.StreamInfo;
@@ -297,6 +299,8 @@ public class CloudMusic {
 
                 currentlyPlaying = song;
 
+                System.out.println(currentlyPlaying.picUrl);
+
                 Tuple<String, String> playUrl = song.getPlayUrl();
 
                 WidgetsManager.musicInfo.downloading = false;
@@ -501,15 +505,23 @@ public class CloudMusic {
                 InputStream is = HttpUtils.downloadStream(music.getPicUrl(320), 5);
                 InputStream isSmall = HttpUtils.downloadStream(music.getPicUrl(128), 5);
 
-                // 此处无法使用 NativeBackedImage, 底下那个 gaussianBlur 需要很多 ImageIO 狗屎才能工作
-                BufferedImage read = ImageIO.read(is);
+                byte[] byteArray = IOUtils.toByteArray(is);
+                is.close();
+
+                BufferedImage read = NativeBackedImage.make(new ByteArrayInputStream(byteArray));
                 Textures.loadTextureAsyncly(musicCover, read);
 
                 BufferedImage readSmall = NativeBackedImage.make(isSmall);
                 Textures.loadTextureAsyncly(musicCoverSmall, readSmall);
 
                 MultiThreadingUtil.runAsync(() -> {
-                    BufferedImage blured = gaussianBlur(read, 31);
+                    // 此处无法使用 NativeBackedImage, gaussianBlur 需要很多 ImageIO 狗屎才能工作
+                    BufferedImage blured;
+                    try {
+                        blured = gaussianBlur(ImageIO.read(new ByteArrayInputStream(byteArray)), 31);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
                     Textures.loadTextureAsyncly(musicCoverBlur, blured);
                 });
             }

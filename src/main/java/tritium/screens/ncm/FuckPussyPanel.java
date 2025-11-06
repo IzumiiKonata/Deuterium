@@ -519,7 +519,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
     double coverSize = (CloudMusic.player == null || CloudMusic.player.isPausing()) ? this.getCoverSizeMin() : this.getCoverSizeMax();
     double progressBarHeight = 8, volumeBarHeight = 8;
 
-    float coverAlpha = .0f;
+    float coverAlpha = 1f;
     boolean prevMouse = false;
 
     ScrollText stMusicName = new ScrollText(), stArtists = new ScrollText();
@@ -532,7 +532,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         double center = this.getCoverSizeMin();
         coverSize = Interpolations.interpBezier(coverSize, player == null || player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
 
-        if (prevCover != null && coverAlpha <= .99f) {
+        if (prevCover != null && coverAlpha <= .9f) {
             GlStateManager.bindTexture(prevCover.getGlTextureId());
             this.roundedRectTextured(center - coverSize * .5, center - coverSize * .5, coverSize, coverSize, 3, alpha);
         }

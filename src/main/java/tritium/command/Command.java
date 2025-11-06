@@ -51,6 +51,11 @@ public abstract class Command implements SharedConstants {
      * @param args   format arguments
      */
     public void print(String format, Object... args) {
+
+        if (mc.thePlayer == null) {
+            return;
+        }
+
         mc.thePlayer.addChatMessage(EnumChatFormatting.AQUA + "[" + Tritium.NAME + "] " + EnumChatFormatting.RESET + String.format(format, args));
     }
 

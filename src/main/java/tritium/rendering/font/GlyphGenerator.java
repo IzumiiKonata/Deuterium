@@ -3,6 +3,7 @@ package tritium.rendering.font;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Location;
+import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.GLContext;
@@ -18,31 +19,37 @@ import java.awt.image.BufferedImage;
 
 public class GlyphGenerator {
 
+    static final AffineTransform transformation = new AffineTransform();
+    static final FontRenderContext context = new FontRenderContext(transformation, true, true);
+
+    private static boolean canFontDisplayChar(Font f, char ch) {
+        transformation.setToIdentity();
+        return f.createGlyphVector(context, String.valueOf(ch)).getGlyphCode(0) != 0;
+    }
+
     private static Font getFontForGlyph(char ch, Font f, Font... fallBackFonts) {
 
-        if (f.canDisplay(ch)) {
-            return f;
-        } else {
+        if (!canFontDisplayChar(f, ch)) {
             if (fallBackFonts != null) {
                 for (Font fallBackFont : fallBackFonts) {
-                    if (fallBackFont != null && fallBackFont.canDisplay(ch)) {
+                    if (fallBackFont != null && canFontDisplayChar(fallBackFont, ch)) {
 //                        System.out.println("Can't display " + ch);
                         return fallBackFont;
                     }
                 }
             }
-
-            return f;
         }
 
+        return f;
+
     }
+
+    static final BufferedImage fontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
+    static final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
 
     public static void generate(CFontRenderer fr, char ch, Font f, Location identifier, GlyphLoadedCallback onLoaded) {
 
         double fontHeight = -1;
-
-        final BufferedImage fontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
-        final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
 
         Font font = getFontForGlyph(ch, f, fr.fallBackFonts);
 
@@ -53,18 +60,19 @@ public class GlyphGenerator {
 
         GlyphVector gv = font.createGlyphVector(frc, String.valueOf(ch));
 //        Rectangle2D bounds = gv.getVisualBounds();
-        int width = (int) Math.ceil(gv.getGlyphMetrics(0).getAdvance());
-        int height = fontMetrics.getAscent() + fontMetrics.getDescent();
+        float width = gv.getGlyphMetrics(0).getAdvance();
+        float height = fontMetrics.getAscent() + fontMetrics.getDescent();
+        int imgWidth = MathHelper.roundUpToPowerOfTwo((int) width);
+        int imgHeight = MathHelper.roundUpToPowerOfTwo((int) height);
 
-        Glyph glyph = new Glyph(width, height, ch);
+        Glyph glyph = new Glyph(width, height, imgWidth, imgHeight, ch);
 
         fr.allGlyphs[ch] = glyph;
 
         if (width == 0) {
             return;
         }
-
-        BufferedImage bi = new BufferedImage(width, height,
+        BufferedImage bi = new BufferedImage(imgWidth, imgHeight,
                 BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = bi.createGraphics();
@@ -122,11 +130,11 @@ public class GlyphGenerator {
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, glyph.textureId);
             RenderSystem.linearFilter();
 
-            if (GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
-                float maxAnisotropy = GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-                GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
-                        Math.min(16.0f, maxAnisotropy));
-            }
+//            if (GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
+//                float maxAnisotropy = GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
+//                GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
+//                        Math.min(16.0f, maxAnisotropy));
+//            }
             glyph.init();
         });
 
