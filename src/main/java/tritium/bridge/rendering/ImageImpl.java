@@ -45,6 +45,6 @@ public class ImageImpl implements Image {
         if (texObj == null)
             return;
 
-        tritium.rendering.entities.impl.Image.draw(texObj.getGlTextureId(), x, y, width, height, tritium.rendering.entities.impl.Image.Type.Normal);
+        tritium.rendering.Image.draw(texObj.getGlTextureId(), x, y, width, height, tritium.rendering.Image.Type.Normal);
     }
 }

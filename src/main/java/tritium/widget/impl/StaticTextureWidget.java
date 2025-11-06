@@ -5,14 +5,13 @@ import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.util.Location;
 import tritium.Tritium;
-import tritium.rendering.entities.impl.Image;
+import tritium.rendering.Image;
 import tritium.rendering.texture.Textures;
 import tritium.widget.Widget;
 import tritium.interfaces.SharedRenderingConstants;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.nio.file.Files;
 import java.util.Random;
 import java.util.stream.Collectors;

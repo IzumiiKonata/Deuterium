@@ -8,15 +8,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.utils.i18n.Localizable;
 import tritium.module.Module;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
-import tritium.settings.ClientSettings;
 import tritium.settings.Setting;
 import tritium.widget.direction.HorizontalDirection;
 import tritium.widget.direction.VerticalDirection;
-
-import java.awt.*;
 
 /**
  * @author IzumiiKonata

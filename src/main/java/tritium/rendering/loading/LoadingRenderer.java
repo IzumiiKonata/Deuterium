@@ -11,7 +11,7 @@ import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.GLContextUtils;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.loading.screens.NormalLoadingScreen;
 import tritium.rendering.rendersystem.RenderSystem;
 

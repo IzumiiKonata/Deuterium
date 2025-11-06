@@ -10,7 +10,7 @@ import org.lwjgl.opengl.Display;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;

@@ -189,7 +189,7 @@ public class MusicSpectrumWidget extends Widget {
 
                     if (stereo && CloudMusic.player.spectrumDataRFilled) {
                         double lineHeight = 0.5;
-                        tritium.rendering.entities.impl.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
+                        tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
 
                         GlStateManager.color(1, 1, 1, 1);
                         this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.waveRightVertexesBufferBackend, CloudMusic.player.waveRightVertexes.length / 2);
@@ -210,7 +210,7 @@ public class MusicSpectrumWidget extends Widget {
 
                     if (stereo && CloudMusic.player.oscilloscopeDataRFilled) {
                         double lineHeight = 0.5;
-                        tritium.rendering.entities.impl.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
+                        tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
 
                         GlStateManager.color(1, 1, 1, 1);
                         this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.oscilloscopeVertexesBufferBackendR, CloudMusic.player.oscilloscopeVertexesR.length / 2);

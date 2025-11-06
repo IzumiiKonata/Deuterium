@@ -1,9 +1,7 @@
 package tritium.rendering.ui.widgets;
 
-import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.Rect;
 import tritium.rendering.ui.AbstractWidget;
-import tritium.settings.ClientSettings;
 
 /**
  * @author IzumiiKonata

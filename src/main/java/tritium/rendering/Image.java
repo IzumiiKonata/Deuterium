@@ -1,7 +1,5 @@
-package tritium.rendering.entities.impl;
+package tritium.rendering;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -14,31 +12,9 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Location;
 import net.optifine.util.TextureUtils;
 import org.lwjgl.opengl.GL11;
-import tritium.rendering.entities.RenderableEntity;
 import tritium.rendering.rendersystem.RenderSystem;
 
-public class Image extends RenderableEntity {
-    private final ITextureObject texture;
-    @Getter
-    @Setter
-    public Location image;
-    @Getter
-    @Setter
-    public Type type;
-
-    public Image(Location image, double x, double y, double width, double height, Type type) {
-        super(x, y, width, height);
-        this.setType(type);
-        this.setImage(image);
-
-        ITextureObject texture1 = mc.getTextureManager().getTexture(image);
-        if (texture1 == null) {
-            texture = new SimpleTexture(image);
-            mc.getTextureManager().loadTexture(image, texture);
-        } else {
-            texture = texture1;
-        }
-    }
+public class Image {
 
     public static void draw(Location img, double x, double y, double width, double height, Type type) {
         draw(img, x, y, width, height, width, height, type);
@@ -502,22 +478,6 @@ public class Image extends RenderableEntity {
         worldrenderer.pos(x + width, y, 0.0D).tex((u + width) * f, v * f1).endVertex();
         worldrenderer.pos(x, y, 0.0D).tex(u * f, v * f1).endVertex();
         tessellator.draw();
-    }
-
-    @Override
-    public void onRender(double mouseX, double mouseY) {
-        if (type == Type.Normal) {
-            GlStateManager.color(1, 1, 1, 1);
-        }
-
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-        TextureUtils.bindTexture(texture.getGlTextureId());
-        Gui.drawModalRectWithCustomSizedTexture(getX(), getY(), 0, 0, getWidth(), getHeight(), getWidth(), getHeight());
-
-        GlStateManager.enableAlpha();
-        
     }
 
     public enum Type {

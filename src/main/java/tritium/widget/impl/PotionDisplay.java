@@ -11,12 +11,10 @@ import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
 import tritium.interfaces.IFontRenderer;
 import tritium.management.FontManager;
-import tritium.rendering.Stencil;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 
 import tritium.settings.BooleanSetting;
-import tritium.settings.ClientSettings;
 import tritium.widget.Widget;
 import tritium.interfaces.SharedRenderingConstants;
 

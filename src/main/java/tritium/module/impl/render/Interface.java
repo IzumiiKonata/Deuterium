@@ -1,26 +1,15 @@
 package tritium.module.impl.render;
 
-import net.minecraft.util.EnumChatFormatting;
-import tritium.Tritium;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
 import tritium.module.Module;
 import tritium.rendering.async.AsyncGLContext;
-import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
-import tritium.rendering.notification.NotificationManager;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.settings.BooleanSetting;
 import tritium.settings.ClientSettings;
-import tritium.settings.NumberSetting;
-import tritium.settings.StringSetting;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
-import java.awt.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * @author IzumiiKonata

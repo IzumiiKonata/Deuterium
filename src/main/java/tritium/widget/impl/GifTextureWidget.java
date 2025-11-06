@@ -4,7 +4,7 @@ import com.google.gson.JsonObject;
 import lombok.SneakyThrows;
 import net.minecraft.util.Location;
 import tritium.Tritium;
-import tritium.rendering.entities.impl.Image;
+import tritium.rendering.Image;
 import tritium.rendering.texture.Textures;
 import tritium.utils.other.gif.GifDecoder;
 import tritium.utils.timing.Timer;

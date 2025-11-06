@@ -2,13 +2,11 @@ package tritium.rendering.ui;
 
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.interfaces.SharedRenderingConstants;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.ui.container.ScrollPanel;
 import tritium.settings.ClientSettings;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 

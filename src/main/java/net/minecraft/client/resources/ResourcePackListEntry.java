@@ -7,9 +7,7 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Location;
 import tritium.rendering.ResPackPreview;
-import tritium.rendering.entities.impl.Image;
-import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.loading.screens.NormalLoadingScreen;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
 import java.util.List;

@@ -8,7 +8,7 @@ import tritium.rendering.Stencil;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.timing.Timer;

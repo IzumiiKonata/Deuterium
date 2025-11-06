@@ -6,13 +6,11 @@ import tritium.management.ThemeManager;
 import tritium.rendering.InterpolatableColor;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.clickable.ClickableEntity;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 import tritium.utils.i18n.Localizable;
-
-import java.awt.*;
 
 /**
  * @author IzumiiKonata

@@ -3,7 +3,6 @@ package tritium.rendering;
 import lombok.Getter;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
-import tritium.rendering.entities.impl.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.DevUtils;
 

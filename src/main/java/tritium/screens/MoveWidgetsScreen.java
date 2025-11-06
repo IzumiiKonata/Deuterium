@@ -9,7 +9,7 @@ import tritium.utils.i18n.Localizable;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.cursor.CursorUtils;
 import tritium.widget.Widget;

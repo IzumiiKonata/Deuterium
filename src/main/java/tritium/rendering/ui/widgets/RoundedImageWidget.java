@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.util.Location;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Image;
 import tritium.rendering.ui.AbstractWidget;
 
 import java.util.function.Supplier;

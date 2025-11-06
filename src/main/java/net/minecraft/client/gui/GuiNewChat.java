@@ -16,8 +16,6 @@ import tritium.management.FontManager;
 import tritium.management.ModuleManager;
 import tritium.module.impl.render.Chat;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

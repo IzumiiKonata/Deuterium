@@ -3,11 +3,10 @@ package tritium.widget.impl;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
-import tritium.Tritium;
 import tritium.management.FontManager;
 import tritium.rendering.Stencil;
-import tritium.rendering.entities.impl.Image;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Image;
+import tritium.rendering.Rect;
 import tritium.settings.NumberSetting;
 import tritium.widget.Widget;
 

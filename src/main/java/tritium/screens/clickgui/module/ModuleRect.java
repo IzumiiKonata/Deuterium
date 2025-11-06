@@ -3,7 +3,7 @@ package tritium.screens.clickgui.module;
 import tritium.management.FontManager;
 import tritium.module.Module;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.widgets.RectWidget;

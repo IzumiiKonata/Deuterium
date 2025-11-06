@@ -20,7 +20,7 @@ import today.opai.api.interfaces.render.RenderUtil;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
 import java.awt.*;

@@ -2,8 +2,7 @@ package tritium.rendering.ui.container;
 
 
 import tritium.rendering.StencilClipManager;
-import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.Rect;
 
 /**
  * 裁剪。

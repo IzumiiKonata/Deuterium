@@ -23,7 +23,7 @@ import net.minecraft.util.Location;
 import net.minecraft.util.Timer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.input.Mouse;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.settings.ClientSettings;
 import tritium.utils.res.skin.PlayerSkinTextureCache;
 

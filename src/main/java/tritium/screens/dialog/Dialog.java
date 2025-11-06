@@ -7,7 +7,7 @@ import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.RenderableEntity;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
 public abstract class Dialog implements SharedRenderingConstants {
@@ -27,13 +27,7 @@ public abstract class Dialog implements SharedRenderingConstants {
     }
 
     public double width = 0, height = 0;
-    Rect base = new Rect(0, 0, 0, 0, 0, Rect.RectType.EXPAND);
-
     public abstract void render(double mouseX, double mouseY);
-
-    protected void addEntity(RenderableEntity ent) {
-        base.addChild(ent);
-    }
 
     public void onRender(double mouseX, double mouseY) {
         this.drawBackgroundMask();
@@ -42,22 +36,7 @@ public abstract class Dialog implements SharedRenderingConstants {
 
         this.doGlPreTransforms(this.openCloseScale);
 
-        base.setX((RenderSystem.getWidth() - width) * 0.5);
-        base.setY((RenderSystem.getHeight() - height) * 0.5);
-        base.setWidth(width);
-        base.setHeight(height);
-        base.setColor(ThemeManager.get(ThemeManager.ThemeColor.Surface, (int) (alpha * 255)));
-
-        double spacing = 4;
-
-        for (RenderableEntity entity : base.getContainer()) {
-
-            width = Math.max(entity.getRelativeX() + entity.getWidth() + spacing, width);
-            height = Math.max(entity.getRelativeY() + entity.getHeight() + spacing, height);
-
-        }
-
-        base.draw(mouseX, mouseY);
+        Rect.draw((RenderSystem.getWidth() - width) * 0.5, (RenderSystem.getHeight() - height) * 0.5, width, height, ThemeManager.get(ThemeManager.ThemeColor.Surface, (int) (alpha * 255)));
 
         this.render(mouseX, mouseY);
 
@@ -91,21 +70,15 @@ public abstract class Dialog implements SharedRenderingConstants {
     }
 
     public void keyTyped(char typedChar, int keyCode) {
-
-        if (base.keyTyped(typedChar, keyCode))
-            return;
-
         if (keyCode == Keyboard.KEY_ESCAPE) {
             this.close();
         }
     }
 
     public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        base.mouseClicked(mouseX, mouseY, mouseButton);
     }
 
     public void mouseReleased(double mouseX, double mouseY, int mouseButton) {
-        base.mouseReleased(mouseX, mouseY, mouseButton);
     }
 
 }

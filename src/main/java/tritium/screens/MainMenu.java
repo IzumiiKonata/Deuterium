@@ -14,7 +14,7 @@ import tritium.management.*;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.clickable.impl.ClickableIcon;
 import tritium.rendering.entities.clickable.impl.FlatMainMenuButton;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.management.FontManager;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.loading.LoadingRenderer;
@@ -24,7 +24,6 @@ import tritium.rendering.shader.Shaders;
 import tritium.screens.altmanager.AltScreen;
 import tritium.screens.ncm.NCMScreen;
 import tritium.settings.ClientSettings;
-import tritium.utils.alt.AltManager;
 import tritium.utils.i18n.Localizable;
 import tritium.utils.other.info.Version;
 

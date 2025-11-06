@@ -6,7 +6,7 @@ import tritium.management.ThemeManager;
 import tritium.rendering.Stencil;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
 import tritium.settings.ClientSettings;

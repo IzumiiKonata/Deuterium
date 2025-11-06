@@ -10,7 +10,7 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.EnumChatFormatting;
 import tritium.interfaces.IFontRenderer;
 import tritium.management.FontManager;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.BooleanSetting;
 import tritium.widget.Widget;

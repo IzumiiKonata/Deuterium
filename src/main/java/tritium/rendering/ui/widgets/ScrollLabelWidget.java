@@ -2,8 +2,7 @@ package tritium.rendering.ui.widgets;
 
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
-import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.Rect;
 import tritium.utils.timing.Timer;
 
 import java.util.function.Supplier;

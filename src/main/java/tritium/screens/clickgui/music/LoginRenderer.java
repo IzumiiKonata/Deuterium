@@ -13,8 +13,8 @@ import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Image;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Image;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.i18n.Localizable;
 

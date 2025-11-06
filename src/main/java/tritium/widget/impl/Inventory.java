@@ -14,14 +14,10 @@ import net.minecraft.src.Config;
 import net.optifine.CustomItems;
 import org.lwjgl.opengl.GL11;
 import tritium.management.FontManager;
-import tritium.management.ThemeManager;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.settings.ClientSettings;
 import tritium.utils.player.InvUtils;
 import tritium.widget.Widget;
-
-import java.awt.*;
 
 public class Inventory extends Widget {
 

@@ -9,7 +9,7 @@ import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.Stencil;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 

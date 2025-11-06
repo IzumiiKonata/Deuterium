@@ -12,7 +12,7 @@ import tritium.ncm.music.lyric.LyricLine;
 import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;

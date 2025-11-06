@@ -3,7 +3,7 @@ package tritium.screens.clickgui.value.values;
 import org.lwjgl.input.Mouse;
 import tritium.rendering.HSBColor;
 import tritium.rendering.entities.impl.GradientRect;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.settings.ColorSetting;

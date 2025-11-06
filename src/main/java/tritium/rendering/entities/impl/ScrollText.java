@@ -1,7 +1,7 @@
 package tritium.rendering.entities.impl;
 
 import lombok.Setter;
-import tritium.rendering.Stencil;
+import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;

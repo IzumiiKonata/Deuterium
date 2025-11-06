@@ -8,9 +8,8 @@ import tritium.ncm.OptionsUtil;
 import tritium.ncm.music.CloudMusic;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.BaseScreen;
@@ -19,7 +18,6 @@ import tritium.screens.ncm.panels.ControlsBar;
 import tritium.screens.ncm.panels.NavigateBar;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

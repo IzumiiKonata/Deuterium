@@ -5,7 +5,7 @@ import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.Rect;
+import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.LabelWidget;
