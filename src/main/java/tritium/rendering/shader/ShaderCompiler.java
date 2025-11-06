@@ -5,26 +5,22 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
-import tritium.Tritium;
 import tritium.interfaces.SharedConstants;
-import tritium.rendering.rendersystem.RenderSystem;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
-import static org.lwjgl.opengl.GL11.*;
-
-public class ShaderUtil implements SharedConstants {
+public class ShaderCompiler implements SharedConstants {
 
     private static final IResourceManager RESOURCE_MANAGER = Minecraft.getMinecraft().getResourceManager();
 
-    public static int createShader(final String fragmentResource, final String vertexResource) {
-        final String fragmentSource = getShaderResource(fragmentResource);
-        final String vertexSource = getShaderResource(vertexResource);
+    public static int compile(final String fragment, final String vertex) {
+        final String fragmentSource = getShaderResource(fragment);
+        final String vertexSource = getShaderResource(vertex);
 
-        if (fragmentResource == null || vertexResource == null) {
+        if (fragment == null || vertex == null) {
             System.out.println("An error occurred whilst creating shader");
             return -1;
         }
@@ -37,8 +33,8 @@ public class ShaderUtil implements SharedConstants {
         GL20.glCompileShader(fragmentId);
         GL20.glCompileShader(vertexId);
 
-        if (!compileShader(fragmentId)) return -1;
-        if (!compileShader(vertexId)) return -1;
+        if (!checkIfCompiled(fragmentId)) return -1;
+        if (!checkIfCompiled(vertexId)) return -1;
 
         final int programId = GL20.glCreateProgram();
         GL20.glAttachShader(programId, fragmentId);
@@ -51,7 +47,7 @@ public class ShaderUtil implements SharedConstants {
         return programId;
     }
 
-    private static boolean compileShader(final int shaderId) {
+    private static boolean checkIfCompiled(final int shaderId) {
         final boolean compiled = GL20.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == GL11.GL_TRUE;
         if (compiled) return true;
 

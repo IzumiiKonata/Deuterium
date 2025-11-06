@@ -20,7 +20,7 @@ import java.util.Optional;
 @UtilityClass
 public class Textures implements SharedConstants {
 
-    public Optional<ITextureObject> getTextureOrLoadAsyncly(Location location, BufferedImage img) {
+    public Optional<ITextureObject> getTextureOrLoadAsynchronously(Location location, BufferedImage img) {
 
         TextureManager textureManager = mc.getTextureManager();
 

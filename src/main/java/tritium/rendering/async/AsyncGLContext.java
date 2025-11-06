@@ -10,7 +10,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
-import tritium.rendering.states.States;
 import tritium.utils.logging.Logger;
 import tritium.utils.other.DevUtils;
 
@@ -81,15 +80,11 @@ public class AsyncGLContext {
 
                         LOGGER.debug("ID: {} on thread {}", task.id, Thread.currentThread().getName());
 
-                        States.push();
-
                         // execute the task
                         task.runnable.run();
 
                         // complete the future
                         task.future.complete(null);
-
-                        States.pop();
 
                         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
 

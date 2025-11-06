@@ -299,8 +299,6 @@ public class CloudMusic {
 
                 currentlyPlaying = song;
 
-                System.out.println(currentlyPlaying.picUrl);
-
                 Tuple<String, String> playUrl = song.getPlayUrl();
 
                 WidgetsManager.musicInfo.downloading = false;

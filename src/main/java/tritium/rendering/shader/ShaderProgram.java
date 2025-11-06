@@ -12,7 +12,10 @@ public class ShaderProgram implements SharedConstants {
     private final int programId;
 
     public ShaderProgram(final String fragmentPath, final String vertexPath) {
-        this.programId = ShaderUtil.createShader(fragmentPath, vertexPath);
+        this.programId = ShaderCompiler.compile(fragmentPath, vertexPath);
+        if (this.programId == -1) {
+            throw new RuntimeException("Failed to compile shader\n    Fragment: " + fragmentPath + "\n    Vertex: " + vertexPath);
+        }
     }
 
     public static void drawQuadFlipped(final double x, final double y, final double width, final double height) {
