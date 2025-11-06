@@ -120,7 +120,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         float b = ((color) & 0xff) * RenderSystem.DIVIDE_BY_255;
         float a = ((color >> 24) & 0xff) * RenderSystem.DIVIDE_BY_255;
         drawString(s,  x,  y, r, g, b, a);
-        return getStringWidth(s);
+        return (float) getStringWidthD(s);
     }
 
     @Override
@@ -245,11 +245,11 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         float b = ((color) & 0xff) * RenderSystem.DIVIDE_BY_255;
         float a = ((color >> 24) & 0xff) * RenderSystem.DIVIDE_BY_255;
 
-        return drawString(s,  (x - getStringWidth(s) * .5),  y, r, g, b, a);
+        return drawString(s,  (x - getStringWidthD(s) * .5),  y, r, g, b, a);
     }
 
     public void drawCenteredStringWithShadow(String s, double x, double y, int color) {
-        drawStringWithShadow(s,  (x - getStringWidth(s) * .5),  y, color);
+        drawStringWithShadow(s,  (x - getStringWidthD(s) * .5),  y, color);
     }
 
     public void drawCenteredStringMultiLine(String s, double x, double y, int color) {
@@ -260,7 +260,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         double offsetY = y;
         for (String string : s.split("\n")) {
-            drawString(string,  (x - getStringWidth(string) / 2.0),  offsetY, r, g, b, a);
+            drawString(string,  (x - getStringWidthD(string) / 2.0),  offsetY, r, g, b, a);
             offsetY += this.getStringHeight(string);
         }
 
@@ -269,12 +269,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     public String trim(String text, double width) {
         String name = text;
 
-        if (this.getStringWidth(name) > width) {
+        if (this.getStringWidthD(name) > width) {
             int idx = name.length() - 1;
             while (true) {
                 String substring = name.substring(0, idx);
 
-                if (this.getStringWidth(substring + "...") <= width) {
+                if (this.getStringWidthD(substring + "...") <= width) {
                     name = substring + "...";
                     break;
                 }
@@ -574,7 +574,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public void drawOutlineCenteredString(String text, double x, double y, int color, int outlineColor) {
-        drawOutlineString(text, x - getStringWidth(text) / 2.0, y, color, outlineColor);
+        drawOutlineString(text, x - getStringWidthD(text) * .5, y, color, outlineColor);
     }
 
     public void drawOutlineString(String text, double x, double y, int color, int outlineColor) {

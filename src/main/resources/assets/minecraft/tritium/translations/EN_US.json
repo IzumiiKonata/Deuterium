@@ -883,6 +883,7 @@
     "setting.absolute volume.name": "Absolute Volume",
     "setting.waveform stereo.name": "Waveform Stereo",
     "setting.window time (ms).name": "Window Time (ms)",
+    "setting.show cps.name": "Show CPS",
 
     "setting.in game ime.name": "In game IME",
     "widget.bossbar.name": "BossBar",
