@@ -201,7 +201,8 @@ public class Chat extends Module {
 
                     for (IChatComponent ichatcomponent : chatline.getChatComponent()) {
                         if (ichatcomponent instanceof ChatComponentText) {
-                            j1 += FontManager.pf28.getWidthDouble(GuiUtilRenderComponents.func_178909_a(((ChatComponentText) ichatcomponent).getChatComponentText_TextValue(), false));
+                            String text = GuiUtilRenderComponents.func_178909_a(((ChatComponentText) ichatcomponent).getChatComponentText_TextValue(), false);
+                            j1 += FontManager.pf28.getStringWidthD(text);
 
                             if (j1 > mouseX) {
                                 return ichatcomponent;

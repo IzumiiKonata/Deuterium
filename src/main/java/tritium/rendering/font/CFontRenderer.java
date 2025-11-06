@@ -388,13 +388,13 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (c1 == '）')
                 c1 = ')';
 
-            Glyph glyph = locateGlyph(c1);
+            float charWidth = getCharWidth(c1);
 
             if (!shouldntAdd) {
-                shouldntAdd = glyph == null || glyph.width == 0;
+                shouldntAdd = charWidth == 0;
             }
 
-            currentLine += glyph == null ? 0 : (glyph.width * 0.5);
+            currentLine += charWidth;
         }
 
         if (!shouldntAdd) {
@@ -501,6 +501,15 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return new int[]{red, green, blue};
     }
 
+    float getCharWidth(char ch) {
+        Glyph glyph = allGlyphs[ch];
+
+        if (glyph == null)
+            return .0f;
+
+        return glyph.width * .5f;
+    }
+
     public String[] fitWidth(String text, double width) {
 
         List<String> split = new ArrayList<>();
@@ -509,7 +518,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         double w = 0;
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
-            String s = Character.toString(c);
 
             if (c == '\247') {
                 i += 1;
@@ -529,16 +537,16 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 continue;
             }
 
-            double tWidth = this.getStringWidth(s);
+            double tWidth = this.getCharWidth(c);
 
             if (w + tWidth < width) {
-                sb.append(s);
+                sb.append(c);
                 w += tWidth;
             } else {
-                if (s.equals(" ")) {
+                if (c == ' ') {
                     split.add(sb.toString());
-                    sb = new StringBuilder(s);
-                    w = this.getStringWidth(s);
+                    sb = new StringBuilder(String.valueOf(c));
+                    w = this.getCharWidth(c);
                 } else {
                     int lastSpace = sb.toString().lastIndexOf(" ");
                     if (lastSpace != -1) {
@@ -548,7 +556,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                         sb = new StringBuilder();
                     } else {
                         split.add(sb.toString());
-                        sb = new StringBuilder(s);
+                        sb = new StringBuilder(String.valueOf(c));
                     }
                     w = 0;
                 }
@@ -565,8 +573,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         drawString(text, x, y, color);
     }
 
-    public void drawOutlineCenteredString(String text, double x, double y, int color, int onlineColor) {
-        drawOutlineString(text, x - getStringWidth(text) / 2.0, y, color, onlineColor);
+    public void drawOutlineCenteredString(String text, double x, double y, int color, int outlineColor) {
+        drawOutlineString(text, x - getStringWidth(text) / 2.0, y, color, outlineColor);
     }
 
     public void drawOutlineString(String text, double x, double y, int color, int outlineColor) {
@@ -582,7 +590,4 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return this.getStringWidth(text);
     }
 
-    public double getWidthDouble(String text) {
-        return this.getStringWidthD(text);
-    }
 }

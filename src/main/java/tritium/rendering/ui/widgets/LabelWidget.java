@@ -8,7 +8,6 @@ import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
 
-import java.awt.*;
 import java.util.function.Supplier;
 
 /**
@@ -80,7 +79,8 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
 
         }
 
-        double width = widthNotLimited ? font.getWidthDouble(lbl) : this.getMaxWidth();
+        double width;
+        width = widthNotLimited ? font.getStringWidthD(lbl) : this.getMaxWidth();
         this.setBounds(width, font.getStringHeight(lbl));
     }
 

@@ -250,7 +250,7 @@ public class MusicInfoWidget extends Widget {
                     int textColor = RenderSystem.hexColor(255, 255, 255, (int) (alpha * 128));
                     double playbackTimeY = progressBarOffsetY + 9;
                     FontManager.pf14bold.drawString(currentTime, imgX + imgSize + imgSpacing, playbackTimeY, textColor);
-                    FontManager.pf14bold.drawString(totalTime, imgX + imgSize + imgSpacing + progressBarWidth - FontManager.pf14bold.getStringWidth(totalTime) - 1, playbackTimeY, textColor);
+                    FontManager.pf14bold.drawString(totalTime, imgX + imgSize + imgSpacing + progressBarWidth - FontManager.pf14bold.getStringWidthD(totalTime), playbackTimeY, textColor);
 
                 }
 

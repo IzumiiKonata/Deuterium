@@ -589,15 +589,15 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         // curTime
         FontManager.pf12bold.drawString(formatDuration(currentTimeMillis), elementsXOffset, progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
         String remainingTime = "-" + formatDuration(totalTimeMillis - currentTimeMillis);
-        FontManager.pf12bold.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12bold.getStringWidth(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
+        FontManager.pf12bold.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12bold.getStringWidthD(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
 
         FontManager.music40.drawString("I", elementsXOffset - 8, height - 32, hexColor(1, 1, 1, alpha * .5f));
-        FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidth("J") + 4, height - 32, hexColor(1, 1, 1, alpha * .5f));
+        FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidthD("J") + 4, height - 32, hexColor(1, 1, 1, alpha * .5f));
 
         double volumeBarYOffset = height - 24;
-        double volumeBarWidth = this.getCoverSizeMax() - FontManager.music40.getStringWidth("I") - FontManager.music40.getStringWidth("J");
+        double volumeBarWidth = this.getCoverSizeMax() - FontManager.music40.getStringWidthD("I") - FontManager.music40.getStringWidthD("J");
 
-        double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidth("I") - 2;
+        double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidthD("I") - 2;
         roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha * .5f));
         StencilClipManager.beginClip(() -> {
             Rect.draw(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth * (player == null ? 0 : player.getVolume()), volumeBarHeight, -1);

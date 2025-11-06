@@ -277,7 +277,7 @@ public class MoveWidgetsScreen extends BaseScreen {
         double offsetY = widget.getY() + widget.getHeight() + (Math.abs(spacingH)) * 2;
 
         for (String s : list) {
-            FontManager.pf20bold.drawString(s, posX - FontManager.pf20bold.getStringWidth(s), offsetY, -1);
+            FontManager.pf20bold.drawString(s, posX - FontManager.pf20bold.getStringWidthD(s), offsetY, -1);
 
             offsetY += FontManager.pf20bold.getHeight() + 2;
         }

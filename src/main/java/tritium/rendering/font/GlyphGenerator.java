@@ -23,8 +23,9 @@ public class GlyphGenerator {
     static final FontRenderContext context = new FontRenderContext(transformation, true, true);
 
     private static boolean canFontDisplayChar(Font f, char ch) {
-        transformation.setToIdentity();
-        return f.createGlyphVector(context, String.valueOf(ch)).getGlyphCode(0) != 0;
+//        transformation.setToIdentity();
+//        return f.createGlyphVector(context, String.valueOf(ch)).getGlyphCode(0) != 0;
+        return f.canDisplay(ch);
     }
 
     private static Font getFontForGlyph(char ch, Font f, Font... fallBackFonts) {
@@ -55,10 +56,11 @@ public class GlyphGenerator {
 
         final FontMetrics fontMetrics = fontGraphics.getFontMetrics(font);
         final FontMetrics fontMetricsOrig = fontGraphics.getFontMetrics(f);
-        FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
+//        FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
 //        Rectangle2D stringBounds = fontMetrics.getStringBounds(String.valueOf(ch), fontGraphics);
 
-        GlyphVector gv = font.createGlyphVector(frc, String.valueOf(ch));
+        transformation.setToIdentity();
+        GlyphVector gv = font.createGlyphVector(context, String.valueOf(ch));
 //        Rectangle2D bounds = gv.getVisualBounds();
         float width = gv.getGlyphMetrics(0).getAdvance();
         float height = fontMetrics.getAscent() + fontMetrics.getDescent();
