@@ -87,7 +87,6 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
-          # 获取上一个release的tag
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
           
           if [ -z "$PREV_TAG" ]; then
