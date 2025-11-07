@@ -101,7 +101,7 @@ public class MusicWidget extends RoundedRectWidget {
                 });
         lblMusicName.setClickable(false);
 
-        LabelWidget lblMusicArtist = new LabelWidget(music.getArtistsName() + " - " + music.getAlbumName(), FontManager.pf14bold);
+        LabelWidget lblMusicArtist = new LabelWidget(music.getArtistsName() + " - " + music.getAlbum().getName(), FontManager.pf14bold);
         this.addChild(lblMusicArtist);
 
         lblMusicArtist
@@ -158,7 +158,7 @@ public class MusicWidget extends RoundedRectWidget {
             return;
 
         MultiThreadingUtil.runAsync(() -> {
-            try (InputStream inputStream = HttpUtils.downloadStream(music.getPicUrl(64))) {
+            try (InputStream inputStream = HttpUtils.downloadStream(music.getCoverUrl(64))) {
                 if (inputStream != null) {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
 

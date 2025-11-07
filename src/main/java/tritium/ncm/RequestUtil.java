@@ -6,6 +6,7 @@ import com.google.gson.JsonObject;
 import lombok.Builder;
 import lombok.Data;
 import lombok.SneakyThrows;
+import tritium.utils.json.JsonUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -24,7 +25,6 @@ import java.util.stream.Collectors;
  */
 public class RequestUtil {
 
-    private static final Gson gson = new Gson();
     private static final SecureRandom random = new SecureRandom();
 //    private static final String ANONYMOUS_TOKEN; // 需要从文件读取
 
@@ -149,20 +149,17 @@ public class RequestUtil {
             return new RequestAnswer(status, object, cookies);
         }
 
-        static final Gson GSON = (new GsonBuilder().serializeNulls()).create();
-        static final Gson GSON_PRETTYPRINT = (new GsonBuilder().serializeNulls().setPrettyPrinting()).create();
-
         public String toString() {
-            return GSON.toJson(this.body);
+            return JsonUtils.toJsonString(this.body);
         }
 
         public JsonObject toJsonObject() {
-            return GSON.fromJson(toString(), JsonObject.class);
+            return JsonUtils.parse(toString(), JsonObject.class);
         }
 
-        public JsonObject toJsonObjectPrettyPrinting() {
-            return GSON_PRETTYPRINT.fromJson(toString(), JsonObject.class);
-        }
+//        public JsonObject toJsonObjectPrettyPrinting() {
+//            return JsonUtils.parse(toString(), JsonObject.class);
+//        }
     }
 
     /**
@@ -409,7 +406,7 @@ public class RequestUtil {
                         postData = buildFormData(eapiFormData);
                     } else {
                         url = APP_CONF.getApiDomain() + uri;
-                        postData = gson.toJson(data);
+                        postData = JsonUtils.toJsonString(data);
                     }
                     break;
 
@@ -499,11 +496,11 @@ public class RequestUtil {
                     try {
                         answer.setBody(CryptoUtil.eapiResDecrypt(responseBody));
                     } catch (Exception e) {
-                        answer.setBody(gson.fromJson(responseBody, Object.class));
+                        answer.setBody(JsonUtils.parse(responseBody, Object.class));
                     }
                 } else {
                     try {
-                        answer.setBody(gson.fromJson(responseBody, Object.class));
+                        answer.setBody(JsonUtils.parse(responseBody, Object.class));
                     } catch (Exception e) {
                         answer.setBody(responseBody);
                     }

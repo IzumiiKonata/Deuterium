@@ -70,7 +70,7 @@ public class ControlsBar extends NCMPanel {
         });
         lblMusicName.setClickable(false);
 
-        LabelWidget lblMusicArtist = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "无" : CloudMusic.currentlyPlaying.getArtistsName() + " - " + CloudMusic.currentlyPlaying.getAlbumName(), FontManager.pf14bold);
+        LabelWidget lblMusicArtist = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "无" : CloudMusic.currentlyPlaying.getArtistsName() + " - " + CloudMusic.currentlyPlaying.getAlbum().getName(), FontManager.pf14bold);
         this.addChild(lblMusicArtist);
 
         lblMusicArtist.setBeforeRenderCallback(() -> {

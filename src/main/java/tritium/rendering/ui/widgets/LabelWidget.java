@@ -100,7 +100,8 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
     }
 
     public String getLabel() {
-        return label.get();
+        String lbl = label.get();
+        return lbl == null ? "null" : lbl;
     }
 
     public LabelWidget setLabel(String label) {

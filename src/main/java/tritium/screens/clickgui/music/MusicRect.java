@@ -62,10 +62,7 @@ public class MusicRect extends RectWidget {
 
             TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
             if (textureManager.getTexture(coverLoc) == null) {
-                if (!music.textureLoaded) {
-                    music.textureLoaded = true;
-                    CloudMusic.loadMusicCover(music, true);
-                }
+                CloudMusic.loadMusicCover(music, true);
                 return null;
             }
 

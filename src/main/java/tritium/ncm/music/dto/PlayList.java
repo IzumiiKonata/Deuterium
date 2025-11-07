@@ -3,9 +3,13 @@ package tritium.ncm.music.dto;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 import lombok.Getter;
 import tritium.ncm.RequestUtil;
 import tritium.ncm.api.CloudMusicApi;
+import tritium.utils.json.JsonUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.util.List;
@@ -14,110 +18,64 @@ import java.util.concurrent.CopyOnWriteArrayList;
 /**
  * 歌单对象
  */
+@Data
 public class PlayList {
+
+    @SerializedName("id")
     public final long id;
-    public String name;
-    @Getter
-    private final RenderValues renderValues = new RenderValues();
-    public String coverUrl;
-    public int count;
-    public long playCount;
-    public User creator;
-    public String[] description;
-    public boolean subscribed;
-    public long createTime;
-    //    public JsonArray tags;
-    public final List<Music> musics = new CopyOnWriteArrayList<>();
 
-    public boolean searchMode = false;
-    public JsonArray songs;
+    @SerializedName("name")
+    public final String name;
 
-    public boolean musicsLoaded = false;
+    @SerializedName(value = "coverImgUrl", alternate = { "picUrl" })
+    public final String coverUrl;
 
-    public PlayList(JsonObject data) {
+    @SerializedName("trackCount")
+    public final int count;
 
-        JsonObject playlist;
-        if (data.has("playlist")) {
-            playlist = data.get("playlist").getAsJsonObject();
-        } else {
-            playlist = data;
-        }
+    @SerializedName(value = "playCount", alternate = { "playcount" })
+    public final long playCount;
 
-        if (playlist.has("subscribed") && !playlist.get("subscribed").isJsonNull()) {
-            this.subscribed = playlist.get("subscribed").getAsBoolean();
-        }
-        this.id = playlist.get("id").getAsLong();
-        this.name = playlist.get("name").getAsString();
-        JsonElement coverElement = playlist.get("coverImgUrl");
+    @SerializedName("creator")
+    public final User creator;
 
-        if (coverElement != null && !coverElement.isJsonNull()) {
-            this.coverUrl = coverElement.getAsString();
-        } else if ((coverElement = playlist.get("picUrl")) != null && !coverElement.isJsonNull()) {
-            this.coverUrl = coverElement.getAsString();
-        } else {
-            this.coverUrl = "";
-        }
+    @SerializedName("description")
+    public final String description;
 
-        this.count = playlist.get("trackCount").getAsInt();
-        JsonElement playCountElement = playlist.get("playCount");
+    @SerializedName("subscribed")
+    public final boolean subscribed;
 
-        if (playCountElement != null && !playCountElement.isJsonNull()) {
-            this.playCount = playCountElement.getAsLong();
-        } else if ((playCountElement = playlist.get("playcount")) != null && !playCountElement.isJsonNull()) {
-            this.playCount = playCountElement.getAsLong();
-        } else {
-            this.playCount = 0;
-        }
+    @SerializedName("createTime")
+    public final long createTime;
 
-        this.creator = new User(playlist.get("creator").getAsJsonObject());
-        this.createTime = playlist.get("createTime").getAsLong();
-        JsonElement desc = playlist.get("description");
-        if (desc != null && !desc.isJsonNull()) {
-            this.description = desc.getAsString().split("\n");
-        } else {
-            this.description = null;
-        }
-//        this.tags = playlist.get("tags").getAsJsonArray();
-
-    }
-
-    //Search
-    public PlayList() {
-        searchMode = true;
-        this.id = 0;
-        this.name = "Search";
-    }
+    // unique fields
+    public transient List<Music> musics;
+    public transient boolean searchMode = false;
+    public transient boolean musicsQueried = false, musicsLoaded = false;
 
     public List<Music> getMusics() {
-        if (!musics.isEmpty() && (this.songs != null || searchMode)) {
+
+        if (this.musics == null)
+            this.musics = new CopyOnWriteArrayList<>();
+
+        if (!musics.isEmpty() && (this.musicsQueried || searchMode)) {
             return this.musics;
         }
 
-        if (this.songs == null && !searchMode) {
+        if (!this.musicsQueried && !searchMode) {
+            this.musicsQueried = true;
 
-            this.songs = new JsonArray();
-
-            MultiThreadingUtil.runAsync(() -> {
-                RequestUtil.RequestAnswer requestAnswer = null;
-                try {
-                    requestAnswer = CloudMusicApi.playlistTrackAll(id, 8);
-                } catch (Exception e) {
-                    this.songs = null;
-                    throw new RuntimeException(e);
-                }
-                this.songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
-                this.songs.forEach(element -> {
-                    this.musics.add(new Music(element.getAsJsonObject(), null));
-                });
-                musicsLoaded = true;
-            });
-
+            MultiThreadingUtil.runAsync(this::queryMusics);
         }
 
         return this.musics;
     }
 
     public void loadMusicsWithCallback(MusicsLoadedCallback callback) {
+
+        if (this.musics == null)
+            this.musics = new CopyOnWriteArrayList<>();
+
         if (!musics.isEmpty()) {
             callback.onMusicsLoaded(musics);
             return;
@@ -126,23 +84,30 @@ public class PlayList {
         if (!searchMode) {
 
             MultiThreadingUtil.runAsync(() -> {
-                RequestUtil.RequestAnswer requestAnswer = null;
-                try {
-                    requestAnswer = CloudMusicApi.playlistTrackAll(id, 8);
-                } catch (Exception e) {
-                    this.songs = null;
-                    throw new RuntimeException(e);
-                }
-                this.songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
-                this.songs.forEach(element -> {
-                    this.musics.add(new Music(element.getAsJsonObject(), null));
-                });
-
-                musicsLoaded = true;
+                queryMusics();
                 callback.onMusicsLoaded(musics);
             });
-
         }
+    }
+
+    private void queryMusics() {
+        RequestUtil.RequestAnswer requestAnswer;
+        try {
+            requestAnswer = CloudMusicApi.playlistTrackAll(id, 8);
+        } catch (Exception e) {
+            this.musicsQueried = false;
+            e.printStackTrace();
+            return;
+        }
+
+        JsonArray songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
+        songs.forEach(element -> {
+            Music music = JsonUtils.parse(element.getAsJsonObject(), Music.class);
+            this.musics.add(music);
+            music.init();
+        });
+
+        musicsLoaded = true;
     }
 
     public interface MusicsLoadedCallback {
@@ -159,12 +124,6 @@ public class PlayList {
 
     public void removeFromList(long musicId) {
         CloudMusicApi.playlistTracks("del", this.id, String.valueOf(musicId));
-    }
-
-    public static class RenderValues {
-
-        public float hoveredAlpha = 0;
-
     }
 
 }

@@ -23,6 +23,7 @@ import tritium.rendering.Image;
 import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.texture.Textures;
+import tritium.utils.json.JsonUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.network.HttpUtils;
 
@@ -183,7 +184,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
 
         this.capes.add(new Cape("", false, "", "No Cape"));
 
-        JsonObject profile = new Gson().fromJson(input, JsonObject.class);
+        JsonObject profile = JsonUtils.toJsonObject(input);
 
         JsonArray capes = profile.getAsJsonArray("capes");
 
@@ -233,12 +234,11 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
 
                         Collection<Property> textures = Minecraft.getMinecraft().profileProperties.get("textures");
 
-                        Gson gson = new Gson();
                         JsonObject jObj = null;
 
                         for (Iterator<Property> iterator = textures.iterator(); iterator.hasNext(); ) {
                             Property t = iterator.next();
-                            JsonObject jObjOld = gson.fromJson(new String(Base64.getDecoder().decode(t.getValue())), JsonObject.class);
+                            JsonObject jObjOld = JsonUtils.toJsonObject(new String(Base64.getDecoder().decode(t.getValue())));
 
                             if (!jObjOld.get("profileName").getAsString().equals(Minecraft.getMinecraft().getSession().getProfile().getName()))
                                 continue;
@@ -266,7 +266,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
                         }
 
                         if (jObj != null)
-                            textures.add(new Property("textures", Base64.getEncoder().encodeToString(gson.toJson(jObj).getBytes(StandardCharsets.UTF_8))));
+                            textures.add(new Property("textures", Base64.getEncoder().encodeToString(JsonUtils.toJsonString(jObj).getBytes(StandardCharsets.UTF_8))));
 
                     }
 

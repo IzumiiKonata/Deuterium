@@ -12,7 +12,7 @@ public class Circle implements SharedRenderingConstants {
 
     public void draw(double posX, double posY) {
 
-        roundedRect(posX - length, posY - length, length * 2, length * 2, length, new Color(255, 255, 255, (int) (alpha * 255)));
+        roundedRect(posX - length, posY - length, length * 2, length * 2, length, 1f, 1f, 1f, alpha);
 
     }
 

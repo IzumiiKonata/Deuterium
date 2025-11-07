@@ -1,17 +1,16 @@
 package tritium.ncm.music.dto;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import lombok.Getter;
+import com.google.gson.annotations.SerializedName;
+import lombok.Data;
 import net.minecraft.util.Tuple;
 import tritium.ncm.api.CloudMusicApi;
 import tritium.ncm.music.CloudMusic;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
-@Getter
+@Data
 public class Music {
 
     static final int STEREO = 8192;
@@ -20,164 +19,51 @@ public class Music {
     static final int DIRTY = 1048576;
     static final long HIRES = 17179869184L;
 
-    private final long id;
+    @SerializedName("name")
     private final String name;
-    private final String translatedName;
-    private final String aliasName;
-    private String artistsName;
-    public final JsonArray artists;
-    public final JsonObject album;
-    private final String albumName;
-    public final long duration;
-    public final String picUrl;
-    private final long publishTime;
-    private final String formattedPublishTime;
+
+    @SerializedName("mainTitle")
+    private final String mainTitle;
+
+    @SerializedName("additionalTitle")
+    private final String additionalTitle;
+
+    @SerializedName("id")
+    private final long id;
+
+    @SerializedName("ar")
+    private final List<Artist> artists;
+
+    @SerializedName("alia")
+    private final List<String> aliasName;
+
+    @SerializedName("al")
+    private final Album album;
+
+    @SerializedName("dt")
+    private final long duration;
+
+    @SerializedName("mark")
     private final long featureFlag;
 
-    public boolean hasDynamicCover = false;
-    public String dynamicCoverURL;
+    @SerializedName("publishTime")
+    private final long publishTime;
 
-    public float dynamicCoverHoverAlpha = 0.0f;
+    @SerializedName("tns")
+    private final List<String> translatedName;
 
-    public boolean prevHover = false;
+    private transient String artistsName;
 
-    public float coverflowHoverAlpha = 0.0f;
-    public float listHoverAlpha = 0.0f;
-    public boolean textureLoaded = false;
-    public boolean textureLoadedSmall = false;
-    public float coverLoadAlpha = .0f;
-
-    private Boolean liked = null;
-
-    public boolean isLiked() {
-        if (liked == null) {
-            liked = CloudMusic.likeList.contains(id);
-        }
-        return liked;
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-
-        if (!(obj instanceof Music))
-            return false;
-
-        return ((Music) obj).id == this.id;
-    }
-
-    public Music(long id) {
-        this.id = id;
-        this.name = this.translatedName = this.aliasName = this.artistsName = this.albumName = this.picUrl = this.formattedPublishTime = "";
-        this.artists = null;
-        this.album = null;
-        this.duration = this.featureFlag = this.publishTime = 0;
-    }
-
-    /**
-     * 专辑歌曲没有 picUrl, 通过 cover 传入封面 picUrl
-     */
-    public Music(JsonObject data, String cover) {
-
-//        System.out.println(data);
-
-        this.id = data.get("id").getAsLong();
-
-        if (data.has("tns")) {
-            JsonArray tns = data.getAsJsonArray("tns");
-
-            if (tns.size() > 0) {
-                this.name = data.get("name").getAsString();
-                this.translatedName = tns.get(0).getAsString();
-            } else {
-                this.name = data.get("name").getAsString();
-                this.translatedName = null;
-            }
-        } else {
-            this.name = data.get("name").getAsString();
-            this.translatedName = null;
-        }
-
-
-        JsonArray alias;
-        if (data.has("alia")) {
-            alias = data.get("alia").getAsJsonArray();
-        } else {
-            alias = data.get("alias").getAsJsonArray();
-        }
-
-        if (alias.size() > 0) {
-            this.aliasName = alias.get(0).getAsString();
-        } else {
-            this.aliasName = "";
-        }
-
-        if (data.has("ar")) {
-            this.artists = data.get("ar").getAsJsonArray();
-        } else {
-            this.artists = data.get("artists").getAsJsonArray();
-        }
-
+    public void init() {
         this.artistsName = this.getArtists();
 
-        if (this.artistsName == null || this.artistsName.isEmpty()) {
+        if (this.artistsName.isEmpty()) {
             this.artistsName = "Unknown";
         }
-
-        if (data.has("al")) {
-            this.album = data.get("al").getAsJsonObject();
-        } else {
-            this.album = data.get("album").getAsJsonObject();
-        }
-
-        if (data.has("dt")) {
-            this.duration = data.get("dt").getAsLong() / 1000;
-        } else {
-            this.duration = data.get("duration").getAsLong() / 1000;
-        }
-
-        if (data.has("mark")) {
-            this.featureFlag = data.get("mark").getAsLong();
-        } else {
-            this.featureFlag = 0;
-        }
-
-        if (data.has("publishTime")) {
-            this.publishTime = data.get("publishTime").getAsLong();
-            this.formattedPublishTime = new SimpleDateFormat("yyyy/MM/dd").format(new Date(publishTime));
-        } else {
-            this.publishTime = 0;
-            this.formattedPublishTime = "";
-        }
-
-//        System.out.println(this.album);
-        JsonElement nameElement = this.album.get("name");
-        this.albumName = (nameElement == null || nameElement.isJsonNull()) ? "None" : nameElement.getAsString();
-
-        if (this.album.has("picUrl")) {
-            this.picUrl = this.album.get("picUrl").getAsString();
-        } else {
-            this.picUrl = cover;
-        }
-
     }
 
     private String getArtists() {
-        List<String> artistsList = new ArrayList<>();
-
-        for (JsonElement artistData : artists) {
-
-            JsonObject jObj = artistData.getAsJsonObject();
-
-            if (jObj.has("name")) {
-                JsonElement jName = jObj.get("name");
-
-                if (jName != null && !jName.isJsonNull()) {
-                    artistsList.add(jName.getAsString());
-                }
-            }
-        }
+        List<String> artistsList = this.artists.stream().map(Artist::getName).collect(Collectors.toList());
 
         StringBuilder sb = new StringBuilder();
 
@@ -200,30 +86,15 @@ public class Music {
         return sb.toString();
     }
 
-    /**
-     * 将歌曲扔进垃圾桶 (优化推荐)
-     */
-//    public void addTrashCan(){
-//        this.api.GET_API("/api/radio/trash/add?alg=RT&songId=" + this.id + "&time=25", null);
-//    }
+    public String getCoverUrl(int size) {
+        return this.album.getPicUrl() + "?param=" + size + "y" + size;
+    }
 
     /**
-     * 获取歌词
-     *
-     * @return 滚动歌词对象
+     * 更新歌曲播放次数
+     * 这个方法目前会触发网易云风控, 不要使用
      */
-    public LyricDTO lyric() {
-        return new LyricDTO(CloudMusicApi.lyricNew(this.id).toJsonObject());
-    }
-
-    public String getPicUrl() {
-        return this.getPicUrl(420);
-    }
-
-    public String getPicUrl(int size) {
-        return this.picUrl + "?param=" + size + "y" + size;
-    }
-
+    @Deprecated
     public void updPlayCount(PlayList pl, float sec) {
 //        MultiThreadingUtil.runAsync(() -> {
 //            Map<String, Object> data = new HashMap<>();
@@ -259,11 +130,6 @@ public class Music {
 
     public void setLike(boolean like) {
         CloudMusicApi.like(this.id, like);
-        this.liked = like;
-    }
-
-    public long getDuration() {
-        return this.duration * 1000;
     }
 
     public boolean isInstrumental() {

@@ -2,7 +2,6 @@ package tritium.management;
 
 import com.google.gson.*;
 import lombok.Cleanup;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import tritium.Tritium;
@@ -10,6 +9,7 @@ import tritium.utils.alt.Alt;
 import tritium.utils.alt.AltManager;
 import tritium.module.Module;
 import tritium.settings.ClientSettings;
+import tritium.utils.json.JsonUtils;
 import tritium.widget.Widget;
 import tritium.widget.impl.GifTextureWidget;
 import tritium.widget.impl.StaticTextureWidget;
@@ -67,8 +67,6 @@ public class ConfigManager extends AbstractManager {
             configDir.mkdir();
         }
 
-        Gson gson = new Gson();
-
         try {
             File configFile = ConfigManager.configFile;
 
@@ -78,7 +76,7 @@ public class ConfigManager extends AbstractManager {
 
             @Cleanup
             Reader fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(configFile), StandardCharsets.UTF_8));
-            JsonObject config = gson.fromJson(fileReader, JsonObject.class);
+            JsonObject config = JsonUtils.toJsonObject(fileReader);
 
             return config.get("Settings").getAsJsonObject();
         } catch (Throwable t) {
@@ -95,11 +93,9 @@ public class ConfigManager extends AbstractManager {
         //模块配置目录
 
         try {
-            Gson gson = new Gson();
-
             @Cleanup
             Reader fileReader = new BufferedReader(new InputStreamReader(Files.newInputStream(configFile.toPath()), StandardCharsets.UTF_8));
-            JsonObject config = gson.fromJson(fileReader, JsonObject.class);
+            JsonObject config = JsonUtils.toJsonObject(fileReader);
 
             JsonObject modules = config.get("Modules").getAsJsonObject();
 
@@ -167,7 +163,7 @@ public class ConfigManager extends AbstractManager {
 
         configFile.createNewFile();
 
-        Files.write(configFile.toPath(), new GsonBuilder().setPrettyPrinting().create().toJson(jsonObject).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+        Files.write(configFile.toPath(), JsonUtils.toJsonString(jsonObject).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
 
         this.saveAlts();
 
@@ -185,12 +181,12 @@ public class ConfigManager extends AbstractManager {
                 printWriter.close();
             } else {
                 AltManager.getAlts().clear();
-                Gson gson = (new GsonBuilder()).create();
-                Reader reader = new BufferedReader(new InputStreamReader(new FileInputStream(ALT), StandardCharsets.UTF_8));
-                JsonArray array = gson.fromJson(reader, JsonArray.class);
+
+                Reader reader = new BufferedReader(new InputStreamReader(Files.newInputStream(ALT.toPath()), StandardCharsets.UTF_8));
+                JsonArray array = JsonUtils.toJsonArray(reader);
                 AltManager.getAlts().clear();
                 for (JsonElement jsonElement : array) {
-                    Alt alt = gson.fromJson(jsonElement, Alt.class);
+                    Alt alt = JsonUtils.parse(jsonElement, Alt.class);
                     AltManager.getAlts().add(alt);
                 }
             }
@@ -205,8 +201,7 @@ public class ConfigManager extends AbstractManager {
     public void saveAlts() {
         try {
             PrintWriter printWriter = new PrintWriter(ALT, "UTF-8");
-            Gson gson = (new GsonBuilder().setPrettyPrinting()).create();
-            printWriter.println(gson.toJson(AltManager.getAlts()));
+            printWriter.println(JsonUtils.toJsonString(AltManager.getAlts()));
             printWriter.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

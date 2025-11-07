@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import lombok.Data;
 import tritium.ncm.math.DigestUtils;
 import tritium.ncm.math.Hex;
+import tritium.utils.json.JsonUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
@@ -28,7 +29,6 @@ public class CryptoUtil {
     
     private static final String PUBLIC_KEY = "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDgtQn2JZ34ZC28NWYpAUd98iZ37BUrX/aKzmFbt7clFSs6sXqHauqKWqdtLkF2KexO40H1YTX8z2lSgBBOAxLsvaklV8k4cBFK9snQXE9/DDaFt6Rr7iVZMldczhC0JNgTz+SHXT6CBHuX3e9SdB1Ua44oncaTWz7OBGLbCiK45wIDAQAB";
     
-    private static final Gson gson = new Gson();
     private static final SecureRandom random = new SecureRandom();
     
     @Data
@@ -138,7 +138,7 @@ public class CryptoUtil {
      * weapi加密
      */
     public static WeapiResult weapi(Object data) {
-        String text = gson.toJson(data);
+        String text = JsonUtils.toJsonString(data);
 
         StringBuilder secretKey = new StringBuilder();
         for (int i = 0; i < 16; i++) {
@@ -161,7 +161,7 @@ public class CryptoUtil {
      * linuxapi加密
      */
     public static LinuxapiResult linuxapi(Object data) {
-        String text = gson.toJson(data);
+        String text = JsonUtils.toJsonString(data);
         String eparams = aesEncrypt(text, "ecb", LINUX_API_KEY, "", "hex");
         
         LinuxapiResult result = new LinuxapiResult();
@@ -173,7 +173,7 @@ public class CryptoUtil {
      * eapi加密
      */
     public static EapiResult eapi(String url, Object data) {
-        String text = data instanceof String ? (String) data : gson.toJson(data);
+        String text = data instanceof String ? (String) data : JsonUtils.toJsonString(data);
         String message = "nobody" + url + "use" + text + "md5forencrypt";
         String digest = DigestUtils.md5Hex(message);
         String dataStr = url + "-36cd479b6b5-" + text + "-36cd479b6b5-" + digest;
@@ -189,7 +189,7 @@ public class CryptoUtil {
      */
     public static Object eapiResDecrypt(String encryptedParams) {
         String decryptedData = aesDecrypt(encryptedParams, EAPI_KEY, "", "hex");
-        return gson.fromJson(decryptedData, Object.class);
+        return JsonUtils.parse(decryptedData, Object.class);
     }
     
     /**
@@ -205,7 +205,7 @@ public class CryptoUtil {
         if (matcher.find()) {
             String url = matcher.group(1);
             String dataJson = matcher.group(2);
-            Object data = gson.fromJson(dataJson, Object.class);
+            Object data = JsonUtils.parse(dataJson, Object.class);
             
             DecryptResult result = new DecryptResult();
             result.setUrl(url);

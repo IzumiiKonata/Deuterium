@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
+import tritium.utils.json.JsonUtils;
 
 import java.io.*;
 import java.net.*;
@@ -295,11 +296,7 @@ public class HttpClient {
         }
 
         public JsonObject toJson() {
-            Gson gson = new Gson();
-            JsonReader reader = new JsonReader(new StringReader(this.toString()));
-            reader.setLenient(true);
-
-            return gson.fromJson(reader, JsonObject.class);
+            return JsonUtils.toJsonObject(this.toString());
         }
 
         public String getSetCookie() {

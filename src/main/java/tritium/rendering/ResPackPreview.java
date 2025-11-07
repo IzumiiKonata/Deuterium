@@ -129,9 +129,7 @@ public class ResPackPreview {
     }
 
     public static boolean metadataHasAnimationFrames(InputStream is) {
-        Gson gson = new Gson();
-
-        JsonObject jObj = gson.fromJson(new InputStreamReader(is), JsonObject.class);
+        JsonObject jObj = tritium.utils.json.JsonUtils.toJsonObject(new InputStreamReader(is));
 
         if (!jObj.isJsonObject())
             return false;
@@ -190,9 +188,7 @@ public class ResPackPreview {
             return;
         }
 
-        Gson gson = new Gson();
-
-        JsonObject jObj = gson.fromJson(new InputStreamReader(is), JsonObject.class);
+        JsonObject jObj = tritium.utils.json.JsonUtils.toJsonObject(new InputStreamReader(is));
 
         if (!jObj.isJsonObject())
             return;

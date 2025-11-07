@@ -1,6 +1,5 @@
 package tritium.ncm.api;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import tritium.ncm.OptionsUtil;
 import tritium.ncm.RequestUtil;
+import tritium.utils.json.JsonUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -24,8 +24,6 @@ import java.util.stream.Collectors;
  */
 @UtilityClass
 public class CloudMusicApi {
-
-    static Gson gson = new Gson();
 
     public RequestUtil.RequestAnswer lyricNew(long id) {
 
@@ -49,22 +47,22 @@ public class CloudMusicApi {
 
         RequestUtil.RequestAnswer request = RequestUtil.createRequest("/api/w/nuser/account/get", new HashMap<>(), OptionsUtil.createOptions("weapi"));
 
-        String result = request.toString();
+        JsonObject result = request.toJsonObject();
 
         if (request.getStatus() == 200) {
 
             JsonObject objResult = new JsonObject();
 
             objResult.addProperty("status", 200);
-            objResult.add("data", gson.fromJson(request.toString(), JsonElement.class));
+            objResult.add("data", request.toJsonObject());
             if (request.getCookies() != null) {
                 objResult.addProperty("cookie", String.join(";", request.getCookies()));
             }
 
-            result = gson.toJson(objResult);
+            result = objResult;
         }
 
-        return RequestUtil.RequestAnswer.of(gson.fromJson(result, JsonObject.class), 200, request.getCookies());
+        return RequestUtil.RequestAnswer.of(result, 200, request.getCookies());
     }
 
     @SneakyThrows
@@ -123,7 +121,7 @@ public class CloudMusicApi {
 
         JsonObject obj = new JsonObject();
         obj.addProperty("status", 200);
-        obj.add("data", gson.fromJson(request.toString(), JsonObject.class));
+        obj.add("data", request.toJsonObject());
         if (request.getCookies() != null) {
             obj.addProperty("cookie", String.join(";", request.getCookies()));
         }
@@ -145,7 +143,7 @@ public class CloudMusicApi {
 //        JsonObject objBody = new JsonObject();
 //
 //        if (request.getStatus() == 200) {
-//            JsonObject jsonObject = gson.fromJson(request.toString(), JsonObject.class);
+//            JsonObject jsonObject = gson.fromJson(request.toJsonString(), JsonObject.class);
 //            jsonObject.addProperty("cookie", String.join(";", request.getCookies()));
 //            objBody.add("body", jsonObject);
 //        }
@@ -237,7 +235,7 @@ public class CloudMusicApi {
         Map<String, Object> data = new HashMap<>();
         data.put("op", operation);
         data.put("pid", trackId);
-        data.put("trackIds", gson.toJson(split));
+        data.put("trackIds", JsonUtils.toJsonString(split));
         data.put("imme", "true");
 
         RequestUtil.RequestAnswer request = RequestUtil.createRequest("/api/playlist/manipulate/tracks", data, OptionsUtil.createOptions());
@@ -249,9 +247,9 @@ public class CloudMusicApi {
             List<String> list = new ArrayList<>();
             list.addAll(Arrays.asList(split));
             list.addAll(Arrays.asList(split));
-            data2.put("trackIds", gson.toJson(list.toArray(new String[0])));
+            data2.put("trackIds", JsonUtils.toJsonString(list.toArray(new String[0])));
             data2.put("imme", "true");
-            return RequestUtil.createRequest("/api/playlist/manipulate/tracks", data, OptionsUtil.createOptions());
+            return RequestUtil.createRequest("/api/playlist/manipulate/tracks", data2, OptionsUtil.createOptions());
         } else {
             JsonObject obj = new JsonObject();
             obj.addProperty("status", 200);

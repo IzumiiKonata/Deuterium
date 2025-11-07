@@ -2,7 +2,6 @@ package tritium.ncm.music;
 
 import com.google.gson.*;
 import com.jsyn.exceptions.ChannelMismatchException;
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
 import javazoom.jl.converter.Converter;
 import lombok.Cleanup;
 import lombok.Getter;
@@ -424,10 +423,7 @@ public class CloudMusic {
         }
 
         private void loadMusicCover(Music song) {
-            if (!song.textureLoaded) {
-                song.textureLoaded = true;
-                CloudMusic.loadMusicCover(song);
-            }
+            CloudMusic.loadMusicCover(song);
         }
 
         PlayMode lastMode = playMode;
@@ -500,8 +496,8 @@ public class CloudMusic {
             public void run() {
 
                 @Cleanup
-                InputStream is = HttpUtils.downloadStream(music.getPicUrl(320), 5);
-                InputStream isSmall = HttpUtils.downloadStream(music.getPicUrl(128), 5);
+                InputStream is = HttpUtils.downloadStream(music.getCoverUrl(320), 5);
+                InputStream isSmall = HttpUtils.downloadStream(music.getCoverUrl(128), 5);
 
                 byte[] byteArray = IOUtils.toByteArray(is);
                 is.close();
@@ -537,7 +533,7 @@ public class CloudMusic {
                     return;
 
                 @Cleanup
-                InputStream inputStream = HttpUtils.downloadStream(music.getPicUrl(size), 5);
+                InputStream inputStream = HttpUtils.downloadStream(music.getCoverUrl(size), 5);
 
                 Textures.loadTextureAsyncly(location, NativeBackedImage.make(inputStream));
             }
@@ -724,7 +720,7 @@ public class CloudMusic {
 
                 string = string.replaceAll("[ - ]", " ");
 
-                JsonObject json = JsonUtils.jsonObjectFromString(string);
+                JsonObject json = JsonUtils.toJsonObject(string);
 
                 MusicLyricsWidget.initLyric(json, song);
                 FuckPussyPanel.initLyric(json, song);
@@ -804,10 +800,7 @@ public class CloudMusic {
         }
     }
 
-    static Gson gson = new Gson();
-
     public static User getUserProfile() {
-
         JsonObject jsonObject = CloudMusicApi.loginStatus().toJsonObject();
 
         JsonObject d = jsonObject.getAsJsonObject("data");
@@ -819,9 +812,7 @@ public class CloudMusic {
 
         JsonObject profile = d.getAsJsonObject("profile");
 
-//        DebugUtils.debugThis(profile);
-
-        return new User(profile);
+        return JsonUtils.parse(profile, User.class);
     }
 
 
@@ -843,8 +834,9 @@ public class CloudMusic {
 
         if (songs != null) {
             for (JsonElement song : songs) {
-                Music m = new Music(song.getAsJsonObject(), null);
-                list.add(m);
+                Music music = JsonUtils.parse(song.getAsJsonObject(), Music.class);
+                list.add(music);
+                music.init();
             }
         }
 //        JsonObject data = post.toJson();

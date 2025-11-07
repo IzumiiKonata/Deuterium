@@ -21,6 +21,7 @@ import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RoundedImageWidget;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
+import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
@@ -66,7 +67,7 @@ public class HomePanel extends NCMPanel {
                     }
 
                     JsonObject playList = element.getAsJsonObject();
-                    playLists.add(new PlayList(playList));
+                    playLists.add(JsonUtils.parse(playList, PlayList.class));
                 }
 
                 layout();

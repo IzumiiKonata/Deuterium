@@ -14,6 +14,7 @@ import net.minecraft.util.Location;
 import tritium.Tritium;
 import tritium.utils.i18n.Language;
 import tritium.settings.ClientSettings;
+import tritium.utils.json.JsonUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
@@ -33,8 +34,6 @@ public class Localizer extends AbstractManager {
 
     @Getter
     private static Language LANG;
-
-    private static final Gson gson = (new GsonBuilder().setPrettyPrinting()).create();
 
     private static final List<String> missing = new ArrayList<>();
 
@@ -90,7 +89,7 @@ public class Localizer extends AbstractManager {
                     BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))
             ) {
 
-                Language l = gson.fromJson(reader, Language.class);
+                Language l = JsonUtils.parse(reader, Language.class);
 
                 for (Map.Entry<String, JsonElement> entry : l.getTranslations().entrySet()) {
                     String trans = entry.getValue().getAsString();
