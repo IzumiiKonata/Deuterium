@@ -96,9 +96,9 @@ jobs:
           cat > release_notes.md << EOF
           ## Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
           
-          **Build Info:**
-          - Commit: ${{ steps.get_version.outputs.COMMIT_SHORT }}
-          - Build Time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **构建信息:**
+          - 提交: ${{ steps.get_version.outputs.COMMIT_SHORT }}
+          - 构建时间: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           
           ---
           Built with ❤️ by IzumiKonata
@@ -108,7 +108,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_version.outputs.RELEASE_NAME }}
-          name: [AUTO BUILD] Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
+          name: "[自动构建] Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}"
           body_path: release_notes.md
           draft: false
           prerelease: true
