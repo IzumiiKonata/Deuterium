@@ -9,9 +9,7 @@
 package ingameime;
 
 
-import tech.konata.obfuscation.ExcludeThis;
 
-@ExcludeThis
 public class PreEditRect {
     private transient long swigCPtr;
     protected transient boolean swigCMemOwn;
