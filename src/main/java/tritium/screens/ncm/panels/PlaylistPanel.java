@@ -111,7 +111,7 @@ public class PlaylistPanel extends NCMPanel {
             creatorAvatar.setRadius(7.25);
         });
 
-        LabelWidget lblCreator = new LabelWidget(playList.creator.name, FontManager.pf16bold);
+        LabelWidget lblCreator = new LabelWidget(playList.getCreator().getName(), FontManager.pf16bold);
         this.addChild(lblCreator);
 
         lblCreator.setBeforeRenderCallback(() -> {
@@ -127,7 +127,7 @@ public class PlaylistPanel extends NCMPanel {
             lblPlaylistInfo.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
         });
 
-        LabelWidget lblPlaylistName = new LabelWidget(playList.name, FontManager.pf32);
+        LabelWidget lblPlaylistName = new LabelWidget(playList.getName(), FontManager.pf32);
         this.addChild(lblPlaylistName);
 
         lblPlaylistName.setBeforeRenderCallback(() -> {
@@ -188,7 +188,7 @@ public class PlaylistPanel extends NCMPanel {
 
         List<Music> musics = playList.musics;
         if (musics.isEmpty())
-            return playList.count + "首歌曲";
+            return playList.getCount() + "首歌曲";
 
         return musics.size() + "首歌曲 · " + this.formatDuration(musics.stream().mapToLong(Music::getDuration).sum());
     }
@@ -201,7 +201,7 @@ public class PlaylistPanel extends NCMPanel {
             return;
 
         MultiThreadingUtil.runAsync(() -> {
-            try (InputStream inputStream = HttpUtils.downloadStream(playList.coverUrl + "?param=256y256")) {
+            try (InputStream inputStream = HttpUtils.downloadStream(playList.getCoverUrl() + "?param=256y256")) {
                 if (inputStream != null) {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
                     AsyncGLContext.submit(() -> {
@@ -225,7 +225,7 @@ public class PlaylistPanel extends NCMPanel {
         if (textureManager.getTexture(avatarLoc) != null)
             return;
         MultiThreadingUtil.runAsync(() -> {
-            try (InputStream inputStream = HttpUtils.downloadStream(playList.creator.avatarUrl + "?param=32y32")) {
+            try (InputStream inputStream = HttpUtils.downloadStream(playList.getCreator().getAvatarUrl() + "?param=32y32")) {
                 if (inputStream != null) {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
                     AsyncGLContext.submit(() -> {
@@ -243,10 +243,10 @@ public class PlaylistPanel extends NCMPanel {
     }
 
     private Location getCoverLocation() {
-        return Location.of("tritium/textures/playlist/" + this.playList.id + "/cover.png");
+        return Location.of("tritium/textures/playlist/" + this.playList.getId() + "/cover.png");
     }
 
     private Location getUserAvatarLocation() {
-        return Location.of("tritium/textures/users/" + this.playList.creator.id + "/avatar.png");
+        return Location.of("tritium/textures/users/" + this.playList.getCreator().getId() + "/avatar.png");
     }
 }

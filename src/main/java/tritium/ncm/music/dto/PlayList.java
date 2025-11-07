@@ -22,35 +22,35 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class PlayList {
 
     @SerializedName("id")
-    public final long id;
+    private final long id;
 
     @SerializedName("name")
-    public final String name;
+    private final String name;
 
     @SerializedName(value = "coverImgUrl", alternate = { "picUrl" })
-    public final String coverUrl;
+    private final String coverUrl;
 
     @SerializedName("trackCount")
-    public final int count;
+    private final int count;
 
     @SerializedName(value = "playCount", alternate = { "playcount" })
-    public final long playCount;
+    private final long playCount;
 
     @SerializedName("creator")
-    public final User creator;
+    private final User creator;
 
     @SerializedName("description")
-    public final String description;
+    private final String description;
 
     @SerializedName("subscribed")
-    public final boolean subscribed;
+    private final boolean subscribed;
 
     @SerializedName("createTime")
-    public final long createTime;
+    private final long createTime;
 
     // unique fields
     public transient List<Music> musics;
-    public transient boolean searchMode = false;
+    private transient boolean searchMode = false;
     public transient boolean musicsQueried = false, musicsLoaded = false;
 
     public List<Music> getMusics() {

@@ -126,7 +126,7 @@ public class MusicsWindow extends Window {
 
         PlayList playlist = playlists.getLastOnSetting();
         if (playlist != null) {
-            FontManager.pf16.drawString(playlist.name, this.baseRect.getX() + 16, this.baseRect.getY() + 7, RenderSystem.reAlpha(ClickGui.getColor(19), this.baseRect.getAlpha()));
+            FontManager.pf16.drawString(playlist.getName(), this.baseRect.getX() + 16, this.baseRect.getY() + 7, RenderSystem.reAlpha(ClickGui.getColor(19), this.baseRect.getAlpha()));
 //            StencilClipManager.endClip();
         }
 

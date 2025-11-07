@@ -100,10 +100,10 @@ public class NavigateBar extends NCMPanel {
         List<PlayList> pl = CloudMusic.playLists;
 
         if (pl != null) {
-            List<PlayList> playLists = pl.stream().filter(playList -> !playList.subscribed).collect(Collectors.toList());
+            List<PlayList> playLists = pl.stream().filter(playList -> !playList.isSubscribed()).collect(Collectors.toList());
             for (int i = 0; i < playLists.size(); i++) {
                 PlayList playList = playLists.get(i);
-                PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
+                PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", () -> Color.GRAY.getRGB(), () -> playList.getName(), () -> {
                     NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
                 });
 
@@ -120,8 +120,8 @@ public class NavigateBar extends NCMPanel {
         this.playlistPanel.addChild(lblSubscribed);
 
         if (pl != null) {
-            pl.stream().filter(playList -> playList.subscribed).forEach(playList -> {
-                PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.name, () -> {
+            pl.stream().filter(playList -> playList.isSubscribed()).forEach(playList -> {
+                PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.getName(), () -> {
                     NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
                 });
 
@@ -142,7 +142,7 @@ public class NavigateBar extends NCMPanel {
             creatorAvatar.setRadius(7.25);
         });
 
-        LabelWidget lblCreator = new LabelWidget(() -> CloudMusic.profile == null ? "未登录" : CloudMusic.profile.name, FontManager.pf16bold);
+        LabelWidget lblCreator = new LabelWidget(() -> CloudMusic.profile == null ? "未登录" : CloudMusic.profile.getName(), FontManager.pf16bold);
         this.addChild(lblCreator);
 
         lblCreator.setBeforeRenderCallback(() -> {
@@ -163,7 +163,7 @@ public class NavigateBar extends NCMPanel {
             return;
 
         MultiThreadingUtil.runAsync(() -> {
-            try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.avatarUrl + "?param=32y32")) {
+            try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.getAvatarUrl() + "?param=32y32")) {
                 if (inputStream != null) {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
                     AsyncGLContext.submit(() -> {
@@ -186,7 +186,7 @@ public class NavigateBar extends NCMPanel {
             return null;
         }
 
-        return Location.of("tritium/textures/users/" + CloudMusic.profile.id + "/avatar.png");
+        return Location.of("tritium/textures/users/" + CloudMusic.profile.getId() + "/avatar.png");
     }
 
     @Override

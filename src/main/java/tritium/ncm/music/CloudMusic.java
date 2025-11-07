@@ -848,7 +848,7 @@ public class CloudMusic {
     public static List<Long> likeList() {
         List<Long> list = new ArrayList<>();
 
-        JsonObject json = CloudMusicApi.likeList(profile.id).toJsonObject();
+        JsonObject json = CloudMusicApi.likeList(profile.getId()).toJsonObject();
 
         JsonArray ids = json.getAsJsonArray("ids");
         for (JsonElement id : ids) {

@@ -69,7 +69,7 @@ public class PlaylistRect extends RectWidget {
             if (CloudMusic.profile == null)
                 return null;
 
-            Location coverLoc = Location.of("tritium/textures/playlist_" + playlist.id + ".png");
+            Location coverLoc = Location.of("tritium/textures/playlist_" + playlist.getId() + ".png");
 
             TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
             if (textureManager.getTexture(coverLoc) == null) {
@@ -77,7 +77,7 @@ public class PlaylistRect extends RectWidget {
                 if (!imgLoaded) {
                     imgLoaded = true;
                     MultiThreadingUtil.runAsync(() -> {
-                        try (InputStream inputStream = HttpUtils.downloadStream(playlist.coverUrl + "?param=" + (int) (imgBg.getWidth() * 2) + "y" + (int) (imgBg.getHeight() * 2))) {
+                        try (InputStream inputStream = HttpUtils.downloadStream(playlist.getCoverUrl() + "?param=" + (int) (imgBg.getWidth() * 2) + "y" + (int) (imgBg.getHeight() * 2))) {
                             if (inputStream != null) {
                                 NativeBackedImage img = NativeBackedImage.make(inputStream);
                                 AsyncGLContext.submit(() -> {
@@ -122,7 +122,7 @@ public class PlaylistRect extends RectWidget {
             rightArrowLabel.centerVertically();
         });
 
-        LabelWidget playlistLabel = new LabelWidget(() -> this.playlist.name, FontManager.pf16);
+        LabelWidget playlistLabel = new LabelWidget(() -> this.playlist.getName(), FontManager.pf16);
         this.addChild(playlistLabel);
         playlistLabel.setClickable(false);
         playlistLabel.setBeforeRenderCallback(() -> {

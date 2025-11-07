@@ -154,7 +154,7 @@ public class HomePanel extends NCMPanel {
             this.loadCover();
 
             CFontRenderer pf14bold = FontManager.pf14bold;
-            LabelWidget lblName = new LabelWidget(() -> String.join("\n", pf14bold.fitWidth(playList.name, size)), pf14bold);
+            LabelWidget lblName = new LabelWidget(() -> String.join("\n", pf14bold.fitWidth(playList.getName(), size)), pf14bold);
 
             this.addChild(lblName);
 
@@ -191,7 +191,7 @@ public class HomePanel extends NCMPanel {
                 return;
 
             MultiThreadingUtil.runAsync(() -> {
-                try (InputStream inputStream = HttpUtils.downloadStream(playList.coverUrl + "?param=256y256")) {
+                try (InputStream inputStream = HttpUtils.downloadStream(playList.getCoverUrl() + "?param=256y256")) {
                     if (inputStream != null) {
                         NativeBackedImage img = NativeBackedImage.make(inputStream);
                         AsyncGLContext.submit(() -> {
@@ -210,7 +210,7 @@ public class HomePanel extends NCMPanel {
         }
 
         private Location getCoverLocation() {
-            return Location.of("tritium/textures/playlist/" + this.playList.id + "/cover.png");
+            return Location.of("tritium/textures/playlist/" + this.playList.getId() + "/cover.png");
         }
 
     }

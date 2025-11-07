@@ -18,15 +18,15 @@ import java.util.List;
 public class User {
 
     @SerializedName("userId")
-    public final long id;
+    private final long id;
     @SerializedName("nickname")
-    public final String name;
+    private final String name;
     @SerializedName("signature")
-    public final String signature;
+    private final String signature;
     @SerializedName("vipType")
-    public final int vip;
+    private final int vip;
     @SerializedName("avatarUrl")
-    public final String avatarUrl;
+    private final String avatarUrl;
 
     /**
      * 用户歌单
