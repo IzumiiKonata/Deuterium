@@ -156,7 +156,7 @@ public class PlaylistPanel extends NCMPanel {
         });
 
         playList.loadMusicsWithCallback(musics -> {
-            musicsPanel.addChild(playList.getMusics().stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music))).toArray(MusicWidget[]::new));
+            musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music))).toArray(MusicWidget[]::new));
         });
     }
 

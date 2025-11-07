@@ -76,12 +76,13 @@ public class PlayList {
         if (this.musics == null)
             this.musics = new CopyOnWriteArrayList<>();
 
-        if (!musics.isEmpty()) {
+        if (!musics.isEmpty() && (this.musicsQueried || searchMode)) {
             callback.onMusicsLoaded(musics);
             return;
         }
 
-        if (!searchMode) {
+        if (!this.musicsQueried && !searchMode) {
+            this.musicsQueried = true;
 
             MultiThreadingUtil.runAsync(() -> {
                 queryMusics();
