@@ -107,7 +107,7 @@ public class PlaylistPanel extends NCMPanel {
 
         creatorAvatar.setBeforeRenderCallback(() -> {
             creatorAvatar.setBounds(16, 16);
-            creatorAvatar.setPosition(cover.getRelativeX() + cover.getWidth() + 12, btnPlay.getRelativeY() - 4 - creatorAvatar.getHeight());
+            creatorAvatar.setPosition(cover.getRelativeX() + cover.getWidth() + 12, btnPlay.getRelativeY() - 6 - creatorAvatar.getHeight());
             creatorAvatar.setRadius(7.25);
         });
 
