@@ -4,12 +4,6 @@ permissions:
   contents: write
 
 on:
-  push:
-    branches:
-      - main
-      - master
-    tags:
-      - 'v*'
   workflow_dispatch:
 
 jobs:
@@ -93,12 +87,24 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
+          # 获取上一个release的tag
+          PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+          
+          if [ -z "$PREV_TAG" ]; then
+            COMMITS=$(git log --pretty=format:'- %s (%h)' HEAD)
+          else
+            COMMITS=$(git log --pretty=format:'- %s (%h)' ${PREV_TAG}..HEAD)
+          fi
+          
           cat > release_notes.md << EOF
           ## Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
           
           **构建信息:**
           - 提交: ${{ steps.get_version.outputs.COMMIT_SHORT }}
           - 构建时间: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          **提交记录:**
+          ${COMMITS}
           
           ---
           Built with ❤️ by IzumiKonata
