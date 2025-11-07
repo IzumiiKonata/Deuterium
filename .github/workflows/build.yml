@@ -1,0 +1,137 @@
+name: Build and Release Tritium Client
+
+on:
+  push:
+    branches:
+      - main
+      - master
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Get version from pom.xml
+        id: get_version
+        run: |
+          VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+          COMMIT_SHORT=$(git rev-parse --short HEAD)
+          echo "COMMIT_SHORT=$COMMIT_SHORT" >> $GITHUB_OUTPUT
+          BUILD_NUMBER=${{ github.run_number }}
+          echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_OUTPUT
+          RELEASE_NAME="${VERSION}-${COMMIT_SHORT}"
+          echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Build with Maven
+        run: mvn clean package -DskipTests
+
+      - name: Prepare release directory
+        run: |
+          mkdir -p release/Tritium
+
+      - name: Copy artifacts
+        run: |
+          cp target/Tritium-*.jar release/Tritium/Tritium.jar || cp target/*.jar release/Tritium/Tritium.jar
+
+      - name: Calculate SHA1
+        id: calculate_sha1
+        run: |
+          SHA1=$(sha1sum release/Tritium/Tritium.jar | awk '{print $1}')
+          echo "SHA1=$SHA1" >> $GITHUB_OUTPUT
+          SIZE=$(stat -c%s release/Tritium/Tritium.jar)
+          echo "SIZE=$SIZE" >> $GITHUB_OUTPUT
+
+      - name: Update Tritium.json with build info
+        run: |
+          cp Releases/Tritium.json release/Tritium/Tritium.json
+          
+          sudo apt-get update && sudo apt-get install -y jq
+          jq --arg sha1 "${{ steps.calculate_sha1.outputs.SHA1 }}" \
+             --arg size "${{ steps.calculate_sha1.outputs.SIZE }}" \
+             '.downloads.client.sha1 = $sha1 | .downloads.client.size = ($size | tonumber)' \
+             release/Tritium/Tritium.json > release/Tritium/Tritium.json.tmp
+          mv release/Tritium/Tritium.json.tmp release/Tritium/Tritium.json
+
+      - name: Generate version info file
+        run: |
+          cat > release/Tritium/version.json << EOF
+          {
+            "version": "${{ steps.get_version.outputs.VERSION }}",
+            "commit": "${{ github.sha }}",
+            "commit_short": "${{ steps.get_version.outputs.COMMIT_SHORT }}",
+            "build_number": ${{ steps.get_version.outputs.BUILD_NUMBER }},
+            "build_time": "$(date -u +%s)",
+            "build_time_readable": "$(date -u +"%Y-%m-%d %H:%M:%S UTC")",
+            "branch": "${{ github.ref_name }}",
+            "repository": "${{ github.repository }}",
+            "release_name": "${{ steps.get_version.outputs.RELEASE_NAME }}",
+            "download_url": "https://github.com/${{ github.repository }}/releases/download/${{ steps.get_version.outputs.RELEASE_NAME }}/Tritium.jar"
+          }
+          EOF
+
+      - name: Create release package
+        run: |
+          cd release
+          zip -r Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}.zip Tritium/
+
+      - name: Generate release notes
+        id: release_notes
+        run: |
+          cat > release_notes.md << EOF
+          ## Tritium Client ${{ steps.get_version.outputs.RELEASE_NAME }}
+          
+          **Build Information:**
+          - Version: ${{ steps.get_version.outputs.VERSION }}
+          - Commit: ${{ steps.get_version.outputs.COMMIT_SHORT }}
+          - Build Number: ${{ steps.get_version.outputs.BUILD_NUMBER }}
+          - Build Time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          
+          **File Information:**
+          - Tritium.jar SHA1: ${{ steps.calculate_sha1.outputs.SHA1 }}
+          - Size: ${{ steps.calculate_sha1.outputs.SIZE }} bytes
+          
+          **Installation:**
+          1. Download the zip file
+          2. Extract to your Minecraft launcher directory
+          3. Use the provided Tritium.json with your launcher
+          
+          ---
+          Built with ❤️ by IzumiKonata
+          EOF
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get_version.outputs.RELEASE_NAME }}
+          name: Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          files: |
+            release/Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}.zip
+            release/Tritium/Tritium.jar
+            release/Tritium/Tritium.json
+            release/Tritium/version.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}
+          path: release/
+          retention-days: 30
