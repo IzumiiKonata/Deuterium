@@ -36,8 +36,25 @@ jobs:
           echo "COMMIT_SHORT=$COMMIT_SHORT" >> $GITHUB_OUTPUT
           BUILD_NUMBER=${{ github.run_number }}
           echo "BUILD_NUMBER=$BUILD_NUMBER" >> $GITHUB_OUTPUT
-          RELEASE_NAME="${VERSION}-${COMMIT_SHORT}"
+          RELEASE_NAME="${COMMIT_SHORT}"
           echo "RELEASE_NAME=$RELEASE_NAME" >> $GITHUB_OUTPUT
+
+      - name: Generate version info file
+        run: |
+          cat > src/main/resources/version.json << EOF
+          {
+            "version": "${{ steps.get_version.outputs.VERSION }}",
+            "commit": "${{ github.sha }}",
+            "commit_short": "${{ steps.get_version.outputs.COMMIT_SHORT }}",
+            "build_number": ${{ steps.get_version.outputs.BUILD_NUMBER }},
+            "build_time": "$(date -u +%s)",
+            "build_time_readable": "$(date -u +"%Y-%m-%d %H:%M:%S UTC")",
+            "branch": "${{ github.ref_name }}",
+            "repository": "${{ github.repository }}",
+            "release_name": "${{ steps.get_version.outputs.RELEASE_NAME }}",
+            "download_url": "https://github.com/${{ github.repository }}/releases/download/${{ steps.get_version.outputs.RELEASE_NAME }}/Tritium.jar"
+          }
+          EOF
 
       - name: Build with Maven
         run: mvn clean package -DskipTests
@@ -68,23 +85,6 @@ jobs:
              release/Tritium/Tritium.json > release/Tritium/Tritium.json.tmp
           mv release/Tritium/Tritium.json.tmp release/Tritium/Tritium.json
 
-      - name: Generate version info file
-        run: |
-          cat > release/Tritium/version.json << EOF
-          {
-            "version": "${{ steps.get_version.outputs.VERSION }}",
-            "commit": "${{ github.sha }}",
-            "commit_short": "${{ steps.get_version.outputs.COMMIT_SHORT }}",
-            "build_number": ${{ steps.get_version.outputs.BUILD_NUMBER }},
-            "build_time": "$(date -u +%s)",
-            "build_time_readable": "$(date -u +"%Y-%m-%d %H:%M:%S UTC")",
-            "branch": "${{ github.ref_name }}",
-            "repository": "${{ github.repository }}",
-            "release_name": "${{ steps.get_version.outputs.RELEASE_NAME }}",
-            "download_url": "https://github.com/${{ github.repository }}/releases/download/${{ steps.get_version.outputs.RELEASE_NAME }}/Tritium.jar"
-          }
-          EOF
-
       - name: Create release package
         run: |
           cd release
@@ -94,22 +94,11 @@ jobs:
         id: release_notes
         run: |
           cat > release_notes.md << EOF
-          ## Tritium Client ${{ steps.get_version.outputs.RELEASE_NAME }}
+          ## Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
           
-          **Build Information:**
-          - Version: ${{ steps.get_version.outputs.VERSION }}
-          - Commit: ${{ steps.get_version.outputs.COMMIT_SHORT }}
-          - Build Number: ${{ steps.get_version.outputs.BUILD_NUMBER }}
-          - Build Time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
-          
-          **File Information:**
-          - Tritium.jar SHA1: ${{ steps.calculate_sha1.outputs.SHA1 }}
-          - Size: ${{ steps.calculate_sha1.outputs.SIZE }} bytes
-          
-          **Installation:**
-          1. Download the zip file
-          2. Extract to your Minecraft launcher directory
-          3. Use the provided Tritium.json with your launcher
+          **构建信息:**
+          - 提交: ${{ steps.get_version.outputs.COMMIT_SHORT }}
+          - 构建时间: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           
           ---
           Built with ❤️ by IzumiKonata
@@ -119,15 +108,12 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_version.outputs.RELEASE_NAME }}
-          name: Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
+          name: [自动构建] Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
           body_path: release_notes.md
           draft: false
-          prerelease: false
+          prerelease: true
           files: |
             release/Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}.zip
-            release/Tritium/Tritium.jar
-            release/Tritium/Tritium.json
-            release/Tritium/version.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
