@@ -96,9 +96,9 @@ jobs:
           cat > release_notes.md << EOF
           ## Tritium ${{ steps.get_version.outputs.RELEASE_NAME }}
           
-          **构建信息:**
-          - 提交: ${{ steps.get_version.outputs.COMMIT_SHORT }}
-          - 构建时间: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          **Build Info:**
+          - Commit: ${{ steps.get_version.outputs.COMMIT_SHORT }}
+          - Build Time: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
           
           ---
           Built with ❤️ by IzumiKonata
