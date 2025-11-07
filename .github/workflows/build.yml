@@ -88,6 +88,7 @@ jobs:
         id: release_notes
         run: |
           # a
+          # b
           PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
           
           if [ -z "$PREV_TAG" ]; then
