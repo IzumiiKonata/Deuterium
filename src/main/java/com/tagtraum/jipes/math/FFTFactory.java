@@ -1,86 +1,12 @@
-/*
- * =================================================
- * Copyright 2011 tagtraum industries incorporated
- * All rights reserved.
- * =================================================
- */
 package com.tagtraum.jipes.math;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-/**
- * <p>Factory for FF{@link Transform}s. Using the factory allows for sliding-in a faster, perhaps
- * native implementation (like it's done in <a href="http://www.beatunes.com/">beaTunes</a>).
- * </p>
- * <p>In order to use a factory other than the default factory, you need to specify
- * its classname with the system property <code>com.tagtraum.jipes.math.FFTFactory</code>.
- * I.e.
- * <xmp>-Dcom.tagtraum.jipes.math.FFTFactory=YOUR.CLASSNAME.HERE</xmp>
- * <p>
- *
- * @author <a href="mailto:hs@tagtraum.com">Hendrik Schreiber</a>
- */
 public abstract class FFTFactory {
-
-    public static final String FACTORYCLASS_PROPERTY_NAME = FFTFactory.class.getName();
-    private static Logger LOG = Logger.getLogger(FFTFactory.class.getName());
-    private static FFTFactory instance;
 
     protected FFTFactory() {
     }
 
-    /**
-     * Creates a factory for FFT {@link Transform} objects.
-     *
-     * @return factory instance
-     */
-    public synchronized static FFTFactory getInstance() {
-        if (instance == null) {
-            final String factoryClassname = System.getProperty(FACTORYCLASS_PROPERTY_NAME);
-            if (factoryClassname != null) {
-                try {
-                    instance = (FFTFactory) Class.forName(factoryClassname, true, Thread.currentThread().getContextClassLoader()).newInstance();
-                } catch (Exception e) {
-                    LOG.log(Level.WARNING, "Unable to instantiate configured FFTFactory \"" + factoryClassname + "\". Will fall back to standard implementation. Problem: " + e, e);
-                }
-            }
-            if (instance == null) {
-                // fall back to built-in factory
-                instance = new JavaFFTFactory();
-            }
-        }
-        return instance;
-    }
-
-    /**
-     * Creates an instance of the fast Fourier transform (FFT).
-     * By specifying the number of samples implementations can pre-create lookup tables to speed
-     * up the actual transform.
-     *
-     * @param numberOfSamples number of samples the FFT instance should be able to process
-     * @return FFT instance
-     */
     public abstract Transform create(int numberOfSamples);
 
-    /**
-     * Default implementation for a Java FFT factory.
-     */
-    private static class JavaFFTFactory extends FFTFactory {
-
-        private JavaFFT last;
-
-        @Override
-        public synchronized Transform create(final int numberOfSamples) {
-            if (last != null && last.numberOfSamples == numberOfSamples) return last;
-            last = new JavaFFT(numberOfSamples);
-            return last;
-        }
-    }
-
-    /**
-     * Default implementation for a Java FFT.
-     */
     public static class JavaFFT implements Transform {
 
         private static final int MAX_FAST_BITS = 16;
@@ -88,6 +14,8 @@ public abstract class FFTFactory {
         private final int numberOfSamples;
         private final int[] reverseIndices;
         private float[] frequencies;
+        private final float[] cosTable;
+        private final float[] sinTable;
 
         static {
             int len = 2;
@@ -113,10 +41,18 @@ public abstract class FFTFactory {
             this.frequencies = new float[numberOfSamples];
             for (int index=0; index<numberOfSamples; index++) {
                 if (index <= numberOfSamples / 2) {
-                    this.frequencies[index] = index / numberOfSamples;
+                    this.frequencies[index] = index / (float)numberOfSamples;
                 } else {
                     this.frequencies[index] = -((numberOfSamples - index) / (float) numberOfSamples);
                 }
+            }
+
+            this.cosTable = new float[numberOfSamples];
+            this.sinTable = new float[numberOfSamples];
+            for (int i = 0; i < numberOfSamples; i++) {
+                float angle = (float)(-2.0 * Math.PI * i / numberOfSamples);
+                cosTable[i] = (float)Math.cos(angle);
+                sinTable[i] = (float)Math.sin(angle);
             }
         }
 
@@ -140,15 +76,6 @@ public abstract class FFTFactory {
             return out;
         }
 
-        /**
-         * Actual fast Fourier transform implementation.
-         *
-         * @param inverse      inverse or not
-         * @param realIn       real portion input
-         * @param imaginaryIn  imaginary in
-         * @param realOut      real out
-         * @param imaginaryOut imaginary out
-         */
         public void transform(final boolean inverse,
                               final float[] realIn,
                               final float[] imaginaryIn,
@@ -158,54 +85,55 @@ public abstract class FFTFactory {
                 throw new IllegalArgumentException("Number of samples must be " + numberOfSamples + " for this instance of JavaFFT");
             }
 
-            for (int i = 0; i < numberOfSamples; i++) {
-                realOut[this.reverseIndices[i]] = realIn[i];
+            int i = 0;
+            for (; i <= numberOfSamples - 4; i += 4) {
+                realOut[reverseIndices[i]] = realIn[i];
+                realOut[reverseIndices[i+1]] = realIn[i+1];
+                realOut[reverseIndices[i+2]] = realIn[i+2];
+                realOut[reverseIndices[i+3]] = realIn[i+3];
             }
+            for (; i < numberOfSamples; i++) {
+                realOut[reverseIndices[i]] = realIn[i];
+            }
+
             if (imaginaryIn != null) {
-                for (int i = 0; i < numberOfSamples; i++) {
-                    imaginaryOut[this.reverseIndices[i]] = imaginaryIn[i];
+                i = 0;
+                for (; i <= numberOfSamples - 4; i += 4) {
+                    imaginaryOut[reverseIndices[i]] = imaginaryIn[i];
+                    imaginaryOut[reverseIndices[i+1]] = imaginaryIn[i+1];
+                    imaginaryOut[reverseIndices[i+2]] = imaginaryIn[i+2];
+                    imaginaryOut[reverseIndices[i+3]] = imaginaryIn[i+3];
+                }
+                for (; i < numberOfSamples; i++) {
+                    imaginaryOut[reverseIndices[i]] = imaginaryIn[i];
+                }
+            } else {
+                for (i = 0; i < numberOfSamples; i++) {
+                    imaginaryOut[i] = 0.0f;
                 }
             }
 
             int blockEnd = 1;
-            final double angleNumerator;
-            if (inverse) angleNumerator = -2.0 * Math.PI;
-            else angleNumerator = 2.0 * Math.PI;
+            final int sign = inverse ? 1 : -1;
+
             for (int blockSize = 2; blockSize <= numberOfSamples; blockSize <<= 1) {
-                final double deltaAngle = angleNumerator / (float) blockSize;
-                final double sm2 = (-Math.sin(-2 * deltaAngle));
-                final double sm1 = (-Math.sin(-deltaAngle));
-                final double cm2 = (Math.cos(-2 * deltaAngle));
-                final double cm1 = (Math.cos(-deltaAngle));
-                final double w = 2 * cm1;
-                double ar1;
-                double ai1;
-                double ar2;
-                double ai2;
+                final int angleStep = numberOfSamples / blockSize;
 
-                for (int i = 0; i < numberOfSamples; i += blockSize) {
-                    ar2 = cm2;
-                    ar1 = cm1;
-
-                    ai2 = sm2;
-                    ai1 = sm1;
-
+                for (i = 0; i < numberOfSamples; i += blockSize) {
                     for (int j = i, n = 0; n < blockEnd; j++, n++) {
-                        final double ar0 = w * ar1 - ar2;
-                        ar2 = ar1;
-                        ar1 = ar0;
-
-                        final double ai0 = w * ai1 - ai2;
-                        ai2 = ai1;
-                        ai1 = ai0;
+                        final int angleIdx = (n * angleStep) & (numberOfSamples - 1);
+                        final float ar0 = cosTable[angleIdx];
+                        final float ai0 = sign * sinTable[angleIdx];
 
                         final int k = j + blockEnd;
-                        /* temp real, temp imaginary */
-                        final double tr = ar0 * realOut[k] - ai0 * imaginaryOut[k];
-                        final double ti = ar0 * imaginaryOut[k] + ai0 * realOut[k];
+                        final float rk = realOut[k];
+                        final float ik = imaginaryOut[k];
 
-                        realOut[k] = (float) (realOut[j] - tr);
-                        imaginaryOut[k] = (float)(imaginaryOut[j] - ti);
+                        final float tr = ar0 * rk - ai0 * ik;
+                        final float ti = ar0 * ik + ai0 * rk;
+
+                        realOut[k] = realOut[j] - tr;
+                        imaginaryOut[k] = imaginaryOut[j] - ti;
 
                         realOut[j] += tr;
                         imaginaryOut[j] += ti;
@@ -215,11 +143,22 @@ public abstract class FFTFactory {
                 blockEnd = blockSize;
             }
 
-            // normalize, if inverse transform
             if (inverse) {
-                for (int i = 0; i < numberOfSamples; i++) {
-                    realOut[i] /= (float) numberOfSamples;
-                    imaginaryOut[i] /= (float) numberOfSamples;
+                final float scale = 1.0f / numberOfSamples;
+                i = 0;
+                for (; i <= numberOfSamples - 4; i += 4) {
+                    realOut[i] *= scale;
+                    imaginaryOut[i] *= scale;
+                    realOut[i+1] *= scale;
+                    imaginaryOut[i+1] *= scale;
+                    realOut[i+2] *= scale;
+                    imaginaryOut[i+2] *= scale;
+                    realOut[i+3] *= scale;
+                    imaginaryOut[i+3] *= scale;
+                }
+                for (; i < numberOfSamples; i++) {
+                    realOut[i] *= scale;
+                    imaginaryOut[i] *= scale;
                 }
             }
         }
@@ -273,6 +212,4 @@ public abstract class FFTFactory {
                     '}';
         }
     }
-
-
 }
