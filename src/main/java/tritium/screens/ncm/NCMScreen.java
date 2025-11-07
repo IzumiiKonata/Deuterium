@@ -15,6 +15,7 @@ import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.BaseScreen;
 import tritium.screens.clickgui.music.LoginRenderer;
 import tritium.screens.ncm.panels.ControlsBar;
+import tritium.screens.ncm.panels.HomePanel;
 import tritium.screens.ncm.panels.NavigateBar;
 
 import java.util.ArrayList;
@@ -58,8 +59,13 @@ public class NCMScreen extends BaseScreen {
         alpha = 0f;
         closing = false;
 
-        if (this.playlistsPanel == null)
+        if (this.playlistsPanel == null) {
             this.layout();
+
+            // only when logged in
+            if (CloudMusic.profile != null)
+                this.setCurrentPanel(new HomePanel());
+        }
     }
 
     public void layout() {
@@ -181,6 +187,9 @@ public class NCMScreen extends BaseScreen {
                 CloudMusic.loadNCM(OptionsUtil.getCookie());
 
                 this.layout();
+
+                if (CloudMusic.profile != null)
+                    this.setCurrentPanel(new HomePanel());
             }
         }
 
