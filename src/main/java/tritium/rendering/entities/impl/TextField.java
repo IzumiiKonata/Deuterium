@@ -48,6 +48,8 @@ public class TextField extends GuiTextField {
     @Setter
     public String placeholder = "";
     public boolean isPassword;
+    @Setter
+    private TextChangedCallback callback = null;
 
     // 光标和选择
     @Getter
@@ -97,6 +99,10 @@ public class TextField extends GuiTextField {
     private Timer imePositionUpdateTimer = new Timer();
     private Timer cursorForceShowTimer = new Timer();
 
+    public interface TextChangedCallback {
+        void onTextChanged(String newText);
+    }
+
     public TextField(int number, float x, float y, int width, int height) {
         super(number, Minecraft.getMinecraft().fontRendererObj, (int) x, (int) y, width, height);
         this.textFieldNumber = number;
@@ -111,6 +117,8 @@ public class TextField extends GuiTextField {
 
     public void setText(String text) {
         this.text = text;
+        if (this.callback != null)
+            this.callback.onTextChanged(text);
         setCursorPositionEnd();
     }
 
@@ -145,6 +153,8 @@ public class TextField extends GuiTextField {
         String result = newText.toString();
         if (textPredicate.apply(result)) {
             text = result;
+            if (this.callback != null)
+                this.callback.onTextChanged(text);
             moveCursorBy(selStart - selectionEnd + charsToAdd);
 
             if (responder != null) {
@@ -176,6 +186,8 @@ public class TextField extends GuiTextField {
         }
 
         text = newText.toString();
+        if (this.callback != null)
+            this.callback.onTextChanged(text);
 
         if (deleteBefore) {
             moveCursorBy(count);
@@ -723,6 +735,8 @@ public class TextField extends GuiTextField {
         maxStringLength = length;
         if (text.length() > length) {
             text = text.substring(0, length);
+            if (this.callback != null)
+                this.callback.onTextChanged(text);
         }
     }
 

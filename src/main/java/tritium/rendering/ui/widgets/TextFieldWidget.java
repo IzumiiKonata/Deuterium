@@ -1,5 +1,6 @@
 package tritium.rendering.ui.widgets;
 
+import lombok.Getter;
 import tritium.rendering.entities.impl.TextField;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
@@ -12,6 +13,7 @@ import java.awt.*;
  */
 public class TextFieldWidget extends AbstractWidget<TextFieldWidget> {
 
+    @Getter
     private final TextField textField;
 
     public TextFieldWidget(CFontRenderer fontRenderer) {
@@ -80,6 +82,11 @@ public class TextFieldWidget extends AbstractWidget<TextFieldWidget> {
 
     public TextFieldWidget drawUnderline(boolean drawUnderline) {
         this.textField.setDrawLineUnder(drawUnderline);
+        return this;
+    }
+
+    public TextFieldWidget setTextChangedCallback(TextField.TextChangedCallback callback) {
+        this.textField.setCallback(callback);
         return this;
     }
 }

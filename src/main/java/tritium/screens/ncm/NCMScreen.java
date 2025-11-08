@@ -275,6 +275,10 @@ public class NCMScreen extends BaseScreen {
             return;
         }
 
+        if (this.currentPanel != null && this.currentPanel.onKeyTypedReceived(typedChar, keyCode)) {
+            return;
+        }
+
         if (keyCode == Keyboard.KEY_ESCAPE) {
 
             if (this.fuckPussyPanel != null)

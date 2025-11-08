@@ -55,14 +55,14 @@ public class Music {
     private transient String artistsName;
 
     public void init() {
-        this.artistsName = this.getArtists();
+        this.artistsName = this.buildArtistsNames();
 
         if (this.artistsName.isEmpty()) {
             this.artistsName = "Unknown";
         }
     }
 
-    private String getArtists() {
+    private String buildArtistsNames() {
         List<String> artistsList = this.artists.stream().map(Artist::getName).collect(Collectors.toList());
 
         StringBuilder sb = new StringBuilder();

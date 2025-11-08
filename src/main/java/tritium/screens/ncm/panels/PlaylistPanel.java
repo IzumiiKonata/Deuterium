@@ -4,11 +4,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
+import org.lwjgl.input.Keyboard;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
+import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.container.Panel;
@@ -16,6 +19,7 @@ import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.*;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
+import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
@@ -23,6 +27,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 /**
@@ -36,6 +41,9 @@ public class PlaylistPanel extends NCMPanel {
     public PlaylistPanel(PlayList playlist) {
         this.playList = playlist;
     }
+
+    private TextFieldWidget tfSearch;
+    private double tfOpenAnimation = 20;
 
     @Override
     public void onInit() {
@@ -104,6 +112,76 @@ public class PlaylistPanel extends NCMPanel {
                 return true;
             });
 
+            RoundedRectWidget searchBar = new RoundedRectWidget();
+            this.addChild(searchBar);
+
+            searchBar.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+
+                if (mouseButton == 0) {
+                    if (!this.tfSearch.isFocused()) {
+                        this.tfSearch.setFocused(true);
+                        this.tfSearch.getTextField().dragging = true;
+                    }
+                }
+
+                return true;
+            });
+
+            searchBar.setBeforeRenderCallback(() -> {
+                tfOpenAnimation = Interpolations.interpBezier(tfOpenAnimation, this.tfSearch.isFocused() ? 80 : 20, .3f);
+                searchBar.setAlpha(1f);
+                searchBar.setColor(0xFF5E5E5E);
+                searchBar.setWidth(tfOpenAnimation);
+                searchBar.setHeight(btnPlayRandomOrder.getHeight());
+                searchBar.setRadius(7);
+                searchBar.setPosition(btnPlayRandomOrder.getRelativeX() + btnPlayRandomOrder.getWidth() + 8, btnPlayRandomOrder.getRelativeY());
+            });
+
+            RoundedRectWidget searchBarBg = new RoundedRectWidget();
+            searchBar.addChild(searchBarBg);
+            searchBarBg.setClickable(false);
+
+            searchBarBg.setBeforeRenderCallback(() -> {
+                searchBarBg.setMargin(.5);
+                searchBarBg.setAlpha(.6f);
+                searchBar.setColor(0xFF292727);
+                searchBarBg.setRadius(searchBar.getRadius() - .5);
+            });
+
+            LabelWidget lblSearchIcon = new LabelWidget("K", FontManager.music18);
+            searchBar.addChild(lblSearchIcon);
+            lblSearchIcon.setClickable(false);
+
+            lblSearchIcon.setBeforeRenderCallback(() -> {
+                lblSearchIcon.setColor(hexColor(100, 100, 100));
+                lblSearchIcon.centerVertically();
+                lblSearchIcon.setPosition(lblSearchIcon.getRelativeY(), lblSearchIcon.getRelativeY());
+            });
+
+            this.tfSearch = new TextFieldWidget(FontManager.pf14bold);
+            searchBar.addChild(tfSearch);
+
+            this.tfSearch.setOnKeyTypedCallback((character, keyCode) -> {
+                if (this.tfSearch.isFocused()) {
+                    if (keyCode == Keyboard.KEY_ESCAPE)
+                        this.tfSearch.setFocused(false);
+
+
+                    return true;
+                }
+
+                return false;
+            });
+
+            tfSearch.setBeforeRenderCallback(() -> {
+                tfSearch.drawUnderline(false);
+                tfSearch.setMargin(2);
+                double xSpacing = lblSearchIcon.getRelativeX() + lblSearchIcon.getWidth() + 4;
+                tfSearch.setBounds(xSpacing, tfSearch.getRelativeY(), tfSearch.getWidth() - xSpacing, tfSearch.getHeight());
+                tfSearch.setColor(this.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+                tfSearch.setDisabledTextColor(RenderSystem.reAlpha(this.getColor(NCMScreen.ColorType.PRIMARY_TEXT), .4f));
+            });
+
             RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
             this.addChild(creatorAvatar);
             creatorAvatar.fadeIn();
@@ -168,6 +246,31 @@ public class PlaylistPanel extends NCMPanel {
         playList.loadMusicsWithCallback(musics -> {
             musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music))).collect(Collectors.toList()));
         });
+
+        if (this.tfSearch != null) {
+            this.tfSearch.setTextChangedCallback(text -> {
+                if (text.isEmpty()) {
+                    musicsPanel.getChildren().forEach(child -> child.setHidden(false));
+                } else {
+                    for (AbstractWidget<?> child : musicsPanel.getChildren()) {
+                        if (child instanceof MusicWidget widget) {
+
+                            if (
+                                    widget.music.getName().toLowerCase().contains(text.toLowerCase()) ||
+                                    widget.music.getArtists().stream().anyMatch(artist -> artist != null && artist.getName() != null && artist.getName().toLowerCase().contains(text.toLowerCase())) ||
+                                    (widget.music.getAlbum() != null && widget.music.getAlbum().getName() != null && widget.music.getAlbum().getName().toLowerCase().contains(text.toLowerCase()))
+                            ) {
+                                widget.setHidden(false);
+                            } else {
+                                widget.setHidden(true);
+                            }
+
+                        }
+                    }
+                }
+
+            });
+        }
     }
 
     private String formatDuration(long totalMillis) {
