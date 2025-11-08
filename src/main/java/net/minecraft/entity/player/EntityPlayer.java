@@ -37,8 +37,6 @@ import net.minecraft.network.play.server.S12PacketEntityVelocity;
 import net.minecraft.potion.Potion;
 import net.minecraft.scoreboard.*;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.stats.StatBase;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
@@ -1151,10 +1149,6 @@ public abstract class EntityPlayer extends EntityLivingBase {
                             this.onEnchantmentCritical(targetEntity);
                         }
 
-                        if (f >= 18.0F) {
-                            this.triggerAchievement(AchievementList.overkill);
-                        }
-
                         this.setLastAttacker(targetEntity);
 
                         if (targetEntity instanceof EntityLivingBase) {
@@ -1456,22 +1450,6 @@ public abstract class EntityPlayer extends EntityLivingBase {
     }
 
     /**
-     * Will trigger the specified trigger.
-     */
-    public void triggerAchievement(StatBase achievementIn) {
-        this.addStat(achievementIn, 1);
-    }
-
-    /**
-     * Adds a value to a statistic field.
-     */
-    public void addStat(StatBase stat, int amount) {
-    }
-
-    public void func_175145_a(StatBase p_175145_1_) {
-    }
-
-    /**
      * Causes this entity to do an upwards motion (jumping).
      */
     public void jump() {
@@ -1559,8 +1537,6 @@ public abstract class EntityPlayer extends EntityLivingBase {
                 if (this.ridingEntity instanceof EntityMinecart) {
                     if (this.startMinecartRidingCoordinate == null) {
                         this.startMinecartRidingCoordinate = new BlockPos(this);
-                    } else if (this.startMinecartRidingCoordinate.distanceSq(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)) >= 1000000.0D) {
-                        this.triggerAchievement(AchievementList.onARail);
                     }
                 }
             }
@@ -1584,17 +1560,6 @@ public abstract class EntityPlayer extends EntityLivingBase {
 
     protected String getFallSoundString(int damageValue) {
         return damageValue > 4 ? "game.player.hurt.fall.big" : "game.player.hurt.fall.small";
-    }
-
-    /**
-     * This method gets called when the entity kills another one.
-     */
-    public void onKillEntity(EntityLivingBase entityLivingIn) {
-        if (entityLivingIn instanceof IMob) {
-            this.triggerAchievement(AchievementList.killEnemy);
-        }
-
-        EntityList.EntityEggInfo entitylist$entityegginfo = EntityList.entityEggs.get(EntityList.getEntityID(entityLivingIn));
     }
 
     /**

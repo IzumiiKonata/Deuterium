@@ -11,7 +11,6 @@ import net.minecraft.entity.projectile.EntityLargeFireball;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.*;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
@@ -67,7 +66,6 @@ public class EntityGhast extends EntityFlying implements IMob {
             return false;
         } else if ("fireball".equals(source.getDamageType()) && source.getEntity() instanceof EntityPlayer) {
             super.attackEntityFrom(source, 1000.0F);
-            ((EntityPlayer) source.getEntity()).triggerAchievement(AchievementList.ghast);
             return true;
         } else {
             return super.attackEntityFrom(source, amount);

@@ -101,7 +101,7 @@ public class AltScreen extends BaseScreen {
                 final WorldSettings worldSettings = new WorldSettings(0L, WorldSettings.GameType.NOT_SET, true, false, WorldType.DEFAULT);
                 final FakeNetHandlerPlayClient netHandler = new FakeNetHandlerPlayClient(Minecraft.getMinecraft());
                 this.world = new FakeWorld(worldSettings, netHandler);
-                this.player = new EntityPlayerSP(Minecraft.getMinecraft(), this.world, netHandler, null);
+                this.player = new EntityPlayerSP(Minecraft.getMinecraft(), this.world, netHandler);
                 int modelParts = 0;
                 for (EnumPlayerModelParts enumplayermodelparts : Minecraft.getMinecraft().gameSettings.getModelParts()) {
                     modelParts |= enumplayermodelparts.getPartMask();

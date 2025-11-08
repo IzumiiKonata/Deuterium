@@ -52,9 +52,6 @@ import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.*;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.scoreboard.*;
-import net.minecraft.stats.Achievement;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.stats.StatBase;
 import net.minecraft.tileentity.*;
 import net.minecraft.util.*;
 import net.minecraft.village.MerchantRecipeList;
@@ -108,7 +105,6 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
     private boolean doneLoadingTerrain;
     public final Map<UUID, NetworkPlayerInfo> playerInfoMap = Maps.newHashMap();
     public int currentServerMaxPlayers = 20;
-    private boolean field_147308_k = false;
 
     /**
      * Just an ordinary random number generator, used to randomize audio pitch of item/orb pickup and randomize both
@@ -1084,38 +1080,6 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
      */
     public void handleStatistics(S37PacketStatistics packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        boolean flag = false;
-
-        for (Entry<StatBase, Integer> entry : packetIn.func_148974_c().entrySet()) {
-            StatBase statbase = entry.getKey();
-            int i = entry.getValue().intValue();
-
-            if (statbase.isAchievement() && i > 0) {
-                if (this.field_147308_k && this.gameController.thePlayer.getStatFileWriter().readStat(statbase) == 0) {
-                    Achievement achievement = (Achievement) statbase;
-                    this.gameController.guiAchievement.displayAchievement(achievement);
-
-                    if (statbase == AchievementList.openInventory) {
-                        this.gameController.gameSettings.showInventoryAchievementHint = false;
-                        this.gameController.gameSettings.saveOptions();
-                    }
-                }
-
-                flag = true;
-            }
-
-            this.gameController.thePlayer.getStatFileWriter().unlockAchievement(this.gameController.thePlayer, statbase, i);
-        }
-
-        if (!this.field_147308_k && !flag && this.gameController.gameSettings.showInventoryAchievementHint) {
-            this.gameController.guiAchievement.displayUnformattedAchievement(AchievementList.openInventory);
-        }
-
-        this.field_147308_k = true;
-
-        if (this.gameController.currentScreen instanceof IProgressMeter) {
-            ((IProgressMeter) this.gameController.currentScreen).doneLoading();
-        }
     }
 
     public void handleEntityEffect(S1DPacketEntityEffect packetIn) {

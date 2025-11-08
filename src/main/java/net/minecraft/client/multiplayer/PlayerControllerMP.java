@@ -15,7 +15,6 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.network.play.client.*;
-import net.minecraft.stats.StatFileWriter;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
@@ -400,8 +399,8 @@ public class PlayerControllerMP {
         }
     }
 
-    public EntityPlayerSP func_178892_a(World worldIn, StatFileWriter statWriter) {
-        return new EntityPlayerSP(this.mc, worldIn, this.netClientHandler, statWriter);
+    public EntityPlayerSP func_178892_a(World worldIn) {
+        return new EntityPlayerSP(this.mc, worldIn, this.netClientHandler);
     }
 
     /**

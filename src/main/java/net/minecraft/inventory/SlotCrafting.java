@@ -5,7 +5,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.*;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.stats.AchievementList;
 
 public class SlotCrafting extends Slot {
     /**
@@ -66,50 +65,6 @@ public class SlotCrafting extends Slot {
         }
 
         this.amountCrafted = 0;
-
-        if (stack.getItem() == Item.getItemFromBlock(Blocks.crafting_table)) {
-            this.thePlayer.triggerAchievement(AchievementList.buildWorkBench);
-        }
-
-        if (stack.getItem() instanceof ItemPickaxe) {
-            this.thePlayer.triggerAchievement(AchievementList.buildPickaxe);
-        }
-
-        if (stack.getItem() == Item.getItemFromBlock(Blocks.furnace)) {
-            this.thePlayer.triggerAchievement(AchievementList.buildFurnace);
-        }
-
-        if (stack.getItem() instanceof ItemHoe) {
-            this.thePlayer.triggerAchievement(AchievementList.buildHoe);
-        }
-
-        if (stack.getItem() == Items.bread) {
-            this.thePlayer.triggerAchievement(AchievementList.makeBread);
-        }
-
-        if (stack.getItem() == Items.cake) {
-            this.thePlayer.triggerAchievement(AchievementList.bakeCake);
-        }
-
-        if (stack.getItem() instanceof ItemPickaxe && ((ItemPickaxe) stack.getItem()).getToolMaterial() != Item.ToolMaterial.WOOD) {
-            this.thePlayer.triggerAchievement(AchievementList.buildBetterPickaxe);
-        }
-
-        if (stack.getItem() instanceof ItemSword) {
-            this.thePlayer.triggerAchievement(AchievementList.buildSword);
-        }
-
-        if (stack.getItem() == Item.getItemFromBlock(Blocks.enchanting_table)) {
-            this.thePlayer.triggerAchievement(AchievementList.enchantments);
-        }
-
-        if (stack.getItem() == Item.getItemFromBlock(Blocks.bookshelf)) {
-            this.thePlayer.triggerAchievement(AchievementList.bookcase);
-        }
-
-        if (stack.getItem() == Items.golden_apple && stack.getMetadata() == 1) {
-            this.thePlayer.triggerAchievement(AchievementList.overpowered);
-        }
     }
 
     public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {

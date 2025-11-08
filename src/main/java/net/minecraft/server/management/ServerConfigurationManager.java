@@ -21,7 +21,6 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.ServerScoreboard;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.stats.StatisticsFile;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -68,7 +67,6 @@ public abstract class ServerConfigurationManager {
      * The Set of all whitelisted players.
      */
     private final UserListWhitelist whiteListedPlayers;
-    private final Map<UUID, StatisticsFile> playerStatFiles;
 
     /**
      * Reference to the PlayerNBTManager object.
@@ -102,7 +100,6 @@ public abstract class ServerConfigurationManager {
         this.bannedIPs = new BanList(FILE_IPBANS);
         this.ops = new UserListOps(FILE_OPS);
         this.whiteListedPlayers = new UserListWhitelist(FILE_WHITELIST);
-        this.playerStatFiles = Maps.newHashMap();
         this.mcServer = server;
         this.bannedPlayers.setLanServer(false);
         this.bannedIPs.setLanServer(false);
@@ -136,8 +133,6 @@ public abstract class ServerConfigurationManager {
         nethandlerplayserver.sendPacket(new S05PacketSpawnPosition(blockpos));
         nethandlerplayserver.sendPacket(new S39PacketPlayerAbilities(playerIn.capabilities));
         nethandlerplayserver.sendPacket(new S09PacketHeldItemChange(playerIn.inventory.currentItem));
-        playerIn.getStatFile().func_150877_d();
-        playerIn.getStatFile().sendAchievements(playerIn);
         this.sendScoreboard((ServerScoreboard) worldserver.getScoreboard(), playerIn);
         this.mcServer.refreshStatusNextTick();
         ChatComponentTranslation chatcomponenttranslation;
@@ -268,11 +263,6 @@ public abstract class ServerConfigurationManager {
      */
     protected void writePlayerData(EntityPlayerMP playerIn) {
         this.playerNBTManagerObj.writePlayerData(playerIn);
-        StatisticsFile statisticsfile = this.playerStatFiles.get(playerIn.getUniqueID());
-
-        if (statisticsfile != null) {
-            statisticsfile.saveStatFile();
-        }
     }
 
     /**
@@ -318,7 +308,6 @@ public abstract class ServerConfigurationManager {
 
         if (entityplayermp == playerIn) {
             this.uuidToPlayerMap.remove(uuid);
-            this.playerStatFiles.remove(uuid);
         }
 
         this.sendPacketToAllPlayers(new S38PacketPlayerListItem(S38PacketPlayerListItem.Action.REMOVE_PLAYER, playerIn));
@@ -854,30 +843,6 @@ public abstract class ServerConfigurationManager {
      */
     public void sendChatMsg(IChatComponent component) {
         this.sendChatMsgImpl(component, true);
-    }
-
-    public StatisticsFile getPlayerStatsFile(EntityPlayer playerIn) {
-        UUID uuid = playerIn.getUniqueID();
-        StatisticsFile statisticsfile = uuid == null ? null : this.playerStatFiles.get(uuid);
-
-        if (statisticsfile == null) {
-            File file1 = new File(this.mcServer.worldServerForDimension(0).getSaveHandler().getWorldDirectory(), "stats");
-            File file2 = new File(file1, uuid.toString() + ".json");
-
-            if (!file2.exists()) {
-                File file3 = new File(file1, playerIn.getName() + ".json");
-
-                if (file3.exists() && file3.isFile()) {
-                    file3.renameTo(file2);
-                }
-            }
-
-            statisticsfile = new StatisticsFile(this.mcServer, file2);
-            statisticsfile.readStatFile();
-            this.playerStatFiles.put(uuid, statisticsfile);
-        }
-
-        return statisticsfile;
     }
 
     public void setViewDistance(int distance) {

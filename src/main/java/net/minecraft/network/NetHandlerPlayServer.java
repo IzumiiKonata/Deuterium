@@ -32,7 +32,6 @@ import net.minecraft.network.play.client.*;
 import net.minecraft.network.play.server.*;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.UserListBansEntry;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityCommandBlock;
 import net.minecraft.tileentity.TileEntitySign;
@@ -785,12 +784,12 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
 
                 break;
 
-            case REQUEST_STATS:
-                this.playerEntity.getStatFile().func_150876_a(this.playerEntity);
-                break;
-
-            case OPEN_INVENTORY_ACHIEVEMENT:
-                this.playerEntity.triggerAchievement(AchievementList.openInventory);
+//            case REQUEST_STATS:
+//                this.playerEntity.getStatFile().func_150876_a(this.playerEntity);
+//                break;
+//
+//            case OPEN_INVENTORY_ACHIEVEMENT:
+//                this.playerEntity.triggerAchievement(AchievementList.openInventory);
         }
     }
 

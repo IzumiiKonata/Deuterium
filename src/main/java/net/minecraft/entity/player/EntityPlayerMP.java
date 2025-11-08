@@ -36,9 +36,6 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ItemInWorldManager;
 import net.minecraft.server.management.UserListOpsEntry;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.stats.StatBase;
-import net.minecraft.stats.StatisticsFile;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
@@ -80,7 +77,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
     public double managedPosZ;
     public final List<ChunkCoordIntPair> loadedChunks = Lists.newLinkedList();
     private final List<Integer> destroyedItemsNetCache = Lists.newLinkedList();
-    private final StatisticsFile statsFile;
 
     /**
      * the total health of the player, includes actual health and absorption health. Updated every tick.
@@ -155,7 +151,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
         }
 
         this.mcServer = server;
-        this.statsFile = server.getConfigurationManager().getPlayerStatsFile(this);
         this.stepHeight = 0.0F;
         this.moveToBlockPosAndAngles(blockpos, 0.0F, 0.0F);
 
@@ -344,53 +339,11 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
                 this.playerNetServerHandler.sendPacket(new S1FPacketSetExperience(this.experience, this.experienceTotal, this.experienceLevel));
             }
 
-            if (this.ticksExisted % 20 * 5 == 0 && !this.getStatFile().hasAchievementUnlocked(AchievementList.exploreAllBiomes)) {
-                this.updateBiomesExplored();
-            }
         } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Ticking player");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Player being ticked");
             this.addEntityCrashInfo(crashreportcategory);
             throw new ReportedException(crashreport);
-        }
-    }
-
-    /**
-     * Updates all biomes that have been explored by this player and triggers Adventuring Time if player qualifies.
-     */
-    protected void updateBiomesExplored() {
-        BiomeGenBase biomegenbase = this.worldObj.getBiomeGenForCoords(new BlockPos(MathHelper.floor_double(this.posX), 0, MathHelper.floor_double(this.posZ)));
-        String s = biomegenbase.biomeName;
-        JsonSerializableSet jsonserializableset = this.getStatFile().func_150870_b(AchievementList.exploreAllBiomes);
-
-        if (jsonserializableset == null) {
-            jsonserializableset = this.getStatFile().func_150872_a(AchievementList.exploreAllBiomes, new JsonSerializableSet());
-        }
-
-        jsonserializableset.add(s);
-
-        if (this.getStatFile().canUnlockAchievement(AchievementList.exploreAllBiomes) && jsonserializableset.size() >= BiomeGenBase.explorationBiomesList.size()) {
-            Set<BiomeGenBase> set = Sets.newHashSet(BiomeGenBase.explorationBiomesList);
-
-            for (String s1 : jsonserializableset) {
-                Iterator<BiomeGenBase> iterator = set.iterator();
-
-                while (iterator.hasNext()) {
-                    BiomeGenBase biomegenbase1 = iterator.next();
-
-                    if (biomegenbase1.biomeName.equals(s1)) {
-                        iterator.remove();
-                    }
-                }
-
-                if (set.isEmpty()) {
-                    break;
-                }
-            }
-
-            if (set.isEmpty()) {
-                this.triggerAchievement(AchievementList.exploreAllBiomes);
-            }
         }
     }
 
@@ -479,13 +432,11 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
      */
     public void travelToDimension(int dimensionId) {
         if (this.dimension == 1 && dimensionId == 1) {
-            this.triggerAchievement(AchievementList.theEnd2);
             this.worldObj.removeEntity(this);
             this.playerConqueredTheEnd = true;
             this.playerNetServerHandler.sendPacket(new S2BPacketChangeGameState(4, 0.0F));
         } else {
             if (this.dimension == 0 && dimensionId == 1) {
-                this.triggerAchievement(AchievementList.theEnd);
                 BlockPos blockpos = this.mcServer.worldServerForDimension(dimensionId).getSpawnCoordinate();
 
                 if (blockpos != null) {
@@ -493,8 +444,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
                 }
 
                 dimensionId = 1;
-            } else {
-                this.triggerAchievement(AchievementList.portal);
             }
 
             this.mcServer.getConfigurationManager().transferPlayerToDimension(this, dimensionId);
@@ -764,37 +713,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
         }
     }
 
-    /**
-     * Adds a value to a statistic field.
-     */
-    public void addStat(StatBase stat, int amount) {
-        if (stat != null) {
-            this.statsFile.increaseStat(this, stat, amount);
-
-            for (ScoreObjective scoreobjective : this.getWorldScoreboard().getObjectivesFromCriteria(stat.getCriteria())) {
-                this.getWorldScoreboard().getValueFromObjective(this.getName(), scoreobjective).increseScore(amount);
-            }
-
-            if (this.statsFile.func_150879_e()) {
-                this.statsFile.func_150876_a(this);
-            }
-        }
-    }
-
-    public void func_175145_a(StatBase p_175145_1_) {
-        if (p_175145_1_ != null) {
-            this.statsFile.unlockAchievement(this, p_175145_1_, 0);
-
-            for (ScoreObjective scoreobjective : this.getWorldScoreboard().getObjectivesFromCriteria(p_175145_1_.getCriteria())) {
-                this.getWorldScoreboard().getValueFromObjective(this.getName(), scoreobjective).setScorePoints(0);
-            }
-
-            if (this.statsFile.func_150879_e()) {
-                this.statsFile.func_150876_a(this);
-            }
-        }
-    }
-
     public void mountEntityAndWakeUp() {
         if (this.riddenByEntity != null) {
             this.riddenByEntity.mountEntity(this);
@@ -979,13 +897,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
 
     public void markPlayerActive() {
         this.playerLastActiveTime = MinecraftServer.getCurrentTimeMillis();
-    }
-
-    /**
-     * Gets the stats file for reading achievements
-     */
-    public StatisticsFile getStatFile() {
-        return this.statsFile;
     }
 
     /**

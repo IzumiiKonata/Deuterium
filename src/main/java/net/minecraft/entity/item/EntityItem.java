@@ -8,7 +8,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -300,34 +299,6 @@ public class EntityItem extends Entity {
             int i = itemstack.stackSize;
 
             if (this.delayBeforeCanPickup == 0 && (this.owner == null || 6000 - this.age <= 200 || this.owner.equals(entityIn.getName())) && entityIn.inventory.addItemStackToInventory(itemstack)) {
-                if (itemstack.getItem() == Item.getItemFromBlock(Blocks.log)) {
-                    entityIn.triggerAchievement(AchievementList.mineWood);
-                }
-
-                if (itemstack.getItem() == Item.getItemFromBlock(Blocks.log2)) {
-                    entityIn.triggerAchievement(AchievementList.mineWood);
-                }
-
-                if (itemstack.getItem() == Items.leather) {
-                    entityIn.triggerAchievement(AchievementList.killCow);
-                }
-
-                if (itemstack.getItem() == Items.diamond) {
-                    entityIn.triggerAchievement(AchievementList.diamonds);
-                }
-
-                if (itemstack.getItem() == Items.blaze_rod) {
-                    entityIn.triggerAchievement(AchievementList.blazeRod);
-                }
-
-                if (itemstack.getItem() == Items.diamond && this.getThrower() != null) {
-                    EntityPlayer entityplayer = this.worldObj.getPlayerEntityByName(this.getThrower());
-
-                    if (entityplayer != null && entityplayer != entityIn) {
-                        entityplayer.triggerAchievement(AchievementList.diamondsToYou);
-                    }
-                }
-
                 if (!this.isSilent()) {
                     this.worldObj.playSoundAtEntity(entityIn, "random.pop", 0.2F, ((this.rand.nextFloat() - this.rand.nextFloat()) * 0.7F + 1.0F) * 2.0F);
                 }

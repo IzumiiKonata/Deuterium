@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.MathHelper;
 
 public class SlotFurnaceOutput extends Slot {
@@ -83,13 +82,5 @@ public class SlotFurnaceOutput extends Slot {
         }
 
         this.field_75228_b = 0;
-
-        if (stack.getItem() == Items.iron_ingot) {
-            this.thePlayer.triggerAchievement(AchievementList.acquireIron);
-        }
-
-        if (stack.getItem() == Items.cooked_fish) {
-            this.thePlayer.triggerAchievement(AchievementList.cookFish);
-        }
     }
 }

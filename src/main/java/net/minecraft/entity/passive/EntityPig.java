@@ -12,7 +12,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNavigateGround;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -180,10 +179,6 @@ public class EntityPig extends EntityAnimal {
 
     public void fall(float distance, float damageMultiplier) {
         super.fall(distance, damageMultiplier);
-
-        if (distance > 5.0F && this.riddenByEntity instanceof EntityPlayer) {
-            ((EntityPlayer) this.riddenByEntity).triggerAchievement(AchievementList.flyPig);
-        }
     }
 
     public EntityPig createChild(EntityAgeable ageable) {

@@ -18,8 +18,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.play.client.*;
 import net.minecraft.potion.Potion;
-import net.minecraft.stats.StatBase;
-import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
 import net.minecraft.world.IInteractionObject;
@@ -37,7 +35,6 @@ import tritium.management.EventManager;
 
 public class EntityPlayerSP extends AbstractClientPlayer {
     public NetHandlerPlayClient sendQueue;
-    private final StatFileWriter statWriter;
 
     /**
      * The last X position which was transmitted to the server, used to determine when the X position changes and needs
@@ -117,10 +114,9 @@ public class EntityPlayerSP extends AbstractClientPlayer {
      */
     public float prevTimeInPortal;
 
-    public EntityPlayerSP(Minecraft mcIn, World worldIn, NetHandlerPlayClient netHandler, StatFileWriter statFile) {
+    public EntityPlayerSP(Minecraft mcIn, World worldIn, NetHandlerPlayClient netHandler) {
         super(worldIn, netHandler.getGameProfile());
         this.sendQueue = netHandler;
-        this.statWriter = statFile;
         this.mc = mcIn;
         this.dimension = 0;
     }
@@ -348,17 +344,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
     }
 
     /**
-     * Adds a value to a statistic field.
-     */
-    public void addStat(StatBase stat, int amount) {
-        if (stat != null) {
-            if (stat.isIndependent) {
-                super.addStat(stat, amount);
-            }
-        }
-    }
-
-    /**
      * Sends the player's abilities to the server (if there is one).
      */
     public void sendPlayerAbilities() {
@@ -386,10 +371,6 @@ public class EntityPlayerSP extends AbstractClientPlayer {
 
     public String getClientBrand() {
         return this.clientBrand;
-    }
-
-    public StatFileWriter getStatFileWriter() {
-        return this.statWriter;
     }
 
     public void addChatComponentMessage(IChatComponent chatComponent) {

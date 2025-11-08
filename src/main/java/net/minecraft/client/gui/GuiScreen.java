@@ -18,9 +18,6 @@ import net.minecraft.nbt.JsonToNBT;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTException;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.stats.Achievement;
-import net.minecraft.stats.StatBase;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
@@ -298,24 +295,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
                 }
             } else if (hoverevent.getAction() == HoverEvent.Action.SHOW_TEXT) {
                 this.drawHoveringText(NEWLINE_SPLITTER.splitToList(hoverevent.getValue().getFormattedText()), x, y);
-            } else if (hoverevent.getAction() == HoverEvent.Action.SHOW_ACHIEVEMENT) {
-                StatBase statbase = StatList.getOneShotStat(hoverevent.getValue().getUnformattedText());
-
-                if (statbase != null) {
-                    IChatComponent ichatcomponent = statbase.getStatName();
-                    IChatComponent ichatcomponent1 = new ChatComponentTranslation("stats.tooltip.type." + (statbase.isAchievement() ? "achievement" : "statistic"));
-                    ichatcomponent1.getChatStyle().setItalic(Boolean.TRUE);
-                    String s1 = statbase instanceof Achievement ? ((Achievement) statbase).getDescription() : null;
-                    List<String> list = Lists.newArrayList(ichatcomponent.getFormattedText(), ichatcomponent1.getFormattedText());
-
-                    if (s1 != null) {
-                        list.addAll(this.fontRendererObj.listFormattedStringToWidth(s1, 150));
-                    }
-
-                    this.drawHoveringText(list, x, y);
-                } else {
-                    this.drawCreativeTabHoveringText(EnumChatFormatting.RED + "Invalid statistic/achievement!", x, y);
-                }
             }
 
             GlStateManager.disableLighting();

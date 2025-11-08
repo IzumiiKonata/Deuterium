@@ -1,6 +1,5 @@
 package net.minecraft.client.gui;
 
-import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.resources.I18n;
 import tritium.screens.MainMenu;
 
@@ -28,7 +27,9 @@ public class GuiIngameMenu extends GuiScreen {
         this.buttonList.add(new GuiButton(0, this.width / 2 - 100, this.height / 4 + 96 + i, 98, 20, I18n.format("menu.options")));
         GuiButton guibutton;
         this.buttonList.add(guibutton = new GuiButton(7, this.width / 2 + 2, this.height / 4 + 96 + i, 98, 20, I18n.format("menu.shareToLan")));
-        this.buttonList.add(new GuiButton(5, this.width / 2 - 100, this.height / 4 + 48 + i, 98, 20, I18n.format("gui.achievements")));
+        GuiButton achievements;
+        this.buttonList.add(achievements = new GuiButton(5, this.width / 2 - 100, this.height / 4 + 48 + i, 98, 20, "Achievements?!"));
+        achievements.enabled = false;
         GuiButton guiStatsButton;
         this.buttonList.add(guiStatsButton = new GuiButton(6, this.width / 2 + 2, this.height / 4 + 48 + i, 98, 20, "Where's Statistics?"));
         guiStatsButton.enabled = false;
@@ -64,10 +65,6 @@ public class GuiIngameMenu extends GuiScreen {
             case 4:
                 this.mc.displayGuiScreen(null);
                 this.mc.setIngameFocus();
-                break;
-
-            case 5:
-                this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.thePlayer.getStatFileWriter()));
                 break;
 
             case 6:

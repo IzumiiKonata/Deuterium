@@ -29,7 +29,6 @@ import net.minecraft.client.audio.MusicTicker;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.gui.achievement.GuiAchievement;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.main.GameConfiguration;
@@ -78,9 +77,6 @@ import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.profiler.Profiler;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.src.Config;
-import net.minecraft.stats.AchievementList;
-import net.minecraft.stats.IStatStringFormat;
-import net.minecraft.stats.StatFileWriter;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Timer;
 import net.minecraft.util.*;
@@ -229,10 +225,6 @@ public class Minecraft implements IThreadListener {
      */
     public IntegratedServer theIntegratedServer;
 
-    /**
-     * Gui achievement
-     */
-    public GuiAchievement guiAchievement;
     public GuiIngame ingameGUI;
 
     /**
@@ -581,15 +573,6 @@ public class Minecraft implements IThreadListener {
         this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
         this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
 
-        AchievementList.openInventory.setStatStringFormatter(new IStatStringFormat() {
-            public String formatString(String str) {
-                try {
-                    return String.format(str, GameSettings.getKeyDisplayString(Minecraft.this.gameSettings.keyBindInventory.getKeyCode()));
-                } catch (Exception exception) {
-                    return "Error: " + exception.getLocalizedMessage();
-                }
-            }
-        });
         LoadingRenderer.setProgress(30, "Minecraft - OpenGL Initialization");
         this.mouseHelper = new MouseHelper();
         this.checkGLError("Pre startup");
@@ -630,7 +613,6 @@ public class Minecraft implements IThreadListener {
         LoadingRenderer.setProgress(48, "Minecraft - Render Global");
         this.renderGlobal = new RenderGlobal(this);
         this.mcResourceManager.registerReloadListener(this.renderGlobal);
-        this.guiAchievement = new GuiAchievement(this);
         LoadingRenderer.setProgress(50, "Minecraft - Finish");
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
@@ -1214,9 +1196,6 @@ public class Minecraft implements IThreadListener {
             this.prevFrameTime = System.nanoTime();
         }
 
-        if (!ModuleManager.noAchievements.isEnabled()) {
-            this.guiAchievement.updateAchievementWindow();
-        }
         this.framebufferMc.unbindFramebuffer();
         GlStateManager.popMatrix();
 
@@ -2297,7 +2276,6 @@ public class Minecraft implements IThreadListener {
             }
 
             this.theIntegratedServer = null;
-            this.guiAchievement.clearAchievements();
             this.entityRenderer.getMapItemRenderer().clearLoadedMaps();
         }
 
@@ -2330,7 +2308,7 @@ public class Minecraft implements IThreadListener {
             }
 
             if (this.thePlayer == null) {
-                this.thePlayer = this.playerController.func_178892_a(worldClientIn, new StatFileWriter());
+                this.thePlayer = this.playerController.func_178892_a(worldClientIn);
                 this.playerController.flipPlayer(this.thePlayer);
             }
 
@@ -2362,7 +2340,7 @@ public class Minecraft implements IThreadListener {
 
         this.renderViewEntity = null;
         EntityPlayerSP entityplayersp = this.thePlayer;
-        this.thePlayer = this.playerController.func_178892_a(this.theWorld, this.thePlayer == null ? new StatFileWriter() : this.thePlayer.getStatFileWriter());
+        this.thePlayer = this.playerController.func_178892_a(this.theWorld);
         this.thePlayer.getDataWatcher().updateWatchedObjectsFromList(entityplayersp.getDataWatcher().getAllWatched());
         this.thePlayer.dimension = dimension;
         this.renderViewEntity = this.thePlayer;

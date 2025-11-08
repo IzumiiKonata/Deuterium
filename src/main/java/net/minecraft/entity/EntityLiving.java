@@ -20,7 +20,6 @@ import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.src.Config;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.MathHelper;
@@ -475,14 +474,6 @@ public abstract class EntityLiving extends EntityLivingBase {
             if (flag && this.func_175448_a(itemstack)) {
                 if (itemstack1 != null && this.rand.nextFloat() - 0.1F < this.equipmentDropChances[i]) {
                     this.entityDropItem(itemstack1, 0.0F);
-                }
-
-                if (itemstack.getItem() == Items.diamond && itemEntity.getThrower() != null) {
-                    EntityPlayer entityplayer = this.worldObj.getPlayerEntityByName(itemEntity.getThrower());
-
-                    if (entityplayer != null) {
-                        entityplayer.triggerAchievement(AchievementList.diamondsToYou);
-                    }
                 }
 
                 this.setCurrentItemOrArmor(i, itemstack);

@@ -16,7 +16,6 @@ import net.minecraft.init.Items;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.pathfinding.PathNavigateGround;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.*;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
@@ -454,12 +453,6 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
 
         if (entityitem != null) {
             entityitem.setNoDespawn();
-        }
-
-        if (!this.worldObj.isRemote) {
-            for (EntityPlayer entityplayer : this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, this.getEntityBoundingBox().expand(50.0D, 100.0D, 50.0D))) {
-                entityplayer.triggerAchievement(AchievementList.killWither);
-            }
         }
     }
 

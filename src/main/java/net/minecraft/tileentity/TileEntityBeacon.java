@@ -20,7 +20,6 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ITickable;
@@ -179,11 +178,6 @@ public class TileEntityBeacon extends TileEntityLockable implements ITickable, I
             }
         }
 
-        if (!this.worldObj.isRemote && this.levels == 4 && i < this.levels) {
-            for (EntityPlayer entityplayer : this.worldObj.getEntitiesWithinAABB(EntityPlayer.class, (new AxisAlignedBB(j, k, l, j, k - 4, l)).expand(10.0D, 5.0D, 10.0D))) {
-                entityplayer.triggerAchievement(AchievementList.fullBeacon);
-            }
-        }
     }
 
     public List<TileEntityBeacon.BeamSegment> getBeamSegments() {

@@ -15,7 +15,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.DifficultyInstance;
@@ -157,15 +156,7 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob {
     public void onDeath(DamageSource cause) {
         super.onDeath(cause);
 
-        if (cause.getSourceOfDamage() instanceof EntityArrow && cause.getEntity() instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) cause.getEntity();
-            double d0 = entityplayer.posX - this.posX;
-            double d1 = entityplayer.posZ - this.posZ;
-
-            if (d0 * d0 + d1 * d1 >= 2500.0D) {
-                entityplayer.triggerAchievement(AchievementList.snipeSkeleton);
-            }
-        } else if (cause.getEntity() instanceof EntityCreeper && ((EntityCreeper) cause.getEntity()).getPowered() && ((EntityCreeper) cause.getEntity()).isAIEnabled()) {
+        if (cause.getEntity() instanceof EntityCreeper && ((EntityCreeper) cause.getEntity()).getPowered() && ((EntityCreeper) cause.getEntity()).isAIEnabled()) {
             ((EntityCreeper) cause.getEntity()).func_175493_co();
             this.entityDropItem(new ItemStack(Items.skull, 1, this.getSkeletonType() == 1 ? 1 : 0), 0.0F);
         }

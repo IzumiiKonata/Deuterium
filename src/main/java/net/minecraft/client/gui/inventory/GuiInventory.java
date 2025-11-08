@@ -2,7 +2,6 @@ package net.minecraft.client.gui.inventory;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.achievement.GuiAchievements;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.InventoryEffectRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -130,7 +129,7 @@ public class GuiInventory extends InventoryEffectRenderer {
      */
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id == 0) {
-            this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.thePlayer.getStatFileWriter()));
+//            this.mc.displayGuiScreen(new GuiAchievements(this, this.mc.thePlayer.getStatFileWriter()));
         }
 
         if (button.id == 1) {

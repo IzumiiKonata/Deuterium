@@ -45,7 +45,6 @@ public class ModuleManager extends AbstractManager {
     public static final WorldTime worldTime = new WorldTime();
     public static final MotionBlur motionBlur = new MotionBlur();
     public static final NoHurtCam noHurtCam = new NoHurtCam();
-    public static final NoAchievements noAchievements = new NoAchievements();
     public static final Perspective perspective = new Perspective();
     public static final ColorSaturation colorSaturation = new ColorSaturation();
     public static final BloodParticles bloodParticles = new BloodParticles();

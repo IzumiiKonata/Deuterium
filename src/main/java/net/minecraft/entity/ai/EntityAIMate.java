@@ -5,7 +5,6 @@ import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.stats.AchievementList;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.world.World;
 
@@ -105,13 +104,6 @@ public class EntityAIMate extends EntityAIBase {
 
             if (entityplayer == null && this.targetMate.getPlayerInLove() != null) {
                 entityplayer = this.targetMate.getPlayerInLove();
-            }
-
-            if (entityplayer != null) {
-
-                if (this.theAnimal instanceof EntityCow) {
-                    entityplayer.triggerAchievement(AchievementList.breedCow);
-                }
             }
 
             this.theAnimal.setGrowingAge(6000);

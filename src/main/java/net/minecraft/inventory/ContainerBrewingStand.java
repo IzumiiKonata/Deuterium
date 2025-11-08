@@ -4,7 +4,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.AchievementList;
 
 public class ContainerBrewingStand extends Container {
     private final IInventory tileBrewingStand;
@@ -147,10 +146,6 @@ public class ContainerBrewingStand extends Container {
         }
 
         public void onPickupFromSlot(EntityPlayer playerIn, ItemStack stack) {
-            if (stack.getItem() == Items.potionitem && stack.getMetadata() > 0) {
-                this.player.triggerAchievement(AchievementList.potion);
-            }
-
             super.onPickupFromSlot(playerIn, stack);
         }
 
