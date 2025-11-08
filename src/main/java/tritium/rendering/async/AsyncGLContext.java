@@ -36,9 +36,6 @@ public class AsyncGLContext {
     @Getter
     private static final List<Context> threads = Collections.synchronizedList(new ArrayList<>());
 
-    /**
-     * a list to store tasks when the loader threads aren't loaded.
-     */
     public static final Logger LOGGER = new Logger("AsyncGLContext") {
         {
 //            this.setOverrideLevel(LogLevel.DEBUG);

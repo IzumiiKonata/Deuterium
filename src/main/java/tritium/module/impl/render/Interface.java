@@ -49,15 +49,6 @@ public class Interface extends Module {
                 x = 300;
                 y = 100;
 
-                debug("MultiThreadingUtil:");
-                debug("Tasks: " + MultiThreadingUtil.getTASK_QUEUE().size());
-
-                for (int i = 0; i < MultiThreadingUtil.getThreads().size(); i++) {
-                    MultiThreadingUtil.WorkerThread workerThread = MultiThreadingUtil.getThreads().get(i);
-
-                    debug("Thread #" + i + ": " + workerThread.getState());
-                }
-
                 debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
 
                 x = 500;
