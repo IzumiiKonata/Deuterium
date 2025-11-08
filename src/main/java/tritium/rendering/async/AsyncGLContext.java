@@ -23,7 +23,7 @@ import java.util.concurrent.ConcurrentLinkedQueue;
  */
 public class AsyncGLContext {
 
-    public static final int THREAD_COUNT = 4;
+    public static final int THREAD_COUNT = Math.max(1, Runtime.getRuntime().availableProcessors() / 2);
 
     public static final Object MULTITHREADING_LOCK = new Object();
 
