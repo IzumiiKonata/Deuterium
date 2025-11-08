@@ -17,6 +17,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
+import tritium.utils.other.MemoryTracker;
 
 import java.nio.*;
 import java.util.Arrays;
@@ -56,7 +57,7 @@ public class WorldRenderer {
     private ByteBuffer byteBufferTriangles;
 
     public WorldRenderer(int bufferSizeIn) {
-        this.byteBuffer = MemoryUtil.memAlloc(bufferSizeIn * 4);
+        this.byteBuffer = MemoryTracker.memAlloc(bufferSizeIn * 4);
         this.rawIntBuffer = this.byteBuffer.asIntBuffer();
         this.rawShortBuffer = this.byteBuffer.asShortBuffer();
         this.rawFloatBuffer = this.byteBuffer.asFloatBuffer();
@@ -70,11 +71,11 @@ public class WorldRenderer {
             int k = j + (((this.rawIntBuffer.position() + p_181670_1_) * 4 - j) / 2097152 + 1) * 2097152;
             logger.warn("Needed to grow BufferBuilder buffer: Old size " + i + " bytes, new size " + k + " bytes.");
             int l = this.rawIntBuffer.position();
-            ByteBuffer bytebuffer = MemoryUtil.memAlloc(k);
+            ByteBuffer bytebuffer = MemoryTracker.memAlloc(k);
             this.byteBuffer.position(0);
             bytebuffer.put(this.byteBuffer);
             bytebuffer.rewind();
-            MemoryUtil.memFree(this.byteBuffer);
+            MemoryTracker.memFree(this.byteBuffer);
             this.byteBuffer = bytebuffer;
             this.rawFloatBuffer = this.byteBuffer.asFloatBuffer();
             this.rawIntBuffer = this.byteBuffer.asIntBuffer();
@@ -367,7 +368,7 @@ public class WorldRenderer {
 
         this.modeTriangles = false;
 
-        MemoryUtil.memFree(byteBufferTriangles);
+        MemoryTracker.memFree(byteBufferTriangles);
         byteBufferTriangles = null;
     }
 
@@ -978,11 +979,11 @@ public class WorldRenderer {
     public void quadsToTriangles() {
         if (this.drawMode == 7) {
             if (this.byteBufferTriangles == null) {
-                this.byteBufferTriangles = MemoryUtil.memAlloc(this.byteBuffer.capacity() * 2);
+                this.byteBufferTriangles = MemoryTracker.memAlloc(this.byteBuffer.capacity() * 2);
             }
 
             if (this.byteBufferTriangles.capacity() < this.byteBuffer.capacity() * 2) {
-                this.byteBufferTriangles = MemoryUtil.memAlloc(this.byteBuffer.capacity() * 2);
+                this.byteBufferTriangles = MemoryTracker.memAlloc(this.byteBuffer.capacity() * 2);
             }
 
             int i = this.vertexFormat.getSize();

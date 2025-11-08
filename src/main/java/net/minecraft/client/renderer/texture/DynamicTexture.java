@@ -11,10 +11,18 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
 import tritium.utils.other.DevUtils;
+import tritium.utils.other.MemoryTracker;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Supplier;
 
 @Getter
 public class DynamicTexture extends AbstractTexture {
@@ -158,87 +166,65 @@ public class DynamicTexture extends AbstractTexture {
     @Setter
     protected boolean linear = true;
 
+    static final int BUFFER_SIZE = 2097152;
+
+    static Map<Thread, IntBuffer> threadByteBufferMap = new ConcurrentHashMap<>();
+
+    static IntBuffer getTempBufferForCurrentThread() {
+        return threadByteBufferMap.computeIfAbsent(Thread.currentThread(), t -> MultiThreadingUtil.runOnMainThread(() -> MemoryTracker.memAllocInt(BUFFER_SIZE)));
+    }
+
     @SneakyThrows
     public synchronized void updateDynamicTexture() {
+        this.bindTexture();
 
-//        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-            this.bindTexture();
-            TextureUtil.setTextureBlurMipmap(isLinear(), false);
-            TextureUtil.setTextureClamped(false);
+        TextureUtil.setTextureBlurMipmap(isLinear(), false);
+        TextureUtil.setTextureClamped(false);
 
-            Minecraft mc = Minecraft.getMinecraft();
+        Minecraft mc = Minecraft.getMinecraft();
 
-            if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ pre")) {
-                DevUtils.printCurrentInvokeStack();
+        if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ pre")) {
+            DevUtils.printCurrentInvokeStack();
+        }
+
+        IntBuffer dataBuffer = getTempBufferForCurrentThread();
+        MemoryUtil.memSet(dataBuffer, 0);
+
+        synchronized (dataBuffer) {
+            int i = BUFFER_SIZE / width;
+            int j;
+
+            int[] aint = this.dynamicTextureData;
+
+            if (mc.gameSettings.anaglyph) {
+                aint = TextureUtil.updateAnaglyph(this.dynamicTextureData);
             }
 
-            if (this.dynamicTextureData.length < 4194304) {
+            for (int k = 0; k < width * height; k += width * j) {
+                int l = k / width;
+                j = Math.min(i, height - l);
+                int i1 = width * j;
 
-                int padd = 0;
-
-                if (this.dynamicTextureData.length % 4 != 0) {
-                    padd = (4 - this.dynamicTextureData.length % 4);
-                }
-
-                IntBuffer buffer = MemoryUtil.memAllocInt(this.dynamicTextureData.length + padd);
-                buffer.clear();
-                buffer.put(this.dynamicTextureData, 0, this.dynamicTextureData.length);
-                buffer.flip();
+                dataBuffer.clear();
+                MemoryUtil.memSet(dataBuffer, 0);
+                dataBuffer.put(aint, k, i1);
+                dataBuffer.flip();
 
                 if (alphaTexture)
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL11.GL_ALPHA, GL12.GL_UNSIGNED_BYTE, buffer);
+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL11.GL_ALPHA, GL12.GL_UNSIGNED_BYTE, dataBuffer);
                 else
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
-
-                MemoryUtil.memFree(buffer);
-
-                if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ direct subImage2D")) {
-                    DevUtils.printCurrentInvokeStack();
-                }
-
-            } else {
-
-                // creates a 16 MB buffer
-                IntBuffer dataBuffer = MemoryUtil.memAllocInt(4194304);
-
-                int i = 4194304 / width;
-                int j;
-
-                int[] aint = this.dynamicTextureData;
-
-                if (mc.gameSettings.anaglyph) {
-                    aint = TextureUtil.updateAnaglyph(this.dynamicTextureData);
-                }
-
-                for (int k = 0; k < width * height; k += width * j) {
-                    int l = k / width;
-                    j = Math.min(i, height - l);
-                    int i1 = width * j;
-
-                    dataBuffer.clear();
-                    dataBuffer.put(aint, k, i1);
-                    dataBuffer.flip();
-
-                    if (alphaTexture)
-                        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL11.GL_ALPHA, GL12.GL_UNSIGNED_BYTE, dataBuffer);
-                    else
-                        GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
-                }
-
-                if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ indirect subImage2D")) {
-                    DevUtils.printCurrentInvokeStack();
-                }
-
-                MemoryUtil.memFree(dataBuffer);
-
+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
             }
+        }
 
-            if (this.clearable) {
-                this.dynamicTextureData = new int[0];
-            }
+        if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ indirect subImage2D")) {
+            DevUtils.printCurrentInvokeStack();
+        }
+
+        if (this.clearable)
+            this.dynamicTextureData = null;
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-//        }
     }
 
     public int[] getTextureData() {

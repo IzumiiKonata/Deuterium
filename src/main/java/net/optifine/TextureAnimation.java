@@ -8,6 +8,7 @@ import net.minecraft.util.Location;
 import net.optifine.util.TextureUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
+import tritium.utils.other.MemoryTracker;
 
 import java.nio.ByteBuffer;
 import java.util.Properties;
@@ -115,7 +116,7 @@ public class TextureAnimation {
                 this.dstTextId = itextureobject.getGlTextureId();
             }
             if (this.imageData == null) {
-                this.imageData = MemoryUtil.memAlloc(this.srcData.length);
+                this.imageData = MemoryTracker.memAlloc(this.srcData.length);
                 this.imageData.put(this.srcData);
                 this.imageData.flip();
                 this.srcData = null;
@@ -137,7 +138,7 @@ public class TextureAnimation {
                             this.imageData.position(i);
                             GlStateManager.bindTexture(this.dstTextId);
                             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, this.dstX, this.dstY, this.frameWidth, this.frameHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.imageData);
-                            MemoryUtil.memFree(imageData);
+                            MemoryTracker.memFree(imageData);
                         }
                     }
                 }
@@ -151,7 +152,7 @@ public class TextureAnimation {
         if (j + i <= this.imageData.limit()) {
             final int k = i * frame2.index;
             if (k + i <= this.imageData.limit()) {
-                this.interpolateData = MemoryUtil.memAlloc(frameWidth * frameHeight * 4);
+                this.interpolateData = MemoryTracker.memAlloc(frameWidth * frameHeight * 4);
                 for (int l = 0; l < i; ++l) {
                     final int i1 = this.imageData.get(j + l) & 255;
                     final int j1 = this.imageData.get(k + l) & 255;
@@ -162,7 +163,7 @@ public class TextureAnimation {
                 this.interpolateData.flip();
                 GlStateManager.bindTexture(this.dstTextId);
                 GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, this.dstX, this.dstY, this.frameWidth, this.frameHeight, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, this.interpolateData);
-                MemoryUtil.memFree(this.interpolateData);
+                MemoryTracker.memFree(this.interpolateData);
             }
         }
     }

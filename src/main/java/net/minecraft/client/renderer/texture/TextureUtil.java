@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
+import tritium.utils.other.MemoryTracker;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -113,7 +114,7 @@ public class TextureUtil {
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, level, xOffset, yOffset + l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
         }
 
-        MemoryUtil.memFree(dataBuffer);
+        MemoryTracker.memFree(dataBuffer);
     }
 
     public static int uploadTextureImageAllocate(int p_110989_0_, BufferedImage p_110989_1_, boolean p_110989_2_, boolean p_110989_3_) {
@@ -167,7 +168,7 @@ public class TextureUtil {
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_110993_1_, p_110993_2_ + i1, i, j1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
         }
 
-        MemoryUtil.memFree(dataBuffer);
+        MemoryTracker.memFree(dataBuffer);
 
         aint = null;
     }

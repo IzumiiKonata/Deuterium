@@ -816,7 +816,7 @@ public class Minecraft implements IThreadListener {
                     Display.setIcon(icons);
 
 //                    for (ByteBuffer icon : icons) {
-//                        MemoryUtil.memFree(icon);
+//                        MemoryTracker.memFree(icon);
 //                    }
                 }
             } catch (IOException ioexception) {

@@ -329,27 +329,6 @@ public class GLU {
         return Registry.gluCheckExtension(extName, extString);
     }
 
-
-    /**
-     * Method gluScaleImage.
-     *
-     * @param format
-     * @param widthIn
-     * @param heightIn
-     * @param typeIn
-     * @param dataIn
-     * @param widthOut
-     * @param heightOut
-     * @param typeOut
-     * @param dataOut
-     * @return int
-     */
-    public static int gluScaleImage(int format, int widthIn, int heightIn, int typeIn, ByteBuffer dataIn, int widthOut,
-                                    int heightOut, int typeOut, ByteBuffer dataOut) {
-
-        return MipMap.gluScaleImage(format, widthIn, heightIn, typeIn, dataIn, widthOut, heightOut, typeOut, dataOut);
-    }
-
     public static String gluErrorString(int error_code) {
         switch (error_code) {
             case GLU_INVALID_ENUM:

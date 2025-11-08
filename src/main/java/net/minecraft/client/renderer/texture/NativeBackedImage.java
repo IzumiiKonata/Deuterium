@@ -5,6 +5,7 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
+import tritium.utils.other.MemoryTracker;
 
 import java.awt.*;
 import java.awt.image.*;
@@ -135,7 +136,7 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
             e.printStackTrace();
         } finally {
             // free
-            MemoryUtil.memFree(imgBuf);
+            MemoryTracker.memFree(imgBuf);
             IOUtils.closeQuietly(stream);
         }
 
@@ -167,7 +168,7 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
             e.printStackTrace();
         } finally {
             // free
-            MemoryUtil.memFree(imgBuf);
+            MemoryTracker.memFree(imgBuf);
         }
 
         return null;
@@ -177,7 +178,7 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         ByteBuffer byteBuffer;
         if (inputStream instanceof FileInputStream) {
             FileChannel fileChannel = ((FileInputStream) inputStream).getChannel();
-            byteBuffer = MemoryUtil.memAlloc((int) fileChannel.size() + 1);
+            byteBuffer = MemoryTracker.memAlloc((int) fileChannel.size() + 1);
 
             while (fileChannel.read(byteBuffer) != -1) {
             }
@@ -188,13 +189,13 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
             } catch (IOException ignored) {
             }
 
-            byteBuffer = MemoryUtil.memAlloc(sizeGuess * 2);
+            byteBuffer = MemoryTracker.memAlloc(sizeGuess * 2);
             ReadableByteChannel readableByteChannel = new FastByteChannel(inputStream);
 
             while (readableByteChannel.read(byteBuffer) != -1) {
                 // If we've filled the buffer, make it twice as large and reparse
                 if (byteBuffer.remaining() == 0) {
-                    byteBuffer = MemoryUtil.memRealloc(byteBuffer, byteBuffer.capacity() * 2);
+                    byteBuffer = MemoryTracker.memRealloc(byteBuffer, byteBuffer.capacity() * 2);
                 }
             }
         }

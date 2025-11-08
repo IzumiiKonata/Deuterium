@@ -7,6 +7,7 @@ import org.lwjgl.system.MemoryUtil;
 import processing.sound.*;
 import tritium.management.WidgetsManager;
 import tritium.screens.ncm.NCMScreen;
+import tritium.utils.other.MemoryTracker;
 import tritium.widget.impl.ExtendedSpectrumVisualizer;
 import tritium.widget.impl.MusicSpectrumWidget;
 
@@ -145,10 +146,10 @@ public class AudioPlayer {
 //                if (rectBuffer == null || rectBuffer.capacity() != spectrum.length * 8) {
 //
 //                    if (rectBuffer != null) {
-//                        MemoryUtil.memFree(rectBackend);
+//                        MemoryTracker.memFree(rectBackend);
 //                    }
 //
-//                    rectBackend = MemoryUtil.memAlloc((spectrum.length * 8) << 2);
+//                    rectBackend = MemoryTracker.memAlloc((spectrum.length * 8) << 2);
 //                    rectBuffer = rectBackend.asFloatBuffer();
 //                } else {
 //                    rectBuffer.clear();
@@ -214,10 +215,10 @@ public class AudioPlayer {
                 if (waveVertexesBuffer == null || waveVertexesBuffer.capacity() != CloudMusic.player.waveVertexes.length) {
 
                     if (waveVertexesBuffer != null) {
-                        MemoryUtil.memFree(waveVertexesBufferBackend);
+                        MemoryTracker.memFree(waveVertexesBufferBackend);
                     }
 
-                    waveVertexesBufferBackend = MemoryUtil.memAlloc(CloudMusic.player.waveVertexes.length << 2);
+                    waveVertexesBufferBackend = MemoryTracker.memAlloc(CloudMusic.player.waveVertexes.length << 2);
                     waveVertexesBuffer = waveVertexesBufferBackend.asFloatBuffer();
                     waveVertexesBuffer.put(CloudMusic.player.waveVertexes);
                 } else {
@@ -234,10 +235,10 @@ public class AudioPlayer {
                 if (waveRightVertexesBuffer == null || waveRightVertexesBuffer.capacity() != CloudMusic.player.waveRightVertexes.length) {
 
                     if (waveRightVertexesBuffer != null) {
-                        MemoryUtil.memFree(waveRightVertexesBufferBackend);
+                        MemoryTracker.memFree(waveRightVertexesBufferBackend);
                     }
 
-                    waveRightVertexesBufferBackend = MemoryUtil.memAlloc(CloudMusic.player.waveRightVertexes.length << 2);
+                    waveRightVertexesBufferBackend = MemoryTracker.memAlloc(CloudMusic.player.waveRightVertexes.length << 2);
                     waveRightVertexesBuffer = waveRightVertexesBufferBackend.asFloatBuffer();
                 } else {
                     waveRightVertexesBuffer.clear();
@@ -262,10 +263,10 @@ public class AudioPlayer {
             // 更新左声道缓冲区
             if (oscilloscopeVertexesBufferL == null || oscilloscopeVertexesBufferL.capacity() != oscilloscopeVertexesL.length) {
                 if (oscilloscopeVertexesBufferL != null) {
-                    MemoryUtil.memFree(oscilloscopeVertexesBufferBackendL);
+                    MemoryTracker.memFree(oscilloscopeVertexesBufferBackendL);
                 }
 
-                oscilloscopeVertexesBufferBackendL = MemoryUtil.memAlloc(oscilloscopeVertexesL.length << 2);
+                oscilloscopeVertexesBufferBackendL = MemoryTracker.memAlloc(oscilloscopeVertexesL.length << 2);
                 oscilloscopeVertexesBufferL = oscilloscopeVertexesBufferBackendL.asFloatBuffer();
             } else {
                 oscilloscopeVertexesBufferL.clear();
@@ -277,10 +278,10 @@ public class AudioPlayer {
             // 更新右声道缓冲区
             if (oscilloscopeVertexesBufferR == null || oscilloscopeVertexesBufferR.capacity() != oscilloscopeVertexesR.length) {
                 if (oscilloscopeVertexesBufferR != null) {
-                    MemoryUtil.memFree(oscilloscopeVertexesBufferBackendR);
+                    MemoryTracker.memFree(oscilloscopeVertexesBufferBackendR);
                 }
 
-                oscilloscopeVertexesBufferBackendR = MemoryUtil.memAlloc(oscilloscopeVertexesR.length << 2);
+                oscilloscopeVertexesBufferBackendR = MemoryTracker.memAlloc(oscilloscopeVertexesR.length << 2);
                 oscilloscopeVertexesBufferR = oscilloscopeVertexesBufferBackendR.asFloatBuffer();
             } else {
                 oscilloscopeVertexesBufferR.clear();

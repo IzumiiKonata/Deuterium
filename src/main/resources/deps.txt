@@ -9,17 +9,17 @@ com.google.code.findbugs:jsr305:3.0.2
 org.checkerframework:checker-qual:3.33.0
 com.google.errorprone:error_prone_annotations:2.18.0
 com.google.j2objc:j2objc-annotations:2.8
-org.lwjgl:lwjgl-glfw:3.3.3
-org.lwjgl:lwjgl-openal:3.3.3
-org.lwjgl:lwjgl-opengl:3.3.3
-org.lwjgl:lwjgl-stb:3.3.3
-org.lwjgl:lwjgl:3.3.3
-org.lwjgl:lwjgl-jemalloc:3.3.3
-org.lwjgl:lwjgl:natives-windows:3.3.3
-org.lwjgl:lwjgl-jemalloc:natives-windows:3.3.3
-# org.lwjgl:lwjgl-glfw:natives-windows:3.3.3
-org.lwjgl:lwjgl-openal:natives-windows:3.3.3
-org.lwjgl:lwjgl-opengl:natives-windows:3.3.3
-org.lwjgl:lwjgl-stb:natives-windows:3.3.3
+org.lwjgl:lwjgl-glfw:3.3.6
+org.lwjgl:lwjgl-openal:3.3.6
+org.lwjgl:lwjgl-opengl:3.3.6
+org.lwjgl:lwjgl-stb:3.3.6
+org.lwjgl:lwjgl:3.3.6
+org.lwjgl:lwjgl-jemalloc:3.3.6
+org.lwjgl:lwjgl:natives-windows:3.3.6
+org.lwjgl:lwjgl-jemalloc:natives-windows:3.3.6
+# org.lwjgl:lwjgl-glfw:natives-windows:3.3.6
+org.lwjgl:lwjgl-openal:natives-windows:3.3.6
+org.lwjgl:lwjgl-opengl:natives-windows:3.3.6
+org.lwjgl:lwjgl-stb:natives-windows:3.3.6
 net.java.dev.jna:jna:5.14.0
 net.java.dev.jna:jna-platform:5.14.0

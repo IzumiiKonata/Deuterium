@@ -83,8 +83,6 @@ public class AsyncGLContext {
                         // complete the future
                         task.future.complete(null);
 
-                        GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-
                         // sync gl commands among all the threads
                         GL11.glFlush();
                         GL11.glFinish();

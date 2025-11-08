@@ -47,6 +47,7 @@ import org.lwjgl.opengl.*;
 import org.lwjglx.util.glu.GLU;
 import org.lwjglx.util.vector.Vector4f;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.other.MemoryTracker;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -1065,12 +1066,12 @@ public class Shaders {
             } else {
                 byte[] abyte = Config.readAll(inputstream);
                 IOUtils.closeQuietly(inputstream);
-                ByteBuffer bytebuffer = MemoryUtil.memAlloc(abyte.length);
+                ByteBuffer bytebuffer = MemoryTracker.memAlloc(abyte.length);
                 bytebuffer.put(abyte);
                 bytebuffer.flip();
                 TextureMetadataSection texturemetadatasection = SimpleShaderTexture.loadTextureMetadataSection(s, new TextureMetadataSection(true, true, new ArrayList()));
                 CustomTextureRaw customtextureraw = new CustomTextureRaw(type, internalFormat, width, height, depth, pixelFormat, pixelType, bytebuffer, textureUnit, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
-                MemoryUtil.memFree(bytebuffer);
+                MemoryTracker.memFree(bytebuffer);
                 return customtextureraw;
             }
         } catch (IOException ioexception) {
@@ -2593,7 +2594,7 @@ public class Shaders {
                 abyte[i - 1] = 10;
             }
 
-            MemoryUtil.memFree(bytebuffer);
+            MemoryTracker.memFree(bytebuffer);
 
             String s = new String(abyte, Charsets.US_ASCII);
             s = StrUtils.trim(s, " \n\r\t");

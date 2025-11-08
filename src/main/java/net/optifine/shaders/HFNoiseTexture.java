@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
+import tritium.utils.other.MemoryTracker;
 
 import java.nio.ByteBuffer;
 
@@ -13,7 +14,7 @@ public class HFNoiseTexture implements ICustomTexture {
 
     public HFNoiseTexture(int width, int height) {
         byte[] abyte = this.genHFNoiseImage(width, height);
-        ByteBuffer bytebuffer = MemoryUtil.memAlloc(abyte.length);
+        ByteBuffer bytebuffer = MemoryTracker.memAlloc(abyte.length);
         bytebuffer.put(abyte);
         bytebuffer.flip();
         GlStateManager.bindTexture(this.texID);
@@ -24,7 +25,7 @@ public class HFNoiseTexture implements ICustomTexture {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
         GlStateManager.bindTexture(0);
 
-        MemoryUtil.memFree(bytebuffer);
+        MemoryTracker.memFree(bytebuffer);
     }
 
     public int getID() {
