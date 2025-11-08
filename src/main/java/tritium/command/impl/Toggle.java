@@ -26,17 +26,12 @@ public class Toggle extends Command {
 
         String moduleName = args[0];
 
-        Optional<Module> m = client.getModuleManager().getModuleByName(moduleName);
-
-        m.ifPresent(md -> {
+        client.getModuleManager().getModuleByName(moduleName).ifPresentOrElse(md -> {
             md.toggle();
             this.print((md.isEnabled() ? (EnumChatFormatting.GREEN + "Enabled ") : (EnumChatFormatting.RED + "Disabled ")) + EnumChatFormatting.RESET + "module " + EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.RESET + ".");
-
-        });
-
-        if (!m.isPresent()) {
+        }, () -> {
             this.print(EnumChatFormatting.RED + "Module " + EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED + " not found!");
-        }
+        });
 
     }
 }

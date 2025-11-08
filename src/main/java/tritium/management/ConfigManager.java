@@ -100,30 +100,23 @@ public class ConfigManager extends AbstractManager {
             JsonObject modules = config.get("Modules").getAsJsonObject();
 
             modules.entrySet().forEach(m -> {
-                Optional<Module> module = client.getModuleManager().getModuleByName(m.getKey());
-
-                module.ifPresent(mod -> {
+                client.getModuleManager().getModuleByName(m.getKey()).ifPresentOrElse(mod -> {
                     mod.loadConfig(m.getValue().getAsJsonObject());
-                });
-
-                if (!module.isPresent()) {
+                }, () -> {
                     this.logger.error("Module {} is missing!", m.getKey());
-                }
+                });
             });
 
             JsonObject widgets = config.get("Widgets").getAsJsonObject();
 
             widgets.entrySet().forEach(w -> {
-                Optional<Widget> widget = client.getWidgetsManager().getWidgetByName(w.getKey());
 
-
-                widget.ifPresent(wid -> {
+                client.getWidgetsManager().getWidgetByName(w.getKey()).ifPresentOrElse(wid -> {
                     wid.loadConfig(w.getValue().getAsJsonObject());
+                }, () -> {
+                    this.logger.error("Widget {} is missing!", w.getKey());
                 });
 
-                if (!widget.isPresent()) {
-                    this.logger.error("Widget {} is missing!", w.getKey());
-                }
             });
         } catch (Throwable ignored) {
 
