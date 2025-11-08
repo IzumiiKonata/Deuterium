@@ -62,7 +62,7 @@ jobs:
 
       - name: Copy artifacts
         run: |
-          cp target/Tritium-*.jar release/Tritium/Tritium.jar || cp target/*.jar release/Tritium/Tritium.jar
+          cp target/Tritium.jar release/Tritium/Tritium.jar
 
       - name: Calculate SHA1
         id: calculate_sha1
