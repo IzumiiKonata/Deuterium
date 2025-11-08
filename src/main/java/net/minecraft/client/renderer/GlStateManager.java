@@ -375,36 +375,37 @@ public class GlStateManager {
 
     public static int generateTexture() {
 
-        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            return GL11.glGenTextures();
-        }
+        return GL11.glGenTextures();
 
-        if (!Minecraft.getMinecraft().loaded) {
-            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-                int id = glGenTextures();
-
-//                System.out.println("Generated texture ID: " + id + " for thread " + Thread.currentThread().getName());
-
-                return id;
-            }
-        }
-
-        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> {
-
-            int texId = glGenTextures();
-            GL11.glFlush();
-            GL11.glFinish();
-
-            return texId;
-
-        });
-        try {
-            return future.get(5, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            throw new RuntimeException("Timeout waiting for texture ID", e);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+//        }
+//
+//        if (!Minecraft.getMinecraft().loaded) {
+//            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+//                int id = glGenTextures();
+//
+////                System.out.println("Generated texture ID: " + id + " for thread " + Thread.currentThread().getName());
+//
+//                return id;
+//            }
+//        }
+//
+//        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> {
+//
+//            int texId = glGenTextures();
+//            GL11.glFlush();
+//            GL11.glFinish();
+//
+//            return texId;
+//
+//        });
+//        try {
+//            return future.get(5, TimeUnit.SECONDS);
+//        } catch (TimeoutException e) {
+//            throw new RuntimeException("Timeout waiting for texture ID", e);
+//        } catch (ExecutionException | InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     public static void generateTextures(IntBuffer buffer) {
