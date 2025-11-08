@@ -104,8 +104,6 @@ public class Display {
             return;
         }
 
-        Configuration.DEBUG.set(true);
-
         long monitor = glfwGetPrimaryMonitor();
         GLFWVidMode vidmode = glfwGetVideoMode(monitor);
 
