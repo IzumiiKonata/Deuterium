@@ -29,6 +29,7 @@ public class Launcher {
     public static final long startupTime = System.currentTimeMillis();
 
     public static void main(String[] p_main_0_) {
+        Configuration.MEMORY_ALLOCATOR.set("jemalloc");
         ConsoleOutputRedirector.init();
 
         Configuration.DISABLE_CHECKS.set(true);
