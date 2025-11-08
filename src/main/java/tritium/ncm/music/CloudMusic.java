@@ -613,9 +613,9 @@ public class CloudMusic {
         boolean enabled = WidgetsManager.musicInfo.isEnabled();
 
         if (enabled) {
-            WidgetsManager.musicInfo.downloading = true;
-            WidgetsManager.musicInfo.downloadProgress = 0;
-            WidgetsManager.musicInfo.downloadSpeed = "0 b/s";
+            WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = true;
+            WidgetsManager.musicInfo.downloadProgress = NCMScreen.getInstance().downloadProgress = 0;
+            WidgetsManager.musicInfo.downloadSpeed = NCMScreen.getInstance().downloadSpeed = "0 b/s";
         }
 
         try {
@@ -629,10 +629,10 @@ public class CloudMusic {
                     if (enabled) {
 
                         if (progress >= 1) {
-                            WidgetsManager.musicInfo.downloading = false;
+                            WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = false;
                         }
 
-                        WidgetsManager.musicInfo.downloadProgress = progress;
+                        WidgetsManager.musicInfo.downloadProgress = NCMScreen.getInstance().downloadProgress = progress;
                     }
                 }
 
@@ -673,7 +673,7 @@ public class CloudMusic {
 
                         int diff = (bytesRead - lastBytesRead) * (1000 / checkDelay);
 
-                        WidgetsManager.musicInfo.downloadSpeed = this.getSize(diff) + "/s";
+                        WidgetsManager.musicInfo.downloadSpeed = NCMScreen.getInstance().downloadSpeed = this.getSize(diff) + "/s";
 
                         lastBytesRead = bytesRead;
                     }
@@ -691,7 +691,7 @@ public class CloudMusic {
             t.printStackTrace();
 
             if (enabled) {
-                WidgetsManager.musicInfo.downloading = false;
+                WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = false;
             }
 
             music.delete();

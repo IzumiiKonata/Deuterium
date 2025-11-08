@@ -4,6 +4,7 @@ import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import tritium.management.FontManager;
 import tritium.ncm.OptionsUtil;
 import tritium.ncm.music.CloudMusic;
 import tritium.rendering.StencilClipManager;
@@ -193,7 +194,37 @@ public class NCMScreen extends BaseScreen {
             }
         }
 
+        this.renderDownloadingPanel();
+
         GlStateManager.popMatrix();
+    }
+
+    public boolean downloading = false;
+    public double downloadProgress = 0;
+    public String downloadSpeed = "0 b/s";
+    float downloadPanelAlpha = 0.0f;
+
+    private void renderDownloadingPanel() {
+//        this.downloading = true;
+        this.downloadPanelAlpha = Interpolations.interpBezier(this.downloadPanelAlpha, this.downloading ? 1f : 0f, 0.3f);
+
+        if (this.downloadPanelAlpha <= 0.02f)
+            return;
+
+        double downloadPanelWidth = 240;
+        double downloadPanelHeight = 60;
+        double progressBarWidth = downloadPanelWidth - 16;
+        double progressBarHeight = 8;
+
+        double offsetY = 8 + -(8 + downloadPanelHeight) * (1 - downloadPanelAlpha);
+        Rect.draw(RenderSystem.getWidth() * .5 - downloadPanelWidth * .5, offsetY, downloadPanelWidth, downloadPanelHeight, RenderSystem.reAlpha(0x202020, downloadPanelAlpha));
+        FontManager.pf34bold.drawCenteredString("Downloading...", RenderSystem.getWidth() * .5, offsetY + 8, hexColor(1, 1, 1, downloadPanelAlpha));
+        FontManager.pf25bold.drawCenteredString(String.valueOf(downloadSpeed), RenderSystem.getWidth() * .5, offsetY + 8 + FontManager.pf34bold.getHeight() + 4, hexColor(1, 1, 1, downloadPanelAlpha));
+        roundedRect(RenderSystem.getWidth() * .5 - progressBarWidth * .5, offsetY + downloadPanelHeight - 8 - progressBarHeight, progressBarWidth, progressBarHeight, 3, hexColor(1, 1, 1, .5f * downloadPanelAlpha));
+
+        StencilClipManager.beginClip(() -> Rect.draw(RenderSystem.getWidth() * .5 - progressBarWidth * .5, offsetY + downloadPanelHeight - 8 - progressBarHeight, progressBarWidth * downloadProgress, progressBarHeight, -1));
+        roundedRect(RenderSystem.getWidth() * .5 - progressBarWidth * .5, offsetY + downloadPanelHeight - 8 - progressBarHeight, progressBarWidth, progressBarHeight, 3, hexColor(1, 1, 1, downloadPanelAlpha));
+        StencilClipManager.endClip();
     }
 
     public LoginRenderer loginRenderer = null;
