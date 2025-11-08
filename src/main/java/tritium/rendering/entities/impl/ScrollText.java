@@ -103,11 +103,6 @@ public class ScrollText {
 
 
         StencilClipManager.endClip();
-
-        if (ClientSettings.DEBUG_MODE.getValue()) {
-            fr.drawString("" + scrollOffset, x, y - fr.getHeight(), color);
-        }
-
     }
 
 }

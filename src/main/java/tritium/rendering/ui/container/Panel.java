@@ -1,5 +1,7 @@
 package tritium.rendering.ui.container;
 
+import tritium.rendering.Rect;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 
 /**
@@ -14,6 +16,7 @@ public class Panel extends AbstractWidget<Panel> {
 
     @Override
     protected void renderDebugLayout() {
-
+        super.renderDebugLayout();
+        Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), reAlpha(0x00F50EE8, this.getAlpha() * .05f));
     }
 }

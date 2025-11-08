@@ -106,6 +106,8 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
         this.onRender(mouseX, mouseY, dWheel);
 
+        boolean debug = ClientSettings.DEBUG_MODE.getValue();
+
         boolean childHovering = false;
 
         for (AbstractWidget<?> child : this.getChildren()) {
@@ -118,13 +120,17 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
             child.renderWidget(mouseX, mouseY, dWheel);
 
-            if (ClientSettings.DEBUG_MODE.getValue()) {
+            if (debug) {
                 child.renderDebugLayout();
             }
 
             if (child.isClickable() && child.testHovered(mouseX, mouseY)) {
                 childHovering = true;
             }
+        }
+
+        if (debug) {
+            this.renderDebugLayout();
         }
 
         GlStateManager.popMatrix();
