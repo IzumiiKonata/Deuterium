@@ -43,7 +43,7 @@ public class UpdateChecker {
 
                 String get;
                 try {
-                    get = HttpUtils.getString("https://api.github.com/repos/IzumiiKonata/Deuterium/releases/latest", null);
+                    get = HttpUtils.getString("https://gh-proxy.com/https://api.github.com/repos/IzumiiKonata/Deuterium/releases/latest", null);
                 } catch (IOException e) {
                     Tritium.getLogger().error("检查更新失败!", e);
                     updateCheckResult = UpdateCheckResult.ERROR;
