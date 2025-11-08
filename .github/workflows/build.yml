@@ -119,7 +119,7 @@ jobs:
           name: "${{ steps.get_version.outputs.RELEASE_NAME }}"
           body_path: release_notes.md
           draft: false
-          prerelease: true
+          prerelease: false
           files: |
             release/Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}.zip
         env:
