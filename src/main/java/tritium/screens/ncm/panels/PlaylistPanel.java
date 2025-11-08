@@ -43,7 +43,7 @@ public class PlaylistPanel extends NCMPanel {
     }
 
     private TextFieldWidget tfSearch;
-    private double tfOpenAnimation = 20;
+    private double tfOpenAnimation = 21;
 
     @Override
     public void onInit() {
@@ -128,7 +128,7 @@ public class PlaylistPanel extends NCMPanel {
             });
 
             searchBar.setBeforeRenderCallback(() -> {
-                tfOpenAnimation = Interpolations.interpBezier(tfOpenAnimation, this.tfSearch.isFocused() ? 80 : 20, .3f);
+                tfOpenAnimation = Interpolations.interpBezier(tfOpenAnimation, this.tfSearch.isFocused() ? 80 : 21, .3f);
                 searchBar.setAlpha(1f);
                 searchBar.setColor(0xFF5E5E5E);
                 searchBar.setWidth(tfOpenAnimation);
