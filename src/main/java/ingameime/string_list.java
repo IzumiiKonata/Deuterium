@@ -9,9 +9,6 @@
 package ingameime;
 
 
-import tritium.utils.res.CleanerInstance;
-
-import java.lang.ref.Cleaner;
 
 public class string_list extends java.util.AbstractSequentialList<String> {
     private transient long swigCPtr;
@@ -140,32 +137,13 @@ public class string_list extends java.util.AbstractSequentialList<String> {
         }.init(index);
     }
 
-    static public class Iterator implements AutoCloseable {
+    static public class Iterator {
         private transient long swigCPtr;
         protected transient boolean swigCMemOwn;
-        protected transient Cleaner.Cleanable cleanable;
-
-        private static class IteratorCleanup implements Runnable {
-            private final long ptr;
-            private final boolean owned;
-
-            IteratorCleanup(long ptr, boolean owned) {
-                this.ptr = ptr;
-                this.owned = owned;
-            }
-
-            @Override
-            public void run() {
-                if (ptr != 0 && owned) {
-                    IngameIMEJNI.delete_string_list_Iterator(ptr);
-                }
-            }
-        }
 
         protected Iterator(long cPtr, boolean cMemoryOwn) {
             swigCMemOwn = cMemoryOwn;
             swigCPtr = cPtr;
-            this.cleanable = CleanerInstance.getInstance().register(this, new IteratorCleanup(cPtr, cMemoryOwn));
         }
 
         protected static long getCPtr(Iterator obj) {
@@ -184,8 +162,7 @@ public class string_list extends java.util.AbstractSequentialList<String> {
             return ptr;
         }
 
-        @Override
-        public void close() {
+        protected void finalize() {
             delete();
         }
 
@@ -197,7 +174,6 @@ public class string_list extends java.util.AbstractSequentialList<String> {
                 }
                 swigCPtr = 0;
             }
-            cleanable.clean();
         }
 
         public void set_unchecked(String v) {
