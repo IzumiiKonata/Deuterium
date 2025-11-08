@@ -8,8 +8,4 @@ import tritium.event.eventapi.Event;
  */
 public class Render2DEvent extends Event {
 
-    public static class Render2DBeforeInventoryEvent extends Event {
-
-    }
-
 }

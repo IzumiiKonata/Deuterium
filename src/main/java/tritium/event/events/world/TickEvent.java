@@ -14,8 +14,5 @@ public class TickEvent extends EventState {
 
     private int elapsedTicks;
 
-    public TickEvent() {
-        this.setParallel(true);
-    }
 }
 

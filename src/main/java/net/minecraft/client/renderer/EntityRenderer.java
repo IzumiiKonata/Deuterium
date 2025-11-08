@@ -69,10 +69,8 @@ import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
 import tritium.Tritium;
 import tritium.event.events.input.MouseXYChangeEvent;
-import tritium.event.events.rendering.HurtCamEvent;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.event.events.rendering.Render3DEvent;
-import tritium.event.events.rendering.UpdateCameraAndRenderEvent;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.EventManager;
 import tritium.management.FontManager;
@@ -607,9 +605,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     private void hurtCameraEffect(float partialTicks) {
         if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
 
-            HurtCamEvent event = EventManager.call(new HurtCamEvent());
-
-            if (event.isCancelled())
+            if (ModuleManager.noHurtCam.isEnabled())
                 return;
 
             EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
@@ -1209,8 +1205,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
     public void updateCameraAndRender(float partialTicks, long nanoTime) {
 
-        EventManager.call(new UpdateCameraAndRenderEvent());
-
         Config.renderPartialTicks = partialTicks;
         this.frameInit();
 
@@ -1288,7 +1282,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
 //                    GlStateManager.pushAttrib();
 //                    GlStateManager.pushMatrix();
-                    EventManager.call(new Render2DEvent.Render2DBeforeInventoryEvent());
                     EventManager.call(new Render2DEvent());
 //                    GlStateManager.popMatrix();
 //                    GlStateManager.popAttrib();

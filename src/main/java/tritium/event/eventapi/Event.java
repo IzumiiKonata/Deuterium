@@ -11,8 +11,4 @@ public class Event {
     @Getter
     @Setter
     boolean responded = false;
-
-    @Getter
-    @Setter
-    boolean parallel = false;
 }

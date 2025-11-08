@@ -31,7 +31,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import tritium.bridge.entity.EntityWrapper;
 import tritium.event.events.player.MoveEntityRotationEvent;
-import tritium.event.events.player.SafeWalkEvent;
 import tritium.management.EventManager;
 import tritium.rendering.EntityLighter;
 
@@ -606,10 +605,7 @@ public abstract class Entity implements ICommandSender {
             double d4 = y;
             double d5 = z;
 
-            SafeWalkEvent event = new SafeWalkEvent();
-            EventManager.call(event);
-
-            boolean flag = (this.onGround && (this.isSneaking() || event.isSafeWalk())) && this instanceof EntityPlayer;
+            boolean flag = (this.onGround && this.isSneaking()) && this instanceof EntityPlayer;
 
             if (flag) {
                 double d6;

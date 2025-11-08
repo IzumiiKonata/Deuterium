@@ -7,6 +7,8 @@ import tritium.event.eventapi.*;
 import tritium.interfaces.SharedConstants;
 import tritium.event.eventapi.*;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.util.*;
@@ -30,6 +32,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
         client.getEventManager()._register(obj);
     }
 
+    static MethodHandles.Lookup lookup = MethodHandles.lookup();
 
     /**
      * 注册该对象中所有被@Handler修饰的方法
@@ -58,7 +61,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
                 //获取方法的Event类型
                 Class<?> eventClass = method.getParameterTypes()[0];
 
-                Target target = new Target(method, eventClass, obj, pr);
+                Target target = new Target(lookup.unreflect(method), eventClass, obj, pr);
 
                 if (registrationMap.containsKey(eventClass)) {
                     if (!registrationMap.get(eventClass).contains(target)) {
@@ -143,33 +146,20 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     public T _call(T event) {
         List<Target> methodList = registrationMap.get(event.getClass());
 
-
         if (methodList != null) {
             for (Target target : methodList) {
 
                 if (target.getType() == event.getClass()) {
                     event.setResponded(true);
 
-                    if (event.isParallel()) {
-                        pool.execute(() -> {
-                            try {
-                                target.getTargetMethod().invoke(target.getSource(), event);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    } else {
+                    try {
+                        target.getTargetMethod().invoke(target.getSource(), event);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
 
-                        try {
-                            target.getTargetMethod().invoke(target.getSource(), event);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                        if (event instanceof EventCancellable && ((EventCancellable) event).isCancelled()) {
-                            break;
-                        }
-
+                    if (event instanceof EventCancellable && ((EventCancellable) event).isCancelled()) {
+                        break;
                     }
                 }
             }
@@ -182,7 +172,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     @Getter
     @AllArgsConstructor
     private class Target {
-        private Method targetMethod;
+        private MethodHandle targetMethod;
         private Type type;
         private Object source;
         private int priority;

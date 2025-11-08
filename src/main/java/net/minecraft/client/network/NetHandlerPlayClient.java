@@ -64,7 +64,6 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
 import tritium.event.eventapi.State;
-import tritium.event.events.player.EntityVelocityEvent;
 import tritium.event.events.player.RespawnEvent;
 import tritium.management.EventManager;
 import tritium.screens.MainMenu;
@@ -312,16 +311,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         Entity entity = this.clientWorldController.getEntityByID(packetIn.getEntityID());
 
         if (entity != null) {
-
-            EntityVelocityEvent event = new EntityVelocityEvent(packetIn.getEntityID());
-            event.setState(State.PRE);
-
-            EventManager.call(event);
-
-            entity.setVelocity((double) packetIn.getMotionX() / 8000.0D, (double) packetIn.getMotionY() / 8000.0D, (double) packetIn.getMotionZ() / 8000.0D);
-
-            event.setState(State.POST);
-            EventManager.call(event);
+            entity.setVelocity(packetIn.getMotionX() / 8000.0D, packetIn.getMotionY() / 8000.0D, packetIn.getMotionZ() / 8000.0D);
         }
     }
 

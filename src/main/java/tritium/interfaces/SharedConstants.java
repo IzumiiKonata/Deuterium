@@ -20,9 +20,4 @@ public interface SharedConstants {
 
     Tritium client = Tritium.getInstance();
 
-    AtomicInteger COUNTER = new AtomicInteger(0);
-
-    ThreadPoolExecutor pool = new ThreadPoolExecutor(10, 30, 0L, TimeUnit.SECONDS, new LinkedBlockingQueue<>(), r ->
-            new Thread(r, String.format("Thread %s", COUNTER.incrementAndGet())));
-
 }

@@ -8,7 +8,6 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.ChatComponentEvent;
-import tritium.event.events.rendering.RenderTextEvent;
 import tritium.module.Module;
 
 public class NameSpoof extends Module {
@@ -19,10 +18,10 @@ public class NameSpoof extends Module {
 
     public String name = "You";
 
-    @Handler
-    public void onRenderString(RenderTextEvent event) {
-//        event.setText(event.getText().replaceAll(mc.getSession().getUsername(), name));
-    }
+//    @Handler
+//    public void onRenderString(RenderTextEvent event) {
+////        event.setText(event.getText().replaceAll(mc.getSession().getUsername(), name));
+//    }
 
     private void replaceChatComponentText(ChatComponentText text) {
         text.setText(text.getChatComponentText_TextValue().replace(mc.getSession().getUsername(), this.getSpoofedName()));

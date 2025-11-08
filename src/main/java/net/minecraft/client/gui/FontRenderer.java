@@ -18,9 +18,6 @@ import net.optifine.render.GlBlendState;
 import net.optifine.util.FontUtils;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
-import tritium.event.events.rendering.RenderTextEvent;
-import tritium.interfaces.IFontRenderer;
-import tritium.management.EventManager;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -480,12 +477,12 @@ public class FontRenderer implements IResourceManagerReloadListener {
      */
     private void renderStringAtPos(String text, boolean shadow) {
 
-        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
+//        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
+//
+//        if (call.isCancelled())
+//            return;
 
-        if (call.isCancelled())
-            return;
-
-        text = call.getText();
+//        text = call.getText();
 
         for (int i = 0; i < text.length(); ++i) {
             char c0 = text.charAt(i);
@@ -663,9 +660,9 @@ public class FontRenderer implements IResourceManagerReloadListener {
      */
     public int getStringWidth(String text) {
 
-        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
-
-        text = call.getText();
+//        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
+//
+//        text = call.getText();
 
         if (text == null) {
             return 0;

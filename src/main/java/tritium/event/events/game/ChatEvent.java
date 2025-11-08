@@ -16,8 +16,4 @@ public class ChatEvent extends EventCancellable {
     @Setter
     private String msg;
 
-    public ChatEvent() {
-        this.setParallel(true);
-    }
-
 }

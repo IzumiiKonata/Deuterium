@@ -16,19 +16,19 @@ import java.util.List;
 @UtilityClass
 public class MemoryTracker {
 
-    public synchronized ByteBuffer memAlloc(int size) {
+    public /*synchronized */ByteBuffer memAlloc(int size) {
         return MemoryUtil.memAlloc(size);
     }
 
-    public synchronized ByteBuffer memRealloc(ByteBuffer ptr, int size) {
+    public /*synchronized */ByteBuffer memRealloc(ByteBuffer ptr, int size) {
         return MemoryUtil.memRealloc(ptr, size);
     }
 
-    public synchronized IntBuffer memAllocInt(int size) {
+    public /*synchronized */IntBuffer memAllocInt(int size) {
         return MemoryUtil.memAllocInt(size);
     }
     
-    public synchronized void memFree(Buffer buffer) {
+    public /*synchronized */void memFree(Buffer buffer) {
         if (buffer == null)
             return;
 
