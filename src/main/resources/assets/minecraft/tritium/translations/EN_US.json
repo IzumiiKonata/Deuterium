@@ -901,6 +901,12 @@
 
     "setting.raw input.name": "Raw Input",
 
+    "version.checking": "Checking for updates...",
+    "version.up_to_date": "Up to date",
+    "version.outdated_new_release": "A new release is available.",
+    "version.outdated_new_commit": "One or more new commits",
+    "version.error": "Failed to check for updates",
+
     "clickgui.nosettingshere": "No Settings Here."
   }
 }

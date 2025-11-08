@@ -1416,7 +1416,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             TransitionAnimation.render();
 
-            if (Tritium.getVersion().getType() == Version.Type.Dev) {
+            if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
                 GlStateManager.pushMatrix();
                 GlStateManager.clear(256);
                 GlStateManager.matrixMode(GL11.GL_PROJECTION);

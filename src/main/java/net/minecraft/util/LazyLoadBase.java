@@ -1,5 +1,7 @@
 package net.minecraft.util;
 
+import java.util.function.Supplier;
+
 public abstract class LazyLoadBase<T> {
     private T value;
     private boolean isLoaded = false;
@@ -19,4 +21,14 @@ public abstract class LazyLoadBase<T> {
     }
 
     protected abstract T load();
+
+    public static <T> LazyLoadBase<T> of(Supplier<T> supplier) {
+        return new LazyLoadBase<>() {
+            @Override
+            protected T load() {
+                return supplier.get();
+            }
+        };
+    }
+
 }

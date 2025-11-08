@@ -7,6 +7,7 @@ import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.GuiSelectWorld;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Tuple;
 import tritium.Tritium;
 import tritium.interfaces.SharedConstants;
@@ -25,6 +26,7 @@ import tritium.screens.altmanager.AltScreen;
 import tritium.screens.ncm.NCMScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.i18n.Localizable;
+import tritium.utils.other.info.UpdateChecker;
 import tritium.utils.other.info.Version;
 
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ public class MainMenu extends BaseScreen {
                 )
         ));
 
-        if (Tritium.getVersion().getType() == Version.Type.Dev) {
+        if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
             tuples.add(
                 Tuple.of(
                     Localizable.ofUntranslatable("打开音乐播放器"), () -> {
@@ -153,14 +155,28 @@ public class MainMenu extends BaseScreen {
         renderer.render(RenderSystem.getWidth(), RenderSystem.getHeight());
     }
 
+    private EnumChatFormatting mapCheckResultToColor(UpdateChecker.UpdateCheckResult result) {
+        return switch (result) {
+            case UP_TO_DATE -> EnumChatFormatting.GREEN;
+            case OUTDATED_NEW_RELEASE, OUTDATED_NEW_COMMIT -> EnumChatFormatting.YELLOW;
+            case ERROR -> EnumChatFormatting.RED;
+            case CHECKING -> EnumChatFormatting.GRAY;
+        };
+    }
+
     private void renderInfos() {
 
         List<String> infos = Arrays.asList(
                 "https://github.com/IzumiiKonata/Deuterium",
-                "Tritium-X " + Tritium.getVersion()
+                String.format(
+                        "Tritium-X %s %s%s",
+                        Tritium.getVersion(),
+                        mapCheckResultToColor(UpdateChecker.getUpdateCheckResult()),
+                        UpdateChecker.getUpdateCheckResult().getLocalizable().get()
+                )
         );
 
-        CFontRenderer fr = FontManager.arial14;
+        CFontRenderer fr = FontManager.pf14;
         double yOffset = RenderSystem.getHeight() - fr.getHeight() - 4;
 
         for (String info : infos) {
@@ -177,7 +193,7 @@ public class MainMenu extends BaseScreen {
         int prevHeight = fbConverge != null ? fbConverge.framebufferHeight : 0;
         fbConverge = RenderSystem.createFrameBuffer(fbConverge);
 
-        boolean dev = Tritium.getVersion().getType() == Version.Type.Dev;
+        boolean dev = Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev;
         boolean shouldUpdate = refreshDeconvergeThisFrame || prevWidth != fbConverge.framebufferWidth || prevHeight != fbConverge.framebufferHeight || dev;
 
         if (shouldUpdate) {

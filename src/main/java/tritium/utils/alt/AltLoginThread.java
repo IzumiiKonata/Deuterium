@@ -11,7 +11,6 @@ package tritium.utils.alt;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.var;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import tritium.utils.oauth.OAuth;

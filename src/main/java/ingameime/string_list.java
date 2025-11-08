@@ -9,6 +9,9 @@
 package ingameime;
 
 
+import tritium.utils.res.CleanerInstance;
+
+import java.lang.ref.Cleaner;
 
 public class string_list extends java.util.AbstractSequentialList<String> {
     private transient long swigCPtr;
@@ -137,13 +140,32 @@ public class string_list extends java.util.AbstractSequentialList<String> {
         }.init(index);
     }
 
-    static public class Iterator {
+    static public class Iterator implements AutoCloseable {
         private transient long swigCPtr;
         protected transient boolean swigCMemOwn;
+        protected transient Cleaner.Cleanable cleanable;
+
+        private static class IteratorCleanup implements Runnable {
+            private final long ptr;
+            private final boolean owned;
+
+            IteratorCleanup(long ptr, boolean owned) {
+                this.ptr = ptr;
+                this.owned = owned;
+            }
+
+            @Override
+            public void run() {
+                if (ptr != 0 && owned) {
+                    IngameIMEJNI.delete_string_list_Iterator(ptr);
+                }
+            }
+        }
 
         protected Iterator(long cPtr, boolean cMemoryOwn) {
             swigCMemOwn = cMemoryOwn;
             swigCPtr = cPtr;
+            this.cleanable = CleanerInstance.getInstance().register(this, new IteratorCleanup(cPtr, cMemoryOwn));
         }
 
         protected static long getCPtr(Iterator obj) {
@@ -162,7 +184,8 @@ public class string_list extends java.util.AbstractSequentialList<String> {
             return ptr;
         }
 
-        protected void finalize() {
+        @Override
+        public void close() {
             delete();
         }
 
@@ -174,6 +197,7 @@ public class string_list extends java.util.AbstractSequentialList<String> {
                 }
                 swigCPtr = 0;
             }
+            cleanable.clean();
         }
 
         public void set_unchecked(String v) {
@@ -218,12 +242,16 @@ public class string_list extends java.util.AbstractSequentialList<String> {
         return new Iterator(IngameIMEJNI.string_list_remove(swigCPtr, this, Iterator.getCPtr(pos), pos), true);
     }
 
-    public void removeLast() {
+    public String removeLast() {
+        String s = get(size() - 1);
         IngameIMEJNI.string_list_removeLast(swigCPtr, this);
+        return s;
     }
 
-    public void removeFirst() {
+    public String removeFirst() {
+        String s = get(0);
         IngameIMEJNI.string_list_removeFirst(swigCPtr, this);
+        return s;
     }
 
     public void addLast(String value) {

@@ -9,31 +9,37 @@ import tritium.management.*;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
+import tritium.utils.i18n.Localizable;
+import tritium.utils.json.JsonUtils;
+import tritium.utils.other.info.BuildInfo;
+import tritium.utils.other.info.UpdateChecker;
 import tritium.utils.other.info.Version;
 import tritium.utils.logging.LogLevel;
 import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 import tritium.utils.other.DevUtils;
+import tritium.utils.other.info.VersionUtils;
 
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class Tritium {
 
     @Getter
-    private static final Version version = new Version(Version.Type.Release, 1, 3, 1);
+    private static Version version;
 
     public static final String NAME = "Tritium";
-
-    public static String BUILD_DATE = "Dev Env";
 
     @Getter
     private static final Tritium instance = new Tritium();
 
     @Getter
-    private final Logger logger = LogManager.getLogger("Tritium");
+    private static final Logger logger = LogManager.getLogger("Tritium");
 
     @Getter
     private final List<AbstractManager> managers = new ArrayList<>();
@@ -75,8 +81,7 @@ public class Tritium {
     private final boolean obfuscated = DevUtils.isObfuscated();
 
     public Tritium() {
-        if (Tritium.getVersion().getType() == Version.Type.Dev)
-            this.logger.setOverrideLevel(LogLevel.DEBUG);
+
     }
 
     /**
@@ -154,14 +159,29 @@ public class Tritium {
             EventManager.unregister(manager);
 
         }
+    }
 
-        // delete all temp files
+    static {
+        Optional<BuildInfo> buildInfo = VersionUtils.getBuildInfo();
 
-        File musicCacheDir = new File("MusicCache");
-
-        if (!musicCacheDir.exists()) {
-            return;
-        }
+        buildInfo
+            .ifPresentOrElse(
+                info -> {
+                    String[] splitVer = info.getVersion().split("\\.");
+                    int major = Integer.parseInt(splitVer[0]);
+                    int minor = Integer.parseInt(splitVer[1]);
+                    int patch = Integer.parseInt(splitVer[2]);
+                    version = new Version(Version.ReleaseType.Release, major, minor, patch);
+                    UpdateChecker.check();
+                },
+                () -> {
+                    String branch = VersionUtils.getCurrentBranch();
+                    String currentCommit = VersionUtils.getCurrentCommitShort();
+                    version = new Version(currentCommit, branch);
+                    logger.setOverrideLevel(LogLevel.DEBUG);
+                    UpdateChecker.check();
+                }
+            );
     }
 
 }

@@ -1,6 +1,5 @@
 package tritium.module.impl.render;
 
-import lombok.var;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;

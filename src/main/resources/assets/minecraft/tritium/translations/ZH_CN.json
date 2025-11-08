@@ -724,6 +724,12 @@
 
     "setting.raw input.name": "鼠标原始输入",
 
+    "version.checking": "正在检查更新...",
+    "version.up_to_date": "已是最新版",
+    "version.outdated_new_release": "有新的发行版",
+    "version.outdated_new_commit": "有新的提交",
+    "version.error": "检查更新失败",
+
     "clickgui.nosettingshere": "这里没有设置."
   }
 }
