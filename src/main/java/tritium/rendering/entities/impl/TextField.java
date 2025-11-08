@@ -60,6 +60,7 @@ public class TextField extends GuiTextField {
     private int cursorCounter;
 
     // 拖拽选择相关
+    public boolean lmbPressed;
     public boolean dragging;
     private int dragStartChar;
     private int dragEndChar;
@@ -575,8 +576,12 @@ public class TextField extends GuiTextField {
     }
 
     private void updateStyles(boolean isHovered, int mouseX, int mouseY) {
+
+        if (lmbPressed && !Mouse.isButtonDown(0))
+            lmbPressed = false;
+
         // 失焦检测
-        if (isFocused && !dragging && !isHovered && Mouse.isButtonDown(0)) {
+        if (isFocused && !lmbPressed && !dragging && !isHovered && Mouse.isButtonDown(0)) {
             setFocused(false);
         }
 

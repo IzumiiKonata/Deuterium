@@ -120,7 +120,7 @@ public class PlaylistPanel extends NCMPanel {
                 if (mouseButton == 0) {
                     if (!this.tfSearch.isFocused()) {
                         this.tfSearch.setFocused(true);
-                        this.tfSearch.getTextField().dragging = true;
+                        this.tfSearch.getTextField().lmbPressed = true;
                     }
                 }
 
