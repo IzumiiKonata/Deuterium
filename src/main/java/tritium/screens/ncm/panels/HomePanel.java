@@ -124,6 +124,8 @@ public class HomePanel extends NCMPanel {
 
         double emphasizeAnim = 0;
 
+        boolean coverLoaded = false;
+
         public PlaylistWidget(PlayList playList) {
             this.playList = playList;
 
@@ -142,6 +144,11 @@ public class HomePanel extends NCMPanel {
                     .setLinearFilter(true)
                     .setBeforeRenderCallback(() -> {
 
+                        if (!coverLoaded) {
+                            coverLoaded = true;
+                            this.loadCover();
+                        }
+
                         this.emphasizeAnim = Interpolations.interpBezier(this.emphasizeAnim, cover.isHovering() ? emphasizeAnimMax : 0, .2f);
 
                         cover
@@ -150,8 +157,6 @@ public class HomePanel extends NCMPanel {
                                 .centerHorizontally()
                                 .setBounds(cover.getRelativeX(), this.getWidth() * .5 - size * .5 - emphasizeAnim * .5, cover.getWidth(), cover.getHeight());
                     });
-
-            this.loadCover();
 
             CFontRenderer pf14bold = FontManager.pf14bold;
             LabelWidget lblName = new LabelWidget(() -> String.join("\n", pf14bold.fitWidth(playList.getName(), size)), pf14bold);
