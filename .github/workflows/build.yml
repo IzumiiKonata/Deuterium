@@ -90,7 +90,7 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
-          PREV_COMMIT=$(gh release list --limit 1 --exclude-drafts --exclude-pre-releases --json tagName --jq '.[0].tagName' | xargs -I {} git rev-list -n 1 {} 2>/dev/null || echo "")
+          PREV_COMMIT=$(gh api repos/${{ github.repository }}/releases -q 'map(select(.draft == false and .prerelease == false)) | .[0].target_commitish' 2>/dev/null || echo "")
           
           if [ -z "$PREV_COMMIT" ]; then
             COMMITS=$(git log --pretty=format:'- [%h](https://github.com/${{ github.repository }}/commit/%H) %s')
