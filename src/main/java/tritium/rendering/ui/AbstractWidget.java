@@ -162,6 +162,11 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         }
     }
 
+    public void addChild(List<AbstractWidget<?>> children) {
+        this.children.addAll(children);
+        children.forEach(child -> child.setParent(this));
+    }
+
     protected void renderDebugLayout() {
         // show layout
         RenderSystem.drawOutLine(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0.5, reAlpha(0x00FF0000, this.getAlpha()));

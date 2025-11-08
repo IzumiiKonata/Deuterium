@@ -98,7 +98,7 @@ public class ScrollPanel extends Panel {
         this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
     }
 
-    private void alignChildren() {
+    public void alignChildren() {
         double offsetX = 0;
         double offsetY = 0;
 
@@ -223,11 +223,19 @@ public class ScrollPanel extends Panel {
     @Override
     protected boolean shouldRenderChildren(AbstractWidget<?> child, double mouseX, double mouseY) {
 
-        if (child.getY() + child.getHeight() < this.getY())
-            return false;
+        if (this.getAlignment() == Alignment.VERTICAL || this.getAlignment() == Alignment.VERTICAL_WITH_HORIZONTAL_FILL) {
+            if (child.getRelativeY() + child.getHeight() < 0)
+                return false;
 
-        if (child.getY() > this.getY() + this.getHeight())
-            return false;
+            if (child.getRelativeY() > this.getHeight())
+                return false;
+        } else if (this.getAlignment() == Alignment.HORIZONTAL) {
+            if (child.getRelativeX() + child.getWidth() < 0)
+                return false;
+
+            if (child.getRelativeX() > this.getWidth())
+                return false;
+        }
 
         return true;
     }

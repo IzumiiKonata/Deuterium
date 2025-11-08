@@ -10,18 +10,17 @@ import org.lwjgl.opengl.GL11;
 
 @RequiredArgsConstructor
 public class Glyph {
-    
-    public final float width, height;
-    public final int imgWidth, imgHeight;
+
+    public final int width, height;
     public final char value;
     public int textureId = -1;
-    
+
     public int callList = -1;
     public boolean cached = true;
 
     public void init() {
 
-        GlyphCache.GlyphSize gs = new GlyphCache.GlyphSize(this.width, this.height, this.imgWidth, this.imgHeight);
+        GlyphCache.GlyphSize gs = new GlyphCache.GlyphSize(this.width, this.height);
 
         Integer cachedCallList = GlyphCache.get(gs);
         if (cachedCallList != null) {
@@ -45,11 +44,11 @@ public class Glyph {
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
         GL11.glTexCoord2f(0, 0);
         GL11.glVertex2f(0, 0);
-        GL11.glTexCoord2f(0, (float) this.height / this.imgHeight);
+        GL11.glTexCoord2f(0, 1);
         GL11.glVertex2f(0, h);
-        GL11.glTexCoord2f((float) this.width / this.imgWidth, 0);
+        GL11.glTexCoord2f(1, 0);
         GL11.glVertex2f(w, 0);
-        GL11.glTexCoord2f((float) this.width / this.imgWidth, (float) this.height / this.imgHeight);
+        GL11.glTexCoord2f(1, 1);
         GL11.glVertex2f(w, h);
         GL11.glEnd();
 
@@ -76,5 +75,5 @@ public class Glyph {
 
         return this.width;
     }
-    
+
 }

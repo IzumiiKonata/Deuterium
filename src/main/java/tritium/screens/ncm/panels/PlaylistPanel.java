@@ -10,6 +10,7 @@ import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
+import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.*;
@@ -22,6 +23,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -156,7 +158,7 @@ public class PlaylistPanel extends NCMPanel {
         });
 
         playList.loadMusicsWithCallback(musics -> {
-            musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music))).toArray(MusicWidget[]::new));
+            musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music))).collect(Collectors.toList()));
         });
     }
 

@@ -62,19 +62,17 @@ public class GlyphGenerator {
         transformation.setToIdentity();
         GlyphVector gv = font.createGlyphVector(context, String.valueOf(ch));
 //        Rectangle2D bounds = gv.getVisualBounds();
-        float width = gv.getGlyphMetrics(0).getAdvance();
-        float height = fontMetrics.getAscent() + fontMetrics.getDescent();
-        int imgWidth = MathHelper.roundUpToPowerOfTwo((int) width);
-        int imgHeight = MathHelper.roundUpToPowerOfTwo((int) height);
+        int width = (int) Math.ceil(gv.getGlyphMetrics(0).getAdvance());
+        int height = fontMetrics.getAscent() + fontMetrics.getDescent();
 
-        Glyph glyph = new Glyph(width, height, imgWidth, imgHeight, ch);
+        Glyph glyph = new Glyph(width, height, ch);
 
         fr.allGlyphs[ch] = glyph;
 
         if (width == 0) {
             return;
         }
-        BufferedImage bi = new BufferedImage(imgWidth, imgHeight,
+        BufferedImage bi = new BufferedImage(width, height,
                 BufferedImage.TYPE_INT_ARGB);
 
         Graphics2D g2d = bi.createGraphics();

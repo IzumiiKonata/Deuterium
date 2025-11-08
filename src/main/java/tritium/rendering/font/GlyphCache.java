@@ -44,8 +44,7 @@ public class GlyphCache {
 
     @AllArgsConstructor
     public class GlyphSize {
-        public final float width, height;
-        public final int imgWidth, imgHeight;
+        public final int width, height;
 
         @Override
         public boolean equals(Object o) {
@@ -53,12 +52,12 @@ public class GlyphCache {
             if (o == null || getClass() != o.getClass()) return false;
             GlyphSize other = (GlyphSize) o;
             return width == other.width &&
-                    height == other.height && imgWidth == other.imgWidth && imgHeight == other.imgHeight;
+                    height == other.height;
         }
 
         @Override
         public int hashCode() {
-            return Float.floatToIntBits(width) + Float.floatToIntBits(height) + 3 * imgWidth + imgHeight;
+            return 123 * width + height;
         }
     }
 

@@ -30,7 +30,7 @@ public class MusicWidget extends RoundedRectWidget {
     boolean coverLoaded = false;
 
     public MusicWidget(Music music, PlayList playList, int index) {
-        super(0, 0, 0, 0);
+        super(0, 0, 0, 30);
         this.music = music;
         this.playList = playList;
 
