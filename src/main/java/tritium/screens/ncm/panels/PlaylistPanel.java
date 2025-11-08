@@ -39,113 +39,121 @@ public class PlaylistPanel extends NCMPanel {
 
     @Override
     public void onInit() {
-        RoundedImageWidget cover = new RoundedImageWidget(this.getCoverLocation(), 0, 0, 0, 0);
 
-        cover.setPosition(24, 24);
-        cover.setBounds(128, 128);
-        cover.fadeIn();
-        cover.setLinearFilter(true);
+        double musicsContainerOffsetY;
 
-        this.addChild(cover);
-        this.loadCover();
+        if (!playList.isSearchMode()) {
+            RoundedImageWidget cover = new RoundedImageWidget(this.getCoverLocation(), 0, 0, 0, 0);
 
-        cover.setBeforeRenderCallback(() -> {
-            cover.setRadius(4);
-        });
+            cover.setPosition(24, 24);
+            cover.setBounds(128, 128);
+            cover.fadeIn();
+            cover.setLinearFilter(true);
+
+            this.addChild(cover);
+            this.loadCover();
+
+            cover.setBeforeRenderCallback(() -> {
+                cover.setRadius(4);
+            });
 
 //        LabelWidget lblPlaylistName = new LabelWidget(playList.name, FontManager.pf);
-        RoundedButtonWidget btnPlay = new RoundedButtonWidget("播放歌单", FontManager.pf16);
-        this.addChild(btnPlay);
+            RoundedButtonWidget btnPlay = new RoundedButtonWidget("播放歌单", FontManager.pf16);
+            this.addChild(btnPlay);
 
-        btnPlay.setBeforeRenderCallback(() -> {
-            btnPlay.setBounds(57, 17);
-            btnPlay.setPosition(cover.getRelativeX() + cover.getWidth() + 12, cover.getRelativeY() + cover.getHeight() - btnPlay.getHeight());
-            btnPlay.setRadius(3);
-            btnPlay.setColor(0xFFd60017);
-            btnPlay.setTextColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-        });
+            btnPlay.setBeforeRenderCallback(() -> {
+                btnPlay.setBounds(57, 17);
+                btnPlay.setPosition(cover.getRelativeX() + cover.getWidth() + 12, cover.getRelativeY() + cover.getHeight() - btnPlay.getHeight());
+                btnPlay.setRadius(3);
+                btnPlay.setColor(0xFFd60017);
+                btnPlay.setTextColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            });
 
-        btnPlay.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+            btnPlay.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
 
-            if (mouseButton == 0) {
-                playList.loadMusicsWithCallback(musics -> {
-                    CloudMusic.play(musics, 0);
-                });
-            }
+                if (mouseButton == 0) {
+                    playList.loadMusicsWithCallback(musics -> {
+                        CloudMusic.play(musics, 0);
+                    });
+                }
 
-            return true;
-        });
+                return true;
+            });
 
-        RoundedButtonWidget btnPlayRandomOrder = new RoundedButtonWidget("乱序播放歌单", FontManager.pf16);
-        this.addChild(btnPlayRandomOrder);
+            RoundedButtonWidget btnPlayRandomOrder = new RoundedButtonWidget("乱序播放歌单", FontManager.pf16);
+            this.addChild(btnPlayRandomOrder);
 
-        btnPlayRandomOrder.setBeforeRenderCallback(() -> {
-            btnPlayRandomOrder.setBounds(57, 17);
-            btnPlayRandomOrder.setPosition(cover.getRelativeX() + cover.getWidth() + 12 + btnPlay.getWidth() + 8, cover.getRelativeY() + cover.getHeight() - btnPlayRandomOrder.getHeight());
-            btnPlayRandomOrder.setRadius(3);
-            btnPlayRandomOrder.setColor(0xFFd60017);
-            btnPlayRandomOrder.setTextColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-        });
+            btnPlayRandomOrder.setBeforeRenderCallback(() -> {
+                btnPlayRandomOrder.setBounds(57, 17);
+                btnPlayRandomOrder.setPosition(cover.getRelativeX() + cover.getWidth() + 12 + btnPlay.getWidth() + 8, cover.getRelativeY() + cover.getHeight() - btnPlayRandomOrder.getHeight());
+                btnPlayRandomOrder.setRadius(3);
+                btnPlayRandomOrder.setColor(0xFFd60017);
+                btnPlayRandomOrder.setTextColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            });
 
-        btnPlayRandomOrder.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+            btnPlayRandomOrder.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
 
-            if (mouseButton == 0) {
-                playList.loadMusicsWithCallback(musics -> {
-                    ArrayList<Music> music = new ArrayList<>(musics);
-                    Collections.shuffle(music);
-                    CloudMusic.play(music, 0);
-                });
-            }
+                if (mouseButton == 0) {
+                    playList.loadMusicsWithCallback(musics -> {
+                        ArrayList<Music> music = new ArrayList<>(musics);
+                        Collections.shuffle(music);
+                        CloudMusic.play(music, 0);
+                    });
+                }
 
-            return true;
-        });
+                return true;
+            });
 
-        RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
-        this.addChild(creatorAvatar);
-        creatorAvatar.fadeIn();
-        creatorAvatar.setLinearFilter(true);
+            RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
+            this.addChild(creatorAvatar);
+            creatorAvatar.fadeIn();
+            creatorAvatar.setLinearFilter(true);
 
-        this.loadAvatar();
+            this.loadAvatar();
 
-        creatorAvatar.setBeforeRenderCallback(() -> {
-            creatorAvatar.setBounds(16, 16);
-            creatorAvatar.setPosition(cover.getRelativeX() + cover.getWidth() + 12, btnPlay.getRelativeY() - 6 - creatorAvatar.getHeight());
-            creatorAvatar.setRadius(7.25);
-        });
+            creatorAvatar.setBeforeRenderCallback(() -> {
+                creatorAvatar.setBounds(16, 16);
+                creatorAvatar.setPosition(cover.getRelativeX() + cover.getWidth() + 12, btnPlay.getRelativeY() - 6 - creatorAvatar.getHeight());
+                creatorAvatar.setRadius(7.25);
+            });
 
-        LabelWidget lblCreator = new LabelWidget(playList.getCreator().getName(), FontManager.pf16bold);
-        this.addChild(lblCreator);
+            LabelWidget lblCreator = new LabelWidget(playList.getCreator().getName(), FontManager.pf16bold);
+            this.addChild(lblCreator);
 
-        lblCreator.setBeforeRenderCallback(() -> {
-            lblCreator.setPosition(creatorAvatar.getRelativeX() + creatorAvatar.getWidth() + 4, creatorAvatar.getRelativeY() + creatorAvatar.getHeight() * .5 - lblCreator.getHeight() * .5);
-            lblCreator.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-        });
+            lblCreator.setBeforeRenderCallback(() -> {
+                lblCreator.setPosition(creatorAvatar.getRelativeX() + creatorAvatar.getWidth() + 4, creatorAvatar.getRelativeY() + creatorAvatar.getHeight() * .5 - lblCreator.getHeight() * .5);
+                lblCreator.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            });
 
-        LabelWidget lblPlaylistInfo = new LabelWidget(() -> this.getPlayListInfo(), FontManager.pf12);
-        this.addChild(lblPlaylistInfo);
+            LabelWidget lblPlaylistInfo = new LabelWidget(() -> this.getPlayListInfo(), FontManager.pf12);
+            this.addChild(lblPlaylistInfo);
 
-        lblPlaylistInfo.setBeforeRenderCallback(() -> {
-            lblPlaylistInfo.setPosition(cover.getRelativeX() + cover.getWidth() + 12, creatorAvatar.getRelativeY() - 8 - lblPlaylistInfo.getHeight());
-            lblPlaylistInfo.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
-        });
+            lblPlaylistInfo.setBeforeRenderCallback(() -> {
+                lblPlaylistInfo.setPosition(cover.getRelativeX() + cover.getWidth() + 12, creatorAvatar.getRelativeY() - 8 - lblPlaylistInfo.getHeight());
+                lblPlaylistInfo.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
+            });
 
-        LabelWidget lblPlaylistName = new LabelWidget(playList.getName(), FontManager.pf32);
-        this.addChild(lblPlaylistName);
+            LabelWidget lblPlaylistName = new LabelWidget(playList.getName(), FontManager.pf32);
+            this.addChild(lblPlaylistName);
 
-        lblPlaylistName.setBeforeRenderCallback(() -> {
-            lblPlaylistName.setPosition(cover.getRelativeX() + cover.getWidth() + 12, lblPlaylistInfo.getRelativeY() - 4 - lblPlaylistName.getHeight());
-            lblPlaylistName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-        });
+            lblPlaylistName.setBeforeRenderCallback(() -> {
+                lblPlaylistName.setPosition(cover.getRelativeX() + cover.getWidth() + 12, lblPlaylistInfo.getRelativeY() - 4 - lblPlaylistName.getHeight());
+                lblPlaylistName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            });
+
+            musicsContainerOffsetY = cover.getRelativeY() + cover.getHeight() + 24;
+        } else {
+            musicsContainerOffsetY = 20;
+        }
 
         Panel rwMusicsContainer = new Panel();
 
         this.addChild(rwMusicsContainer);
-//        rwMusicsContainer.setColor(-1);
 
         rwMusicsContainer.setBeforeRenderCallback(() -> {
-            rwMusicsContainer.setBounds(this.getWidth() - 36, this.getHeight() - (cover.getRelativeY() + cover.getHeight() + 24));
+            rwMusicsContainer.setBounds(this.getWidth() - 36, this.getHeight() - (musicsContainerOffsetY));
             rwMusicsContainer.centerHorizontally();
-            rwMusicsContainer.setPosition(rwMusicsContainer.getRelativeX(), cover.getRelativeY() + cover.getHeight() + 24);
+            rwMusicsContainer.setPosition(rwMusicsContainer.getRelativeX(), musicsContainerOffsetY);
         });
 
         ScrollPanel musicsPanel = new ScrollPanel();

@@ -21,6 +21,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         boolean onClick(double relativeX, double relativeY, int mouseButton);
     }
 
+    public interface OnKeyTypedCallback {
+        boolean onKeyTyped(char character, int keyCode);
+    }
+
     public interface BeforeRenderCallback {
         void setPositions();
     }
@@ -52,7 +56,8 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
     private Color color = Color.BLACK;
 
-    protected OnClickCallback callback = null;
+    protected OnClickCallback clickCallback = null;
+    private OnKeyTypedCallback keyTypedCallback = null;
     private Runnable transformations = null, onTick = null;
 
     // 组件的半透明度
@@ -220,6 +225,14 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return (SELF) this;
     }
 
+    public SELF expand(double expand) {
+        this.getBounds().x -= expand;
+        this.getBounds().y -= expand;
+        this.getBounds().width += expand * 2;
+        this.getBounds().height += expand * 2;
+        return (SELF) this;
+    }
+
     /**
      * 测试该组件有没有被鼠标指向
      * @param mouseX 鼠标 X 坐标
@@ -319,16 +332,45 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
      * @return 是否接收点击事件
      */
     public boolean onMouseClicked(double relativeX, double relativeY, int mouseButton) {
-        return this.callback != null && this.isClickable() && this.callback.onClick(relativeX, relativeY, mouseButton);
+        return this.clickCallback != null && this.isClickable() && this.clickCallback.onClick(relativeX, relativeY, mouseButton);
     }
 
-    public void onKeyTypedReceived(char typedChar, int keyCode) {
+    protected boolean iterateChildrenKeyType(List<AbstractWidget<?>> children, char typedChar, int keyCode) {
+        for (AbstractWidget<?> child : children) {
 
+            if (child.isHidden()) {
+                continue;
+            }
+
+            if (!child.getChildren().isEmpty()) {
+                if (this.iterateChildrenKeyType(child.getChildren(), typedChar, keyCode)) {
+                    return true;
+                }
+            }
+
+            if (child.onKeyTyped(typedChar, keyCode))
+                return true;
+        }
+
+        return false;
+    }
+
+    public boolean onKeyTypedReceived(char typedChar, int keyCode) {
         if (this.isHidden())
-            return;
+            return false;
 
-        this.children.forEach(c -> c.onKeyTyped(typedChar, keyCode));
-        this.onKeyTyped(typedChar, keyCode);
+        // 先检测子组件
+        // 如果子组件都没有响应点击事件, 则测试这个组件
+        boolean responded = this.iterateChildrenKeyType(this.getChildren(), typedChar, keyCode);
+        if (!responded) {
+            if (!this.isHidden()) {
+                return this.onKeyTyped(typedChar, keyCode);
+            }
+
+            return false;
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -336,8 +378,8 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
      * @param character 字符
      * @param keyCode 键码
      */
-    public void onKeyTyped(char character, int keyCode) {
-
+    public boolean onKeyTyped(char character, int keyCode) {
+        return this.keyTypedCallback != null && this.keyTypedCallback.onKeyTyped(character, keyCode);
     }
 
     // getters and setters
@@ -457,7 +499,12 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     public SELF setOnClickCallback(OnClickCallback callback) {
-        this.callback = callback;
+        this.clickCallback = callback;
+        return (SELF) this;
+    }
+
+    public SELF setOnKeyTypedCallback(OnKeyTypedCallback callback) {
+        this.keyTypedCallback = callback;
         return (SELF) this;
     }
 

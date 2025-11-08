@@ -15,6 +15,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+import tritium.rendering.Rect;
+import tritium.rendering.StencilClipManager;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.FontManager;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -25,105 +28,74 @@ import tritium.settings.ClientSettings;
 import tritium.utils.other.math.MathUtils;
 import tritium.utils.timing.Timer;
 
-
 import java.awt.*;
 
 public class TextField extends GuiTextField {
+    // 基础属性
     @Getter
     private final int textFieldNumber;
-    private final float yOffset = -1.5f;
+
     public float xPosition;
     public float yPosition;
-    /**
-     * The width of this text field.
-     */
     public float width;
     public float height;
-    public boolean dragging;
-    public int startChar;
-    public int endChar;
-    public MsTimer backspaceTime = new MsTimer();
+
+    // 文本内容
+    @Getter
+    private String text = "";
+    @Getter
+    private int maxStringLength = 128;
     @Setter
     public String placeholder = "";
     public boolean isPassword;
-    /**
-     * Has the current text being edited on the textbox.
-     * -- GETTER --
-     * Returns the contents of the textbox
-     */
-    @Getter
-    private String text = "";
-    /**
-     * -- GETTER --
-     * returns the maximum number of character that can be contained in this textbox
-     */
-    @Getter
-    private int maxStringLength = 128;
-    private int cursorCounter;
-    /**
-     * -- SETTER --
-     * enable drawing background and outline
-     */
-    @Setter
-    private boolean enableBackgroundDrawing = true;
-    @Setter
-    private boolean drawLineUnder = true;
-    /**
-     * if true the textbox can lose focus by clicking elsewhere on the screen
-     * -- SETTER --
-     * if true the textbox can lose focus by clicking elsewhere on the screen
-     */
-    @Setter
-    private boolean canLoseFocus = true;
-    /**
-     * If this value is true along with isEnabled, keyTyped will process the keys.
-     */
-    private boolean isFocused;
-    /**
-     * If this value is true along with isFocused, keyTyped will process the keys.
-     */
-    private boolean isEnabled = true;
-    /**
-     * The current character index that should be used as start of the rendered text.
-     */
-    private int lineScrollOffset;
-    private float offset;
-    private float lastOffset;
-    /**
-     * -- GETTER --
-     * returns the current position of the cursor
-     */
+
+    // 光标和选择
     @Getter
     private int cursorPosition;
-
-    /**
-     * other selection position, maybe the same as the cursor
-     * -- GETTER --
-     * the side of the selection that is not the cursor, may be the same as the cursor
-     */
     @Getter
     private int selectionEnd;
-    public int enabledColor = 14737632;
-    private int disabledColor = 7368816;
-    /**
-     * True if this textbox is visible
-     * -- SETTER --
-     * Sets whether or not this textbox is visible
-     */
+    private int lineScrollOffset;
+    private int cursorCounter;
+
+    // 拖拽选择相关
+    public boolean dragging;
+    private int dragStartChar;
+    private int dragEndChar;
+
+    // 滚动相关
+    private float scrollOffset;
+    private float lastScrollOffset;
+
+    @Setter
+    private boolean drawLineUnder = true;
+    @Setter
+    private boolean canLoseFocus = true;
+    private boolean isFocused;
+    private boolean isEnabled = true;
     @Setter
     private boolean visible = true;
-    private GuiPageButtonList.GuiResponder responder;
-    private Predicate<String> textPredicate = Predicates.alwaysTrue();
+
+    // 样式相关
+    public int enabledColor = 14737632;
+    private int disabledColor = 7368816;
     @Setter
     private float lineOffset;
-
-    private float howerAlpha;
-
-    private Color lineColor;
-
     @Setter
     private float wholeAlpha = 1;
     private float opacity;
+    private float hoverAlpha;
+    private Color lineColor;
+
+    // 字体
+    @Setter
+    private CFontRenderer fontRenderer = FontManager.pf18;
+
+    // 其他
+    private GuiPageButtonList.GuiResponder responder;
+    private Predicate<String> textPredicate = Predicates.alwaysTrue();
+    public MsTimer backspaceTime = new MsTimer();
+    private Timer imePositionUpdateTimer = new Timer();
+    private Timer cursorForceShowTimer = new Timer();
 
     public TextField(int number, float x, float y, int width, int height) {
         super(number, Minecraft.getMinecraft().fontRendererObj, (int) x, (int) y, width, height);
@@ -135,839 +107,691 @@ public class TextField extends GuiTextField {
         this.lineColor = new Color(160, 160, 160);
     }
 
-    public void func_175207_a(GuiPageButtonList.GuiResponder p_175207_1_) {
-        this.responder = p_175207_1_;
+    // ========== 文本操作 ==========
+
+    public void setText(String text) {
+        this.text = text;
+        setCursorPositionEnd();
     }
 
-    /**
-     * Increments the cursor counter
-     */
-    public void updateCursorCounter() {
-        ++this.cursorCounter;
-    }
-
-    /**
-     * Sets the text of the textbox
-     */
-    public void setText(String p_146180_1_) {
-        this.text = p_146180_1_;
-        this.setCursorPositionEnd();
-    }
-
-    /**
-     * returns the text between the cursor and selectionEnd
-     */
     public String getSelectedText() {
-        int var1 = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int var2 = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
-        return this.text.substring(var1, var2);
+        int start = Math.min(cursorPosition, selectionEnd);
+        int end = Math.max(cursorPosition, selectionEnd);
+        return text.substring(start, end);
     }
 
-    public void setPredicate(Predicate<String> p_175205_1_) {
-        this.textPredicate = p_175205_1_;
-    }
+    public void writeText(String input) {
+        String filtered = ChatAllowedCharacters.filterAllowedCharacters(input);
+        int selStart = Math.min(cursorPosition, selectionEnd);
+        int selEnd = Math.max(cursorPosition, selectionEnd);
+        int availableSpace = maxStringLength - text.length() - (selEnd - selStart);
 
-    /**
-     * replaces selected text, or inserts text at the position on the cursor
-     */
-    public void writeText(String p_146191_1_) {
-        String text = "";
-        String filter = ChatAllowedCharacters.filterAllowedCharacters(p_146191_1_);
-        int start = this.cursorPosition < this.selectionEnd ? this.cursorPosition : this.selectionEnd;
-        int end = this.cursorPosition < this.selectionEnd ? this.selectionEnd : this.cursorPosition;
-        int var6 = this.maxStringLength - this.text.length() - (start - end);
+        StringBuilder newText = new StringBuilder();
 
-        if (!this.text.isEmpty()) {
-            text = text + this.text.substring(0, start);
+        // 添加光标前的文本
+        if (!text.isEmpty()) {
+            newText.append(text, 0, selStart);
         }
 
-        int var8;
+        // 添加新输入的文本
+        int charsToAdd = Math.min(availableSpace, filtered.length());
+        newText.append(filtered, 0, charsToAdd);
 
-        if (var6 < filter.length()) {
-            text = text + filter.substring(0, var6);
-            var8 = var6;
-        } else {
-            text = text + filter;
-            var8 = filter.length();
+        // 添加光标后的文本
+        if (!text.isEmpty() && selEnd < text.length()) {
+            newText.append(text.substring(selEnd));
         }
 
-        if (!this.text.isEmpty() && end < this.text.length()) {
-            text = text + this.text.substring(end);
-        }
+        String result = newText.toString();
+        if (textPredicate.apply(result)) {
+            text = result;
+            moveCursorBy(selStart - selectionEnd + charsToAdd);
 
-        if (this.textPredicate.apply(text)) {
-            this.text = text;
-            this.moveCursorBy(start - this.selectionEnd + var8/* - 1*/);
-
-            if (this.responder != null) {
-                this.responder.func_175319_a(this.textFieldNumber, this.text);
+            if (responder != null) {
+                responder.func_175319_a(textFieldNumber, text);
             }
         }
     }
 
-    /**
-     * Deletes the specified number of words starting at the cursor position. Negative numbers will delete words left of
-     * the cursor.
-     */
-    public void deleteWords(int p_146177_1_) {
-        if (!this.text.isEmpty()) {
-            if (this.selectionEnd != this.cursorPosition) {
-                this.writeText("");
+    public void deleteFromCursor(int count) {
+        if (text.isEmpty()) {
+            return;
+        }
+
+        if (selectionEnd != cursorPosition) {
+            writeText("");
+            return;
+        }
+
+        boolean deleteBefore = count < 0;
+        int deleteStart = deleteBefore ? cursorPosition + count : cursorPosition;
+        int deleteEnd = deleteBefore ? cursorPosition : cursorPosition + count;
+
+        StringBuilder newText = new StringBuilder();
+        if (deleteStart >= 0) {
+            newText.append(text, 0, deleteStart);
+        }
+        if (deleteEnd < text.length()) {
+            newText.append(text.substring(deleteEnd));
+        }
+
+        text = newText.toString();
+
+        if (deleteBefore) {
+            moveCursorBy(count);
+        }
+
+        if (responder != null) {
+            responder.func_175319_a(textFieldNumber, text);
+        }
+    }
+
+    public void deleteWords(int count) {
+        if (!text.isEmpty()) {
+            if (selectionEnd != cursorPosition) {
+                writeText("");
             } else {
-                this.deleteFromCursor(this.getNthWordFromCursor(p_146177_1_) - this.cursorPosition);
+                deleteFromCursor(getNthWordFromCursor(count) - cursorPosition);
             }
         }
     }
 
-    /**
-     * delete the selected text, otherwsie deletes characters from either side of the cursor. params: delete num
-     */
-    public void deleteFromCursor(int p_146175_1_) {
-        if (!this.text.isEmpty()) {
-            if (this.selectionEnd != this.cursorPosition) {
-                this.writeText("");
-            } else {
-                boolean var2 = p_146175_1_ < 0;
-                int var3 = var2 ? this.cursorPosition + p_146175_1_ : this.cursorPosition;
-                int var4 = var2 ? this.cursorPosition : this.cursorPosition + p_146175_1_;
-                String var5 = "";
+    // ========== 光标操作 ==========
 
-                if (var3 >= 0) {
-                    var5 = this.text.substring(0, var3);
-                }
-
-                if (var4 < this.text.length()) {
-                    var5 = var5 + this.text.substring(var4);
-                }
-
-                this.text = var5;
-
-                if (var2) {
-                    this.moveCursorBy(p_146175_1_);
-                }
-
-                if (this.responder != null) {
-                    this.responder.func_175319_a(this.textFieldNumber, this.text);
-                }
-            }
-        }
+    public void setCursorPosition(int position) {
+        cursorPosition = MathHelper.clamp_int(position, 0, text.length());
+        dragStartChar = cursorPosition;
+        dragEndChar = cursorPosition;
+        setSelectionPos(cursorPosition);
+        cursorForceShowTimer.reset();
     }
 
-    /**
-     * see @getNthNextWordFromPos() params: N, position
-     */
-    public int getNthWordFromCursor(int p_146187_1_) {
-        return this.getNthWordFromPos(p_146187_1_, this.getCursorPosition());
-    }
-
-    /**
-     * gets the position of the nth word. N may be negative, then it looks backwards. params: N, position
-     */
-    public int getNthWordFromPos(int p_146183_1_, int p_146183_2_) {
-        return this.func_146197_a(p_146183_1_, p_146183_2_, true);
-    }
-
-    public int func_146197_a(int p_146197_1_, int p_146197_2_, boolean p_146197_3_) {
-        int var4 = p_146197_2_;
-        boolean var5 = p_146197_1_ < 0;
-        int var6 = Math.abs(p_146197_1_);
-
-        for (int var7 = 0; var7 < var6; ++var7) {
-            if (var5) {
-                while (p_146197_3_ && var4 > 0 && this.text.charAt(var4 - 1) == 32) {
-                    --var4;
-                }
-
-                while (var4 > 0 && this.text.charAt(var4 - 1) != 32) {
-                    --var4;
-                }
-            } else {
-                int var8 = this.text.length();
-                var4 = this.text.indexOf(32, var4);
-
-                if (var4 == -1) {
-                    var4 = var8;
-                } else {
-                    while (p_146197_3_ && var4 < var8 && this.text.charAt(var4) == 32) {
-                        ++var4;
-                    }
-                }
-            }
-        }
-
-        return var4;
-    }
-
-    /**
-     * Moves the text cursor by a specified number of characters and clears the selection
-     */
-    public void moveCursorBy(int by) {
-        this.setCursorPosition(this.selectionEnd + by);
-    }
-
-    /**
-     * sets the cursors position to the beginning
-     */
     public void setCursorPositionZero() {
-        this.setCursorPosition(0);
+        setCursorPosition(0);
     }
 
-    /**
-     * sets the cursors position to after the text
-     */
     public void setCursorPositionEnd() {
-        this.setCursorPosition(this.text.length());
-        startChar = 0;
-        endChar = text.length();
+        setCursorPosition(text.length());
+        dragStartChar = 0;
+        dragEndChar = text.length();
+        cursorForceShowTimer.reset();
     }
 
-    /**
-     * Call this method from your GuiScreen to process the keys into the textbox
-     */
-    public boolean textboxKeyTyped(char typedChar, int keyCode) {
-        if (!this.isFocused) {
-            return false;
-        } else if (GuiScreen.isKeyComboCtrlA(keyCode)) {
-            this.setCursorPositionEnd();
-            this.setSelectionPos(0);
-            return true;
-        } else if (GuiScreen.isKeyComboCtrlC(keyCode)) {
-            GuiScreen.setClipboardString(this.getSelectedText());
-            return true;
-        } else if (GuiScreen.isKeyComboCtrlV(keyCode)) {
-            if (this.isEnabled) {
-                this.writeText(GuiScreen.getClipboardString());
-            }
+    public void moveCursorBy(int offset) {
+        setCursorPosition(selectionEnd + offset);
+    }
 
-            return true;
-        } else if (GuiScreen.isKeyComboCtrlX(keyCode)) {
-            GuiScreen.setClipboardString(this.getSelectedText());
+    public void setSelectionPos(int position) {
+        int clampedPos = MathHelper.clamp_int(position, 0, text.length());
+        selectionEnd = clampedPos;
 
-            if (this.isEnabled) {
-                this.writeText("");
-            }
+        // 调整滚动偏移
+        if (lineScrollOffset > text.length()) {
+            lineScrollOffset = text.length();
+        }
 
-            return true;
-        } else {
-            switch (keyCode) {
-                case Keyboard.KEY_BACK:
-                    if (GuiScreen.isCtrlKeyDown()) {
-                        if (this.isEnabled) {
-                            this.deleteWords(-1);
-                        }
-                    } else if (this.isEnabled) {
-                        this.deleteFromCursor(-1);
-                    }
+        float visibleWidth = getWidth();
+        String visibleText = String.join("\n", getFontRenderer().fitWidth(
+                text.substring(lineScrollOffset), visibleWidth));
+        int visibleEndPos = visibleText.length() + lineScrollOffset;
 
-                    return true;
+        if (clampedPos == lineScrollOffset) {
+            lineScrollOffset -= String.join("\n", getFontRenderer().fitWidth(
+                    text, (int) visibleWidth)).length();
+        }
 
-                case Keyboard.KEY_HOME:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        this.setSelectionPos(0);
-                    } else {
-                        this.setCursorPositionZero();
-                    }
+        if (clampedPos > visibleEndPos) {
+            lineScrollOffset += (clampedPos - visibleEndPos);
+        } else if (clampedPos <= lineScrollOffset) {
+            lineScrollOffset -= (lineScrollOffset - clampedPos);
+        }
 
-                    return true;
+        lineScrollOffset = MathHelper.clamp_int(lineScrollOffset, 0, text.length());
+    }
 
-                case Keyboard.KEY_LEFT:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        if (GuiScreen.isCtrlKeyDown()) {
-                            this.setSelectionPos(this.getNthWordFromPos(-1, this.getSelectionEnd()));
-                        } else {
-//                            System.out.println("this.getSelectionEnd() = " + this.getSelectionEnd());
-                            this.setSelectionPos(this.getSelectionEnd() - 1);
-//                            if (this.startChar == this.endChar) {
-//
-//                            }
-                            if (this.startChar > 0)
-                                this.startChar -= 1;
-                        }
-                    } else if (GuiScreen.isCtrlKeyDown()) {
-                        this.setCursorPosition(this.getNthWordFromCursor(-1));
-                    } else {
-                        this.moveCursorBy(-1);
-                    }
+    public void updateCursorCounter() {
+        cursorCounter++;
+    }
 
-                    return true;
+    // ========== 单词导航 ==========
 
-                case Keyboard.KEY_RIGHT:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        if (GuiScreen.isCtrlKeyDown()) {
-                            this.setSelectionPos(this.getNthWordFromPos(1, this.getSelectionEnd()));
-                        } else {
-                            this.setSelectionPos(this.getSelectionEnd() + 1);
+    public int getNthWordFromCursor(int n) {
+        return getNthWordFromPos(n, cursorPosition);
+    }
 
-                            if (this.startChar > 0)
-                                this.startChar += 1;
-                        }
-                    } else if (GuiScreen.isCtrlKeyDown()) {
-                        this.setCursorPosition(this.getNthWordFromCursor(1));
-                    } else {
-                        this.moveCursorBy(1);
-                    }
+    public int getNthWordFromPos(int n, int position) {
+        return findWordBoundary(n, position, true);
+    }
 
-                    return true;
+    private int findWordBoundary(int wordCount, int position, boolean skipSpaces) {
+        int currentPos = position;
+        boolean searchBackward = wordCount < 0;
+        int absWordCount = Math.abs(wordCount);
 
-                case Keyboard.KEY_END:
-                    if (GuiScreen.isShiftKeyDown()) {
-                        this.setSelectionPos(this.text.length());
-                    } else {
-                        this.setCursorPositionEnd();
-                    }
+        for (int i = 0; i < absWordCount; i++) {
+            if (searchBackward) {
+                // 向后搜索
+                while (skipSpaces && currentPos > 0 && text.charAt(currentPos - 1) == ' ') {
+                    currentPos--;
+                }
+                while (currentPos > 0 && text.charAt(currentPos - 1) != ' ') {
+                    currentPos--;
+                }
+            } else {
+                // 向前搜索
+                int textLength = text.length();
+                currentPos = text.indexOf(' ', currentPos);
 
-                    return true;
-
-                case Keyboard.KEY_DELETE:
-                    if (GuiScreen.isCtrlKeyDown()) {
-                        if (this.isEnabled) {
-                            this.deleteWords(1);
-                        }
-                    } else if (this.isEnabled) {
-                        this.deleteFromCursor(1);
-                    }
-
-                    return true;
-
-                default: {
-
-                    if (ChatAllowedCharacters.isAllowedCharacter(typedChar)) {
-                        if (this.isEnabled) {
-                            this.writeText(Character.toString(typedChar));
-                        }
-
-                        return true;
-                    } else {
-                        return false;
+                if (currentPos == -1) {
+                    currentPos = textLength;
+                } else {
+                    while (skipSpaces && currentPos < textLength && text.charAt(currentPos) == ' ') {
+                        currentPos++;
                     }
                 }
             }
         }
+
+        return currentPos;
     }
+
+    // ========== 键盘输入处理 ==========
+
+    public boolean textboxKeyTyped(char typedChar, int keyCode) {
+        if (!isFocused) {
+            return false;
+        }
+
+        // Ctrl组合键处理
+        if (GuiScreen.isKeyComboCtrlA(keyCode)) {
+            setCursorPositionEnd();
+            setSelectionPos(0);
+            return true;
+        }
+        if (GuiScreen.isKeyComboCtrlC(keyCode)) {
+            GuiScreen.setClipboardString(getSelectedText());
+            return true;
+        }
+        if (GuiScreen.isKeyComboCtrlV(keyCode)) {
+            if (isEnabled) {
+                writeText(GuiScreen.getClipboardString());
+            }
+            return true;
+        }
+        if (GuiScreen.isKeyComboCtrlX(keyCode)) {
+            GuiScreen.setClipboardString(getSelectedText());
+            if (isEnabled) {
+                writeText("");
+            }
+            return true;
+        }
+
+        // 特殊键处理
+        switch (keyCode) {
+            case Keyboard.KEY_BACK:
+                if (isEnabled) {
+                    if (GuiScreen.isCtrlKeyDown()) {
+                        deleteWords(-1);
+                    } else {
+                        deleteFromCursor(-1);
+                    }
+                }
+                return true;
+
+            case Keyboard.KEY_DELETE:
+                if (isEnabled) {
+                    if (GuiScreen.isCtrlKeyDown()) {
+                        deleteWords(1);
+                    } else {
+                        deleteFromCursor(1);
+                    }
+                }
+                return true;
+
+            case Keyboard.KEY_HOME:
+                if (GuiScreen.isShiftKeyDown()) {
+                    setSelectionPos(0);
+                } else {
+                    setCursorPositionZero();
+                }
+                return true;
+
+            case Keyboard.KEY_END:
+                if (GuiScreen.isShiftKeyDown()) {
+                    setSelectionPos(text.length());
+                } else {
+                    setCursorPositionEnd();
+                }
+                return true;
+
+            case Keyboard.KEY_LEFT:
+                handleLeftKey();
+                return true;
+
+            case Keyboard.KEY_RIGHT:
+                handleRightKey();
+                return true;
+
+            default:
+                if (ChatAllowedCharacters.isAllowedCharacter(typedChar)) {
+                    if (isEnabled) {
+                        writeText(Character.toString(typedChar));
+                    }
+                    return true;
+                }
+                return false;
+        }
+    }
+
+    private void handleLeftKey() {
+        if (GuiScreen.isShiftKeyDown()) {
+            if (GuiScreen.isCtrlKeyDown()) {
+                setSelectionPos(getNthWordFromPos(-1, selectionEnd));
+            } else {
+                int newPos = Math.max(0, selectionEnd - 1);
+                setSelectionPos(newPos);
+                if (dragStartChar > 0) {
+                    cursorForceShowTimer.reset();
+                    dragStartChar--;
+                }
+            }
+        } else {
+            if (GuiScreen.isCtrlKeyDown()) {
+                setCursorPosition(getNthWordFromCursor(-1));
+            } else {
+                moveCursorBy(-1);
+            }
+        }
+    }
+
+    private void handleRightKey() {
+        if (GuiScreen.isShiftKeyDown()) {
+            if (GuiScreen.isCtrlKeyDown()) {
+                setSelectionPos(getNthWordFromPos(1, selectionEnd));
+            } else {
+                int newPos = Math.min(text.length(), selectionEnd + 1);
+                setSelectionPos(newPos);
+                if (dragStartChar < text.length()) {
+                    cursorForceShowTimer.reset();
+                    dragStartChar++;
+                }
+            }
+        } else {
+            if (GuiScreen.isCtrlKeyDown()) {
+                setCursorPosition(getNthWordFromCursor(1));
+            } else {
+                moveCursorBy(1);
+            }
+        }
+    }
+
+    // ========== 鼠标交互 ==========
+
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        boolean isHovered = RenderSystem.isHovered(mouseX, mouseY, xPosition, yPosition, width, height);
+
+        if (canLoseFocus) {
+            if (!isHovered) {
+                dragging = false;
+                lineScrollOffset = 0;
+            }
+            setFocused(isHovered);
+        }
+
+        if (isFocused && isHovered && mouseButton == 0) {
+            startDragging(mouseX);
+            return true;
+        }
+
+        return canLoseFocus;
+    }
+
+    private void startDragging(double mouseX) {
+        float relativeX = (float) (mouseX - xPosition);
+
+        if (!text.isEmpty() && !dragging) {
+            String displayText = getDisplayText();
+            float charWidth = (float) getFontRenderer().getStringWidthD(displayText) / text.length();
+            cursorForceShowTimer.reset();
+            dragStartChar = (int) (relativeX / charWidth);
+            dragStartChar = MathHelper.clamp_int(dragStartChar, 0, text.length());
+            setCursorPosition(dragStartChar);
+        }
+
+        dragging = true;
+    }
+
+    private void updateDragging(int mouseX) {
+        if (!isFocused || !dragging || text.isEmpty()) {
+            return;
+        }
+
+        float relativeX = mouseX - xPosition;
+
+        float charWidth = (float) getFontRenderer().getStringWidthD(text) / text.length();
+        dragEndChar = (int) (relativeX / charWidth);
+        dragEndChar = MathHelper.clamp_int(dragEndChar, 0, text.length());
+        setSelectionPos(dragEndChar);
+    }
+
+    // ========== 渲染 ==========
 
     public void onTick() {
-        lastOffset = offset;
-        String missing = this.text.substring(0, this.lineScrollOffset);
-        offset += (float) ((((getFontRenderer().getStringWidth(missing)) - offset) / (2)) + 0.01);
+        // 更新滚动动画
+        lastScrollOffset = scrollOffset;
+        if (lineScrollOffset > 0) {
+            String hiddenText = text.substring(0, lineScrollOffset);
+            float targetOffset = (float) getFontRenderer().getStringWidthD(hiddenText);
+            scrollOffset += (targetOffset - scrollOffset) / 2f + 0.01f;
+        } else {
+            scrollOffset = 0;
+        }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_BACK) && isFocused()) {
-            if (!this.getText().isEmpty() && backspaceTime.sleep(500, false))
-                this.setText(this.getText().substring(0, this.getText().length() - 1));
+        // 处理长按退格
+        if (Keyboard.isKeyDown(Keyboard.KEY_BACK) && isFocused) {
+            if (!text.isEmpty() && backspaceTime.sleep(500, false)) {
+                setText(text.substring(0, text.length() - 1));
+            }
         } else {
             backspaceTime.reset();
         }
     }
 
-    public void mouseReleased(double mouseX, double mouseY, int mouseButton) {
-        dragging = false;
-    }
-
-    /**
-     * Args: x, y, buttonClicked
-     */
-    public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        boolean isHovered = mouseX >= this.xPosition && mouseX < this.xPosition + this.width && mouseY >= this.yPosition && mouseY < this.yPosition + this.height;
-
-        if (this.canLoseFocus) {
-            if (!isHovered) {
-                dragging = false;
-                lineScrollOffset = 0;
-            }
-            this.setFocused(isHovered);
-        }
-
-        if (this.isFocused && isHovered && mouseButton == 0) {
-            float var5 = (float) (mouseX - this.xPosition);
-
-            if (this.enableBackgroundDrawing) {
-                var5 += isPassword ? 1 : 4;
-            }
-            String var6 = text;
-            if (!dragging) {
-                if (!var6.isEmpty()) {
-                    if (isPassword) {
-                        StringBuilder tmp = new StringBuilder();
-                        for (int i = 0; i < var6.length(); i++) {
-                            tmp.append("*");
-                        }
-
-                        var6 = tmp.toString();
-                    }
-                    this.startChar = (int) (var5 / ((float) getFontRenderer().getStringWidth(var6) / this.text.length()));
-                    this.setCursorPosition(startChar);
-                }
-                dragging = true;
-            }
-        }
-    }
-
-    public int applyAlpha(int color, float alpha) {
-        float f = (color >> 24 & 0xFF) * 0.003921568627451F;
-        Color c = new Color(color);
-        Color c2 = new Color(c.getRed() * 0.003921568627451F, c.getGreen() * 0.003921568627451F, c.getBlue() * 0.003921568627451F, (f) * alpha);
-        return c2.getRGB();
-    }
-
     public void drawTextBox(int mouseX, int mouseY) {
-        this.drawTextBox(mouseX, mouseY, false);
+        drawTextBox(mouseX, mouseY, false);
     }
 
-    /**
-     * Draws the textbox
-     */
     public void drawTextBox(int mouseX, int mouseY, boolean useScissor) {
-        if (this.getVisible()) {
+        if (!visible) {
+            return;
+        }
 
-            this.wholeAlpha = MathUtils.clamp(wholeAlpha, 0, 1);
-            opacity = Interpolations.interpBezier(opacity, 1.0f, 0.05f) * wholeAlpha;
+        // 更新透明度动画
+        wholeAlpha = MathUtils.clamp(wholeAlpha, 0, 1);
+        opacity = Interpolations.interpBezier(opacity, 1.0f, 0.05f) * wholeAlpha;
 
-            double offse = 0;
+        // 计算文本滚动偏移
+        double textScrollOffset = calculateTextScrollOffset();
 
-            if (getFontRenderer().getStringWidth(text) > width) {
-                int sW = getFontRenderer().getStringWidth(text.substring(0, Math.min(text.length() - 1, Math.max(cursorPosition, selectionEnd) + 1)));
-                if (sW > width) {
-                    offse = sW - width;
-                }
-            }
+        // 更新样式
+        boolean isHovered = RenderSystem.isHovered(mouseX, mouseY, xPosition, yPosition, width, height);
+        updateStyles(isHovered, mouseX, mouseY);
 
-            float realOpacity = wholeAlpha;
+        // 绘制下划线
+        if (drawLineUnder) {
+            RenderSystem.drawRect(
+                    xPosition, yPosition + height + lineOffset,
+                    xPosition + width, yPosition + height + 0.5f + lineOffset,
+                    RenderSystem.reAlpha(lineColor.getRGB(), wholeAlpha)
+            );
+        }
 
-            lineColor = Interpolations.getColorAnimationState(lineColor, (RenderSystem.isHovered(mouseX, mouseY, this.xPosition, this.yPosition, this.width, this.height) || isFocused) ? new Color(255, 133, 155) : new Color(180, 180, 180), 100f);
-            howerAlpha = Interpolations.interpLinear(howerAlpha, (RenderSystem.isHovered(mouseX, mouseY, this.xPosition, this.yPosition, this.width, this.height) || isFocused) ? 0.4f : 0.3f, 0.1f) * wholeAlpha;
+        // 处理拖拽
+        if (dragging && !Mouse.isButtonDown(0)) {
+            dragging = false;
+        }
+        if (dragging) {
+            updateDragging(mouseX);
+        }
 
-            if (this.getEnableBackgroundDrawing()) {
-                GlStateManager.disableBlend();
+        // 设置裁剪区域
+        setupClipping(useScissor);
 
-                GlStateManager.enableBlend();
-                if (drawLineUnder)
-                    RenderSystem.drawRect(this.xPosition - 1, this.yPosition + this.height + lineOffset, this.xPosition + this.width + 1, this.yPosition + this.height + 0.5 + lineOffset, RenderSystem.reAlpha(lineColor.getRGB(), wholeAlpha));
-            }
+        // 绘制文本和光标
+        renderTextContent(textScrollOffset, isHovered);
 
-            if (this.isFocused && dragging) {
-                float mouseXRelative = (mouseX - this.xPosition);
+        // 清理裁剪
+        cleanupClipping(useScissor);
 
-                if (this.enableBackgroundDrawing) {
-                    mouseXRelative += isPassword ? 1 : 4;
-                }
-
-                if (!this.text.isEmpty()) {
-                    endChar = (int) (mouseXRelative / ((float) getFontRenderer().getStringWidth(this.text) / this.text.length()));
-                    if (endChar > this.text.length()) endChar = this.text.length();
-                    if (endChar < 0) endChar = 0;
-                    this.setSelectionPos(endChar);
-                }
-            }
-
-            int positionDiff = this.cursorPosition - this.lineScrollOffset;
-            int positionEndDiff = this.selectionEnd - this.lineScrollOffset;
-
-            String text = this.text;
-            if (isPassword) {
-                StringBuilder tmp = new StringBuilder();
-                for (int i = 0; i < text.length(); i++) {
-                    tmp.append("*");
-                }
-                text = tmp.toString();
-            }
-
-            boolean var5 = positionDiff >= 0 && positionDiff <= text.length();
-            boolean var6 = this.isFocused && this.cursorCounter / 6 % 2 == 0 && var5;
-            float var7 = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
-            float var8 = this.enableBackgroundDrawing ? this.yPosition + (this.height - 4) / 2 : this.yPosition;
-
-            if (positionEndDiff > text.length()) {
-                positionEndDiff = text.length();
-            }
-
-            float offsetY = 2f;
-
-            boolean erase = Stencil.isErasing;
-
-
-            if (!useScissor) {
-
-                if (!erase) {
-                    Stencil.write();
-                    RenderSystem.drawRect(xPosition - 1, yPosition, xPosition + this.width + 1, yPosition + this.height - 1, applyAlpha(-1, wholeAlpha));
-                    Stencil.erase();
-                }
-            } else {
-                RenderSystem.doScissor((int) (xPosition - 1), (int) yPosition, (int) (this.width + 1), (int) (this.height - 1));
-            }
-
-            if (this.getText().isEmpty() && !placeholder.isEmpty() && !this.isFocused) {
-                getFontRenderer().drawString(placeholder, var7 - 3.5f, var8 - offsetY + yOffset, applyAlpha(enabledColor, howerAlpha));
-            }
-
-            boolean var13 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
-
-            boolean highlighting = false;
-            if (positionEndDiff != positionDiff) {
-                GlStateManager.color(1, 1, 1, 1);
-
-                int lowestChar = Math.min(startChar, endChar);
-                int highestChar = Math.max(startChar, endChar);
-
-                if (startChar != endChar) {
-                    highlighting = true;
-                }
-
-                if (lowestChar > text.length()) lowestChar = text.length();
-                if (lowestChar < 0) lowestChar = 0;
-                if (highestChar > text.length()) highestChar = text.length();
-                if (highestChar < 0) highestChar = 0;
-
-
-                RenderSystem.drawRect(4 + xPosition + getFontRenderer().getStringWidth(text.substring(0, lowestChar)) - offse - 4f, yPosition - 1, 4 + xPosition + getFontRenderer().getStringWidth(text.substring(0, lowestChar)) - offse + getFontRenderer().getStringWidth(text.substring(lowestChar, highestChar)) - 3f, yPosition + height - 1.5f, applyAlpha(new Color(196, 225, 245).getRGB(), realOpacity));
-                GlStateManager.color(1, 1, 1, 1);
-            }
-
-            //DRAW OVERLAY STRING
-            if (!text.isEmpty()) {
-                getFontRenderer().drawString(text, var7 - offse - 3.5f, var8 - offsetY + yOffset, this.isFocused() ? enabledColor : disabledColor);
-            }
-            if (var6) {
-                if (var13) {
-
-                    String sub = "";
-                    int alpha = (int) Math.min(255, ((System.currentTimeMillis() / 3 % 255) > 255 / 2 ? (Math.abs(Math.abs(System.currentTimeMillis() / 3) % 255 - 255)) : System.currentTimeMillis() / 3 % 255) * 2);
-
-                    if (startChar > 0)
-                        sub = text.substring(0, (startChar));
-                    if (!highlighting) {
-
-                        if (startChar > endChar)
-                            RenderSystem.drawRect(xPosition + getFontRenderer().getStringWidth(sub) + 3.5f - offse - 3.5f, var8 - 5, xPosition + getFontRenderer().getStringWidth(sub) + 0.5f + 3.5f - offse - 3.5f, var8 + 1 + getFontRenderer().getHeight() - 2, alpha > 255 / 2f ? 0xffcdcbcd : 0xff000000);
-                        else
-                            RenderSystem.drawRect(xPosition + getFontRenderer().getStringWidth(sub) + 4.0f - offse - 3.5f, var8 - 5, xPosition + getFontRenderer().getStringWidth(sub) + 4.5f - offse - 3.5f, var8 + 1 + getFontRenderer().getHeight() - 2, alpha > 255 / 2f ? 0xffcdcbcd : 0xff000000);
-
-                    }
-                } else {
-                    GlStateManager.color(1, 1, 1, 1);
-                    float alpha = (float) (MathUtils.clamp(80 + (Math.sin(System.nanoTime() * 0.000000009f) * 0.5f + 0.5f) * (255 - 80), 0, 255) * 0.003921568627451F) * wholeAlpha;
-                    if (!highlighting) {
-                        RenderSystem.drawRect(xPosition + getFontRenderer().getStringWidth(text) + 4.5f - offse - 3f, var8 - 7, xPosition + getFontRenderer().getStringWidth(text) + 0.5f + 4.5f - offse - 4f, var8 + getFontRenderer().getHeight() - 3, RenderSystem.hexColor(80, 80, 80, (int) (alpha * 255)));
-                    }
-                    if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
-                        if (updInputCTXPositionTimer.isDelayed(100)) {
-                            updInputCTXPositionTimer.reset();
-                            PreEditRect rect = new PreEditRect();
-                            double v = (ClientSettings.FIXED_SCALE.getValue() ? 1 : RenderSystem.getScaleFactor()) * 2;
-                            rect.setX((int) ((xPosition + getFontRenderer().getStringWidth(text) + 4.5f - offse - 3f) * v));
-                            rect.setY((int) ((var8 + getFontRenderer().getHeight() - 3) * v));
-                            IngameIMERenderer.InputCtx.setPreEditRect(rect);
-                        }
-                    }
-                    GlStateManager.color(1, 1, 1, 1);
-                }
-            }
-
-            if (!useScissor) {
-                if (!erase) {
-                    Stencil.dispose();
-                }
-            } else {
-                RenderSystem.endScissor();
-            }
-            if (this.isFocused() && IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
-                IngameIMERenderer.draw(xPosition, yPosition, false);
+        // 绘制IME
+        if (isFocused && IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
+            IngameIMERenderer.draw(xPosition, yPosition, false);
         }
     }
 
-    public void drawPasswordBox(int mouseX, int mouseY) {
-        if (this.getVisible()) {
-            float offse = offset * Minecraft.getMinecraft().timer.elapsedPartialTicks + (lastOffset * (1.0f - Minecraft.getMinecraft().timer.elapsedPartialTicks));
-
-            if (this.getEnableBackgroundDrawing()) {
-                GlStateManager.disableBlend();
-
-
-                GlStateManager.enableBlend();
-                RenderSystem.drawRect(this.xPosition - 1, this.yPosition + this.height, this.xPosition + this.width + 1, this.yPosition + this.height + 1, isFocused ? 0xffcac9ca : 0xffe5e4e5);
+    private double calculateTextScrollOffset() {
+        double offset = 0;
+        double width = getFontRenderer().getStringWidthD(text);
+        if (width > this.width) {
+            int visibleEndPos = Math.min(text.length(), Math.max(cursorPosition, selectionEnd));
+            double visibleWidth = getFontRenderer().getStringWidthD(text.substring(0, visibleEndPos));
+            if (visibleWidth > this.width) {
+                offset = visibleWidth - this.width;
             }
+        }
+        return offset;
+    }
 
-            if (dragging && mouseX >= xPosition + width) {
-                this.setSelectionPos(this.getSelectionEnd() + 1);
-            }
+    private void updateStyles(boolean isHovered, int mouseX, int mouseY) {
+        // 失焦检测
+        if (isFocused && !dragging && !isHovered && Mouse.isButtonDown(0)) {
+            setFocused(false);
+        }
 
-            if (this.isFocused && dragging) {
-                int xDiff = (int) (mouseX - this.xPosition);
+        // 线条颜色动画
+        Color targetColor = (isHovered || isFocused) ?
+                new Color(255, 133, 155) : new Color(180, 180, 180);
+        lineColor = Interpolations.getColorAnimationState(lineColor, targetColor, 100f);
 
-                if (this.enableBackgroundDrawing) {
-                    xDiff += 1;
-                }
+        // 悬停透明度动画
+        float targetAlpha = (isHovered || isFocused) ? 0.4f : 0.3f;
+        hoverAlpha = Interpolations.interpLinear(hoverAlpha, targetAlpha, 0.1f) * wholeAlpha;
+    }
 
-                if (!this.text.isEmpty()) {
-                    endChar = xDiff / (getFontRenderer().getStringWidth(this.text) / this.text.length());
-                    if (endChar > this.text.length()) endChar = this.text.length();
-                    if (endChar < 0) endChar = 0;
-                    this.setSelectionPos(endChar);
-                }
-            }
-
-            int var1 = this.isEnabled ? Minecraft.getMinecraft().currentScreen instanceof GuiChat ? 0xffffffff : isFocused ? 0xff000000 : 0xff828182 : Minecraft.getMinecraft().currentScreen instanceof GuiChat ? 0xfffffffe : 0xff000001;
-            int selectionStart = this.cursorPosition - this.lineScrollOffset;
-            int selectionEnd = this.selectionEnd - this.lineScrollOffset;
-
-
-            //this.fontRendererInstance.trimStringToWidth(this.text.substring(this.lineScrollOffset), this.getStringWidth(), false, true);
-            boolean isSelectionValid = selectionStart >= 0 && selectionStart <= text.length();
-            boolean var6 = this.isFocused && this.cursorCounter / 6 % 2 == 0 && isSelectionValid;
-            float var7 = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
-            float var8 = this.enableBackgroundDrawing ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
-
-            if (selectionEnd > text.length()) {
-                selectionEnd = text.length();
-            }
-
-
-            Stencil.write();
-            RenderSystem.drawRect(xPosition - 1, yPosition, xPosition + this.width + 1, yPosition + this.height, -1);
-            Stencil.erase();
-
-            if (this.getText().isEmpty() && !placeholder.isEmpty() && !this.isFocused) {
-                FontManager.pf25.drawString(placeholder, var7 - 3.5f, var8 - 2.5f + yOffset, 0xff8d8b8d);
-            }
-
-            String s = isSelectionValid ? text.substring(0, selectionStart) : text;
-            if (!text.isEmpty()) {
-                getFontRenderer().drawString(s, var7 - 2.5f, var8, -1);
-            }
-
-            boolean var13 = this.cursorPosition < text.length() || text.length() >= this.getMaxStringLength();
-
-            boolean highlighting = false;
-            if (selectionEnd != selectionStart) {
-                GlStateManager.color(1, 1, 1, 1);
-
-                int lowestChar = Math.min(startChar, endChar);
-                int highestChar = Math.max(startChar, endChar);
-
-                if ((4 + xPosition + getFontRenderer().getStringWidth(text.substring(0, lowestChar)) - offse - 3.5f) - (4 + xPosition + getFontRenderer().getStringWidth(text.substring(0, lowestChar)) - offse + getFontRenderer().getStringWidth(text.substring(lowestChar, highestChar)) - 3.5f) != 0) {
-                    highlighting = true;
-                }
-
-                RenderSystem.drawRect(4 + xPosition + getFontRenderer().getStringWidth(text.substring(0, lowestChar)) - offse - 3.5f, yPosition + 2 - 5 + 4, 4 + xPosition + getFontRenderer().getStringWidth(text.substring(0, lowestChar)) - offse + getFontRenderer().getStringWidth(text.substring(lowestChar, highestChar)) - 3.5f, yPosition + height - 1.5f - 2, 0xffadcffe);
-                GlStateManager.color(1, 1, 1, 1);
-            }
-
-
-            //DRAW OVERLAY STRING
-            if (!text.isEmpty()) {
-                getFontRenderer().drawString(text, var7 - offse - 3.5f, var8 - 1.5f + 6 - 19 / 2f, var1);
-            }
-            if (var6) {
-                if (var13) {
-                    String sub = "";
-                    int alpha = (int) Math.min(255, ((System.currentTimeMillis() / 3 % 255) > 255 / 2 ? (Math.abs(Math.abs(System.currentTimeMillis() / 3) % 255 - 255)) : System.currentTimeMillis() / 3 % 255) * 2);
-
-                    if (startChar > 0)
-                        sub = text.substring(0, (startChar));
-                    if (!highlighting) {
-
-                        if (startChar > endChar)
-                            RenderSystem.drawRect(xPosition + getFontRenderer().getStringWidth(sub) + 3.5f - offse - 3.5f, var8 - 5, xPosition + getFontRenderer().getStringWidth(sub) + 0.5f + 3.5f - offse - 3.5f, var8 + 1 + getFontRenderer().getHeight() - 2, alpha > 255 / 2f ? 0xffcdcbcd : 0xff000000);
-                        else
-                            RenderSystem.drawRect(xPosition + getFontRenderer().getStringWidth(sub) + 4.0f - offse - 3.5f, var8 - 5, xPosition + getFontRenderer().getStringWidth(sub) + 4.5f - offse - 3.5f, var8 + 1 + getFontRenderer().getHeight() - 2, alpha > 255 / 2f ? 0xffcdcbcd : 0xff000000);
-
-                    }
-                } else {
-                    GlStateManager.color(1, 1, 1, 1);
-                    //if(!dragging)
-                    int alpha = (int) ((System.currentTimeMillis() / 3 % 255) > 255 / 2 ? (255) : 255 / 2f);
-                    if (!highlighting) {
-                        RenderSystem.drawRect(xPosition + getFontRenderer().getStringWidth(text) + 4.5f - offse - 4f, var8 - 5, xPosition + getFontRenderer().getStringWidth(text) + 0.5f + 4.5f - offse - 4f, var8 + 1 + getFontRenderer().getHeight() - 2, alpha > 255 / 2f ? 0xffcdcbcd : 0xff000000);
-                    }
-                    GlStateManager.color(1, 1, 1, 1);
-                }
-            }
-            Stencil.dispose();
-
+    private void setupClipping(boolean useScissor) {
+        if (!useScissor && !Stencil.isErasing) {
+            StencilClipManager.beginClip(() -> {
+                RenderSystem.drawRect(xPosition - 1, yPosition,
+                        xPosition + width + 1, yPosition + height - 1, -1);
+            });
+        } else if (useScissor) {
+            RenderSystem.doScissor((int) xPosition - 1, (int) yPosition,
+                    (int) width + 1, (int) height - 1);
         }
     }
 
-    /**
-     * draws the vertical line cursor in the textbox
-     */
-    private void drawCursorVertical(float f, float p_146188_2_, float g, float p_146188_4_) {
-        float var5;
-
-        if (f < g) {
-            var5 = f;
-            f = g;
-            g = var5;
-        }
-
-        if (p_146188_2_ < p_146188_4_) {
-            var5 = p_146188_2_;
-            p_146188_2_ = p_146188_4_;
-            p_146188_4_ = var5;
-        }
-
-        if (g > this.xPosition + this.width) {
-            g = this.xPosition + this.width;
-        }
-
-        if (f > this.xPosition + this.width) {
-            f = this.xPosition + this.width;
-        }
-
-        RenderSystem.drawRect(f + 1.5f, p_146188_2_ + 0.5f, g + 0.5f, p_146188_4_ - 1, 0xffadcffe);
-
-       /* Tessellator var7 = Tessellator.getInstance();
-        WorldRenderer var6 = var7.getWorldRenderer();
-        GlStateManager.color(0.0F, 0.0F, 255.0F, 255.0F);
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableColorLogic();
-        GlStateManager.colorLogicOp(5387);
-        var6.startDrawingQuads();
-        var6.addVertex((double)p_146188_1_, (double)p_146188_4_, 0.0D);
-        var6.addVertex((double)p_146188_3_, (double)p_146188_4_, 0.0D);
-        var6.addVertex((double)p_146188_3_, (double)p_146188_2_, 0.0D);
-        var6.addVertex((double)p_146188_1_, (double)p_146188_2_, 0.0D);
-        var7.draw();
-        GlStateManager.disableColorLogic();
-        GlStateManager.enableTexture2D();*/
-    }
-
-    public void setMaxStringLength(int p_146203_1_) {
-        this.maxStringLength = p_146203_1_;
-
-        if (this.text.length() > p_146203_1_) {
-            this.text = this.text.substring(0, p_146203_1_);
+    private void cleanupClipping(boolean useScissor) {
+        if (!useScissor && !Stencil.isErasing) {
+            StencilClipManager.endClip();
+        } else if (useScissor) {
+            RenderSystem.endScissor();
         }
     }
 
-    /**
-     * sets the position of the cursor to the provided index
-     */
-    public void setCursorPosition(int p_146190_1_) {
-        this.cursorPosition = p_146190_1_;
-        startChar = p_146190_1_;
-        endChar = p_146190_1_;
-        int var2 = this.text.length();
-        this.cursorPosition = MathHelper.clamp_int(this.cursorPosition, 0, var2);
-        this.setSelectionPos(this.cursorPosition);
+    private void renderTextContent(double scrollOffset, boolean isHovered) {
+        String displayText = getDisplayText();
+        float posX = xPosition;
+        float posY = yPosition;
+        // 绘制占位符
+        if (text.isEmpty() && !placeholder.isEmpty() && !isFocused) {
+            getFontRenderer().drawString(placeholder, posX, getRenderOffsetY(),
+                    applyAlpha(enabledColor, hoverAlpha));
+            return;
+        }
+
+        // 绘制选择高亮
+        if (hasSelection()) {
+            renderSelection(displayText, scrollOffset);
+        }
+
+        // 绘制文本
+        if (!displayText.isEmpty()) {
+            int textColor = isFocused ? enabledColor : disabledColor;
+            int alpha = (textColor >> 24) & 255;
+            getFontRenderer().drawString(displayText, posX - (float) scrollOffset,
+                    getRenderOffsetY(),
+                    RenderSystem.reAlpha(textColor, alpha * RenderSystem.DIVIDE_BY_255 * wholeAlpha));
+        }
+
+        // 绘制光标
+        if (shouldDrawCursor() && !hasSelection()) {
+            renderCursor(displayText, posX, getRenderOffsetY(), scrollOffset);
+        }
     }
 
-    /**
-     * get enable drawing background and outline
-     */
-    public boolean getEnableBackgroundDrawing() {
-        return this.enableBackgroundDrawing;
+    private String getDisplayText() {
+        return isPassword ? "*".repeat(text.length()) : text;
     }
 
-    /**
-     * Sets the text colour for this textbox (disabled text will not use this colour)
-     */
-    public void setTextColor(int textColor) {
-        this.enabledColor = textColor;
+    private boolean hasSelection() {
+        return dragStartChar != dragEndChar;
     }
 
-    public void setDisabledTextColour(int disabledColor) {
-        this.disabledColor = disabledColor;
+    private boolean shouldDrawCursor() {
+        int visibleCursorPos = cursorPosition - lineScrollOffset;
+        return isFocused && (cursorCounter / 6) % 2 == 0 &&
+                visibleCursorPos >= 0 && visibleCursorPos <= text.length();
     }
 
-    /**
-     * Getter for the focused field
-     */
-    public boolean isFocused() {
-        return this.isFocused;
+    private double getRenderOffsetY() {
+        return yPosition + height * .5 - getFontRenderer().getHeight() * .5;
     }
 
-    /**
-     * Sets focus to this gui element
-     */
+    private void renderSelection(String displayText, double scrollOffset) {
+        int lowestChar = Math.min(dragStartChar, dragEndChar);
+        int highestChar = Math.max(dragStartChar, dragEndChar);
+
+        lowestChar = MathHelper.clamp_int(lowestChar, 0, text.length());
+        highestChar = MathHelper.clamp_int(highestChar, 0, text.length());
+
+        if (lowestChar < highestChar) {
+            float startX = (float) (xPosition + getFontRenderer().getStringWidthD(
+                                displayText.substring(0, lowestChar)) - (float) scrollOffset);
+            float endX = (float) (startX + getFontRenderer().getStringWidthD(
+                                displayText.substring(lowestChar, highestChar)) + 1f);
+
+            RenderSystem.drawRect(startX, getRenderOffsetY() - 1, endX, getRenderOffsetY() + getFontRenderer().getHeight() + 1,
+                    applyAlpha(new Color(196, 225, 245).getRGB(), wholeAlpha));
+            GlStateManager.color(1, 1, 1, 1);
+        }
+    }
+
+    double animatedCursorX = -1;
+
+    private void renderCursor(String displayText, double posX, double posY, double scrollOffset) {
+        String textBeforeCursor = dragStartChar > 0 ?
+                displayText.substring(0, dragStartChar) : "";
+        float cursorX = (float) (xPosition + getFontRenderer().getStringWidthD(textBeforeCursor) - (float) scrollOffset);
+
+        // 闪烁动画
+        long l = System.currentTimeMillis() / 5 % 255;
+        int alpha = (int) Math.min(255,
+                (l > 127 ?
+                        (255 - l) :
+                        l) * 2);
+
+        if (animatedCursorX == -1)
+            animatedCursorX = cursorX;
+        animatedCursorX = Interpolations.interpBezier(animatedCursorX, cursorX, .4f);
+
+        if (alpha > 127 || !cursorForceShowTimer.isDelayed(750)) {
+            RenderSystem.drawRect(animatedCursorX, posY - 2, animatedCursorX + 0.5f,
+                    posY + getFontRenderer().getHeight() + 2, 0xffcdcbcd);
+        }
+
+        // 更新IME位置
+        if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
+            updateIMEPosition(cursorX, (float) posY);
+        }
+    }
+
+    private void updateIMEPosition(float cursorX, float cursorY) {
+        if (imePositionUpdateTimer.isDelayed(100)) {
+            imePositionUpdateTimer.reset();
+            PreEditRect rect = new PreEditRect();
+            double scale = (ClientSettings.FIXED_SCALE.getValue() ? 1 : RenderSystem.getScaleFactor()) * 2;
+            rect.setX((int) (cursorX * scale));
+            rect.setY((int) ((cursorY + getFontRenderer().getHeight() - 3) * scale));
+            IngameIMERenderer.InputCtx.setPreEditRect(rect);
+        }
+    }
+
+    private int applyAlpha(int color, float alpha) {
+        float originalAlpha = ((color >> 24) & 0xFF) / 255f;
+        Color c = new Color(color, true);
+        return new Color(
+                c.getRed() / 255f,
+                c.getGreen() / 255f,
+                c.getBlue() / 255f,
+                originalAlpha * alpha
+        ).getRGB();
+    }
+
+    // ========== Getter/Setter ==========
+
+    public void setMaxStringLength(int length) {
+        maxStringLength = length;
+        if (text.length() > length) {
+            text = text.substring(0, length);
+        }
+    }
+
+    public void setPredicate(Predicate<String> predicate) {
+        textPredicate = predicate;
+    }
+
+    public void func_175207_a(GuiPageButtonList.GuiResponder responder) {
+        this.responder = responder;
+    }
+
+    public void setTextColor(int color) {
+        enabledColor = color;
+    }
+
+    public void setDisabledTextColour(int color) {
+        disabledColor = color;
+    }
+
     public void setFocused(boolean focused) {
-        if (focused && !this.isFocused) {
-            this.cursorCounter = 0;
+        if (focused && !isFocused) {
+            cursorCounter = 0;
             Keyboard.enableRepeatEvents(true);
-
-            if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
+            if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
                 IngameIMERenderer.setActivated(true);
+            }
         }
+        isFocused = focused;
+    }
 
-        this.isFocused = focused;
+    public boolean isFocused() {
+        return isFocused;
     }
 
     public void setEnabled(boolean enabled) {
-        this.isEnabled = enabled;
+        isEnabled = enabled;
     }
 
-    /**
-     * returns the width of the textbox depending on if background drawing is enabled
-     */
-    public int getWidth() {
-        return (int) (this.getEnableBackgroundDrawing() ? this.width - 8 : this.width);
+    public boolean isEnabled() {
+        return isEnabled;
     }
 
-    /**
-     * Sets the position of the selection anchor (i.e. position the selection was started at)
-     */
-    public void setSelectionPos(int pos) {
-        int length = this.text.length();
-
-        if (pos > length) {
-            pos = length;
-        }
-
-        if (pos < 0) {
-            pos = 0;
-        }
-
-        this.selectionEnd = pos;
-
-        if (this.lineScrollOffset > length) {
-            this.lineScrollOffset = length;
-        }
-
-        float textWidth = this.getWidth();
-        String split = String.join("\n", getFontRenderer().fitWidth(this.text.substring(this.lineScrollOffset), textWidth));
-
-        float wWidth = split.length() + this.lineScrollOffset;
-
-        if (pos == this.lineScrollOffset) {
-            this.lineScrollOffset -= String.join("\n", getFontRenderer().fitWidth(this.text, (int) textWidth)).length();
-        }
-
-        if (pos > wWidth) {
-            this.lineScrollOffset += (int) (pos - wWidth);
-        } else if (pos <= this.lineScrollOffset) {
-            this.lineScrollOffset -= this.lineScrollOffset - pos;
-        }
-
-        this.lineScrollOffset = MathHelper.clamp_int(this.lineScrollOffset, 0, length);
-    }
-
-    /**
-     * returns true if this textbox is visible
-     */
     public boolean getVisible() {
-        return this.visible;
+        return visible;
     }
 
-    @Setter
-    private CFontRenderer fontRenderer = FontManager.pf18;
+    public int getWidth() {
+        return (int) (width);
+    }
+
+    public void setPosition(double x, double y) {
+        xPosition = (float) x;
+        yPosition = (float) y;
+    }
+
+    public void setBounds(double w, double h) {
+        width = (float) w;
+        height = (float) h;
+    }
 
     private CFontRenderer getFontRenderer() {
-
-        if (fontRenderer == null || (fontRenderer.sizePx == FontManager.pf18.sizePx && fontRenderer != FontManager.pf18))
+        if (fontRenderer == null ||
+                (fontRenderer.sizePx == FontManager.pf18.sizePx && fontRenderer != FontManager.pf18)) {
             fontRenderer = FontManager.pf18;
-
+        }
         return fontRenderer;
     }
 
-    public void setPosition(double v, double v1) {
-        xPosition = (float) v;
-        yPosition = (float) v1;
-    }
-
-    public void setBounds(double i, double i1) {
-        width = (float) i;
-        height = (float) i1;
-    }
-
-    Timer updInputCTXPositionTimer = new Timer();
+    // ========== 工具类 ==========
 
     public static final class MsTimer {
         private long time;
@@ -979,31 +803,24 @@ public class TextField extends GuiTextField {
             active = true;
         }
 
-        public boolean reach(final long time) {
-            if (!active)
-                return false;
-            return time() >= time;
+        public boolean reach(long duration) {
+            return active && elapsed() >= duration;
         }
 
         public void reset() {
             time = System.currentTimeMillis();
         }
 
-        public boolean sleep(final long time) {
-            if (!active)
-                return false;
-            if (time() >= time) {
-                reset();
-                return true;
-            }
-            return false;
+        public boolean sleep(long duration) {
+            return sleep(duration, true);
         }
 
-        public boolean sleep(final long time, boolean reset) {
-            if (!active)
+        public boolean sleep(long duration, boolean autoReset) {
+            if (!active) {
                 return false;
-            if (time() >= time) {
-                if (reset) {
+            }
+            if (elapsed() >= duration) {
+                if (autoReset) {
                     reset();
                 }
                 return true;
@@ -1011,9 +828,8 @@ public class TextField extends GuiTextField {
             return false;
         }
 
-        public long time() {
+        public long elapsed() {
             return System.currentTimeMillis() - time;
         }
-
     }
 }

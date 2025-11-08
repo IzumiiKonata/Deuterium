@@ -6,25 +6,29 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
+import org.lwjgl.input.Keyboard;
+import tritium.ncm.api.CloudMusicApi;
 import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
+import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
-import tritium.rendering.ui.widgets.LabelWidget;
-import tritium.rendering.ui.widgets.RectWidget;
-import tritium.rendering.ui.widgets.RoundedImageWidget;
-import tritium.rendering.ui.widgets.RoundedRectWidget;
+import tritium.rendering.ui.widgets.*;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
+import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;
 import java.io.InputStream;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
@@ -34,7 +38,7 @@ import java.util.stream.Collectors;
  */
 public class NavigateBar extends NCMPanel {
 
-    RoundedRectWidget searchBar = new RoundedRectWidget();
+    TextFieldWidget searchField = new TextFieldWidget(FontManager.pf14bold);
     ScrollPanel playlistPanel = new ScrollPanel();
 
     public NavigateBar() {
@@ -54,14 +58,90 @@ public class NavigateBar extends NCMPanel {
             bg.setAlpha(0.9f);
         });
 
+        RoundedRectWidget searchBar = new RoundedRectWidget();
+        RoundedRectWidget searchBarFocusAnimation = new RoundedRectWidget();
+
+        this.addChild(searchBarFocusAnimation);
         this.addChild(searchBar);
 
-        this.searchBar.setBeforeRenderCallback(() -> {
-            searchBar.setAlpha(.2f);
-            searchBar.setColor(0xFFFF1010);
+        searchBarFocusAnimation.setBeforeRenderCallback(() -> {
+            if (!searchField.isFocused()) {
+                searchBarFocusAnimation.setAlpha(0);
+            } else {
+                searchBarFocusAnimation.setAlpha(Interpolations.interpBezier(searchBarFocusAnimation.getAlpha(), 1f, .3f));
+                searchBarFocusAnimation.setRadius(4);
+                searchBarFocusAnimation.setColor(0xff780C17);
+                searchBarFocusAnimation.setBounds(searchBar.getRelativeX(), searchBar.getRelativeY(), searchBar.getWidth(), searchBar.getHeight());
+                searchBarFocusAnimation.expand(1 + 5 * (1 - searchBarFocusAnimation.getAlpha()));
+            }
+        });
+
+        searchBar.setBeforeRenderCallback(() -> {
+            searchBar.setAlpha(1f);
+            searchBar.setColor(0xFF5E5E5E);
             searchBar.setMargin(8);
             searchBar.setHeight(16);
-            searchBar.setRadius(4);
+            searchBar.setRadius(3.5);
+        });
+
+        RoundedRectWidget searchBarBg = new RoundedRectWidget();
+        searchBar.addChild(searchBarBg);
+
+        searchBarBg.setBeforeRenderCallback(() -> {
+            searchBarBg.setMargin(.5);
+            searchBarBg.setAlpha(.6f);
+            searchBar.setColor(0xFF292727);
+            searchBarBg.setRadius(searchBar.getRadius() - .5);
+        });
+
+        LabelWidget lblSearchIcon = new LabelWidget("K", FontManager.music18);
+        searchBar.addChild(lblSearchIcon);
+
+        lblSearchIcon.setBeforeRenderCallback(() -> {
+            lblSearchIcon.setColor(hexColor(100, 100, 100));
+            lblSearchIcon.centerVertically();
+            lblSearchIcon.setPosition(lblSearchIcon.getRelativeY(), lblSearchIcon.getRelativeY());
+        });
+
+        searchBar.addChild(searchField);
+
+        this.searchField.setOnKeyTypedCallback((character, keyCode) -> {
+            if (this.searchField.isFocused()) {
+                if (keyCode == Keyboard.KEY_ESCAPE)
+                    this.searchField.setFocused(false);
+
+                if (keyCode == Keyboard.KEY_RETURN) {
+
+                    PlayList playList = JsonUtils.parse("{}", PlayList.class);
+                    playList.setSearchMode(true);
+                    playList.musics = new CopyOnWriteArrayList<>();
+                    PlaylistPanel panel = new PlaylistPanel(playList);
+                    NCMScreen.getInstance().setCurrentPanel(panel);
+
+                    MultiThreadingUtil.runAsync(() -> {
+                        List<Music> search = CloudMusic.search(this.searchField.getText());
+                        playList.musics.addAll(search);
+                        panel.onInit();
+                    });
+//
+//                    System.out.println("SEARCH: " + this.searchField.getText());
+//                    CloudMusicApi.cloudSearch(this.searchField.getText(), CloudMusicApi.SearchType.Single).toJsonObject()
+                }
+
+                return true;
+            }
+
+            return false;
+        });
+
+        searchField.setBeforeRenderCallback(() -> {
+            searchField.drawUnderline(false);
+            searchField.setMargin(2);
+            double xSpacing = lblSearchIcon.getRelativeX() + lblSearchIcon.getWidth() + 4;
+            searchField.setBounds(xSpacing, searchField.getRelativeY(), searchField.getWidth() - xSpacing, searchField.getHeight());
+            searchField.setColor(this.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            searchField.setDisabledTextColor(RenderSystem.reAlpha(this.getColor(NCMScreen.ColorType.PRIMARY_TEXT), .4f));
+//            Rect.draw(searchField.getX(), searchField.getY(), searchField.getWidth(), searchField.getHeight(), 0x800090ff);
         });
 
         this.addChild(playlistPanel);
@@ -149,6 +229,11 @@ public class NavigateBar extends NCMPanel {
             lblCreator.setPosition(creatorAvatar.getRelativeX() + creatorAvatar.getWidth() + 4, creatorAvatar.getRelativeY() + creatorAvatar.getHeight() * .5 - lblCreator.getHeight() * .5);
             lblCreator.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
         });
+    }
+
+    @Override
+    public boolean onMouseClicked(double mouseX, double mouseY, int mouseButton) {
+        return false;
     }
 
     private void loadAvatar() {

@@ -239,6 +239,11 @@ public class NCMScreen extends BaseScreen {
 
     @Override
     public void onKeyTyped(char typedChar, int keyCode) {
+
+        if (this.basePanel.onKeyTypedReceived(typedChar, keyCode)) {
+            return;
+        }
+
         if (keyCode == Keyboard.KEY_ESCAPE) {
 
             if (this.fuckPussyPanel != null)
@@ -249,7 +254,6 @@ public class NCMScreen extends BaseScreen {
         }
 
         if (keyCode == Keyboard.KEY_SPACE && CloudMusic.currentlyPlaying != null && CloudMusic.player != null && !CloudMusic.player.isFinished()) {
-
             if (CloudMusic.player.isPausing())
                 CloudMusic.player.unpause();
             else
