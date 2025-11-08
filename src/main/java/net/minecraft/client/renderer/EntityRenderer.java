@@ -87,7 +87,7 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.BaseScreen;
 import tritium.settings.ClientSettings;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.info.Version;
 

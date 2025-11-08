@@ -12,7 +12,7 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;

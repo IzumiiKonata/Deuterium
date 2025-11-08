@@ -27,7 +27,7 @@ import net.optifine.util.PropertiesOrdered;
 import net.optifine.util.TextureUtils;
 import net.optifine.util.TimedEvent;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.Sys;

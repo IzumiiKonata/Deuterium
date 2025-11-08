@@ -24,7 +24,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import tritium.rendering.ResPackPreview;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 

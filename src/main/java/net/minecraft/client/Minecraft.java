@@ -119,7 +119,7 @@ import tritium.rendering.loading.LoadingRenderer;
 import tritium.screens.MainMenu;
 import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.optimization.Deduplicator;

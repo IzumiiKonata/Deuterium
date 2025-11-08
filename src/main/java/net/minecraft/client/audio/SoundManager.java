@@ -12,7 +12,7 @@ import org.lwjgl.openal.ALC10;
 import org.lwjgl.system.MemoryUtil;
 import paulscode.sound.*;
 import paulscode.sound.codecs.CodecJOrbis;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 

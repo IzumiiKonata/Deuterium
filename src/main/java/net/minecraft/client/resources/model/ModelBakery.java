@@ -24,7 +24,7 @@ import net.optifine.CustomItems;
 import net.optifine.util.StrUtils;
 import net.optifine.util.TextureUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;

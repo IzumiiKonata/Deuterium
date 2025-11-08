@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.data.PackMetadataSection;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.image.BufferedImage;

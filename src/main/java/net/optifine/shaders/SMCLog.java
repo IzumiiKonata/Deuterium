@@ -1,6 +1,6 @@
 package net.optifine.shaders;
 
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public abstract class SMCLog {

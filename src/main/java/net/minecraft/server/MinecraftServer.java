@@ -37,7 +37,7 @@ import org.apache.commons.lang3.Validate;
 import tritium.event.eventapi.State;
 import tritium.event.events.world.WorldTickEvent;
 import tritium.management.EventManager;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;

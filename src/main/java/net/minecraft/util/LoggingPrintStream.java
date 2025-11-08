@@ -1,6 +1,6 @@
 package net.minecraft.util;
 
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.OutputStream;

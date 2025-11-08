@@ -68,7 +68,7 @@ import tritium.event.events.player.EntityVelocityEvent;
 import tritium.event.events.player.RespawnEvent;
 import tritium.management.EventManager;
 import tritium.screens.MainMenu;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;

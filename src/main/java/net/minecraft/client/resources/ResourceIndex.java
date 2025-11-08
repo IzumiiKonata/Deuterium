@@ -9,7 +9,7 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import net.minecraft.util.JsonUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;

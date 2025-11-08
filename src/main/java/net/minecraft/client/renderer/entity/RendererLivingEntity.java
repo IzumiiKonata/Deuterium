@@ -29,7 +29,7 @@ import tritium.management.ModuleManager;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.widget.impl.PaperDoll;
 

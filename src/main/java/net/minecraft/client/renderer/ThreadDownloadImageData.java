@@ -15,7 +15,7 @@ import net.optifine.player.CapeImageBuffer;
 import net.optifine.shaders.ShadersTex;
 import org.apache.commons.io.FileUtils;
 import tritium.rendering.async.AsyncGLContext;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;

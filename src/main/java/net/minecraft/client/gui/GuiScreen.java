@@ -29,7 +29,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import tritium.event.events.game.RawKeyInputEvent;
 import tritium.management.EventManager;
-import org.apache.logging.log4j.LogManager;
+import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.timing.Timer;
 
