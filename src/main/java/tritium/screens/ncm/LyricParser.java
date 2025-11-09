@@ -202,6 +202,9 @@ public class LyricParser {
             long startDuration = Long.parseLong(timeParts[0]);
             long duration = Long.parseLong(timeParts[1]);
 
+            if (i > 0 && startDuration == 0)
+                continue;
+
             LyricLine l = new LyricLine(startDuration, "");
 
             parseWordTimings(l, line.substring(line.indexOf("]") + 1));

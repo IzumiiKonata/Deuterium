@@ -68,7 +68,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             lyrics.clear();
             lyrics.addAll(lyricLines);
 
-            currentDisplaying = lyrics.get(0);
+            currentDisplaying = lyrics.getFirst();
             updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
             addLongBreaks();
             scrollTarget = scrollOffset = 0;
@@ -76,10 +76,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     }
 
     private static void addLongBreaks() {
+        long longBreaksDuration = 3000L;
         if (lyrics.stream().allMatch(l -> l.words.isEmpty())) {
 
             long timeStamp = lyrics.getFirst().getTimeStamp();
-            if (timeStamp >= 5000L) {
+            if (timeStamp >= longBreaksDuration) {
                 LyricLine line = new LyricLine(0L, "● ● ●");
 //                line.renderEmphasizes = false;
                 line.words.add(new LyricLine.Word("● ● ●", timeStamp));
@@ -98,7 +99,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         for (LyricLine lyric : lyrics) {
             long curDur = getLyricDuration(lyric);
             long l = lyric.getTimeStamp() - last;
-            if (l >= 5000L) {
+            if (l >= longBreaksDuration) {
                 LyricLine line = new LyricLine(last, "● ● ●");
 //                line.renderEmphasizes = false;
                 line.words.add(new LyricLine.Word("● ● ●", l));
