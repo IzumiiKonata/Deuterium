@@ -69,16 +69,11 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 //            }
 //        }
 
-        locateGlyph('A');
+//        locateGlyph('A');
     }
-
-    List<Integer> loaded = new ArrayList<>();
 
     public double fontHeight = -1;
-
-    public interface GlyphLoaded {
-        void loaded(Glyph glyph);
-    }
+    final Object fontHeightLock = new Object();
 
     private Glyph locateGlyph(char ch) {
 
@@ -86,32 +81,16 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         if (gly != null) return gly;
 
         GlyphGenerator.generate(this, ch, this.font, randomIdentifier(), fontHeight -> {
-            this.fontHeight = Math.max(this.fontHeight, fontHeight);
-        });
+            synchronized (fontHeightLock) {
+                if (fontHeight > this.fontHeight) {
+                    System.out.println(font.getFontName() + ", size " + font.getSize() + " to " + fontHeight + ", triggered by char " + ch + ", delta: " + (fontHeight - this.fontHeight));
+                }
 
-        return null;
-    }
-
-    @SneakyThrows
-    private Glyph locateGlyphBlocking(char ch) {
-        Glyph gly = allGlyphs[ch];
-        if (gly != null) return gly;
-
-        final Object lock = new Object();
-
-        GlyphGenerator.generate(this, ch, this.font, randomIdentifier(), fontHeight -> {
-            this.fontHeight = Math.max(this.fontHeight, fontHeight);
-
-            synchronized (lock) {
-                lock.notifyAll();
+                this.fontHeight = Math.max(this.fontHeight, fontHeight);
             }
         });
 
-        synchronized (lock) {
-            lock.wait();
-        }
-
-        return allGlyphs[ch];
+        return null;
     }
 
     public float drawString(String s, double x, double y, int color) {
@@ -261,7 +240,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         double offsetY = y;
         for (String string : s.split("\n")) {
             drawString(string,  (x - getStringWidthD(string) / 2.0),  offsetY, r, g, b, a);
-            offsetY += this.getStringHeight(string);
+            offsetY += this.getFontHeight();
         }
 
     }
@@ -404,63 +383,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return Math.max(currentLine, maxPreviousLines);
     }
 
-    private final Map<String, Float> stringHeightMap = new HashMap<>();
-
-    public float getStringHeight(String text) {
-
-        Float f = this.stringHeightMap.get(text);
-        if (f != null)
-            return f;
-
-        char[] c = stripControlCodes(text).toCharArray();
-        if (c.length == 0) {
-            c = new char[]{' '};
-        }
-        float currentLine = 0;
-        float previous = 0;
-        for (char c1 : c) {
-
-            if (c1 == '\n') {
-                if (currentLine == 0) {
-                    currentLine = this.getHeight();
-                }
-                previous += currentLine + 4;
-                currentLine = 0;
-                continue;
-            }
-
-            Glyph glyph = locateGlyph(c1);
-
-            if (glyph == null)
-                return -1;
-
-            currentLine = Math.max(this.getHeight(), currentLine);
-        }
-
-        this.stringHeightMap.put(text, currentLine + previous);
-
-        return currentLine + previous;
-    }
-
     public int getHeight() {
-
-//        if (fontHeightObj == null) {
-//
-//            int i = (int) ((this.getStringHeight(" ") - 4) / 2);
-//
-//            if (i > 10) {
-//                fontHeightObj = i;
-//            } else {
-//                return i;
-//            }
-//
-//        }
-
-        return (int) ((this.fontHeight - 8) * .5);
+        return (int) this.getFontHeight();
     }
 
     public double getFontHeight() {
-        return (this.fontHeight - 8) * .5;
+        return (this.fontHeight - 6) * .5;
     }
 
     @Override
@@ -479,7 +407,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         }
 
         allGlyphs = new Glyph['\uFFFF' + 1];
-        stringHeightMap.clear();
         stringWidthMap.clear();
         stringWidthMapD.clear();
     }
@@ -508,6 +435,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             return .0f;
 
         return glyph.width * .5f;
+    }
+
+    public double getStringHeight(String text) {
+        return text.split("\n").length * (getFontHeight() + 4) - 4;
     }
 
     public String[] fitWidth(String text, double width) {

@@ -163,7 +163,7 @@ public class MusicWidget extends RoundedRectWidget {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
 
                     if (img != null) {
-                        AsyncGLContext.submit(() -> {
+                        MultiThreadingUtil.runAsync(() -> {
                             if (textureManager.getTexture(coverLoc) != null) {
                                 textureManager.deleteTexture(coverLoc);
                             }

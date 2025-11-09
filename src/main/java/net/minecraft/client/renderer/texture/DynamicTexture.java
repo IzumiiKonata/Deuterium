@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IResourceManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -16,13 +15,7 @@ import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
 
 @Getter
 public class DynamicTexture extends AbstractTexture {
@@ -93,7 +86,6 @@ public class DynamicTexture extends AbstractTexture {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {
                 int pixel = img.getRGB(x, y);
-                // 提取 Alpha 通道（或者用白色的亮度作为 Alpha）
                 int alpha = (pixel >> 24) & 0xFF;
                 dynamicTextureData[y * width + x] = (byte) alpha;
             }
@@ -101,10 +93,19 @@ public class DynamicTexture extends AbstractTexture {
     }
 
     public void allocateTexture(int textureWidth, int textureHeight) {
+
+        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
+                this.allocateTextureImpl(0, textureWidth, textureHeight);
+                return null;
+            });
+            return;
+        }
+
         this.allocateTextureImpl(0, textureWidth, textureHeight);
     }
 
-    public synchronized void allocateTextureImpl(int levels, int width, int height) {
+    public void allocateTextureImpl(int levels, int width, int height) {
 
         this.deleteTexture();
         this.bindTexture();
@@ -131,51 +132,24 @@ public class DynamicTexture extends AbstractTexture {
     public void loadTexture(IResourceManager resourceManager) throws IOException {
     }
 
-    public void updateDynamicTexture(BufferedImage img) {
-
-        if (img == null) {
-            System.err.println("img == null?!");
-            DevUtils.printCurrentInvokeStack();
-            return;
-        }
-
-        if (this.dynamicTextureData.length != img.getWidth() * img.getHeight()) {
-            this.width = img.getWidth();
-            this.height = img.getHeight();
-            this.dynamicTextureData = new int[img.getWidth() * img.getHeight()];
-            this.deleteTexture();
-            this.glTextureId = -1;
-            TextureUtil.allocateTexture(this.getGlTextureId(), img.getWidth(), img.getHeight());
-        }
-
-        img.getRGB(0, 0, img.getWidth(), img.getHeight(), this.dynamicTextureData, 0, img.getWidth());
-
-        Minecraft mc = Minecraft.getMinecraft();
-
-        TextureUtil.allocateTexture(this.getGlTextureId(), img.getWidth(), img.getHeight());
-
-        if (mc.checkGLError("Dynamic Texture @ allocateTexture")) {
-            DevUtils.printCurrentInvokeStack();
-        }
-
-        this.updateDynamicTexture();
-
-    }
-
     @Getter
     @Setter
     protected boolean linear = true;
 
     static final int BUFFER_SIZE = 2097152;
-
-    static Map<Thread, IntBuffer> threadByteBufferMap = new ConcurrentHashMap<>();
-
-    static IntBuffer getTempBufferForCurrentThread() {
-        return threadByteBufferMap.computeIfAbsent(Thread.currentThread(), t -> MultiThreadingUtil.runOnMainThread(() -> MemoryTracker.memAllocInt(BUFFER_SIZE)));
-    }
+    static final IntBuffer DATA_BUFFER = MemoryTracker.memAllocInt(BUFFER_SIZE);
 
     @SneakyThrows
-    public synchronized void updateDynamicTexture() {
+    public void updateDynamicTexture() {
+
+        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
+                this.updateDynamicTexture();
+                return null;
+            });
+            return;
+        }
+
         this.bindTexture();
 
         TextureUtil.setTextureBlurMipmap(isLinear(), false);
@@ -187,8 +161,10 @@ public class DynamicTexture extends AbstractTexture {
             DevUtils.printCurrentInvokeStack();
         }
 
-        IntBuffer dataBuffer = getTempBufferForCurrentThread();
+        IntBuffer dataBuffer = DATA_BUFFER;
+        dataBuffer.clear();
         MemoryUtil.memSet(dataBuffer, 0);
+        dataBuffer.clear();
 
         synchronized (dataBuffer) {
             int i = BUFFER_SIZE / width;
@@ -206,7 +182,6 @@ public class DynamicTexture extends AbstractTexture {
                 int i1 = width * j;
 
                 dataBuffer.clear();
-                MemoryUtil.memSet(dataBuffer, 0);
                 dataBuffer.put(aint, k, i1);
                 dataBuffer.flip();
 

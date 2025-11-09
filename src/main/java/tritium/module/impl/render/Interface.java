@@ -54,14 +54,14 @@ public class Interface extends Module {
                 x = 500;
                 y = 100;
 
-                debug("AsyncGLContext:");
-                debug("Tasks: " + AsyncGLContext.getTASK_QUEUE().size());
-
-                for (int i = 0; i < AsyncGLContext.getThreads().size(); i++) {
-                    AsyncGLContext.Context workerThread = AsyncGLContext.getThreads().get(i);
-
-                    debug("Thread #" + i + ": " + workerThread.getState());
-                }
+//                debug("AsyncGLContext:");
+//                debug("Tasks: " + AsyncGLContext.getTASK_QUEUE().size());
+//
+//                for (int i = 0; i < AsyncGLContext.getThreads().size(); i++) {
+//                    AsyncGLContext.Context workerThread = AsyncGLContext.getThreads().get(i);
+//
+//                    debug("Thread #" + i + ": " + workerThread.getState());
+//                }
             });
         }
 

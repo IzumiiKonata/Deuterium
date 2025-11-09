@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import today.opai.api.interfaces.render.Image;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -36,7 +37,7 @@ public class ImageImpl implements Image {
         if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
             texObj = new DynamicTexture(img, true);
         } else {
-            AsyncGLContext.submit(() -> texObj = new DynamicTexture(img, true));
+            MultiThreadingUtil.runAsync(() -> texObj = new DynamicTexture(img, true));
         }
     }
 

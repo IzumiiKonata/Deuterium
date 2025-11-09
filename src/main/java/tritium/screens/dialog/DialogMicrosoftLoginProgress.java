@@ -26,7 +26,7 @@ public class DialogMicrosoftLoginProgress extends Dialog {
 
         String text = label.get();
         width = 32 + FontManager.pf40.getStringWidthD(text);
-        height = 32 + FontManager.pf40.getStringHeight(label.get());
+        height = 32 + FontManager.pf40.getStringHeight(text);
 
         double x = RenderSystem.getWidth() * 0.5 - width * 0.5,
                 y = RenderSystem.getHeight() * 0.5 - height * 0.5;

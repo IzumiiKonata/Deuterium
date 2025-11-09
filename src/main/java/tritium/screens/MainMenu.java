@@ -117,7 +117,7 @@ public class MainMenu extends BaseScreen {
                     ClientSettings.THEME.setValue(ClientSettings.THEME.getValue() == ThemeManager.Theme.Dark ? ThemeManager.Theme.Light : ThemeManager.Theme.Dark);
 
                     this.buttons.forEach(b -> b.setBackgroundColor(this.getColor(ColorType.BUTTON)));
-                    this.refreshDeconvergeThisFrame = true;
+//                    this.refreshDeconvergeThisFrame = true;
 
                     this.themeButton.setIcon(this.getThemeIcon());
                 }, () -> {
@@ -186,36 +186,25 @@ public class MainMenu extends BaseScreen {
 
     }
 
-    private boolean refreshDeconvergeThisFrame = false;
+//    private boolean refreshDeconvergeThisFrame = false;
 
     private void renderDeconverge() {
-        int prevWidth = fbConverge != null ? fbConverge.framebufferWidth : 0;
-        int prevHeight = fbConverge != null ? fbConverge.framebufferHeight : 0;
         fbConverge = RenderSystem.createFrameBuffer(fbConverge);
 
         boolean dev = Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev;
-        boolean shouldUpdate = refreshDeconvergeThisFrame || prevWidth != fbConverge.framebufferWidth || prevHeight != fbConverge.framebufferHeight || dev;
 
-        if (shouldUpdate) {
+        fbConverge.setFramebufferColor(this.getColor(ColorType.BACKGROUND), 0.0F);
+        fbConverge.bindFramebuffer(true);
+        fbConverge.framebufferClearNoBinding();
 
-            refreshDeconvergeThisFrame = false;
-            fbConverge.setFramebufferColor(this.getColor(ColorType.BACKGROUND), 0.0F);
-            fbConverge.bindFramebuffer(true);
-            fbConverge.framebufferClearNoBinding();
-
-            if (dev) {
-                this.renderDevDeconverge();
-            } else {
-                CFontRenderer titleFr = FontManager.arial60bold;
-                boolean bl = titleFr._drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
-
-                // 如果有字形未加载完则下一帧要重新绘制
-                if (!bl)
-                    refreshDeconvergeThisFrame = true;
-            }
-
-            Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
+        if (dev) {
+            this.renderDevDeconverge();
+        } else {
+            CFontRenderer titleFr = FontManager.arial60bold;
+            titleFr.drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
         }
+
+        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
         GlStateManager.bindTexture(fbConverge.framebufferTexture);
         Shaders.DECONVERGE.render();

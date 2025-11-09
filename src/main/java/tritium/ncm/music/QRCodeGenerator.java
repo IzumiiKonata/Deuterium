@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Location;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,7 +27,7 @@ public class QRCodeGenerator {
 
         BufferedImage img = QRCodeGenerator.generateQRCode(address, 128, 128);
 
-        AsyncGLContext.submit(() -> {
+        MultiThreadingUtil.runAsync(() -> {
 
             if (Minecraft.getMinecraft().getTextureManager().getTexture(qrCode) != null) {
                 Minecraft.getMinecraft().getTextureManager().deleteTexture(qrCode);

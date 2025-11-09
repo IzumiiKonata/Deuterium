@@ -3,18 +3,12 @@ package tritium.rendering.font;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Location;
-import net.minecraft.util.MathHelper;
-import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
-import org.lwjgl.opengl.GL11;
-import org.lwjglx.opengl.GLContext;
-import tritium.rendering.async.AsyncGLContext;
-import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
-import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 
 public class GlyphGenerator {
@@ -48,20 +42,18 @@ public class GlyphGenerator {
     static final BufferedImage fontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     static final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
 
-    public static void generate(CFontRenderer fr, char ch, Font f, Location identifier, GlyphLoadedCallback onLoaded) {
+    public static void generate(CFontRenderer fr, char ch, Font originalFont, Location identifier, GlyphLoadedCallback onLoaded) {
 
-        double fontHeight = -1;
+        Font fallbackFont = getFontForGlyph(ch, originalFont, fr.fallBackFonts);
+        boolean isUsingFallback = fallbackFont != originalFont;
 
-        Font font = getFontForGlyph(ch, f, fr.fallBackFonts);
-
-        final FontMetrics fontMetrics = fontGraphics.getFontMetrics(font);
-        final FontMetrics fontMetricsOrig = fontGraphics.getFontMetrics(f);
+        final FontMetrics fontMetrics = fontGraphics.getFontMetrics(fallbackFont);
+        final FontMetrics fontMetricsOrig = fontGraphics.getFontMetrics(originalFont);
 //        FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
 //        Rectangle2D stringBounds = fontMetrics.getStringBounds(String.valueOf(ch), fontGraphics);
 
         transformation.setToIdentity();
-        GlyphVector gv = font.createGlyphVector(context, String.valueOf(ch));
-//        Rectangle2D bounds = gv.getVisualBounds();
+        GlyphVector gv = fallbackFont.createGlyphVector(context, String.valueOf(ch));
         int width = (int) Math.ceil(gv.getGlyphMetrics(0).getAdvance());
         int height = fontMetrics.getAscent() + fontMetrics.getDescent();
 
@@ -72,70 +64,57 @@ public class GlyphGenerator {
         if (width == 0) {
             return;
         }
-        BufferedImage bi = new BufferedImage(width, height,
-                BufferedImage.TYPE_INT_ARGB);
 
-        Graphics2D g2d = bi.createGraphics();
-        g2d.setColor(new Color(255, 255, 255, 255));
-        g2d.setComposite(AlphaComposite.Src);
+        MultiThreadingUtil.runAsync(() -> {
+            double fontHeight = -1;
 
-        g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-        g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
-        g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
+            BufferedImage bi = new BufferedImage(width, height,
+                    BufferedImage.TYPE_INT_ARGB);
 
-        g2d.setFont(font);
+            Graphics2D g2d = bi.createGraphics();
+            g2d.setColor(new Color(255, 255, 255, 255));
+            g2d.setComposite(AlphaComposite.Src);
 
-        if (fontMetrics.getHeight() > fontHeight && font == f) {
-            fontHeight = fontMetrics.getAscent() + fontMetrics.getDescent();
-        }
+            g2d.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_DITHERING, RenderingHints.VALUE_DITHER_ENABLE);
 
-        if (font == f) {
-            g2d.drawString(String.valueOf(ch), 0, fontMetrics.getAscent());
-        } else {
-            // 需要和主字体对齐
-            g2d.drawString(String.valueOf(ch), 0, fontMetricsOrig.getAscent());
-        }
+            g2d.setFont(fallbackFont);
 
-        g2d.dispose();
-        fontImage.flush();
-
-        for (int x = 0; x < bi.getWidth(); x++) {
-            for (int y = 0; y < bi.getHeight(); y++) {
-                int rgb = bi.getRGB(x, y);
-                int alpha = (rgb >> 24) & 0xFF;
-                bi.setRGB(x, y, (alpha << 24) | 0xFFFFFF);
+            int h = fontMetricsOrig.getAscent() + fontMetricsOrig.getDescent();
+            if (h > fontHeight) {
+                fontHeight = h;
             }
-        }
 
-        onLoaded.onLoaded(fontHeight);
+            if (!isUsingFallback) {
+                g2d.drawString(String.valueOf(ch), 0, fontMetrics.getAscent());
+            } else {
+                // 需要和主字体对齐
+                g2d.drawString(String.valueOf(ch), 0, fontMetricsOrig.getAscent());
+            }
 
-        // okay this is complicated.....
-        AsyncGLContext.submit(() -> {
+            g2d.dispose();
+            fontImage.flush();
 
-            while (!Minecraft.getMinecraft().loaded) {
-                try {
-                    Thread.sleep(50L);
-                } catch (InterruptedException ignored) {
+            for (int x = 0; x < bi.getWidth(); x++) {
+                for (int y = 0; y < bi.getHeight(); y++) {
+                    int rgb = bi.getRGB(x, y);
+                    int alpha = (rgb >> 24) & 0xFF;
+                    bi.setRGB(x, y, (alpha << 24) | 0xFFFFFF);
                 }
             }
 
-            DynamicTexture dynamicTexture = new DynamicTexture(bi, true, false);
+            onLoaded.onLoaded(fontHeight);
+
+            DynamicTexture dynamicTexture = new DynamicTexture(bi, true, true);
             Minecraft.getMinecraft().getTextureManager().loadTexture(identifier, dynamicTexture);
 
             bi.flush();
             glyph.textureId = dynamicTexture.getGlTextureId();
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, glyph.textureId);
-            RenderSystem.linearFilter();
-
-//            if (GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
-//                float maxAnisotropy = GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
-//                GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT,
-//                        Math.min(16.0f, maxAnisotropy));
-//            }
-            glyph.init();
+            MultiThreadingUtil.runOnMainThread(glyph::init);
         });
 
     }

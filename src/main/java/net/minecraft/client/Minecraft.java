@@ -480,7 +480,7 @@ public class Minecraft implements IThreadListener {
         this.renderEngine = new TextureManager(this.mcResourceManager);
 
         //CLIENT
-        AsyncGLContext.init();
+//        AsyncGLContext.init();
         //END CLIENT
 
         this.mcResourceManager.registerReloadListener(this.renderEngine);

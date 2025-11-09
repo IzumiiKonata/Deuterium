@@ -53,7 +53,7 @@ public class ResPackPreview {
         this.frameWidth = img.getWidth();
         this.imgHeight = img.getHeight();
 
-        CompletableFuture<Void> textureUploadingTask = AsyncGLContext.submit(() -> {
+        CompletableFuture<Void> textureUploadingTask = MultiThreadingUtil.runAsync(() -> {
             this.locImg = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("ResourcePackPreview", new DynamicTexture(img));
         });
 
@@ -78,7 +78,7 @@ public class ResPackPreview {
     }
 
     public void cleanUp() {
-        AsyncGLContext.submit(() -> {
+        MultiThreadingUtil.runAsync(() -> {
             ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(locImg);
             if (textureObj != null) {
                 TextureUtil.deleteTexture(textureObj.getGlTextureId());

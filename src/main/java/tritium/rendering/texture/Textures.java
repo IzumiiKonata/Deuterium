@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.interfaces.SharedConstants;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.image.BufferedImage;
 import java.util.Optional;
@@ -52,7 +53,7 @@ public class Textures implements SharedConstants {
 
     public void loadTextureAsyncly(Location location, BufferedImage img, boolean flush, boolean clearable, boolean linear, Runnable after) {
 
-        AsyncGLContext.submit(
+        MultiThreadingUtil.runAsync(
                 () -> {
                     Textures.loadTexture(location, img, clearable, linear);
 

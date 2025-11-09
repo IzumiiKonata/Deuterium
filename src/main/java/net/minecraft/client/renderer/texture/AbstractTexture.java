@@ -7,6 +7,7 @@ import net.optifine.shaders.MultiTexID;
 import net.optifine.shaders.ShadersTex;
 import org.lwjgl.opengl.GL11;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 public abstract class AbstractTexture implements ITextureObject {
     protected int glTextureId = -1;
@@ -110,9 +111,10 @@ public abstract class AbstractTexture implements ITextureObject {
         if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
             GlStateManager.deleteTexture(this.getGlTextureId());
         } else {
-            // we're on async gl context
-
-            GL11.glDeleteTextures(this.getGlTextureId());
+            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
+                GL11.glDeleteTextures(this.getGlTextureId());
+                return null;
+            });
         }
 
     }

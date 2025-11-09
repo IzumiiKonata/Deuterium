@@ -114,7 +114,7 @@ public class PlaylistsWindow extends Window {
                             try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.getAvatarUrl() + "?param=32y32")) {
                                 if (inputStream != null) {
                                     NativeBackedImage img = NativeBackedImage.make(inputStream);
-                                    AsyncGLContext.submit(() -> {
+                                    MultiThreadingUtil.runAsync(() -> {
                                         if (textureManager.getTexture(avatarLoc) != null) {
                                             textureManager.deleteTexture(avatarLoc);
                                         }

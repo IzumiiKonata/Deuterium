@@ -242,7 +242,7 @@ public class CloudMusic {
             }
         }
 
-        loadMusicCover(songs.get(0));
+        loadMusicCover(songs.getFirst());
 
         if (startIdx == -1) {
             startIdx = 0;
@@ -503,21 +503,21 @@ public class CloudMusic {
                 is.close();
 
                 BufferedImage read = NativeBackedImage.make(new ByteArrayInputStream(byteArray));
-                Textures.loadTextureAsyncly(musicCover, read);
+
+                if (read != null) {
+                    BufferedImage input = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                    input.setRGB(0, 0, read.getWidth(), read.getHeight(), read.getRGB(0, 0, read.getWidth(), read.getHeight(), null, 0, read.getWidth()), 0, read.getWidth());
+
+                    MultiThreadingUtil.runAsync(() -> {
+                        BufferedImage blurred = gaussianBlur(input, 31);
+                        Textures.loadTextureAsyncly(musicCoverBlur, blurred);
+                    });
+
+                    Textures.loadTextureAsyncly(musicCover, read);
+                }
 
                 BufferedImage readSmall = NativeBackedImage.make(isSmall);
                 Textures.loadTextureAsyncly(musicCoverSmall, readSmall);
-
-                MultiThreadingUtil.runAsync(() -> {
-                    // 此处无法使用 NativeBackedImage, gaussianBlur 需要很多 ImageIO 狗屎才能工作
-                    BufferedImage blured;
-                    try {
-                        blured = gaussianBlur(ImageIO.read(new ByteArrayInputStream(byteArray)), 31);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    Textures.loadTextureAsyncly(musicCoverBlur, blured);
-                });
             }
         });
     }

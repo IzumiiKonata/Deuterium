@@ -199,7 +199,7 @@ public class HomePanel extends NCMPanel {
                 try (InputStream inputStream = HttpUtils.downloadStream(playList.getCoverUrl() + "?param=256y256")) {
                     if (inputStream != null) {
                         NativeBackedImage img = NativeBackedImage.make(inputStream);
-                        AsyncGLContext.submit(() -> {
+                        MultiThreadingUtil.runAsync(() -> {
                             if (textureManager.getTexture(coverLoc) != null) {
                                 textureManager.deleteTexture(coverLoc);
                             }

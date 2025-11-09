@@ -1,7 +1,5 @@
 package net.minecraft.client.renderer;
 
-import com.google.common.util.concurrent.ListenableFuture;
-import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.src.Config;
 import net.minecraft.util.Matrix4f;
@@ -10,21 +8,17 @@ import net.optifine.render.GlAlphaState;
 import net.optifine.render.GlBlendState;
 import net.optifine.shaders.Shaders;
 import net.optifine.util.LockCounter;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
 import tritium.rendering.FramebufferCaching;
 import tritium.rendering.async.AsyncGLContext;
-import tritium.utils.other.DevUtils;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 public class GlStateManager {
@@ -375,36 +369,40 @@ public class GlStateManager {
 
     public static int generateTexture() {
 
-        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() && GLFW.glfwGetCurrentContext() <= 0) {
+            return MultiThreadingUtil.runOnMainThreadBlocking(GL11::glGenTextures);
+        }
+
+//        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
             return GL11.glGenTextures();
-        }
-
-        if (!Minecraft.getMinecraft().loaded) {
-            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-                int id = glGenTextures();
-
-//                System.out.println("Generated texture ID: " + id + " for thread " + Thread.currentThread().getName());
-
-                return id;
-            }
-        }
-
-        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> {
-
-            int texId = glGenTextures();
-            GL11.glFlush();
-            GL11.glFinish();
-
-            return texId;
-
-        });
-        try {
-            return future.get(5, TimeUnit.SECONDS);
-        } catch (TimeoutException e) {
-            throw new RuntimeException("Timeout waiting for texture ID", e);
-        } catch (ExecutionException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+//        }
+//
+//        if (!Minecraft.getMinecraft().loaded) {
+//            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+//                int id = glGenTextures();
+//
+////                System.out.println("Generated texture ID: " + id + " for thread " + Thread.currentThread().getName());
+//
+//                return id;
+//            }
+//        }
+//
+//        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> {
+//
+//            int texId = glGenTextures();
+//            GL11.glFlush();
+//            GL11.glFinish();
+//
+//            return texId;
+//
+//        });
+//        try {
+//            return future.get(5, TimeUnit.SECONDS);
+//        } catch (TimeoutException e) {
+//            throw new RuntimeException("Timeout waiting for texture ID", e);
+//        } catch (ExecutionException | InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     public static void generateTextures(IntBuffer buffer) {

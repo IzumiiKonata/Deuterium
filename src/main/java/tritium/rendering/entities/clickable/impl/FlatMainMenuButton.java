@@ -46,7 +46,7 @@ public class FlatMainMenuButton extends ClickableEntity {
         fr.drawCenteredString(
                 text.get(),
                 this.getX() + this.getWidth() / 2.0d,
-                this.getY() + this.getHeight() / 2.0d - fr.getHeight() / 2.0d,
+                this.getY() + this.getHeight() / 2.0d - fr.getFontHeight() / 2.0d,
                 this.textColor.getHexColor()
         );
 

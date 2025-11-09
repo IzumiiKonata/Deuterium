@@ -34,8 +34,6 @@ public class NormalLoadingScreen extends LoadingScreenRenderer implements Shared
 
     @Override
     public void init() {
-        super.init();
-//        pf40 = new CFontRenderer(FontManager.fontFromTTF("pf_normal.ttf", 40, Font.PLAIN), true, true);
         timer.reset();
     }
 

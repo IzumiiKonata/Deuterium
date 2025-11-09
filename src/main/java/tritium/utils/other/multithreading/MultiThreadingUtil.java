@@ -1,15 +1,11 @@
 package tritium.utils.other.multithreading;
 
-import lombok.Getter;
 import lombok.SneakyThrows;
 
 import net.minecraft.client.Minecraft;
 import tritium.utils.logging.Logger;
 import tritium.utils.other.DevUtils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
@@ -48,8 +44,12 @@ public class MultiThreadingUtil {
     }
 
     @SneakyThrows
-    public static <T> T runOnMainThread(Supplier<T> supplier) {
+    public static <T> T runOnMainThreadBlocking(Supplier<T> supplier) {
         return Minecraft.getMinecraft().addScheduledTask(supplier::get).get();
+    }
+
+    public static void runOnMainThread(Runnable runnable) {
+        Minecraft.getMinecraft().addScheduledTask(runnable);
     }
 
     private static class FutureTaskWrapper implements Runnable {
