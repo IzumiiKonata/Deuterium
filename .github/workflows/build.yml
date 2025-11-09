@@ -109,9 +109,9 @@ jobs:
           fi
           
           if [ -z "$PREV_COMMIT" ]; then
-            COMMITS=$(git log --pretty=format:'- [%h](https://github.com/${{ github.repository }}/commit/%H) %s')
+            COMMITS=$(git log --pretty=format:'- [`%h`](https://github.com/${{ github.repository }}/commit/%H) %s')
           else
-            COMMITS=$(git log --pretty=format:'- [%h](https://github.com/${{ github.repository }}/commit/%H) %s' ${PREV_COMMIT}..HEAD)
+            COMMITS=$(git log --pretty=format:'- [`%h`](https://github.com/${{ github.repository }}/commit/%H) %s' ${PREV_COMMIT}..HEAD)
           fi
           
           cat > release_notes.md << EOF
