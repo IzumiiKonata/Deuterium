@@ -36,8 +36,8 @@ public class InputStreamLeakageTracker {
             return false;
         });
 
-        if (leakageMap.isEmpty())
-            System.out.println("No leakage.");
+//        if (leakageMap.isEmpty())
+//            System.out.println("No leakage.");
     }
 
     static {
