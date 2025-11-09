@@ -82,9 +82,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         GlyphGenerator.generate(this, ch, this.font, randomIdentifier(), fontHeight -> {
             synchronized (fontHeightLock) {
-                if (fontHeight > this.fontHeight) {
-                    System.out.println(font.getFontName() + ", size " + font.getSize() + " to " + fontHeight + ", triggered by char " + ch + ", delta: " + (fontHeight - this.fontHeight));
-                }
+//                if (fontHeight > this.fontHeight) {
+//                    System.out.println(font.getFontName() + ", size " + font.getSize() + " to " + fontHeight + ", triggered by char " + ch + ", delta: " + (fontHeight - this.fontHeight));
+//                }
 
                 this.fontHeight = Math.max(this.fontHeight, fontHeight);
             }

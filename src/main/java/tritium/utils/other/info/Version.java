@@ -29,7 +29,7 @@ public class Version {
         this.commit = commit;
         this.branch = branch;
 
-        this.releaseType = ReleaseType.Release;
+        this.releaseType = ReleaseType.Dev;
         this.versionType = VersionType.COMMIT_AND_BRANCH;
     }
 

@@ -132,7 +132,7 @@ public class MainMenu extends BaseScreen {
          );
 
         startTime = System.currentTimeMillis();
-        alphas.clear();
+        alphas = new float[0];
     }
 
     @Override
@@ -199,10 +199,10 @@ public class MainMenu extends BaseScreen {
 
         if (dev) {
             this.renderDevDeconverge();
-        } else {
-            CFontRenderer titleFr = FontManager.arial60bold;
-            titleFr.drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
         }
+
+        CFontRenderer titleFr = FontManager.arial60bold;
+        titleFr.drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
 
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
@@ -211,7 +211,7 @@ public class MainMenu extends BaseScreen {
     }
 
     long startTime = System.currentTimeMillis();
-    List<Float> alphas = new ArrayList<>();
+    float[] alphas = new float[0];
 
     private void renderDevDeconverge() {
 
@@ -222,12 +222,8 @@ public class MainMenu extends BaseScreen {
 
         char[] charArray = str.toCharArray();
 
-        if (alphas.size() != str.length()) {
-            alphas = new ArrayList<>(str.length());
-
-            for (int i = 0; i < charArray.length; i++) {
-                alphas.add(0f);
-            }
+        if (alphas.length != str.length()) {
+            alphas = new float[str.length()];
         }
 
         for (int i = 0; i < charArray.length; i++) {
@@ -241,10 +237,10 @@ public class MainMenu extends BaseScreen {
             double x = angX <= 0 ? 0 : Math.sin(-Math.toRadians(angX % 360.0f)) * 128;
             double y = angY <= 0 ? 0 : Math.sin(-Math.toRadians(angY % 360.0f)) * 36;
 
-            float alpha = alphas.get(i);
-            alphas.set(i, Interpolations.interpBezier(alpha, angX > 0 && angY > 0 ? 1 : 0, .1f));
+            float alpha = alphas[i];
+            alphas[i] = Interpolations.interpBezier(alpha, angX > 0 && angY > 0 ? 1 : 0, .1f);
 
-            fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 3.5d + y, reAlpha(this.getColor(ColorType.TEXT), alpha));
+            fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 1.375d + y, reAlpha(this.getColor(ColorType.TEXT), alpha));
         }
 
     }
