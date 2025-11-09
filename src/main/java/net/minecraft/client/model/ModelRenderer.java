@@ -201,13 +201,17 @@ public class ModelRenderer {
     private static final FloatBuffer valkyrie$buffer = BufferUtils.createFloatBuffer(16);
     private static final org.lwjglx.util.vector.Matrix4f valkyrie$matrix = new Matrix4f();
 
+    private static final Vector3f Z_AXIS = new Vector3f(0, 0, 1);
+    private static final Vector3f X_AXIS = new Vector3f(1, 0, 0);
+    private static final Vector3f Y_AXIS = new Vector3f(0, 1, 0);
+
     private void valkyrie$applyTransformation(final float scale, final boolean applyOffset) {
         valkyrie$matrix.setIdentity();
 
         boolean flag = this.scaleX != 1.0F || this.scaleY != 1.0F || this.scaleZ != 1.0F;
 
         if (applyOffset)
-            valkyrie$matrix.translate(new Vector3f(offsetX, offsetY, offsetZ));
+            valkyrie$matrix.translate(offsetX, offsetY, offsetZ);
 
         if (this.rotateAngleX == 0 && this.rotateAngleY == 0 && this.rotateAngleZ == 0) {
 
@@ -216,18 +220,18 @@ public class ModelRenderer {
             }
 
             if (this.rotationPointX != 0 || this.rotationPointY != 0 || this.rotationPointZ != 0)
-                valkyrie$matrix.translate(new Vector3f(rotationPointX * scale, rotationPointY * scale, rotationPointZ * scale));
+                valkyrie$matrix.translate(rotationPointX * scale, rotationPointY * scale, rotationPointZ * scale);
         } else {
-            valkyrie$matrix.translate(new Vector3f(rotationPointX * scale, rotationPointY * scale, rotationPointZ * scale));
+            valkyrie$matrix.translate(rotationPointX * scale, rotationPointY * scale, rotationPointZ * scale);
 
             if (rotateAngleZ != 0)
-                valkyrie$matrix.rotate(rotateAngleZ, new Vector3f(0, 0, 1));
+                valkyrie$matrix.rotate(rotateAngleZ, Z_AXIS);
 
             if (rotateAngleY != 0)
-                valkyrie$matrix.rotate(rotateAngleY, new Vector3f(0, 1, 0));
+                valkyrie$matrix.rotate(rotateAngleY, Y_AXIS);
 
             if (rotateAngleX != 0)
-                valkyrie$matrix.rotate(rotateAngleX, new Vector3f(1, 0, 0));
+                valkyrie$matrix.rotate(rotateAngleX, X_AXIS);
 
             if (flag) {
                 GlStateManager.scale(this.scaleX, this.scaleY, this.scaleZ);

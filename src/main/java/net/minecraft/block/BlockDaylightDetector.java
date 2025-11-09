@@ -47,7 +47,7 @@ public class BlockDaylightDetector extends BlockContainer {
     public void updatePower(World worldIn, BlockPos pos) {
         if (!worldIn.provider.getHasNoSky()) {
             IBlockState iblockstate = worldIn.getBlockState(pos);
-            int i = worldIn.getLightFor(EnumSkyBlock.SKY, pos) - worldIn.getSkylightSubtracted();
+            int i = worldIn.getLightFor(EnumSkyBlock.SKY, pos.getX(), pos.getY(), pos.getZ()) - worldIn.getSkylightSubtracted();
             float f = worldIn.getCelestialAngleRadians(1.0F);
             float f1 = f < (float) Math.PI ? 0.0F : ((float) Math.PI * 2F);
             f = f + (f1 - f) * 0.2F;

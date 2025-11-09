@@ -29,7 +29,7 @@ public class GuiUtilRenderComponents {
                 String s1 = s.substring(k + 1);
                 s = s.substring(0, k + 1);
                 ChatComponentText chatcomponenttext = new ChatComponentText(s1);
-                chatcomponenttext.setChatStyle(ichatcomponent1.getChatStyle().createShallowCopy());
+                chatcomponenttext.setChatStyle(ichatcomponent1.getChatStyle());
                 list1.add(j + 1, chatcomponenttext);
                 flag = true;
             }
@@ -38,13 +38,13 @@ public class GuiUtilRenderComponents {
             String s5 = s4.endsWith("\n") ? s4.substring(0, s4.length() - 1) : s4;
             int i1 = p_178908_2_.getStringWidth(s5);
             ChatComponentText chatcomponenttext1 = new ChatComponentText(s5);
-            chatcomponenttext1.setChatStyle(ichatcomponent1.getChatStyle().createShallowCopy());
+            chatcomponenttext1.setChatStyle(ichatcomponent1.getChatStyle());
 
             if (i + i1 > p_178908_1_) {
                 String s2 = p_178908_2_.trimStringToWidth(s4, p_178908_1_ - i, false);
                 String s3 = s2.length() < s4.length() ? s4.substring(s2.length()) : null;
 
-                if (s3 != null && s3.length() > 0) {
+                if (s3 != null) {
                     int l = s2.lastIndexOf(" ");
 
                     if (l >= 0 && p_178908_2_.getStringWidth(s4.substring(0, l)) > 0) {

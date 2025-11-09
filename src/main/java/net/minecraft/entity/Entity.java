@@ -2272,14 +2272,22 @@ public abstract class Entity implements ICommandSender {
         return true;
     }
 
-    /**
-     * Get the formatted ChatComponent that will be used for the sender's username in chat
-     */
-    public IChatComponent getDisplayName() {
+    LazyLoadBase<IChatComponent> displayName = LazyLoadBase.of(() -> {
         ChatComponentText chatcomponenttext = new ChatComponentText(this.getName());
         chatcomponenttext.getChatStyle().setChatHoverEvent(this.getHoverEvent());
         chatcomponenttext.getChatStyle().setInsertion(this.getUniqueID().toString());
         return chatcomponenttext;
+    });
+
+    /**
+     * Get the formatted ChatComponent that will be used for the sender's username in chat
+     */
+    public IChatComponent getDisplayName() {
+        return displayName.getValue();
+    }
+
+    public void updateDisplayName() {
+        this.displayName.forceReload();
     }
 
     /**
@@ -2287,6 +2295,7 @@ public abstract class Entity implements ICommandSender {
      */
     public void setCustomNameTag(String name) {
         this.dataWatcher.updateObject(2, name);
+        this.updateDisplayName();
     }
 
     public String getCustomNameTag() {
@@ -2297,7 +2306,7 @@ public abstract class Entity implements ICommandSender {
      * Returns true if this thing is named
      */
     public boolean hasCustomName() {
-        return this.dataWatcher.getWatchableObjectString(2).length() > 0;
+        return !this.dataWatcher.getWatchableObjectString(2).isEmpty();
     }
 
     public void setAlwaysRenderNameTag(boolean alwaysRenderNameTag) {
@@ -2326,7 +2335,7 @@ public abstract class Entity implements ICommandSender {
         return EnumFacing.getHorizontal(MathHelper.floor_double((double) (this.rotationYaw * 4.0F / 360.0F) + 0.5D) & 3);
     }
 
-    protected HoverEvent getHoverEvent() {
+    LazyLoadBase<HoverEvent> hoverEvent = LazyLoadBase.of(() -> {
         NBTTagCompound nbttagcompound = new NBTTagCompound();
         String s = EntityList.getEntityString(this);
         nbttagcompound.setString("id", this.getUniqueID().toString());
@@ -2337,6 +2346,10 @@ public abstract class Entity implements ICommandSender {
 
         nbttagcompound.setString("name", this.getName());
         return new HoverEvent(HoverEvent.Action.SHOW_ENTITY, new ChatComponentText(nbttagcompound.toString()));
+    });
+
+    protected HoverEvent getHoverEvent() {
+        return this.hoverEvent.getValue();
     }
 
     public boolean isSpectatedByPlayer(EntityPlayerMP player) {

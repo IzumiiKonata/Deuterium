@@ -229,32 +229,42 @@ public class BlockPos extends Vec3i {
     }
 
     public static Iterable<BlockPos.MutableBlockPos> getAllInBoxMutable(BlockPos from, BlockPos to) {
-        final BlockPos blockpos = new BlockPos(Math.min(from.getX(), to.getX()), Math.min(from.getY(), to.getY()), Math.min(from.getZ(), to.getZ()));
-        final BlockPos blockpos1 = new BlockPos(Math.max(from.getX(), to.getX()), Math.max(from.getY(), to.getY()), Math.max(from.getZ(), to.getZ()));
-        return new Iterable<BlockPos.MutableBlockPos>() {
+        return getAllInBoxMutable(from.getX(), from.getY(), from.getZ(), to.getX(), to.getY(), to.getZ());
+    }
+
+    public static Iterable<BlockPos.MutableBlockPos> getAllInBoxMutable(int fromX, int fromY, int fromZ, int toX, int toY, int toZ) {
+
+        int minX = Math.min(fromX, toX);
+        int minY = Math.min(fromY, toY);
+        int minZ = Math.min(fromZ, toZ);
+        int maxX = Math.max(fromX, toX);
+        int maxY = Math.max(fromY, toY);
+        int maxZ = Math.max(fromZ, toZ);
+
+        return new Iterable<>() {
             public Iterator<BlockPos.MutableBlockPos> iterator() {
-                return new AbstractIterator<BlockPos.MutableBlockPos>() {
+                return new AbstractIterator<>() {
                     private BlockPos.MutableBlockPos theBlockPos = null;
 
                     protected BlockPos.MutableBlockPos computeNext() {
                         if (this.theBlockPos == null) {
-                            this.theBlockPos = new BlockPos.MutableBlockPos(blockpos.getX(), blockpos.getY(), blockpos.getZ());
+                            this.theBlockPos = new BlockPos.MutableBlockPos(minX, minY, minZ);
                             return this.theBlockPos;
-                        } else if (this.theBlockPos.equals(blockpos1)) {
+                        } else if (this.theBlockPos.getX() == maxX && this.theBlockPos.getY() == maxY && this.theBlockPos.getZ() == maxZ) {
                             return this.endOfData();
                         } else {
                             int i = this.theBlockPos.getX();
                             int j = this.theBlockPos.getY();
                             int k = this.theBlockPos.getZ();
 
-                            if (i < blockpos1.getX()) {
+                            if (i < maxX) {
                                 ++i;
-                            } else if (j < blockpos1.getY()) {
-                                i = blockpos.getX();
+                            } else if (j < maxY) {
+                                i = minX;
                                 ++j;
-                            } else if (k < blockpos1.getZ()) {
-                                i = blockpos.getX();
-                                j = blockpos.getY();
+                            } else if (k < maxZ) {
+                                i = minX;
+                                j = minY;
                                 ++k;
                             }
 

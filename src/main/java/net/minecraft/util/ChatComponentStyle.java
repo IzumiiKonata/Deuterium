@@ -70,10 +70,7 @@ public abstract class ChatComponentStyle implements IChatComponent {
         return stringbuilder.toString();
     }
 
-    /**
-     * Gets the text of this component, with formatting codes added for rendering.
-     */
-    public final String getFormattedText() {
+    LazyLoadBase<String> formattedTextCache = LazyLoadBase.of(() -> {
         StringBuilder stringbuilder = new StringBuilder();
 
         for (IChatComponent ichatcomponent : this) {
@@ -83,6 +80,13 @@ public abstract class ChatComponentStyle implements IChatComponent {
         }
 
         return stringbuilder.toString();
+    });
+
+    /**
+     * Gets the text of this component, with formatting codes added for rendering.
+     */
+    public final String getFormattedText() {
+        return formattedTextCache.getValue();
     }
 
     public static Iterator<IChatComponent> createDeepCopyIterator(Iterable<IChatComponent> components) {

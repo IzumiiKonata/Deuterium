@@ -500,9 +500,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
             GlStateManager.rotate(f * this.getDeathMaxRotation(bat), 0.0F, 0.0F, 1.0F);
         } else {
-            String s = EnumChatFormatting.getTextWithoutFormattingCodes(bat.getName());
-
-            if (s != null && (s.equals("Dinnerbone") || s.equals("Grumm")) && (!(bat instanceof EntityPlayer) || ((EntityPlayer) bat).isWearing(EnumPlayerModelParts.CAPE))) {
+            String nameTag;
+            if ((!(bat instanceof EntityPlayer) || ((EntityPlayer) bat).isWearing(EnumPlayerModelParts.CAPE)) && (nameTag = bat.getCustomNameTag()) != null && (nameTag.equals("Dinnerbone") || nameTag.equals("Grumm"))) {
                 GlStateManager.translate(0.0F, bat.height + 0.1F, 0.0F);
                 GlStateManager.rotate(180.0F, 0.0F, 0.0F, 1.0F);
             }

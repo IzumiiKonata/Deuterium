@@ -57,7 +57,10 @@ public class SkinManager {
      * May download the skin if its not in the cache, can be passed a SkinManager#SkinAvailableCallback for handling
      */
     public Location loadSkin(final MinecraftProfileTexture profileTexture, final Type p_152789_2_, final SkinManager.SkinAvailableCallback skinAvailableCallback) {
-        final Location resourcelocation = Location.of("skins/" + profileTexture.getHash());
+
+        String url = profileTexture.getUrl();
+
+        final Location resourcelocation = Location.of("skins/" + url);
         ITextureObject itextureobject = this.textureManager.getTexture(resourcelocation);
 
         if (itextureobject != null) {
@@ -65,10 +68,13 @@ public class SkinManager {
                 skinAvailableCallback.skinAvailable(p_152789_2_, resourcelocation, profileTexture, imgData.get(resourcelocation));
             }
         } else {
-            File file1 = new File(this.skinCacheDir, profileTexture.getHash().length() > 2 ? profileTexture.getHash().substring(0, 2) : "xx");
-            File file2 = new File(file1, profileTexture.getHash());
+
+            String hash = url.substring(38);
+
+            File file1 = new File(this.skinCacheDir, hash.length() > 2 ? hash.substring(0, 2) : "xx");
+            File file2 = new File(file1, hash);
             final IImageBuffer iimagebuffer = p_152789_2_ == Type.SKIN ? new ImageBufferDownload() : null;
-            ThreadDownloadImageData threaddownloadimagedata = new ThreadDownloadImageData(file2, profileTexture.getUrl(), DefaultPlayerSkin.getDefaultSkinLegacy(), new IImageBuffer() {
+            ThreadDownloadImageData threaddownloadimagedata = new ThreadDownloadImageData(file2, url, DefaultPlayerSkin.getDefaultSkinLegacy(), new IImageBuffer() {
 
                 private BufferedImage img;
 

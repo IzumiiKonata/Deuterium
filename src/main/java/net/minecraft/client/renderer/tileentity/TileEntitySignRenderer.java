@@ -94,8 +94,9 @@ public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntity
                 for (int j = 0; j < te.signText.length; ++j) {
                     if (te.signText[j] != null) {
                         IChatComponent ichatcomponent = te.signText[j];
-                        List<IChatComponent> list = GuiUtilRenderComponents.splitText(ichatcomponent, 90, fontrenderer, false, true);
-                        String s = list != null && list.size() > 0 ? list.get(0).getFormattedText() : "";
+                        if (te.shouldUpdateSplitTexts)
+                            te.splitSignLines[j] = GuiUtilRenderComponents.splitText(ichatcomponent, 90, fontrenderer, false, true);
+                        String s = !te.splitSignLines[j].isEmpty() ? te.splitSignLines[j].getFirst().getFormattedText() : "";
 
                         if (j == te.lineBeingEdited) {
                             s = "> " + s + " <";
@@ -105,6 +106,8 @@ public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntity
                         }
                     }
                 }
+
+                te.shouldUpdateSplitTexts = false;
             }
         }
 

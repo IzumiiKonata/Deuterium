@@ -20,6 +20,13 @@ public abstract class LazyLoadBase<T> {
         return this.value;
     }
 
+    public void forceReload() {
+        synchronized (this) {
+            this.value = this.load();
+            this.isLoaded = true;
+        }
+    }
+
     protected abstract T load();
 
     public static <T> LazyLoadBase<T> of(Supplier<T> supplier) {

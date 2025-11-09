@@ -914,6 +914,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 
                 if (tileentitysign.getIsEditable()) {
                     System.arraycopy(packetIn.getLines(), 0, tileentitysign.signText, 0, 4);
+                    tileentitysign.shouldUpdateSplitTexts = true;
                     tileentitysign.markDirty();
                 }
 

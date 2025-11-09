@@ -149,28 +149,27 @@ public class TextureUtil {
         return textureId;
     }
 
-    private static void uploadTextureImageSubImpl(BufferedImage p_110993_0_, int p_110993_1_, int p_110993_2_, boolean p_110993_3_, boolean p_110993_4_) {
-        int i = p_110993_0_.getWidth();
-        int j = p_110993_0_.getHeight();
-        int k = 4194304 / i;
-        int[] aint = new int[4194304];
-        setTextureBlurred(p_110993_3_);
-        setTextureClamped(p_110993_4_);
+    static final int[] textureData = new int[4194304];
+
+    private static void uploadTextureImageSubImpl(BufferedImage img, int xOffset, int yOffset, boolean blur, boolean clamp) {
+        int width = img.getWidth();
+        int height = img.getHeight();
+        int k = 4194304 / width;
+        setTextureBlurred(blur);
+        setTextureClamped(clamp);
 
         IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(4194304);
 
-        for (int l = 0; l < i * j; l += i * k) {
-            int i1 = l / i;
-            int j1 = Math.min(k, j - i1);
-            int k1 = i * j1;
-            p_110993_0_.getRGB(0, i1, i, j1, aint, 0, i);
-            copyToBuffer(aint, k1, dataBuffer);
-            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, p_110993_1_, p_110993_2_ + i1, i, j1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
+        for (int l = 0; l < width * height; l += width * k) {
+            int i1 = l / width;
+            int j1 = Math.min(k, height - i1);
+            int k1 = width * j1;
+            img.getRGB(0, i1, width, j1, textureData, 0, width);
+            copyToBuffer(textureData, k1, dataBuffer);
+            GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset + i1, width, j1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
         }
 
         MemoryTracker.memFree(dataBuffer);
-
-        aint = null;
     }
 
     public static void setTextureClamped(boolean clamp) {

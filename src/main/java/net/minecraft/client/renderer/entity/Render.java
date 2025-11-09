@@ -216,8 +216,8 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
 
-            for (BlockPos blockpos : BlockPos.getAllInBoxMutable(new BlockPos(i, k, i1), new BlockPos(j, l, j1))) {
-                Block block = world.getBlockState(blockpos.down()).getBlock();
+            for (BlockPos blockpos : BlockPos.getAllInBoxMutable(i, k, i1, j, l, j1)) {
+                Block block = world.getBlockState(blockpos.getX(), blockpos.getY() - 1, blockpos.getZ()).getBlock();
 
                 if (block.getRenderType() != -1 && world.getLightFromNeighbors(blockpos) > 3) {
                     this.renderShadowBlock(block, x, y, z, blockpos, shadowAlpha, f, d2, d3, d4);

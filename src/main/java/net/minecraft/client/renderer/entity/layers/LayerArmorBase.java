@@ -49,10 +49,10 @@ public abstract class LayerArmorBase<T extends ModelBase> implements LayerRender
             t.setLivingAnimations(entitylivingbaseIn, p_177182_2_, p_177182_3_, partialTicks);
 
             this.setModelPartVisible(t, armorSlot);
-            boolean flag = this.isSlotForLeggings(armorSlot);
+            boolean leggings = this.isSlotForLeggings(armorSlot);
 
-            if (!Config.isCustomItems() || !CustomItems.bindCustomArmorTexture(itemstack, flag ? 2 : 1, null)) {
-                this.renderer.bindTexture(this.getArmorResource(itemarmor, flag));
+            if (!Config.isCustomItems() || !CustomItems.bindCustomArmorTexture(itemstack, leggings ? 2 : 1, null)) {
+                this.renderer.bindTexture(this.getArmorResource(itemarmor, leggings));
             }
 
             float colorB = 1.0F;
@@ -69,8 +69,8 @@ public abstract class LayerArmorBase<T extends ModelBase> implements LayerRender
                     GlStateManager.color(colorR * f, colorG * f1, colorB * f2, alpha);
                     t.render(entitylivingbaseIn, p_177182_2_, p_177182_3_, p_177182_5_, p_177182_6_, p_177182_7_, scale);
 
-                    if (!Config.isCustomItems() || !CustomItems.bindCustomArmorTexture(itemstack, flag ? 2 : 1, "overlay")) {
-                        this.renderer.bindTexture(this.getArmorResource(itemarmor, flag, "overlay"));
+                    if (!Config.isCustomItems() || !CustomItems.bindCustomArmorTexture(itemstack, leggings ? 2 : 1, "overlay")) {
+                        this.renderer.bindTexture(this.getArmorResource(itemarmor, leggings, "overlay"));
                     }
 
                 case CHAIN:
@@ -143,12 +143,13 @@ public abstract class LayerArmorBase<T extends ModelBase> implements LayerRender
         }
     }
 
-    private Location getArmorResource(ItemArmor p_177181_1_, boolean p_177181_2_) {
-        return this.getArmorResource(p_177181_1_, p_177181_2_, null);
+    private Location getArmorResource(ItemArmor armor, boolean leggings) {
+        return this.getArmorResource(armor, leggings, null);
     }
 
-    private Location getArmorResource(ItemArmor p_177178_1_, boolean p_177178_2_, String p_177178_3_) {
-        String s = String.format("textures/models/armor/%s_layer_%d%s.png", p_177178_1_.getArmorMaterial().getName(), p_177178_2_ ? 2 : 1, p_177178_3_ == null ? "" : String.format("_%s", p_177178_3_));
+    private Location getArmorResource(ItemArmor armor, boolean forLeggings, String additionalIdentifier) {
+//        String s = String.format("textures/models/armor/%s_layer_%d%s.png", armor.getArmorMaterial().getName(), forLeggings ? 2 : 1, additionalIdentifier == null ? "" : String.format("_%s", additionalIdentifier));
+        String s = "textures/models/armor/" + armor.getArmorMaterial().getName() + "_layer_" + (forLeggings ? 2 : 1) + (additionalIdentifier == null ? "" : "_" + additionalIdentifier) + ".png";
         Location resourcelocation = ARMOR_TEXTURE_RES_MAP.get(s);
 
         if (resourcelocation == null) {

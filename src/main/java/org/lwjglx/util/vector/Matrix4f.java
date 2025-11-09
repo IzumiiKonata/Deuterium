@@ -500,6 +500,10 @@ public class Matrix4f extends Matrix implements Serializable {
         return translate(vec, this);
     }
 
+    public Matrix4f translate(double x, double y, double z) {
+        return translate(x, y, z, this);
+    }
+
     /**
      * Scales this matrix
      *
@@ -640,6 +644,21 @@ public class Matrix4f extends Matrix implements Serializable {
         dest.m31 += src.m01 * vec.x + src.m11 * vec.y + src.m21 * vec.z;
         dest.m32 += src.m02 * vec.x + src.m12 * vec.y + src.m22 * vec.z;
         dest.m33 += src.m03 * vec.x + src.m13 * vec.y + src.m23 * vec.z;
+
+        return dest;
+    }
+
+    public Matrix4f translate(double x, double y, double z, Matrix4f dest) {
+        return translate(x, y, z, this, dest);
+    }
+
+    public static Matrix4f translate(double x, double y, double z, Matrix4f src, Matrix4f dest) {
+        if (dest == null) dest = new Matrix4f();
+
+        dest.m30 += src.m00 * x + src.m10 * y + src.m20 * z;
+        dest.m31 += src.m01 * x + src.m11 * y + src.m21 * z;
+        dest.m32 += src.m02 * x + src.m12 * y + src.m22 * z;
+        dest.m33 += src.m03 * x + src.m13 * y + src.m23 * z;
 
         return dest;
     }

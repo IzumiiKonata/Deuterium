@@ -180,7 +180,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     }
 
     public BiomeGenBase getBiomeGenForCoords(final BlockPos pos) {
-        if (this.isBlockLoaded(pos)) {
+        if (this.isBlockLoaded(pos.getX(), pos.getY(), pos.getZ())) {
             Chunk chunk = this.getChunkFromBlockCoords(pos);
 
             try {
@@ -243,6 +243,10 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     /**
      * Check if the given BlockPos has valid coordinates
      */
+    private boolean isValid(int x, int y, int z) {
+        return x >= -30000000 && z >= -30000000 && x < 30000000 && z < 30000000 && y >= 0 && y < 256;
+    }
+
     private boolean isValid(BlockPos pos) {
         return pos.getX() >= -30000000 && pos.getZ() >= -30000000 && pos.getX() < 30000000 && pos.getZ() < 30000000 && pos.getY() >= 0 && pos.getY() < 256;
     }
@@ -256,11 +260,19 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     }
 
     public boolean isBlockLoaded(BlockPos pos) {
-        return this.isBlockLoaded(pos, true);
+        return this.isBlockLoaded(pos.getX(), pos.getY(), pos.getZ(), true);
     }
 
     public boolean isBlockLoaded(BlockPos pos, boolean allowEmpty) {
-        return this.isValid(pos) && this.isChunkLoaded(pos.getX() >> 4, pos.getZ() >> 4, allowEmpty);
+        return this.isBlockLoaded(pos.getX(), pos.getY(), pos.getZ(), allowEmpty);
+    }
+
+    public boolean isBlockLoaded(int x, int y, int z) {
+        return this.isBlockLoaded(x, y, z, true);
+    }
+
+    public boolean isBlockLoaded(int x, int y, int z, boolean allowEmpty) {
+        return this.isValid(x, y, z) && this.isChunkLoaded(x >> 4, z >> 4, allowEmpty);
     }
 
     public boolean isAreaLoaded(BlockPos center, int radius) {
@@ -316,6 +328,10 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         return this.getChunkFromChunkCoords(pos.getX() >> 4, pos.getZ() >> 4);
     }
 
+    public Chunk getChunkFromBlockCoords(int x, int z) {
+        return this.getChunkFromChunkCoords(x >> 4, z >> 4);
+    }
+
     /**
      * Returns back a chunk looked up by chunk coordinates Args: x, y
      */
@@ -329,7 +345,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
      * world. Flags can be added together.
      */
     public boolean setBlockState(BlockPos pos, IBlockState newState, int flags) {
-        if (!this.isValid(pos)) {
+        if (!this.isValid(pos.getX(), pos.getY(), pos.getZ())) {
             return false;
         } else if (!this.isRemote && this.worldInfo.getTerrainType() == WorldType.DEBUG_WORLD) {
             return false;
@@ -540,17 +556,21 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     }
 
     public int getLightFromNeighbors(BlockPos pos) {
-        return this.getLight(pos, true);
+        return this.getLight(pos.getX(), pos.getY(), pos.getZ(), true);
     }
 
-    public int getLight(BlockPos pos, boolean checkNeighbors) {
-        if (pos.getX() >= -30000000 && pos.getZ() >= -30000000 && pos.getX() < 30000000 && pos.getZ() < 30000000) {
-            if (checkNeighbors && this.getBlockState(pos).getBlock().getUseNeighborBrightness()) {
-                int i1 = this.getLight(pos.up(), false);
-                int i = this.getLight(pos.east(), false);
-                int j = this.getLight(pos.west(), false);
-                int k = this.getLight(pos.south(), false);
-                int l = this.getLight(pos.north(), false);
+    public int getLightFromNeighbors(int x, int y, int z) {
+        return this.getLight(x, y, z, true);
+    }
+
+    public int getLight(int x, int y, int z, boolean checkNeighbors) {
+        if (x >= -30000000 && y >= -30000000 && x < 30000000 && z < 30000000) {
+            if (checkNeighbors && this.getBlockState(x, y, z).getBlock().getUseNeighborBrightness()) {
+                int i1 = this.getLight(x, y + 1, z, false);
+                int i = this.getLight(x + 1, y, z, false);
+                int j = this.getLight(x - 1, y, z, false);
+                int k = this.getLight(x, y, z + 1, false);
+                int l = this.getLight(x, y, z - 1, false);
 
                 if (i > i1) {
                     i1 = i;
@@ -569,15 +589,15 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 }
 
                 return i1;
-            } else if (pos.getY() < 0) {
+            } else if (y < 0) {
                 return 0;
             } else {
-                if (pos.getY() >= 256) {
-                    pos = new BlockPos(pos.getX(), 255, pos.getZ());
+                if (y >= 256) {
+                    y = 255;
                 }
 
-                Chunk chunk = this.getChunkFromBlockCoords(pos);
-                return chunk.getLightSubtracted(pos, this.skylightSubtracted);
+                Chunk chunk = this.getChunkFromBlockCoords(x, z);
+                return chunk.getLightSubtracted(x, y, z, this.skylightSubtracted);
             }
         } else {
             return 15;
@@ -629,14 +649,14 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
 
             if (!this.isValid(pos)) {
                 return type.defaultLightValue;
-            } else if (!this.isBlockLoaded(pos)) {
+            } else if (!this.isBlockLoaded(pos.getX(), pos.getY(), pos.getZ())) {
                 return type.defaultLightValue;
             } else if (this.getBlockState(pos).getBlock().getUseNeighborBrightness()) {
-                int i1 = this.getLightFor(type, pos.up());
-                int i = this.getLightFor(type, pos.east());
-                int j = this.getLightFor(type, pos.west());
-                int k = this.getLightFor(type, pos.south());
-                int l = this.getLightFor(type, pos.north());
+                int i1 = this.getLightFor(type, pos.getX(), pos.getY() + 1, pos.getZ());
+                int i = this.getLightFor(type, pos.getX() + 1, pos.getY(), pos.getZ());
+                int j = this.getLightFor(type, pos.getX() - 1, pos.getY(), pos.getZ());
+                int k = this.getLightFor(type, pos.getX(), pos.getY(), pos.getZ() + 1);
+                int l = this.getLightFor(type, pos.getX(), pos.getY(), pos.getZ() - 1);
 
                 if (i > i1) {
                     i1 = i;
@@ -662,28 +682,27 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         }
     }
 
-    public int getLightFor(EnumSkyBlock type, BlockPos pos) {
-        if (pos.getY() < 0) {
-            pos = new BlockPos(pos.getX(), 0, pos.getZ());
-        }
+    static BlockPos.MutableBlockPos MUTABLE_BLOCK_POS = new BlockPos.MutableBlockPos();
 
-        if (!this.isValid(pos)) {
-            return type.defaultLightValue;
-        } else if (!this.isBlockLoaded(pos)) {
-            return type.defaultLightValue;
-        } else {
-            Chunk chunk = this.getChunkFromBlockCoords(pos);
-            return chunk.getLightFor(type, pos);
-        }
+    public int getLightFor(EnumSkyBlock type, BlockPos pos) {
+        return getLightFor(type, pos.getX(), pos.getY(), pos.getZ());
     }
 
-    public void setLightFor(EnumSkyBlock type, BlockPos pos, int lightValue) {
-        if (this.isValid(pos)) {
-            if (this.isBlockLoaded(pos)) {
-                Chunk chunk = this.getChunkFromBlockCoords(pos);
-                chunk.setLightFor(type, pos, lightValue);
-                this.notifyLightSet(pos);
-            }
+    public int getLightFor(EnumSkyBlock type, int x, int y, int z) {
+
+        MUTABLE_BLOCK_POS.set(x, y, z);
+
+        if (MUTABLE_BLOCK_POS.getY() < 0) {
+            MUTABLE_BLOCK_POS.set(x, 0, z);
+        }
+
+        if (!this.isValid(MUTABLE_BLOCK_POS)) {
+            return type.defaultLightValue;
+        } else if (!this.isBlockLoaded(MUTABLE_BLOCK_POS.getX(), MUTABLE_BLOCK_POS.getY(), MUTABLE_BLOCK_POS.getZ())) {
+            return type.defaultLightValue;
+        } else {
+            Chunk chunk = this.getChunkFromBlockCoords(MUTABLE_BLOCK_POS);
+            return chunk.getLightFor(type, MUTABLE_BLOCK_POS);
         }
     }
 
@@ -705,15 +724,24 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     }
 
     public float getLightBrightness(BlockPos pos) {
-        return this.provider.getLightBrightnessTable()[this.getLightFromNeighbors(pos)];
+        return this.provider.getLightBrightnessTable()[this.getLightFromNeighbors(pos.getX(), pos.getY(), pos.getZ())];
     }
 
     public IBlockState getBlockState(BlockPos pos) {
-        if (!this.isValid(pos)) {
+        if (!this.isValid(pos.getX(), pos.getY(), pos.getZ())) {
             return Blocks.air.getDefaultState();
         } else {
             Chunk chunk = this.getChunkFromBlockCoords(pos);
             return chunk.getBlockState(pos);
+        }
+    }
+
+    public IBlockState getBlockState(int x, int y, int z) {
+        if (!this.isValid(x, y, z)) {
+            return Blocks.air.getDefaultState();
+        } else {
+            Chunk chunk = this.getChunkFromBlockCoords(x, z);
+            return chunk.getBlockState(x, y, z);
         }
     }
 
@@ -2187,7 +2215,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             j = j + p_147467_1_;
             k = k + p_147467_2_;
 
-            if (block.getMaterial() == Material.air && this.getLight(blockpos) <= this.rand.nextInt(8) && this.getLightFor(EnumSkyBlock.SKY, blockpos) <= 0) {
+            if (block.getMaterial() == Material.air && this.getLight(blockpos) <= this.rand.nextInt(8) && this.getLightFor(EnumSkyBlock.SKY, blockpos.getX(), blockpos.getY(), blockpos.getZ()) <= 0) {
                 EntityPlayer entityplayer = this.getClosestPlayer((double) j + 0.5D, (double) l + 0.5D, (double) k + 0.5D, 8.0D);
 
                 if (entityplayer != null && entityplayer.getDistanceSq((double) j + 0.5D, (double) l + 0.5D, (double) k + 0.5D) > 4.0D) {
@@ -2227,11 +2255,11 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         float f = biomegenbase.getFloatTemperature(pos);
 
         if (!(f > 0.15F)) {
-            if (pos.getY() >= 0 && pos.getY() < 256 && this.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
+            if (pos.getY() >= 0 && pos.getY() < 256 && this.getLightFor(EnumSkyBlock.BLOCK, pos.getX(), pos.getY(), pos.getZ()) < 10) {
                 IBlockState iblockstate = this.getBlockState(pos);
                 Block block = iblockstate.getBlock();
 
-                if ((block == Blocks.water || block == Blocks.flowing_water) && iblockstate.getValue(BlockLiquid.LEVEL).intValue() == 0) {
+                if ((block == Blocks.water || block == Blocks.flowing_water) && iblockstate.getValue(BlockLiquid.LEVEL) == 0) {
                     if (!noWaterAdj) {
                         return true;
                     }
@@ -2262,7 +2290,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         } else if (!checkLight) {
             return true;
         } else {
-            if (pos.getY() >= 0 && pos.getY() < 256 && this.getLightFor(EnumSkyBlock.BLOCK, pos) < 10) {
+            if (pos.getY() >= 0 && pos.getY() < 256 && this.getLightFor(EnumSkyBlock.BLOCK, pos.getX(), pos.getY(), pos.getZ()) < 10) {
                 Block block = this.getBlockState(pos).getBlock();
 
                 return block.getMaterial() == Material.air && Blocks.snow_layer.canPlaceBlockAt(this, pos);
@@ -2308,8 +2336,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 return i;
             } else {
                 for (EnumFacing enumfacing : EnumFacing.values()) {
-                    BlockPos blockpos = pos.offset(enumfacing);
-                    int k = this.getLightFor(lightType, blockpos) - j;
+                    int k = this.getLightFor(lightType, pos.getX() + enumfacing.getFrontOffsetX(), pos.getY() + enumfacing.getFrontOffsetY(), pos.getZ() + enumfacing.getFrontOffsetZ()) - j;
 
                     if (k > i) {
                         i = k;

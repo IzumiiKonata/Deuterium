@@ -109,6 +109,7 @@ public class GuiEditSign extends GuiScreen {
         }
 
         this.tileSign.signText[this.editLine] = new ChatComponentText(s);
+        this.tileSign.shouldUpdateSplitTexts = true;
 
         if (keyCode == 1) {
             this.actionPerformed(this.doneBtn);

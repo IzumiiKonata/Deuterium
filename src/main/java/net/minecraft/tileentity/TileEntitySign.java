@@ -14,8 +14,19 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class TileEntitySign extends TileEntity {
     public final IChatComponent[] signText = new IChatComponent[]{new ChatComponentText(""), new ChatComponentText(""), new ChatComponentText(""), new ChatComponentText("")};
+    public boolean shouldUpdateSplitTexts = false;
+    public List<IChatComponent>[] splitSignLines = new ArrayList[4];
+
+    {
+        for (int i = 0; i < splitSignLines.length; i++) {
+            splitSignLines[i] = new ArrayList<>();
+        }
+    }
 
     /**
      * The index of the line currently being edited. Only used on client side, but defined on both. Note this is only
@@ -91,10 +102,13 @@ public class TileEntitySign extends TileEntity {
                 } catch (CommandException var7) {
                     this.signText[i] = ichatcomponent;
                 }
+
             } catch (JsonParseException var8) {
                 this.signText[i] = new ChatComponentText(s);
             }
         }
+
+        this.shouldUpdateSplitTexts = true;
 
         this.stats.readStatsFromNBT(compound);
     }

@@ -102,14 +102,12 @@ public class TileEntityRendererDispatcher {
         if (tileentityIn.getDistanceSq(this.entityX, this.entityY, this.entityZ) < tileentityIn.getMaxRenderDistanceSquared()) {
             boolean flag = true;
 
-            if (flag) {
-                RenderHelper.enableStandardItemLighting();
-                int i = this.worldObj.getCombinedLight(tileentityIn.getPos(), 0);
-                int j = i % 65536;
-                int k = i / 65536;
-                OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j, (float) k);
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            }
+            RenderHelper.enableStandardItemLighting();
+            int i = this.worldObj.getCombinedLight(tileentityIn.getPos(), 0);
+            int j = i % 65536;
+            int k = i / 65536;
+            OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j, (float) k);
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
             BlockPos blockpos = tileentityIn.getPos();
 

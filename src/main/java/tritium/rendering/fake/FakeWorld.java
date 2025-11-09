@@ -124,9 +124,6 @@ public class FakeWorld extends WorldClient {
     public void markBlockRangeForRenderUpdate(final BlockPos rangeMin, final BlockPos rangeMax) {
     }
 
-    public void setLightFor(final EnumSkyBlock type, final BlockPos pos, final int lightValue) {
-    }
-
     public float getLightBrightness(final BlockPos pos) {
         return 1.0f;
     }

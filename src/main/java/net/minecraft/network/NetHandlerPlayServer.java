@@ -944,6 +944,8 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
                 tileentitysign.signText[i] = new ChatComponentText(EnumChatFormatting.getTextWithoutFormattingCodes(aichatcomponent[i].getUnformattedText()));
             }
 
+            tileentitysign.shouldUpdateSplitTexts = true;
+
             tileentitysign.markDirty();
             worldserver.markBlockForUpdate(blockpos);
         }

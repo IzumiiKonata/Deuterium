@@ -16,6 +16,8 @@ public class EntityLighter {
         return start + delta * (end - start);
     }
 
+    static final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
+
     public static int getBlendedLight(Entity entity, float tickDelta) {
         boolean calcBlockLight = !entity.isBurning();
 
@@ -48,8 +50,6 @@ public class EntityLighter {
         // The sampled light values contributed by all sources
         double sl = 0;
         double bl = 0;
-
-        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
         // Iterate over every block in the sampling volume
         for (int bX = bMinX; bX < bMaxX; bX++) {

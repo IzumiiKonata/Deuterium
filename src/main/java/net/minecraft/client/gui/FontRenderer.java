@@ -19,8 +19,6 @@ import net.optifine.util.FontUtils;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -273,7 +271,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
      */
     private float renderChar(char ch, boolean italic) {
         if (ch != 32 && ch != 160) {
-            int i = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".indexOf(ch);
+            int i = charMap[ch];
             return i != -1 && !this.unicodeFlag ? this.renderDefaultChar(i, italic) : this.renderUnicodeChar(ch, italic);
         } else {
             return !this.unicodeFlag ? this.charWidthFloat[ch] : 4.0F;
@@ -453,24 +451,24 @@ public class FontRenderer implements IResourceManagerReloadListener {
         this.strikethroughStyle = false;
     }
 
-    private final String listOfRandomChars = "  !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~¡£ª«¬®°±²·º»¼½¿ÀÁÂÄÅÆÇÈÉÊËÍÑÓÔÕÖ×ØÚÜßàáâãäåæçèéêëìíîïñòóôõö÷øùúûüÿğİıŒœŞşŴŵžƒȇΓΘΣΦΩαβδμπστⁿ∅∈∙√∞∩≈≡≤≥⌠⌡─│┌┐└┘├┤┬┴┼═║╒╓╔╕╖╗╘╙╚╛╜╝╞╟╠╡╢╣╤╥╦╧╨╩╪╫╬▀▄█▌▐░▒▓■";
-    private final char[] randomChars = listOfRandomChars.toCharArray();
-    private final int[] randomCharMap;
+    private final String listOfAsciiChars = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000";
+    private final char[] asciiCharsArray = listOfAsciiChars.toCharArray();
+    private final int[] charMap;
 
     {
         char max = 0;
 
-        for (char c : randomChars) {
+        for (char c : asciiCharsArray) {
             max = (char) Math.max(max, c);
         }
 
-        randomCharMap = new int[max + 1];
-        Arrays.fill(randomCharMap, -1);
-        for (char c : randomChars) {
-            randomCharMap[c] = 0;
+        charMap = new int['\uFFFF' + 1];
+        Arrays.fill(charMap, -1);
+        for (int i = 0; i < asciiCharsArray.length; i++) {
+            char c = asciiCharsArray[i];
+            charMap[c] = i;
         }
     }
-
 
     /**
      * Render a single line string at the current (posX,posY) and update posX
@@ -484,105 +482,104 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
 //        text = call.getText();
 
+        char[] charArray = text.toCharArray();
         for (int i = 0; i < text.length(); ++i) {
-            char c0 = text.charAt(i);
+            char currentChar = charArray[i];
 
-            if (c0 == 167 && i + 1 < text.length()) {
-                int l = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(i + 1));
+            if (currentChar == '\247' && i + 1 < text.length()) {
+                char next = charArray[i + 1];
 
-                if (l < 16) {
-                    this.randomStyle = false;
-                    this.boldStyle = false;
-                    this.strikethroughStyle = false;
-                    this.underlineStyle = false;
-                    this.italicStyle = false;
+                if (next >= '0' && next <= 'r') {
+                    if (next <= 'f') {
+                        this.randomStyle = false;
+                        this.boldStyle = false;
+                        this.strikethroughStyle = false;
+                        this.underlineStyle = false;
+                        this.italicStyle = false;
 
-                    if (l < 0 || l > 15) {
-                        l = 15;
+                        int colorIndex = ((next - 'a') >= 0 ? (next - 'a' + 10) : (next - '0')) + (shadow ? 16 : 0);
+
+                        int hexColor = this.colorCode[colorIndex];
+
+                        if (Config.isCustomColors()) {
+                            hexColor = CustomColors.getTextColor(colorIndex, hexColor);
+                        }
+
+                        this.textColor = hexColor;
+                        this.setColor((float) (hexColor >> 16) / 255.0F, (float) (hexColor >> 8 & 255) / 255.0F, (float) (hexColor & 255) / 255.0F, this.alpha);
+                    } else if (next == 'k') {
+                        this.randomStyle = true;
+                    } else if (next == 'l') {
+                        this.boldStyle = true;
+                    } else if (next == 'm') {
+                        this.strikethroughStyle = true;
+                    } else if (next == 'n') {
+                        this.underlineStyle = true;
+                    } else if (next == 'o') {
+                        this.italicStyle = true;
+                    } else if (next == 'r') {
+                        this.randomStyle = false;
+                        this.boldStyle = false;
+                        this.strikethroughStyle = false;
+                        this.underlineStyle = false;
+                        this.italicStyle = false;
+                        this.setColor(this.red, this.blue, this.green, this.alpha);
                     }
-
-                    if (shadow) {
-                        l += 16;
-                    }
-
-                    int i1 = this.colorCode[l];
-
-                    if (Config.isCustomColors()) {
-                        i1 = CustomColors.getTextColor(l, i1);
-                    }
-
-                    this.textColor = i1;
-                    this.setColor((float) (i1 >> 16) / 255.0F, (float) (i1 >> 8 & 255) / 255.0F, (float) (i1 & 255) / 255.0F, this.alpha);
-                } else if (l == 16) {
-                    this.randomStyle = true;
-                } else if (l == 17) {
-                    this.boldStyle = true;
-                } else if (l == 18) {
-                    this.strikethroughStyle = true;
-                } else if (l == 19) {
-                    this.underlineStyle = true;
-                } else if (l == 20) {
-                    this.italicStyle = true;
-                } else if (l == 21) {
-                    this.randomStyle = false;
-                    this.boldStyle = false;
-                    this.strikethroughStyle = false;
-                    this.underlineStyle = false;
-                    this.italicStyle = false;
-                    this.setColor(this.red, this.blue, this.green, this.alpha);
                 }
 
                 ++i;
             } else {
-                int j = -1;
+                int randomCharValue = -1;
 
-                if (this.randomStyle && c0 < randomCharMap.length && (j = randomCharMap[c0]) != -1) {
-                    int k = this.getCharWidth(c0);
-                    char c1;
+                if (this.randomStyle && currentChar < charMap.length && (randomCharValue = charMap[currentChar]) != -1) {
+                    int desiredCharWidth = this.getCharWidth(currentChar);
+                    char charWithTheSameWidth;
 
                     do {
-                        j = this.fontRandom.nextInt(randomChars.length);
-                        c1 = randomChars[j];
-                    } while (k != this.getCharWidth(c1));
+                        randomCharValue = this.fontRandom.nextInt(asciiCharsArray.length);
+                        charWithTheSameWidth = asciiCharsArray[randomCharValue];
+                    } while (desiredCharWidth != this.getCharWidth(charWithTheSameWidth));
 
-                    c0 = c1;
+                    currentChar = charWithTheSameWidth;
                 }
 
-                float f1 = j != -1 && !this.unicodeFlag ? this.offsetBold : 0.5F;
-                boolean flag = (c0 == 0 || j == -1 || this.unicodeFlag) && shadow;
+                boolean canCharBeRandomized = randomCharValue != -1;
+
+                float boldOffset = canCharBeRandomized && !this.unicodeFlag ? this.offsetBold : 0.5F;
+                boolean flag = (currentChar == 0 || !canCharBeRandomized || this.unicodeFlag) && shadow;
 
                 if (flag) {
-                    this.posX -= f1;
-                    this.posY -= f1;
+                    this.posX -= boldOffset;
+                    this.posY -= boldOffset;
                 }
 
-                float f = this.renderChar(c0, this.italicStyle);
+                float charWidth = this.renderChar(currentChar, this.italicStyle);
 
                 if (flag) {
-                    this.posX += f1;
-                    this.posY += f1;
+                    this.posX += boldOffset;
+                    this.posY += boldOffset;
                 }
 
                 if (this.boldStyle) {
-                    this.posX += f1;
+                    this.posX += boldOffset;
 
                     if (flag) {
-                        this.posX -= f1;
-                        this.posY -= f1;
+                        this.posX -= boldOffset;
+                        this.posY -= boldOffset;
                     }
 
-                    this.renderChar(c0, this.italicStyle);
-                    this.posX -= f1;
+                    this.renderChar(currentChar, this.italicStyle);
+                    this.posX -= boldOffset;
 
                     if (flag) {
-                        this.posX += f1;
-                        this.posY += f1;
+                        this.posX += boldOffset;
+                        this.posY += boldOffset;
                     }
 
-                    f += f1;
+                    charWidth += boldOffset;
                 }
 
-                this.doDraw(f);
+                this.doDraw(charWidth);
             }
         }
     }
@@ -721,7 +718,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
         if (charIn == 167) {
             return -1.0F;
         } else if (charIn != 32 && charIn != 160) {
-            int i = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".indexOf(charIn);
+            int i = charMap[charIn];
 
             if (charIn > 0 && i != -1 && !this.unicodeFlag) {
                 return this.charWidthFloat[i];

@@ -562,7 +562,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 }
             }
         }
-        if (sb.length() != 0) {
+        if (!sb.isEmpty()) {
             split.add(sb.toString());
         }
 

@@ -80,7 +80,7 @@ public class BlockState {
     static class StateImplementation extends BlockStateBase {
         private final Block block;
         private final ImmutableMap<IProperty, Comparable> properties;
-        private ImmutableTable<IProperty, Comparable, IBlockState> propertyValueTable;
+        private Table<IProperty, Comparable, IBlockState> propertyValueTable;
 
         private StateImplementation(Block blockIn, ImmutableMap<IProperty, Comparable> propertiesIn) {
             this.block = blockIn;
@@ -139,7 +139,7 @@ public class BlockState {
                     }
                 }
 
-                this.propertyValueTable = ImmutableTable.copyOf(table);
+                this.propertyValueTable = table;
             }
         }
 
