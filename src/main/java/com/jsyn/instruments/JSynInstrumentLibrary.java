@@ -16,7 +16,6 @@
 
 package com.jsyn.instruments;
 
-import com.jsyn.swing.InstrumentBrowser;
 import com.jsyn.util.InstrumentLibrary;
 import com.jsyn.util.VoiceDescription;
 
@@ -24,7 +23,6 @@ import com.jsyn.util.VoiceDescription;
  * Stock instruments provided with the JSyn distribution.
  *
  * @author Phil Burk (C) 2011 Mobileer Inc
- * @see InstrumentBrowser
  */
 
 public class JSynInstrumentLibrary implements InstrumentLibrary {
