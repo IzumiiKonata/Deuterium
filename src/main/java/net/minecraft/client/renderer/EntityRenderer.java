@@ -82,20 +82,19 @@ import tritium.rendering.ParticleCulling;
 import tritium.rendering.TransitionAnimation;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
+import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.BaseScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
+import tritium.utils.other.info.UpdateChecker;
 import tritium.utils.other.info.Version;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.Callable;
 
 public class EntityRenderer implements IResourceManagerReloadListener {
@@ -1409,7 +1408,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             TransitionAnimation.render();
 
-            if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
+            List<String> hints = this.getHints();
+            if (!this.hints.isEmpty()) {
                 GlStateManager.pushMatrix();
                 GlStateManager.clear(256);
                 GlStateManager.matrixMode(GL11.GL_PROJECTION);
@@ -1420,7 +1420,13 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.loadIdentity();
                 GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
-                FontManager.pf18.drawCenteredStringWithShadow("警告: 你正在使用开发版本。", RenderSystem.getWidth() * .5, 4, 0xFFFF0000);
+                double offsetY = 4;
+                CFontRenderer fr = FontManager.pf18;
+
+                for (String hint : hints) {
+                    fr.drawCenteredStringWithShadow(hint, RenderSystem.getWidth() * .5, offsetY, 0xFFFFFFFF);
+                    offsetY += fr.getHeight() + 2;
+                }
 
                 GlStateManager.popMatrix();
             }
@@ -1434,6 +1440,26 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         if (this.mc.gameSettings.ofProfiler) {
             this.mc.gameSettings.showDebugProfilerChart = true;
         }
+    }
+
+    final List<String> hints = new ArrayList<>();
+
+    private List<String> getHints() {
+        hints.clear();
+
+        if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
+            hints.add(EnumChatFormatting.RED + "警告: 你正在使用开发版本。");
+        }
+
+        if (UpdateChecker.getUpdateCheckResult() == UpdateChecker.UpdateCheckResult.OUTDATED_NEW_COMMIT) {
+            hints.add(EnumChatFormatting.YELLOW + "客户端已过期 (有新提交)");
+        }
+
+        if (UpdateChecker.getUpdateCheckResult() == UpdateChecker.UpdateCheckResult.OUTDATED_NEW_RELEASE) {
+            hints.add(EnumChatFormatting.YELLOW + "客户端已过期 (有新版本)");
+        }
+
+        return hints;
     }
 
     private boolean isDrawBlockOutline() {
