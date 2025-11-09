@@ -318,7 +318,7 @@ public class NavigateBar extends NCMPanel {
             lblIcon.setBeforeRenderCallback(() -> {
                 lblIcon.setColor(iconColorSupplier.get());
                 lblIcon.centerVertically();
-                lblIcon.setPosition(8, lblIcon.getRelativeY());
+                lblIcon.setPosition(8, lblIcon.getRelativeY()/* + .5*/);
             });
 
             lblIcon.setClickable(false);

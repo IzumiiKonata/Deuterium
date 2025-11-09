@@ -37,6 +37,7 @@ public class LyricLine {
     public boolean shouldUpdatePosition = false;
     public double reboundAnimation = 0;
     public Timer delayTimer = new Timer();
+    public boolean renderEmphasizes = true;
 
     public final List<Word> words = new CopyOnWriteArrayList<>();
 
@@ -75,11 +76,12 @@ public class LyricLine {
                 double wordWidth = fr.getStringWidthD(word.word);
 
                 if (w + wordWidth > width) {
-                    height += fr.getHeight() * .85 + 4;
                     w = wordWidth;
+                    height += fr.getHeight() * .85 + 4;
                 } else {
                     w += wordWidth;
                 }
+
             }
 
             this.height = height;
@@ -89,21 +91,18 @@ public class LyricLine {
                 canSetComputed = false;
             }
 
-            int length = fr.fitWidth(lyric, (float) width - 12).length;
+            int length = fr.fitWidth(lyric, (float) width).length;
             this.height = length * fr.getHeight() * .85 + length * 4;
         }
 
         if (translationText != null) {
-
             if (!fr.areGlyphsLoaded(translationText)) {
                 canSetComputed = false;
             }
 
             CFontRenderer frTranslation = FontManager.pf34bold;
-            String[] strings = frTranslation.fitWidth(translationText, width - 12);
-            height += frTranslation.getHeight() * strings.length + 4 * (strings.length - 1)/* + 8*/;
-        } else {
-            height -= 4;
+            String[] strings = frTranslation.fitWidth(translationText, width);
+            height += frTranslation.getHeight() * strings.length + 4 * (strings.length - 1) + 8;
         }
 
         heightComputed = canSetComputed;
