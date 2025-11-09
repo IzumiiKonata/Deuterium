@@ -36,7 +36,6 @@ import java.util.*;
  * @author Brian Matzon <brian@matzon.dk>
  * @version $Revision: 3608 $ $Id: LWJGLUtil.java 3608 2011-08-10 16:05:46Z spasi $
  */
-@SuppressWarnings("rawtypes")
 public class LWJGLUtil {
 
     /**

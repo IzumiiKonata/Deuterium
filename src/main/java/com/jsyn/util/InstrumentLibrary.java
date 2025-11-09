@@ -16,13 +16,10 @@
 
 package com.jsyn.util;
 
-import com.jsyn.swing.InstrumentBrowser;
-
 /**
  * A library of instruments that can be used to play notes.
  * 
  * @author Phil Burk (C) 2011 Mobileer Inc
- * @see InstrumentBrowser
  */
 
 public interface InstrumentLibrary {
