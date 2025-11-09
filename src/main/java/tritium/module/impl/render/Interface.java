@@ -35,7 +35,7 @@ public class Interface extends Module {
     @Handler
     public final void onRender2D(Render2DEvent e) {
 
-        mc.fontRendererObj.drawString("ABCDEFGabcdefg操操你妈逼", 100, 100, -1);
+//        mc.fontRendererObj.drawString("ABCDEFGabcdefg操操你妈逼", 100, 100, -1);
 
 //        if (this.notifications.getValue())
 //            NotificationManager.doRender(RenderSystem.getWidth() * 0.5, 4);
