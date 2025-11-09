@@ -769,6 +769,14 @@ public class TextField extends GuiTextField {
                 IngameIMERenderer.setActivated(true);
             }
         }
+
+        if (!focused && isFocused) {
+            Keyboard.enableRepeatEvents(false);
+            if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
+                IngameIMERenderer.setActivated(false);
+            }
+        }
+
         isFocused = focused;
     }
 
