@@ -5,7 +5,7 @@ import tritium.ncm.music.AudioPlayer;
 import tritium.ncm.music.CloudMusic;
 import tritium.management.FontManager;
 import tritium.rendering.ui.widgets.*;
-import tritium.screens.ncm.FuckPussyPanel;
+import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
 import tritium.widget.impl.MusicInfoWidget;
@@ -54,7 +54,7 @@ public class ControlsBar extends NCMPanel {
 
         playingCover.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
             if (CloudMusic.currentlyPlaying != null) {
-                NCMScreen.getInstance().fuckPussyPanel = new FuckPussyPanel(CloudMusic.currentlyPlaying);
+                NCMScreen.getInstance().musicLyricsPanel = new MusicLyricsPanel(CloudMusic.currentlyPlaying);
             }
 
             return true;
@@ -171,7 +171,7 @@ public class ControlsBar extends NCMPanel {
                         float progress = (float) (percent * CloudMusic.player.getTotalTimeMillis());
                         CloudMusic.player.setPlaybackTime(progress);
                         MusicLyricsWidget.quickResetProgress(progress);
-                        FuckPussyPanel.resetProgress(progress);
+                        MusicLyricsPanel.resetProgress(progress);
                     }
                 }
             }

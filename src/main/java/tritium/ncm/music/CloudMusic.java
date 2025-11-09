@@ -26,7 +26,7 @@ import tritium.management.ConfigManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.GaussianKernel;
 import tritium.rendering.texture.Textures;
-import tritium.screens.ncm.FuckPussyPanel;
+import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.screens.ncm.NCMScreen;
 import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
@@ -35,7 +35,6 @@ import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicInfoWidget;
 import tritium.widget.impl.MusicLyricsWidget;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -723,7 +722,7 @@ public class CloudMusic {
                 JsonObject json = JsonUtils.toJsonObject(string);
 
                 MusicLyricsWidget.initLyric(json, song);
-                FuckPussyPanel.initLyric(json, song);
+                MusicLyricsPanel.initLyric(json, song);
 
             }
         });

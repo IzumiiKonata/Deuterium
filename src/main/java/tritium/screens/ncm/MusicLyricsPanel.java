@@ -41,7 +41,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author IzumiiKonata
  * Date: 2025/10/17 21:56
  */
-public class FuckPussyPanel implements SharedRenderingConstants {
+public class MusicLyricsPanel implements SharedRenderingConstants {
 
     private Music music;
     float alpha = 0f;
@@ -153,7 +153,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
-    public FuckPussyPanel(Music music) {
+    public MusicLyricsPanel(Music music) {
         this.music = music;
         float currentTimeMillis = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
         updateCurrentDisplayingLyric(currentTimeMillis);
@@ -665,7 +665,7 @@ public class FuckPussyPanel implements SharedRenderingConstants {
                 float progress = (float) (percent * totalTimeMillis);
                 player.setPlaybackTime(progress);
                 MusicLyricsWidget.quickResetProgress(progress);
-                FuckPussyPanel.resetProgress(progress);
+                MusicLyricsPanel.resetProgress(progress);
                 scrollTarget = scrollOffset = 0;
             }
         }

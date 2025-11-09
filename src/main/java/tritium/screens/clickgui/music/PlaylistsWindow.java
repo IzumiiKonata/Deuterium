@@ -15,7 +15,6 @@ import tritium.ncm.music.dto.PlayList;
 import tritium.ncm.music.dto.User;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.container.Panel;
@@ -27,7 +26,7 @@ import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.category.CategoriesWindow;
-import tritium.screens.ncm.FuckPussyPanel;
+import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicLyricsWidget;
@@ -227,7 +226,7 @@ public class PlaylistsWindow extends Window {
                         float progress = (float) (percent * CloudMusic.player.getTotalTimeMillis());
                         CloudMusic.player.setPlaybackTime(progress);
                         MusicLyricsWidget.quickResetProgress(progress);
-                        FuckPussyPanel.resetProgress(progress);
+                        MusicLyricsPanel.resetProgress(progress);
                     }
                 }
             }

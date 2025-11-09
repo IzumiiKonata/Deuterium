@@ -49,7 +49,7 @@ public class NCMScreen extends BaseScreen {
     @Getter
     ControlsBar controlsBar;
 
-    public FuckPussyPanel fuckPussyPanel = null;
+    public MusicLyricsPanel musicLyricsPanel = null;
 
     public NCMScreen() {
 
@@ -123,7 +123,7 @@ public class NCMScreen extends BaseScreen {
 
         this.basePanel.setBounds(this.getPanelWidth(), this.getPanelHeight());
 
-        if (this.fuckPussyPanel == null || this.fuckPussyPanel.alpha <= .9f) {
+        if (this.musicLyricsPanel == null || this.musicLyricsPanel.alpha <= .9f) {
             this.basePanel.setAlpha(alpha);
             this.basePanel.renderWidget(mouseX, mouseY, dWheel);
 
@@ -162,16 +162,16 @@ public class NCMScreen extends BaseScreen {
             this.controlsBar.renderWidget(mouseX, mouseY, dWheel);
         }
 
-        if (this.fuckPussyPanel != null) {
+        if (this.musicLyricsPanel != null) {
             StencilClipManager.beginClip(() -> {
                 Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), -1);
             });
-            Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), getColor(ColorType.GENERIC_BACKGROUND) | ((int) (this.fuckPussyPanel.alpha * 255)) << 24);
-            this.fuckPussyPanel.onRender(mouseX, mouseY, basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), dWheel);
+            Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), getColor(ColorType.GENERIC_BACKGROUND) | ((int) (this.musicLyricsPanel.alpha * 255)) << 24);
+            this.musicLyricsPanel.onRender(mouseX, mouseY, basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), dWheel);
             StencilClipManager.endClip();
 
-            if (this.fuckPussyPanel.shouldClose())
-                this.fuckPussyPanel = null;
+            if (this.musicLyricsPanel.shouldClose())
+                this.musicLyricsPanel = null;
         }
 
         boolean loggedIn = !OptionsUtil.getCookie().isEmpty();
@@ -281,8 +281,8 @@ public class NCMScreen extends BaseScreen {
 
         if (keyCode == Keyboard.KEY_ESCAPE) {
 
-            if (this.fuckPussyPanel != null)
-                this.fuckPussyPanel.close();
+            if (this.musicLyricsPanel != null)
+                this.musicLyricsPanel.close();
             else
                 closing = true;
 
@@ -299,7 +299,7 @@ public class NCMScreen extends BaseScreen {
 
     @Override
     public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
-        if (fuckPussyPanel == null) {
+        if (musicLyricsPanel == null) {
             this.basePanel.onMouseClickReceived(mouseX, mouseY, mouseButton);
 
             if (this.currentPanel != null)
@@ -329,7 +329,7 @@ public class NCMScreen extends BaseScreen {
             }
 
         } else {
-            this.fuckPussyPanel.mouseClicked(mouseX, mouseY, mouseButton);
+            this.musicLyricsPanel.mouseClicked(mouseX, mouseY, mouseButton);
         }
 
     }
