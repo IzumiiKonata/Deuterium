@@ -442,62 +442,75 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public String[] fitWidth(String text, double width) {
+        List<String> lines = new ArrayList<>();
 
-        List<String> split = new ArrayList<>();
+        int i = 0;
+        while (i < text.length()) {
+            LineBreakResult result = findLineBreak(text, i, width);
 
-        StringBuilder sb = new StringBuilder();
-        double w = 0;
-        for (int i = 0; i < text.length(); i++) {
+            lines.add(text.substring(i, result.endIndex));
+
+            i = result.nextStartIndex;
+        }
+
+        return lines.toArray(new String[0]);
+    }
+
+    private LineBreakResult findLineBreak(String text, int startIndex, double maxWidth) {
+        double currentWidth = 0;
+        int i = startIndex;
+        int lastSpaceIndex = -1;
+        int lastSpaceVisualIndex = -1;
+
+        while (i < text.length()) {
             char c = text.charAt(i);
 
-            if (c == '\247') {
-                i += 1;
-                sb.append(c);
-
-                if (i < text.length()) {
-                    sb.append(text.charAt(i));
-                }
-
+            if (c == '\247' && i + 1 < text.length()) {
+                i += 2;
                 continue;
             }
 
             if (c == '\n') {
-                split.add(sb.toString());
-                sb = new StringBuilder();
-                w = 0;
-                continue;
+                return new LineBreakResult(i, i + 1);
             }
 
-            double tWidth = this.getCharWidth(c);
+            if (c == ' ') {
+                lastSpaceIndex = i;
+                lastSpaceVisualIndex = i;
+            }
 
-            if (w + tWidth < width) {
-                sb.append(c);
-                w += tWidth;
-            } else {
+            double charWidth = getCharWidth(c);
+
+            if (currentWidth + charWidth > maxWidth) {
                 if (c == ' ') {
-                    split.add(sb.toString());
-                    sb = new StringBuilder(String.valueOf(c));
-                    w = this.getCharWidth(c);
-                } else {
-                    int lastSpace = sb.toString().lastIndexOf(" ");
-                    if (lastSpace != -1) {
-                        String res = sb.substring(0, lastSpace);
-                        split.add(res);
-                        i = text.substring(0 , Math.min(text.length(), i + res.length())).lastIndexOf(res) + res.length();
-                        sb = new StringBuilder();
-                    } else {
-                        split.add(sb.toString());
-                        sb = new StringBuilder(String.valueOf(c));
-                    }
-                    w = 0;
+                    return new LineBreakResult(i, i + 1);
                 }
+
+                if (lastSpaceIndex != -1) {
+                    return new LineBreakResult(lastSpaceIndex, lastSpaceIndex + 1);
+                }
+
+                if (i == startIndex) {
+                    return new LineBreakResult(i + 1, i + 1);
+                }
+                return new LineBreakResult(i, i);
             }
-        }
-        if (!sb.isEmpty()) {
-            split.add(sb.toString());
+
+            currentWidth += charWidth;
+            i++;
         }
 
-        return split.toArray(new String[0]);
+        return new LineBreakResult(text.length(), text.length());
+    }
+
+    private static class LineBreakResult {
+        final int endIndex;
+        final int nextStartIndex;
+
+        LineBreakResult(int endIndex, int nextStartIndex) {
+            this.endIndex = endIndex;
+            this.nextStartIndex = nextStartIndex;
+        }
     }
 
     public void drawStringWithBetterShadow(String text, double x, double y, int color) {

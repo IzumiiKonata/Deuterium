@@ -91,7 +91,7 @@ public class LyricLine {
                 canSetComputed = false;
             }
 
-            int length = fr.fitWidth(lyric, (float) width).length;
+            int length = fr.fitWidth(lyric, width).length;
             this.height = length * fr.getHeight() * .85 + length * 4;
         }
 
