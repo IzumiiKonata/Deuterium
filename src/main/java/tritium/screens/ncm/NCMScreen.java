@@ -67,6 +67,9 @@ public class NCMScreen extends BaseScreen {
             if (CloudMusic.profile != null)
                 this.setCurrentPanel(new HomePanel());
         }
+
+        if (this.musicLyricsPanel != null)
+            this.musicLyricsPanel.onInit();
     }
 
     public void layout() {

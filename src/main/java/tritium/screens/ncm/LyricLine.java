@@ -55,6 +55,10 @@ public class LyricLine {
 
     private boolean heightComputed = false;
 
+    public void markDirty() {
+        heightComputed = false;
+    }
+
     public void computeHeight(double width) {
 
         if (heightComputed) return;
