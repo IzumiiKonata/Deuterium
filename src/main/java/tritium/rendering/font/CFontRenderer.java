@@ -388,7 +388,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public double getFontHeight() {
-        return (this.fontHeight - 6) * .5;
+        return (this.fontHeight - 8) * .5;
     }
 
     @Override
