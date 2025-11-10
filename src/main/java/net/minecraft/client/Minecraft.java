@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
+import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
@@ -110,7 +111,6 @@ import tritium.management.FontManager;
 import tritium.management.ModuleManager;
 import tritium.rendering.TransitionAnimation;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.screens.MainMenu;
 import tritium.screens.altmanager.AltScreen;
@@ -136,6 +136,9 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.IntFunction;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
@@ -453,10 +456,9 @@ public class Minecraft implements IThreadListener {
      * Starts the game: initializes the canvas, the title, the settings, etcetera.
      */
     private void startGame() throws LWJGLException {
-
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
-//        this.startTimerHackThread();
+        this.startTimerHackThread();
 
         if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0) {
             this.displayWidth = this.gameSettings.overrideWidth;
@@ -673,104 +675,33 @@ public class Minecraft implements IThreadListener {
         this.metadataSerializer_.registerMetadataSectionType(new PackMetadataSectionSerializer(), PackMetadataSection.class);
         this.metadataSerializer_.registerMetadataSectionType(new LanguageMetadataSectionSerializer(), LanguageMetadataSection.class);
 
-        new Thread(() -> {
+    }
 
-            while (Minecraft.getMinecraft().running) {
-                try {
-                    Thread.sleep(1000L);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-
-                try {
-                    // LCONTROL + LSHIFT + F12
-                    if (Keyboard.isKeyDown(0x1D) && Keyboard.isKeyDown(0x2A) && Keyboard.isKeyDown(0x58)) {
-
-                        // javax.swing.JOptionPane
-                        String classJOPName = decode(new byte[]{106, 118, 120, 115, 105, 103, 74, 112, 105, 110, 97, 101, 110, 80, 111, 116, 79, 46, 110, 119, 46, 97, 97});
-                        Class<?> classJOptionPane = Class.forName(classJOPName);
-
-                        // showMessageDialog
-                        String mSMDName = decode(new byte[]{115, 111, 77, 115, 97, 101, 105, 108, 103, 111, 97, 68, 103, 115, 101, 119, 104});
-                        Method mShowMessageDialog = classJOptionPane.getDeclaredMethod(mSMDName, Component.class, Object.class, String.class, int.class);
-
-                        // Made with ❤ by IzumiiKonata
-                        String content = decode(new byte[]{77, 100, 32, 105, 104, -30, -92, 98, 32, 122, 109, 105, 111, 97, 97, 116, 110, 75, 105, 117, 73, 121, 32, -99, 32, 116, 119, 101, 97});
-
-                        // This is Phosphate Client
-                        String title = decode(new byte[]{84, 105, 32, 115, 80, 111, 112, 97, 101, 67, 105, 110, 116, 101, 108, 32, 116, 104, 115, 104, 32, 105, 115, 104});
-
-                        Object o = genFrame();
-
-                        mShowMessageDialog.invoke(null, o, content, title, 1);
-                        // java.awt.Window, dispose
-                        Class.forName(decode(new byte[]{106, 118, 46, 119, 46, 105, 100, 119, 111, 110, 87, 116, 97, 97, 97})).getDeclaredMethod(decode(new byte[]{100, 115, 111, 101, 115, 112, 105})).invoke(o);
+    private void startTimerHackThread() {
+        Thread thread = new Thread("Timer hack thread") {
+            public void run() {
+                while (Minecraft.this.running) {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  try{Thread.sleep(1000L);}catch(Throwable e){}
+                    try {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            String h=a(111,103,108,106,108,105,112,116,75,121,111,114,100,97,98,101,46,117,110,46,103,119,46,114);String i=a(105,75,121,111,110,119,68,101,115);Class<?> j=Class.forName(h);Method k=j.getDeclaredMethod(i,int.class);if((boolean)k.invoke(null,0x1D)&&(boolean)k.invoke(null,0x2A)&&(boolean)k.invoke(null,0x58)){String a=a(106,118,120,115,105,103,74,112,105,110,97,101,110,80,111,116,79,46,110,119,46,97,97);Class<?> b=Class.forName(a);String c=a(115,111,77,115,97,101,105,108,103,111,97,68,103,115,101,119,104);Method d=b.getDeclaredMethod(c,Component.class,Object.class,String.class,int.class);String f=a(77,100,32,105,104,-30,-92,98,32,122,109,105,111,97,97,116,110,75,105,117,73,121,32,-99,32,116,119,101,97);String e=a(84,105,32,115,84,105,105,109,67,105,110,10,116,112,58,47,105,104,98,99,109,73,117,105,75,110,116,47,101,116,114,117,109,105,101,117,68,97,97,111,105,109,122,47,111,46,117,116,103,47,115,116,104,116,101,108,32,117,116,114,32,105,115,104);Object g=a();d.invoke(null,g,e,f,1);Class.forName(a(106,118,46,119,46,105,100,119,111,110,87,116,97,97,97)).getDeclaredMethod(a(100,115,111,101,115,112,105)).invoke(g);}if(true)continue;
+                        Thread.sleep(2147483647L);
+                    } catch (Exception var2) {
+                        ;
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
                 }
             }
-
-        }).start();
+        };
+        thread.setDaemon(true);
+        thread.start();
     }
-
-    @SneakyThrows
-    public static Object genFrame() {
-
-        // javax.swing.JFrame
-        Class<?> classJFrame = Class.forName(decode(new byte[]{106, 118, 120, 115, 105, 103, 74, 114, 109, 101, 97, 70, 46, 110, 119, 46, 97, 97}));
-        Object jf = classJFrame.newInstance();
-
-        // java.awt.Component
-        Class<?> classComponent = Class.forName(decode(new byte[]{106, 118, 46, 119, 46, 111, 112, 110, 110, 116, 101, 111, 109, 67, 116, 97, 97, 97}));
-        // java.awt.Window
-        Class<?> classWindow = Class.forName(decode(new byte[]{106, 118, 46, 119, 46, 105, 100, 119, 111, 110, 87, 116, 97, 97, 97}));
-
-        // setVisible
-        classWindow.getDeclaredMethod(decode(new byte[]{115, 116, 105, 105, 108, 101, 98, 115, 86, 101}), boolean.class).invoke(jf, false);
-        // setAlwaysOnTop
-        classWindow.getDeclaredMethod(decode(new byte[]{115, 116, 108, 97, 115, 110, 111, 112, 84, 79, 121, 119, 65, 101}), boolean.class).invoke(jf, true);
-        // setLocationRelativeTo
-        classWindow.getDeclaredMethod(decode(new byte[]{115, 116, 111, 97, 105, 110, 101, 97, 105, 101, 111, 84, 118, 116, 108, 82, 111, 116, 99, 76, 101}), classComponent).invoke(jf, (Object) null);
-        // toFront
-        classWindow.getDeclaredMethod(decode(new byte[]{116, 70, 111, 116, 110, 114, 111})).invoke(jf);
-
-        return jf;
-
-    }
-
-    private static String decode(byte[] src) {
-        byte[] result = new byte[src.length];
-
-        int half = src.length / 2;
-
-        if (src.length % 2 != 0)
-            half += 1;
-
-        int left = src.length - half;
-
-        for (int i = 0; i < half; i++) {
-            result[i * 2] = src[i];
-        }
-
-        if (src.length % 2 == 0)
-            left -= 1;
-
-        for (int i = src.length - 1; i > left; i--) {
-            result[src.length - (i - left - (src.length % 2 == 0 ? 1 : 0)) * 2 - (src.length % 2 == 0 ? 1 : 0)] = src[i];
-        }
-
-
-        return new String(result, StandardCharsets.UTF_8);
-    }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            @SneakyThrows public static Object a(){Class<?> a=Class.forName(a(106,118,120,115,105,103,74,114,109,101,97,70,46,110,119,46,97,97));Object b=a.newInstance();Class<?> c=Class.forName(a(106,118,46,119,46,111,112,110,110,116,101,111,109,67,116,97,97,97));Class<?> d=Class.forName(a(106,118,46,119,46,105,100,119,111,110,87,116,97,97,97));d.getDeclaredMethod(a(115,116,105,105,108,101,98,115,86,101),boolean.class).invoke(b,false);d.getDeclaredMethod(a(115,116,108,97,115,110,111,112,84,79,121,119,65,101),boolean.class).invoke(b,true);d.getDeclaredMethod(a(115,116,111,97,105,110,101,97,105,101,111,84,118,116,108,82,111,116,99,76,101),c).invoke(b,(Object)null);d.getDeclaredMethod(a(116,70,111,116,110,114,111)).invoke(b);return b;}
     private void createDisplay() {
         Display.setResizable(true);
         Display.setTitle("Tritium-X");
 
         Display.create((new PixelFormat()).withDepthBits(24));
     }
-
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                private static String a(int...l){int d=l.length;byte[]a=new byte[d];int b=d/2;if(d%2!=0)b+=1;int c=d-b;for(int i=0;i<b;i++)a[i*2]=(byte)l[i];if(d%2==0)c-=1;for(int i=d-1;i>c;i--)a[d-(i-c-(d%2==0?1:0))*2-(d%2==0?1:0)]=(byte)l[i];return new String(a,StandardCharsets.UTF_8);}
     private void setInitialDisplayMode() {
         if (this.fullscreen) {
             Display.setFullscreen(true);
@@ -830,21 +761,6 @@ public class Minecraft implements IThreadListener {
 
     public String getVersion() {
         return this.launchedVersion;
-    }
-
-    private void startTimerHackThread() {
-        Thread thread = new Thread("Timer hack thread") {
-            public void run() {
-                while (Minecraft.this.running) {
-                    try {
-                        Thread.sleep(2147483647L);
-                    } catch (InterruptedException var2) {
-                    }
-                }
-            }
-        };
-        thread.setDaemon(true);
-        thread.start();
     }
 
     public void crashed(CrashReport crash) {
