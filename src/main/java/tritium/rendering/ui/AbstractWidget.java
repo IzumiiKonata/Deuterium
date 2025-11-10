@@ -1,5 +1,6 @@
 package tritium.rendering.ui;
 
+import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.rendering.Rect;
@@ -11,7 +12,7 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 组件 base。
+ * 组件 base.
  * @author IzumiiKonata
  * Date: 2025/7/8 19:42
  */
@@ -25,55 +26,108 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         boolean onKeyTyped(char character, int keyCode);
     }
 
-    public interface BeforeRenderCallback {
-        void setPositions();
+    public interface RenderCallback {
+        void onRender();
     }
 
+    /**
+     * 父组件，可为空
+     */
+    @Getter
     AbstractWidget<?> parent = null;
+
+    /**
+     * 子组件列表
+     */
+    @Getter
     List<AbstractWidget<?>> children = new CopyOnWriteArrayList<>();
 
     public static class Bounds {
         /**
-         * 这个组件相对于父组件的坐标的偏移。
+         * 这个组件相对于父组件的坐标的偏移.
          * 比如说, 有一个坐标为 (100, 100) 的矩形组件,
          * 然后有一个新的组件作为这个矩形组件的子组件,
          * 然后设置子组件 x, y 都为 2,
-         * 那么子组件的 {@link AbstractWidget#getX()} 将返回 父组件的屏幕 X 坐标 100 加上子组件的偏移 X 坐标 2, 结果为 102. Y 轴同理。
+         * 那么子组件的 {@link AbstractWidget#getX()} 将返回 父组件的屏幕 X 坐标 100 加上子组件的偏移 X 坐标 2, 结果为 102. Y 轴同理.
          * 子组件的 {@link AbstractWidget#getRelativeX()} 将返回 2.
-         *
+         * 如果该组件没有父组件, 则 x, y 字段代表的是屏幕坐标.
          */
         private double x, y;
         private double width, height;
     }
 
+    /**
+     * 组件 (偏移) 位置
+     */
+    @Getter
     private final Bounds bounds = new Bounds();
-    private BeforeRenderCallback beforeRenderCallback = () -> {};
 
+    /**
+     * 渲染回调
+     */
+    private RenderCallback beforeRenderCallback = () -> {};
+
+    /**
+     * 组件是否可点击
+     */
+    @Getter
     private boolean clickable = true;
-    private boolean hovering = false;
-    private boolean hidden = false;
-    private boolean bloom = false, blur = false;
 
+    /**
+     * 鼠标是否在组件内
+     */
+    @Getter
+    private boolean hovering = false;
+
+    /**
+     * 组件是否被隐藏
+     */
+    @Getter
+    private boolean hidden = false;
+    @Getter
+    private boolean bloom = false;
+    @Getter
+    private boolean blur = false;
+
+    /**
+     * 颜色
+     */
     private Color color = Color.BLACK;
 
+    /**
+     * 点击回调
+     */
     protected OnClickCallback clickCallback = null;
+
+    /**
+     * 键盘输入回调
+     */
     private OnKeyTypedCallback keyTypedCallback = null;
     private Runnable transformations = null, onTick = null;
 
-    // 组件的半透明度
+    /**
+     * 组件的半透明度
+     */
     private float alpha = 1.0f;
 
     /**
-     * 在此处编写组件的渲染代码。
+     * 在此处编写组件的渲染代码.
      */
     public abstract void onRender(double mouseX, double mouseY, int dWheel);
 
+    /**
+     * 返回是否应该渲染指定的子组件.
+     * @param child 子组件
+     * @param mouseX 鼠标 X 坐标
+     * @param mouseY 鼠标 Y 坐标
+     * @return 返回 true 表示应该渲染该子组件, 返回 false 表示应该跳过该子组件.
+     */
     protected boolean shouldRenderChildren(AbstractWidget<?> child, double mouseX, double mouseY) {
         return true;
     }
 
     /**
-     * 渲染这个组件以及它的子组件。
+     * 渲染这个组件以及它的子组件.
      * @param mouseX 鼠标 X 坐标
      * @param mouseY 鼠标 Y 坐标
      * @param dWheel 滚轮
@@ -83,30 +137,34 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         if (this.isHidden())
             return;
 
-        GlStateManager.pushMatrix();
+        boolean shouldResetMatrixState = this.transformations != null;
 
-        if (this.transformations != null)
-            this.transformations.run();
-
-        this.beforeRenderCallback.setPositions();
-
-        Runnable shader = () -> {
+        if (shouldResetMatrixState) {
             GlStateManager.pushMatrix();
-
-            if (this.transformations != null)
-                this.transformations.run();
-
-            this.onRender(mouseX, mouseY, dWheel);
-
-            GlStateManager.popMatrix();
-        };
-
-        if (this.isBloom()) {
-            SharedRenderingConstants.BLOOM.add(shader);
+            this.transformations.run();
         }
 
-        if (this.isBlur()) {
-            SharedRenderingConstants.BLUR.add(shader);
+        this.beforeRenderCallback.onRender();
+
+        if (this.isBloom() || this.isBlur()) {
+
+            Runnable shader = () -> {
+                if (shouldResetMatrixState) {
+                    GlStateManager.pushMatrix();
+                    this.transformations.run();
+                }
+
+                this.onRender(mouseX, mouseY, dWheel);
+
+                if (shouldResetMatrixState)
+                    GlStateManager.popMatrix();
+            };
+
+            if (this.isBloom())
+                SharedRenderingConstants.BLOOM.add(shader);
+
+            if (this.isBlur())
+                SharedRenderingConstants.BLUR.add(shader);
         }
 
         this.onRender(mouseX, mouseY, dWheel);
@@ -115,6 +173,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
         boolean childHovering = false;
 
+        // 渲染所有子组件
         for (AbstractWidget<?> child : this.getChildren()) {
 
             if (child.isHidden())
@@ -129,7 +188,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
                 child.renderDebugLayout();
             }
 
-            if (child.isClickable() && child.testHovered(mouseX, mouseY)) {
+            if (!childHovering && child.isClickable() && child.testHovered(mouseX, mouseY)) {
                 childHovering = true;
             }
         }
@@ -138,7 +197,8 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
             this.renderDebugLayout();
         }
 
-        GlStateManager.popMatrix();
+        if (shouldResetMatrixState)
+            GlStateManager.popMatrix();
 
         // 更新组件悬停状态
         // 如果所有的子组件都没有被选中, 且这个组件被选中, 才设置这个组件的 hovering 为 true.
@@ -166,6 +226,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
     }
 
+    /**
+     * 添加子组件
+     * @param children 子组件
+     */
     public void addChild(AbstractWidget<?>... children) {
         for (AbstractWidget<?> child : children) {
             this.children.add(child);
@@ -173,11 +237,18 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         }
     }
 
+    /**
+     * 添加子组件
+     * @param children 子组件
+     */
     public void addChild(List<AbstractWidget<?>> children) {
         this.children.addAll(children);
         children.forEach(child -> child.setParent(this));
     }
 
+    /**
+     * 渲染 Debug 布局
+     */
     protected void renderDebugLayout() {
         // show layout
         RenderSystem.drawOutLine(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 0.5, reAlpha(0x00FF0000, this.getAlpha()));
@@ -203,7 +274,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * 设置这个组件相较于父组件的留边, 会直接修改组件的 x, y 坐标以及长宽。
+     * 设置这个组件相较于父组件的留边, 会直接修改组件的 x, y 坐标以及长宽.
      * @param margin 留边大小
      */
     public SELF setMargin(double margin) {
@@ -211,7 +282,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * 设置这个组件相较于父组件的留边, 会直接修改组件的 x, y 坐标以及长宽。
+     * 设置这个组件相较于父组件的留边, 会直接修改组件的 x, y 坐标以及长宽.
      * @param left 左边的留边大小
      * @param top 上面的留边大小
      * @param right 右边的留边大小
@@ -225,6 +296,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return (SELF) this;
     }
 
+    /**
+     * 扩大这个组件的边界
+     * @param expand 边界大小
+     */
     public SELF expand(double expand) {
         this.getBounds().x -= expand;
         this.getBounds().y -= expand;
@@ -255,7 +330,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * 实用方法, 检测鼠标有没有在一个矩形范围内。
+     * 实用方法, 检测鼠标有没有在一个矩形范围内.
      * @param mouseX 鼠标 X 坐标
      * @param mouseY 鼠标 Y 坐标
      * @param x 矩形 X 坐标
@@ -317,7 +392,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         // 如果子组件都没有响应点击事件, 则测试这个组件
         if (!this.iterateChildrenMouseClick(this.getChildren(), mouseX, mouseY, mouseButton)) {
             if (!this.isHidden() && this.isHovering()) {
-                // 不需要在乎返回值。
+                // 不需要在乎返回值.
                 this.onMouseClicked(mouseX - this.getX(), mouseY - this.getY(), mouseButton);
             }
         }
@@ -325,7 +400,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * 当组件被点击时, 此方法被调用。
+     * 当组件被点击时, 此方法被调用.
      * @param relativeX 被点击的在组件内的坐标 X
      * @param relativeY 被点击的在组件内的坐标 Y
      * @param mouseButton 鼠标按钮, 0 为鼠标左键, 1 为鼠标右键
@@ -374,7 +449,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * 当接收到键盘输入时, 此方法被调用。
+     * 当接收到键盘输入时, 此方法被调用.
      * @param character 字符
      * @param keyCode 键码
      */
@@ -382,16 +457,9 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return this.keyTypedCallback != null && this.keyTypedCallback.onKeyTyped(character, keyCode);
     }
 
-    // getters and setters
-
-
     public SELF setBloom(boolean bloom) {
         this.bloom = bloom;
         return (SELF) this;
-    }
-
-    public boolean isBloom() {
-        return bloom;
     }
 
     public SELF setBlur(boolean blur) {
@@ -399,11 +467,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return (SELF) this;
     }
 
-    public boolean isBlur() {
-        return blur;
-    }
-
-    public SELF setBeforeRenderCallback(BeforeRenderCallback beforeRenderCallback) {
+    public SELF setBeforeRenderCallback(RenderCallback beforeRenderCallback) {
         this.beforeRenderCallback = beforeRenderCallback;
         return (SELF) this;
     }
@@ -466,14 +530,6 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return (SELF) this;
     }
 
-    public boolean isHidden() {
-        return hidden;
-    }
-
-    public boolean isHovering() {
-        return hovering;
-    }
-
     /**
      * 获取用于渲染的 alpha.
      */
@@ -509,7 +565,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * @return 返回这个组件在屏幕上 相对于 (0, 0) 的 X 坐标。
+     * @return 返回这个组件的屏幕 X 坐标.
      */
     public double getX() {
 
@@ -521,7 +577,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * @return 返回这个组件在屏幕上 相对于 (0, 0) 的 Y 坐标。
+     * @return 返回这个组件的屏幕 Y 坐标.
      */
     public double getY() {
 
@@ -532,38 +588,54 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return this.getParent().getY() + this.getBounds().y;
     }
 
-    public Bounds getBounds() {
-        return bounds;
-    }
-
+    /**
+     * @return 获取这个组件的偏移 X 坐标.
+     */
     public double getRelativeX() {
         return this.getBounds().x;
     }
 
+    /**
+     * @return 获取这个组件的偏移 Y 坐标.
+     */
     public double getRelativeY() {
         return this.getBounds().y;
     }
 
+    /**
+     * @return 获取这个组件的宽度.
+     */
     public double getWidth() {
         return this.getBounds().width;
     }
 
+    /**
+     * @return 获取这个组件的高度.
+     */
     public double getHeight() {
         return this.getBounds().height;
     }
 
+    /**
+     * 设置组件的宽度.
+     * @param width 宽度
+     */
     public SELF setWidth(double width) {
         this.getBounds().width = width;
         return (SELF) this;
     }
 
+    /**
+     * 设置组件的高度.
+     * @param height 高度
+     */
     public SELF setHeight(double height) {
         this.getBounds().height = height;
         return (SELF) this;
     }
 
     /**
-     * 设置组件的界限。
+     * 设置组件的偏移位置和大小.
      * @param x 相对于父组件的 X 偏移
      * @param y 相对于父组件的 Y 偏移
      * @param width 宽
@@ -578,17 +650,22 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     }
 
     /**
-     * 使组件居中。
-     * @return
+     * 使组件居中.
      */
     public SELF center() {
         return this.setPosition(this.getParentWidth() * .5 - this.getWidth() * .5, this.getParentHeight() * .5 - this.getHeight() * .5);
     }
 
+    /**
+     * 使组件水平居中.
+     */
     public SELF centerHorizontally() {
         return this.setPosition(this.getParentWidth() * .5 - this.getWidth() * .5, this.getRelativeY());
     }
 
+    /**
+     * 使组件垂直居中.
+     */
     public SELF centerVertically() {
         return this.setPosition(this.getRelativeX(), this.getParentHeight() * .5 - this.getHeight() * .5);
     }
@@ -616,35 +693,36 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return (SELF) this;
     }
 
+    /**
+     * 设置组件的大小.
+     */
     public SELF setBounds(double size) {
         return this.setBounds(size, size);
     }
 
+    /**
+     * 设置组件的大小.
+     */
     public SELF setBounds(double width, double height) {
         this.getBounds().width = width;
         this.getBounds().height = height;
         return (SELF) this;
     }
 
-    public boolean isClickable() {
-        return clickable;
-    }
-
+    /**
+     * 设置组件是否可点击.
+     */
     public SELF setClickable(boolean clickable) {
         this.clickable = clickable;
         return (SELF) this;
     }
 
-    public AbstractWidget<?> getParent() {
-        return parent;
-    }
-
+    /**
+     * 设置组件的父组件.
+     */
     public SELF setParent(AbstractWidget<?> parent) {
         this.parent = parent;
         return (SELF) this;
     }
 
-    public List<AbstractWidget<?>> getChildren() {
-        return children;
-    }
 }
