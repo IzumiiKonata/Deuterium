@@ -7,7 +7,6 @@ import ingameime.PreEditRect;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiPageButtonList;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
@@ -16,7 +15,6 @@ import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.FontManager;
@@ -31,7 +29,6 @@ import tritium.utils.timing.Timer;
 import java.awt.*;
 
 public class TextField extends GuiTextField {
-    // 基础属性
     @Getter
     private final int textFieldNumber;
 
@@ -40,7 +37,6 @@ public class TextField extends GuiTextField {
     public float width;
     public float height;
 
-    // 文本内容
     @Getter
     private String text = "";
     @Getter
@@ -51,7 +47,6 @@ public class TextField extends GuiTextField {
     @Setter
     private TextChangedCallback callback = null;
 
-    // 光标和选择
     @Getter
     private int cursorPosition;
     @Getter
@@ -59,26 +54,23 @@ public class TextField extends GuiTextField {
     private int lineScrollOffset;
     private int cursorCounter;
 
-    // 拖拽选择相关
     public boolean lmbPressed;
     public boolean dragging;
     private int dragStartChar;
     private int dragEndChar;
 
-    // 滚动相关
-    private float scrollOffset;
-    private float lastScrollOffset;
-
     @Setter
     private boolean drawLineUnder = true;
     @Setter
     private boolean canLoseFocus = true;
+    @Getter
     private boolean isFocused;
+    @Getter
+    @Setter
     private boolean isEnabled = true;
     @Setter
     private boolean visible = true;
 
-    // 样式相关
     public int enabledColor = 14737632;
     private int disabledColor = 7368816;
     @Setter
@@ -89,16 +81,13 @@ public class TextField extends GuiTextField {
     private float hoverAlpha;
     private Color lineColor;
 
-    // 字体
     @Setter
     private CFontRenderer fontRenderer = FontManager.pf18;
 
-    // 其他
     private GuiPageButtonList.GuiResponder responder;
     private Predicate<String> textPredicate = Predicates.alwaysTrue();
-    public MsTimer backspaceTime = new MsTimer();
-    private Timer imePositionUpdateTimer = new Timer();
-    private Timer cursorForceShowTimer = new Timer();
+    private final Timer imePositionUpdateTimer = new Timer();
+    private final Timer cursorForceShowTimer = new Timer();
 
     public interface TextChangedCallback {
         void onTextChanged(String newText);
@@ -113,8 +102,6 @@ public class TextField extends GuiTextField {
         this.height = height;
         this.lineColor = new Color(160, 160, 160);
     }
-
-    // ========== 文本操作 ==========
 
     public void setText(String text) {
         this.text = text;
@@ -137,16 +124,13 @@ public class TextField extends GuiTextField {
 
         StringBuilder newText = new StringBuilder();
 
-        // 添加光标前的文本
         if (!text.isEmpty()) {
             newText.append(text, 0, selStart);
         }
 
-        // 添加新输入的文本
         int charsToAdd = Math.min(availableSpace, filtered.length());
         newText.append(filtered, 0, charsToAdd);
 
-        // 添加光标后的文本
         if (!text.isEmpty() && selEnd < text.length()) {
             newText.append(text.substring(selEnd));
         }
@@ -209,8 +193,6 @@ public class TextField extends GuiTextField {
         }
     }
 
-    // ========== 光标操作 ==========
-
     public void setCursorPosition(int position) {
         cursorPosition = MathHelper.clamp_int(position, 0, text.length());
         dragStartChar = cursorPosition;
@@ -225,8 +207,7 @@ public class TextField extends GuiTextField {
 
     public void setCursorPositionEnd() {
         setCursorPosition(text.length());
-        dragStartChar = 0;
-        dragEndChar = text.length();
+        dragStartChar = dragEndChar = text.length();
         cursorForceShowTimer.reset();
     }
 
@@ -238,7 +219,6 @@ public class TextField extends GuiTextField {
         int clampedPos = MathHelper.clamp_int(position, 0, text.length());
         selectionEnd = clampedPos;
 
-        // 调整滚动偏移
         if (lineScrollOffset > text.length()) {
             lineScrollOffset = text.length();
         }
@@ -266,8 +246,6 @@ public class TextField extends GuiTextField {
         cursorCounter++;
     }
 
-    // ========== 单词导航 ==========
-
     public int getNthWordFromCursor(int n) {
         return getNthWordFromPos(n, cursorPosition);
     }
@@ -283,7 +261,7 @@ public class TextField extends GuiTextField {
 
         for (int i = 0; i < absWordCount; i++) {
             if (searchBackward) {
-                // 向后搜索
+                
                 while (skipSpaces && currentPos > 0 && text.charAt(currentPos - 1) == ' ') {
                     currentPos--;
                 }
@@ -291,7 +269,7 @@ public class TextField extends GuiTextField {
                     currentPos--;
                 }
             } else {
-                // 向前搜索
+                
                 int textLength = text.length();
                 currentPos = text.indexOf(' ', currentPos);
 
@@ -308,14 +286,11 @@ public class TextField extends GuiTextField {
         return currentPos;
     }
 
-    // ========== 键盘输入处理 ==========
-
     public boolean textboxKeyTyped(char typedChar, int keyCode) {
         if (!isFocused) {
             return false;
         }
 
-        // Ctrl组合键处理
         if (GuiScreen.isKeyComboCtrlA(keyCode)) {
             setCursorPositionEnd();
             setSelectionPos(0);
@@ -339,9 +314,8 @@ public class TextField extends GuiTextField {
             return true;
         }
 
-        // 特殊键处理
-        switch (keyCode) {
-            case Keyboard.KEY_BACK:
+        return switch (keyCode) {
+            case Keyboard.KEY_BACK -> {
                 if (isEnabled) {
                     if (GuiScreen.isCtrlKeyDown()) {
                         deleteWords(-1);
@@ -349,9 +323,9 @@ public class TextField extends GuiTextField {
                         deleteFromCursor(-1);
                     }
                 }
-                return true;
-
-            case Keyboard.KEY_DELETE:
+                yield true;
+            }
+            case Keyboard.KEY_DELETE -> {
                 if (isEnabled) {
                     if (GuiScreen.isCtrlKeyDown()) {
                         deleteWords(1);
@@ -359,41 +333,42 @@ public class TextField extends GuiTextField {
                         deleteFromCursor(1);
                     }
                 }
-                return true;
-
-            case Keyboard.KEY_HOME:
+                yield true;
+            }
+            case Keyboard.KEY_HOME -> {
                 if (GuiScreen.isShiftKeyDown()) {
                     setSelectionPos(0);
                 } else {
                     setCursorPositionZero();
                 }
-                return true;
-
-            case Keyboard.KEY_END:
+                yield true;
+            }
+            case Keyboard.KEY_END -> {
                 if (GuiScreen.isShiftKeyDown()) {
                     setSelectionPos(text.length());
                 } else {
                     setCursorPositionEnd();
                 }
-                return true;
-
-            case Keyboard.KEY_LEFT:
+                yield true;
+            }
+            case Keyboard.KEY_LEFT -> {
                 handleLeftKey();
-                return true;
-
-            case Keyboard.KEY_RIGHT:
+                yield true;
+            }
+            case Keyboard.KEY_RIGHT -> {
                 handleRightKey();
-                return true;
-
-            default:
+                yield true;
+            }
+            default -> {
                 if (ChatAllowedCharacters.isAllowedCharacter(typedChar)) {
                     if (isEnabled) {
                         writeText(Character.toString(typedChar));
                     }
-                    return true;
+                    yield true;
                 }
-                return false;
-        }
+                yield false;
+            }
+        };
     }
 
     private void handleLeftKey() {
@@ -412,7 +387,10 @@ public class TextField extends GuiTextField {
             if (GuiScreen.isCtrlKeyDown()) {
                 setCursorPosition(getNthWordFromCursor(-1));
             } else {
-                moveCursorBy(-1);
+                if (cursorPosition != selectionEnd)
+                    setCursorPosition(Math.min(cursorPosition, selectionEnd));
+                else
+                    moveCursorBy(-1);
             }
         }
     }
@@ -433,12 +411,13 @@ public class TextField extends GuiTextField {
             if (GuiScreen.isCtrlKeyDown()) {
                 setCursorPosition(getNthWordFromCursor(1));
             } else {
-                moveCursorBy(1);
+                if (cursorPosition != selectionEnd)
+                    setCursorPosition(Math.max(cursorPosition, selectionEnd));
+                else
+                    moveCursorBy(1);
             }
         }
     }
-
-    // ========== 鼠标交互 ==========
 
     public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
         boolean isHovered = RenderSystem.isHovered(mouseX, mouseY, xPosition, yPosition, width, height);
@@ -487,29 +466,6 @@ public class TextField extends GuiTextField {
         setSelectionPos(dragEndChar);
     }
 
-    // ========== 渲染 ==========
-
-    public void onTick() {
-        // 更新滚动动画
-        lastScrollOffset = scrollOffset;
-        if (lineScrollOffset > 0) {
-            String hiddenText = text.substring(0, lineScrollOffset);
-            float targetOffset = (float) getFontRenderer().getStringWidthD(hiddenText);
-            scrollOffset += (targetOffset - scrollOffset) / 2f + 0.01f;
-        } else {
-            scrollOffset = 0;
-        }
-
-        // 处理长按退格
-        if (Keyboard.isKeyDown(Keyboard.KEY_BACK) && isFocused) {
-            if (!text.isEmpty() && backspaceTime.sleep(500, false)) {
-                setText(text.substring(0, text.length() - 1));
-            }
-        } else {
-            backspaceTime.reset();
-        }
-    }
-
     public void drawTextBox(int mouseX, int mouseY) {
         drawTextBox(mouseX, mouseY, false);
     }
@@ -519,18 +475,14 @@ public class TextField extends GuiTextField {
             return;
         }
 
-        // 更新透明度动画
         wholeAlpha = MathUtils.clamp(wholeAlpha, 0, 1);
         opacity = Interpolations.interpBezier(opacity, 1.0f, 0.05f) * wholeAlpha;
 
-        // 计算文本滚动偏移
         double textScrollOffset = calculateTextScrollOffset();
 
-        // 更新样式
         boolean isHovered = RenderSystem.isHovered(mouseX, mouseY, xPosition, yPosition, width, height);
         updateStyles(isHovered, mouseX, mouseY);
 
-        // 绘制下划线
         if (drawLineUnder) {
             RenderSystem.drawRect(
                     xPosition, yPosition + height + lineOffset,
@@ -539,24 +491,20 @@ public class TextField extends GuiTextField {
             );
         }
 
-        // 处理拖拽
         if (dragging && !Mouse.isButtonDown(0)) {
             dragging = false;
         }
+
         if (dragging) {
             updateDragging(mouseX);
         }
 
-        // 设置裁剪区域
         setupClipping(useScissor);
 
-        // 绘制文本和光标
         renderTextContent(textScrollOffset, isHovered);
 
-        // 清理裁剪
         cleanupClipping(useScissor);
 
-        // 绘制IME
         if (isFocused && IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
             IngameIMERenderer.draw(xPosition, yPosition, false);
         }
@@ -580,17 +528,14 @@ public class TextField extends GuiTextField {
         if (lmbPressed && !Mouse.isButtonDown(0))
             lmbPressed = false;
 
-        // 失焦检测
         if (isFocused && !lmbPressed && !dragging && !isHovered && Mouse.isButtonDown(0)) {
             setFocused(false);
         }
 
-        // 线条颜色动画
         Color targetColor = (isHovered || isFocused) ?
                 new Color(255, 133, 155) : new Color(180, 180, 180);
         lineColor = Interpolations.getColorAnimationState(lineColor, targetColor, 100f);
 
-        // 悬停透明度动画
         float targetAlpha = (isHovered || isFocused) ? 0.4f : 0.3f;
         hoverAlpha = Interpolations.interpLinear(hoverAlpha, targetAlpha, 0.1f) * wholeAlpha;
     }
@@ -619,19 +564,17 @@ public class TextField extends GuiTextField {
         String displayText = getDisplayText();
         float posX = xPosition;
         float posY = yPosition;
-        // 绘制占位符
+        
         if (text.isEmpty() && !placeholder.isEmpty() && !isFocused) {
             getFontRenderer().drawString(placeholder, posX, getRenderOffsetY(),
                     applyAlpha(enabledColor, hoverAlpha));
             return;
         }
 
-        // 绘制选择高亮
         if (hasSelection()) {
             renderSelection(displayText, scrollOffset);
         }
 
-        // 绘制文本
         if (!displayText.isEmpty()) {
             int textColor = isFocused ? enabledColor : disabledColor;
             int alpha = (textColor >> 24) & 255;
@@ -640,7 +583,6 @@ public class TextField extends GuiTextField {
                     RenderSystem.reAlpha(textColor, alpha * RenderSystem.DIVIDE_BY_255 * wholeAlpha));
         }
 
-        // 绘制光标
         if (shouldDrawCursor() && !hasSelection()) {
             renderCursor(displayText, posX, getRenderOffsetY(), scrollOffset);
         }
@@ -690,7 +632,6 @@ public class TextField extends GuiTextField {
                 displayText.substring(0, dragStartChar) : "";
         float cursorX = (float) (xPosition + getFontRenderer().getStringWidthD(textBeforeCursor) - (float) scrollOffset);
 
-        // 闪烁动画
         long l = System.currentTimeMillis() / 5 % 255;
         int alpha = (int) Math.min(255,
                 (l > 127 ?
@@ -706,7 +647,6 @@ public class TextField extends GuiTextField {
                     posY + getFontRenderer().getHeight() + 2, 0xffcdcbcd);
         }
 
-        // 更新IME位置
         if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
             updateIMEPosition(cursorX, (float) posY);
         }
@@ -733,8 +673,6 @@ public class TextField extends GuiTextField {
                 originalAlpha * alpha
         ).getRGB();
     }
-
-    // ========== Getter/Setter ==========
 
     public void setMaxStringLength(int length) {
         maxStringLength = length;
@@ -780,18 +718,6 @@ public class TextField extends GuiTextField {
         isFocused = focused;
     }
 
-    public boolean isFocused() {
-        return isFocused;
-    }
-
-    public void setEnabled(boolean enabled) {
-        isEnabled = enabled;
-    }
-
-    public boolean isEnabled() {
-        return isEnabled;
-    }
-
     public boolean getVisible() {
         return visible;
     }
@@ -818,45 +744,4 @@ public class TextField extends GuiTextField {
         return fontRenderer;
     }
 
-    // ========== 工具类 ==========
-
-    public static final class MsTimer {
-        private long time;
-        @Setter
-        private boolean active;
-
-        public MsTimer() {
-            time = System.currentTimeMillis();
-            active = true;
-        }
-
-        public boolean reach(long duration) {
-            return active && elapsed() >= duration;
-        }
-
-        public void reset() {
-            time = System.currentTimeMillis();
-        }
-
-        public boolean sleep(long duration) {
-            return sleep(duration, true);
-        }
-
-        public boolean sleep(long duration, boolean autoReset) {
-            if (!active) {
-                return false;
-            }
-            if (elapsed() >= duration) {
-                if (autoReset) {
-                    reset();
-                }
-                return true;
-            }
-            return false;
-        }
-
-        public long elapsed() {
-            return System.currentTimeMillis() - time;
-        }
-    }
 }
