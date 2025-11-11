@@ -1241,7 +1241,7 @@ public class Minecraft implements IThreadListener {
 
         if (this.theWorld == null)
             if (this.gameSettings.limitFramerate == (int) GameSettings.Options.FRAMERATE_LIMIT.getValueMax())
-                return Math.min(300, Math.max(120, Display.getDesktopDisplayMode().getFrequency() * 4));
+                return Math.min(320, Display.getDesktopDisplayMode().getFrequency() * 2);
 
         return /*this.theWorld == null && this.currentScreen != null ? 240 : */this.gameSettings.limitFramerate;
     }
