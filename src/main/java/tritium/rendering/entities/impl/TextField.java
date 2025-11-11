@@ -48,9 +48,9 @@ public class TextField extends GuiTextField {
     private TextChangedCallback callback = null;
 
     @Getter
-    private int cursorPosition;
+    public int cursorPosition;
     @Getter
-    private int selectionEnd;
+    public int selectionEnd;
     private int lineScrollOffset;
     private int cursorCounter;
 
@@ -216,30 +216,7 @@ public class TextField extends GuiTextField {
     }
 
     public void setSelectionPos(int position) {
-        int clampedPos = MathHelper.clamp_int(position, 0, text.length());
-        selectionEnd = clampedPos;
-
-        if (lineScrollOffset > text.length()) {
-            lineScrollOffset = text.length();
-        }
-
-        float visibleWidth = getWidth();
-        String visibleText = String.join("\n", getFontRenderer().fitWidth(
-                text.substring(lineScrollOffset), visibleWidth));
-        int visibleEndPos = visibleText.length() + lineScrollOffset;
-
-        if (clampedPos == lineScrollOffset) {
-            lineScrollOffset -= String.join("\n", getFontRenderer().fitWidth(
-                    text, (int) visibleWidth)).length();
-        }
-
-        if (clampedPos > visibleEndPos) {
-            lineScrollOffset += (clampedPos - visibleEndPos);
-        } else if (clampedPos <= lineScrollOffset) {
-            lineScrollOffset -= (lineScrollOffset - clampedPos);
-        }
-
-        lineScrollOffset = MathHelper.clamp_int(lineScrollOffset, 0, text.length());
+        selectionEnd = MathHelper.clamp_int(position, 0, text.length());
     }
 
     public void updateCursorCounter() {
@@ -286,14 +263,20 @@ public class TextField extends GuiTextField {
         return currentPos;
     }
 
+    public void selectAll() {
+        this.setCursorPosition(0);
+        this.setSelectionPos(text.length());
+        this.dragStartChar = 0;
+        this.dragEndChar = text.length();
+    }
+
     public boolean textboxKeyTyped(char typedChar, int keyCode) {
         if (!isFocused) {
             return false;
         }
 
         if (GuiScreen.isKeyComboCtrlA(keyCode)) {
-            setCursorPositionEnd();
-            setSelectionPos(0);
+            this.selectAll();
             return true;
         }
         if (GuiScreen.isKeyComboCtrlC(keyCode)) {
@@ -512,14 +495,23 @@ public class TextField extends GuiTextField {
 
     private double calculateTextScrollOffset() {
         double offset = 0;
-        double width = getFontRenderer().getStringWidthD(text);
-        if (width > this.width) {
-            int visibleEndPos = Math.min(text.length(), Math.max(cursorPosition, selectionEnd));
-            double visibleWidth = getFontRenderer().getStringWidthD(text.substring(0, visibleEndPos));
-            if (visibleWidth > this.width) {
-                offset = visibleWidth - this.width;
+        double totalWidth = getFontRenderer().getStringWidthD(text);
+
+        if (totalWidth > this.width) {
+            int targetPos = Math.max(cursorPosition, selectionEnd);
+            double widthToTarget = getFontRenderer().getStringWidthD(text.substring(0, targetPos));
+
+            if (widthToTarget > this.width) {
+                offset = widthToTarget - this.width;
+            }
+
+            int leftPos = Math.min(cursorPosition, selectionEnd);
+            double widthToLeft = getFontRenderer().getStringWidthD(text.substring(0, leftPos));
+            if (widthToLeft < offset) {
+                offset = widthToLeft;
             }
         }
+
         return offset;
     }
 

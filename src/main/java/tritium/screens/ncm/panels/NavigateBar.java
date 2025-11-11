@@ -58,6 +58,20 @@ public class NavigateBar extends NCMPanel {
             bg.setAlpha(0.9f);
         });
 
+        this.setOnKeyTypedCallback((character, keyCode) -> {
+            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)
+                    && keyCode == Keyboard.KEY_F
+                    && !(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
+                    && !(Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU))) {
+
+                this.searchField.setFocused(true);
+                this.searchField.getTextField().selectAll();
+                return true;
+            }
+
+            return false;
+        });
+
         RoundedRectWidget searchBar = new RoundedRectWidget();
         RoundedRectWidget searchBarFocusAnimation = new RoundedRectWidget();
 
