@@ -103,7 +103,7 @@ public class ConsoleScreen extends BaseScreen {
 
             this.textField.setOnKeyTypedCallback((typedChar, keyCode) -> {
                 if (this.textField.isFocused()) {
-                    if (keyCode == Keyboard.KEY_RETURN) {
+                    if (keyCode == Keyboard.KEY_RETURN && !this.textField.getText().isEmpty()) {
                         Tritium.getInstance().getCommandManager().execute(this.textField.getText());
                         this.textField.setText("");
                     }
