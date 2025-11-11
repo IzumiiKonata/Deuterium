@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
 import net.minecraft.util.Tuple;
 import org.apache.commons.io.IOUtils;
@@ -17,8 +18,10 @@ import org.kc7bfi.jflac.PCMProcessor;
 import org.kc7bfi.jflac.metadata.StreamInfo;
 import org.kc7bfi.jflac.util.ByteData;
 import org.kc7bfi.jflac.util.WavWriter;
+import tritium.management.CommandManager;
 import tritium.ncm.OptionsUtil;
 import tritium.ncm.api.CloudMusicApi;
+import tritium.ncm.music.dto.Artist;
 import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.dto.PlayList;
 import tritium.ncm.music.dto.User;
@@ -26,6 +29,7 @@ import tritium.management.ConfigManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.GaussianKernel;
 import tritium.rendering.texture.Textures;
+import tritium.screens.ConsoleScreen;
 import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.screens.ncm.NCMScreen;
 import tritium.utils.json.JsonUtils;
@@ -46,6 +50,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -306,10 +311,17 @@ public class CloudMusic {
                     player = initializePlayer(musicFile);
                 } catch (Exception e) {
                     e.printStackTrace();
+                    ConsoleScreen.log(EnumChatFormatting.RED + "[CloudMusic] Failed to initiate audio player! Error: {}", e.getMessage());
                     break;
                 }
 
 //                OpenApiInstance.api.popNotification(EnumNotificationType.INFO, "Now Playing", song.getName(), 1500);
+
+                ConsoleScreen.log("[CloudMusic] Now playing: ");
+                ConsoleScreen.log("[CloudMusic]     ID: {}", song.getId());
+                ConsoleScreen.log("[CloudMusic]     Name: {}", song.getName());
+                ConsoleScreen.log("[CloudMusic]     Album: {}", song.getAlbum().getName());
+                ConsoleScreen.log("[CloudMusic]     Artists: {}", song.getArtists().stream().map(Artist::getName).collect(Collectors.joining(", ")));
 
                 try {
                     player.play();
@@ -860,6 +872,27 @@ public class CloudMusic {
     public static String qrKey() {
         JsonObject json = CloudMusicApi.loginQrKey().toJsonObject();
         return json.getAsJsonObject("data").get("unikey").getAsString();
+    }
+
+    static {
+        CommandManager.registerSimpleCommand("set_player_rate", new String[] {}, (args) -> {
+
+            if (args.length < 1) {
+                ConsoleScreen.log(EnumChatFormatting.RED + "Not enough arguments");
+                return;
+            }
+
+            if (player == null)
+                return;
+
+            try {
+                float rate = Float.parseFloat(args[0]);
+                player.player.rate(rate);
+            } catch (NumberFormatException e) {
+                ConsoleScreen.log(EnumChatFormatting.RED + "Not a number: {}", args[0]);
+            }
+
+        });
     }
 
 }

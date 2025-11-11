@@ -63,6 +63,7 @@ import net.minecraft.world.storage.MapData;
 import tritium.event.eventapi.State;
 import tritium.event.events.player.RespawnEvent;
 import tritium.management.EventManager;
+import tritium.screens.ConsoleScreen;
 import tritium.screens.MainMenu;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -137,7 +138,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
         this.gameController.loadWorld(this.clientWorldController);
         this.gameController.thePlayer.dimension = packetIn.getDimension();
-        this.gameController.displayGuiScreen(/*new GuiDownloadTerrain(this)*/null);
+        if (!(this.gameController.currentScreen instanceof ConsoleScreen))
+            this.gameController.displayGuiScreen(/*new GuiDownloadTerrain(this)*/null);
         this.gameController.thePlayer.setEntityId(packetIn.getEntityId());
         this.currentServerMaxPlayers = packetIn.getMaxPlayers();
         this.gameController.thePlayer.setReducedDebug(packetIn.isReducedDebugInfo());
@@ -491,7 +493,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
             this.gameController.thePlayer.prevPosY = this.gameController.thePlayer.posY;
             this.gameController.thePlayer.prevPosZ = this.gameController.thePlayer.posZ;
             this.doneLoadingTerrain = true;
-            this.gameController.displayGuiScreen(null);
+            if (!(this.gameController.currentScreen instanceof ConsoleScreen))
+                this.gameController.displayGuiScreen(null);
         }
     }
 

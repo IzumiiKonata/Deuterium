@@ -1,6 +1,10 @@
 package tritium.screens;
 
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.client.multiplayer.GuiConnecting;
+import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import tritium.Tritium;
@@ -36,6 +40,37 @@ public class ConsoleScreen extends BaseScreen {
     private void registerConsoleCommands() {
         CommandManager.registerSimpleCommand("clear", new String[] { "cls" }, args -> {
             logsPanel.getChildren().clear();
+        });
+
+        CommandManager.registerSimpleCommand("quit", args -> {
+            Minecraft.getMinecraft().shutdown();
+        });
+
+        CommandManager.registerSimpleCommand("disconnect", args -> {
+            boolean singlePlayer = this.mc.isIntegratedServerRunning();
+            this.mc.theWorld.sendQuittingDisconnectingPacket();
+            this.mc.loadWorld(null);
+
+            if (singlePlayer) {
+                this.mc.displayGuiScreen(MainMenu.getInstance());
+            } else {
+                this.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.getInstance()));
+            }
+        });
+
+        CommandManager.registerSimpleCommand("connect", args -> {
+
+            if (args.length < 1) {
+                log(EnumChatFormatting.RED + "Usage: connect <ip>:[port]");
+                return;
+            }
+
+            if (mc.theWorld != null) {
+                this.mc.theWorld.sendQuittingDisconnectingPacket();
+//                this.mc.loadWorld(null);
+            }
+
+            GuiConnecting.connectTo(args[0]);
         });
     }
 

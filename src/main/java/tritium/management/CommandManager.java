@@ -76,6 +76,10 @@ public class CommandManager extends AbstractManager {
         void execute(String[] args);
     }
 
+    public static void registerSimpleCommand(String name, SimpleCommandCallback callback) {
+        registerSimpleCommand(name, new String[0], callback);
+    }
+
     public static void registerSimpleCommand(String name, String[] alias, SimpleCommandCallback callback) {
         // 这里只需要 new 一个 Command 对象就可以了
         // 因为在 Command 的类构造器里会自动将自己添加到命令列表中

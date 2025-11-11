@@ -12,6 +12,13 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
+import net.minecraft.util.EnumChatFormatting;
+import tritium.event.eventapi.Handler;
+import tritium.event.events.world.TickEvent;
+import tritium.event.events.world.WorldChangedEvent;
+import tritium.management.EventManager;
+import tritium.screens.ConsoleScreen;
+import tritium.screens.MainMenu;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -81,6 +88,61 @@ public class GuiConnecting extends GuiScreen {
 
                     GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", s)));
                 }
+            }
+        }).start();
+    }
+
+    public static void connectTo(String addr) {
+        ServerAddress serveraddress = ServerAddress.fromString(addr);
+        Minecraft mc = Minecraft.getMinecraft();
+        mc.loadWorld(null);
+        mc.setServerData(new ServerData("Server", addr, false));
+        String ip = serveraddress.getIP();
+        int port = serveraddress.getPort();
+        logger.info("Connecting to " + ip + ", " + port);
+        ConsoleScreen.log("Connecting to {}, {}", ip, port);
+        (new Thread("Server Connector #" + CONNECTION_ID.incrementAndGet()) {
+            NetworkManager networkManager;
+            public void run() {
+                EventManager.register(this);
+                InetAddress inetaddress = null;
+
+                try {
+                    inetaddress = InetAddress.getByName(ip);
+                    networkManager = NetworkManager.createNetworkManagerAndConnect(inetaddress, port, mc.gameSettings.isUsingNativeTransport());
+                    networkManager.setNetHandler(new NetHandlerLoginClient(networkManager, mc, MainMenu.getInstance()));
+                    networkManager.sendPacket(new C00Handshake(47, ip, port, EnumConnectionState.LOGIN));
+                    networkManager.sendPacket(new C00PacketLoginStart(mc.getSession().getProfile()));
+                } catch (UnknownHostException unknownhostexception) {
+                    GuiConnecting.logger.error("Couldn't connect to server", unknownhostexception);
+                    ConsoleScreen.log(EnumChatFormatting.RED + "Couldn't connect to server: Unknown Host");
+                } catch (Exception exception) {
+                    GuiConnecting.logger.error("Couldn't connect to server", exception);
+                    String s = exception.toString();
+
+                    if (inetaddress != null) {
+                        String s1 = inetaddress + ":" + port;
+                        s = s.replaceAll(s1, "");
+                    }
+
+                    ConsoleScreen.log(EnumChatFormatting.RED + "Couldn't connect to server: {}", s);
+                }
+            }
+
+            @Handler
+            public void onTick(TickEvent event) {
+                if (this.networkManager != null) {
+                    if (this.networkManager.isChannelOpen()) {
+                        this.networkManager.processReceivedPackets();
+                    } else {
+                        this.networkManager.checkDisconnected();
+                    }
+                }
+            }
+
+            @Handler
+            public void worldChanged(WorldChangedEvent event) {
+                EventManager.unregister(this);
             }
         }).start();
     }

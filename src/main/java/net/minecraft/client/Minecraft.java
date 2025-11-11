@@ -117,6 +117,7 @@ import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
+import tritium.utils.other.DevUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.optimization.Deduplicator;
 import tritium.widget.impl.keystrokes.CPSUtils;
@@ -917,6 +918,8 @@ public class Minecraft implements IThreadListener {
      * Sets the argument GuiScreen as the main (topmost visible) screen.
      */
     public void displayGuiScreen(GuiScreen guiScreenIn) {
+
+        DevUtils.printCurrentInvokeStack();
 
         if (this.thePlayer == null && this.theWorld == null && this.currentScreen != null && this.currentScreen instanceof MainMenu) {
             TransitionAnimation.task(() -> this.displayGuiScreen0(guiScreenIn));
