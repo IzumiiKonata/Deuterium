@@ -2195,10 +2195,10 @@ public class Minecraft implements IThreadListener {
         this.renderViewEntity = null;
         this.myNetworkManager = null;
 
-        if (this.loadingScreen != null) {
-            this.loadingScreen.resetProgressAndMessage(loadingMessage);
-            this.loadingScreen.displayLoadingString("");
-        }
+//        if (this.loadingScreen != null) {
+//            this.loadingScreen.resetProgressAndMessage(loadingMessage);
+//            this.loadingScreen.displayLoadingString("");
+//        }
 
         if (worldClientIn == null && this.theWorld != null) {
             this.mcResourcePackRepository.clearResourcePack();

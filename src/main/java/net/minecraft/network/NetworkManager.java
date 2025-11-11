@@ -18,12 +18,14 @@ import io.netty.handler.timeout.TimeoutException;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import tritium.event.events.packet.ReceivePacketEvent;
 import tritium.event.events.packet.SendPacketEvent;
 import tritium.management.EventManager;
+import tritium.screens.ConsoleScreen;
 import tritium.utils.timing.Counter;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -428,6 +430,8 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
                     this.getNetHandler().onDisconnect(new ChatComponentText("Disconnected"));
                 }
             } else {
+                if (Minecraft.getMinecraft().currentScreen instanceof ConsoleScreen)
+                    return;
                 logger.warn("handleDisconnection() called twice");
             }
         }

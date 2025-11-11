@@ -61,7 +61,6 @@ public class ConsoleScreen extends BaseScreen {
 
             if (mc.theWorld != null) {
                 this.mc.theWorld.sendQuittingDisconnectingPacket();
-//                this.mc.loadWorld(null);
             }
 
             GuiConnecting.connectTo(args[0]);

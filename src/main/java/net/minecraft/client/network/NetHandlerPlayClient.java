@@ -555,6 +555,12 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
      * Invoked when disconnecting, the parameter is a ChatComponent describing the reason for termination
      */
     public void onDisconnect(IChatComponent reason) {
+
+        if (this.gameController.currentScreen instanceof ConsoleScreen) {
+            ConsoleScreen.log("Lost connection: {}", reason.getFormattedText());
+            return;
+        }
+
         this.gameController.loadWorld(null);
 
         if (this.guiScreenServer != null) {
@@ -767,7 +773,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
             this.clientWorldController.setWorldScoreboard(scoreboard);
             this.gameController.loadWorld(this.clientWorldController);
             this.gameController.thePlayer.dimension = packetIn.getDimensionID();
-            this.gameController.displayGuiScreen(/*new GuiDownloadTerrain(this)*/null);
+            if (!(this.gameController.currentScreen instanceof ConsoleScreen))
+                this.gameController.displayGuiScreen(/*new GuiDownloadTerrain(this)*/null);
         }
 
         this.gameController.setDimensionAndSpawnPlayer(packetIn.getDimensionID());

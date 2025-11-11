@@ -21,6 +21,7 @@ import net.minecraft.network.login.server.S03PacketEnableCompression;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.CryptManager;
 import net.minecraft.util.IChatComponent;
+import tritium.screens.ConsoleScreen;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -88,6 +89,12 @@ public class NetHandlerLoginClient implements INetHandlerLoginClient {
      * Invoked when disconnecting, the parameter is a ChatComponent describing the reason for termination
      */
     public void onDisconnect(IChatComponent reason) {
+
+        if (this.mc.currentScreen instanceof ConsoleScreen) {
+            ConsoleScreen.log("Failed to connect: {}", reason.getFormattedText());
+            return;
+        }
+
         this.mc.displayGuiScreen(new GuiDisconnected(this.previousGuiScreen, "connect.failed", reason));
     }
 
