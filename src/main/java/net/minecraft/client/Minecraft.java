@@ -919,8 +919,6 @@ public class Minecraft implements IThreadListener {
      */
     public void displayGuiScreen(GuiScreen guiScreenIn) {
 
-        DevUtils.printCurrentInvokeStack();
-
         if (this.thePlayer == null && this.theWorld == null && this.currentScreen != null && this.currentScreen instanceof MainMenu) {
             TransitionAnimation.task(() -> this.displayGuiScreen0(guiScreenIn));
         } else {
