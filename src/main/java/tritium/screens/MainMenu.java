@@ -48,7 +48,7 @@ public class MainMenu extends BaseScreen {
     ClickableIcon themeButton;
 
     public MainMenu() {
-        FontManager.waitUntilAllLoaded();
+
     }
 
     @Override

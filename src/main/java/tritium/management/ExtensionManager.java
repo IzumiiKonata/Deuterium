@@ -2,9 +2,11 @@ package tritium.management;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.util.EnumChatFormatting;
 import today.opai.api.Extension;
 import today.opai.api.annotations.ExtensionInfo;
 import tritium.bridge.OpenAPIImpl;
+import tritium.screens.ConsoleScreen;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,11 +40,16 @@ public class ExtensionManager extends AbstractManager {
             return;
         }
 
-        System.out.println("Looking for folder " + extensionsDir.getAbsolutePath() + " for extensions...");
+        ConsoleScreen.log("[ExtensionManager] Checking extensions in folder {}...", extensionsDir.getAbsolutePath());
 
-        System.out.println("Files: " + Arrays.toString(extensionsDir.listFiles()));
+        File[] files = extensionsDir.listFiles();
 
-        for (File file : extensionsDir.listFiles()) {
+        if (files == null || files.length == 0) {
+            ConsoleScreen.log("[ExtensionManager] No extensions found.");
+            return;
+        }
+
+        for (File file : files) {
             if (file.isFile() && file.getName().toLowerCase().endsWith(".jar")) {
                 tryLoadJar(file);
             }
@@ -51,6 +58,8 @@ public class ExtensionManager extends AbstractManager {
 
     @SneakyThrows
     private void tryLoadJar(File jar) {
+
+        ConsoleScreen.log("[ExtensionManager] Loading file {}...", jar.getName());
 
         // don't care about closing
         URLClassLoader cl = new URLClassLoader( new URL[]{ jar.toURI().toURL() }, Thread.currentThread().getContextClassLoader()) {
@@ -72,14 +81,15 @@ public class ExtensionManager extends AbstractManager {
                 } catch (Throwable t) {
                     System.err.println("Cannot load extension: " + jar.getName() + ", iterating class " + className);
                     t.printStackTrace();
+                    ConsoleScreen.log(EnumChatFormatting.RED + "[ExtensionManager] Cannot load extension: {}, iterating class {}", jar.getName(), className);
                 }
                 return true;
             }, cl);
         } catch (Exception e) {
             cl.close();
-
             System.err.println("Cannot load extension: " + jar.getName());
             e.printStackTrace();
+            ConsoleScreen.log(EnumChatFormatting.RED + "[ExtensionManager] Cannot load extension: {}", jar.getName());
         }
 
     }
@@ -94,11 +104,13 @@ public class ExtensionManager extends AbstractManager {
             extension.initialize(OpenAPIImpl.getInstance());
 
             loadedExtensions.put(annotation, extension);
+            ConsoleScreen.log(EnumChatFormatting.GREEN + "[ExtensionManager] Loaded extension {} by {}, version {}", annotation.name(), annotation.author(), annotation.version());
 
             return true;
         } catch (Exception e) {
             System.err.println("Cannot load extension: " + annotation.name() + " by " + annotation.author());
             e.printStackTrace();
+            ConsoleScreen.log(EnumChatFormatting.RED + "[ExtensionManager] Cannot load extension: {} by {}, version {}", annotation.name(), annotation.author(), annotation.version());
             return false;
         }
     }

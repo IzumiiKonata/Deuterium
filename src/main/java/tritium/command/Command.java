@@ -6,6 +6,7 @@ import net.minecraft.util.EnumChatFormatting;
 import tritium.Tritium;
 import tritium.interfaces.SharedConstants;
 import tritium.management.CommandManager;
+import tritium.screens.ConsoleScreen;
 
 /**
  * @author IzumiiKonata
@@ -51,12 +52,7 @@ public abstract class Command implements SharedConstants {
      * @param args   format arguments
      */
     public void print(String format, Object... args) {
-
-        if (mc.thePlayer == null) {
-            return;
-        }
-
-        mc.thePlayer.addChatMessage(EnumChatFormatting.AQUA + "[" + Tritium.NAME + "] " + EnumChatFormatting.RESET + String.format(format, args));
+        ConsoleScreen.log(format, args);
     }
 
     /**

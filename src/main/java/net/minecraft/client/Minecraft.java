@@ -1988,10 +1988,6 @@ public class Minecraft implements IThreadListener {
                 this.displayGuiScreen(new GuiChat("/"));
             }
 
-            if (this.currentScreen == null && Keyboard.isKeyDown(Keyboard.KEY_PERIOD) && flag && !ModuleManager.noCommand.isEnabled()) {
-                this.displayGuiScreen(new GuiChat("."));
-            }
-
             if (this.thePlayer.isUsingItem()) {
                 if (!this.gameSettings.keyBindUseItem.isKeyDown()) {
                     this.playerController.onStoppedUsingItem(this.thePlayer);

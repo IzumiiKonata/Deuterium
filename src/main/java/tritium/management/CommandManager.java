@@ -6,9 +6,7 @@ import net.minecraft.util.EnumChatFormatting;
 import tritium.Tritium;
 import tritium.command.Command;
 import tritium.command.impl.*;
-import tritium.event.eventapi.Handler;
-import tritium.event.events.game.ChatEvent;
-import tritium.command.impl.*;
+import tritium.screens.ConsoleScreen;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -29,25 +27,8 @@ public class CommandManager extends AbstractManager {
         super("CommandManager");
     }
 
-    @Handler
-    public final void onChat(ChatEvent event) {
-        String unformatted = event.getMsg();
-
-        if (!unformatted.startsWith("."))
-            return;
-
-        if (ModuleManager.noCommand.isEnabled())
-            return;
-
-        if (unformatted.toLowerCase().startsWith(".say"))
-            return;
-
-        event.setCancelled();
-
-        unformatted = unformatted.substring(1);
-
-
-        String[] split = unformatted.split(" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
+    public void execute(String unformattedCommand) {
+        String[] split = unformattedCommand.split(" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
         for (int i = 0; i < split.length; i++) {
             split[i] = split[i].replaceAll("\"", "");
@@ -91,8 +72,23 @@ public class CommandManager extends AbstractManager {
     NSpoof nSpoof = new NSpoof();
     Reload reload = new Reload();
 
+    public interface SimpleCommandCallback {
+        void execute(String[] args);
+    }
+
+    public static void registerSimpleCommand(String name, String[] alias, SimpleCommandCallback callback) {
+        // 这里只需要 new 一个 Command 对象就可以了
+        // 因为在 Command 的类构造器里会自动将自己添加到命令列表中
+        new Command(name, name, name, alias) {
+            @Override
+            public void execute(String[] args) {
+                callback.execute(args);
+            }
+        };
+    }
+
     public void print(String message) {
-        Minecraft.getMinecraft().thePlayer.addChatMessage(EnumChatFormatting.AQUA + "[" + Tritium.NAME + "] " + EnumChatFormatting.RESET + message);
+        ConsoleScreen.log(message);
     }
 
     @Override
@@ -104,4 +100,5 @@ public class CommandManager extends AbstractManager {
     public void stop() {
 
     }
+
 }

@@ -41,6 +41,10 @@ public class ScrollPanel extends Panel {
     }
 
     public ScrollPanel setAlignment(Alignment alignment) {
+
+        if (alignment == null)
+            throw new IllegalArgumentException("Alignment cannot be null!");
+
         this.alignment = alignment;
         return this;
     }
@@ -75,27 +79,83 @@ public class ScrollPanel extends Panel {
 
         this.targetScrollOffset = Math.max(this.targetScrollOffset, 0);
 
-        if (this.alignment == Alignment.VERTICAL) {
-            double childrenHeightSum = this.getChildrenHeightSum();
-            if (childrenHeightSum > this.getHeight())
-                this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
-            else
-                this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
-        } else if (this.alignment == Alignment.HORIZONTAL) {
-            double childrenWidthSum = this.getChildrenWidthSum();
-            if (childrenWidthSum > this.getWidth())
-                this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenWidthSum - this.getWidth());
-            else
-                this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
-        } else if (this.alignment == Alignment.VERTICAL_WITH_HORIZONTAL_FILL) {
-            double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
-            if (childrenHeightSum > this.getHeight())
-                this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
-            else
-                this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+        switch (this.alignment) {
+            case VERTICAL -> {
+                double childrenHeightSum = this.getChildrenHeightSum();
+                if (childrenHeightSum > this.getHeight())
+                    this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
+                else
+                    this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+            }
+            case HORIZONTAL -> {
+                double childrenWidthSum = this.getChildrenWidthSum();
+                if (childrenWidthSum > this.getWidth())
+                    this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenWidthSum - this.getWidth());
+                else
+                    this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+            }
+            case VERTICAL_WITH_HORIZONTAL_FILL -> {
+                double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
+                if (childrenHeightSum > this.getHeight())
+                    this.targetScrollOffset = Math.min(this.targetScrollOffset, childrenHeightSum - this.getHeight());
+                else
+                    this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
+            }
         }
 
         this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
+    }
+
+    public void scrollToEnd() {
+        switch (this.alignment) {
+            case VERTICAL -> {
+                double childrenHeightSum = this.getChildrenHeightSum();
+                if (childrenHeightSum > this.getHeight())
+                    this.targetScrollOffset = childrenHeightSum - this.getHeight();
+                else
+                    this.targetScrollOffset = 0;
+            }
+            case HORIZONTAL -> {
+                double childrenWidthSum = this.getChildrenWidthSum();
+                if (childrenWidthSum > this.getWidth())
+                    this.targetScrollOffset = childrenWidthSum - this.getWidth();
+                else
+                    this.targetScrollOffset = 0;
+            }
+            case VERTICAL_WITH_HORIZONTAL_FILL -> {
+                double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
+                if (childrenHeightSum > this.getHeight())
+                    this.targetScrollOffset = childrenHeightSum - this.getHeight();
+                else
+                    this.targetScrollOffset = 0;
+            }
+        }
+    }
+
+    public boolean isScrolledToEnd() {
+        return switch (this.alignment) {
+            case VERTICAL -> {
+                double childrenHeightSum = this.getChildrenHeightSum();
+                if (childrenHeightSum > this.getHeight())
+                    yield this.targetScrollOffset == childrenHeightSum - this.getHeight();
+                else
+                    yield this.targetScrollOffset == 0;
+            }
+            case HORIZONTAL -> {
+                double childrenWidthSum = this.getChildrenWidthSum();
+                if (childrenWidthSum > this.getWidth())
+                    yield this.targetScrollOffset == childrenWidthSum - this.getWidth();
+                else
+                    yield this.targetScrollOffset == 0;
+            }
+            case VERTICAL_WITH_HORIZONTAL_FILL -> {
+                double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
+                if (childrenHeightSum > this.getHeight())
+                    yield this.targetScrollOffset == childrenHeightSum - this.getHeight();
+                else
+                    yield this.targetScrollOffset == 0;
+            }
+        };
     }
 
     public void alignChildren() {
@@ -115,20 +175,24 @@ public class ScrollPanel extends Panel {
             if (child.isHidden())
                 continue;
 
-            if (this.alignment == Alignment.VERTICAL) {
-                child.setPosition(child.getRelativeX(), offsetY);
-                offsetY += height + spacing;
-            } else if (this.alignment == Alignment.HORIZONTAL) {
-                child.setPosition(offsetX, child.getRelativeY());
-                offsetX += width + spacing;
-            } else if (this.alignment == Alignment.VERTICAL_WITH_HORIZONTAL_FILL) {
-                if (offsetX + width > this.getWidth()) {
-                    offsetX = 0;
+            switch (this.alignment) {
+                case VERTICAL -> {
+                    child.setPosition(child.getRelativeX(), offsetY);
                     offsetY += height + spacing;
                 }
+                case HORIZONTAL -> {
+                    child.setPosition(offsetX, child.getRelativeY());
+                    offsetX += width + spacing;
+                }
+                case VERTICAL_WITH_HORIZONTAL_FILL -> {
+                    if (offsetX + width > this.getWidth()) {
+                        offsetX = 0;
+                        offsetY += height + spacing;
+                    }
 
-                child.setPosition(offsetX, offsetY);
-                offsetX += width + spacing;
+                    child.setPosition(offsetX, offsetY);
+                    offsetX += width + spacing;
+                }
             }
         }
     }
@@ -223,18 +287,21 @@ public class ScrollPanel extends Panel {
     @Override
     protected boolean shouldRenderChildren(AbstractWidget<?> child, double mouseX, double mouseY) {
 
-        if (this.getAlignment() == Alignment.VERTICAL || this.getAlignment() == Alignment.VERTICAL_WITH_HORIZONTAL_FILL) {
-            if (child.getRelativeY() + child.getHeight() < 0)
-                return false;
+        switch (this.getAlignment()) {
+            case VERTICAL, VERTICAL_WITH_HORIZONTAL_FILL -> {
+                if (child.getRelativeY() + child.getHeight() < 0)
+                    return false;
 
-            if (child.getRelativeY() > this.getHeight())
-                return false;
-        } else if (this.getAlignment() == Alignment.HORIZONTAL) {
-            if (child.getRelativeX() + child.getWidth() < 0)
-                return false;
+                if (child.getRelativeY() > this.getHeight())
+                    return false;
+            }
+            case HORIZONTAL -> {
+                if (child.getRelativeX() + child.getWidth() < 0)
+                    return false;
 
-            if (child.getRelativeX() > this.getWidth())
-                return false;
+                if (child.getRelativeX() > this.getWidth())
+                    return false;
+            }
         }
 
         return true;

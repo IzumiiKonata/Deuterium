@@ -19,7 +19,6 @@ import tritium.rendering.StencilClipManager;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.FontManager;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.Stencil;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.font.CFontRenderer;
 import tritium.settings.ClientSettings;
@@ -40,7 +39,7 @@ public class TextField extends GuiTextField {
     @Getter
     private String text = "";
     @Getter
-    private int maxStringLength = 128;
+    private int maxStringLength = 512;
     @Setter
     public String placeholder = "";
     public boolean isPassword;
@@ -450,10 +449,6 @@ public class TextField extends GuiTextField {
     }
 
     public void drawTextBox(int mouseX, int mouseY) {
-        drawTextBox(mouseX, mouseY, false);
-    }
-
-    public void drawTextBox(int mouseX, int mouseY, boolean useScissor) {
         if (!visible) {
             return;
         }
@@ -482,11 +477,11 @@ public class TextField extends GuiTextField {
             updateDragging(mouseX);
         }
 
-        setupClipping(useScissor);
+        setupClipping();
 
         renderTextContent(textScrollOffset, isHovered);
 
-        cleanupClipping(useScissor);
+        cleanupClipping();
 
         if (isFocused && IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
             IngameIMERenderer.draw(xPosition, yPosition, false);
@@ -532,24 +527,15 @@ public class TextField extends GuiTextField {
         hoverAlpha = Interpolations.interpLinear(hoverAlpha, targetAlpha, 0.1f) * wholeAlpha;
     }
 
-    private void setupClipping(boolean useScissor) {
-        if (!useScissor && !Stencil.isErasing) {
-            StencilClipManager.beginClip(() -> {
-                RenderSystem.drawRect(xPosition - 1, yPosition,
-                        xPosition + width + 1, yPosition + height - 1, -1);
-            });
-        } else if (useScissor) {
-            RenderSystem.doScissor((int) xPosition - 1, (int) yPosition,
-                    (int) width + 1, (int) height - 1);
-        }
+    private void setupClipping() {
+        StencilClipManager.beginClip(() -> {
+            RenderSystem.drawRect(xPosition - 1, yPosition - 4,
+                    xPosition + width + 1, yPosition + height + 4, -1);
+        });
     }
 
-    private void cleanupClipping(boolean useScissor) {
-        if (!useScissor && !Stencil.isErasing) {
-            StencilClipManager.endClip();
-        } else if (useScissor) {
-            RenderSystem.endScissor();
-        }
+    private void cleanupClipping() {
+        StencilClipManager.endClip();
     }
 
     private void renderTextContent(double scrollOffset, boolean isHovered) {
@@ -693,6 +679,7 @@ public class TextField extends GuiTextField {
 
     public void setFocused(boolean focused) {
         if (focused && !isFocused) {
+            cursorForceShowTimer.reset();
             cursorCounter = 0;
             Keyboard.enableRepeatEvents(true);
             if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {

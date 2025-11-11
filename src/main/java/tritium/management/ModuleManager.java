@@ -7,7 +7,7 @@ import tritium.event.events.game.KeyPressedEvent;
 import tritium.module.Module;
 import tritium.module.impl.movement.AutoSprint;
 import tritium.module.impl.other.NameSpoof;
-import tritium.module.impl.other.NoCommand;
+import tritium.module.impl.other.OpenConsole;
 import tritium.module.impl.other.ViewLogs;
 import tritium.module.impl.render.*;
 import tritium.module.submodule.SubModule;
@@ -57,9 +57,9 @@ public class ModuleManager extends AbstractManager {
     public static final AutoSprint autoSprint = new AutoSprint();
 
     // OTHER
-    public static final NoCommand noCommand = new NoCommand();
     public static final NameSpoof nameSpoof = new NameSpoof();
-    public static final ViewLogs openConsole = new ViewLogs();
+    public static final ViewLogs viewLogs = new ViewLogs();
+    public static final OpenConsole openConsole = new OpenConsole();
 
 
     public ModuleManager() {

@@ -4,10 +4,12 @@ import ingameime.IngameIMEJNI;
 import lombok.Getter;
 import org.lwjgl.opengl.Display;
 import tritium.event.eventapi.Event;
+import tritium.launch.Launcher;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.*;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.screens.ConsoleScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.i18n.Localizable;
 import tritium.utils.json.JsonUtils;
@@ -104,8 +106,6 @@ public class Tritium {
 //            DropTarget.getInstance().registerDropTarget(WindowUtil.getWindowHandle(Display.getWindow()));
 //        }
 
-        LoadingRenderer.setProgress(70, NAME + " - Start");
-
         LoadingRenderer.setProgress(90, NAME + " - Managers");
 
         this.fontManager = new FontManager();
@@ -123,7 +123,7 @@ public class Tritium {
 
         for (AbstractManager manager : this.managers) {
 
-            this.logger.debug("正在调用 {} 的 init() 方法...", manager.getName());
+            logger.debug("正在调用 {} 的 init() 方法...", manager.getName());
             manager.init();
             EventManager.register(manager);
 
@@ -144,6 +144,10 @@ public class Tritium {
 
         System.gc();
         clientLoaded = true;
+
+        ConsoleScreen.log("[Tritium] Tritium {}", ver.toString());
+        ConsoleScreen.log("[Tritium] Client launched. Time used: %.2fs", (System.currentTimeMillis() - Launcher.startupTime) / 1000.0f);
+        UpdateChecker.check();
     }
 
     /**
@@ -154,7 +158,7 @@ public class Tritium {
 
         for (AbstractManager manager : this.managers) {
 
-            this.logger.debug("正在调用 {} 的 stop() 方法...", manager.getName());
+            logger.debug("正在调用 {} 的 stop() 方法...", manager.getName());
             manager.stop();
             EventManager.unregister(manager);
 
@@ -172,14 +176,12 @@ public class Tritium {
                     int minor = Integer.parseInt(splitVer[1]);
                     int patch = Integer.parseInt(splitVer[2]);
                     version = new Version(Version.ReleaseType.Release, major, minor, patch);
-                    UpdateChecker.check();
                 },
                 () -> {
                     String branch = VersionUtils.getCurrentBranch();
                     String currentCommit = VersionUtils.getCurrentCommitShort();
                     version = new Version(currentCommit, branch);
                     logger.setOverrideLevel(LogLevel.DEBUG);
-                    UpdateChecker.check();
                 }
             );
     }

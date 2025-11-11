@@ -50,7 +50,7 @@ public class LyricParser {
             String translation = transMap.get(l.timeStamp);
 
             if (translation == null) {
-                System.out.println("Translation not found for " + l.lyric + " at " + l.timeStamp);
+//                System.out.println("Translation not found for " + l.lyric + " at " + l.timeStamp);
                 continue;
             }
 

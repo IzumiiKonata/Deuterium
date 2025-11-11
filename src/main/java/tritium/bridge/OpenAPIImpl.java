@@ -4,7 +4,6 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.util.IChatComponent;
-import today.opai.api.Extension;
 import today.opai.api.OpenAPI;
 import today.opai.api.enums.EnumNotificationType;
 import today.opai.api.features.ExtensionCommand;
@@ -78,7 +77,7 @@ public class OpenAPIImpl implements OpenAPI {
 
     @Override
     public void runCommand(String clientCommand) {
-        Tritium.getInstance().getCommandManager().onChat(new ChatEvent(clientCommand));
+        Tritium.getInstance().getCommandManager().execute(clientCommand);
     }
 
     @Override

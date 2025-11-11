@@ -32,12 +32,7 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
         TRIM_TO_WIDTH;
     }
 
-    LazyLoadBase<ScrollText> scrollText = new LazyLoadBase<ScrollText>() {
-        @Override
-        protected ScrollText load() {
-            return new ScrollText();
-        }
-    };
+    LazyLoadBase<ScrollText> scrollText = LazyLoadBase.of(ScrollText::new);
 
     public LabelWidget(String label, CFontRenderer font) {
         this.setLabel(label);
@@ -111,6 +106,10 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
 
     public LabelWidget setLabel(Supplier<String> label) {
         this.label = label;
+
+        if (label.get() != null)
+            this.setHeight(font.getStringHeight(label.get()));
+
         return this;
     }
 }

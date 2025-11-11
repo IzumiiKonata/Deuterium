@@ -2,7 +2,9 @@ package tritium.utils.other.info;
 
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
+import net.minecraft.util.EnumChatFormatting;
 import tritium.Tritium;
+import tritium.screens.ConsoleScreen;
 import tritium.utils.i18n.Localizable;
 import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
@@ -21,6 +23,7 @@ public class UpdateChecker {
     private UpdateCheckResult updateCheckResult = UpdateCheckResult.CHECKING;
 
     public void check() {
+        ConsoleScreen.log("[UpdateChecker] Checking for updates...");
         Thread versionCheckThread = new Thread(() -> {
             Version version = Tritium.getVersion();
             if (version.getVersionType() == Version.VersionType.COMMIT_AND_BRANCH) {
@@ -30,14 +33,17 @@ public class UpdateChecker {
 
                 if (currentCommit.equals("UNKNOWN") || remote.equals("UNKNOWN")) {
                     updateCheckResult = UpdateCheckResult.ERROR;
+                    ConsoleScreen.log(EnumChatFormatting.RED + "[UpdateChecker] Cannot check for updates because branch or commit is unknown");
                     return;
                 }
 
                 if (currentCommit.equals(remote)) {
                     // up to date
                     updateCheckResult = UpdateCheckResult.UP_TO_DATE;
+                    ConsoleScreen.log(EnumChatFormatting.GREEN + "[UpdateChecker] Up to date.");
                 } else {
                     updateCheckResult = UpdateCheckResult.OUTDATED_NEW_COMMIT;
+                    ConsoleScreen.log(EnumChatFormatting.YELLOW + "[UpdateChecker] Outdated, new commit found.");
                 }
             } else {
 
@@ -47,6 +53,7 @@ public class UpdateChecker {
                 } catch (IOException e) {
                     Tritium.getLogger().error("检查更新失败!", e);
                     updateCheckResult = UpdateCheckResult.ERROR;
+                    ConsoleScreen.log(EnumChatFormatting.RED + "[UpdateChecker] Cannot check for updates because failed to fetch latest release");
                     return;
                 }
 
@@ -60,8 +67,10 @@ public class UpdateChecker {
 
                 if (version.getMajor() == major && version.getMinor() == minor && version.getPatch() == patch) {
                     updateCheckResult = UpdateCheckResult.UP_TO_DATE;
+                    ConsoleScreen.log(EnumChatFormatting.GREEN + "[UpdateChecker] Up to date.");
                 } else {
                     updateCheckResult = UpdateCheckResult.OUTDATED_NEW_RELEASE;
+                    ConsoleScreen.log(EnumChatFormatting.YELLOW + "[UpdateChecker] Outdated, new release found.");
                 }
             }
         }, "Version Check Thread");

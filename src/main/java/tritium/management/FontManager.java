@@ -158,7 +158,7 @@ public class FontManager extends AbstractManager {
 
     @Override
     public void init() {
-
+        waitUntilAllLoaded();
     }
     
     private static final HashMap<String, Font> fonts = new HashMap<>();
