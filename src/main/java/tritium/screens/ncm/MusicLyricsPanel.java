@@ -718,12 +718,14 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         playPauseButton.setOnClickCallback((x, y, i) -> {
 
-            if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null) {
-                if (CloudMusic.player.isPausing())
-                    CloudMusic.player.unpause();
-                else
-                    CloudMusic.player.pause();
+            if (i == 0) {
+                if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null) {
+                    if (CloudMusic.player.isPausing())
+                        CloudMusic.player.unpause();
+                    else
+                        CloudMusic.player.pause();
 
+                }
             }
 
             return true;
@@ -741,8 +743,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         prev.setColor(Color.WHITE);
 
         prev.setOnClickCallback((x, y, i) -> {
-            if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
-                CloudMusic.prev();
+
+            if (i == 0) {
+                if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
+                    CloudMusic.prev();
+            }
 
             return true;
         });
@@ -757,8 +762,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         next.setColor(Color.WHITE);
 
         next.setOnClickCallback((x, y, i) -> {
-            if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
-                CloudMusic.next();
+
+            if (i == 0) {
+                if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
+                    CloudMusic.next();
+            }
 
             return true;
         });
