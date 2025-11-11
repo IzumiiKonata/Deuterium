@@ -47,15 +47,9 @@ public class ConsoleScreen extends BaseScreen {
         });
 
         CommandManager.registerSimpleCommand("disconnect", args -> {
-            boolean singlePlayer = this.mc.isIntegratedServerRunning();
             this.mc.theWorld.sendQuittingDisconnectingPacket();
-            this.mc.loadWorld(null);
 
-            if (singlePlayer) {
-                this.mc.displayGuiScreen(MainMenu.getInstance());
-            } else {
-                this.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.getInstance()));
-            }
+            log("Ok disconnected");
         });
 
         CommandManager.registerSimpleCommand("connect", args -> {
