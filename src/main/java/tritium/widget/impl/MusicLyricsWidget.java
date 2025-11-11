@@ -121,7 +121,7 @@ public class MusicLyricsWidget extends Widget {
         List<LyricLine> parsed = LyricParser.parse(lyric);
 
         // 异步获取TTML歌词 (逐字歌词)
-        fetchTTMLLyrics(music, parsed);
+//        fetchTTMLLyrics(music, parsed);
 
         synchronized (allLyrics) {
             allLyrics.clear();

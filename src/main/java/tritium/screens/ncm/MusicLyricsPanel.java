@@ -58,7 +58,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             parsed.add(new LyricLine(0L, "暂无歌词"));
         }
 
-        fetchTTMLLyrics(music, parsed);
+//        fetchTTMLLyrics(music, parsed);
 
         addLyrics(parsed);
     }
