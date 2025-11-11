@@ -2,17 +2,17 @@ package tritium.module.impl.other;
 
 import org.lwjgl.input.Keyboard;
 import tritium.module.Module;
-import tritium.screens.ConsoleScreen;
+import tritium.screens.LogScreen;
 
 /**
  * @author IzumiiKonata
  * @since 2024/8/31 12:42
  */
-public class OpenConsole extends Module {
+public class ViewLogs extends Module {
 
-    public OpenConsole() {
+    public ViewLogs() {
 
-        super("OpenConsole", Category.OTHER);
+        super("ViewLogs", Category.OTHER);
 
         super.setKeyBind(Keyboard.KEY_BACKSLASH);
         super.setShouldRender(() -> false);
@@ -23,7 +23,7 @@ public class OpenConsole extends Module {
     public void onEnable() {
 
         if (mc.thePlayer != null && mc.theWorld != null) {
-            mc.displayGuiScreen(ConsoleScreen.getInstance());
+            mc.displayGuiScreen(LogScreen.getInstance());
         }
 
         this.toggle();

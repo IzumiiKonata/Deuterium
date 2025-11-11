@@ -15,10 +15,10 @@ import java.util.List;
  * @author IzumiiKonata
  * @since 2024/8/31 12:42
  */
-public class ConsoleScreen extends BaseScreen {
+public class LogScreen extends BaseScreen {
 
     @Getter
-    private static final ConsoleScreen instance = new ConsoleScreen();
+    private static final LogScreen instance = new LogScreen();
 
     int scroll = 0;
 
