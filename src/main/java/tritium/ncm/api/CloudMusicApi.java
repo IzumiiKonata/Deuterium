@@ -329,9 +329,7 @@ public class CloudMusicApi {
     }
 
     public RequestUtil.RequestAnswer songDetail(long id) {
-
         return songDetail(Collections.singletonList(id));
-
     }
 
     public RequestUtil.RequestAnswer songDetail(List<Long> ids) {
@@ -341,7 +339,7 @@ public class CloudMusicApi {
         StringBuilder sb = new StringBuilder();
 
         for (Long id : ids) {
-            if (sb.length() > 0)
+            if (!sb.isEmpty())
                 sb.append(",");
             sb.append("{\"id\":").append(id).append("}");
         }

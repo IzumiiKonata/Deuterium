@@ -45,7 +45,7 @@ public class Command implements SharedConstants {
         hardDeclaredInvokeInfos.add(invokeInfo);
     }
 
-    public void tryExecute(String[] args) {
+    public List<InvokeInfo> getInvokeInfos() {
         List<InvokeInfo> invokeInfos = new ArrayList<>(hardDeclaredInvokeInfos);
 
         for (Method declaredMethod : this.getClass().getDeclaredMethods()) {
@@ -55,6 +55,12 @@ public class Command implements SharedConstants {
                 invokeInfos.add(new InvokeInfo(declaredMethod.getAnnotation(CommandHandler.class), this, declaredMethod, declaredMethod.getParameterTypes()));
             }
         }
+
+        return invokeInfos;
+    }
+
+    public void tryExecute(String[] args) {
+        List<InvokeInfo> invokeInfos = this.getInvokeInfos();
 
         boolean found = false;
         for (InvokeInfo invokeInfo : invokeInfos) {

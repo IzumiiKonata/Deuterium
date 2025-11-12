@@ -103,9 +103,7 @@ public class PlayList {
 
         JsonArray songs = requestAnswer.toJsonObject().getAsJsonArray("songs");
         songs.forEach(element -> {
-            Music music = JsonUtils.parse(element.getAsJsonObject(), Music.class);
-            this.musics.add(music);
-            music.init();
+            this.musics.add(JsonUtils.parse(element.getAsJsonObject(), Music.class));
         });
 
         musicsLoaded = true;

@@ -845,9 +845,7 @@ public class CloudMusic {
 
         if (songs != null) {
             for (JsonElement song : songs) {
-                Music music = JsonUtils.parse(song.getAsJsonObject(), Music.class);
-                list.add(music);
-                music.init();
+                list.add(JsonUtils.parse(song.getAsJsonObject(), Music.class));
             }
         }
 //        JsonObject data = post.toJson();
@@ -881,6 +879,25 @@ public class CloudMusic {
 
             player.player.rate(rate);
         }, Float.class, "rate");
+
+        CommandManager.registerCommand("set_player_volume", (Float volume) -> {
+            if (player == null)
+                return;
+
+            player.setVolume(Math.max(0, Math.min(1, volume)));
+        }, Float.class, "volume");
+
+        CommandManager.registerCommand("play", (Long id) -> {
+            MultiThreadingUtil.runAsync(() -> {
+                JsonArray songs = CloudMusicApi.songDetail(id).toJsonObject().getAsJsonArray("songs");
+                if (songs.isEmpty()) {
+                    ConsoleScreen.log(EnumChatFormatting.RED + "No such song: {}", id);
+                    return;
+                }
+
+                play(Collections.singletonList(JsonUtils.parse(songs.get(0), Music.class)), 0);
+            });
+        }, Long.class, "music id");
     }
 
 }

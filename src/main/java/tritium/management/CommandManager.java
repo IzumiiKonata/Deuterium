@@ -83,7 +83,7 @@ public class CommandManager extends AbstractManager {
 
     private static Command getOrCreateNew(String name, String[] alias) {
         for (Command cmd : CommandManager.getCommands()) {
-            if (cmd.getName().equals(name) && Arrays.equals(cmd.getAlias(), alias))
+            if (cmd.getName().equals(name))
                 return cmd;
         }
 

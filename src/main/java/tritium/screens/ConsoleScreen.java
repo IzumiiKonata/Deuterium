@@ -8,8 +8,10 @@ import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import tritium.Tritium;
+import tritium.command.Command;
 import tritium.management.CommandManager;
 import tritium.management.FontManager;
+import tritium.rendering.Rect;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.LabelWidget;
@@ -31,7 +33,7 @@ public class ConsoleScreen extends BaseScreen {
     TextFieldWidget textField;
     ScrollPanel logsPanel;
 
-    boolean titleBarDragging = false;
+    boolean titleBarDragging = false, bottomCornerDragging = false;
 
     public ConsoleScreen() {
         this.layout();
@@ -39,6 +41,12 @@ public class ConsoleScreen extends BaseScreen {
     }
 
     private void registerConsoleCommands() {
+
+        if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
+            // reload the screen's layout
+            CommandManager.registerSimpleCommand("layout", this::layout);
+        }
+
         CommandManager.registerSimpleCommand("clear", new String[] { "cls" }, () -> {
             logsPanel.getChildren().clear();
         });
@@ -56,10 +64,51 @@ public class ConsoleScreen extends BaseScreen {
 
         CommandManager.registerCommand("connect", GuiConnecting::connectTo, String.class, "server address");
 
-        if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
-            // reload the screen's layout
-            CommandManager.registerSimpleCommand("layout", this::layout);
-        }
+        CommandManager.registerSimpleCommand("help", () -> {
+            log("Available commands:");
+
+            CommandManager.getCommands().forEach(command -> {
+                for (Command.InvokeInfo invokeInfo : command.getInvokeInfos()) {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(command.getName().toLowerCase());
+
+                    for (int j = 0; j < invokeInfo.methodToInvoke.getParameters().length; j++) {
+                        sb.append(" ").append("<").append(invokeInfo.annotation.paramNames().length > 0 ? (invokeInfo.annotation.paramNames()[j]) : ("arg" + (j + 1))).append(">");
+                    }
+
+                    ConsoleScreen.log("    {}", sb.toString());
+                }
+            });
+        });
+
+        CommandManager.registerCommand("help", (String commandName) -> {
+
+            Command command = null;
+            for (Command cmd : CommandManager.getCommands()) {
+                if (cmd.getName().equalsIgnoreCase(commandName)) {
+                    command = cmd;
+                    break;
+                }
+            }
+
+            if (command == null) {
+                log(EnumChatFormatting.RED + "No such command: {}", commandName);
+                return;
+            }
+
+            log("{}: ", command.getName());
+            for (Command.InvokeInfo invokeInfo : command.getInvokeInfos()) {
+                StringBuilder sb = new StringBuilder();
+                sb.append(command.getName().toLowerCase());
+
+                for (int j = 0; j < invokeInfo.methodToInvoke.getParameters().length; j++) {
+                    sb.append(" ").append("<").append(invokeInfo.annotation.paramNames().length > 0 ? (invokeInfo.annotation.paramNames()[j]) : ("arg" + (j + 1))).append(">");
+                }
+
+                ConsoleScreen.log("    {}", sb.toString());
+            }
+
+        }, String.class, "command name");
     }
 
     @Override
@@ -137,7 +186,7 @@ public class ConsoleScreen extends BaseScreen {
                 }
 
                 if (this.textField.isFocused()) {
-                    if (keyCode == Keyboard.KEY_RETURN && !this.textField.getText().isEmpty()) {
+                    if ((keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) && !this.textField.getText().isEmpty()) {
                         Tritium.getInstance().getCommandManager().execute(this.textField.getText());
                         this.textField.setText("");
                         return true;
@@ -146,6 +195,29 @@ public class ConsoleScreen extends BaseScreen {
 
                 return false;
             });
+
+            // drag to change window size
+            {
+                Panel panel = new Panel();
+                this.textField.addChild(panel);
+
+                panel.setBeforeRenderCallback(() -> {
+                    panel.setBounds(this.textField.getWidth() - textFieldBgHeight + 2, -2, textFieldBgHeight, textFieldBgHeight);
+
+                    double lineWidth = 1;
+                    double length = 6;
+                    float alpha = panel.isHovering() ? .8f : .4f;
+                    Rect.draw(panel.getX() + panel.getWidth() - length, panel.getY() + panel.getHeight() - lineWidth, length, lineWidth, hexColor(1, 1, 1, alpha));
+                    Rect.draw(panel.getX() + panel.getWidth() - lineWidth, panel.getY() + panel.getHeight() - length, lineWidth, length - lineWidth, hexColor(1, 1, 1, alpha));
+                });
+
+                panel.setOnClickCallback((x, y, i) -> {
+                    if (i == 0)
+                        bottomCornerDragging = true;
+
+                    return true;
+                });
+            }
         }
 
         // logs container
@@ -224,8 +296,10 @@ public class ConsoleScreen extends BaseScreen {
     public void drawScreen(double mouseX, double mouseY) {
         this.base.renderWidget(mouseX, mouseY, Mouse.getDWheel());
 
-        if (!Mouse.isButtonDown(0))
+        if (!Mouse.isButtonDown(0)) {
             this.titleBarDragging = false;
+            this.bottomCornerDragging = false;
+        }
 
         // dragging
         {
@@ -237,9 +311,13 @@ public class ConsoleScreen extends BaseScreen {
 //                this.topRect.setPosition(mouseX - w, mouseY - h);
             }
 
-            this.lastMouseX = mouseX;
-            this.lastMouseY = mouseY;
+            if (this.bottomCornerDragging) {
+                this.base.setBounds(this.base.getWidth() + mouseX - this.lastMouseX, this.base.getHeight() + mouseY - this.lastMouseY);
+            }
         }
+
+        this.lastMouseX = mouseX;
+        this.lastMouseY = mouseY;
     }
 
     @Override

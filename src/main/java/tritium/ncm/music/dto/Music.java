@@ -54,12 +54,16 @@ public class Music {
 
     private transient String artistsName;
 
-    public void init() {
-        this.artistsName = this.buildArtistsNames();
+    public String getArtistsName() {
+        if (this.artistsName == null) {
+            this.artistsName = this.buildArtistsNames();
 
-        if (this.artistsName.isEmpty()) {
-            this.artistsName = "Unknown";
+            if (this.artistsName.isEmpty()) {
+                this.artistsName = "Unknown";
+            }
         }
+
+        return this.artistsName;
     }
 
     private String buildArtistsNames() {
