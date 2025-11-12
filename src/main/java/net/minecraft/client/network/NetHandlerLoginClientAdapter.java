@@ -36,13 +36,15 @@ public class NetHandlerLoginClientAdapter extends NetHandlerLoginClient {
     public void handleLoginSuccess(S02PacketLoginSuccess packetIn) {
         super.handleLoginSuccess(packetIn);
 
-        ConsoleScreen.log("Ok login success, unloading current world...");
+        ConsoleScreen.log("Ok login success, performing world change...");
 
         if (mc.theWorld != null) {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
 //            this.mc.playerController.setNoCheckDisconnect(true);
         }
 
-        this.mc.loadWorld(null);
+        mc.addScheduledTask(() -> mc.loadWorld(null));
+
+//        this.mc.loadWorld(null);
     }
 }

@@ -4,7 +4,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Queues;
 import com.google.common.collect.Sets;
-import com.google.common.io.ByteStreams;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
@@ -117,7 +116,6 @@ import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.other.DevUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.optimization.Deduplicator;
 import tritium.widget.impl.keystrokes.CPSUtils;
@@ -137,9 +135,6 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.function.IntFunction;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
 import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
@@ -2166,16 +2161,9 @@ public class Minecraft implements IThreadListener {
     }
 
     /**
-     * unloads the current world first
-     */
-    public void loadWorld(WorldClient worldClientIn) {
-        this.loadWorld(worldClientIn, "");
-    }
-
-    /**
      * par2Str is displayed on the loading screen to the user unloads the current world first
      */
-    public void loadWorld(WorldClient worldClientIn, String loadingMessage) {
+    public void loadWorld(WorldClient worldClientIn) {
         if (worldClientIn == null) {
             NetHandlerPlayClient nethandlerplayclient = this.getNetHandler();
 
