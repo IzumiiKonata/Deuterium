@@ -31,7 +31,7 @@ import java.security.PublicKey;
 
 public class NetHandlerLoginClient implements INetHandlerLoginClient {
     private static final Logger logger = LogManager.getLogger("NetHandlerLoginClient");
-    private final Minecraft mc;
+    final Minecraft mc;
     private final GuiScreen previousGuiScreen;
     private final NetworkManager networkManager;
 
@@ -68,11 +68,7 @@ public class NetHandlerLoginClient implements INetHandlerLoginClient {
             }
         }
 
-        this.networkManager.sendPacket(new C01PacketEncryptionResponse(secretkey, publickey, packetIn.getVerifyToken()), new GenericFutureListener<Future<? super Void>>() {
-            public void operationComplete(Future<? super Void> p_operationComplete_1_) throws Exception {
-                NetHandlerLoginClient.this.networkManager.enableEncryption(secretkey);
-            }
-        });
+        this.networkManager.sendPacket(new C01PacketEncryptionResponse(secretkey, publickey, packetIn.getVerifyToken()), p_operationComplete_1_ -> NetHandlerLoginClient.this.networkManager.enableEncryption(secretkey));
     }
 
     private MinecraftSessionService getSessionService() {

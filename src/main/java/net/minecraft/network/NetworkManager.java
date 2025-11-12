@@ -18,6 +18,8 @@ import io.netty.handler.timeout.TimeoutException;
 import io.netty.util.AttributeKey;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.ArrayUtils;
@@ -77,6 +79,9 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
      */
     private IChatComponent terminationReason;
     private boolean isEncrypted;
+
+    @Getter
+    @Setter
     private boolean disconnected;
 
     public NetworkManager(EnumPacketDirection packetDirection) {
@@ -430,8 +435,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
                     this.getNetHandler().onDisconnect(new ChatComponentText("Disconnected"));
                 }
             } else {
-                if (Minecraft.getMinecraft().currentScreen instanceof ConsoleScreen)
-                    return;
                 logger.warn("handleDisconnection() called twice");
             }
         }

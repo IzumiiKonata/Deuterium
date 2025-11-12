@@ -52,7 +52,7 @@ public class CommandManager extends AbstractManager {
                     e.printStackTrace(pw);
                     pw.flush();
 
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(EnumChatFormatting.RED + sw.toString());
+                    ConsoleScreen.log(EnumChatFormatting.RED + sw.toString());
                 }
             }
         }

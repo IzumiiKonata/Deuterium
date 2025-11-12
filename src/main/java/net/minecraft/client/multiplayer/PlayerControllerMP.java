@@ -1,6 +1,7 @@
 package net.minecraft.client.multiplayer;
 
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -14,12 +15,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.network.NetworkManager;
 import net.minecraft.network.play.client.*;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import tritium.event.events.player.AttackEvent;
 import tritium.management.EventManager;
+import tritium.screens.ConsoleScreen;
 
 public class PlayerControllerMP {
     /**
@@ -28,6 +31,9 @@ public class PlayerControllerMP {
     private final Minecraft mc;
     private final NetHandlerPlayClient netClientHandler;
     private BlockPos currentBlock = new BlockPos(-1, -1, -1);
+
+    @Setter
+    private boolean noCheckDisconnect = false;
 
     /**
      * The Item currently being used to destroy a block
@@ -296,10 +302,26 @@ public class PlayerControllerMP {
     public void updateController() {
         this.syncCurrentPlayItem();
 
-        if (this.netClientHandler.getNetworkManager().isChannelOpen()) {
-            this.netClientHandler.getNetworkManager().processReceivedPackets();
+        NetworkManager nm = this.netClientHandler.getNetworkManager();
+        if (nm.isChannelOpen()) {
+            nm.processReceivedPackets();
         } else {
-            this.netClientHandler.getNetworkManager().checkDisconnected();
+            if (!this.noCheckDisconnect)
+                nm.checkDisconnected();
+            else {
+                if (!nm.isDisconnected()) {
+                    nm.setDisconnected(true);
+                    if (nm.getExitMessage() != null) {
+                        String formattedText = nm.getExitMessage().getFormattedText();
+
+                        if (!formattedText.equals("Quitting"))
+                            ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: {}", formattedText);
+
+                    } else if (nm.getNetHandler() != null) {
+                        ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: Disconnected");
+                    }
+                }
+            }
         }
     }
 

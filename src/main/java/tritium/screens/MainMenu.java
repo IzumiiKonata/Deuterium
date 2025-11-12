@@ -199,10 +199,10 @@ public class MainMenu extends BaseScreen {
 
         if (dev) {
             this.renderDevDeconverge();
+        } else {
+            CFontRenderer titleFr = FontManager.arial60bold;
+            titleFr.drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
         }
-
-        CFontRenderer titleFr = FontManager.arial60bold;
-        titleFr.drawCenteredString("Tritium", RenderSystem.getWidth() * .5, RenderSystem.getHeight() / 3.0d, this.getColor(ColorType.TEXT));
 
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
@@ -218,7 +218,7 @@ public class MainMenu extends BaseScreen {
         CFontRenderer fr = FontManager.pf65bold;
 
         boolean obfuscatedDev = Tritium.getInstance().isObfuscated();
-        String str = obfuscatedDev ? "你他妈在干什么" : "所有人操大逼";
+        String str = obfuscatedDev ? "你他妈在干什么" : "Tritium";
 
         char[] charArray = str.toCharArray();
 
@@ -231,7 +231,7 @@ public class MainMenu extends BaseScreen {
 
             long time = System.currentTimeMillis() - startTime;
 
-            double angX = time * .125 - (i * 30);
+            double angX = time * .125 - (i * 20);
             double angY = time * .25 - (360.0f / charArray.length * i);
 
             double x = angX <= 0 ? 0 : Math.sin(-Math.toRadians(angX % 360.0f)) * 128;
@@ -240,7 +240,7 @@ public class MainMenu extends BaseScreen {
             float alpha = alphas[i];
             alphas[i] = Interpolations.interpBezier(alpha, angX > 0 && angY > 0 ? 1 : 0, .1f);
 
-            fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 1.375d + y, reAlpha(this.getColor(ColorType.TEXT), alpha));
+            fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 3.5d + y, reAlpha(this.getColor(ColorType.TEXT), alpha));
         }
 
     }

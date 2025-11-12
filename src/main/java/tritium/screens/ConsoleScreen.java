@@ -16,6 +16,7 @@ import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.rendering.ui.widgets.TextFieldWidget;
 import tritium.utils.other.StringFormatter;
+import tritium.utils.other.info.Version;
 
 /**
  * @author IzumiiKonata
@@ -48,6 +49,7 @@ public class ConsoleScreen extends BaseScreen {
 
         CommandManager.registerSimpleCommand("disconnect", args -> {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
+            this.mc.playerController.setNoCheckDisconnect(true);
 
             log("Ok disconnected");
         });
@@ -59,12 +61,15 @@ public class ConsoleScreen extends BaseScreen {
                 return;
             }
 
-            if (mc.theWorld != null) {
-                this.mc.theWorld.sendQuittingDisconnectingPacket();
-            }
-
             GuiConnecting.connectTo(args[0]);
         });
+
+        if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
+            // reload the screen's layout
+            CommandManager.registerSimpleCommand("layout", args -> {
+                this.layout();
+            });
+        }
     }
 
     @Override
@@ -130,17 +135,23 @@ public class ConsoleScreen extends BaseScreen {
             });
 
             this.textField.setOnKeyTypedCallback((typedChar, keyCode) -> {
+
+                if (keyCode == Keyboard.KEY_ESCAPE || keyCode == Keyboard.KEY_GRAVE) {
+                    mc.displayGuiScreen(null);
+
+                    if (keyCode == Keyboard.KEY_GRAVE) {
+                        this.textField.setText(this.textField.getText().substring(0, this.textField.getText().length() - 1));
+                    }
+
+                    return true;
+                }
+
                 if (this.textField.isFocused()) {
                     if (keyCode == Keyboard.KEY_RETURN && !this.textField.getText().isEmpty()) {
                         Tritium.getInstance().getCommandManager().execute(this.textField.getText());
                         this.textField.setText("");
+                        return true;
                     }
-
-                    if (keyCode == Keyboard.KEY_ESCAPE) {
-                        mc.displayGuiScreen(null);
-                    }
-
-                    return true;
                 }
 
                 return false;
@@ -202,7 +213,7 @@ public class ConsoleScreen extends BaseScreen {
         this.logsPanel.addChild(lwLog);
         lwLog.setColor(-1);
         // lol
-        lwLog.setHeight(2);
+        lwLog.setHeight(Math.max(2, lwLog.getHeight()));
 
         if (scrolledToEnd)
             logsPanel.scrollToEnd();
