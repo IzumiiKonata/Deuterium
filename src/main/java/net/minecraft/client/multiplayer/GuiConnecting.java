@@ -14,6 +14,7 @@ import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IChatComponent;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.game.GameLoopEvent;
 import tritium.event.events.world.TickEvent;
@@ -146,11 +147,10 @@ public class GuiConnecting extends GuiScreen {
                     } else {
                         if (!this.networkManager.isDisconnected()) {
                             this.networkManager.setDisconnected(true);
-                            if (this.networkManager.getExitMessage() != null) {
-                                String formattedText = this.networkManager.getExitMessage().getFormattedText();
-
-                                if (!formattedText.equals("Quitting"))
-                                    ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: {}", formattedText);
+                            IChatComponent exitMessage = this.networkManager.getExitMessage();
+                            if (exitMessage != null) {
+                                if (!exitMessage.getUnformattedText().equals("Quitting"))
+                                    ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: {}", exitMessage.getFormattedText());
                             } else if (this.networkManager.getNetHandler() != null) {
                                 ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: Disconnected");
                             }

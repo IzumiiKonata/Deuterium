@@ -1,15 +1,20 @@
 package tritium.management;
 
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
+import lombok.SneakyThrows;
 import net.minecraft.util.EnumChatFormatting;
-import tritium.Tritium;
+import tritium.bridge.ExtensionCommandWrapper;
 import tritium.command.Command;
+import tritium.command.CommandHandler;
 import tritium.command.impl.*;
 import tritium.screens.ConsoleScreen;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,7 +49,13 @@ public class CommandManager extends AbstractManager {
                 System.arraycopy(split, 1, args, 0, split.length - 1);
 
                 try {
-                    command.execute(args);
+
+                    if (command instanceof ExtensionCommandWrapper wrapper) {
+                        wrapper.execute(args);
+                    } else {
+                        command.tryExecute(args);
+                    }
+
                 } catch (Exception e) {
                     StringWriter sw = new StringWriter();
 
@@ -63,32 +74,139 @@ public class CommandManager extends AbstractManager {
     }
 
     Bind bind = new Bind();
-
     Rot rot = new Rot();
     Toggle toggle = new Toggle();
     Set set = new Set();
     Config config = new Config();
-    GetSelfHead getSelfHead = new GetSelfHead();
-    NSpoof nSpoof = new NSpoof();
+    NameSpoof nSpoof = new NameSpoof();
     Reload reload = new Reload();
 
+    private static Command getOrCreateNew(String name, String[] alias) {
+        for (Command cmd : CommandManager.getCommands()) {
+            if (cmd.getName().equals(name) && Arrays.equals(cmd.getAlias(), alias))
+                return cmd;
+        }
+
+        Command command;
+        commands.add(command = new Command(name, name, name, alias));
+        return command;
+    }
+
     public interface SimpleCommandCallback {
-        void execute(String[] args);
+        void execute();
+    }
+
+    public interface SingleArgumentCommandCallback<T> {
+        void execute(T arg);
+    }
+
+    public static <T> void registerCommand(String name, SingleArgumentCommandCallback<T> callback, Class<T> argType, String argDesc) {
+        registerCommand(name, new String[0], callback, argType, argDesc);
+    }
+
+    @SneakyThrows
+    public static <T> void registerCommand(String name, String[] alias, SingleArgumentCommandCallback<T> callback, Class<T> argType, String argDesc) {
+        Command command = getOrCreateNew(name, alias);
+
+        Method execute = callback.getClass().getDeclaredMethod("execute", Object.class);
+        execute.setAccessible(true);
+        Command.InvokeInfo invokeInfo = new Command.InvokeInfo(new CommandHandler() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return CommandHandler.class;
+            }
+
+            final String[] desc = new String[] { argDesc };
+
+            @Override
+            public String[] paramNames() {
+                return desc;
+            }
+        }, callback, execute, new Class[] {argType});
+        command.registerInvokeInfo(invokeInfo);
+    }
+
+    public interface TwoArgumentCommandCallback<T1, T2> {
+        void execute(T1 arg1, T2 arg2);
+    }
+
+    public static <T1, T2> void registerCommand(String name, TwoArgumentCommandCallback<T1, T2> callback, Class<T1> argType1, Class<T2> argType2, String argDesc1, String argDesc2) {
+        registerCommand(name, new String[0], callback, argType1, argType2, argDesc1, argDesc2);
+    }
+
+    @SneakyThrows
+    public static <T1, T2> void registerCommand(String name, String[] alias, TwoArgumentCommandCallback<T1, T2> callback, Class<T1> argType1, Class<T2> argType2, String argDesc1, String argDesc2) {
+        Command command = getOrCreateNew(name, alias);
+
+        Method execute = callback.getClass().getDeclaredMethod("execute", Object.class, Object.class);
+        execute.setAccessible(true);
+        Command.InvokeInfo invokeInfo = new Command.InvokeInfo(new CommandHandler() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return CommandHandler.class;
+            }
+
+            final String[] desc = new String[] { argDesc1, argDesc2 };
+
+            @Override
+            public String[] paramNames() {
+                return desc;
+            }
+        }, callback, execute, new Class[] {argType1, argType2});
+        command.registerInvokeInfo(invokeInfo);
+    }
+
+    public interface ThreeArgumentCommandCallback<T1, T2, T3> {
+        void execute(T1 arg1, T2 arg2, T3 arg3);
+    }
+
+    public static <T1, T2, T3> void registerCommand(String name, ThreeArgumentCommandCallback<T1, T2, T3> callback, Class<T1> argType1, Class<T2> argType2, Class<T3> argType3, String argDesc1, String argDesc2, String argDesc3) {
+        registerCommand(name, new String[0], callback, argType1, argType2, argType3, argDesc1, argDesc2, argDesc3);
+    }
+
+    @SneakyThrows
+    public static <T1, T2, T3> void registerCommand(String name, String[] alias, ThreeArgumentCommandCallback<T1, T2, T3> callback, Class<T1> argType1, Class<T2> argType2, Class<T3> argType3, String argDesc1, String argDesc2, String argDesc3) {
+        Command command = getOrCreateNew(name, alias);
+
+        Method execute = callback.getClass().getDeclaredMethod("execute", Object.class, Object.class, Object.class);
+        execute.setAccessible(true);
+        Command.InvokeInfo invokeInfo = new Command.InvokeInfo(new CommandHandler() {
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return CommandHandler.class;
+            }
+
+            final String[] desc = new String[] { argDesc1, argDesc2, argDesc3 };
+
+            @Override
+            public String[] paramNames() {
+                return desc;
+            }
+        }, callback, execute, new Class[] {argType1, argType2, argType3});
+        command.registerInvokeInfo(invokeInfo);
     }
 
     public static void registerSimpleCommand(String name, SimpleCommandCallback callback) {
         registerSimpleCommand(name, new String[0], callback);
     }
 
+    @SneakyThrows
     public static void registerSimpleCommand(String name, String[] alias, SimpleCommandCallback callback) {
-        // 这里只需要 new 一个 Command 对象就可以了
-        // 因为在 Command 的类构造器里会自动将自己添加到命令列表中
-        new Command(name, name, name, alias) {
+        Command command = getOrCreateNew(name, alias);
+
+        Method execute = callback.getClass().getDeclaredMethod("execute");
+        execute.setAccessible(true);
+        command.registerInvokeInfo(new Command.InvokeInfo(new CommandHandler() {
             @Override
-            public void execute(String[] args) {
-                callback.execute(args);
+            public Class<? extends Annotation> annotationType() {
+                return CommandHandler.class;
             }
-        };
+
+            @Override
+            public String[] paramNames() {
+                return new String[0];
+            }
+        }, callback, execute, new Class[0]));
     }
 
     public void print(String message) {
@@ -96,8 +214,14 @@ public class CommandManager extends AbstractManager {
     }
 
     @Override
+    @SneakyThrows
     public void init() {
-
+        for (Field field : this.getClass().getDeclaredFields()) {
+            if (Command.class.isAssignableFrom(field.getType())) {
+                Command command = (Command) field.get(this);
+                CommandManager.getCommands().add(command);
+            }
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package tritium.command.impl;
 
 import tritium.Tritium;
 import tritium.command.Command;
+import tritium.command.CommandHandler;
 import tritium.management.EventManager;
 import tritium.management.Localizer;
 import tritium.management.ModuleManager;
@@ -25,8 +26,8 @@ public class Reload extends Command {
         super("Reload", "reloads translations.", "reload", "r");
     }
 
-    @Override
-    public void execute(String[] args) {
+    @CommandHandler
+    public void execute() {
         Localizer.loadLang();
         this.print("Reloaded translations!");
 

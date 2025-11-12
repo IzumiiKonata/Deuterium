@@ -1,6 +1,7 @@
 package tritium.command.impl;
 
 import lombok.SneakyThrows;
+import tritium.command.CommandHandler;
 import tritium.ncm.music.CloudMusic;
 import tritium.command.Command;
 import tritium.management.ModuleManager;
@@ -15,15 +16,10 @@ public class Config extends Command {
         super("Config", "Save or reload config.", "config <save/reload/load <profile name>>", "c", "config");
     }
 
-    @Override
     @SneakyThrows
-    public void execute(String[] args) {
-        if (args.length == 0) {
-            this.printUsage();
-            return;
-        }
-
-        switch (args[0].toLowerCase()) {
+    @CommandHandler(paramNames = "save/reload")
+    public void execute(String op) {
+        switch (op) {
             case "save": {
                 client.getConfigManager().stop();
                 client.getConfigManager().saveAlts();

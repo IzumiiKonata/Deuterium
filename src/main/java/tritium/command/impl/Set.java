@@ -2,6 +2,7 @@ package tritium.command.impl;
 
 import net.minecraft.util.EnumChatFormatting;
 import tritium.command.Command;
+import tritium.command.CommandHandler;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
 import tritium.module.Module;
@@ -20,55 +21,50 @@ public class Set extends Command {
         super("Set", "set <module> <setting> <value>", "set <module> <setting> <value>", "s", "set");
     }
 
-    @Override
-    public void execute(String[] args) {
-        if (args.length < 3) {
-            this.print(EnumChatFormatting.RED + "Usage: " + this.getUsage());
-        } else {
-            String moduleName = args[0]/*.replaceAll("-", " ")*/;
-            boolean moduleFound = false;
-            for (Module module : ModuleManager.getModules()) {
+    @CommandHandler(paramNames = {"module name", "setting name", "value"})
+    public void execute(String moduleName, String settingName, String value) {
+        boolean moduleFound = false;
+        for (Module module : ModuleManager.getModules()) {
+            if (module.nameEquals(moduleName)) {
+                moduleFound = true;
+                this.iterInto(module, settingName, value);
+            }
+        }
+
+        if (!moduleFound) {
+
+            for (Module module : WidgetsManager.getWidgets()) {
                 if (module.nameEquals(moduleName)) {
                     moduleFound = true;
-                    this.iterInto(module, args);
+                    this.iterInto(module, settingName, value);
                 }
             }
 
             if (!moduleFound) {
-
-                for (Module module : WidgetsManager.getWidgets()) {
-                    if (module.nameEquals(moduleName)) {
-                        moduleFound = true;
-                        this.iterInto(module, args);
-                    }
-                }
-
-                if (!moduleFound) {
-                    this.print(EnumChatFormatting.RED + "Module " + moduleName + " not found!");
-                }
+                this.print(EnumChatFormatting.RED + "Module " + moduleName + " not found!");
             }
         }
     }
 
-    private void iterInto(Module module, String[] args) {
-        String settingName = args[1]/*.replaceAll("\\^", " ")*/;
+    private void iterInto(Module module, String settingName, String value) {
         boolean settingFound = false;
         for (Setting<?> setting : module.getSettings()) {
             if (setting.getInternalName().equalsIgnoreCase(settingName)) {
 
                 settingFound = true;
-                if (setting instanceof BooleanSetting) {
-                    ((BooleanSetting) setting).setValue(Boolean.parseBoolean(args[2]));
-                    this.print("Set setting " + setting.getName().get() + "'s value to " + setting.getValue());
-                } else if (setting instanceof ModeSetting) {
-                    ((ModeSetting<?>) setting).setMode(args[2]);
-                    this.print("Set setting " + setting.getName().get() + "'s value to " + setting.getValue());
-                } else if (setting instanceof NumberSetting) {
-                    setting.loadValue(args[2]);
-                    this.print("Set setting " + setting.getName().get() + "'s value to " + setting.getValue());
-                } else {
-                    setting.loadValue(args[2]);
-                    this.print("Set setting " + setting.getName().get() + "'s value to " + setting.getValue());
+                switch (setting) {
+                    case BooleanSetting booleanSetting -> {
+                        booleanSetting.setValue(Boolean.parseBoolean(value));
+                        this.print("Set setting " + setting.getName().get() + "'s value to " + setting.getValue());
+                    }
+                    case ModeSetting modeSetting -> {
+                        modeSetting.setMode(value);
+                        this.print("Set setting " + setting.getName().get() + "'s value to " + setting.getValue());
+                    }
+                    default -> {
+                        setting.loadValue(value);
+                        this.print("Set setting " + setting.getName().get() + "'s value to " + setting.getValue());
+                    }
                 }
 
             }

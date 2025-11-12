@@ -2,6 +2,7 @@ package tritium.command.impl;
 
 import net.minecraft.util.EnumChatFormatting;
 import tritium.command.Command;
+import tritium.command.CommandHandler;
 import tritium.module.Module;
 
 import java.util.Optional;
@@ -16,16 +17,8 @@ public class Toggle extends Command {
         super("Toggle", "Toggles the module.", "toggle <module>", "t");
     }
 
-    @Override
-    public void execute(String[] args) {
-
-        if (args.length < 1) {
-            this.printUsage();
-            return;
-        }
-
-        String moduleName = args[0];
-
+    @CommandHandler(paramNames = {"module name"})
+    public void execute(String moduleName) {
         client.getModuleManager().getModuleByName(moduleName).ifPresentOrElse(md -> {
             md.toggle();
             this.print((md.isEnabled() ? (EnumChatFormatting.GREEN + "Enabled ") : (EnumChatFormatting.RED + "Disabled ")) + EnumChatFormatting.RESET + "module " + EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.RESET + ".");

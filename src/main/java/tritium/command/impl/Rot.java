@@ -1,6 +1,7 @@
 package tritium.command.impl;
 
 import tritium.command.Command;
+import tritium.command.CommandHandler;
 
 /**
  * @author IzumiiKonata
@@ -12,14 +13,9 @@ public class Rot extends Command {
         super("Rot", "Rot", "Rot <yaw> <pitch>", "rot");
     }
 
-    @Override
-    public void execute(String[] args) {
-        if (args.length == 2) {
-            float yaw = Float.parseFloat(args[0]);
-            float pitch = Float.parseFloat(args[1]);
-
-            mc.thePlayer.rotationYaw = yaw;
-            mc.thePlayer.rotationPitch = pitch;
-        }
+    @CommandHandler(paramNames = {"yaw", "pitch"})
+    public void execute(float yaw, float pitch) {
+        mc.thePlayer.rotationYaw = yaw;
+        mc.thePlayer.rotationPitch = pitch;
     }
 }

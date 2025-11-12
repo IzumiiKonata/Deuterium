@@ -39,36 +39,26 @@ public class ConsoleScreen extends BaseScreen {
     }
 
     private void registerConsoleCommands() {
-        CommandManager.registerSimpleCommand("clear", new String[] { "cls" }, args -> {
+        CommandManager.registerSimpleCommand("clear", new String[] { "cls" }, () -> {
             logsPanel.getChildren().clear();
         });
 
-        CommandManager.registerSimpleCommand("quit", args -> {
+        CommandManager.registerSimpleCommand("quit", () -> {
             Minecraft.getMinecraft().shutdown();
         });
 
-        CommandManager.registerSimpleCommand("disconnect", args -> {
+        CommandManager.registerSimpleCommand("disconnect", () -> {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.playerController.setNoCheckDisconnect(true);
 
             log("Ok disconnected");
         });
 
-        CommandManager.registerSimpleCommand("connect", args -> {
-
-            if (args.length < 1) {
-                log(EnumChatFormatting.RED + "Usage: connect <ip>:[port]");
-                return;
-            }
-
-            GuiConnecting.connectTo(args[0]);
-        });
+        CommandManager.registerCommand("connect", GuiConnecting::connectTo, String.class, "server address");
 
         if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
             // reload the screen's layout
-            CommandManager.registerSimpleCommand("layout", args -> {
-                this.layout();
-            });
+            CommandManager.registerSimpleCommand("layout", this::layout);
         }
     }
 
@@ -264,5 +254,10 @@ public class ConsoleScreen extends BaseScreen {
     @Override
     public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
         this.base.onMouseClickReceived(mouseX, mouseY, mouseButton);
+    }
+
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
     }
 }

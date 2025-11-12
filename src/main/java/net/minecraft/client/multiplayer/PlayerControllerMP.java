@@ -311,11 +311,10 @@ public class PlayerControllerMP {
             else {
                 if (!nm.isDisconnected()) {
                     nm.setDisconnected(true);
-                    if (nm.getExitMessage() != null) {
-                        String formattedText = nm.getExitMessage().getFormattedText();
-
-                        if (!formattedText.equals("Quitting"))
-                            ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: {}", formattedText);
+                    IChatComponent exitMessage = nm.getExitMessage();
+                    if (exitMessage != null) {
+                        if (!exitMessage.getUnformattedText().equals("Quitting"))
+                            ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: {}", exitMessage.getFormattedText());
 
                     } else if (nm.getNetHandler() != null) {
                         ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: Disconnected");

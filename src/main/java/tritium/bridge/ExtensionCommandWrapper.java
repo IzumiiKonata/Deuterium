@@ -16,7 +16,6 @@ public class ExtensionCommandWrapper extends Command {
         this.command = command;
     }
 
-    @Override
     public void execute(String[] args) {
         // dirty fix
         String[] params = new String[args.length + 1];

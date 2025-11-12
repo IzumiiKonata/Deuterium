@@ -875,24 +875,12 @@ public class CloudMusic {
     }
 
     static {
-        CommandManager.registerSimpleCommand("set_player_rate", new String[] {}, (args) -> {
-
-            if (args.length < 1) {
-                ConsoleScreen.log(EnumChatFormatting.RED + "Not enough arguments");
-                return;
-            }
-
+        CommandManager.registerCommand("set_player_rate", (Float rate) -> {
             if (player == null)
                 return;
 
-            try {
-                float rate = Float.parseFloat(args[0]);
-                player.player.rate(rate);
-            } catch (NumberFormatException e) {
-                ConsoleScreen.log(EnumChatFormatting.RED + "Not a number: {}", args[0]);
-            }
-
-        });
+            player.player.rate(rate);
+        }, Float.class, "rate");
     }
 
 }
