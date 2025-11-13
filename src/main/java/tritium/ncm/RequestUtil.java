@@ -26,9 +26,7 @@ import java.util.stream.Collectors;
 public class RequestUtil {
 
     private static final SecureRandom random = new SecureRandom();
-//    private static final String ANONYMOUS_TOKEN; // 需要从文件读取
 
-    // 操作系统配置映射
     private static final Map<String, OsConfig> OS_MAP = new HashMap<>();
 
     public static String globalDeviceId = "";
@@ -61,7 +59,6 @@ public class RequestUtil {
         private boolean encryptResponse;
     }
 
-    // 应用配置
     private static final AppConfig APP_CONF = AppConfig.builder()
             .domain("https://music.163.com")
             .apiDomain("https://interface.music.163.com")
@@ -182,7 +179,6 @@ public class RequestUtil {
         return bytesToHex(bytes);
     }
 
-    // 生成指定长度的随机字节数组
     public static byte[] generateRandomBytes(int length) {
         SecureRandom random = new SecureRandom();
         byte[] bytes = new byte[length];
@@ -190,7 +186,6 @@ public class RequestUtil {
         return bytes;
     }
 
-    // 将字节数组转换为十六进制字符串
     public static String bytesToHex(byte[] bytes) {
         StringBuilder hexString = new StringBuilder();
         for (byte b : bytes) {
@@ -286,7 +281,6 @@ public class RequestUtil {
                 cookie = (Map<String, String>) options.getCookie();
             }
 
-            // 设置默认cookie值
             String nuid = generateRandomString(32);
             OsConfig osConfig = OS_MAP.getOrDefault(cookie.get("os"), OS_MAP.get("pc"));
 
@@ -319,7 +313,6 @@ public class RequestUtil {
             String postData = "";
             String csrfToken = cookie.getOrDefault("__csrf", "");
 
-            // 根据加密方式处理请求
             switch (crypto) {
                 case "weapi":
                     headers.put("Referer", APP_CONF.getDomain());
@@ -360,7 +353,6 @@ public class RequestUtil {
 
                 case "eapi":
                 case "api":
-                    // 构建header
                     Map<String, String> header = new HashMap<>();
                     header.put("osver", cookie.get("osver"));
                     header.put("deviceId", cookie.get("deviceId"));
@@ -415,11 +407,9 @@ public class RequestUtil {
                     throw new IllegalArgumentException("Unknown crypto type: " + crypto);
             }
 
-            // 创建HTTP连接
             URL requestUrl = new URL(url);
             HttpURLConnection connection = null;
 
-            // 设置代理
             if (StringUtils.isNotBlank(options.getProxy())) {
                 String[] proxyParts = options.getProxy().split(":");
                 if (proxyParts.length == 2) {
@@ -434,20 +424,17 @@ public class RequestUtil {
                 connection = (HttpURLConnection) requestUrl.openConnection();
             }
 
-            // 设置请求属性
             connection.setRequestMethod("POST");
             connection.setConnectTimeout(30000);
             connection.setReadTimeout(30000);
             connection.setDoOutput(true);
             connection.setDoInput(true);
 
-            // 设置请求头
             connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
             for (Map.Entry<String, String> entry : headers.entrySet()) {
                 connection.setRequestProperty(entry.getKey(), entry.getValue());
             }
 
-            // 发送POST数据
             if (postData != null && !postData.isEmpty()) {
                 try (OutputStream os = connection.getOutputStream()) {
                     byte[] input = postData.getBytes(StandardCharsets.UTF_8);
@@ -455,10 +442,8 @@ public class RequestUtil {
                 }
             }
 
-            // 获取响应
             int responseCode = connection.getResponseCode();
 
-            // 读取响应内容
             String responseBody = "";
             InputStream inputStream = null;
             try {
@@ -485,13 +470,11 @@ public class RequestUtil {
                 }
             }
 
-            // 构建响应对象
             RequestAnswer answer = RequestAnswer.builder()
                     .status(responseCode)
                     .build();
 
             if (!responseBody.isEmpty()) {
-                // 处理加密响应
                 if (Boolean.TRUE.equals(options.getER()) && "eapi".equals(crypto)) {
                     try {
                         answer.setBody(CryptoUtil.eapiResDecrypt(responseBody));
@@ -507,7 +490,6 @@ public class RequestUtil {
                 }
             }
 
-            // 处理Cookie
             Map<String, List<String>> headerFields = connection.getHeaderFields();
             List<String> setCookieHeaders = headerFields.get("Set-Cookie");
             if (setCookieHeaders != null && !setCookieHeaders.isEmpty()) {
