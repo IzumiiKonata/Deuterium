@@ -222,7 +222,7 @@ public class NCMScreen extends BaseScreen {
         double offsetY = 8 + -(8 + downloadPanelHeight) * (1 - downloadPanelAlpha);
         Rect.draw(RenderSystem.getWidth() * .5 - downloadPanelWidth * .5, offsetY, downloadPanelWidth, downloadPanelHeight, RenderSystem.reAlpha(0x202020, downloadPanelAlpha * alpha));
         FontManager.pf34bold.drawCenteredString("Downloading...", RenderSystem.getWidth() * .5, offsetY + 8, hexColor(1, 1, 1, downloadPanelAlpha * alpha));
-        FontManager.pf25bold.drawCenteredString(String.valueOf(downloadSpeed), RenderSystem.getWidth() * .5, offsetY + 8 + FontManager.pf34bold.getHeight() + 4, hexColor(1, 1, 1, downloadPanelAlpha * alpha));
+        FontManager.pf25bold.drawCenteredString(String.valueOf(downloadSpeed), RenderSystem.getWidth() * .5, offsetY + 8 + FontManager.pf34bold.getHeight(), hexColor(1, 1, 1, downloadPanelAlpha * alpha));
         roundedRect(RenderSystem.getWidth() * .5 - progressBarWidth * .5, offsetY + downloadPanelHeight - 8 - progressBarHeight, progressBarWidth, progressBarHeight, 3, hexColor(1, 1, 1, .5f * downloadPanelAlpha * alpha));
 
         StencilClipManager.beginClip(() -> Rect.draw(RenderSystem.getWidth() * .5 - progressBarWidth * .5, offsetY + downloadPanelHeight - 8 - progressBarHeight, progressBarWidth * downloadProgress, progressBarHeight, -1));
