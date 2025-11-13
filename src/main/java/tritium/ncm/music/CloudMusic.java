@@ -317,11 +317,11 @@ public class CloudMusic {
 
 //                OpenApiInstance.api.popNotification(EnumNotificationType.INFO, "Now Playing", song.getName(), 1500);
 
-                ConsoleScreen.log("[CloudMusic] Now playing: ");
-                ConsoleScreen.log("[CloudMusic]     ID: {}", song.getId());
-                ConsoleScreen.log("[CloudMusic]     Name: {}", song.getName());
-                ConsoleScreen.log("[CloudMusic]     Album: {}", song.getAlbum().getName());
-                ConsoleScreen.log("[CloudMusic]     Artists: {}", song.getArtists().stream().map(Artist::getName).collect(Collectors.joining(", ")));
+                ConsoleScreen.log("[CloudMusic] Now playing: {}, id {}", song.getName(), song.getId());
+//                ConsoleScreen.log("[CloudMusic]     ID: {}", song.getId());
+//                ConsoleScreen.log("[CloudMusic]     Name: {}", song.getName());
+//                ConsoleScreen.log("[CloudMusic]     Album: {}", song.getAlbum().getName());
+//                ConsoleScreen.log("[CloudMusic]     Artists: {}", song.getArtists().stream().map(Artist::getName).collect(Collectors.joining(", ")));
 
                 try {
                     player.play();
@@ -878,14 +878,14 @@ public class CloudMusic {
                 return;
 
             player.player.rate(rate);
-        }, Float.class, "rate");
+        }, Float.class, "rate").setDescription("Set audio player's playback rate");
 
         CommandManager.registerCommand("set_player_volume", (Float volume) -> {
             if (player == null)
                 return;
 
             player.setVolume(Math.max(0, Math.min(1, volume)));
-        }, Float.class, "volume");
+        }, Float.class, "volume").setDescription("Set audio player's volume");
 
         CommandManager.registerCommand("play", (Long id) -> {
             MultiThreadingUtil.runAsync(() -> {
@@ -897,7 +897,7 @@ public class CloudMusic {
 
                 play(Collections.singletonList(JsonUtils.parse(songs.get(0), Music.class)), 0);
             });
-        }, Long.class, "music id");
+        }, Long.class, "music id").setDescription("Play the song with the given id");
     }
 
 }

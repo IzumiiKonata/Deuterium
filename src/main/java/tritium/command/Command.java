@@ -2,6 +2,7 @@ package tritium.command;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.EnumChatFormatting;
@@ -94,6 +95,8 @@ public class Command implements SharedConstants {
         public final Object objInstance;
         public final Method methodToInvoke;
         public final Class<?>[] parameterTypes;
+        @Setter
+        public String desc = "";
 
         public boolean isArgsLengthMatch(String[] args) {
             return parameterTypes.length == args.length;

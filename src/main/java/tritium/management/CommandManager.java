@@ -100,12 +100,16 @@ public class CommandManager extends AbstractManager {
         void execute(T arg);
     }
 
-    public static <T> void registerCommand(String name, SingleArgumentCommandCallback<T> callback, Class<T> argType, String argDesc) {
-        registerCommand(name, new String[0], callback, argType, argDesc);
+    public interface CommandRegisteredCallback {
+        void setDescription(String description);
+    }
+
+    public static <T> CommandRegisteredCallback registerCommand(String name, SingleArgumentCommandCallback<T> callback, Class<T> argType, String argDesc) {
+        return registerCommand(name, new String[0], callback, argType, argDesc);
     }
 
     @SneakyThrows
-    public static <T> void registerCommand(String name, String[] alias, SingleArgumentCommandCallback<T> callback, Class<T> argType, String argDesc) {
+    public static <T> CommandRegisteredCallback registerCommand(String name, String[] alias, SingleArgumentCommandCallback<T> callback, Class<T> argType, String argDesc) {
         Command command = getOrCreateNew(name, alias);
 
         Method execute = callback.getClass().getDeclaredMethod("execute", Object.class);
@@ -124,18 +128,19 @@ public class CommandManager extends AbstractManager {
             }
         }, callback, execute, new Class[] {argType});
         command.registerInvokeInfo(invokeInfo);
+        return invokeInfo::setDesc;
     }
 
     public interface TwoArgumentCommandCallback<T1, T2> {
         void execute(T1 arg1, T2 arg2);
     }
 
-    public static <T1, T2> void registerCommand(String name, TwoArgumentCommandCallback<T1, T2> callback, Class<T1> argType1, Class<T2> argType2, String argDesc1, String argDesc2) {
-        registerCommand(name, new String[0], callback, argType1, argType2, argDesc1, argDesc2);
+    public static <T1, T2> CommandRegisteredCallback registerCommand(String name, TwoArgumentCommandCallback<T1, T2> callback, Class<T1> argType1, Class<T2> argType2, String argDesc1, String argDesc2) {
+        return registerCommand(name, new String[0], callback, argType1, argType2, argDesc1, argDesc2);
     }
 
     @SneakyThrows
-    public static <T1, T2> void registerCommand(String name, String[] alias, TwoArgumentCommandCallback<T1, T2> callback, Class<T1> argType1, Class<T2> argType2, String argDesc1, String argDesc2) {
+    public static <T1, T2> CommandRegisteredCallback registerCommand(String name, String[] alias, TwoArgumentCommandCallback<T1, T2> callback, Class<T1> argType1, Class<T2> argType2, String argDesc1, String argDesc2) {
         Command command = getOrCreateNew(name, alias);
 
         Method execute = callback.getClass().getDeclaredMethod("execute", Object.class, Object.class);
@@ -154,18 +159,20 @@ public class CommandManager extends AbstractManager {
             }
         }, callback, execute, new Class[] {argType1, argType2});
         command.registerInvokeInfo(invokeInfo);
+
+        return invokeInfo::setDesc;
     }
 
     public interface ThreeArgumentCommandCallback<T1, T2, T3> {
         void execute(T1 arg1, T2 arg2, T3 arg3);
     }
 
-    public static <T1, T2, T3> void registerCommand(String name, ThreeArgumentCommandCallback<T1, T2, T3> callback, Class<T1> argType1, Class<T2> argType2, Class<T3> argType3, String argDesc1, String argDesc2, String argDesc3) {
-        registerCommand(name, new String[0], callback, argType1, argType2, argType3, argDesc1, argDesc2, argDesc3);
+    public static <T1, T2, T3> CommandRegisteredCallback registerCommand(String name, ThreeArgumentCommandCallback<T1, T2, T3> callback, Class<T1> argType1, Class<T2> argType2, Class<T3> argType3, String argDesc1, String argDesc2, String argDesc3) {
+        return registerCommand(name, new String[0], callback, argType1, argType2, argType3, argDesc1, argDesc2, argDesc3);
     }
 
     @SneakyThrows
-    public static <T1, T2, T3> void registerCommand(String name, String[] alias, ThreeArgumentCommandCallback<T1, T2, T3> callback, Class<T1> argType1, Class<T2> argType2, Class<T3> argType3, String argDesc1, String argDesc2, String argDesc3) {
+    public static <T1, T2, T3> CommandRegisteredCallback registerCommand(String name, String[] alias, ThreeArgumentCommandCallback<T1, T2, T3> callback, Class<T1> argType1, Class<T2> argType2, Class<T3> argType3, String argDesc1, String argDesc2, String argDesc3) {
         Command command = getOrCreateNew(name, alias);
 
         Method execute = callback.getClass().getDeclaredMethod("execute", Object.class, Object.class, Object.class);
@@ -184,19 +191,20 @@ public class CommandManager extends AbstractManager {
             }
         }, callback, execute, new Class[] {argType1, argType2, argType3});
         command.registerInvokeInfo(invokeInfo);
+        return invokeInfo::setDesc;
     }
 
-    public static void registerSimpleCommand(String name, SimpleCommandCallback callback) {
-        registerSimpleCommand(name, new String[0], callback);
+    public static CommandRegisteredCallback registerSimpleCommand(String name, SimpleCommandCallback callback) {
+        return registerSimpleCommand(name, new String[0], callback);
     }
 
     @SneakyThrows
-    public static void registerSimpleCommand(String name, String[] alias, SimpleCommandCallback callback) {
+    public static CommandRegisteredCallback registerSimpleCommand(String name, String[] alias, SimpleCommandCallback callback) {
         Command command = getOrCreateNew(name, alias);
 
         Method execute = callback.getClass().getDeclaredMethod("execute");
         execute.setAccessible(true);
-        command.registerInvokeInfo(new Command.InvokeInfo(new CommandHandler() {
+        Command.InvokeInfo invokeInfo = new Command.InvokeInfo(new CommandHandler() {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return CommandHandler.class;
@@ -206,7 +214,9 @@ public class CommandManager extends AbstractManager {
             public String[] paramNames() {
                 return new String[0];
             }
-        }, callback, execute, new Class[0]));
+        }, callback, execute, new Class[0]);
+        command.registerInvokeInfo(invokeInfo);
+        return invokeInfo::setDesc;
     }
 
     public void print(String message) {

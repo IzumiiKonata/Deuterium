@@ -20,6 +20,10 @@ import tritium.rendering.ui.widgets.TextFieldWidget;
 import tritium.utils.other.StringFormatter;
 import tritium.utils.other.info.Version;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+
 /**
  * @author IzumiiKonata
  * Date: 2025/11/11 21:27
@@ -35,6 +39,9 @@ public class ConsoleScreen extends BaseScreen {
 
     boolean titleBarDragging = false, bottomCornerDragging = false;
 
+    final List<String> commandHistory = new ArrayList<>();
+    int commandHistoryIndex = 0;
+
     public ConsoleScreen() {
         this.layout();
         this.registerConsoleCommands();
@@ -44,42 +51,45 @@ public class ConsoleScreen extends BaseScreen {
 
         if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
             // reload the screen's layout
-            CommandManager.registerSimpleCommand("layout", this::layout);
+            CommandManager.registerSimpleCommand("layout", this::layout).setDescription("Reload ConsoleScreen's layout");
         }
 
         CommandManager.registerSimpleCommand("clear", new String[] { "cls" }, () -> {
             logsPanel.getChildren().clear();
-        });
+        }).setDescription("Clear the console");
 
         CommandManager.registerSimpleCommand("quit", () -> {
             Minecraft.getMinecraft().shutdown();
-        });
+        }).setDescription("Quit the game");
 
         CommandManager.registerSimpleCommand("disconnect", () -> {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.playerController.setNoCheckDisconnect(true);
 
             log("Ok disconnected");
-        });
+        }).setDescription("Disconnect from the current server silently");
 
-        CommandManager.registerCommand("connect", GuiConnecting::connectTo, String.class, "server address");
+        CommandManager.registerCommand("connect", GuiConnecting::connectTo, String.class, "server address").setDescription("Connect to a server");
 
         CommandManager.registerSimpleCommand("help", () -> {
             log("Available commands:");
 
-            CommandManager.getCommands().forEach(command -> {
-                for (Command.InvokeInfo invokeInfo : command.getInvokeInfos()) {
-                    StringBuilder sb = new StringBuilder();
-                    sb.append(command.getName().toLowerCase());
+            CommandManager.getCommands()
+                    .stream()
+                    .sorted(Comparator.comparing(o -> o.getName().toLowerCase()))
+                    .forEach(command -> {
+                        for (Command.InvokeInfo invokeInfo : command.getInvokeInfos()) {
+                            StringBuilder sb = new StringBuilder();
+                            sb.append(command.getName().toLowerCase());
 
-                    for (int j = 0; j < invokeInfo.methodToInvoke.getParameters().length; j++) {
-                        sb.append(" ").append("<").append(invokeInfo.annotation.paramNames().length > 0 ? (invokeInfo.annotation.paramNames()[j]) : ("arg" + (j + 1))).append(">");
-                    }
+                            for (int j = 0; j < invokeInfo.methodToInvoke.getParameters().length; j++) {
+                                sb.append(" ").append("<").append(invokeInfo.annotation.paramNames().length > 0 ? (invokeInfo.annotation.paramNames()[j]) : ("arg" + (j + 1))).append(">");
+                            }
 
-                    ConsoleScreen.log("    {}", sb.toString());
-                }
-            });
-        });
+                            ConsoleScreen.log("    {} {}", sb.toString(), invokeInfo.desc.isEmpty() ? "" : "- " + invokeInfo.desc);
+                        }
+                    });
+        }).setDescription("Show help for all commands");
 
         CommandManager.registerCommand("help", (String commandName) -> {
 
@@ -105,10 +115,16 @@ public class ConsoleScreen extends BaseScreen {
                     sb.append(" ").append("<").append(invokeInfo.annotation.paramNames().length > 0 ? (invokeInfo.annotation.paramNames()[j]) : ("arg" + (j + 1))).append(">");
                 }
 
-                ConsoleScreen.log("    {}", sb.toString());
+                ConsoleScreen.log("    {} {}", sb.toString(), invokeInfo.desc.isEmpty() ? "" : "- " + invokeInfo.desc);
             }
 
-        }, String.class, "command name");
+        }, String.class, "command name").setDescription("Show help for a command");
+    }
+
+    private void addCommandHistory(String command) {
+        if (commandHistory.isEmpty() || !commandHistory.getLast().equals(command))
+            commandHistory.add(command);
+        commandHistoryIndex = commandHistory.size();
     }
 
     @Override
@@ -186,9 +202,29 @@ public class ConsoleScreen extends BaseScreen {
                 }
 
                 if (this.textField.isFocused()) {
-                    if ((keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) && !this.textField.getText().isEmpty()) {
-                        Tritium.getInstance().getCommandManager().execute(this.textField.getText());
+                    String text = this.textField.getText();
+                    if ((keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) && !text.isEmpty()) {
+                        Tritium.getInstance().getCommandManager().execute(text);
+                        this.addCommandHistory(text);
                         this.textField.setText("");
+                        return true;
+                    }
+
+                    if (keyCode == Keyboard.KEY_UP) {
+                        if (commandHistoryIndex > 0) {
+                            commandHistoryIndex--;
+                            this.textField.setText(commandHistory.get(commandHistoryIndex));
+                        }
+                        return true;
+                    }
+
+                    if (keyCode == Keyboard.KEY_DOWN) {
+                        if (commandHistoryIndex < commandHistory.size() - 1) {
+                            commandHistoryIndex++;
+                            this.textField.setText(commandHistory.get(commandHistoryIndex));
+                        } else if (commandHistoryIndex == commandHistory.size()) {
+                            this.textField.setText("");
+                        }
                         return true;
                     }
                 }
@@ -312,7 +348,7 @@ public class ConsoleScreen extends BaseScreen {
             }
 
             if (this.bottomCornerDragging) {
-                this.base.setBounds(this.base.getWidth() + mouseX - this.lastMouseX, this.base.getHeight() + mouseY - this.lastMouseY);
+                this.base.setBounds(Math.max(400, this.base.getWidth() + mouseX - this.lastMouseX), Math.max(300, this.base.getHeight() + mouseY - this.lastMouseY));
             }
         }
 
