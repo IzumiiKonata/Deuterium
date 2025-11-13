@@ -43,7 +43,7 @@ public class FontManager extends AbstractManager {
     @Getter
     private static final List<CFontRenderer> extensionCreatedFontRenderers = new CopyOnWriteArrayList<>();
 
-    private static List<CFontRenderer> getAllFontRenderers() {
+    public static List<CFontRenderer> getAllFontRenderers() {
 
         return Arrays.stream(FontManager.class.getDeclaredFields())
                 .filter(field -> field.getType() == CFontRenderer.class)

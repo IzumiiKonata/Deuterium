@@ -127,7 +127,7 @@ public interface SharedRenderingConstants {
     }
 
     default int hexColor(float r, float g, float b) {
-        return hexColor(r, g, b, 255);
+        return hexColor(r, g, b, 1f);
     }
 
     default int hexColor(float r, float g, float b, float a) {

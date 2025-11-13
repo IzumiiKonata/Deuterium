@@ -388,7 +388,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public double getFontHeight() {
-        return (this.fontHeight - 8) * .5;
+        return (this.fontHeight - 8.5) * .5;
     }
 
     @Override
@@ -409,6 +409,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         allGlyphs = new Glyph['\uFFFF' + 1];
         stringWidthMap.clear();
         stringWidthMapD.clear();
+        fontHeight = -1;
     }
 
     public static Location randomIdentifier() {

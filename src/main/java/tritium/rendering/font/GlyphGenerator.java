@@ -39,6 +39,23 @@ public class GlyphGenerator {
 
     }
 
+    private static int getMaxFontHeight(Font originalFont, Font[] fallbackFonts) {
+        int maxHeight = fontGraphics.getFontMetrics(originalFont).getAscent() +
+                fontGraphics.getFontMetrics(originalFont).getDescent();
+
+        if (fallbackFonts != null) {
+            for (Font fallbackFont : fallbackFonts) {
+                if (fallbackFont != null) {
+                    FontMetrics fm = fontGraphics.getFontMetrics(fallbackFont);
+                    int height = fm.getAscent() + fm.getDescent();
+                    maxHeight = Math.max(maxHeight, height);
+                }
+            }
+        }
+
+        return maxHeight;
+    }
+
     static final BufferedImage fontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     static final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
 
@@ -49,13 +66,11 @@ public class GlyphGenerator {
 
         final FontMetrics fontMetrics = fontGraphics.getFontMetrics(fallbackFont);
         final FontMetrics fontMetricsOrig = fontGraphics.getFontMetrics(originalFont);
-//        FontRenderContext frc = new FontRenderContext(new AffineTransform(), true, true);
-//        Rectangle2D stringBounds = fontMetrics.getStringBounds(String.valueOf(ch), fontGraphics);
 
         transformation.setToIdentity();
         GlyphVector gv = fallbackFont.createGlyphVector(context, String.valueOf(ch));
         int width = (int) Math.ceil(gv.getGlyphMetrics(0).getAdvance());
-        int height = fontMetrics.getAscent() + fontMetrics.getDescent();
+        int height = getMaxFontHeight(originalFont, fr.fallBackFonts);
 
         Glyph glyph = new Glyph(width, height, ch);
 
@@ -66,8 +81,6 @@ public class GlyphGenerator {
         }
 
         MultiThreadingUtil.runAsync(() -> {
-            double fontHeight = -1;
-
             BufferedImage bi = new BufferedImage(width, height,
                     BufferedImage.TYPE_INT_ARGB);
 
@@ -84,17 +97,8 @@ public class GlyphGenerator {
 
             g2d.setFont(fallbackFont);
 
-            int h = fontMetricsOrig.getAscent() + fontMetricsOrig.getDescent();
-            if (h > fontHeight) {
-                fontHeight = h;
-            }
-
-            if (!isUsingFallback) {
-                g2d.drawString(String.valueOf(ch), 0, fontMetrics.getAscent());
-            } else {
-                // 需要和主字体对齐
-                g2d.drawString(String.valueOf(ch), 0, fontMetricsOrig.getAscent());
-            }
+            int baselineY = (height + fontMetrics.getAscent() - fontMetrics.getDescent()) / 2;
+            g2d.drawString(String.valueOf(ch), 0, baselineY);
 
             g2d.dispose();
             fontImage.flush();
@@ -107,7 +111,7 @@ public class GlyphGenerator {
                 }
             }
 
-            onLoaded.onLoaded(fontHeight);
+            onLoaded.onLoaded(height);
 
             DynamicTexture dynamicTexture = new DynamicTexture(bi, true, true);
             Minecraft.getMinecraft().getTextureManager().loadTexture(identifier, dynamicTexture);

@@ -581,7 +581,7 @@ public class TextField extends GuiTextField {
     }
 
     private double getRenderOffsetY() {
-        return yPosition + height * .5 - getFontRenderer().getHeight() * .5;
+        return yPosition + height * .5 - getFontRenderer().getFontHeight() * .5;
     }
 
     private void renderSelection(String displayText, double scrollOffset) {
@@ -597,7 +597,7 @@ public class TextField extends GuiTextField {
             float endX = (float) (startX + getFontRenderer().getStringWidthD(
                                 displayText.substring(lowestChar, highestChar)) + 1f);
 
-            RenderSystem.drawRect(startX, getRenderOffsetY() - 1, endX, getRenderOffsetY() + getFontRenderer().getHeight() + 1,
+            RenderSystem.drawRect(startX, getRenderOffsetY() - 1, endX, getRenderOffsetY() + getFontRenderer().getFontHeight() + 1,
                     applyAlpha(new Color(196, 225, 245).getRGB(), wholeAlpha));
             GlStateManager.color(1, 1, 1, 1);
         }
@@ -622,7 +622,7 @@ public class TextField extends GuiTextField {
 
         if (alpha > 127 || !cursorForceShowTimer.isDelayed(750)) {
             RenderSystem.drawRect(animatedCursorX, posY - 2, animatedCursorX + 0.5f,
-                    posY + getFontRenderer().getHeight() + 2, 0xffcdcbcd);
+                    posY + getFontRenderer().getFontHeight() + 2, 0xffcdcbcd);
         }
 
         if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
@@ -636,7 +636,7 @@ public class TextField extends GuiTextField {
             PreEditRect rect = new PreEditRect();
             double scale = (ClientSettings.FIXED_SCALE.getValue() ? 1 : RenderSystem.getScaleFactor()) * 2;
             rect.setX((int) (cursorX * scale));
-            rect.setY((int) ((cursorY + getFontRenderer().getHeight() - 3) * scale));
+            rect.setY((int) ((cursorY + getFontRenderer().getFontHeight()) * scale));
             IngameIMERenderer.InputCtx.setPreEditRect(rect);
         }
     }

@@ -4,8 +4,11 @@ import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
 import tritium.module.Module;
+import tritium.rendering.Rect;
 import tritium.rendering.async.AsyncGLContext;
+import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
@@ -34,6 +37,24 @@ public class Interface extends Module {
 
     @Handler
     public final void onRender2D(Render2DEvent e) {
+
+//        NORMAL.add(() -> {
+//            double offsetX = 4, offsetY = 4;
+//            for (CFontRenderer fr : FontManager.getAllFontRenderers()) {
+//                String text = "AaBbGg你好";
+//                double stringWidth = fr.getStringWidthD(text);
+//                Rect.draw(offsetX, offsetY, stringWidth, fr.getFontHeight(), -1);
+//                fr.drawString(text, offsetX, offsetY, hexColor(0, 0, 0f));
+//                Rect.draw(offsetX + stringWidth, offsetY + fr.getFontHeight() * .5, stringWidth, fr.getFontHeight(), -1);
+//                fr.drawString(text, offsetX + stringWidth, offsetY + fr.getFontHeight() * .5, hexColor(0, 0, 0f));
+//                offsetY += fr.getFontHeight() + 2;
+//
+//                if (offsetY > RenderSystem.getHeight() - 20) {
+//                    offsetX += 400;
+//                    offsetY = 4;
+//                }
+//            }
+//        });
 
 //        mc.fontRendererObj.drawString("ABCDEFGabcdefg操操你妈逼", 100, 100, -1);
 
