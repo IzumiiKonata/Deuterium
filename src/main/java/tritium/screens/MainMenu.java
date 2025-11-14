@@ -152,7 +152,8 @@ public class MainMenu extends BaseScreen {
         // render loading screen outro
         LoadingScreenRenderer renderer = LoadingRenderer.loadingScreenRenderer;
         renderer.alpha = Interpolations.interpBezier(renderer.alpha, 0, .1f);
-        renderer.render(RenderSystem.getWidth(), RenderSystem.getHeight());
+        if (renderer.alpha > .02f)
+            renderer.render(RenderSystem.getWidth(), RenderSystem.getHeight());
     }
 
     private EnumChatFormatting mapCheckResultToColor(UpdateChecker.UpdateCheckResult result) {
