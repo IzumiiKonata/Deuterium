@@ -60,27 +60,6 @@ public class ControlsBar extends NCMPanel {
             return true;
         });
 
-        LabelWidget lblMusicName = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "未在播放" : CloudMusic.currentlyPlaying.getName(), FontManager.pf14bold);
-        this.addChild(lblMusicName);
-
-        lblMusicName.setBeforeRenderCallback(() -> {
-            lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-            lblMusicName.centerVertically();
-            lblMusicName.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2);
-        });
-        lblMusicName.setClickable(false);
-
-        LabelWidget lblMusicArtist = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "无" : CloudMusic.currentlyPlaying.getArtistsName() + " - " + CloudMusic.currentlyPlaying.getAlbum().getName(), FontManager.pf14bold);
-        this.addChild(lblMusicArtist);
-
-        lblMusicArtist.setBeforeRenderCallback(() -> {
-            lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
-            lblMusicArtist.centerVertically();
-            lblMusicArtist.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2);
-        });
-
-        lblMusicArtist.setClickable(false);
-
         double buttonsYOffset = -4;
 
         IconWidget playPause = new IconWidget("B", FontManager.icon30, 0, 0, 20, 20);
@@ -225,6 +204,29 @@ public class ControlsBar extends NCMPanel {
             lblRemainingTime.setPosition(progressBarBg.getRelativeX() + progressBarBg.getWidth() + 4, lblCurTime.getRelativeY());
         });
         lblRemainingTime.setClickable(false);
+
+        LabelWidget lblMusicName = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "未在播放" : CloudMusic.currentlyPlaying.getName(), FontManager.pf14bold);
+        this.addChild(lblMusicName);
+
+        lblMusicName.setBeforeRenderCallback(() -> {
+            lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            lblMusicName.centerVertically();
+            lblMusicName.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2);
+            lblMusicName.setMaxWidth(lblCurTime.getRelativeX() - lblMusicName.getRelativeX() - 4);
+        });
+        lblMusicName.setClickable(false);
+
+        LabelWidget lblMusicArtist = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "无" : CloudMusic.currentlyPlaying.getArtistsName() + " - " + CloudMusic.currentlyPlaying.getAlbum().getName(), FontManager.pf14bold);
+        this.addChild(lblMusicArtist);
+
+        lblMusicArtist.setBeforeRenderCallback(() -> {
+            lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
+            lblMusicArtist.centerVertically();
+            lblMusicArtist.setPosition(playingCover.getRelativeX() + playingCover.getWidth() + 4, lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2);
+            lblMusicArtist.setMaxWidth(lblCurTime.getRelativeX() - lblMusicArtist.getRelativeX() - 4);
+        });
+
+        lblMusicArtist.setClickable(false);
     }
 
     private String formatDuration(float totalMillis) {
