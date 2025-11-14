@@ -4,15 +4,20 @@ import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
 import tritium.module.Module;
+import tritium.ncm.music.CloudMusic;
 import tritium.rendering.Rect;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.GlyphCache;
+import tritium.rendering.music.PVRenderer;
+import tritium.rendering.music.impl.*;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -35,8 +40,25 @@ public class Interface extends Module {
 
     }
 
+    final List<PVRenderer> pvRenderers = Arrays.asList(
+            new LagTrain(),
+            new OchameKino(),
+            new KyuKurarin()
+    );
+
     @Handler
     public final void onRender2D(Render2DEvent e) {
+
+        if (CloudMusic.currentlyPlaying != null && CloudMusic.player != null) {
+            for (PVRenderer pvRenderer : pvRenderers) {
+                if (pvRenderer.isApplicable(CloudMusic.currentlyPlaying.getId())) {
+                    NORMAL.add(pvRenderer::render);
+                    break;
+                }
+            }
+        }
+
+
 
 //        NORMAL.add(() -> {
 //            double offsetX = 4, offsetY = 4;
