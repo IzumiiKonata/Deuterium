@@ -207,6 +207,7 @@ public class ConsoleScreen extends BaseScreen {
                         Tritium.getInstance().getCommandManager().execute(text);
                         this.addCommandHistory(text);
                         this.textField.setText("");
+                        this.logsPanel.scrollToEnd();
                         return true;
                     }
 
