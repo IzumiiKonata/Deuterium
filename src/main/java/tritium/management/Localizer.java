@@ -12,6 +12,7 @@ import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.util.Location;
 import tritium.Tritium;
+import tritium.screens.ConsoleScreen;
 import tritium.utils.i18n.Language;
 import tritium.settings.ClientSettings;
 import tritium.utils.json.JsonUtils;
@@ -57,7 +58,7 @@ public class Localizer extends AbstractManager {
     public static void setLang(String lang) {
         for (Language language : languages) {
             if (language.getName().equals(lang)) {
-                Minecraft.getLogger().debug("Lang change triggered: {} to {}", LANG.getName(), language.getName());
+                ConsoleScreen.log("[Localizer] Lang change triggered: {} to {}", LANG.getName(), language.getName());
 
                 LANG = language;
             }

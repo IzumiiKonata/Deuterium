@@ -87,6 +87,8 @@ public class CloudMusic {
 
         if (!s.isEmpty()) {
             loadNCM(s);
+        } else {
+            ConsoleScreen.log("[NCM] Not logged in.");
         }
 
     }
@@ -113,6 +115,8 @@ public class CloudMusic {
 
         if (profile == null)
             return;
+
+        ConsoleScreen.log("[NCM] Logged in as {}({})", profile.getName(), profile.getId());
 
         if (!OptionsUtil.getCookie().isEmpty()) {
             onStop();
@@ -142,10 +146,7 @@ public class CloudMusic {
 
         CloudMusic.playLists = playLists;
 
-        if (!playLists.isEmpty()) {
-            // FIXME
-//            MusicScreen.selectedList = playLists.get(0);
-        }
+        ConsoleScreen.log("[NCM] Loaded {} playlists", playLists.size());
 
         likeList = likeList();
     }
@@ -311,17 +312,17 @@ public class CloudMusic {
                     player = initializePlayer(musicFile);
                 } catch (Exception e) {
                     e.printStackTrace();
-                    ConsoleScreen.log(EnumChatFormatting.RED + "[CloudMusic] Failed to initiate audio player! Error: {}", e.getMessage());
+                    ConsoleScreen.log(EnumChatFormatting.RED + "[NCM] Failed to initiate audio player! Error: {}", e.getMessage());
                     break;
                 }
 
 //                OpenApiInstance.api.popNotification(EnumNotificationType.INFO, "Now Playing", song.getName(), 1500);
 
-                ConsoleScreen.log("[CloudMusic] Now playing: {}, id {}", song.getName(), song.getId());
-//                ConsoleScreen.log("[CloudMusic]     ID: {}", song.getId());
-//                ConsoleScreen.log("[CloudMusic]     Name: {}", song.getName());
-//                ConsoleScreen.log("[CloudMusic]     Album: {}", song.getAlbum().getName());
-//                ConsoleScreen.log("[CloudMusic]     Artists: {}", song.getArtists().stream().map(Artist::getName).collect(Collectors.joining(", ")));
+                ConsoleScreen.log("[NCM] Now playing: {}, id {}", song.getName(), song.getId());
+//                ConsoleScreen.log("[NCM]     ID: {}", song.getId());
+//                ConsoleScreen.log("[NCM]     Name: {}", song.getName());
+//                ConsoleScreen.log("[NCM]     Album: {}", song.getAlbum().getName());
+//                ConsoleScreen.log("[NCM]     Artists: {}", song.getArtists().stream().map(Artist::getName).collect(Collectors.joining(", ")));
 
                 try {
                     player.play();
