@@ -124,8 +124,9 @@ public class NavigateBar extends NCMPanel {
                 if (keyCode == Keyboard.KEY_ESCAPE)
                     this.searchField.setFocused(false);
 
-                if (keyCode == Keyboard.KEY_RETURN) {
+                if (keyCode == Keyboard.KEY_RETURN || keyCode == Keyboard.KEY_NUMPADENTER) {
 
+                    // new instance
                     PlayList playList = JsonUtils.parse("{}", PlayList.class);
                     playList.setSearchMode(true);
                     playList.musics = new CopyOnWriteArrayList<>();
