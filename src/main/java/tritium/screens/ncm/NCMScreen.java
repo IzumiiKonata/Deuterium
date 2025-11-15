@@ -70,6 +70,13 @@ public class NCMScreen extends BaseScreen {
 
         if (this.musicLyricsPanel != null)
             this.musicLyricsPanel.onInit();
+
+        Keyboard.enableRepeatEvents(true);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        Keyboard.enableRepeatEvents(false);
     }
 
     public void layout() {

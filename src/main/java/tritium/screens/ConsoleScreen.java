@@ -130,6 +130,12 @@ public class ConsoleScreen extends BaseScreen {
     @Override
     public void initGui() {
         this.textField.setFocused(true);
+        Keyboard.enableRepeatEvents(true);
+    }
+
+    @Override
+    public void onGuiClosed() {
+        Keyboard.enableRepeatEvents(false);
     }
 
     private void layout() {
