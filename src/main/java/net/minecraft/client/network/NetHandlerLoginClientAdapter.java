@@ -6,6 +6,7 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.login.server.S00PacketDisconnect;
 import net.minecraft.network.login.server.S01PacketEncryptionRequest;
 import net.minecraft.network.login.server.S02PacketLoginSuccess;
+import net.minecraft.network.login.server.S03PacketEnableCompression;
 import tritium.screens.ConsoleScreen;
 
 /**
@@ -20,6 +21,7 @@ public class NetHandlerLoginClientAdapter extends NetHandlerLoginClient {
 
     @Override
     public void handleEncryptionRequest(S01PacketEncryptionRequest packetIn) {
+        ConsoleScreen.log("Got S01PacketEncryptionRequest, logging in...");
         super.handleEncryptionRequest(packetIn);
 
         ConsoleScreen.log("Sending C01PacketEncryptionResponse");
@@ -36,7 +38,7 @@ public class NetHandlerLoginClientAdapter extends NetHandlerLoginClient {
     public void handleLoginSuccess(S02PacketLoginSuccess packetIn) {
         super.handleLoginSuccess(packetIn);
 
-        ConsoleScreen.log("Ok login success, performing world change...");
+        ConsoleScreen.log("Ok login successful, performing world change...");
 
         if (mc.theWorld != null) {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
@@ -46,5 +48,12 @@ public class NetHandlerLoginClientAdapter extends NetHandlerLoginClient {
         mc.addScheduledTask(() -> mc.loadWorld(null));
 
 //        this.mc.loadWorld(null);
+    }
+
+    @Override
+    public void handleEnableCompression(S03PacketEnableCompression packetIn) {
+        super.handleEnableCompression(packetIn);
+
+        ConsoleScreen.log("Server requested compression threshold: {}", packetIn.getCompressionTreshold());
     }
 }
