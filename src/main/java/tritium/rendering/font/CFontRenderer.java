@@ -460,8 +460,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     private LineBreakResult findLineBreak(String text, int startIndex, double maxWidth) {
         double currentWidth = 0;
         int i = startIndex;
-        int lastSpaceIndex = -1;
-        int lastSpaceVisualIndex = -1;
+        int lastBreakableIndex = -1;
 
         while (i < text.length()) {
             char c = text.charAt(i);
@@ -475,20 +474,20 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 return new LineBreakResult(i, i + 1);
             }
 
-            if (c == ' ') {
-                lastSpaceIndex = i;
-                lastSpaceVisualIndex = i;
+            boolean breakable = c == ' ' || c == '.' || c == ',' || c == '!' || c == '?' || c == '。' || c == '，' || c == '；' || c == ';' || c == '(' || c == ')';
+            if (breakable) {
+                lastBreakableIndex = i;
             }
 
             double charWidth = getCharWidth(c);
 
             if (currentWidth + charWidth > maxWidth) {
-                if (c == ' ') {
+                if (breakable) {
                     return new LineBreakResult(i, i + 1);
                 }
 
-                if (lastSpaceIndex != -1) {
-                    return new LineBreakResult(lastSpaceIndex, lastSpaceIndex + 1);
+                if (lastBreakableIndex != -1) {
+                    return new LineBreakResult(lastBreakableIndex, lastBreakableIndex + 1);
                 }
 
                 if (i == startIndex) {
