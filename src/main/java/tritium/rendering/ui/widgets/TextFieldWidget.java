@@ -80,6 +80,11 @@ public class TextFieldWidget extends AbstractWidget<TextFieldWidget> {
         return this;
     }
 
+    public TextFieldWidget setPlaceholder(String placeholder) {
+        this.textField.setPlaceholder(placeholder);
+        return this;
+    }
+
     public TextFieldWidget drawUnderline(boolean drawUnderline) {
         this.textField.setDrawLineUnder(drawUnderline);
         return this;

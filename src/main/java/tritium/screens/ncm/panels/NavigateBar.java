@@ -119,6 +119,8 @@ public class NavigateBar extends NCMPanel {
 
         searchBar.addChild(searchField);
 
+        this.searchField.setPlaceholder("搜索...");
+
         this.searchField.setOnKeyTypedCallback((character, keyCode) -> {
             if (this.searchField.isFocused()) {
                 if (keyCode == Keyboard.KEY_ESCAPE)
