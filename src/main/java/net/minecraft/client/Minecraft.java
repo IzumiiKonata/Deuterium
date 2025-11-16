@@ -1714,12 +1714,37 @@ public class Minecraft implements IThreadListener {
 
         if (theWorld != null && thePlayer != null) {
 
-            ModuleManager.getModules().stream()
-                    .filter(m -> m.getKeyBind() + 100 == button)
-                    .forEach(m -> {
-                        m.setEnabled(pressed);
-                    });
+            if (this.gameSettings.keyBindTogglePerspective.getKeyCode() < 0 && this.gameSettings.keyBindTogglePerspective.isPressed()) {
+                ++this.gameSettings.thirdPersonView;
 
+                if (this.gameSettings.thirdPersonView > 2) {
+                    this.gameSettings.thirdPersonView = 0;
+                }
+
+                if (this.gameSettings.thirdPersonView == 0) {
+                    this.entityRenderer.loadEntityShader(this.getRenderViewEntity());
+                } else if (this.gameSettings.thirdPersonView == 1) {
+                    this.entityRenderer.loadEntityShader(null);
+                }
+
+                this.renderGlobal.setDisplayListEntitiesDirty();
+            }
+
+            if (this.gameSettings.keyBindSmoothCamera.getKeyCode() < 0 && this.gameSettings.keyBindSmoothCamera.isPressed()) {
+                this.gameSettings.smoothCamera = !this.gameSettings.smoothCamera;
+            }
+
+//            ModuleManager.getModules().stream()
+//                    .filter(m -> m.getKeyBind() + 100 == button)
+//                    .forEach(m -> {
+//                        System.out.println(m.getInternalName() + ": " + button);
+//                        m.setEnabled(pressed);
+//                        System.out.println(m.isEnabled());
+//                    });
+
+
+            if (pressed)
+                EventManager.call(new KeyPressedEvent(button - 100));
         }
     }
 
@@ -1914,7 +1939,7 @@ public class Minecraft implements IThreadListener {
                             this.gameSettings.showLagometer = GuiScreen.isAltKeyDown();
                         }
 
-                        if (this.gameSettings.keyBindTogglePerspective.isPressed()) {
+                        if (this.gameSettings.keyBindTogglePerspective.getKeyCode() > 0 && this.gameSettings.keyBindTogglePerspective.isPressed()) {
                             ++this.gameSettings.thirdPersonView;
 
                             if (this.gameSettings.thirdPersonView > 2) {
@@ -1930,7 +1955,7 @@ public class Minecraft implements IThreadListener {
                             this.renderGlobal.setDisplayListEntitiesDirty();
                         }
 
-                        if (this.gameSettings.keyBindSmoothCamera.isPressed()) {
+                        if (this.gameSettings.keyBindSmoothCamera.getKeyCode() > 0 && this.gameSettings.keyBindSmoothCamera.isPressed()) {
                             this.gameSettings.smoothCamera = !this.gameSettings.smoothCamera;
                         }
                     }

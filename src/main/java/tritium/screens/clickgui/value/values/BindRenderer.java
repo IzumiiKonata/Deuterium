@@ -1,6 +1,9 @@
 package tritium.screens.clickgui.value.values;
 
 import org.lwjgl.input.Keyboard;
+import tritium.event.eventapi.Handler;
+import tritium.event.events.game.KeyPressedEvent;
+import tritium.management.EventManager;
 import tritium.management.FontManager;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
@@ -8,6 +11,8 @@ import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
 import tritium.settings.BindSetting;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author IzumiiKonata
@@ -17,7 +22,7 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
 
     private final BindSetting setting;
 
-    boolean listening = false;
+    final AtomicBoolean listening = new AtomicBoolean(false);
 
     public BindRenderer(BindSetting setting) {
         this.setting = setting;
@@ -45,15 +50,46 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
 
         rw.setOnClickCallback((mouseX, mouseY, mouseButton) -> {
             if (mouseButton == 0) {
-                this.listening = true;
+                if (!listening.get()) {
+                    this.listening.set(true);
+
+                    EventManager.register(new Object() {
+
+                        boolean skipFirst = false;
+
+                        @Handler
+                        public void onKeyEvent(KeyPressedEvent event) {
+
+                            if (event.getKeyCode() < 0 && !skipFirst) {
+                                skipFirst = true;
+                                return;
+                            }
+
+                            if (event.getKeyCode() < 0 && BindRenderer.this.listening.get()) {
+                                BindRenderer.this.listening.set(false);
+                                setting.setValue(event.getKeyCode());
+                                EventManager.unregister(this);
+                                return;
+                            }
+
+                            if (!BindRenderer.this.listening.get()) {
+                                EventManager.unregister(this);
+                            }
+
+                        }
+
+                    });
+
+                    return true;
+                }
             }
 
             return true;
         });
 
         rw.setOnKeyTypedCallback((character, keyCode) -> {
-            if (this.listening) {
-                listening = false;
+            if (this.listening.get()) {
+                listening.set(false);
 
                 if (keyCode == Keyboard.KEY_ESCAPE)
                     keyCode = Keyboard.KEY_NONE;
@@ -77,9 +113,18 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
     }
 
     private String getKeyName() {
-
-        if (this.listening)
+        if (this.listening.get())
             return "Listening...";
+
+        if (setting.getValue() < 0)
+            return switch (setting.getValue() + 100) {
+                case 0 -> "LMB";
+                case 1 -> "RMB";
+                case 2 -> "MIDDLE";
+                case 3 -> "Mouse 4";
+                case 4 -> "Mouse 5";
+                default -> "UNK: " + setting.getValue();
+            };
 
         return Keyboard.getKeyName(setting.getValue());
     }
