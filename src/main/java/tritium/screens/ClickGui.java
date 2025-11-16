@@ -104,6 +104,11 @@ public class ClickGui extends BaseScreen {
         }
     }
 
+    @Override
+    public boolean doesGuiPauseGame() {
+        return false;
+    }
+
     public static int getColor(int type) {
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
         switch (theme) {

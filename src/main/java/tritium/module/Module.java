@@ -22,6 +22,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -143,6 +144,9 @@ public class Module implements SharedConstants, SharedRenderingConstants {
 
     }
 
+    @Setter
+    Consumer<SubModule<?>> onSubModuleChangedCallback = null;
+
     @SafeVarargs
     @SneakyThrows
     public final void addSubModules(SubModule<? extends Module>... subModules) {
@@ -167,6 +171,10 @@ public class Module implements SharedConstants, SharedRenderingConstants {
                     SubModule<?> aft = getSubModuleByName(now);
                     EventManager.register(aft);
                     aft.onEnable();
+                }
+
+                if (Module.this.onSubModuleChangedCallback != null) {
+                    Module.this.onSubModuleChangedCallback.accept(getSubModuleByName(now));
                 }
             }
 

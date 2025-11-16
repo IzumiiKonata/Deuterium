@@ -10,6 +10,14 @@ public class Timer {
 
     public long lastNs = System.nanoTime();
 
+    public Timer() {
+
+    }
+
+    public Timer(long millis) {
+        this.lastNs = System.nanoTime() - millis * 1_000_000;
+    }
+
     public boolean isDelayed(long ms) {
         return this.isDelayed(ms * 1_000_000.0);
     }

@@ -32,6 +32,7 @@ import tritium.event.events.player.SlowDownEvent;
 import tritium.event.events.player.UpdateEvent;
 import tritium.event.events.rendering.FovModifierEvent;
 import tritium.management.EventManager;
+import tritium.utils.timing.Timer;
 
 public class EntityPlayerSP extends AbstractClientPlayer {
     public NetHandlerPlayClient sendQueue;
@@ -606,6 +607,19 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         EventManager.call(event);
 
         return event.fovModifier;
+    }
+
+    public Timer blockAnimationPreviewTimer = new Timer(2000);
+
+    @Override
+    public int getItemInUseCount() {
+
+        if (!blockAnimationPreviewTimer.isDelayed(1000)) {
+            super.swingItem();
+            return 1;
+        }
+
+        return super.getItemInUseCount();
     }
 
     /**

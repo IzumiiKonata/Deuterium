@@ -25,6 +25,11 @@ public class BlockAnimations extends Module {
     public BlockAnimations() {
         super("BlockAnimations", Category.RENDER);
         super.addSubModules(new Vanilla(), new Lunar(), new Swing(), new Swong(), new Swang(), new Swank(), new SwAing(), new Punch());
+
+        super.setOnSubModuleChangedCallback(module -> {
+            if (mc.thePlayer != null)
+                mc.thePlayer.blockAnimationPreviewTimer.reset();
+        });
     }
 
     public NumberSetting<Double> x = new NumberSetting<>("X", 0.0, -1.0, 1.0, 0.05);
