@@ -39,7 +39,7 @@ public class StringRenderer extends AbstractWidget<StringRenderer> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
 
     }
 }

@@ -35,7 +35,7 @@ public class ImageWidget extends AbstractWidget<ImageWidget> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         Location img = locImg.get();
 
         if (img == null)

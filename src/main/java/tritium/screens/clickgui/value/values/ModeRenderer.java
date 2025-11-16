@@ -55,7 +55,7 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
             }
 
             @Override
-            public void onRender(double mouseX, double mouseY, int dWheel) {
+            public void onRender(double mouseX, double mouseY) {
                 double targetW = (open ? this.getMaxEntryWidth() : pf14.getWidth(setting.getTranslation(setting.getValue()))) + 4;
                 double targetH = this.getEntryHeight() * (this.open ? (setting.getConstants().length + 1) : 1);
 
@@ -68,11 +68,11 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
                 this.setPosition(ModeRenderer.this.getWidth() - this.getWidth(), 0);
                 this.setColor(this.isHovering() ? ClickGui.getColor(24) : ClickGui.getColor(23));
 
-                super.onRender(mouseX, mouseY, dWheel);
+                super.onRender(mouseX, mouseY);
                 FontManager.pf14.drawCenteredString(setting.getTranslation(setting.getValue()), this.getX() + this.getWidth() * .5, this.getY() + this.getEntryHeight() * .5 - pf14.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(20), this.getAlpha()));
 
                 StencilClipManager.beginClip(() -> {
-                    super.onRender(mouseX, mouseY, dWheel);
+                    super.onRender(mouseX, mouseY);
                 });
 
                 boolean shouldRender = open || Math.abs(width - targetW) > .5 || Math.abs(height - targetH) > .5;
@@ -131,7 +131,7 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
 
     }
 }

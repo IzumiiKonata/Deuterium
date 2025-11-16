@@ -51,7 +51,7 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
 
         this.scale = Interpolations.interpBezier(this.scale, selected ? 1 : 0, 0.4);
         this.selectIndicatorAlpha = Interpolations.interpBezier(this.selectIndicatorAlpha, selected ? 1 : 0, 0.3f);

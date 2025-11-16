@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.ui.container.ScrollPanel;
 import tritium.settings.ClientSettings;
 
 import java.awt.*;
@@ -24,6 +25,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
     public interface OnKeyTypedCallback {
         boolean onKeyTyped(char character, int keyCode);
+    }
+
+    public interface OnDWheelCallback {
+        boolean onDWheel(double mouseX, double mouseY, int dWheel);
     }
 
     public interface RenderCallback {
@@ -103,6 +108,9 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
      * 键盘输入回调
      */
     private OnKeyTypedCallback keyTypedCallback = null;
+
+    private OnDWheelCallback dWheelCallback = null;
+
     private Runnable transformations = null, onTick = null;
 
     /**
@@ -113,7 +121,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
     /**
      * 在此处编写组件的渲染代码.
      */
-    public abstract void onRender(double mouseX, double mouseY, int dWheel);
+    public abstract void onRender(double mouseX, double mouseY);
 
     /**
      * 返回是否应该渲染指定的子组件.
@@ -154,7 +162,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
                     this.transformations.run();
                 }
 
-                this.onRender(mouseX, mouseY, dWheel);
+                this.onRender(mouseX, mouseY);
 
                 if (shouldResetMatrixState)
                     GlStateManager.popMatrix();
@@ -167,7 +175,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
                 SharedRenderingConstants.BLUR.add(shader);
         }
 
-        this.onRender(mouseX, mouseY, dWheel);
+        this.onRender(mouseX, mouseY);
 
         boolean debug = ClientSettings.DEBUG_MODE.getValue();
 
@@ -203,6 +211,9 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         // 更新组件悬停状态
         // 如果所有的子组件都没有被选中, 且这个组件被选中, 才设置这个组件的 hovering 为 true.
         this.hovering = !childHovering && this.testHovered(mouseX, mouseY);
+
+        if (dWheel != 0)
+            this.onDWheelReceived(mouseX, mouseY, dWheel);
     }
 
     public SELF setOnTick(Runnable onTick) {
@@ -379,6 +390,34 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         return false;
     }
 
+    protected boolean iterateChildrenDWheel(List<AbstractWidget<?>> children, double mouseX, double mouseY, int dWheel) {
+        for (AbstractWidget<?> child : children) {
+
+            if (child.isHidden()) {
+                continue;
+            }
+
+            if (!child.shouldClickChildren(mouseX, mouseY))
+                continue;
+
+            if (!child.getChildren().isEmpty()) {
+                if (this.iterateChildrenDWheel(child.getChildren(), mouseX, mouseY, dWheel)) {
+                    return true;
+                }
+            }
+
+            if ((child.isHovering() || child.canBeScrolled()) && child.isClickable() && child.onDWheel(mouseX - child.getX(), mouseY - child.getY(), dWheel)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean canBeScrolled() {
+        return false;
+    }
+
     protected boolean shouldClickChildren(double mouseX, double mouseY) {
         return true;
     }
@@ -397,6 +436,18 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
             }
         }
 
+    }
+
+    public void onDWheelReceived(double mouseX, double mouseY, int dWheel) {
+        if (!this.shouldClickChildren(mouseX, mouseY))
+            return;
+
+        if (!this.iterateChildrenDWheel(this.getChildren(), mouseX, mouseY, dWheel)) {
+            if (!this.isHidden() && (this.isHovering() || this.canBeScrolled())) {
+                // 不需要在乎返回值.
+                this.onDWheel(mouseX - this.getX(), mouseY - this.getY(), dWheel);
+            }
+        }
     }
 
     /**
@@ -455,6 +506,10 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
      */
     public boolean onKeyTyped(char character, int keyCode) {
         return this.keyTypedCallback != null && this.keyTypedCallback.onKeyTyped(character, keyCode);
+    }
+
+    public boolean onDWheel(double mouseX, double mouseY, int dWheel) {
+        return this.dWheelCallback != null && this.dWheelCallback.onDWheel(mouseX, mouseY, dWheel);
     }
 
     public SELF setBloom(boolean bloom) {

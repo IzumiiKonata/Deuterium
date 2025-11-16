@@ -57,7 +57,7 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         boolean widthNotLimited = this.getMaxWidth() == -1;
 
         String lbl = this.getLabel();

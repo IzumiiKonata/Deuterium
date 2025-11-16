@@ -17,7 +17,7 @@ public class RectWidget extends AbstractWidget<RectWidget> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.getHexColor());
 
 

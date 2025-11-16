@@ -50,31 +50,36 @@ public class ScrollPanel extends Panel {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
-        // 垂直滑动
-        this.performScroll(mouseX, mouseY, dWheel);
+    public void onRender(double mouseX, double mouseY) {
+        this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
 
         // 设置子组件的垂直位置
         this.alignChildren();
     }
 
-    private void performScroll(double mouseX, double mouseY, int dWheel) {
+    @Override
+    public boolean onDWheel(double mouseX, double mouseY, int dWheel) {
+
+        // 垂直滑动
+        this.performScroll(dWheel);
+        super.onDWheel(mouseX, mouseY, dWheel);
+
+        return true;
+    }
+
+    private void performScroll(int dWheel) {
 
         if (dWheel != 0) {
 
-            double strength = 24;
+            double strength = 12;
 
             if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
                 strength *= 2;
 
-            // hovering this panel
-            if (this.testHovered(mouseX, mouseY)) {
-                if (dWheel > 0)
-                    this.targetScrollOffset -= strength;
-                else
-                    this.targetScrollOffset += strength;
-
-            }
+            if (dWheel > 0)
+                this.targetScrollOffset -= strength;
+            else
+                this.targetScrollOffset += strength;
         }
 
         this.targetScrollOffset = Math.max(this.targetScrollOffset, 0);
@@ -102,8 +107,6 @@ public class ScrollPanel extends Panel {
                     this.targetScrollOffset = Math.min(this.targetScrollOffset, 0);
             }
         }
-
-        this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
     }
 
     public void scrollToEnd() {
@@ -317,4 +320,8 @@ public class ScrollPanel extends Panel {
         this.spacing = spacing;
     }
 
+    @Override
+    public boolean canBeScrolled() {
+        return true;
+    }
 }

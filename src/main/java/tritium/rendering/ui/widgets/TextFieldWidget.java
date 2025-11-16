@@ -22,7 +22,7 @@ public class TextFieldWidget extends AbstractWidget<TextFieldWidget> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         this.textField.xPosition = (float) this.getX();
         this.textField.yPosition = (float) this.getY();
         this.textField.width = (float) this.getWidth();

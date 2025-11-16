@@ -36,7 +36,7 @@ public class IconWidget extends AbstractWidget<IconWidget> {
     boolean run = false;
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         GlStateManager.disableAlpha();
 
         int alpha = (int) (this.getAlpha() * 255);

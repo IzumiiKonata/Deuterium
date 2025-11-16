@@ -19,7 +19,7 @@ public class ScrollLabelWidget extends LabelWidget {
     long waitTime = 3000;
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
 
         double x = this.getX();
         double y = this.getY();

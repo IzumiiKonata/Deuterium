@@ -93,7 +93,7 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
     double nameHoverAnimation = 0;
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         this.setColor(this.isHovering() ? ClickGui.getColor(10) : ClickGui.getColor(8));
         Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.getHexColor());
 

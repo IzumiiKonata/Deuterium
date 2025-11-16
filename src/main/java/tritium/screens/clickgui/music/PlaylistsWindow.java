@@ -211,8 +211,8 @@ public class PlaylistsWindow extends Window {
             boolean prevMouse = false;
 
             @Override
-            public void onRender(double mouseX, double mouseY, int dWheel) {
-                super.onRender(mouseX, mouseY, dWheel);
+            public void onRender(double mouseX, double mouseY) {
+                super.onRender(mouseX, mouseY);
 
                 if (prevMouse && !Mouse.isButtonDown(0))
                     prevMouse = false;
@@ -405,8 +405,8 @@ public class PlaylistsWindow extends Window {
             }
 
             @Override
-            public void onRender(double mouseX, double mouseY, int dWheel) {
-                super.onRender(mouseX, mouseY, dWheel);
+            public void onRender(double mouseX, double mouseY) {
+                super.onRender(mouseX, mouseY);
 
                 if (!Mouse.isButtonDown(0) && clicking)
                     clicking = false;

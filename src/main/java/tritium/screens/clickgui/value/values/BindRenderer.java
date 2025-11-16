@@ -38,7 +38,7 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
 
     }
 }

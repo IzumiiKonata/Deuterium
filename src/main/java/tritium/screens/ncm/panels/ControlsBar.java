@@ -135,8 +135,8 @@ public class ControlsBar extends NCMPanel {
             boolean prevMouse = false;
 
             @Override
-            public void onRender(double mouseX, double mouseY, int dWheel) {
-                super.onRender(mouseX, mouseY, dWheel);
+            public void onRender(double mouseX, double mouseY) {
+                super.onRender(mouseX, mouseY);
 
                 if (prevMouse && !Mouse.isButtonDown(0))
                     prevMouse = false;

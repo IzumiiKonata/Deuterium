@@ -58,8 +58,8 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
             }
 
             @Override
-            public void onRender(double mouseX, double mouseY, int dWheel) {
-                super.onRender(mouseX, mouseY, dWheel);
+            public void onRender(double mouseX, double mouseY) {
+                super.onRender(mouseX, mouseY);
 
                 if (!Mouse.isButtonDown(0) && clicking)
                     clicking = false;
@@ -91,8 +91,8 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
 
         RectWidget slider = new RectWidget() {
             @Override
-            public void onRender(double mouseX, double mouseY, int dWheel) {
-                super.onRender(mouseX, mouseY, dWheel);
+            public void onRender(double mouseX, double mouseY) {
+                super.onRender(mouseX, mouseY);
 
                 double r = 8.5;
                 NumberRenderer.this.roundedRect(this.getX() + this.getWidth() - r * .5, this.getY() + this.getHeight() * .5 - r * .5, r, r, r * .5 - 1, RenderSystem.reAlpha(ClickGui.getColor(0), this.getAlpha()));
@@ -125,7 +125,7 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
 
     }
 }

@@ -72,8 +72,8 @@ public class MusicRect extends RectWidget {
             float alpha = .0f;
 
             @Override
-            public void onRender(double mouseX, double mouseY, int dWheel) {
-                super.onRender(mouseX, mouseY, dWheel);
+            public void onRender(double mouseX, double mouseY) {
+                super.onRender(mouseX, mouseY);
                 this.setAlpha(alpha);
 
                 alpha = Interpolations.interpBezier(alpha, this.getLocImg().get() != null ? 1f : 0f, 0.2f);
@@ -94,7 +94,7 @@ public class MusicRect extends RectWidget {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
-        super.onRender(mouseX, mouseY, dWheel);
+    public void onRender(double mouseX, double mouseY) {
+        super.onRender(mouseX, mouseY);
     }
 }

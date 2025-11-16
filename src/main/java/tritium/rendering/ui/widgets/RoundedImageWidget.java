@@ -49,7 +49,7 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         Location img = locImg.get();
 
         if (img == null)

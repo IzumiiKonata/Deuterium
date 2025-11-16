@@ -38,7 +38,7 @@ public class LabelRenderer extends AbstractWidget<LabelRenderer> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
 
     }
 }

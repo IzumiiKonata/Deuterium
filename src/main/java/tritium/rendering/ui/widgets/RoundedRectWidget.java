@@ -19,7 +19,7 @@ public class RoundedRectWidget extends AbstractWidget<RoundedRectWidget> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         this.roundedRect(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.radius, this.getHexColor());
     }
 

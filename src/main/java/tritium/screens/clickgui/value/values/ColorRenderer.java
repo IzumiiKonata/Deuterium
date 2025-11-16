@@ -44,7 +44,7 @@ public class ColorRenderer extends AbstractWidget<ColorRenderer> {
     }
 
     @Override
-    public void onRender(double mouseX, double mouseY, int dWheel) {
+    public void onRender(double mouseX, double mouseY) {
         double positionX = this.getX();
         double positionY = this.getY();
 
