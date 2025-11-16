@@ -373,21 +373,21 @@ public class SoundManager {
         } catch (Throwable ignored) {}
     }
 
-    public void playSound(ISound p_sound) {
+    public Location playSound(ISound p_sound) {
         try {
             if (this.loaded) {
                 if (this.sndSystem.getMasterVolume() <= 0.0F) {
                     logger.debug("Skipped playing soundEvent: {}, master volume was zero", p_sound.getSoundLocation());
                 } else {
-                    SoundEventAccessorComposite soundeventaccessorcomposite = this.sndHandler.getSound(p_sound.getSoundLocation());
+                    SoundEventAccessorComposite accessor = this.sndHandler.getSound(p_sound.getSoundLocation());
 
-                    if (soundeventaccessorcomposite == null) {
+                    if (accessor == null) {
                         logger.warn("Unable to play unknown soundEvent: {}", p_sound.getSoundLocation());
                     } else {
-                        SoundPoolEntry soundpoolentry = soundeventaccessorcomposite.cloneEntry();
+                        SoundPoolEntry soundpoolentry = accessor.cloneEntry();
 
                         if (soundpoolentry == SoundHandler.missing_sound) {
-                            logger.warn("Unable to play empty soundEvent: {}", soundeventaccessorcomposite.getSoundEventLocation());
+                            logger.warn("Unable to play empty soundEvent: {}", accessor.getSoundEventLocation());
                         } else {
                             float f = p_sound.getVolume();
                             float f1 = 16.0F;
@@ -396,7 +396,7 @@ public class SoundManager {
                                 f1 *= f;
                             }
 
-                            SoundCategory soundcategory = soundeventaccessorcomposite.getSoundCategory();
+                            SoundCategory soundcategory = accessor.getSoundCategory();
                             float f2 = this.getNormalizedVolume(p_sound, soundpoolentry, soundcategory);
                             double d0 = this.getNormalizedPitch(p_sound, soundpoolentry);
                             Location resourcelocation = soundpoolentry.getSoundPoolEntryLocation();
@@ -413,7 +413,7 @@ public class SoundManager {
                                     this.sndSystem.newSource(false, s, getURLForSoundResource(resourcelocation), resourcelocation.toString(), flag, p_sound.getXPosF(), p_sound.getYPosF(), p_sound.getZPosF(), p_sound.getAttenuationType().getTypeInt(), f1);
                                 }
 
-                                logger.debug("Playing sound {} for event {} as channel {}", soundpoolentry.getSoundPoolEntryLocation(), soundeventaccessorcomposite.getSoundEventLocation(), s);
+                                logger.debug("Playing sound {} for event {} as channel {}", soundpoolentry.getSoundPoolEntryLocation(), accessor.getSoundEventLocation(), s);
                                 this.sndSystem.setPitch(s, (float) d0);
                                 this.sndSystem.setVolume(s, f2);
                                 this.sndSystem.play(s);
@@ -429,6 +429,8 @@ public class SoundManager {
                                     this.tickableSounds.add((ITickableSound) p_sound);
                                 }
                             }
+
+                            return resourcelocation;
                         }
                     }
                 }
@@ -436,6 +438,8 @@ public class SoundManager {
         } catch (Throwable ignored) {
 
         }
+
+        return null;
     }
 
     /**

@@ -3,6 +3,7 @@ package tritium.screens.clickgui.category;
 import lombok.Getter;
 import lombok.Setter;
 import tritium.management.FontManager;
+import tritium.rendering.ARGB;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
@@ -73,7 +74,7 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
                 this.getX(), this.getY(),
                 this.getWidth(), this.getHeight(),
                 radius,
-                RenderSystem.hexColor(255, 255, 255, (int) (Math.min(this.hoverIndicatorAlpha, this.getAlpha()) * 255))
+                ARGB.color(255, 255, 255, (int) (Math.min(this.hoverIndicatorAlpha, this.getAlpha()) * 255))
         );
 
         FontManager.tritium42.drawCenteredString(this.icon, this.getX() + this.getWidth() * .5, this.getY() + this.getHeight() * .2, RenderSystem.reAlpha(this.isSelected() ? ClickGui.getColor(5) : ClickGui.getColor(4), this.getAlpha()));

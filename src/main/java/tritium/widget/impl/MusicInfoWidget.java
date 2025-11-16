@@ -10,6 +10,7 @@ import tritium.ncm.music.Quality;
 import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.lyric.LyricLine;
 import tritium.management.FontManager;
+import tritium.rendering.ARGB;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
@@ -247,7 +248,7 @@ public class MusicInfoWidget extends Widget {
                     int tSec = (int) (CloudMusic.player.getTotalTimeSeconds() - tMin * 60);
                     String totalTime = (tMin < 10 ? "0" + tMin : tMin) + ":" + (tSec < 10 ? "0" + tSec : tSec);
 
-                    int textColor = RenderSystem.hexColor(255, 255, 255, (int) (alpha * 128));
+                    int textColor = ARGB.color(255, 255, 255, (int) (alpha * 128));
                     double playbackTimeY = progressBarOffsetY + 9;
                     FontManager.pf14bold.drawString(currentTime, imgX + imgSize + imgSpacing, playbackTimeY, textColor);
                     FontManager.pf14bold.drawString(totalTime, imgX + imgSize + imgSpacing + progressBarWidth - FontManager.pf14bold.getStringWidthD(totalTime), playbackTimeY, textColor);

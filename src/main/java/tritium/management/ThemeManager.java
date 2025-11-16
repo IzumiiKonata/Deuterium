@@ -5,14 +5,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
+import tritium.rendering.ARGB;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
-
-import static tritium.rendering.rendersystem.RenderSystem.hexColor;
 
 /**
  * @author IzumiiKonata
@@ -71,19 +68,19 @@ public class ThemeManager extends AbstractManager {
     }
 
     public static int get(ThemeColor c) {
-        return RenderSystem.hexColor((int) c.r, (int) c.g, (int) c.b, (int) c.a);
+        return ARGB.color((int) c.r, (int) c.g, (int) c.b, (int) c.a);
     }
 
     public static int get(ThemeColor c, int alpha) {
-        return RenderSystem.hexColor((int) c.r, (int) c.g, (int) c.b, alpha);
+        return ARGB.color((int) c.r, (int) c.g, (int) c.b, alpha);
     }
 
     public static Color getAsColor(ThemeColor c) {
-        return new Color(RenderSystem.hexColor((int) c.r, (int) c.g, (int) c.b, (int) c.a), true);
+        return new Color(ARGB.color((int) c.r, (int) c.g, (int) c.b, (int) c.a), true);
     }
 
     public static Color getAsColor(ThemeColor c, int alpha) {
-        return new Color(RenderSystem.hexColor((int) c.r, (int) c.g, (int) c.b, alpha), true);
+        return new Color(ARGB.color((int) c.r, (int) c.g, (int) c.b, alpha), true);
     }
 
 
@@ -103,14 +100,14 @@ public class ThemeManager extends AbstractManager {
     @RequiredArgsConstructor
     public enum Theme {
         Light(
-                RenderSystem.hexColor(238, 238, 238),
-                RenderSystem.hexColor(254, 254, 254),
-                RenderSystem.hexColor(54, 54, 54)
+                ARGB.color(238, 238, 238),
+                ARGB.color(254, 254, 254),
+                ARGB.color(54, 54, 54)
         ),
         Dark(
-                RenderSystem.hexColor(34, 35, 39),
-                RenderSystem.hexColor(19, 19, 20),
-                RenderSystem.hexColor(254, 254, 254)
+                ARGB.color(34, 35, 39),
+                ARGB.color(19, 19, 20),
+                ARGB.color(254, 254, 254)
         );
 
         public final int surface, onSurface, text;

@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Location;
+import tritium.rendering.ARGB;
 import tritium.rendering.ResPackPreview;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -111,7 +112,7 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
                     double posX = mouseX + 4;
                     double posY = mouseY + 4;
 
-                    Rect.draw(posX, posY, 215, 40, RenderSystem.hexColor(255, 255, 255, 50));
+                    Rect.draw(posX, posY, 215, 40, ARGB.color(255, 255, 255, 50));
 
                     double startX = posX + 4;
                     double startY = posY + 4;

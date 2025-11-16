@@ -7,12 +7,12 @@ import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.Display;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.ThemeManager;
+import tritium.rendering.ARGB;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Image;
 import tritium.rendering.Rect;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.loading.LoadingScreenRenderer;
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
 
@@ -46,15 +46,25 @@ public class NormalLoadingScreen extends LoadingScreenRenderer implements Shared
 
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
 
-        int bgColor = theme == ThemeManager.Theme.Dark ? RenderSystem.hexColor(32, 32, 43, (int) (alpha * 255)) : RenderSystem.hexColor(235, 235, 235, (int) (alpha * 255));
-        int progressBarColor = theme == ThemeManager.Theme.Light ? RenderSystem.hexColor(32, 32, 43, (int) (alpha * 255)) : RenderSystem.hexColor(235, 235, 235, (int) (alpha * 255));
+        int bgColor;
+        if (theme == ThemeManager.Theme.Dark) {
+            bgColor = ARGB.color(32, 32, 43, (int) (alpha * 255));
+        } else {
+            bgColor = ARGB.color(235, 235, 235, (int) (alpha * 255));
+        }
+        int progressBarColor;
+        if (theme == ThemeManager.Theme.Light) {
+            progressBarColor = ARGB.color(32, 32, 43, (int) (alpha * 255));
+        } else {
+            progressBarColor = ARGB.color(235, 235, 235, (int) (alpha * 255));
+        }
 
         Rect.draw(0, 0, width, height, bgColor);
 
         GlStateManager.color(1, 1, 1, alpha);
         Image.draw(Location.of("tritium/textures/logo" + (theme == ThemeManager.Theme.Light ? "" : "_white") + ".png"), width / 2.0d - 64, height / 2.0d - 64, 128, 128, Image.Type.NoColor);
 
-        Rect.draw(width / 2.0d - pbWidth / 2.0, height * 5.0 / 6.0, pbWidth, 4, RenderSystem.hexColor(128, 128, 128, (int) (alpha * 255)));
+        Rect.draw(width / 2.0d - pbWidth / 2.0, height * 5.0 / 6.0, pbWidth, 4, ARGB.color(128, 128, 128, (int) (alpha * 255)));
         Rect.draw(width / 2.0d - pbWidth / 2.0, height * 5.0 / 6.0, progressWidth, 4, progressBarColor);
 
         if (timer.isDelayed(500)) {

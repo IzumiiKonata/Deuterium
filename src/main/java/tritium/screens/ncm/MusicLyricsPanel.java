@@ -15,6 +15,7 @@ import tritium.ncm.music.dto.Music;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
+import tritium.rendering.ARGB;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
@@ -69,8 +70,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             lyrics.addAll(lyricLines);
 
             currentDisplaying = lyrics.getFirst();
-            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
             addLongBreaks();
+            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
             scrollTarget = scrollOffset = 0;
         }
     }
@@ -636,8 +637,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         double elementsXOffset = center - this.getCoverSizeMax() * .5;
         double elementsYOffset = center + this.getCoverSizeMax() * .5 + 16;
 
-        stMusicName.render(FontManager.pf28bold, CloudMusic.currentlyPlaying.getName(), elementsXOffset, elementsYOffset, this.getCoverSizeMax(), RenderSystem.hexColor(1, 1, 1, alpha));
-        stArtists.render(FontManager.pf20bold, CloudMusic.currentlyPlaying.getArtistsName(), elementsXOffset, elementsYOffset + FontManager.pf20bold.getHeight() + 8, this.getCoverSizeMax(), RenderSystem.hexColor(1, 1, 1, alpha * .8f));
+        stMusicName.render(FontManager.pf28bold, CloudMusic.currentlyPlaying.getName(), elementsXOffset, elementsYOffset, this.getCoverSizeMax(), ARGB.color((float) 1, (float) 1, (float) 1, alpha));
+        stArtists.render(FontManager.pf20bold, CloudMusic.currentlyPlaying.getArtistsName(), elementsXOffset, elementsYOffset + FontManager.pf20bold.getHeight() + 8, this.getCoverSizeMax(), ARGB.color((float) 1, (float) 1, (float) 1, alpha * .8f));
 
         // progressbar 背景
         double progressBarYOffset = elementsYOffset + FontManager.pf20bold.getHeight() + 8 + FontManager.pf20bold.getHeight() + 12;

@@ -38,8 +38,8 @@ public class GuiWinGame extends GuiScreen {
         SoundHandler soundhandler = this.mc.getSoundHandler();
 
         if (this.field_146581_h == 0) {
-            musicticker.func_181557_a();
-            musicticker.func_181558_a(MusicTicker.MusicType.CREDITS);
+            musicticker.stopCurrentPlaying();
+            musicticker.playNext(MusicTicker.MusicType.CREDITS);
             soundhandler.resumeSounds();
         }
 

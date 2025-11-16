@@ -34,6 +34,7 @@ import net.optifine.CustomColors;
 import org.lwjgl.opengl.GL11;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
+import tritium.rendering.ARGB;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.settings.ClientSettings;
@@ -591,15 +592,15 @@ public class GuiIngame extends Gui {
             String s2 = EnumChatFormatting.RED + String.valueOf(score1.getScorePoints());
             int k = j1 - j * this.getFontRenderer().FONT_HEIGHT;
             int l = scaledRes.getScaledWidth() - k1 + 2;
-            drawRect(l1 - 2, k, l, k + this.getFontRenderer().FONT_HEIGHT, RenderSystem.hexColor(0, 0, 0, 80));
-            this.getFontRenderer().drawString(s1, l1, k, RenderSystem.hexColor(255, 255, 255, cA));
-            this.getFontRenderer().drawString(s2, l - this.getFontRenderer().getStringWidth(s2), k, RenderSystem.hexColor(255, 255, 255, cA));
+            drawRect(l1 - 2, k, l, k + this.getFontRenderer().FONT_HEIGHT, ARGB.color(0, 0, 0, 80));
+            this.getFontRenderer().drawString(s1, l1, k, ARGB.color(255, 255, 255, cA));
+            this.getFontRenderer().drawString(s2, l - this.getFontRenderer().getStringWidth(s2), k, ARGB.color(255, 255, 255, cA));
 
             if (j == collection.size()) {
                 String s3 = objective.getDisplayName();
-                drawRect(l1 - 2, k - this.getFontRenderer().FONT_HEIGHT - 1, l, k - 1, RenderSystem.hexColor(0, 0, 0, 96));
-                drawRect(l1 - 2, k - 1, l, k, RenderSystem.hexColor(0, 0, 0, 80));
-                this.getFontRenderer().drawString(s3, l1 + i / 2 - this.getFontRenderer().getStringWidth(s3) / 2, k - this.getFontRenderer().FONT_HEIGHT, RenderSystem.hexColor(255, 255, 255, cA));
+                drawRect(l1 - 2, k - this.getFontRenderer().FONT_HEIGHT - 1, l, k - 1, ARGB.color(0, 0, 0, 96));
+                drawRect(l1 - 2, k - 1, l, k, ARGB.color(0, 0, 0, 80));
+                this.getFontRenderer().drawString(s3, l1 + i / 2 - this.getFontRenderer().getStringWidth(s3) / 2, k - this.getFontRenderer().FONT_HEIGHT, ARGB.color(255, 255, 255, cA));
             }
         }
     }

@@ -23,6 +23,7 @@ import net.minecraft.util.Location;
 import net.minecraft.util.Timer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.input.Mouse;
+import tritium.rendering.ARGB;
 import tritium.rendering.Rect;
 import tritium.settings.ClientSettings;
 import tritium.utils.res.skin.PlayerSkinTextureCache;
@@ -146,22 +147,6 @@ public class RenderSystem {
 
     public static void resetColor() {
         RenderSystem.color(-1);
-    }
-
-    public static int hexColor(float r, float g, float b) {
-        return hexColor(r, g, b, 255);
-    }
-
-    public static int hexColor(float r, float g, float b, float a) {
-        return (int) (a * 255) << 24 | (int) (r * 255) << 16 | (int) (g * 255) << 8 | (int) (b * 255);
-    }
-
-    public static int hexColor(int red, int green, int blue) {
-        return hexColor(red, green, blue, 255);
-    }
-
-    public static int hexColor(int red, int green, int blue, int alpha) {
-        return alpha << 24 | red << 16 | green << 8 | blue;
     }
 
     public static void drawGradientRectLeftToRight(final double left, final double top, final double right, final double bottom, final int startColor, final int endColor) {
@@ -622,7 +607,7 @@ public class RenderSystem {
         if (alpha < 0) {
             alpha = 0;
         }
-        return RenderSystem.hexColor((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, (int) (alpha * 255));
+        return ARGB.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, (int) (alpha * 255));
     }
 
     public static void quickDrawRect(final float x, final float y, final float x2, final float y2) {

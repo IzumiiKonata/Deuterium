@@ -158,8 +158,8 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable {
     /**
      * Play a sound
      */
-    public void playSound(ISound sound) {
-        this.sndManager.playSound(sound);
+    public Location playSound(ISound sound) {
+        return this.sndManager.playSound(sound);
     }
 
     /**

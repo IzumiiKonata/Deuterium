@@ -21,32 +21,33 @@ public class MusicTicker implements ITickable {
      * Like the old updateEntity(), except more generic.
      */
     public void update() {
-        MusicTicker.MusicType musicticker$musictype = this.mc.getAmbientMusicType();
+        MusicTicker.MusicType type = this.mc.getAmbientMusicType();
 
         if (this.currentMusic != null) {
-            if (!musicticker$musictype.getMusicLocation().equals(this.currentMusic.getSoundLocation())) {
+            if (!type.getMusicLocation().equals(this.currentMusic.getSoundLocation())) {
                 this.mc.getSoundHandler().stopSound(this.currentMusic);
-                this.timeUntilNextMusic = MathHelper.getRandomIntegerInRange(this.rand, 0, musicticker$musictype.getMinDelay() / 2);
+                this.timeUntilNextMusic = MathHelper.getRandomIntegerInRange(this.rand, 0, type.getMinDelay() / 2);
             }
 
             if (!this.mc.getSoundHandler().isSoundPlaying(this.currentMusic)) {
                 this.currentMusic = null;
-                this.timeUntilNextMusic = Math.min(MathHelper.getRandomIntegerInRange(this.rand, musicticker$musictype.getMinDelay(), musicticker$musictype.getMaxDelay()), this.timeUntilNextMusic);
+                this.timeUntilNextMusic = Math.min(MathHelper.getRandomIntegerInRange(this.rand, type.getMinDelay(), type.getMaxDelay()), this.timeUntilNextMusic);
             }
         }
 
         if (this.currentMusic == null && this.timeUntilNextMusic-- <= 0) {
-            this.func_181558_a(musicticker$musictype);
+            this.playNext(type);
         }
     }
 
-    public void func_181558_a(MusicTicker.MusicType p_181558_1_) {
-        this.currentMusic = PositionedSoundRecord.create(p_181558_1_.getMusicLocation());
-        this.mc.getSoundHandler().playSound(this.currentMusic);
+    public void playNext(MusicTicker.MusicType type) {
+        this.currentMusic = PositionedSoundRecord.create(type.getMusicLocation());
+        Location location = this.mc.getSoundHandler().playSound(this.currentMusic);
+//        System.out.println("Playing: " + location);
         this.timeUntilNextMusic = Integer.MAX_VALUE;
     }
 
-    public void func_181557_a() {
+    public void stopCurrentPlaying() {
         if (this.currentMusic != null) {
             this.mc.getSoundHandler().stopSound(this.currentMusic);
             this.currentMusic = null;

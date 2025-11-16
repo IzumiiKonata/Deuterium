@@ -7,6 +7,7 @@ import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
 import tritium.Tritium;
 import tritium.interfaces.IFontRenderer;
+import tritium.rendering.ARGB;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.StringUtils;
 
@@ -107,7 +108,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         int a = (color >> 24) & 0xff;
 
-        drawString(net.minecraft.util.StringUtils.stripControlCodes(text), x + 1, y + 1, RenderSystem.hexColor(0, 0, 0, a));
+        drawString(net.minecraft.util.StringUtils.stripControlCodes(text), x + 1, y + 1, ARGB.color(0, 0, 0, a));
         drawString(text, x, y, color);
 
         return this.getStringWidth(text);
