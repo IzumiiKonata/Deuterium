@@ -375,6 +375,7 @@
     "widget.pingdisplay.desc": "显示你到服务器的延迟.",
 
     "setting.left-handed.name": "左撇子",
+    "setting.left-handed bind.name": "切换左右手按键绑定",
     "setting.screw speed.name": "速度",
     "setting.rotate speed.name": "速度",
 

@@ -535,6 +535,7 @@
     "widget.fpsdisplay.desc": "Shows your fps.",
 
     "setting.left-handed.name": "Left Handed",
+    "setting.left-handed bind.name": "Switch hand bind",
     "setting.screw speed.name": "Screw Speed",
     "setting.rotate speed.name": "Rotate Speed",
 

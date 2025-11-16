@@ -178,7 +178,7 @@ public class ItemRenderer {
     private void renderItemMap(AbstractClientPlayer clientPlayer, float pitch, float equipmentProgress, float swingProgress) {
 
         if (ModuleManager.blockAnimations.isEnabled()) {
-            if (ModuleManager.blockAnimations.leftHanded.getValue()) {
+            if (ModuleManager.blockAnimations.isLeftHanded()) {
                 GlStateManager.cullFace(GL11.GL_BACK);
                 GlStateManager.scale(-1, 1, 1);
             } else {
@@ -298,7 +298,7 @@ public class ItemRenderer {
     private void transformFirstPersonItem(float equipProgress, float swingProgress) {
 
         if (ModuleManager.blockAnimations.isEnabled()) {
-            if (((this.itemToRender.getItem() == Items.compass) || (this.itemToRender.getItem() == Items.clock)) && ModuleManager.blockAnimations.leftHanded.getValue()) {
+            if (((this.itemToRender.getItem() == Items.compass) || (this.itemToRender.getItem() == Items.clock)) && ModuleManager.blockAnimations.isLeftHanded()) {
                 GlStateManager.cullFace(GL11.GL_BACK);
                 GlStateManager.translate(0.05, -0.63, -1.35);
                 GlStateManager.rotate(-50, 1, 0, 0);
@@ -382,11 +382,11 @@ public class ItemRenderer {
             if (ba.isEnabled()) {
 
                 if (this.itemToRender != null && this.itemToRender.getItem() instanceof ItemSword) {
-                    int k = ba.leftHanded.getValue() ? -1 : 1;
+                    int k = ba.isLeftHanded() ? -1 : 1;
                     GlStateManager.translate(ba.x.getValue() * k, ba.y.getValue(), ba.z.getValue());
                 }
 
-                if (ba.leftHanded.getValue()) {
+                if (ba.isLeftHanded()) {
                     GlStateManager.scale(-1, 1, 1);
                     if (this.itemToRender != null) {
                         GlStateManager.cullFace(GL11.GL_FRONT);
@@ -402,9 +402,9 @@ public class ItemRenderer {
             GlStateManager.popMatrix();
 
             if (ba.isEnabled() && ba.twoHanded.getValue()) {
-                int k = ba.leftHanded.getValue() ? 1 : -1;
+                int k = ba.isLeftHanded() ? 1 : -1;
                 GlStateManager.translate(ba.x.getValue() * k, ba.y.getValue(), ba.z.getValue());
-                if (ba.leftHanded.getValue()) {
+                if (ba.isLeftHanded()) {
                     GlStateManager.scale(1, 1, 1);
                 } else {
                     GlStateManager.scale(-1, 1, 1);

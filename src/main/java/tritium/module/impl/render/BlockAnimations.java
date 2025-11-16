@@ -5,10 +5,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import tritium.event.events.game.KeyPressedEvent;
 import tritium.module.impl.render.blockanimations.*;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.world.TickEvent;
 import tritium.module.Module;
+import tritium.settings.BindSetting;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
@@ -29,6 +31,7 @@ public class BlockAnimations extends Module {
     public NumberSetting<Double> y = new NumberSetting<>("Y", 0.15, -1.0, 1.0, 0.05);
     public NumberSetting<Double> z = new NumberSetting<>("Z", 0.0, -1.0, 1.0, 0.05);
     public BooleanSetting leftHanded = new BooleanSetting("Left-Handed", false);
+    public BindSetting leftHandedBind = new BindSetting("Left-Handed Bind", 0, () -> leftHanded.getValue());
     public BooleanSetting twoHanded = new BooleanSetting("Two-Handed", false, () -> false);
     public ModeSetting<TwoHandedMode> twoHandedMode = new ModeSetting<>("Two Handed Mode", TwoHandedMode.Clone, () -> twoHanded.getValue());
 
@@ -36,6 +39,21 @@ public class BlockAnimations extends Module {
         Clone,
         Static,
         StaticNoItem
+    }
+
+    private boolean left = true;
+
+    @Handler
+    public void onKey(KeyPressedEvent event) {
+
+        if (leftHanded.getValue() && event.getKeyCode() == leftHandedBind.getValue()) {
+            left = !left;
+        }
+
+    }
+
+    public boolean isLeftHanded() {
+        return leftHanded.getValue() && left;
     }
 
     /**
