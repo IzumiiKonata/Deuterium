@@ -72,7 +72,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             currentDisplaying = lyrics.getFirst();
             addLongBreaks();
             updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
-            scrollTarget = scrollOffset = 0;
+//            scrollTarget = scrollOffset = 0;
         }
     }
 
