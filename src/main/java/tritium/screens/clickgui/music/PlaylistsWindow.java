@@ -487,13 +487,17 @@ public class PlaylistsWindow extends Window {
     }
 
     @Override
-    public void keyTyped(char typedChar, int keyCode) {
+    public boolean keyTyped(char typedChar, int keyCode) {
         if (keyCode == Keyboard.KEY_SPACE && CloudMusic.currentlyPlaying != null && CloudMusic.player != null && !CloudMusic.player.isFinished()) {
 
             if (CloudMusic.player.isPausing())
                 CloudMusic.player.unpause();
             else
                 CloudMusic.player.pause();
+
+            return true;
         }
+
+        return false;
     }
 }

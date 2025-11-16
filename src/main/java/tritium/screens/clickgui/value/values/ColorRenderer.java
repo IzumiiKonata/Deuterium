@@ -1,11 +1,14 @@
 package tritium.screens.clickgui.value.values;
 
 import org.lwjgl.input.Mouse;
+import tritium.management.FontManager;
 import tritium.rendering.HSBColor;
 import tritium.rendering.entities.impl.GradientRect;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
+import tritium.rendering.ui.widgets.LabelWidget;
+import tritium.screens.ClickGui;
 import tritium.settings.ColorSetting;
 
 import java.awt.*;
@@ -22,7 +25,16 @@ public class ColorRenderer extends AbstractWidget<ColorRenderer> {
 
     public ColorRenderer(ColorSetting setting) {
         this.setting = setting;
-        this.setBounds(142, 100);
+        double height = FontManager.pf14.getHeight() + 5;
+        this.setBounds(142, 100 + height);
+
+        LabelWidget label = new LabelWidget(() -> setting.getName().get(), FontManager.pf14);
+        label.setBeforeRenderCallback(() -> {
+            label.setColor(ClickGui.getColor(20));
+        });
+        label.setPosition(0, height * .5 - FontManager.pf14.getHeight() * .5);
+        this.addChild(label);
+
         this.setColor(setting.getRGB());
 
         this.hueMap = new ArrayList<>();
@@ -46,7 +58,8 @@ public class ColorRenderer extends AbstractWidget<ColorRenderer> {
     @Override
     public void onRender(double mouseX, double mouseY) {
         double positionX = this.getX();
-        double positionY = this.getY();
+        double height = FontManager.pf14.getHeight() + 5;
+        double positionY = this.getY() + height;
 
         float hue = this.getValue().getHue();
         Color color = this.getValue().getColor();

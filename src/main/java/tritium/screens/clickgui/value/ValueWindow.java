@@ -145,6 +145,11 @@ public class ValueWindow extends Window {
     }
 
     @Override
+    public boolean keyTyped(char typedChar, int keyCode) {
+        return this.baseRect.onKeyTypedReceived(typedChar, keyCode);
+    }
+
+    @Override
     public void setAlpha(float alpha) {
         this.baseRect.setAlpha(alpha);
     }

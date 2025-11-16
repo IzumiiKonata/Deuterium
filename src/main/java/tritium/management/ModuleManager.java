@@ -2,17 +2,20 @@ package tritium.management;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import tritium.Tritium;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.game.KeyPressedEvent;
 import tritium.module.Module;
 import tritium.module.impl.movement.AutoSprint;
 import tritium.module.impl.other.NameSpoof;
 import tritium.module.impl.other.OpenConsole;
+import tritium.module.impl.other.Test;
 import tritium.module.impl.other.ViewLogs;
 import tritium.module.impl.render.*;
 import tritium.module.submodule.SubModule;
 import tritium.settings.ClientSettings;
 import tritium.settings.Setting;
+import tritium.utils.other.info.Version;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -61,6 +64,8 @@ public class ModuleManager extends AbstractManager {
     public static final ViewLogs viewLogs = new ViewLogs();
     public static final OpenConsole openConsole = new OpenConsole();
 
+    static final Test testModule = new Test();
+
 
     public ModuleManager() {
         super("ModuleManager");
@@ -70,8 +75,6 @@ public class ModuleManager extends AbstractManager {
     public void onKeyPress(KeyPressedEvent event) {
         modules.stream().filter(m -> m.getKeyBind() == event.getKeyCode()).forEach(Module::toggle);
     }
-
-    ;
 
     public Optional<Module> getModuleByName(String name) {
 
@@ -98,6 +101,9 @@ public class ModuleManager extends AbstractManager {
 
             if (Module.class.isAssignableFrom(field.getType())) {
                 Module module = (Module) field.get(null);
+
+                if (module == testModule && Tritium.getVersion().getReleaseType() != Version.ReleaseType.Dev)
+                    continue;
 
                 modules.add(module);
             }

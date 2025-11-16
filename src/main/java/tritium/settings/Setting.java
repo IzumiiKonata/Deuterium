@@ -72,7 +72,13 @@ public abstract class Setting<T> {
     }
 
     public String getValueForConfig() {
-        return this.getValue().toString();
+
+        T val = this.getValue();
+
+        if (val == null)
+            return "";
+
+        return val.toString();
     }
 
     public void setValue(T value) {

@@ -93,11 +93,15 @@ public class ClickGui extends BaseScreen {
 
     @Override
     public void onKeyTyped(char typedChar, int keyCode) {
+        for (Window window : this.windows) {
+            if (window.keyTyped(typedChar, keyCode)) {
+                return;
+            }
+        }
+
         if (keyCode == Keyboard.KEY_ESCAPE) {
             this.closing = true;
         }
-
-        this.windows.forEach(window -> window.keyTyped(typedChar, keyCode));
     }
 
     public static int getColor(int type) {

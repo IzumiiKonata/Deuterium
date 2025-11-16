@@ -1,5 +1,7 @@
 package tritium.settings;
 
+import tritium.bridge.settings.TextValueWrapper;
+
 import java.util.function.Supplier;
 
 /**
@@ -14,6 +16,11 @@ public class StringSetting extends Setting<String> {
 
     public StringSetting(String name, String value, Supplier<Boolean> shouldRender) {
         super(name, value, shouldRender);
+    }
+
+    @Override
+    protected void createValueWrapper() {
+        this.wrapper = new TextValueWrapper(this);
     }
 
     public boolean onValueChanged(String before, String after) {
