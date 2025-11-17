@@ -111,4 +111,12 @@ public class ARGB {
         return ARGB.toABGR(color);
     }
 
+    public static int srgbLerp(float alpha, int p0, int p1) {
+        int a = Mth.lerpInt(alpha, ARGB.alpha(p0), ARGB.alpha(p1));
+        int red = Mth.lerpInt(alpha, ARGB.red(p0), ARGB.red(p1));
+        int green = Mth.lerpInt(alpha, ARGB.green(p0), ARGB.green(p1));
+        int blue = Mth.lerpInt(alpha, ARGB.blue(p0), ARGB.blue(p1));
+        return ARGB.color(red, green, blue, a);
+    }
+
 }

@@ -3,6 +3,7 @@ package net.minecraft.client.resources;
 import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
+import tritium.rendering.AnimatedTexture;
 import tritium.rendering.ResPackPreview;
 
 import java.io.*;
@@ -70,7 +71,7 @@ public class FolderResourcePack extends AbstractResourcePack {
                 String name = file.getName();
                 if (file.isFile() && name.endsWith(".mcmeta") && !name.startsWith("bow_pulling_")) {
 
-                    if (ResPackPreview.metadataHasAnimationFrames(Files.newInputStream(file.toPath())))
+                    if (AnimatedTexture.metadataHasAnimationFrames(Files.newInputStream(file.toPath())))
                         return true;
 
                 }

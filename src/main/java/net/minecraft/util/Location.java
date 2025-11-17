@@ -1,5 +1,6 @@
 package net.minecraft.util;
 
+import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 import tritium.utils.optimization.IdentifierCaches;
 

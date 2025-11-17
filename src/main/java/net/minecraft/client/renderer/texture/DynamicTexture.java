@@ -134,7 +134,7 @@ public class DynamicTexture extends AbstractTexture {
 
     @Getter
     @Setter
-    protected boolean linear = true;
+    protected boolean linear = false;
 
     static final int BUFFER_SIZE = 2097152;
     static final IntBuffer DATA_BUFFER = MemoryTracker.memAllocInt(BUFFER_SIZE);

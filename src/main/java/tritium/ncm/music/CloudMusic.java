@@ -28,6 +28,7 @@ import tritium.ncm.music.dto.User;
 import tritium.management.ConfigManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.GaussianKernel;
+import tritium.rendering.MusicToast;
 import tritium.rendering.texture.Textures;
 import tritium.screens.ConsoleScreen;
 import tritium.screens.ncm.MusicLyricsPanel;
@@ -318,6 +319,7 @@ public class CloudMusic {
 
 //                OpenApiInstance.api.popNotification(EnumNotificationType.INFO, "Now Playing", song.getName(), 1500);
 
+                MusicToast.pushMusicToast(song.getArtistsName() + " - " + song.getName());
                 ConsoleScreen.log("[NCM] Now playing: {}, id {}", song.getName(), song.getId());
 //                ConsoleScreen.log("[NCM]     ID: {}", song.getId());
 //                ConsoleScreen.log("[NCM]     Name: {}", song.getName());

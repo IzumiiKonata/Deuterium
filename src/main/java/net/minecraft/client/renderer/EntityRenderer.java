@@ -78,6 +78,7 @@ import tritium.management.ModuleManager;
 import tritium.module.impl.render.CameraPositions;
 import tritium.module.impl.render.Perspective;
 import tritium.module.impl.render.WorldTime;
+import tritium.rendering.MusicToast;
 import tritium.rendering.ParticleCulling;
 import tritium.rendering.TransitionAnimation;
 import tritium.rendering.animation.Animation;
@@ -1356,16 +1357,24 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                         GlStateManager.pushMatrix();
                         GlStateManager.clear(256);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
+                        GlStateManager.pushMatrix();
                         GlStateManager.loadIdentity();
                         GlStateManager.ortho(0.0D, mc.displayWidth / 2.0d, mc.displayHeight / 2.0d,
                                 0.0D, 1000.0D, 3000.0D);
                         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+                        GlStateManager.pushMatrix();
                         GlStateManager.loadIdentity();
                         GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
                         ((BaseScreen) this.mc.currentScreen).drawScreen(k1, l1, partialTicks);
 
                         GlStateManager.popMatrix();
+                        GlStateManager.matrixMode(GL11.GL_PROJECTION);
+                        GlStateManager.popMatrix();
+                        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+                        GlStateManager.popMatrix();
+
+
 
                     } else {
                         this.mc.currentScreen.drawScreen((int) k1, (int) l1, partialTicks);
@@ -1407,6 +1416,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             }
 
             TransitionAnimation.render();
+
+            MusicToast.render();
 
             List<String> hints = this.getHints();
             if (!this.hints.isEmpty()) {

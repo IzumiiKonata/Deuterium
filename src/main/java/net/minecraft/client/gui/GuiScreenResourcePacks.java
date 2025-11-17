@@ -60,7 +60,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
 
         watchService = FileSystems.getDefault().newWatchService();
         File fileResourcepacks = Minecraft.getMinecraft().getFileResourcepacks();
-        System.out.println("REGISTER: " + fileResourcepacks.getAbsolutePath());
+//        System.out.println("REGISTER: " + fileResourcepacks.getAbsolutePath());
         Path path = fileResourcepacks.toPath();
         path.register(watchService, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE);
     }

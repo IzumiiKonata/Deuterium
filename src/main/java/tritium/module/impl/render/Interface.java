@@ -5,6 +5,7 @@ import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
 import tritium.module.Module;
 import tritium.ncm.music.CloudMusic;
+import tritium.rendering.MusicToast;
 import tritium.rendering.Rect;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.font.CFontRenderer;
@@ -57,8 +58,6 @@ public class Interface extends Module {
                 }
             }
         }
-
-
 
 //        NORMAL.add(() -> {
 //            double offsetX = 4, offsetY = 4;

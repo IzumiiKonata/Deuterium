@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
+import tritium.rendering.AnimatedTexture;
 import tritium.rendering.ResPackPreview;
 
 import java.io.Closeable;
@@ -117,7 +118,7 @@ public class FileResourcePack extends AbstractResourcePack implements Closeable 
 
             if (s.startsWith("assets/minecraft/textures/items") && s.endsWith(".mcmeta")) {
 
-                if (ResPackPreview.metadataHasAnimationFrames(zipfile.getInputStream(zipentry)))
+                if (AnimatedTexture.metadataHasAnimationFrames(zipfile.getInputStream(zipentry)))
                     return true;
 
             }

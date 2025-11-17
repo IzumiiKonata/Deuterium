@@ -215,6 +215,9 @@ public class GuiOverlayDebug extends Gui {
                 list.add(String.format("Looking at: %d %d %d", blockpos1.getX(), blockpos1.getY(), blockpos1.getZ()));
             }
 
+            list.add("");
+            list.add("MusicTicker.timeUntilNextMusic: " + mc.getMusicTicker().getTimeUntilNextMusic());
+
             return list;
         }
     }

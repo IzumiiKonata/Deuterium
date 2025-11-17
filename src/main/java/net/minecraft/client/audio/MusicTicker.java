@@ -1,9 +1,11 @@
 package net.minecraft.client.audio;
 
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
+import tritium.rendering.MusicToast;
 
 import java.util.Random;
 
@@ -11,6 +13,7 @@ public class MusicTicker implements ITickable {
     private final Random rand = new Random();
     private final Minecraft mc;
     private ISound currentMusic;
+    @Getter
     private int timeUntilNextMusic = 100;
 
     public MusicTicker(Minecraft mcIn) {
@@ -43,6 +46,7 @@ public class MusicTicker implements ITickable {
     public void playNext(MusicTicker.MusicType type) {
         this.currentMusic = PositionedSoundRecord.create(type.getMusicLocation());
         Location location = this.mc.getSoundHandler().playSound(this.currentMusic);
+        MusicToast.pushMusicToast(location);
 //        System.out.println("Playing: " + location);
         this.timeUntilNextMusic = Integer.MAX_VALUE;
     }
