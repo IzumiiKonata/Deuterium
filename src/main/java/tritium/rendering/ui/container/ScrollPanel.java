@@ -135,6 +135,32 @@ public class ScrollPanel extends Panel {
         }
     }
 
+    public void scrollToEndImmediately() {
+        switch (this.alignment) {
+            case VERTICAL -> {
+                double childrenHeightSum = this.getChildrenHeightSum();
+                if (childrenHeightSum > this.getHeight())
+                    this.actualScrollOffset = childrenHeightSum - this.getHeight();
+                else
+                    this.actualScrollOffset = 0;
+            }
+            case HORIZONTAL -> {
+                double childrenWidthSum = this.getChildrenWidthSum();
+                if (childrenWidthSum > this.getWidth())
+                    this.actualScrollOffset = childrenWidthSum - this.getWidth();
+                else
+                    this.actualScrollOffset = 0;
+            }
+            case VERTICAL_WITH_HORIZONTAL_FILL -> {
+                double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
+                if (childrenHeightSum > this.getHeight())
+                    this.actualScrollOffset = childrenHeightSum - this.getHeight();
+                else
+                    this.actualScrollOffset = 0;
+            }
+        }
+    }
+
     public boolean isScrolledToEnd() {
         return switch (this.alignment) {
             case VERTICAL -> {

@@ -454,7 +454,6 @@ public class Minecraft implements IThreadListener {
     private void startGame() throws LWJGLException {
         this.gameSettings = new GameSettings(this, this.mcDataDir);
         this.defaultResourcePacks.add(this.mcDefaultResourcePack);
-        this.startTimerHackThread();
 
         if (this.gameSettings.overrideHeight > 0 && this.gameSettings.overrideWidth > 0) {
             this.displayWidth = this.gameSettings.overrideWidth;
@@ -465,6 +464,8 @@ public class Minecraft implements IThreadListener {
         this.setInitialDisplayMode();
         this.createDisplay();
         this.setWindowIcon();
+
+        this.startTimerHackThread();
 
         OpenGlHelper.initializeTextures();
         this.framebufferMc = new Framebuffer(this.displayWidth, this.displayHeight, true);

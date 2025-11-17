@@ -6,6 +6,9 @@ import tritium.utils.network.HttpUtils;
 import tritium.utils.other.WrappedInputStream;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
@@ -46,49 +49,75 @@ public class DependencyDownloader {
 
     @SneakyThrows
     private void launch(String[] args) {
-        StringBuilder libs = new StringBuilder();
 
+        List<URL> paths = new ArrayList<>();
         for (File file : depsDir.listFiles()) {
-            libs.append(file.getAbsolutePath()).append(File.pathSeparator);
+            paths.add(file.toURI().toURL());
         }
 
-        String classPathBuilder = "\"" + System.getProperty("java.class.path") + File.pathSeparator + libs + "\"";
-
-        ArrayList<String> jvmArgs = new ArrayList<>();
-
-        String javaHome = System.getProperty("java.home");
-        File javaBinDir = new File(javaHome, "bin");
-        File javaExecutable = findJavaExecutable(javaBinDir);
-
-        if (javaExecutable == null) {
-            System.err.println("无法找到Java可执行文件，退出...");
-            System.err.println("Cannot find Java executable, exiting...");
-            System.exit(-1);
+        String classPath = System.getProperty("java.class.path");
+        if (classPath != null && !classPath.isEmpty()) {
+            String[] p = classPath.split(File.pathSeparator);
+            for (String path : p) {
+                try {
+                    File file = new File(path);
+                    paths.add(file.toURI().toURL());
+                    System.out.println(file.getAbsolutePath());
+                } catch (MalformedURLException e) {
+                    System.err.println("无法转换路径: " + path);
+                }
+            }
         }
 
-        jvmArgs.add(javaExecutable.getAbsolutePath());
-        
-        // dbg
-        if (args == null || args.length == 0) {
-            args = new String[] {
-                "--version", "mcp", 
-                "--accessToken", "0", 
-                "--assetsDir", "assets", 
-                "--assetIndex", "1.8", 
-                "--userProperties", "{}"
-            };
-        }
+        URLClassLoader classLoader = new ChildFirstURLClassLoader(paths.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
 
-        jvmArgs.add("-Dfile.encoding=UTF-8");
-        jvmArgs.add("-cp");
-        jvmArgs.add(classPathBuilder);
-        jvmArgs.add("tritium.launch.Launcher");
-        jvmArgs.addAll(Arrays.asList(args));
+        Class<?> aClass = classLoader.loadClass(Launcher.class.getName());
+        aClass.getMethod("main", String[].class).invoke(null, new Object[]{args});
+        classLoader.close();
 
-        System.out.println("Args: " + String.join(" ", jvmArgs));
-
-        ProcessBuilder game = new ProcessBuilder(jvmArgs);
-        game.inheritIO().start();
+//        StringBuilder libs = new StringBuilder();
+//
+//        for (File file : depsDir.listFiles()) {
+//            libs.append(file.getAbsolutePath()).append(File.pathSeparator);
+//        }
+//
+//        String classPathBuilder = "\"" + System.getProperty("java.class.path") + File.pathSeparator + libs + "\"";
+//
+//        ArrayList<String> jvmArgs = new ArrayList<>();
+//
+//        String javaHome = System.getProperty("java.home");
+//        File javaBinDir = new File(javaHome, "bin");
+//        File javaExecutable = findJavaExecutable(javaBinDir);
+//
+//        if (javaExecutable == null) {
+//            System.err.println("无法找到Java可执行文件，退出...");
+//            System.err.println("Cannot find Java executable, exiting...");
+//            System.exit(-1);
+//        }
+//
+//        jvmArgs.add(javaExecutable.getAbsolutePath());
+//
+//        // dbg
+//        if (args == null || args.length == 0) {
+//            args = new String[] {
+//                "--version", "mcp",
+//                "--accessToken", "0",
+//                "--assetsDir", "assets",
+//                "--assetIndex", "1.8",
+//                "--userProperties", "{}"
+//            };
+//        }
+//
+//        jvmArgs.add("-Dfile.encoding=UTF-8");
+//        jvmArgs.add("-cp");
+//        jvmArgs.add(classPathBuilder);
+//        jvmArgs.add("tritium.launch.Launcher");
+//        jvmArgs.addAll(Arrays.asList(args));
+//
+//        System.out.println("Args: " + String.join(" ", jvmArgs));
+//
+//        ProcessBuilder game = new ProcessBuilder(jvmArgs);
+//        game.inheritIO().start();
     }
 
     /**
