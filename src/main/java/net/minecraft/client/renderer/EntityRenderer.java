@@ -1374,8 +1374,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                         GlStateManager.popMatrix();
 
-
-
                     } else {
                         this.mc.currentScreen.drawScreen((int) k1, (int) l1, partialTicks);
                     }
@@ -1417,7 +1415,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             TransitionAnimation.render();
 
-            MusicToast.render();
+            if (ClientSettings.MUSIC_TOAST.getValue())
+                MusicToast.render();
 
             List<String> hints = this.getHints();
             if (!this.hints.isEmpty()) {

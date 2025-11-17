@@ -72,6 +72,7 @@ public class ClientSettings {
     };
 
     public static final BooleanSetting FRAME_PREDICT = new BooleanSetting("Frame Predict", false);
+    public static final BooleanSetting MUSIC_TOAST = new BooleanSetting("Music Toast", true);
     public static final BooleanSetting RAW_INPUT = new BooleanSetting("Raw Input", false) {
 
         @Override

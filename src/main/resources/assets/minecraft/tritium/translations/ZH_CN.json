@@ -637,6 +637,7 @@
     "mode.Rain.name": "雨",
 
     "setting.frame predict.name": "平滑帧数 (实验性)",
+    "setting.music toast.name": "音乐 Toast",
     "mode.Accum.name": "累加",
     "mode.Framebuffer.name": "帧缓冲",
 

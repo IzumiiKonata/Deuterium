@@ -564,6 +564,8 @@
 
     "setting.borderless window.name": "Borderless window (requires restart)",
 
+    "setting.music toast.name": "Music Toast",
+
     "module.motion blur.name": "Motion Blur",
     "module.motion blur.desc": "Get smoother visuals",
     "setting.amount.name": "Intensity",
