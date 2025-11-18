@@ -44,7 +44,7 @@ public class MusicToast implements SharedRenderingConstants {
         double spacing = 4;
         double contentWidth = musicNotesSize + spacing + FontManager.vanilla.getStringWidth(text);
 
-        offset = -Math.max(120, contentWidth + 8) * 1.25;
+        offset = -Math.max(120, contentWidth + 12) * 1.25;
     }
 
     private int musicNoteColorTick;
@@ -72,7 +72,7 @@ public class MusicToast implements SharedRenderingConstants {
             double spacing = 4;
             double contentWidth = musicNotesSize + spacing + vanilla.getStringWidth(text);
 
-            double toastWidth = Math.max(120, contentWidth + 8), toastHeight = 24;
+            double toastWidth = Math.max(120, contentWidth + 12), toastHeight = 24;
 
             offset = Interpolations.interpBezier(offset, forward ? 0 : -toastWidth * 1.25, .1f);
 
@@ -98,8 +98,6 @@ public class MusicToast implements SharedRenderingConstants {
 
             if (toastWidth > 120) {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(Location.of("tritium/textures/hud/now_playing.png"));
-
-                RenderSystem.nearestFilter();
 
                 RenderSystem.color(-1);
 
