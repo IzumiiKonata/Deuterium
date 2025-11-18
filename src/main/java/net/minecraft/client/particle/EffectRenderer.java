@@ -172,8 +172,10 @@ public class EffectRenderer {
         }
     }
 
+    List<EntityFX> listOfEntityFXToRemove = Lists.newArrayList();
+
     private void updateEffectAlphaLayer(List<EntityFX> entitiesFX) {
-        List<EntityFX> list = Lists.newArrayList();
+        listOfEntityFXToRemove.clear();
         long i = System.currentTimeMillis();
         int j = entitiesFX.size();
 
@@ -186,7 +188,7 @@ public class EffectRenderer {
                 }
 
                 if (entityfx.isDead) {
-                    list.add(entityfx);
+                    listOfEntityFXToRemove.add(entityfx);
                 }
 
                 --j;
@@ -196,20 +198,19 @@ public class EffectRenderer {
                 }
             }
         } catch (ConcurrentModificationException ignored) {
-
         }
 
         if (j > 0) {
             int l = j;
 
-            for (Iterator iterator = entitiesFX.iterator(); iterator.hasNext() && l > 0; --l) {
-                EntityFX entityfx1 = (EntityFX) iterator.next();
+            for (Iterator<EntityFX> iterator = entitiesFX.iterator(); iterator.hasNext() && l > 0; --l) {
+                EntityFX entityfx1 = iterator.next();
                 entityfx1.setDead();
                 iterator.remove();
             }
         }
 
-        entitiesFX.removeAll(list);
+        entitiesFX.removeAll(listOfEntityFXToRemove);
     }
 
     private void tickParticle(final EntityFX particle) {

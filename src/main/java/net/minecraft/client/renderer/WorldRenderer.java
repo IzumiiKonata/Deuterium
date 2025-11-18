@@ -323,12 +323,16 @@ public class WorldRenderer {
         return this.vertexCount * this.vertexFormat.getIntegerSize();
     }
 
+    final VertexFormat vfmt = new VertexFormat();
+
     public void setVertexState(WorldRenderer.State state) {
         this.rawIntBuffer.clear();
         this.growBuffer(state.getRawBuffer().length);
         this.rawIntBuffer.put(state.getRawBuffer());
         this.vertexCount = state.getVertexCount();
-        this.vertexFormat = new VertexFormat(state.getVertexFormat());
+        vfmt.clear();
+        vfmt.deepCopy(state.getVertexFormat());
+        this.vertexFormat = vfmt;
 
         if (state.stateQuadSprites != null) {
             if (this.quadSprites == null) {

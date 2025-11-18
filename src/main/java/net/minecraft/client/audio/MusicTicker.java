@@ -7,12 +7,15 @@ import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
 import tritium.rendering.MusicToast;
 
+import java.util.Optional;
 import java.util.Random;
 
 public class MusicTicker implements ITickable {
     private final Random rand = new Random();
     private final Minecraft mc;
     private ISound currentMusic;
+    @Getter
+    private Location musicLocation = null;
     @Getter
     private int timeUntilNextMusic = 100;
 
@@ -34,6 +37,7 @@ public class MusicTicker implements ITickable {
 
             if (!this.mc.getSoundHandler().isSoundPlaying(this.currentMusic)) {
                 this.currentMusic = null;
+                this.musicLocation = null;
                 this.timeUntilNextMusic = Math.min(MathHelper.getRandomIntegerInRange(this.rand, type.getMinDelay(), type.getMaxDelay()), this.timeUntilNextMusic);
             }
         }
@@ -47,6 +51,7 @@ public class MusicTicker implements ITickable {
         this.currentMusic = PositionedSoundRecord.create(type.getMusicLocation());
         Location location = this.mc.getSoundHandler().playSound(this.currentMusic);
         MusicToast.pushMusicToast(location);
+        musicLocation = location;
 //        System.out.println("Playing: " + location);
         this.timeUntilNextMusic = Integer.MAX_VALUE;
     }
@@ -55,6 +60,7 @@ public class MusicTicker implements ITickable {
         if (this.currentMusic != null) {
             this.mc.getSoundHandler().stopSound(this.currentMusic);
             this.currentMusic = null;
+            this.musicLocation = null;
             this.timeUntilNextMusic = 0;
         }
     }

@@ -2,6 +2,7 @@ package tritium.widget.impl.keystrokes;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.util.LazyLoadBase;
 import org.lwjgl.input.Keyboard;
 import tritium.interfaces.IFontRenderer;
 import tritium.interfaces.SharedRenderingConstants;
@@ -29,12 +30,22 @@ public class Key implements SharedRenderingConstants {
 
     List<Circle> circles = new ArrayList<>();
 
+    private final LazyLoadBase<String> keyName;
+
     public Key(KeyBinding key, double xOffset, double yOffset, double width, double height) {
         this.key = key;
         this.xOffset = xOffset;
         this.yOffset = yOffset;
         this.width = width;
         this.height = height;
+
+        this.keyName = LazyLoadBase.of(() -> {
+            if (key.getKeyCode() <= -99) {
+                return this.key.getKeyCode() == -100 ? "L" : "R";
+            }
+
+            return Keyboard.getKeyName(this.key.getKeyCode());
+        });
     }
 
     public void render(double x, double y) {
@@ -110,11 +121,6 @@ public class Key implements SharedRenderingConstants {
     }
 
     private String getKeyName() {
-
-        if (this.key.getKeyCode() <= -99) {
-            return this.key.getKeyCode() == -100 ? "L" : "R";
-        }
-
-        return Keyboard.getKeyName(this.key.getKeyCode());
+        return this.keyName.getValue();
     }
 }

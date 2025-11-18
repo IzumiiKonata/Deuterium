@@ -1,6 +1,7 @@
 package net.minecraft.util;
 
 import net.optifine.util.MathUtils;
+import tritium.utils.math.Mth;
 
 import java.util.Random;
 import java.util.UUID;
@@ -77,16 +78,14 @@ public class MathHelper {
      * Returns the greatest integer less than or equal to the double argument
      */
     public static int floor_double(double value) {
-        int i = (int) value;
-        return value < (double) i ? i - 1 : i;
+        return Mth.floor(value);
     }
 
     /**
      * Long version of floor_double
      */
     public static long floor_double_long(double value) {
-        long i = (long) value;
-        return value < (double) i ? i - 1L : i;
+        return Mth.lfloor(value);
     }
 
     public static int func_154353_e(double value) {

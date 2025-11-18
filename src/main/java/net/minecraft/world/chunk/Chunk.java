@@ -1224,7 +1224,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
                 boolean flag = y == 0 || y == 15 || k == 0 || k == 15 || l == 0 || l == 15;
 
                 if (storage == null && flag || storage != null && storage.getBlockByExtId(k, y, l).getMaterial() == Material.air) {
-                    for (EnumFacing enumfacing : EnumFacing.values()) {
+                    for (EnumFacing enumfacing : EnumFacing.VALUES) {
                         BlockPos blockpos2 = blockpos1.offset(enumfacing);
 
                         if (this.worldObj.getBlockState(blockpos2).getBlock().getLightValue() > 0) {

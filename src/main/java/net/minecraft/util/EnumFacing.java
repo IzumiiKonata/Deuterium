@@ -284,7 +284,7 @@ public enum EnumFacing implements IStringSerializable {
      * Choose a random Facing using the given Random
      */
     public static EnumFacing random(Random rand) {
-        return values()[rand.nextInt(values().length)];
+        return VALUES[rand.nextInt(VALUES.length)];
     }
 
     public static EnumFacing getFacingFromVector(float x, float y, float z) {

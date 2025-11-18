@@ -1,11 +1,9 @@
 package tritium.rendering;
 
+import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.LazyLoadBase;
 import net.minecraft.util.Location;
 import tritium.interfaces.IFontRenderer;
@@ -26,6 +24,7 @@ import java.util.Map;
 @UtilityClass
 public class MusicToast implements SharedRenderingConstants {
 
+    @Getter
     private final Map<String, String> locationToName = new HashMap<>();
 
     final LazyLoadBase<AnimatedTexture> musicNotes = LazyLoadBase.of(() -> {
@@ -45,8 +44,7 @@ public class MusicToast implements SharedRenderingConstants {
         double spacing = 4;
         double contentWidth = musicNotesSize + spacing + FontManager.vanilla.getStringWidth(text);
 
-        renderOffset = -Math.max(120, contentWidth + 8) * 1.25;
-        offset = (int) renderOffset;
+        offset = -Math.max(120, contentWidth + 8) * 1.25;
     }
 
     private int musicNoteColorTick;
@@ -54,8 +52,7 @@ public class MusicToast implements SharedRenderingConstants {
     private int musicNoteColor;
     private String text = null;
     private boolean forward = true;
-    private int offset = -240;
-    private double renderOffset = -240;
+    private double offset = -240;
     private long waitStart = -1L;
 
     public void tickMusicNotes() {
@@ -65,6 +62,7 @@ public class MusicToast implements SharedRenderingConstants {
             musicNoteColor = getLerpedColor(++musicNoteColorTick);
         }
     }
+
 
     public void render() {
         if (text != null) {
@@ -76,13 +74,12 @@ public class MusicToast implements SharedRenderingConstants {
 
             double toastWidth = Math.max(120, contentWidth + 8), toastHeight = 24;
 
-            renderOffset = Interpolations.interpBezier(renderOffset, forward ? 0 : -toastWidth * 1.25, .1f);
-            offset = (int) renderOffset;
+            offset = Interpolations.interpBezier(offset, forward ? 0 : -toastWidth * 1.25, .1f);
 
             double offsetX = offset + 1;
             double offsetY = 1;
 
-            if (forward && renderOffset >= -.5) {
+            if (forward && offset >= -.5) {
 
                 if (waitStart == -1L) {
                     waitStart = System.currentTimeMillis();
@@ -94,7 +91,7 @@ public class MusicToast implements SharedRenderingConstants {
 
             }
 
-            if (!forward && renderOffset <= -toastWidth * 1.2) {
+            if (!forward && offset <= -toastWidth * 1.2) {
                 text = null;
                 return;
             }
@@ -140,7 +137,7 @@ public class MusicToast implements SharedRenderingConstants {
             return;
 
         String string = playingSound.toString();
-        System.out.println( string);
+//        System.out.println( string);
         pushMusicToast(locationToName.getOrDefault(string, "Unknown"));
     }
 

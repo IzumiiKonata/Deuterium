@@ -45,6 +45,14 @@ public class VertexFormat {
         this.vertexSize = 0;
     }
 
+    public void deepCopy(VertexFormat vertexFormatIn) {
+        for (int i = 0; i < vertexFormatIn.getElementCount(); ++i) {
+            this.addElement(vertexFormatIn.getElement(i));
+        }
+
+        this.vertexSize = vertexFormatIn.getSize();
+    }
+
     @SuppressWarnings("incomplete-switch")
     public VertexFormat addElement(VertexFormatElement element) {
         if (element.isPositionElement() && this.hasPosition()) {
