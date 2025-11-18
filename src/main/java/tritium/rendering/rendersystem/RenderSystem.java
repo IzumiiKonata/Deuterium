@@ -23,7 +23,7 @@ import net.minecraft.util.Location;
 import net.minecraft.util.Timer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.input.Mouse;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.settings.ClientSettings;
 import tritium.utils.res.skin.PlayerSkinTextureCache;
@@ -607,7 +607,7 @@ public class RenderSystem {
         if (alpha < 0) {
             alpha = 0;
         }
-        return ARGB.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, (int) (alpha * 255));
+        return RGBA.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, (int) (alpha * 255));
     }
 
     public static void quickDrawRect(final float x, final float y, final float x2, final float y2) {

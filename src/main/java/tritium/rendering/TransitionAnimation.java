@@ -31,7 +31,7 @@ public class TransitionAnimation {
             return;
 
         Rect.draw(
-                0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), ARGB.color(0, 0, 0, (int) (screeMaskAlpha * 255)), Rect.RectType.EXPAND
+                0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), RGBA.color(0, 0, 0, (int) (screeMaskAlpha * 255)), Rect.RectType.EXPAND
         );
 
         if (increasing && screeMaskAlpha > 0.99) {

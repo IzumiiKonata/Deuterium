@@ -3,10 +3,9 @@ package tritium.rendering.ui;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.interfaces.SharedRenderingConstants;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.ui.container.ScrollPanel;
 import tritium.settings.ClientSettings;
 
 import java.awt.*;
@@ -546,7 +545,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         int red = this.color.getRed();
         int green = this.color.getGreen();
         int blue = this.color.getBlue();
-        return ARGB.color(red, green, blue, (int) (this.getAlpha() * 255));
+        return RGBA.color(red, green, blue, (int) (this.getAlpha() * 255));
     }
 
     public SELF setTransformations(Runnable transformations) {

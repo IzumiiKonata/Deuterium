@@ -1,11 +1,10 @@
 package tritium.settings;
 
 import tritium.bridge.settings.ColorValueWrapper;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.HSBColor;
 import tritium.utils.i18n.Localizable;
 import tritium.module.Module;
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.widget.Widget;
 
 import java.awt.*;
@@ -123,7 +122,7 @@ public class ColorSetting extends Setting<Color> {
         int red = color.getRed();
         int green = color.getGreen();
         int blue = color.getBlue();
-        return ARGB.color(red, green, blue, alp);
+        return RGBA.color(red, green, blue, alp);
     }
 
     @Override

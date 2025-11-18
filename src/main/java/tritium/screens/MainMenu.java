@@ -12,7 +12,7 @@ import net.minecraft.util.Tuple;
 import tritium.Tritium;
 import tritium.interfaces.SharedConstants;
 import tritium.management.*;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.clickable.impl.ClickableIcon;
 import tritium.rendering.entities.clickable.impl.FlatMainMenuButton;
@@ -255,21 +255,21 @@ public class MainMenu extends BaseScreen {
             case Dark:
                 switch (type) {
                     case BACKGROUND:
-                        return ARGB.color(32, 32, 43);
+                        return RGBA.color(32, 32, 43);
                     case BUTTON:
-                        return ARGB.color(32, 32, 32);
+                        return RGBA.color(32, 32, 32);
                     case TEXT:
-                        return ARGB.color(255, 255, 255);
+                        return RGBA.color(255, 255, 255);
                 }
                 break;
             case Light:
                 switch (type) {
                     case BACKGROUND:
-                        return ARGB.color(235, 235, 235);
+                        return RGBA.color(235, 235, 235);
                     case BUTTON:
-                        return ARGB.color(246, 246, 246);
+                        return RGBA.color(246, 246, 246);
                     case TEXT:
-                        return ARGB.color(0, 0, 0);
+                        return RGBA.color(0, 0, 0);
                 }
                 break;
         }

@@ -5,9 +5,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.rendersystem.RenderSystem;
 
 import java.awt.*;
 
@@ -68,19 +67,19 @@ public class ThemeManager extends AbstractManager {
     }
 
     public static int get(ThemeColor c) {
-        return ARGB.color((int) c.r, (int) c.g, (int) c.b, (int) c.a);
+        return RGBA.color((int) c.r, (int) c.g, (int) c.b, (int) c.a);
     }
 
     public static int get(ThemeColor c, int alpha) {
-        return ARGB.color((int) c.r, (int) c.g, (int) c.b, alpha);
+        return RGBA.color((int) c.r, (int) c.g, (int) c.b, alpha);
     }
 
     public static Color getAsColor(ThemeColor c) {
-        return new Color(ARGB.color((int) c.r, (int) c.g, (int) c.b, (int) c.a), true);
+        return new Color(RGBA.color((int) c.r, (int) c.g, (int) c.b, (int) c.a), true);
     }
 
     public static Color getAsColor(ThemeColor c, int alpha) {
-        return new Color(ARGB.color((int) c.r, (int) c.g, (int) c.b, alpha), true);
+        return new Color(RGBA.color((int) c.r, (int) c.g, (int) c.b, alpha), true);
     }
 
 
@@ -100,14 +99,14 @@ public class ThemeManager extends AbstractManager {
     @RequiredArgsConstructor
     public enum Theme {
         Light(
-                ARGB.color(238, 238, 238),
-                ARGB.color(254, 254, 254),
-                ARGB.color(54, 54, 54)
+                RGBA.color(238, 238, 238),
+                RGBA.color(254, 254, 254),
+                RGBA.color(54, 54, 54)
         ),
         Dark(
-                ARGB.color(34, 35, 39),
-                ARGB.color(19, 19, 20),
-                ARGB.color(254, 254, 254)
+                RGBA.color(34, 35, 39),
+                RGBA.color(19, 19, 20),
+                RGBA.color(254, 254, 254)
         );
 
         public final int surface, onSurface, text;

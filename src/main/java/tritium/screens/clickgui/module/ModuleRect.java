@@ -2,7 +2,7 @@ package tritium.screens.clickgui.module;
 
 import tritium.management.FontManager;
 import tritium.module.Module;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -99,12 +99,12 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
         Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), this.getHexColor());
 
         if (this.module != ClientSettings.settingsModule) {
-            Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), ARGB.color(223, 1, 1, (int) (this.getAlpha() * 255)));
+            Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RGBA.color(223, 1, 1, (int) (this.getAlpha() * 255)));
 
             this.moduleEnableAlpha = Interpolations.interpBezier(this.moduleEnableAlpha, this.module.isEnabled() ? 1f : 0f, 0.2f);
 
             if (this.moduleEnableAlpha > .05f) {
-                Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), ARGB.color(1, 223, 1, (int) (Math.min(this.moduleEnableAlpha, this.getAlpha()) * 255)));
+                Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RGBA.color(1, 223, 1, (int) (Math.min(this.moduleEnableAlpha, this.getAlpha()) * 255)));
             }
         }
 

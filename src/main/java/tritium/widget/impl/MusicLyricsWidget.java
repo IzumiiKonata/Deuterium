@@ -8,13 +8,12 @@ import tritium.ncm.music.lyric.LyricLine;
 import tritium.ncm.music.lyric.LyricParser;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
@@ -581,8 +580,8 @@ public class MusicLyricsWidget extends Widget {
                                       boolean shouldRender, int alpha,
                                       boolean isActive) {
         return () -> {
-            int hexColor = ARGB.color(255, 255, 255, alpha);
-            int rgb = ARGB.color(255, 255, 255, isActive ? (int) (lyric.alpha * 255) : 100);
+            int hexColor = RGBA.color(255, 255, 255, alpha);
+            int rgb = RGBA.color(255, 255, 255, isActive ? (int) (lyric.alpha * 255) : 100);
 
             // 根据对齐方式渲染
             renderByAlignment(lyric, renderInfo, secondaryLyric, secondaryLyricEmpty,
@@ -768,7 +767,7 @@ public class MusicLyricsWidget extends Widget {
 
             double stWidth = getFontRenderer().getStringWidthD(word);
             bigFrString(word, offsetX, renderInfo.yPosition,
-                    ARGB.color(255, 255, 255, (int) (wordTiming.alpha * 255)));
+                    RGBA.color(255, 255, 255, (int) (wordTiming.alpha * 255)));
 
             offsetX += stWidth;
         }
@@ -804,7 +803,7 @@ public class MusicLyricsWidget extends Widget {
                 }
 
                 bigFrString(word, offsetX, renderInfo.yPosition,
-                        ARGB.color(255, 255, 255, (int) (wordTiming.alpha * 255)));
+                        RGBA.color(255, 255, 255, (int) (wordTiming.alpha * 255)));
 
                 offsetX += stWidth;
             }

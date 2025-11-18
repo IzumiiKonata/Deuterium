@@ -8,7 +8,7 @@ import tritium.interfaces.IFontRenderer;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.Stencil;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
@@ -62,8 +62,8 @@ public class Key implements SharedRenderingConstants {
 
             this.pressedAlpha = Interpolations.interpBezier(this.pressedAlpha, this.key.pressed ? 120 * RenderSystem.DIVIDE_BY_255 : 0, 0.2f);
 
-            Rect.draw(x + xOffset, y + yOffset, width, height, ARGB.color(0, 0, 0, 50), Rect.RectType.EXPAND);
-            Rect.draw(x + xOffset, y + yOffset, width, height, ARGB.color(255, 255, 255, (int) (this.pressedAlpha * 255)), Rect.RectType.EXPAND);
+            Rect.draw(x + xOffset, y + yOffset, width, height, RGBA.color(0, 0, 0, 50), Rect.RectType.EXPAND);
+            Rect.draw(x + xOffset, y + yOffset, width, height, RGBA.color(255, 255, 255, (int) (this.pressedAlpha * 255)), Rect.RectType.EXPAND);
 
             Stencil.write();
             Rect.draw(x + xOffset, y + yOffset, width, height, -1, Rect.RectType.EXPAND);

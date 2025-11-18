@@ -14,7 +14,7 @@ import net.minecraft.src.Config;
 import net.optifine.CustomItems;
 import org.lwjgl.opengl.GL11;
 import tritium.management.FontManager;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.utils.player.InvUtils;
 import tritium.widget.Widget;
@@ -61,8 +61,8 @@ public class Inventory extends Widget {
                         double damageBarWidth = 16;
                         double damageWidth = stack.getItemDamage() / maxDamage * damageBarWidth;
 
-                        Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth, 1.5, ARGB.color(0, 0, 0), Rect.RectType.EXPAND);
-                        Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth - damageWidth, 1.5, ARGB.color(0, 255, 0), Rect.RectType.EXPAND);
+                        Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth, 1.5, RGBA.color(0, 0, 0), Rect.RectType.EXPAND);
+                        Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth - damageWidth, 1.5, RGBA.color(0, 255, 0), Rect.RectType.EXPAND);
                     }
                 }
 

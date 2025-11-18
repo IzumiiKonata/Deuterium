@@ -4,7 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.Display;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.FramebufferCaching;
 import tritium.rendering.GLAction;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -120,19 +120,19 @@ public interface SharedRenderingConstants {
     }
 
     default int hexColor(int red, int green, int blue) {
-        return ARGB.color(red, green, blue);
+        return RGBA.color(red, green, blue);
     }
 
     default int hexColor(int red, int green, int blue, int alpha) {
-        return ARGB.color(red, green, blue, alpha);
+        return RGBA.color(red, green, blue, alpha);
     }
 
     default int hexColor(float r, float g, float b) {
-        return ARGB.color(r, g, b);
+        return RGBA.color(r, g, b);
     }
 
     default int hexColor(float r, float g, float b, float a) {
-        return ARGB.color(r, g, b, a);
+        return RGBA.color(r, g, b, a);
     }
 
     default int reAlpha(int color, float alpha) {
@@ -143,7 +143,7 @@ public interface SharedRenderingConstants {
         if (alpha < 0) {
             alpha = 0;
         }
-        return ARGB.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, (int) (alpha * 255));
+        return RGBA.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, (int) (alpha * 255));
     }
 
     default boolean isHovered(double mouseX, double mouseY, double x, double y, double width, double height) {

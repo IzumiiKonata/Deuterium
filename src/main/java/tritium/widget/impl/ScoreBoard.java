@@ -10,9 +10,8 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.EnumChatFormatting;
 import tritium.interfaces.IFontRenderer;
 import tritium.management.FontManager;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.BooleanSetting;
 import tritium.widget.Widget;
 import tritium.interfaces.SharedRenderingConstants;
@@ -107,7 +106,7 @@ public class ScoreBoard extends Widget {
                     Rect.draw(x - 1, y, finalMaxWidth + 3, this.getFontRenderer().getHeight(), hexColor(0, 0, 0, 96), Rect.RectType.EXPAND);
 
                     String name = objective.getDisplayName();
-                    this.drawString(name, x + finalMaxWidth1 * 0.5 - this.getFontRenderer().getStringWidth(name) * 0.5, y, ARGB.color(255, 255, 255, 255));
+                    this.drawString(name, x + finalMaxWidth1 * 0.5 - this.getFontRenderer().getStringWidth(name) * 0.5, y, RGBA.color(255, 255, 255, 255));
                 }
 
                 Rect.draw(x - 1, y + offsetY[0], finalMaxWidth + 3, this.getFontRenderer().getHeight() + 2, hexColor(0, 0, 0, 80), Rect.RectType.EXPAND);
@@ -118,10 +117,10 @@ public class ScoreBoard extends Widget {
                 String left = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score1.getPlayerName());
                 String right = EnumChatFormatting.RED + String.valueOf(score1.getScorePoints());
 
-                this.drawString(left, x + 2, y + offsetY[0], ARGB.color(255, 255, 255, 255));
+                this.drawString(left, x + 2, y + offsetY[0], RGBA.color(255, 255, 255, 255));
 
                 if (!hidePoints.getValue()) {
-                    this.drawString(right, x + finalMaxWidth1 - this.getFontRenderer().getStringWidth(right), y + offsetY[0], ARGB.color(255, 255, 255, 255));
+                    this.drawString(right, x + finalMaxWidth1 - this.getFontRenderer().getStringWidth(right), y + offsetY[0], RGBA.color(255, 255, 255, 255));
                 }
                 offsetY[0] += this.getFontRenderer().getHeight() + 2;
 

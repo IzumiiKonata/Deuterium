@@ -7,7 +7,7 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.Display;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
@@ -33,7 +33,7 @@ public class LoadingRenderer {
     private static final int backgroundColor;
 
     static {
-        backgroundColor = ARGB.color(0, 0, 0, 255);
+        backgroundColor = RGBA.color(0, 0, 0, 255);
     }
 
     private static final Random random = new Random();
@@ -147,7 +147,7 @@ public class LoadingRenderer {
 
                         alphaMask = (float) alphaAnimation.run(0f);
 
-                        Rect.draw(0, 0, width, height, ARGB.color(0, 0, 0, (int) (alphaMask * 255)), Rect.RectType.EXPAND);
+                        Rect.draw(0, 0, width, height, RGBA.color(0, 0, 0, (int) (alphaMask * 255)), Rect.RectType.EXPAND);
 
 //                        GlStateManager.enableAlpha();
 //                        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);

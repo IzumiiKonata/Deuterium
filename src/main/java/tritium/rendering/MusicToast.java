@@ -186,7 +186,7 @@ public class MusicToast implements SharedRenderingConstants {
         float subStep = ((float)(tickCount % colorDuration) + Mth.frac(tick)) / (float)colorDuration;
         int color1 = getModifiedColor(MUSIC_NOTE_COLORS[c1], 1.25f);
         int color2 = getModifiedColor(MUSIC_NOTE_COLORS[c2], 1.25f);
-        return ARGB.srgbLerp(subStep, color1, color2);
+        return RGBA.srgbLerp(subStep, color1, color2);
     }
 
     private int getModifiedColor(DyeColor color, float brightness) {
@@ -194,7 +194,7 @@ public class MusicToast implements SharedRenderingConstants {
             return -1644826;
         }
         int src = color.getTextureDiffuseColor();
-        return ARGB.color(Mth.floor((float)ARGB.red(src) * brightness), Mth.floor((float)ARGB.green(src) * brightness), Mth.floor((float)ARGB.blue(src) * brightness), 255);
+        return RGBA.color(Mth.floor((float) RGBA.red(src) * brightness), Mth.floor((float) RGBA.green(src) * brightness), Mth.floor((float) RGBA.blue(src) * brightness), 255);
     }
 
     public enum DyeColor
@@ -225,8 +225,8 @@ public class MusicToast implements SharedRenderingConstants {
         DyeColor(int id, String name, int textureDiffuseColor, int fireworkColor, int textColor) {
             this.id = id;
             this.name = name;
-            this.textColor = ARGB.opaque(textColor);
-            this.textureDiffuseColor = ARGB.opaque(textureDiffuseColor);
+            this.textColor = RGBA.opaque(textColor);
+            this.textureDiffuseColor = RGBA.opaque(textureDiffuseColor);
             this.fireworkColor = fireworkColor;
         }
 

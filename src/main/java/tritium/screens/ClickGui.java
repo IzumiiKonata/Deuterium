@@ -4,7 +4,7 @@ import lombok.Getter;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import tritium.management.ThemeManager;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.animation.Interpolations;
 import tritium.screens.clickgui.category.CategoriesWindow;
 import tritium.screens.clickgui.Window;
@@ -115,128 +115,128 @@ public class ClickGui extends BaseScreen {
             case Dark:
                 switch (type) {
                     case 0:
-                        return ARGB.color(21, 21, 21);// Menu
+                        return RGBA.color(21, 21, 21);// Menu
                     case 1:
-                        return ARGB.color(255, 255, 255);// Top Title
+                        return RGBA.color(255, 255, 255);// Top Title
                     case 2:
-                        return ARGB.color(21, 21, 21);// Top
+                        return RGBA.color(21, 21, 21);// Top
                     case 3:
-                        return ARGB.color(28, 28, 28);// Main
+                        return RGBA.color(28, 28, 28);// Main
                     case 4:
-                        return ARGB.color(200, 200, 200);// Menu Icon off
+                        return RGBA.color(200, 200, 200);// Menu Icon off
                     case 5:
-                        return ARGB.color(255, 255, 255);// Menu Icon on
+                        return RGBA.color(255, 255, 255);// Menu Icon on
                     case 6:
-                        return ARGB.color(28, 28, 28);// Menu Frame
+                        return RGBA.color(28, 28, 28);// Menu Frame
                     case 7:
-                        return ARGB.color(60, 81, 249);// Menu Chosen Frame
+                        return RGBA.color(60, 81, 249);// Menu Chosen Frame
                     case 8:
-                        return ARGB.color(21, 21, 21);// ModuleList rect
+                        return RGBA.color(21, 21, 21);// ModuleList rect
                     case 9:
-                        return ARGB.color(255, 255, 255);// ModuleList text
+                        return RGBA.color(255, 255, 255);// ModuleList text
                     case 10:
-                        return ARGB.color(37, 38, 43);// ModuleList rect focus
+                        return RGBA.color(37, 38, 43);// ModuleList rect focus
                     case 11:
-                        return ARGB.color(24, 24, 24);// ModuleList setting
+                        return RGBA.color(24, 24, 24);// ModuleList setting
                     case 12:
-                        return ARGB.color(37, 38, 43);// ModuleList setting focus
+                        return RGBA.color(37, 38, 43);// ModuleList setting focus
                     case 13:
-                        return ARGB.color(21, 21, 21);// Module On Hover Rect
+                        return RGBA.color(21, 21, 21);// Module On Hover Rect
                     case 14:
-                        return ARGB.color(255, 255, 255);// Module On Hover Text
+                        return RGBA.color(255, 255, 255);// Module On Hover Text
                     case 15:
-                        return ARGB.color(32, 32, 32);// Value List Menu
+                        return RGBA.color(32, 32, 32);// Value List Menu
                     case 16:
-                        return ARGB.color(255, 255, 255);// ModuleList settings
+                        return RGBA.color(255, 255, 255);// ModuleList settings
                     case 17:
-                        return ARGB.color(255, 255, 255);// Value List Back
+                        return RGBA.color(255, 255, 255);// Value List Back
                     case 18:
-                        return ARGB.color(0, 111, 255);// Value List back focus
+                        return RGBA.color(0, 111, 255);// Value List back focus
                     case 19:
-                        return ARGB.color(255, 255, 255);// Value List title
+                        return RGBA.color(255, 255, 255);// Value List title
                     case 20:
-                        return ARGB.color(255, 255, 255);// Value List Label
+                        return RGBA.color(255, 255, 255);// Value List Label
                     case 21:
-                        return ARGB.color(38, 38, 38);// Boolean Value rect
+                        return RGBA.color(38, 38, 38);// Boolean Value rect
                     case 22:
-                        return ARGB.color(44, 44, 44);// Boolean Value focus
+                        return RGBA.color(44, 44, 44);// Boolean Value focus
                     case 23:
-                        return ARGB.color(38, 38, 38);// Enum Value rect
+                        return RGBA.color(38, 38, 38);// Enum Value rect
                     case 24:
-                        return ARGB.color(44, 44, 44);// Enum Value focus
+                        return RGBA.color(44, 44, 44);// Enum Value focus
                     case 25:
-                        return ARGB.color(52, 52, 52);// Number Value rect
+                        return RGBA.color(52, 52, 52);// Number Value rect
                     case 26:
-                        return ARGB.color(255, 255, 255);// Number Value rounded
+                        return RGBA.color(255, 255, 255);// Number Value rounded
                     case 27:
-                        return ARGB.color(0, 111, 255);// Number Value rect value
+                        return RGBA.color(0, 111, 255);// Number Value rect value
                     case 28:
-                        return ARGB.color(32, 32, 32);// Command Box Rect
+                        return RGBA.color(32, 32, 32);// Command Box Rect
                     case 29:
-                        return ARGB.color(255, 255, 255);// Command Box Text
+                        return RGBA.color(255, 255, 255);// Command Box Text
                 }
             case Light:
                 switch (type) {
                     case 0:
-                        return ARGB.color(236, 240, 241);// Menu
+                        return RGBA.color(236, 240, 241);// Menu
                     case 1:
-                        return ARGB.color(23, 32, 42);// Top Title
+                        return RGBA.color(23, 32, 42);// Top Title
                     case 2:
-                        return ARGB.color(236, 240, 241);// Top
+                        return RGBA.color(236, 240, 241);// Top
                     case 3:
-                        return ARGB.color(240, 243, 244);// Main
+                        return RGBA.color(240, 243, 244);// Main
                     case 4:
-                        return ARGB.color(28, 40, 51);// Menu Icon off
+                        return RGBA.color(28, 40, 51);// Menu Icon off
                     case 5:
-                        return ARGB.color(240, 243, 244);// Menu Icon on
+                        return RGBA.color(240, 243, 244);// Menu Icon on
                     case 6:
-                        return ARGB.color(244, 246, 247);// Menu Frame
+                        return RGBA.color(244, 246, 247);// Menu Frame
                     case 7:
-                        return ARGB.color(52, 73, 94);// Menu Chosen Frame
+                        return RGBA.color(52, 73, 94);// Menu Chosen Frame
                     case 8:
-                        return ARGB.color(234, 236, 238);// ModuleList rect
+                        return RGBA.color(234, 236, 238);// ModuleList rect
                     case 9:
-                        return ARGB.color(23, 32, 42);// ModuleList text
+                        return RGBA.color(23, 32, 42);// ModuleList text
                     case 10:
-                        return ARGB.color(244, 246, 246);// ModuleList rect focus
+                        return RGBA.color(244, 246, 246);// ModuleList rect focus
                     case 11:
-                        return ARGB.color(213, 216, 220);// ModuleList setting
+                        return RGBA.color(213, 216, 220);// ModuleList setting
                     case 12:
-                        return ARGB.color(214, 219, 223);// ModuleList setting focus
+                        return RGBA.color(214, 219, 223);// ModuleList setting focus
                     case 13:
-                        return ARGB.color(234, 236, 238);// Module On Hover Rect
+                        return RGBA.color(234, 236, 238);// Module On Hover Rect
                     case 14:
-                        return ARGB.color(23, 32, 42);// Module On Hover Text
+                        return RGBA.color(23, 32, 42);// Module On Hover Text
                     case 15:
-                        return ARGB.color(251, 252, 252);// Value List Menu
+                        return RGBA.color(251, 252, 252);// Value List Menu
                     case 16:
-                        return ARGB.color(23, 32, 42);// ModuleList settings
+                        return RGBA.color(23, 32, 42);// ModuleList settings
                     case 17:
-                        return ARGB.color(23, 32, 42);// Value List Back
+                        return RGBA.color(23, 32, 42);// Value List Back
                     case 18:
-                        return ARGB.color(0, 111, 255);// Value List back focus
+                        return RGBA.color(0, 111, 255);// Value List back focus
                     case 19:
-                        return ARGB.color(23, 32, 42);// Value List title
+                        return RGBA.color(23, 32, 42);// Value List title
                     case 20:
-                        return ARGB.color(23, 32, 42);// Value List Label
+                        return RGBA.color(23, 32, 42);// Value List Label
                     case 21:
-                        return ARGB.color(234, 237, 237);// Boolean Value rect
+                        return RGBA.color(234, 237, 237);// Boolean Value rect
                     case 22:
-                        return ARGB.color(242, 243, 244);// Boolean Value focus
+                        return RGBA.color(242, 243, 244);// Boolean Value focus
                     case 23:
-                        return ARGB.color(242, 244, 244);// Enum Value rect
+                        return RGBA.color(242, 244, 244);// Enum Value rect
                     case 24:
-                        return ARGB.color(244, 246, 246);// Enum Value focus
+                        return RGBA.color(244, 246, 246);// Enum Value focus
                     case 25:
-                        return ARGB.color(213, 219, 219);// Number Value rect
+                        return RGBA.color(213, 219, 219);// Number Value rect
                     case 26:
-                        return ARGB.color(174, 182, 191);// Number Value rounded
+                        return RGBA.color(174, 182, 191);// Number Value rounded
                     case 27:
-                        return ARGB.color(0, 111, 255);// Number Value rect value
+                        return RGBA.color(0, 111, 255);// Number Value rect value
                     case 28:
-                        return ARGB.color(251, 252, 252);// Command Box Rect
+                        return RGBA.color(251, 252, 252);// Command Box Rect
                     case 29:
-                        return ARGB.color(23, 32, 42);// Command Box Text
+                        return RGBA.color(23, 32, 42);// Command Box Text
                 }
         }
         return 0;

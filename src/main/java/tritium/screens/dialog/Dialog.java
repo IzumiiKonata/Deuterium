@@ -5,9 +5,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.ThemeManager;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.RenderableEntity;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 
@@ -59,7 +58,7 @@ public abstract class Dialog implements SharedRenderingConstants {
     protected void drawBackgroundMask() {
         this.maskAlpha = Interpolations.interpBezier(this.maskAlpha, this.closing ? 0.0f : 0.6f, 0.2f);
         this.alpha = Interpolations.interpBezier(this.alpha, this.closing ? 0.0f : 1f, 0.2f);
-        Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), ARGB.color(0, 0, 0, (int) (this.maskAlpha * 255)), Rect.RectType.EXPAND);
+        Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), RGBA.color(0, 0, 0, (int) (this.maskAlpha * 255)), Rect.RectType.EXPAND);
     }
 
     public void close() {

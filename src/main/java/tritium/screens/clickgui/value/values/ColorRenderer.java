@@ -2,7 +2,7 @@ package tritium.screens.clickgui.value.values;
 
 import org.lwjgl.input.Mouse;
 import tritium.management.FontManager;
-import tritium.rendering.ARGB;
+import tritium.rendering.RGBA;
 import tritium.rendering.HSBColor;
 import tritium.rendering.entities.impl.GradientRect;
 import tritium.rendering.Rect;
@@ -125,7 +125,7 @@ public class ColorRenderer extends AbstractWidget<ColorRenderer> {
                     this.resetAlpha(this.hueMap.get(index), this.getMenuAlpha()), Rect.RectType.EXPAND);
         }
 
-        Rect.draw(positionX + zWidth + 4, positionY + this.getValue().getHue() * zHeight - .5, 8, 1, ARGB.color(0, 0, 0, getMenuAlpha()));
+        Rect.draw(positionX + zWidth + 4, positionY + this.getValue().getHue() * zHeight - .5, 8, 1, RGBA.color(0, 0, 0, getMenuAlpha()));
 
 //        roundedRect(positionX + this.getValue().getHue() * zWidth, positionY + zHeight + 7, 0, 0, 3, 4, Color.WHITE);
 
@@ -160,7 +160,7 @@ public class ColorRenderer extends AbstractWidget<ColorRenderer> {
                 this.resetAlpha(color, this.getMenuAlpha()),
                 GradientRect.RenderType.Expand, GradientRect.GradientType.Vertical).draw();
 
-        Rect.draw(positionX + zWidth + 16, positionY + (this.getValue().getAlpha() * 0.003921568627451F) * zHeight, 8, 1, ARGB.color(0, 0, 0, getMenuAlpha()));
+        Rect.draw(positionX + zWidth + 16, positionY + (this.getValue().getAlpha() * 0.003921568627451F) * zHeight, 8, 1, RGBA.color(0, 0, 0, getMenuAlpha()));
 //        roundedRect(, 0, 0, 3, 4, Color.WHITE);
 
         if (RenderSystem.isHovered(mouseX, mouseY, positionX + zWidth + 16, positionY, 8, zHeight) && Mouse.isButtonDown(0)) {
