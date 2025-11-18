@@ -3,6 +3,7 @@ package tritium.utils.other.info;
 import lombok.Getter;
 
 /**
+ * 版本。
  * @author IzumiiKonata
  * @since 11/19/2023
  */

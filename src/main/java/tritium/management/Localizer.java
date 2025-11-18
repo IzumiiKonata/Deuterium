@@ -25,6 +25,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 /**
+ * 本地化管理器
  * @author IzumiiKonata
  * @since 2023/12/10
  */
@@ -104,7 +105,7 @@ public class Localizer extends AbstractManager {
 
         }
 
-        LANG = languages.get(0);
+        LANG = languages.getFirst();
 
         ClientSettings.LANG.getModes().clear();
 
@@ -112,7 +113,7 @@ public class Localizer extends AbstractManager {
             ClientSettings.LANG.getModes().add(language.getName());
         }
 
-        ClientSettings.LANG.setValue(languages.get(0).getName());
+        ClientSettings.LANG.setValue(languages.getFirst().getName());
 
     }
 
@@ -125,7 +126,7 @@ public class Localizer extends AbstractManager {
 
     @Override
     public void stop() {
-        for (String s : Localizer.missing.stream().distinct().collect(Collectors.toList())) {
+        for (String s : Localizer.missing.stream().distinct().toList()) {
             System.out.println("\"" + s + "\": \"\", ");
         }
     }

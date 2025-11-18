@@ -38,6 +38,7 @@ public class ConfigManager extends AbstractManager {
     static final Timer configSavingScheduler = new Timer();
 
     static {
+        // 定时保存
         configSavingScheduler.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -49,9 +50,7 @@ public class ConfigManager extends AbstractManager {
     @Override
     @SneakyThrows
     public void init() {
-        //判断目录是否存在
         if (!configDir.exists()) {
-            //创建文件夹
             configDir.mkdir();
         }
 
@@ -61,9 +60,7 @@ public class ConfigManager extends AbstractManager {
 
     @SneakyThrows
     public static JsonObject preloadGlobalSettings() {
-        //判断目录是否存在
         if (!configDir.exists()) {
-            //创建文件夹
             configDir.mkdir();
         }
 
@@ -88,9 +85,6 @@ public class ConfigManager extends AbstractManager {
     public void loadConfig() {
 
         WidgetsManager.getWidgets().removeIf(w -> w instanceof StaticTextureWidget || w instanceof GifTextureWidget);
-
-        //加载模块设置
-        //模块配置目录
 
         try {
             @Cleanup
@@ -127,9 +121,7 @@ public class ConfigManager extends AbstractManager {
     @Override
     @SneakyThrows
     public void stop() {
-        //判断目录是否存在
         if (!configDir.exists()) {
-            //创建文件夹
             configDir.mkdir();
         }
 

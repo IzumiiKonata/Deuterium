@@ -21,7 +21,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @since 3/25/2023 11:04 PM
  */
 public class EventManager<T extends Event> extends AbstractManager implements SharedConstants {
-    //方法Map
+    // 方法Map
     private final Map<Type, List<Target>> registrationMap = new HashMap<>();
 
     public EventManager() {
@@ -35,7 +35,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     static MethodHandles.Lookup lookup = MethodHandles.lookup();
 
     /**
-     * 注册该对象中所有被@Handler修饰的方法
+     * 注册该对象中所有被 @Handler 修饰的方法
      *
      * @param obj 类实例
      */
@@ -53,12 +53,12 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
                     Priority priority = method.getAnnotation(Priority.class);
                     pr = priority.priority().getLevel();
                 } else {
-                    //如果没有@Priority注解的话默认就是Normal优先级
+                    // 如果没有 @Priority 注解的话默认就是 Normal 优先级
                     pr = EnumPriority.NORMAL.getLevel();
                 }
 
 //                method.setAccessible(accessible);
-                //获取方法的Event类型
+                // 获取方法的 Event 类型
                 Class<?> eventClass = method.getParameterTypes()[0];
 
                 Target target = new Target(lookup.unreflect(method), eventClass, obj, pr);
@@ -68,7 +68,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
                         registrationMap.get(eventClass).add(target);
                     }
                 } else {
-                    registrationMap.put(eventClass, new CopyOnWriteArrayList<Target>() {
+                    registrationMap.put(eventClass, new CopyOnWriteArrayList<>() {
                         {
                             add(target);
                         }
@@ -87,7 +87,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     }
 
     /**
-     * 取消订阅指定类实例中的带有@Handler注解的方法.
+     * 取消订阅指定类实例中的带有 @Handler 注解的方法.
      *
      * @param source 类实例
      */
@@ -100,7 +100,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     }
 
     /**
-     * 清理Map中的空Entry
+     * 清理 Map 中的空 Entry
      */
     public void cleanMap(boolean onlyEmptyEntries) {
         Iterator<Map.Entry<Type, List<Target>>> mapIterator = registrationMap.entrySet().iterator();
@@ -113,10 +113,10 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     }
 
     /**
-     * 是否有方法可以接受这个event
+     * 是否有方法可以接受这个 event
      *
      * @param eventClass event类型
-     * @return 是否有方法可以接受这个event
+     * @return 是否有方法可以接受这个 event
      */
     @SneakyThrows
     public boolean canReceive(Class<? extends Event> eventClass) {
@@ -138,9 +138,9 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     }
 
     /**
-     * 调用所有注册的event
+     * 调用所有注册的 event
      *
-     * @param event event类型
+     * @param event event 类型
      */
     @SneakyThrows
     public T _call(T event) {
@@ -187,4 +187,5 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     public void stop() {
 
     }
+
 }

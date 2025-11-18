@@ -11,6 +11,11 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
+/**
+ * 字形生成器
+ * @author IzumiKonata
+ * Date 我忘了
+ */
 public class GlyphGenerator {
 
     static final AffineTransform transformation = new AffineTransform();
@@ -60,12 +65,9 @@ public class GlyphGenerator {
     static final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
 
     public static void generate(CFontRenderer fr, char ch, Font originalFont, Location identifier, GlyphLoadedCallback onLoaded) {
-
         Font fallbackFont = getFontForGlyph(ch, originalFont, fr.fallBackFonts);
-        boolean isUsingFallback = fallbackFont != originalFont;
 
         final FontMetrics fontMetrics = fontGraphics.getFontMetrics(fallbackFont);
-        final FontMetrics fontMetricsOrig = fontGraphics.getFontMetrics(originalFont);
 
         transformation.setToIdentity();
         GlyphVector gv = fallbackFont.createGlyphVector(context, String.valueOf(ch));

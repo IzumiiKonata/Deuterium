@@ -6,6 +6,7 @@ import tritium.utils.logging.LogManager;
 import tritium.utils.logging.Logger;
 
 /**
+ * 抽象管理器类
  * @author IzumiiKonata
  * @since 2023/12/10
  */

@@ -20,6 +20,8 @@ import java.util.stream.IntStream;
 
 public class CFontRenderer implements Closeable, IFontRenderer {
 
+    // 所有字形的数据
+    // 65536 个 但是没占多少内存
     public Glyph[] allGlyphs = new Glyph['\uFFFF' + 1];
 
     public Font font;
@@ -63,14 +65,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     private void init(Font font, float sizePx) {
         this.font = font.deriveFont(sizePx * 2);
-
-//        if (this.sizePx == 9.0 && this.font.getFontName().equals(".萍方-简 正规体")) {
-//            for (char c : "单人游戏多设置账号管理".toCharArray()) {
-//                locateGlyph(c);
-//            }
-//        }
-
-//        locateGlyph('A');
     }
 
     public double fontHeight = -1;
@@ -83,10 +77,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         GlyphGenerator.generate(this, ch, this.font, randomIdentifier(), fontHeight -> {
             synchronized (fontHeightLock) {
-//                if (fontHeight > this.fontHeight) {
-//                    System.out.println(font.getFontName() + ", size " + font.getSize() + " to " + fontHeight + ", triggered by char " + ch + ", delta: " + (fontHeight - this.fontHeight));
-//                }
-
                 this.fontHeight = Math.max(this.fontHeight, fontHeight);
             }
         });
@@ -119,26 +109,25 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     private int getColorCode(char c) {
-        switch (c) {
-            case '0': return 0x000000;
-            case '1': return 0x0000AA;
-            case '2': return 0x00AA00;
-            case '3': return 0x00AAAA;
-            case '4': return 0xAA0000;
-            case '5': return 0xAA00AA;
-            case '6': return 0xFFAA00;
-            case '7': return 0xAAAAAA;
-            case '8': return 0x555555;
-            case '9': return 0x5555FF;
-            case 'A': return 0x55FF55;
-            case 'B': return 0x55FFFF;
-            case 'C': return 0xFF5555;
-            case 'D': return 0xFF55FF;
-            case 'E': return 0xFFFF55;
-            case 'F': return 0xFFFFFF;
-
-            default: return Integer.MIN_VALUE; // Default color or throw an exception
-        }
+        return switch (c) {
+            case '0' -> 0x000000;
+            case '1' -> 0x0000AA;
+            case '2' -> 0x00AA00;
+            case '3' -> 0x00AAAA;
+            case '4' -> 0xAA0000;
+            case '5' -> 0xAA00AA;
+            case '6' -> 0xFFAA00;
+            case '7' -> 0xAAAAAA;
+            case '8' -> 0x555555;
+            case '9' -> 0x5555FF;
+            case 'a' -> 0x55FF55;
+            case 'b' -> 0x55FFFF;
+            case 'c' -> 0xFF5555;
+            case 'd' -> 0xFF55FF;
+            case 'e' -> 0xFFFF55;
+            case 'f' -> 0xFFFFFF;
+            default -> Integer.MIN_VALUE; // Default color or throw an exception
+        };
     }
 
     public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
@@ -165,13 +154,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
             if (inSel) {
                 inSel = false;
-                char c1 = Character.toUpperCase(c);
-                if (c1 == 'R') {
+                if (c == 'r') {
                     r2 = r;
                     g2 = g;
                     b2 = b;
                 } else {
-                    int colorCode = this.getColorCode(c1);
+                    int colorCode = this.getColorCode(c);
 
                     if (colorCode != Integer.MIN_VALUE) {
                         int[] col = RGBIntToRGB(colorCode);
@@ -443,6 +431,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return text.split("\n").length * (getFontHeight() + 4) - 4;
     }
 
+    /**
+     * 将给定的字符串 trim 到给定的 width。
+     * 如果有空格则从空格开始分割
+     * 否则从最后一个字符开始
+     * 所有的分割点详见 {@link #findLineBreak(String, int, double)} 中的 breakable
+     */
     public String[] fitWidth(String text, double width) {
         List<String> lines = new ArrayList<>();
 

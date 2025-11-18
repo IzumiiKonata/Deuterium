@@ -37,6 +37,9 @@ public class Tritium {
 
     public static final String NAME = "Tritium";
 
+    /**
+     * 客户端实例
+     */
     @Getter
     private static final Tritium instance = new Tritium();
 
@@ -166,6 +169,7 @@ public class Tritium {
     }
 
     static {
+        // 获取 version.json
         Optional<BuildInfo> buildInfo = VersionUtils.getBuildInfo();
 
         buildInfo
@@ -175,9 +179,12 @@ public class Tritium {
                     int major = Integer.parseInt(splitVer[0]);
                     int minor = Integer.parseInt(splitVer[1]);
                     int patch = Integer.parseInt(splitVer[2]);
+
+                    // 如果存在那么是发行版
                     version = new Version(Version.ReleaseType.Release, major, minor, patch);
                 },
                 () -> {
+                    // 否则就是开发环境
                     String branch = VersionUtils.getCurrentBranch();
                     String currentCommit = VersionUtils.getCurrentCommitShort();
                     version = new Version(currentCommit, branch);

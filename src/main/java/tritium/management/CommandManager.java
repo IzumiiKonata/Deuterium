@@ -33,14 +33,19 @@ public class CommandManager extends AbstractManager {
     }
 
     public void execute(String unformattedCommand) {
+        // 神必正则
+        // 用于匹配引号中括起来的内容
         String[] split = unformattedCommand.split(" (?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1);
 
+        // 然后去除所有引号
         for (int i = 0; i < split.length; i++) {
             split[i] = split[i].replaceAll("\"", "");
         }
 
+        // 第一个是命令名
         String commandName = split[0];
 
+        // 找命令
         boolean foundCommand = false;
         for (Command command : commands) {
             if (commandName.equalsIgnoreCase(command.getName()) || Arrays.asList(command.getAlias()).contains(commandName.toLowerCase())) {
@@ -91,6 +96,11 @@ public class CommandManager extends AbstractManager {
         commands.add(command = new Command(name, name, name, alias));
         return command;
     }
+
+    // 命令注册
+    // 只实现了无参数、一个参数、两个参数、三个参数的命令注册
+    // 而且还得指定参数类型
+    // 麻烦得很
 
     public interface SimpleCommandCallback {
         void execute();

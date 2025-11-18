@@ -37,6 +37,7 @@ public class FontManager extends AbstractManager {
     public static CFontRenderer googleSans16, googleSans18, googleSans16Bold, googleSans18Bold, product18, tahoma18;
     public static FontWrapper googleSans16W, googleSans18W, googleSans16BoldW, googleSans18BoldW, product18W, tahoma18W;
 
+    // 香草字体的 wrapper
     public static IFontRenderer vanilla;
     public static today.opai.api.interfaces.render.Font vanillaWrapper;
 
@@ -198,38 +199,29 @@ public class FontManager extends AbstractManager {
 
         Font font = readFont("/assets/minecraft/tritium/fonts/" + name + ".ttf");
 
-        switch (name) {
-            case "googlesans":
-            case "product":
-            case "tahoma": {
+        // 中文字体默认使用 SF Pro 作为主字体
+        // 因为它们的英文字母太他妈难看了
+        // 丑陋不堪，，
+        return switch (name) {
+            case "googlesans", "product", "tahoma" -> {
                 Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_normal.ttf");
-                return new CFontRenderer(font, size * 0.5f, fallback);
+                yield new CFontRenderer(font, size * 0.5f, fallback);
             }
-
-            case "googlesansbold": {
+            case "googlesansbold" -> {
                 Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_middleblack.ttf");
-                return new CFontRenderer(font, size * 0.5f, fallback);
+                yield new CFontRenderer(font, size * 0.5f, fallback);
             }
-
-            case "pf_normal": {
+            case "pf_normal" -> {
                 Font main = readFont("/assets/minecraft/tritium/fonts/sfregular.otf");
-                return new CFontRenderer(main, size * 0.5f, font);
+                yield new CFontRenderer(main, size * 0.5f, font);
             }
-
-            case "pf_middleblack": {
+            case "pf_middleblack" -> {
                 Font main = readFont("/assets/minecraft/tritium/fonts/sfbold.otf");
-                return new CFontRenderer(main, size * 0.5f, font);
+                yield new CFontRenderer(main, size * 0.5f, font);
             }
-        }
+            default -> new CFontRenderer(font, size * 0.5f, font);
+        };
 
-        return new CFontRenderer(font, size * 0.5f, font);
-    }
-
-    @SneakyThrows
-    public static CFontRenderer createFromExternalFile(float size, File path, String fallBackName) {
-        Font fallBack = Font.createFont(Font.TRUETYPE_FONT, Objects.requireNonNull(FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/" + fallBackName + ".ttf")));
-
-        return new CFontRenderer(Font.createFont(Font.TRUETYPE_FONT, new FileInputStream(path)), size * 0.5f, fallBack);
     }
 
     @Override
