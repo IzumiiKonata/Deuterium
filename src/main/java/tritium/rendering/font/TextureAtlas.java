@@ -3,6 +3,7 @@ package tritium.rendering.font;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL14;
 import tritium.rendering.RGBA;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.MemoryTracker;
@@ -32,8 +33,13 @@ public class TextureAtlas {
 
     public void init() {
         MultiThreadingUtil.runOnMainThread(() -> {
-            this.textureId = GL11.glGenTextures();
+            this.textureId = GlStateManager.generateTexture();
             GlStateManager.bindTexture(textureId);
+
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LEVEL, 0);
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MIN_LOD, 0.0F);
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL12.GL_TEXTURE_MAX_LOD, (float) 0);
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL14.GL_TEXTURE_LOD_BIAS, 0.0F);
 
             GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
@@ -44,6 +50,8 @@ public class TextureAtlas {
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_ALPHA,
                     ATLAS_SIZE, ATLAS_SIZE, 0,
                     GL11.GL_ALPHA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
+
+            GlStateManager.bindTexture(0);
         });
     }
     
@@ -69,6 +77,7 @@ public class TextureAtlas {
                             width, height, 
                             GL11.GL_ALPHA, GL11.GL_UNSIGNED_BYTE, buffer);
 
+        GlStateManager.bindTexture(0);
         MemoryTracker.memFree(buffer);
         
         float u0 = (float) currentX / ATLAS_SIZE;

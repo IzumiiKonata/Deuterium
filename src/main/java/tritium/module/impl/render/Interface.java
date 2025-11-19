@@ -1,5 +1,6 @@
 package tritium.module.impl.render;
 
+import net.minecraft.util.EnumChatFormatting;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
@@ -57,6 +58,8 @@ public class Interface extends Module {
                 }
             }
         }
+
+//        mc.fontRendererObj.drawString(EnumChatFormatting.BOLD + "你的妈妈死掉了ABCDEFGH", 100, 100, 0xff0090ff);
 
 //        NORMAL.add(() -> {
 //            double offsetX = 4, offsetY = 4;

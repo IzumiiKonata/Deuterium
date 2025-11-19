@@ -83,7 +83,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             });
         }
 
-        return gly != null && gly.uploaded ? gly : null;
+        return null;
     }
 
     public float drawString(String s, double x, double y, int color) {
@@ -133,7 +133,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
-        float r2 = r, g2 = g, b2 = b;
         GlStateManager.pushMatrix();
 
         y -= 2.0f;
@@ -145,14 +144,14 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableTexture2D();
 
+        GlStateManager.color(r, g, b, a);
+
         GlStateManager.bindTexture(atlas.getTextureId());
 
         boolean allLoaded = true;
         double xOffset = 0;
         double yOffset = 0;
         boolean inSel = false;
-
-        GlStateManager.color(r2, g2, b2, a);
 
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 
@@ -162,17 +161,14 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (inSel) {
                 inSel = false;
                 if (c == 'r') {
-                    r2 = r; g2 = g; b2 = b;
+                    GlStateManager.color(r, g, b, a);
                 } else {
                     int colorCode = this.getColorCode(c);
                     if (colorCode != Integer.MIN_VALUE) {
                         int[] col = RGBIntToRGB(colorCode);
-                        r2 = col[0] * RenderSystem.DIVIDE_BY_255;
-                        g2 = col[1] * RenderSystem.DIVIDE_BY_255;
-                        b2 = col[2] * RenderSystem.DIVIDE_BY_255;
+                        GlStateManager.color(col[0] * RenderSystem.DIVIDE_BY_255, col[1] * RenderSystem.DIVIDE_BY_255, col[2] * RenderSystem.DIVIDE_BY_255, a);
                     }
                 }
-                GL11.glColor4f(r2, g2, b2, a);
                 continue;
             }
 

@@ -41,14 +41,18 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
         this.renderManager = renderManager;
     }
 
+    AxisAlignedBB aabbFrustum = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+
     public boolean shouldRender(T livingEntity, ICamera camera, double camX, double camY, double camZ) {
         AxisAlignedBB axisalignedbb = livingEntity.getEntityBoundingBox();
 
         if (axisalignedbb.hasNaN() || axisalignedbb.getAverageEdgeLength() == 0.0D) {
-            axisalignedbb = new AxisAlignedBB(livingEntity.posX - 2.0D, livingEntity.posY - 2.0D, livingEntity.posZ - 2.0D, livingEntity.posX + 2.0D, livingEntity.posY + 2.0D, livingEntity.posZ + 2.0D);
+            aabbFrustum.setValue(livingEntity.posX - 2.0D, livingEntity.posY - 2.0D, livingEntity.posZ - 2.0D, livingEntity.posX + 2.0D, livingEntity.posY + 2.0D, livingEntity.posZ + 2.0D);
+        } else {
+            aabbFrustum.setValue(axisalignedbb);
         }
 
-        return livingEntity.isInRangeToRender3d(camX, camY, camZ) && (livingEntity.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(axisalignedbb));
+        return livingEntity.isInRangeToRender3d(camX, camY, camZ) && (livingEntity.ignoreFrustumCheck || camera.isBoundingBoxInFrustum(aabbFrustum));
     }
 
     /**

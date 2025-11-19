@@ -86,9 +86,7 @@ public class LogManager {
             return sw.toString();
         }
 
-        String string = o.toString();
-
-        return string.replaceAll("\\$", "?");
+        return o.toString();
     }
 
     // "{}", "a"
@@ -97,7 +95,18 @@ public class LogManager {
         try {
             int count = 0;
             while (template.contains("{}")) {
-                template = template.replaceFirst("\\{}", LogManager.toString(args[count]));
+
+                int length = template.length();
+                for (int i = 0; i < length; i++) {
+                    char c = template.charAt(i);
+                    if (c == '{') {
+                        if (i + 1 < length && template.charAt(i + 1) == '}') {
+                            String replacement = LogManager.toString(args[count]);
+                            template = template.substring(0, i) + replacement + template.substring(i + 2);
+                            break;
+                        }
+                    }
+                }
                 count++;
             }
 
