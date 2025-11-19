@@ -148,6 +148,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         GlStateManager.bindTexture(atlas.getTextureId());
 
+        GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
+
         boolean allLoaded = true;
         double xOffset = 0;
         double yOffset = 0;
