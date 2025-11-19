@@ -100,9 +100,7 @@ public class MusicSpectrumWidget extends Widget {
             boolean oscilloscope = style == Oscilloscope;
 
             if (compatMode || waveform || oscilloscope) {
-                NORMAL.add(() -> {
-                    this.roundedRect(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 6, 0, 0, 0, 0.4f);
-                });
+                this.roundedRect(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 6, 0, 0, 0, 0.4f);
             }
 
 //            if (this.visualizer != null) {
@@ -146,128 +144,126 @@ public class MusicSpectrumWidget extends Widget {
 
             }
 
-            NORMAL.add(() -> {
+            GlStateManager.pushMatrix();
+
+            if (rect) {
+
+                GlStateManager.enableBlend();
+                GlStateManager.disableTexture2D();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+
                 GlStateManager.pushMatrix();
 
-                if (rect) {
+                GL11.glDepthMask(false);
+                GL11.glDepthFunc(GL11.GL_ALWAYS);
 
-                    GlStateManager.enableBlend();
-                    GlStateManager.disableTexture2D();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+                int step = compatMode ? 8 : 3;
+                spectrumWidth.set((compatMode ? this.getWidth() : RenderSystem.getWidth()) / ((double) renderSpectrum.length / step));
+                this.drawRect(spectrumWidth.get(), renderSpectrum.length, step);
+                GL11.glEnd();
 
-                    GlStateManager.pushMatrix();
-
-                    GL11.glDepthMask(false);
-                    GL11.glDepthFunc(GL11.GL_ALWAYS);
-
-                    GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-                    int step = compatMode ? 8 : 3;
-                    spectrumWidth.set((compatMode ? this.getWidth() : RenderSystem.getWidth()) / ((double) renderSpectrum.length / step));
-                    this.drawRect(spectrumWidth.get(), renderSpectrum.length, step);
-                    GL11.glEnd();
-
-                    GL11.glDepthFunc(GL11.GL_LEQUAL);
-                    GL11.glDepthMask(true);
-
-                    GlStateManager.popMatrix();
-
-                    GlStateManager.enableTexture2D();
-
-                    GL11.glColor4f(1, 1, 1, 1);
-                }
-
-                if (waveform) {
-                    boolean stereo = this.stereo.getValue();
-
-                    double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
-
-                    // ⚠⚠⚠ race conditions 警告 ⚠⚠⚠
-                    if (CloudMusic.player.spectrumDataLFilled) {
-                        GlStateManager.color(1, 1, 1, 1);
-                        this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.waveVertexesBufferBackend, CloudMusic.player.waveVertexes.length / 2);
-                    }
-
-                    if (stereo && CloudMusic.player.spectrumDataRFilled) {
-                        double lineHeight = 0.5;
-                        tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
-
-                        GlStateManager.color(1, 1, 1, 1);
-                        this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.waveRightVertexesBufferBackend, CloudMusic.player.waveRightVertexes.length / 2);
-                    }
-
-                }
-
-                // 渲染oscilloscope模式
-                if (oscilloscope) {
-                    boolean stereo = this.stereo.getValue();
-
-                    double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
-
-                    if (CloudMusic.player.oscilloscopeDataLFilled) {
-                        GlStateManager.color(1, 1, 1, 1);
-                        this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.oscilloscopeVertexesBufferBackendL, CloudMusic.player.oscilloscopeVertexesL.length / 2);
-                    }
-
-                    if (stereo && CloudMusic.player.oscilloscopeDataRFilled) {
-                        double lineHeight = 0.5;
-                        tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
-
-                        GlStateManager.color(1, 1, 1, 1);
-                        this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.oscilloscopeVertexesBufferBackendR, CloudMusic.player.oscilloscopeVertexesR.length / 2);
-                    }
-                }
-
-                if (line) {
-                    GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-
-                    GlStateManager.color(1, 1, 1, 1);
-                    GL11.glDisable(GL11.GL_TEXTURE_2D);
-                    GL11.glEnable(GL11.GL_LINE_SMOOTH);
-                    GL11.glLineWidth(compatMode ? .75f : 1.0f);
-
-                    GL11.glBegin(GL11.GL_LINE_STRIP);
-
-                    double shrink = 4;
-                    int step = compatMode ? 2 : 1;
-
-                    if (compatMode) {
-                        GL11.glVertex2d(this.getX() + 4, this.getY() + this.getHeight() - shrink);
-                        spectrumWidth.set((this.getWidth() - shrink * 2) / ((double) renderSpectrum.length / step));
-                    } else
-                        GL11.glVertex2d(0, RenderSystem.getHeight());
-
-                    for (int i = 0; i < renderSpectrum.length; i += step) {
-                        GlStateManager.color(1, 1, 1, 1);
-                        double height = -renderSpectrum[i] * this.multiplier.getValue() * 10;
-
-                        if (compatMode)
-                            height = Math.max(height, -this.getHeight() + shrink * 2);
-
-                        GL11.glVertex2d((compatMode ? (this.getX() + 4) : 0) + spectrumWidth.get() * (i + 1) / step + spectrumWidth.get() * 0.5, (compatMode ? (this.getY() + this.getHeight() - shrink) : RenderSystem.getHeight()) + height);
-                    }
-
-                    if (compatMode) {
-                        GL11.glVertex2d(this.getX() + this.getWidth() - shrink, this.getY() + this.getHeight() - shrink);
-                    } else
-                        GL11.glVertex2d(RenderSystem.getWidth(), RenderSystem.getHeight());
-
-                    GL11.glEnd();
-                    GL11.glEnable(GL11.GL_TEXTURE_2D);
-                }
-
-                if (rect) {
-                    this.setWidth(-1);
-//                this.setHeight(offset);
-                }
-
-                if (waveform || oscilloscope || compatMode){
-                    this.setWidth(200);
-                    this.setHeight(80);
-                }
+                GL11.glDepthFunc(GL11.GL_LEQUAL);
+                GL11.glDepthMask(true);
 
                 GlStateManager.popMatrix();
-            });
+
+                GlStateManager.enableTexture2D();
+
+                GL11.glColor4f(1, 1, 1, 1);
+            }
+
+            if (waveform) {
+                boolean stereo = this.stereo.getValue();
+
+                double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
+
+                // ⚠⚠⚠ race conditions 警告 ⚠⚠⚠
+                if (CloudMusic.player.spectrumDataLFilled) {
+                    GlStateManager.color(1, 1, 1, 1);
+                    this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.waveVertexesBufferBackend, CloudMusic.player.waveVertexes.length / 2);
+                }
+
+                if (stereo && CloudMusic.player.spectrumDataRFilled) {
+                    double lineHeight = 0.5;
+                    tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
+
+                    GlStateManager.color(1, 1, 1, 1);
+                    this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.waveRightVertexesBufferBackend, CloudMusic.player.waveRightVertexes.length / 2);
+                }
+
+            }
+
+            // 渲染oscilloscope模式
+            if (oscilloscope) {
+                boolean stereo = this.stereo.getValue();
+
+                double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
+
+                if (CloudMusic.player.oscilloscopeDataLFilled) {
+                    GlStateManager.color(1, 1, 1, 1);
+                    this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.oscilloscopeVertexesBufferBackendL, CloudMusic.player.oscilloscopeVertexesL.length / 2);
+                }
+
+                if (stereo && CloudMusic.player.oscilloscopeDataRFilled) {
+                    double lineHeight = 0.5;
+                    tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
+
+                    GlStateManager.color(1, 1, 1, 1);
+                    this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.oscilloscopeVertexesBufferBackendR, CloudMusic.player.oscilloscopeVertexesR.length / 2);
+                }
+            }
+
+            if (line) {
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+
+                GlStateManager.color(1, 1, 1, 1);
+                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GL11.glEnable(GL11.GL_LINE_SMOOTH);
+                GL11.glLineWidth(compatMode ? .75f : 1.0f);
+
+                GL11.glBegin(GL11.GL_LINE_STRIP);
+
+                double shrink = 4;
+                int step = compatMode ? 2 : 1;
+
+                if (compatMode) {
+                    GL11.glVertex2d(this.getX() + 4, this.getY() + this.getHeight() - shrink);
+                    spectrumWidth.set((this.getWidth() - shrink * 2) / ((double) renderSpectrum.length / step));
+                } else
+                    GL11.glVertex2d(0, RenderSystem.getHeight());
+
+                for (int i = 0; i < renderSpectrum.length; i += step) {
+                    GlStateManager.color(1, 1, 1, 1);
+                    double height = -renderSpectrum[i] * this.multiplier.getValue() * 10;
+
+                    if (compatMode)
+                        height = Math.max(height, -this.getHeight() + shrink * 2);
+
+                    GL11.glVertex2d((compatMode ? (this.getX() + 4) : 0) + spectrumWidth.get() * (i + 1) / step + spectrumWidth.get() * 0.5, (compatMode ? (this.getY() + this.getHeight() - shrink) : RenderSystem.getHeight()) + height);
+                }
+
+                if (compatMode) {
+                    GL11.glVertex2d(this.getX() + this.getWidth() - shrink, this.getY() + this.getHeight() - shrink);
+                } else
+                    GL11.glVertex2d(RenderSystem.getWidth(), RenderSystem.getHeight());
+
+                GL11.glEnd();
+                GL11.glEnable(GL11.GL_TEXTURE_2D);
+            }
+
+            if (rect) {
+                this.setWidth(-1);
+//                this.setHeight(offset);
+            }
+
+            if (waveform || oscilloscope || compatMode){
+                this.setWidth(200);
+                this.setHeight(80);
+            }
+
+            GlStateManager.popMatrix();
         }
 
     }

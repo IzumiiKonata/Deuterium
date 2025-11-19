@@ -63,78 +63,75 @@ public class PotionDisplay extends Widget {
 //            this.roundedRectAccentColor(x, y, width, height, 8, this.getFadeAlpha());
 
             double finalY = y;
-            SharedRenderingConstants.NORMAL.add(() -> {
+            GlStateManager.pushMatrix();
+            this.doScale();
 
-                GlStateManager.pushMatrix();
-                this.doScale();
+            if (this.bg.getValue())
+                this.renderStyledBackground(x, finalY, width, height, 8);
 
-                if (this.bg.getValue())
-                    this.renderStyledBackground(x, finalY, width, height, 8);
+            if (!effect.getIsPotionDurationMax()) {
+                Rect.draw(x, finalY, width * ((double) effect.getDuration() / effect.totalDuration), height, hexColor(255, 255, 255, 80), Rect.RectType.EXPAND);
+            }
 
-                if (!effect.getIsPotionDurationMax()) {
-                    Rect.draw(x, finalY, width * ((double) effect.getDuration() / effect.totalDuration), height, hexColor(255, 255, 255, 80), Rect.RectType.EXPAND);
-                }
+            if (potion.hasStatusIcon()) {
+                int iconIndex = potion.getStatusIconIndex();
+                GlStateManager.enableBlend();
+                GlStateManager.disableAlpha();
 
-                if (potion.hasStatusIcon()) {
-                    int iconIndex = potion.getStatusIconIndex();
-                    GlStateManager.enableBlend();
-                    GlStateManager.disableAlpha();
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE);
 
-                    GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE);
+                this.mc.getTextureManager().bindTexture(Location.of("textures/gui/container/inventory.png"));
+                this.drawTexturedModalRect(x + spacing, finalY + spacing, texSize, texSize, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
+            }
 
-                    this.mc.getTextureManager().bindTexture(Location.of("textures/gui/container/inventory.png"));
-                    this.drawTexturedModalRect(x + spacing, finalY + spacing, texSize, texSize, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
-                }
+            String potionName = I18n.format(potion.getName());
 
-                String potionName = I18n.format(potion.getName());
+            if (effect.getAmplifier() == 1) {
+                potionName = potionName + " " + I18n.format("enchantment.level.2");
+            } else if (effect.getAmplifier() == 2) {
+                potionName = potionName + " " + I18n.format("enchantment.level.3");
+            } else if (effect.getAmplifier() == 3) {
+                potionName = potionName + " " + I18n.format("enchantment.level.4");
+            }
 
-                if (effect.getAmplifier() == 1) {
-                    potionName = potionName + " " + I18n.format("enchantment.level.2");
-                } else if (effect.getAmplifier() == 2) {
-                    potionName = potionName + " " + I18n.format("enchantment.level.3");
-                } else if (effect.getAmplifier() == 3) {
-                    potionName = potionName + " " + I18n.format("enchantment.level.4");
-                }
+            IFontRenderer fr = FontManager.vanilla;
 
-                IFontRenderer fr = FontManager.vanilla;
+            fr.drawString(potionName, x + spacing + texSize + spacing, finalY + spacing * 2 + 2, -1);
+            String duration = Potion.getDurationString(effect);
 
-                fr.drawString(potionName, x + spacing + texSize + spacing, finalY + spacing * 2 + 2, -1);
-                String duration = Potion.getDurationString(effect);
+            fr.drawString(duration, x + spacing + texSize + spacing, finalY + spacing * 2 + fr.getHeight() + spacing, hexColor(255, 255, 255, 180));
 
-                fr.drawString(duration, x + spacing + texSize + spacing, finalY + spacing * 2 + fr.getHeight() + spacing, hexColor(255, 255, 255, 180));
+            if (highlight.getValue() && !effect.getIsPotionDurationMax()) {
+                int sec = effect.getDuration() / 20;
+                int min = sec / 60;
+                sec = sec % 60;
 
-                if (highlight.getValue() && !effect.getIsPotionDurationMax()) {
-                    int sec = effect.getDuration() / 20;
-                    int min = sec / 60;
-                    sec = sec % 60;
+                double offset = 2;
 
-                    double offset = 2;
+                if (sec <= 15 && min == 0) {
 
-                    if (sec <= 15 && min == 0) {
+                    float speed = 0.2f;
 
-                        float speed = 0.2f;
+                    if (effect.fade) {
+                        effect.hightlightAlpha = Interpolations.interpBezier(effect.hightlightAlpha, 0.0F, speed);
 
-                        if (effect.fade) {
-                            effect.hightlightAlpha = Interpolations.interpBezier(effect.hightlightAlpha, 0.0F, speed);
-
-                            if (effect.hightlightAlpha < 0.02f) {
-                                effect.fade = false;
-                            }
-                        } else {
-                            effect.hightlightAlpha = Interpolations.interpBezier(effect.hightlightAlpha, 1.0F, speed);
-
-                            if (effect.hightlightAlpha > 0.98f) {
-                                effect.fade = true;
-                            }
+                        if (effect.hightlightAlpha < 0.02f) {
+                            effect.fade = false;
                         }
+                    } else {
+                        effect.hightlightAlpha = Interpolations.interpBezier(effect.hightlightAlpha, 1.0F, speed);
 
-                        this.roundedOutline(x - offset, finalY - offset, width + offset * 2, height + offset * 2, true ? 3 : 11, 1.5, 1, new Color(1, 1, 1, effect.hightlightAlpha));
+                        if (effect.hightlightAlpha > 0.98f) {
+                            effect.fade = true;
+                        }
                     }
-                }
 
-                GlStateManager.popMatrix();
-            });
+                    this.roundedOutline(x - offset, finalY - offset, width + offset * 2, height + offset * 2, true ? 3 : 11, 1.5, 1, new Color(1, 1, 1, effect.hightlightAlpha));
+                }
+            }
+
+            GlStateManager.popMatrix();
 
             y += height + verticalSpacing;
         }

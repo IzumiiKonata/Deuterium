@@ -53,13 +53,9 @@ public class StaticTextureWidget extends Widget {
 
     @Override
     public void onRender(boolean editing) {
-        SharedRenderingConstants.NORMAL.add(() -> {
-
-            if (mc.getTextureManager().getTexture(location) != null) {
-                Image.drawLinear(location, this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.Normal);
-            }
-
-        });
+        if (mc.getTextureManager().getTexture(location) != null) {
+            Image.drawLinear(location, this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.Normal);
+        }
     }
 
     public Location randomIdentifier() {

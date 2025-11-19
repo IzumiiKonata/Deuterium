@@ -1282,7 +1282,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
 //                    GlStateManager.pushAttrib();
 //                    GlStateManager.pushMatrix();
-                    EventManager.call(new Render2DEvent());
 //                    GlStateManager.popMatrix();
 //                    GlStateManager.popAttrib();
 

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.LazyLoadBase;
 import net.minecraft.util.Location;
 import tritium.interfaces.IFontRenderer;
@@ -100,6 +101,10 @@ public class MusicToast implements SharedRenderingConstants {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(Location.of("tritium/textures/hud/now_playing.png"));
 
                 RenderSystem.color(-1);
+
+                GlStateManager.disableAlpha();
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
                 Gui.drawModalRectWithCustomSizedTexture(offsetX, offsetY, 0, 0, 4, toastHeight, 120, 24);
                 Gui.drawModalRectWithCustomSizedTexture(offsetX + toastWidth - 4, offsetY, 116, 0, 4, toastHeight, 120, 24);

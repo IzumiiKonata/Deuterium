@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.Display;
+import tritium.event.events.rendering.Render2DEvent;
+import tritium.management.EventManager;
 import tritium.rendering.RGBA;
 import tritium.rendering.FramebufferCaching;
 import tritium.rendering.GLAction;
@@ -242,16 +244,11 @@ public interface SharedRenderingConstants {
 
                 RenderSystem.setFrameDeltaTime(Math.max(deltaTime, delta));
 
-                try {
-                    NORMAL.forEach(Runnable::run);
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
+                EventManager.call(new Render2DEvent());
 
                 RenderSystem.setFrameDeltaTime(deltaTime);
 
                 FramebufferCaching.removeCurrentlyBinding();
-
             }
 
             Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
@@ -272,7 +269,7 @@ public interface SharedRenderingConstants {
 
 
         } else {
-            NORMAL.forEach(Runnable::run);
+            EventManager.call(new Render2DEvent());
         }
 
         AFTER.forEach(Runnable::run);
@@ -285,23 +282,14 @@ public interface SharedRenderingConstants {
         BLUR.clear();
         BLOOM.clear();
         PRE_SHADER.clear();
-        UI_BLOOM_RUNNABLES.clear();
-//        UI_RENDER_RUNNABLES.clear();
-        NORMAL.clear();
         AFTER.clear();
-        UI_POST_BLOOM_RUNNABLES.clear();
 
-//        LIMITED_PRE_RENDER_RUNNABLES.clear();
-//        LIMITED_POST_RENDER_RUNNABLES.clear();
     }
 
-    List<Runnable> UI_BLOOM_RUNNABLES = new ArrayList<>();
-    List<Runnable> UI_POST_BLOOM_RUNNABLES = new ArrayList<>();
 
     List<Runnable> BLUR = new ArrayList<>();
     List<Runnable> BLOOM = new ArrayList<>();
     List<Runnable> PRE_SHADER = new ArrayList<>();
-    List<Runnable> NORMAL = new ArrayList<>();
     List<Runnable> AFTER = new ArrayList<>();
 
 }

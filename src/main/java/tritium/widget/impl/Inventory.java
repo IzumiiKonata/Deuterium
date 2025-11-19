@@ -29,61 +29,57 @@ public class Inventory extends Widget {
     public void onRender(boolean editing) {
         double width = 256, height = 88;
 
-        NORMAL.add(() -> {
+        GlStateManager.pushMatrix();
+        this.doScale();
 
-            GlStateManager.pushMatrix();
-            this.doScale();
+        Rect.draw(this.getX(), this.getY(), width, height, hexColor(0, 0, 0, 100), Rect.RectType.EXPAND);
 
-            Rect.draw(this.getX(), this.getY(), width, height, hexColor(0, 0, 0, 100), Rect.RectType.EXPAND);
+        double offsetX = this.getX() + 4, offsetY = this.getY() + 4;
+        double stackWidth = 24, stackHeight = 24;
+        double spacing = 4;
 
-            double offsetX = this.getX() + 4, offsetY = this.getY() + 4;
-            double stackWidth = 24, stackHeight = 24;
-            double spacing = 4;
+        int count = 0;
 
-            int count = 0;
+        for (ItemStack stack : InvUtils.getInventoryContent()) {
 
-            for (ItemStack stack : InvUtils.getInventoryContent()) {
+            Rect.draw(offsetX, offsetY, stackWidth, stackHeight, hexColor(0, 0, 0, 20), Rect.RectType.EXPAND);
 
-                Rect.draw(offsetX, offsetY, stackWidth, stackHeight, hexColor(0, 0, 0, 20), Rect.RectType.EXPAND);
+            if (stack != null) {
+                if (stack.getItem() instanceof ItemBlock)
+                    this.renderItem(stack, offsetX + 4, offsetY + 4, 0.25);
+                else
+                    this.renderItem(stack, offsetX + 3.5, offsetY + 4, 0.25);
 
-                if (stack != null) {
-                    if (stack.getItem() instanceof ItemBlock)
-                        this.renderItem(stack, offsetX + 4, offsetY + 4, 0.25);
-                    else
-                        this.renderItem(stack, offsetX + 3.5, offsetY + 4, 0.25);
-
-                    if (stack.stackSize != 1) {
-                        FontManager.pf14.drawString(String.valueOf(stack.stackSize), offsetX + 20, offsetY + 20, -1);
-                    }
-
-                    if (stack.isItemDamaged()) {
-                        double maxDamage = stack.getMaxDamage();
-                        double damageBarWidth = 16;
-                        double damageWidth = stack.getItemDamage() / maxDamage * damageBarWidth;
-
-                        Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth, 1.5, RGBA.color(0, 0, 0), Rect.RectType.EXPAND);
-                        Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth - damageWidth, 1.5, RGBA.color(0, 255, 0), Rect.RectType.EXPAND);
-                    }
+                if (stack.stackSize != 1) {
+                    FontManager.pf14.drawString(String.valueOf(stack.stackSize), offsetX + 20, offsetY + 20, -1);
                 }
 
-                offsetX += stackWidth + spacing;
-                count++;
+                if (stack.isItemDamaged()) {
+                    double maxDamage = stack.getMaxDamage();
+                    double damageBarWidth = 16;
+                    double damageWidth = stack.getItemDamage() / maxDamage * damageBarWidth;
 
-                if (count > 8) {
-                    offsetX = this.getX() + 4;
-                    offsetY += stackHeight + spacing;
-                    count = 0;
+                    Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth, 1.5, RGBA.color(0, 0, 0), Rect.RectType.EXPAND);
+                    Rect.draw(offsetX + stackWidth / 2.0 - damageBarWidth / 2.0, offsetY + stackHeight - 1, damageBarWidth - damageWidth, 1.5, RGBA.color(0, 255, 0), Rect.RectType.EXPAND);
                 }
-
-
             }
 
-            this.setWidth(width);
-            this.setHeight(height);
+            offsetX += stackWidth + spacing;
+            count++;
 
-            GlStateManager.popMatrix();
+            if (count > 8) {
+                offsetX = this.getX() + 4;
+                offsetY += stackHeight + spacing;
+                count = 0;
+            }
 
-        });
+
+        }
+
+        this.setWidth(width);
+        this.setHeight(height);
+
+        GlStateManager.popMatrix();
     }
 
     private void renderItem(ItemStack itemStack, double x, double y, double scale) {

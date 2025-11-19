@@ -20,7 +20,7 @@ public class ExtensionWidgetWrapper extends Widget {
 
     @Override
     public void onRender(boolean editing) {
-        NORMAL.add(widget::render);
+        widget.render();
     }
 
     @Override

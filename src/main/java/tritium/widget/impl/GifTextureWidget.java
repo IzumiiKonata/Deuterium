@@ -62,22 +62,18 @@ public class GifTextureWidget extends Widget {
 
     @Override
     public void onRender(boolean editing) {
-        NORMAL.add(() -> {
+        if (timer.isDelayed(decoder.getDelay(index))) {
+            timer.reset();
+            index += 1;
 
-            if (timer.isDelayed(decoder.getDelay(index))) {
-                timer.reset();
-                index += 1;
-
-                if (index >= location.length) {
-                    index = 0;
-                }
+            if (index >= location.length) {
+                index = 0;
             }
+        }
 
-            if (mc.getTextureManager().getTexture(location[index]) != null) {
-                Image.drawLinear(location[index], this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.Normal);
-            }
-
-        });
+        if (mc.getTextureManager().getTexture(location[index]) != null) {
+            Image.drawLinear(location[index], this.getX(), this.getY(), this.getWidth(), this.getHeight(), Image.Type.Normal);
+        }
     }
 
     public Location randomIdentifier() {

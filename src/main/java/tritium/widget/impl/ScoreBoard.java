@@ -93,43 +93,41 @@ public class ScoreBoard extends Widget {
         List<Score> finalCollection1 = collection;
         int finalMaxWidth1 = maxWidth;
         int finalMaxWidth2 = maxWidth;
-        SharedRenderingConstants.NORMAL.add(() -> {
-            GlStateManager.pushMatrix();
-            this.doScale();
+        GlStateManager.pushMatrix();
+        this.doScale();
 
 
-            for (int i = 0; i < finalCollection1.size(); i++) {
-                if (i == 0) {
+        for (int i = 0; i < finalCollection1.size(); i++) {
+            if (i == 0) {
 //                    GlStateManager.enableAlpha();
 //                    GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0f);
 
-                    Rect.draw(x - 1, y, finalMaxWidth + 3, this.getFontRenderer().getHeight(), hexColor(0, 0, 0, 96), Rect.RectType.EXPAND);
+                Rect.draw(x - 1, y, finalMaxWidth + 3, this.getFontRenderer().getHeight(), hexColor(0, 0, 0, 96), Rect.RectType.EXPAND);
 
-                    String name = objective.getDisplayName();
-                    this.drawString(name, x + finalMaxWidth1 * 0.5 - this.getFontRenderer().getStringWidth(name) * 0.5, y, RGBA.color(255, 255, 255, 255));
-                }
-
-                Rect.draw(x - 1, y + offsetY[0], finalMaxWidth + 3, this.getFontRenderer().getHeight() + 2, hexColor(0, 0, 0, 80), Rect.RectType.EXPAND);
-
-                Score score1 = finalCollection1.get(i);
-
-                ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(score1.getPlayerName());
-                String left = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score1.getPlayerName());
-                String right = EnumChatFormatting.RED + String.valueOf(score1.getScorePoints());
-
-                this.drawString(left, x + 2, y + offsetY[0], RGBA.color(255, 255, 255, 255));
-
-                if (!hidePoints.getValue()) {
-                    this.drawString(right, x + finalMaxWidth1 - this.getFontRenderer().getStringWidth(right), y + offsetY[0], RGBA.color(255, 255, 255, 255));
-                }
-                offsetY[0] += this.getFontRenderer().getHeight() + 2;
-
+                String name = objective.getDisplayName();
+                this.drawString(name, x + finalMaxWidth1 * 0.5 - this.getFontRenderer().getStringWidth(name) * 0.5, y, RGBA.color(255, 255, 255, 255));
             }
 
-            GlStateManager.popMatrix();
-            this.setWidth(finalMaxWidth2);
-            this.setHeight(offsetY[0]);
-        });
+            Rect.draw(x - 1, y + offsetY[0], finalMaxWidth + 3, this.getFontRenderer().getHeight() + 2, hexColor(0, 0, 0, 80), Rect.RectType.EXPAND);
+
+            Score score1 = finalCollection1.get(i);
+
+            ScorePlayerTeam scoreplayerteam1 = scoreboard.getPlayersTeam(score1.getPlayerName());
+            String left = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score1.getPlayerName());
+            String right = EnumChatFormatting.RED + String.valueOf(score1.getScorePoints());
+
+            this.drawString(left, x + 2, y + offsetY[0], RGBA.color(255, 255, 255, 255));
+
+            if (!hidePoints.getValue()) {
+                this.drawString(right, x + finalMaxWidth1 - this.getFontRenderer().getStringWidth(right), y + offsetY[0], RGBA.color(255, 255, 255, 255));
+            }
+            offsetY[0] += this.getFontRenderer().getHeight() + 2;
+
+        }
+
+        GlStateManager.popMatrix();
+        this.setWidth(finalMaxWidth2);
+        this.setHeight(offsetY[0]);
 
 
     }

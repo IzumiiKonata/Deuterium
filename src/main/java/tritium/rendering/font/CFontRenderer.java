@@ -98,7 +98,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         int a = (color >> 24) & 0xff;
 
-        drawString(net.minecraft.util.StringUtils.stripControlCodes(text), x + 1, y + 1, RGBA.color(0, 0, 0, a));
+        drawString(stripControlCodes(text), x + 1, y + 1, RGBA.color(0, 0, 0, a));
         drawString(text, x, y, color);
 
         return this.getStringWidth(text);

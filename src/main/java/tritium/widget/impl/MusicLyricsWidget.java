@@ -332,18 +332,16 @@ public class MusicLyricsWidget extends Widget {
 
         updateScrollOffset(shouldNotDisplayOtherLyrics);
 
-        NORMAL.add(() -> {
-            GlStateManager.pushMatrix();
+        GlStateManager.pushMatrix();
 
-            StencilClipManager.beginClip(() -> {
-                Rect.draw(this.getX() - 2, this.getY(), this.getWidth() + 4, this.getHeight(), -1);
-            });
-
-            renderAllLyrics(shouldNotDisplayOtherLyrics, songProgress);
-
-            cleanupRender();
-            StencilClipManager.endClip();
+        StencilClipManager.beginClip(() -> {
+            Rect.draw(this.getX() - 2, this.getY(), this.getWidth() + 4, this.getHeight(), -1);
         });
+
+        renderAllLyrics(shouldNotDisplayOtherLyrics, songProgress);
+
+        cleanupRender();
+        StencilClipManager.endClip();
     }
 
     /**

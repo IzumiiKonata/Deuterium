@@ -320,7 +320,7 @@ public class BridgeEventHandler {
 
         EventRender2D evt = new EventRender2D(windowResolution, Minecraft.getMinecraft().timer.renderPartialTicks);
 
-        SharedRenderingConstants.NORMAL.add(() -> handler.onRender2D(evt));
+        handler.onRender2D(evt);
     }
 
     /**

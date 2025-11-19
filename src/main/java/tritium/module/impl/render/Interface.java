@@ -53,7 +53,7 @@ public class Interface extends Module {
         if (CloudMusic.currentlyPlaying != null && CloudMusic.player != null) {
             for (PVRenderer pvRenderer : pvRenderers) {
                 if (pvRenderer.isApplicable(CloudMusic.currentlyPlaying.getId())) {
-                    NORMAL.add(pvRenderer::render);
+                    pvRenderer.render();
                     break;
                 }
             }
@@ -87,14 +87,13 @@ public class Interface extends Module {
 //        }
 
         if (ClientSettings.DEBUG_MODE.getValue()) {
-            NORMAL.add(() -> {
-                x = 300;
-                y = 100;
+            x = 300;
+            y = 100;
 
-                debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
+            debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
 
-                x = 500;
-                y = 100;
+            x = 500;
+            y = 100;
 
 //                debug("AsyncGLContext:");
 //                debug("Tasks: " + AsyncGLContext.getTASK_QUEUE().size());
@@ -104,7 +103,6 @@ public class Interface extends Module {
 //
 //                    debug("Thread #" + i + ": " + workerThread.getState());
 //                }
-            });
         }
 
 //        Rect.draw(0, RenderSystem.getHeight() * .5 - .5, RenderSystem.getWidth(), 1, -1);

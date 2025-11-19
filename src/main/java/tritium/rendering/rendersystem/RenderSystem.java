@@ -123,8 +123,8 @@ public class RenderSystem {
         }
 
 
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+//        Tessellator tessellator = Tessellator.getInstance();
+//        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.disableTexture2D();
@@ -132,15 +132,24 @@ public class RenderSystem {
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         RenderSystem.color(color);
 
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION);
-        worldrenderer.pos(left, bottom, 0.0D).endVertex();
-        worldrenderer.pos(right, bottom, 0.0D).endVertex();
-        worldrenderer.pos(right, top, 0.0D).endVertex();
-        worldrenderer.pos(left, top, 0.0D).endVertex();
+        GL11.glBegin(GL_TRIANGLE_STRIP);
 
-        tessellator.draw();
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
+        GL11.glVertex2d(left, bottom);
+        GL11.glVertex2d(right, bottom);
+        GL11.glVertex2d(left, top);
+        GL11.glVertex2d(right, top);
+
+        GL11.glEnd();
+
+//        worldrenderer.begin(7, DefaultVertexFormats.POSITION);
+//        worldrenderer.pos(left, bottom, 0.0D).endVertex();
+//        worldrenderer.pos(right, bottom, 0.0D).endVertex();
+//        worldrenderer.pos(right, top, 0.0D).endVertex();
+//        worldrenderer.pos(left, top, 0.0D).endVertex();
+//
+//        tessellator.draw();
+//        GlStateManager.enableTexture2D();
+//        GlStateManager.disableBlend();
 
 //        RenderSystem.resetColor();
     }

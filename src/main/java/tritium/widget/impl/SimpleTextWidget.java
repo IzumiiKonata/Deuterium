@@ -25,13 +25,11 @@ public abstract class SimpleTextWidget extends Widget {
 
         double spacing = 4;
 
-        SharedRenderingConstants.NORMAL.add(() -> {
-            GlStateManager.pushMatrix();
-            this.doScale();
-            this.renderStyledBackground(this.getX(), this.getY(), spacing * 2 + fr.getStringWidth(text), spacing * (2) + fr.getHeight(), 8);
-            fr.drawString(text, this.getX() + spacing, this.getY() + spacing, -1);
-            GlStateManager.popMatrix();
-        });
+        GlStateManager.pushMatrix();
+        this.doScale();
+        this.renderStyledBackground(this.getX(), this.getY(), spacing * 2 + fr.getStringWidth(text), spacing * (2) + fr.getHeight(), 8);
+        fr.drawString(text, this.getX() + spacing, this.getY() + spacing, -1);
+        GlStateManager.popMatrix();
 
         this.setWidth(spacing * 2 + fr.getStringWidth(text));
         this.setHeight(spacing * 2 + fr.getHeight());

@@ -43,31 +43,27 @@ public class PaperDoll extends Widget {
         double posX = this.getX();
         double posY = this.getY();
 
-
-
         if (ClientSettings.VIDEO_PRESET.getValue() == ClientSettings.VideoPreset.Quality) {
 
-            SharedRenderingConstants.NORMAL.add(() -> {
-                GlStateManager.pushMatrix();
-                this.doScale();
-                GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.pushMatrix();
+            this.doScale();
+            GlStateManager.color(1, 1, 1, 1);
 
-                fb = RenderSystem.createFrameBuffer(fb);
+            fb = RenderSystem.createFrameBuffer(fb);
 
-                fb.bindFramebuffer(true);
-                fb.framebufferClearNoBinding();
+            fb.bindFramebuffer(true);
+            fb.framebufferClearNoBinding();
 //                GlStateManager.pushMatrix();
 
-                drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
-                GlStateManager.popMatrix();
+            drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
+            GlStateManager.popMatrix();
 
 //                GlStateManager.popMatrix();
 
-                mc.getFramebuffer().bindFramebuffer(true);
+            mc.getFramebuffer().bindFramebuffer(true);
 
-                GlStateManager.bindTexture(fb.framebufferTexture);
-                ShaderProgram.drawQuadFlipped();
-            });
+            GlStateManager.bindTexture(fb.framebufferTexture);
+            ShaderProgram.drawQuadFlipped();
 
             SharedRenderingConstants.BLOOM.add(() -> {
 //                GlStateManager.pushMatrix();
@@ -83,13 +79,11 @@ public class PaperDoll extends Widget {
 //                GlStateManager.popMatrix();
             });
         } else {
-            SharedRenderingConstants.NORMAL.add(() -> {
-                GlStateManager.pushMatrix();
-                this.doScale();
-                GlStateManager.color(1, 1, 1, 1);
-                drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
-                GlStateManager.popMatrix();
-            });
+            GlStateManager.pushMatrix();
+            this.doScale();
+            GlStateManager.color(1, 1, 1, 1);
+            drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
+            GlStateManager.popMatrix();
         }
 
 //        GlStateManager.popAttrib();

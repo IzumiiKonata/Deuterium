@@ -26,36 +26,32 @@ public class MouseStrokes extends Widget {
     public void onRender(boolean editing) {
         double width = 100, height = 100;
 
+        GlStateManager.pushMatrix();
+        this.doScale();
 
-        SharedRenderingConstants.NORMAL.add(() -> {
+        this.renderStyledBackground(this.getX(), this.getY(), width, height, 8);
 
-            GlStateManager.pushMatrix();
-            this.doScale();
+        double centerX = this.getX() + width * 0.5;
+        double centerY = this.getY() + height * 0.5;
 
-            this.renderStyledBackground(this.getX(), this.getY(), width, height, 8);
+        double circleSize = 15;
 
-            double centerX = this.getX() + width * 0.5;
-            double centerY = this.getY() + height * 0.5;
+        double x = centerX - circleSize * 0.5 + relativeX;
+        double y = centerY - circleSize * 0.5 + relativeY;
 
-            double circleSize = 15;
+        x = Math.max(this.getX() + 4, Math.min(this.getX() + width - circleSize - 4, x));
+        y = Math.max(this.getY() + 4, Math.min(this.getY() + height - circleSize - 4, y));
 
-            double x = centerX - circleSize * 0.5 + relativeX;
-            double y = centerY - circleSize * 0.5 + relativeY;
+        this.roundedRect(x, y, circleSize, circleSize, circleSize * 0.5 - 0.75, Color.WHITE);
 
-            x = Math.max(this.getX() + 4, Math.min(this.getX() + width - circleSize - 4, x));
-            y = Math.max(this.getY() + 4, Math.min(this.getY() + height - circleSize - 4, y));
+        float speed = 2f;
+        relativeX = Interpolations.interpBezier(relativeX, relativeXSmooth, speed);
+        relativeY = Interpolations.interpBezier(relativeY, relativeYSmooth, speed);
 
-            this.roundedRect(x, y, circleSize, circleSize, circleSize * 0.5 - 0.75, Color.WHITE);
+        relativeXSmooth = Interpolations.interpBezier(relativeXSmooth, 0, speed * 0.5);
+        relativeYSmooth = Interpolations.interpBezier(relativeYSmooth, 0, speed * 0.5);
 
-            float speed = 2f;
-            relativeX = Interpolations.interpBezier(relativeX, relativeXSmooth, speed);
-            relativeY = Interpolations.interpBezier(relativeY, relativeYSmooth, speed);
-
-            relativeXSmooth = Interpolations.interpBezier(relativeXSmooth, 0, speed * 0.5);
-            relativeYSmooth = Interpolations.interpBezier(relativeYSmooth, 0, speed * 0.5);
-
-            GlStateManager.popMatrix();
-        });
+        GlStateManager.popMatrix();
 
         this.setWidth(width);
         this.setHeight(height);

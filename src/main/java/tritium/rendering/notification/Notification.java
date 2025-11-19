@@ -102,32 +102,31 @@ public class Notification implements SharedRenderingConstants {
 
         openCloseAnimation.run(closing ? 0 : width * 0.5);
 
-        NORMAL.add(() -> {
-            RenderSystem.doScissor(renderX + width * 0.5 - openCloseAnimation.getValue(), renderY, openCloseAnimation.getValue() * 2, height + 4);
-            roundedRect(renderX, renderY, width, height, 6, ThemeManager.getAsColor(ThemeManager.ThemeColor.Surface, 255));
+        RenderSystem.doScissor(renderX + width * 0.5 - openCloseAnimation.getValue(), renderY, openCloseAnimation.getValue() * 2, height + 4);
+        roundedRect(renderX, renderY, width, height, 6, ThemeManager.getAsColor(ThemeManager.ThemeColor.Surface, 255));
 
-            int fontColor;
-            switch (this.type) {
-                case INFO:
-                    fontColor = ThemeManager.get(ThemeManager.ThemeColor.Text);
-                    break;
-                case WARNING:
-                    fontColor = 0xffefbc12;
-                    break;
-                case ERROR:
-                    fontColor = 0xfff04747;
-                    break;
-                case SUCCESS:
-                    fontColor = 0xff23ad5c;
-                    break;
-                default:
-                    throw new IllegalArgumentException();
-            }
+        int fontColor;
+        switch (this.type) {
+            case INFO:
+                fontColor = ThemeManager.get(ThemeManager.ThemeColor.Text);
+                break;
+            case WARNING:
+                fontColor = 0xffefbc12;
+                break;
+            case ERROR:
+                fontColor = 0xfff04747;
+                break;
+            case SUCCESS:
+                fontColor = 0xff23ad5c;
+                break;
+            default:
+                throw new IllegalArgumentException();
+        }
 
-            FontManager.pf20bold.drawCenteredString(this.title, renderX + width * 0.5, renderY + 4, fontColor);
+        FontManager.pf20bold.drawCenteredString(this.title, renderX + width * 0.5, renderY + 4, fontColor);
 
-            if (!forever) {
-                double leftTime = (this.stayTime - timer.delayed().toMillis()) / 1000.0;
+        if (!forever) {
+            double leftTime = (this.stayTime - timer.delayed().toMillis()) / 1000.0;
 
 //                String fmt = df.format(leftTime);
 //
@@ -136,21 +135,20 @@ public class Notification implements SharedRenderingConstants {
 
 //                FontManager.pf20.drawString(" (" + fmt + "s)", renderX + 8 + FontManager.pf20bold.getStringWidth(this.title), renderY + 4.5, fontColor);
 
-                progress = ((double) timer.delayed().toMillis() / this.stayTime);
-            }
+            progress = ((double) timer.delayed().toMillis() / this.stayTime);
+        }
 
-            Stencil.write();
-            Rect.draw(renderX, renderY + height - 3, width * progress, 3, -1, Rect.RectType.EXPAND);
-            Stencil.erase();
-            roundedRect(renderX, renderY, width, height, 6, new Color(fontColor));
-            Stencil.dispose();
+        Stencil.write();
+        Rect.draw(renderX, renderY + height - 3, width * progress, 3, -1, Rect.RectType.EXPAND);
+        Stencil.erase();
+        roundedRect(renderX, renderY, width, height, 6, new Color(fontColor));
+        Stencil.dispose();
 
-            CFontRenderer fontRenderer = FontManager.pf18bold;
+        CFontRenderer fontRenderer = FontManager.pf18bold;
 
-            fontRenderer.drawCenteredString(this.message, renderX + width * 0.5, renderY + 10 + fontRenderer.getHeight(), fontColor);
-            width = Math.max(fontRenderer.getStringWidth(this.message) + 8, 160);
-            RenderSystem.endScissor();
-        });
+        fontRenderer.drawCenteredString(this.message, renderX + width * 0.5, renderY + 10 + fontRenderer.getHeight(), fontColor);
+        width = Math.max(fontRenderer.getStringWidth(this.message) + 8, 160);
+        RenderSystem.endScissor();
 
     }
 

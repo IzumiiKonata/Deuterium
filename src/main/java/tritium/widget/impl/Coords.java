@@ -36,26 +36,24 @@ public class Coords extends Widget {
 
         double spacing = 6;
 
-        SharedRenderingConstants.NORMAL.add(() -> {
-            this.renderStyledBackground(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 8);
+        this.renderStyledBackground(this.getX(), this.getY(), this.getWidth(), this.getHeight(), 8);
 
-            GlStateManager.pushMatrix();
-            this.doScale();
+        GlStateManager.pushMatrix();
+        this.doScale();
 
-            double textWidth = fr == FontManager.vanilla ? 80 : 100;
-            double offsetY = this.getY() + spacing;
+        double textWidth = fr == FontManager.vanilla ? 80 : 100;
+        double offsetY = this.getY() + spacing;
 
-            for (String s : text) {
-                fr.drawString(s, this.getX() + spacing, offsetY, -1);
-                textWidth = Math.max(textWidth, fr.getStringWidth(s));
-                offsetY += fr.getHeight() + 2;
-            }
+        for (String s : text) {
+            fr.drawString(s, this.getX() + spacing, offsetY, -1);
+            textWidth = Math.max(textWidth, fr.getStringWidth(s));
+            offsetY += fr.getHeight() + 2;
+        }
 
-            this.setWidth(spacing * 2 + textWidth);
-            this.setHeight(spacing * 2 + (fr.getHeight() + 2) * text.size() - 2);
+        this.setWidth(spacing * 2 + textWidth);
+        this.setHeight(spacing * 2 + (fr.getHeight() + 2) * text.size() - 2);
 
-            GlStateManager.popMatrix();
-        });
+        GlStateManager.popMatrix();
     }
 
     public List<String > getText() {
