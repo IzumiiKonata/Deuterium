@@ -1,6 +1,7 @@
 package tritium.rendering.ui.container;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.lwjgl.input.Keyboard;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
@@ -16,6 +17,8 @@ import java.util.List;
  */
 public class ScrollPanel extends Panel {
 
+    @Getter
+    @Setter
     private double spacing = 0;
     public double actualScrollOffset = 0, targetScrollOffset = 0;
 
@@ -226,7 +229,7 @@ public class ScrollPanel extends Panel {
         }
     }
 
-    private double getChildrenHeightSum() {
+    protected double getChildrenHeightSum() {
         double result = 0;
 
         List<AbstractWidget<?>> children = this.getChildren();
@@ -248,7 +251,7 @@ public class ScrollPanel extends Panel {
         return result;
     }
 
-    private double getChildrenWidthSum() {
+    protected double getChildrenWidthSum() {
         double result = 0;
 
         List<AbstractWidget<?>> children = this.getChildren();
@@ -270,7 +273,7 @@ public class ScrollPanel extends Panel {
         return result;
     }
 
-    private double getChildrenHeightSumHorizontalFill() {
+    protected double getChildrenHeightSumHorizontalFill() {
         double result = 0;
         double offsetX = 0;
 
@@ -340,10 +343,6 @@ public class ScrollPanel extends Panel {
     protected boolean shouldClickChildren(double mouseX, double mouseY) {
 //        System.out.println(this.testHovered(mouseX, mouseY));
         return this.testHovered(mouseX, mouseY);
-    }
-
-    public void setSpacing(double spacing) {
-        this.spacing = spacing;
     }
 
     @Override

@@ -167,8 +167,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 } else {
                     int colorCode = this.getColorCode(c);
                     if (colorCode != Integer.MIN_VALUE) {
-                        int[] col = RGBIntToRGB(colorCode);
-                        GlStateManager.color(col[0] * RenderSystem.DIVIDE_BY_255, col[1] * RenderSystem.DIVIDE_BY_255, col[2] * RenderSystem.DIVIDE_BY_255, a);
+                        int red = colorCode >> 8 * 2 & 0xFF;
+                        int green = colorCode >> 8 & 0xFF;
+                        int blue = colorCode & 0xFF;
+                        GlStateManager.color(red * RenderSystem.DIVIDE_BY_255, green * RenderSystem.DIVIDE_BY_255, blue * RenderSystem.DIVIDE_BY_255, a);
                     }
                 }
                 continue;

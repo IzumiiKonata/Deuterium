@@ -273,7 +273,12 @@ public class ConsoleScreen extends BaseScreen {
                 logsBg.setColor(0xFF232323);
             });
 
-            logsPanel = new ScrollPanel();
+            logsPanel = new ScrollPanel() {
+                @Override
+                protected double getChildrenHeightSum() {
+                    return logsPanel.getChildren().size() * (FontManager.pf14.getFontHeight() + logsPanel.getSpacing()) - logsPanel.getSpacing();
+                }
+            };
             logsBg.addChild(logsPanel);
             logsPanel.setSpacing(3);
 
