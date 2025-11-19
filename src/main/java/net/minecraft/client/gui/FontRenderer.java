@@ -547,7 +547,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
                 boolean canCharBeRandomized = randomCharValue != -1;
 
-                float boldOffset = canCharBeRandomized && !this.unicodeFlag ? this.offsetBold : 0.5F;
+                float boldOffset = canCharBeRandomized && !this.unicodeFlag ? this.offsetBold : 0.0F;
                 boolean flag = (currentChar == 0 || !canCharBeRandomized || this.unicodeFlag) && shadow;
 
                 if (flag) {

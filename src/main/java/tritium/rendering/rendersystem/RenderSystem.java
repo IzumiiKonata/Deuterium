@@ -127,7 +127,9 @@ public class RenderSystem {
 //        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.disableTexture2D();
+        boolean texture2DEnabled = GlStateManager.isTexture2DEnabled();
+        if (texture2DEnabled)
+            GlStateManager.disableTexture2D();
 
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         RenderSystem.color(color);
@@ -148,6 +150,8 @@ public class RenderSystem {
 //        worldrenderer.pos(left, top, 0.0D).endVertex();
 //
 //        tessellator.draw();
+//        if (texture2DEnabled)
+//            GlStateManager.enableTexture2D();
 //        GlStateManager.enableTexture2D();
 //        GlStateManager.disableBlend();
 

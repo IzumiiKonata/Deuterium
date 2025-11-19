@@ -233,6 +233,7 @@ public class Image {
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.enableTexture2D();
         TextureUtils.bindTexture(img.getGlTextureId());
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, tWidth, tHeight, width, height);
 
@@ -240,7 +241,7 @@ public class Image {
             renderDbgInfo("TexID: " + img.getGlTextureId(), x, y, width, height);
         }
 
-        GlStateManager.enableAlpha();
+//        GlStateManager.enableAlpha();
 
     }
 
@@ -253,6 +254,7 @@ public class Image {
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.enableTexture2D();
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());

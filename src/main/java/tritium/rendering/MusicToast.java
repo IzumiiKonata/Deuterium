@@ -97,6 +97,8 @@ public class MusicToast implements SharedRenderingConstants {
                 return;
             }
 
+            GlStateManager.enableTexture2D();
+
             if (toastWidth > 120) {
                 Minecraft.getMinecraft().getTextureManager().bindTexture(Location.of("tritium/textures/hud/now_playing.png"));
 

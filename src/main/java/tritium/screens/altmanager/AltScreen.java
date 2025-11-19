@@ -256,6 +256,8 @@ public class AltScreen extends BaseScreen {
         playerPreviewFb.bindFramebuffer(true);
         playerPreviewFb.framebufferClearNoBinding();
 
+        GlStateManager.enableTexture2D();
+
         GlStateManager.pushMatrix();
         this.drawPlayer(mouseX, mouseY);
         GlStateManager.popMatrix();

@@ -367,6 +367,10 @@ public class GlStateManager {
         textureState[activeTextureUnit].texture2DState.setDisabled();
     }
 
+    public static boolean isTexture2DEnabled() {
+        return textureState[activeTextureUnit].texture2DState.currentState;
+    }
+
     public static int generateTexture() {
 
         if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() && GLFW.glfwGetCurrentContext() <= 0) {
