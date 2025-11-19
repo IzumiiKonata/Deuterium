@@ -482,6 +482,8 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
 //        text = call.getText();
 
+        GlStateManager.enableTexture2D();
+
         char[] charArray = text.toCharArray();
         for (int i = 0; i < text.length(); ++i) {
             char currentChar = charArray[i];
