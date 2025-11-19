@@ -9,6 +9,7 @@ import tritium.Tritium;
 import tritium.interfaces.IFontRenderer;
 import tritium.rendering.RGBA;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.utils.math.Mth;
 import tritium.utils.other.StringUtils;
 
 import java.awt.*;
@@ -26,12 +27,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     public Font font;
     public Font[] fallBackFonts;
-    private final Map<String, Integer> stringWidthMap = new HashMap<>();
     public float sizePx;
+    private TextureAtlas atlas;
 
     public CFontRenderer(Font font, float sizePx) {
         this.sizePx = sizePx;
-
+        this.atlas = new TextureAtlas();
         init(font, sizePx);
     }
 
@@ -71,17 +72,18 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     final Object fontHeightLock = new Object();
 
     private Glyph locateGlyph(char ch) {
-
         Glyph gly = allGlyphs[ch];
-        if (gly != null) return gly;
+        if (gly != null && gly.uploaded) return gly;
 
-        GlyphGenerator.generate(this, ch, this.font, randomIdentifier(), fontHeight -> {
-            synchronized (fontHeightLock) {
-                this.fontHeight = Math.max(this.fontHeight, fontHeight);
-            }
-        });
+        if (gly == null) {
+            GlyphGenerator.generate(this, ch, this.font, atlas, fontHeight -> {
+                synchronized (fontHeightLock) {
+                    this.fontHeight = Math.max(this.fontHeight, fontHeight);
+                }
+            });
+        }
 
-        return null;
+        return gly != null && gly.uploaded ? gly : null;
     }
 
     public float drawString(String s, double x, double y, int color) {
@@ -131,7 +133,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
-
         float r2 = r, g2 = g, b2 = b;
         GlStateManager.pushMatrix();
 
@@ -140,14 +141,20 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         GlStateManager.translate(x, y, 0);
         GlStateManager.scale(0.5f, 0.5f, 1f);
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA,
+                GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableTexture2D();
 
-        boolean bl = true;
+        GlStateManager.bindTexture(atlas.getTextureId());
 
+        boolean allLoaded = true;
         double xOffset = 0;
         double yOffset = 0;
         boolean inSel = false;
+
+        GlStateManager.color(r2, g2, b2, a);
+
+        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -155,20 +162,17 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (inSel) {
                 inSel = false;
                 if (c == 'r') {
-                    r2 = r;
-                    g2 = g;
-                    b2 = b;
+                    r2 = r; g2 = g; b2 = b;
                 } else {
                     int colorCode = this.getColorCode(c);
-
                     if (colorCode != Integer.MIN_VALUE) {
                         int[] col = RGBIntToRGB(colorCode);
-
                         r2 = col[0] * RenderSystem.DIVIDE_BY_255;
                         g2 = col[1] * RenderSystem.DIVIDE_BY_255;
                         b2 = col[2] * RenderSystem.DIVIDE_BY_255;
                     }
                 }
+                GL11.glColor4f(r2, g2, b2, a);
                 continue;
             }
 
@@ -182,22 +186,38 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 continue;
             }
 
-            if (c == '（')
-                c = '(';
-
-            if (c == '）')
-                c = ')';
+            if (c == '（') c = '(';
+            if (c == '）') c = ')';
 
             Glyph glyph = locateGlyph(c);
-            if (glyph != null && glyph.callList != -1 && glyph.textureId != -1) {
-                xOffset += glyph.render(xOffset, yOffset, r2, g2, b2, a);
+            if (glyph != null && glyph.uploaded) {
+                float x0 = (float) xOffset;
+                float y0 = (float) yOffset;
+                float x1 = x0 + glyph.width;
+                float y1 = y0 + glyph.height;
+
+                GL11.glTexCoord2f(glyph.u0, glyph.v0);
+                GL11.glVertex2f(x0, y0);
+
+                GL11.glTexCoord2f(glyph.u0, glyph.v1);
+                GL11.glVertex2f(x0, y1);
+
+                GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                GL11.glVertex2f(x1, y0);
+
+                GL11.glTexCoord2f(glyph.u1, glyph.v1);
+                GL11.glVertex2f(x1, y1);
+
+                xOffset += glyph.width;
             } else {
-                bl = false;
+                allLoaded = false;
             }
         }
 
+        GL11.glEnd();
+
         GlStateManager.popMatrix();
-        return bl;
+        return allLoaded;
     }
 
     public void drawCenteredString(String s, double x, double y, int color) {
@@ -255,47 +275,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public int getStringWidth(String text) {
-
-//        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
-
-//        text = call.getText();
-
-        Integer i = this.stringWidthMap.get(text);
-        if (i != null)
-            return i;
-
-        boolean shouldntAdd = false;
-
-        char[] c = stripControlCodes(text).toCharArray();
-        float currentLine = 0;
-        float maxPreviousLines = 0;
-        for (char c1 : c) {
-            if (c1 == '\n') {
-                maxPreviousLines = Math.max(currentLine, maxPreviousLines);
-                currentLine = 0;
-                continue;
-            }
-
-            if (c1 == '（')
-                c1 = '(';
-
-            if (c1 == '）')
-                c1 = ')';
-
-            Glyph glyph = locateGlyph(c1);
-
-            if (!shouldntAdd) {
-                shouldntAdd = glyph == null || glyph.width == 0;
-            }
-
-            currentLine += glyph == null ? 0 : (glyph.width * 0.5f);
-        }
-
-        if (!shouldntAdd) {
-            this.stringWidthMap.put(text, (int) Math.max(currentLine, maxPreviousLines));
-        }
-
-        return (int) Math.max(currentLine, maxPreviousLines);
+        return Mth.floor(getStringWidthD(text));
     }
 
     private final Map<String, Double> stringWidthMapD = new HashMap<>();
@@ -326,7 +306,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 continue;
 
             Glyph gly = allGlyphs[c];
-            if (gly == null || gly.textureId == -1 || gly.callList == -1)
+            if (gly == null || !gly.uploaded)
                 return false;
         }
 
@@ -382,21 +362,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     @Override
     public void close() {
-        for (Glyph gly : allGlyphs) {
-            if (gly != null) {
-                if (gly.textureId != -1) {
-                    GlStateManager.deleteTexture(gly.textureId);
-                }
-
-                if (gly.callList != -1 && !gly.cached) {
-                    GLAllocation.deleteDisplayLists(gly.callList);
-                    GlyphCache.CALL_LIST_COUNTER.set(GlyphCache.CALL_LIST_COUNTER.get() - 1);
-                }
-            }
-        }
-
+        atlas.destroy();
+        atlas.init();
         allGlyphs = new Glyph['\uFFFF' + 1];
-        stringWidthMap.clear();
         stringWidthMapD.clear();
         fontHeight = -1;
     }

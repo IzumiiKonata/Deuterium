@@ -5,7 +5,6 @@ import lombok.SneakyThrows;
 import tritium.bridge.rendering.font.FontWrapper;
 import tritium.interfaces.IFontRenderer;
 import tritium.rendering.font.CFontRenderer;
-import tritium.rendering.font.GlyphCache;
 
 import java.awt.*;
 import java.io.File;
@@ -70,9 +69,6 @@ public class FontManager extends AbstractManager {
                 c.close();
             }
         });
-
-        GlyphCache.clear();
-        GlyphCache.CALL_LIST_COUNTER.set(0);
     }
 
     public static void loadFonts() {

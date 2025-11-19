@@ -64,7 +64,8 @@ public class GlyphGenerator {
     static final BufferedImage fontImage = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     static final Graphics2D fontGraphics = (Graphics2D) fontImage.getGraphics();
 
-    public static void generate(CFontRenderer fr, char ch, Font originalFont, Location identifier, GlyphLoadedCallback onLoaded) {
+    public static void generate(CFontRenderer fr, char ch, Font originalFont,
+                                TextureAtlas atlas, GlyphLoadedCallback onLoaded) {
         Font fallbackFont = getFontForGlyph(ch, originalFont, fr.fallBackFonts);
 
         final FontMetrics fontMetrics = fontGraphics.getFontMetrics(fallbackFont);
@@ -75,16 +76,15 @@ public class GlyphGenerator {
         int height = getMaxFontHeight(originalFont, fr.fallBackFonts);
 
         Glyph glyph = new Glyph(width, height, ch);
-
         fr.allGlyphs[ch] = glyph;
 
         if (width == 0) {
+            glyph.uploaded = true;
             return;
         }
 
         MultiThreadingUtil.runAsync(() -> {
-            BufferedImage bi = new BufferedImage(width, height,
-                    BufferedImage.TYPE_INT_ARGB);
+            BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
             Graphics2D g2d = bi.createGraphics();
             g2d.setColor(new Color(255, 255, 255, 255));
@@ -103,7 +103,6 @@ public class GlyphGenerator {
             g2d.drawString(String.valueOf(ch), 0, baselineY);
 
             g2d.dispose();
-            fontImage.flush();
 
             for (int x = 0; x < bi.getWidth(); x++) {
                 for (int y = 0; y < bi.getHeight(); y++) {
@@ -115,17 +114,15 @@ public class GlyphGenerator {
 
             onLoaded.onLoaded(height);
 
-            DynamicTexture dynamicTexture = new DynamicTexture(bi, true, true);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(identifier, dynamicTexture);
-
-            bi.flush();
-            glyph.textureId = dynamicTexture.getGlTextureId();
-            MultiThreadingUtil.runOnMainThread(glyph::init);
+            MultiThreadingUtil.runOnMainThread(() -> {
+                TextureAtlas.AtlasRegion region = atlas.upload(bi);
+                if (region != null) {
+                    glyph.setAtlasRegion(region);
+                }
+                bi.flush();
+            });
         });
-
     }
-
-
 
     public interface GlyphLoadedCallback {
         void onLoaded(double fontHeight);

@@ -67,7 +67,8 @@ public class Image {
         
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.enableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
@@ -94,6 +95,7 @@ public class Image {
 
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
+        GlStateManager.enableTexture2D();
 //        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
@@ -122,6 +124,7 @@ public class Image {
 
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
+        GlStateManager.enableTexture2D();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
@@ -150,6 +153,7 @@ public class Image {
 
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
+        GlStateManager.enableTexture2D();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
@@ -203,6 +207,7 @@ public class Image {
         }
 
         GlStateManager.enableBlend();
+        GlStateManager.enableTexture2D();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
@@ -281,6 +286,7 @@ public class Image {
         }
 
         GlStateManager.enableBlend();
+        GlStateManager.enableTexture2D();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.bindTexture(textureId);
@@ -301,6 +307,7 @@ public class Image {
         }
 
         GlStateManager.enableBlend();
+        GlStateManager.enableTexture2D();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
@@ -329,6 +336,7 @@ public class Image {
         }
 
         GlStateManager.enableBlend();
+        GlStateManager.enableTexture2D();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
@@ -398,6 +406,7 @@ public class Image {
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.enableTexture2D();
 //        GlStateManager.bindTexture(textureId);
 
         drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);

@@ -9,7 +9,6 @@ import tritium.rendering.MusicToast;
 import tritium.rendering.Rect;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.font.CFontRenderer;
-import tritium.rendering.font.GlyphCache;
 import tritium.rendering.music.PVRenderer;
 import tritium.rendering.music.impl.*;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -90,7 +89,7 @@ public class Interface extends Module {
             x = 300;
             y = 100;
 
-            debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
+//            debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
 
             x = 500;
             y = 100;
