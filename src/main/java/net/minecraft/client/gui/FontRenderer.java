@@ -456,12 +456,6 @@ public class FontRenderer implements IResourceManagerReloadListener {
     private final int[] charMap;
 
     {
-        char max = 0;
-
-        for (char c : asciiCharsArray) {
-            max = (char) Math.max(max, c);
-        }
-
         charMap = new int['\uFFFF' + 1];
         Arrays.fill(charMap, -1);
         for (int i = 0; i < asciiCharsArray.length; i++) {
@@ -533,7 +527,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
             } else {
                 int randomCharValue = -1;
 
-                if (this.randomStyle && currentChar < charMap.length && (randomCharValue = charMap[currentChar]) != -1) {
+                if (currentChar < charMap.length && (randomCharValue = charMap[currentChar]) != -1 && this.randomStyle) {
                     int desiredCharWidth = this.getCharWidth(currentChar);
                     char charWithTheSameWidth;
 
@@ -547,7 +541,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
                 boolean canCharBeRandomized = randomCharValue != -1;
 
-                float boldOffset = canCharBeRandomized && !this.unicodeFlag ? this.offsetBold : 0.0F;
+                float boldOffset = canCharBeRandomized && !this.unicodeFlag ? this.offsetBold : 0.5F;
                 boolean flag = (currentChar == 0 || !canCharBeRandomized || this.unicodeFlag) && shadow;
 
                 if (flag) {
