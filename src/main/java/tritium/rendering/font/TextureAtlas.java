@@ -88,8 +88,6 @@ public class TextureAtlas {
     private ByteBuffer imageToBuffer(BufferedImage image) {
         int width = image.getWidth();
         int height = image.getHeight();
-        int[] pixels = new int[width * height];
-        image.getRGB(0, 0, width, height, pixels, 0, width);
 
         ByteBuffer buffer = MemoryTracker.memAlloc(width * height);
 

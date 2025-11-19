@@ -48,9 +48,6 @@ public class GlStateManager {
     private static final GlBlendState blendLockState = new GlBlendState();
     private static boolean creatingDisplayList = false;
 
-    public static boolean caching = false;
-    private static boolean blendCacheState = false;
-
     public static void pushAttrib() {
         GL11.glPushAttrib(8256);
     }
@@ -145,9 +142,6 @@ public class GlStateManager {
         if (blendLock.isLocked()) {
             blendLockState.setDisabled();
         } else {
-            if (caching) {
-                blendCacheState = false;
-            }
             blendState.blend.setDisabled();
         }
     }
@@ -156,10 +150,6 @@ public class GlStateManager {
         if (blendLock.isLocked()) {
             blendLockState.setEnabled();
         } else {
-            if (caching) {
-                blendCacheState = true;
-            }
-
             blendState.blend.setEnabled();
         }
     }
@@ -168,11 +158,6 @@ public class GlStateManager {
         if (blendLock.isLocked()) {
             blendLockState.setFactors(srcFactor, dstFactor);
         } else {
-            if (caching) {
-                OpenGlHelper.glBlendFunc(srcFactor, dstFactor, 1, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                return;
-            }
-
             if (srcFactor != blendState.srcFactor || dstFactor != blendState.dstFactor || srcFactor != blendState.srcFactorAlpha || dstFactor != blendState.dstFactorAlpha) {
                 blendState.srcFactor = srcFactor;
                 blendState.dstFactor = dstFactor;
@@ -198,11 +183,6 @@ public class GlStateManager {
         if (blendLock.isLocked()) {
             blendLockState.setFactors(srcFactor, dstFactor, srcFactorAlpha, dstFactorAlpha);
         } else {
-            if (caching && dstFactorAlpha != GL11.GL_ONE_MINUS_SRC_ALPHA) {
-                OpenGlHelper.glBlendFunc(srcFactor, dstFactor, 1, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                return;
-            }
-
             if (srcFactor != blendState.srcFactor || dstFactor != blendState.dstFactor || srcFactorAlpha != blendState.srcFactorAlpha || dstFactorAlpha != blendState.dstFactorAlpha) {
                 blendState.srcFactor = srcFactor;
                 blendState.dstFactor = dstFactor;
@@ -555,11 +535,6 @@ public class GlStateManager {
     }
 
     public static void color(float colorRed, float colorGreen, float colorBlue, float colorAlpha) {
-        if (caching && !blendCacheState && colorAlpha < 1.0F) {
-            GlStateManager.color(colorRed, colorGreen, colorBlue, 1.0F);
-            return;
-        }
-
         if (colorRed != colorState.red || colorGreen != colorState.green || colorBlue != colorState.blue || colorAlpha != colorState.alpha) {
             colorState.red = colorRed;
             colorState.green = colorGreen;
