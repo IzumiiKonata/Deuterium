@@ -200,7 +200,7 @@ public class ConsoleScreen extends BaseScreen {
                 if (keyCode == Keyboard.KEY_ESCAPE || keyCode == Keyboard.KEY_GRAVE) {
                     mc.displayGuiScreen(null);
 
-                    if (keyCode == Keyboard.KEY_GRAVE) {
+                    if (keyCode == Keyboard.KEY_GRAVE && !this.textField.getText().isEmpty()) {
                         this.textField.setText(this.textField.getText().substring(0, this.textField.getText().length() - 1));
                     }
 
