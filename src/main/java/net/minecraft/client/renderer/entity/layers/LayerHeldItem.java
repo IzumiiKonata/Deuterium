@@ -34,11 +34,11 @@ public class LayerHeldItem implements LayerRenderer<EntityLivingBase> {
                 GlStateManager.scale(f, f, f);
             }
 
-            if (ent instanceof EntityPlayer) {
-                if (ent.getHeldItem() != null && ent.getHeldItem().getItem() instanceof ItemSword && (((EntityPlayer) ent).isUsingItem() || ((EntityPlayer) ent).itemInUseCount != 0 || ((EntityPlayer) ent).isBlocking())) {
-                    float itemScale = 0.0325f;
-                    float glScale = 1.05f;
-                    float glAngle = 24405.0f;
+            if (ent instanceof EntityPlayer player) {
+                if (ent.getHeldItem() != null && ent.getHeldItem().getItem() instanceof ItemSword && (player.isUsingItem() || player.itemInUseCount != 0 || player.isBlocking())) {
+                    float itemScale = 0.0650f;
+                    float glScale = 1.1f;
+                    float glAngle = 285;
                     float glAngleX = 137290.0f;
                     float glAngleY = 2009900.0f;
                     float glAngleZ = 2654900.0f;
@@ -56,19 +56,19 @@ public class LayerHeldItem implements LayerRenderer<EntityLivingBase> {
                 } else {
                     ((ModelBiped) this.livingEntityRenderer.getMainModel()).postRenderArm(0.0625f);
                 }
-                if (!((EntityPlayer) ent).isBlocking()) {
+                if (!player.isBlocking()) {
                     GlStateManager.translate(-0.0855f, 0.4775f, 0.1585f);
                     GlStateManager.rotate(-19.0f, 20.0f, 0.0f, -6.0f);
-                } else if (((EntityPlayer) ent).isBlocking()) {
+                } else if (player.isBlocking()) {
                     GlStateManager.translate(-0.0625f, 0.4375f, 0.0625f);
+                }
+
+                if (player.fishEntity != null) {
+                    itemstack = new ItemStack(Items.fishing_rod, 0);
                 }
             } else {
                 ((ModelBiped) this.livingEntityRenderer.getMainModel()).postRenderArm(0.0625f);
                 GlStateManager.translate(-0.0625f, 0.4375f, 0.0625f);
-            }
-
-            if (ent instanceof EntityPlayer && ((EntityPlayer) ent).fishEntity != null) {
-                itemstack = new ItemStack(Items.fishing_rod, 0);
             }
 
             Item item = itemstack.getItem();
