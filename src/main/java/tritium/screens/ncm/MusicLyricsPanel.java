@@ -350,7 +350,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             GlStateManager.pushMatrix();
                             this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
                             Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight() + 6, -1);
-                            RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 8, FontManager.pf65bold.getHeight() + 6, -1, 0);
+                            RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 16, FontManager.pf65bold.getHeight() + 6, -1, 0);
                             GlStateManager.popMatrix();
 
                             baseFb = RenderSystem.createFrameBuffer(baseFb);
