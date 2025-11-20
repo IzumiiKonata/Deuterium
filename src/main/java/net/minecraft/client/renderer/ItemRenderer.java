@@ -127,6 +127,13 @@ public class ItemRenderer {
         float f = entityplayerspIn.prevRenderArmPitch + (entityplayerspIn.renderArmPitch - entityplayerspIn.prevRenderArmPitch) * partialTicks;
         float f1 = entityplayerspIn.prevRenderArmYaw + (entityplayerspIn.renderArmYaw - entityplayerspIn.prevRenderArmYaw) * partialTicks;
         GlStateManager.rotate((entityplayerspIn.rotationPitch - f) * 0.1F, 1.0F, 0.0F, 0.0F);
+
+        BlockAnimations ba = ModuleManager.blockAnimations;
+        if (ba.isEnabled() && ba.isLeftHanded()) {
+            GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * -0.1F, 0.0F, 1.0F, 0.0F);
+            return;
+        }
+
         GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * 0.1F, 0.0F, 1.0F, 0.0F);
     }
 
