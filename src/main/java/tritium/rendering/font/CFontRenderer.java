@@ -183,6 +183,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (c == '\n') {
                 yOffset += this.getHeight() * 2 + 4;
                 xOffset = 0;
+                GL11.glEnd();
+                GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
                 continue;
             }
 
