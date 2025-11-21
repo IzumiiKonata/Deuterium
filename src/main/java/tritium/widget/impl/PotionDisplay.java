@@ -80,6 +80,7 @@ public class PotionDisplay extends Widget {
 
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE);
+                GlStateManager.enableTexture2D();
 
                 this.mc.getTextureManager().bindTexture(Location.of("textures/gui/container/inventory.png"));
                 this.drawTexturedModalRect(x + spacing, finalY + spacing, texSize, texSize, iconIndex % 8 * 18, 198 + iconIndex / 8 * 18, 18, 18);
