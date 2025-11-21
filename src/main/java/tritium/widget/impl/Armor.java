@@ -31,11 +31,11 @@ public class Armor extends Widget {
                 this.renderItem(armor, x, y);
             }
             int damage = armor.getMaxDamage() - armor.getItemDamage();
-            GlStateManager.enableAlpha();
-            GlStateManager.disableCull();
-            GlStateManager.disableBlend();
+//            GlStateManager.enableAlpha();
+//            GlStateManager.disableCull();
+//            GlStateManager.disableBlend();
             GlStateManager.disableLighting();
-            GlStateManager.clear(256);
+//            GlStateManager.clear(256);
             mc.fontRendererObj.drawStringWithShadow(String.valueOf(damage), x + 18, y + 5, -1);
             y += 18;
         }
