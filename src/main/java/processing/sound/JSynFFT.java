@@ -74,7 +74,7 @@ public class JSynFFT extends FixedRateStereoWriterToMono {
 
 				// 计算频率点幅值
 				for (int i = 0; i < FFT_SIZE; i++) {
-					fftOut[i] = (float) Math.hypot(realOut[i] / FFT_SIZE, imagOut[i] / FFT_SIZE);
+					fftOut[i] = (float) hypot(realOut[i] / FFT_SIZE, imagOut[i] / FFT_SIZE);
 				}
 
 				callback.onFFT(fftOut);
@@ -84,6 +84,86 @@ public class JSynFFT extends FixedRateStereoWriterToMono {
 			}
 		});
 	}
+
+    private final int MIN_DOUBLE_EXPONENT = -1074;
+    private final int MAX_DOUBLE_EXPONENT = 1023;
+    final int SQRT_LO_BITS = 12;
+    final int SQRT_LO_TAB_SIZE = (1<<SQRT_LO_BITS);
+    final double[] sqrtXSqrtHiTab = new double[MAX_DOUBLE_EXPONENT-MIN_DOUBLE_EXPONENT+1];
+    final double[] sqrtXSqrtLoTab = new double[SQRT_LO_TAB_SIZE];
+    final double[] sqrtSlopeHiTab = new double[MAX_DOUBLE_EXPONENT-MIN_DOUBLE_EXPONENT+1];
+    final double[] sqrtSlopeLoTab = new double[SQRT_LO_TAB_SIZE];
+    final double HYPOT_MAX_MAG = twoPow(511);
+    final double HYPOT_FACTOR = twoPow(750);
+
+     {
+        for (int i=MIN_DOUBLE_EXPONENT;i<=MAX_DOUBLE_EXPONENT;i++) {
+            double twoPowExpDiv2 = StrictMath.pow(2.0,i*0.5);
+            sqrtXSqrtHiTab[i-MIN_DOUBLE_EXPONENT] = twoPowExpDiv2 * 0.5; // Half sqrt, to avoid overflows.
+            sqrtSlopeHiTab[i-MIN_DOUBLE_EXPONENT] = 1/twoPowExpDiv2;
+        }
+        sqrtXSqrtLoTab[0] = 1.0;
+        sqrtSlopeLoTab[0] = 1.0;
+        final long SQRT_LO_MASK = (0x3FF0000000000000L | (0x000FFFFFFFFFFFFFL>>SQRT_LO_BITS));
+        for (int i=1;i<SQRT_LO_TAB_SIZE;i++) {
+            long xBits = SQRT_LO_MASK | (((long)(i-1))<<(52-SQRT_LO_BITS));
+            double sqrtX = StrictMath.sqrt(Double.longBitsToDouble(xBits));
+            sqrtXSqrtLoTab[i] = sqrtX;
+            sqrtSlopeLoTab[i] = 1/sqrtX;
+        }
+    }
+
+    public double twoPow(int power) {
+        if (power <= -MAX_DOUBLE_EXPONENT) {
+            if (power >= MIN_DOUBLE_EXPONENT) {
+                return Double.longBitsToDouble(0x0008000000000000L>>(-(power+MAX_DOUBLE_EXPONENT)));
+            } else {
+                return 0.0;
+            }
+        } else if (power > MAX_DOUBLE_EXPONENT) {
+            return Double.POSITIVE_INFINITY;
+        } else {
+            return Double.longBitsToDouble(((long)(power+MAX_DOUBLE_EXPONENT))<<52);
+        }
+    }
+
+    double hypot_NaN(double xAbs, double yAbs) {
+        if ((xAbs == Double.POSITIVE_INFINITY) || (yAbs == Double.POSITIVE_INFINITY)) {
+            return Double.POSITIVE_INFINITY;
+        } else {
+            return Double.NaN;
+        }
+    }
+
+    public double hypot(double x, double y) {
+        x = Math.abs(x);
+        y = Math.abs(y);
+        if (y < x) {
+            double a = x;
+            x = y;
+            y = a;
+        } else if (!(y >= x)) {
+            return hypot_NaN(x, y);
+        }
+
+        if (y-x == y) {
+            return y;
+        } else {
+            double factor;
+            if (y > HYPOT_MAX_MAG) {
+                x *= (1/HYPOT_FACTOR);
+                y *= (1/HYPOT_FACTOR);
+                factor = HYPOT_FACTOR;
+            } else if (x < (1/HYPOT_MAX_MAG)) {
+                x *= HYPOT_FACTOR;
+                y *= HYPOT_FACTOR;
+                factor = (1/HYPOT_FACTOR);
+            } else {
+                factor = 1.0;
+            }
+            return factor * Math.sqrt(x*x+y*y);
+        }
+    }
 
 	protected float[] calculateMagnitudes() {
 		return this.fftOut;
