@@ -68,7 +68,11 @@ public class CommandManager extends AbstractManager {
                     e.printStackTrace(pw);
                     pw.flush();
 
-                    ConsoleScreen.log(EnumChatFormatting.RED + sw.toString());
+                    String string = sw.toString();
+
+                    for (String s : string.split("\n")) {
+                        ConsoleScreen.log(EnumChatFormatting.RED + s.replace("\t", "    "));
+                    }
                 }
             }
         }

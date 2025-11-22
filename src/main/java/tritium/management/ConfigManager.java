@@ -5,6 +5,7 @@ import lombok.Cleanup;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import tritium.Tritium;
+import tritium.command.CommandValues;
 import tritium.utils.alt.Alt;
 import tritium.utils.alt.AltManager;
 import tritium.module.Module;
@@ -34,6 +35,7 @@ public class ConfigManager extends AbstractManager {
     private final File ALT = new File(configDir, "Alts.json");
 
     public static final File configFile = new File(configDir, "Config.json");
+    public static final File commandValuesFile = new File(configDir, "Commands.json");
 
     static final Timer configSavingScheduler = new Timer();
 
@@ -112,10 +114,16 @@ public class ConfigManager extends AbstractManager {
                 });
 
             });
+
+
+            if (commandValuesFile.exists())
+                CommandValues.setValues(JsonUtils.parse(new FileReader(commandValuesFile), CommandValues.Values.class));
+
         } catch (Throwable ignored) {
 
         }
 
+        CommandValues.registerCommands();
     }
 
     @Override
@@ -151,6 +159,8 @@ public class ConfigManager extends AbstractManager {
         Files.write(configFile.toPath(), JsonUtils.toJsonString(jsonObject).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
 
         this.saveAlts();
+
+        Files.write(commandValuesFile.toPath(), JsonUtils.toJsonString(CommandValues.getValues()).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
 
         if (!Tritium.getInstance().isObfuscated()) {
             logger.info("Config saved.");

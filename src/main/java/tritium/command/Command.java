@@ -108,21 +108,24 @@ public class Command implements SharedConstants {
 
             for (int i = 0; i < parameterTypes.length; i++) {
                 Object arg;
+                Class<?> p = parameterTypes[i];
                 try {
-                    arg = this.parseType(parameterTypes[i], args[i]);
+                    arg = this.parseType(p, args[i]);
                 } catch (NumberFormatException e) {
-                    ConsoleScreen.log(EnumChatFormatting.RED + "Unable to parse arg {} to type {}.", args[i], parameterTypes[i].getSimpleName());
+                    ConsoleScreen.log(EnumChatFormatting.RED + "Unable to parse arg {} to type {}.", args[i], p.getSimpleName());
                     ConsoleScreen.log(EnumChatFormatting.RED + "Illegal Arguments!");
                     return;
                 }
 
                 if (arg == null) {
-                    throw new IllegalArgumentException("Unable to parse arg " + args[i] + " (" + (i) + ") to type " + parameterTypes[i].getSimpleName() + ".");
+                    throw new IllegalArgumentException("Unable to parse arg " + args[i] + " (" + (i) + ") to type " + p.getSimpleName() + ".");
                 }
 
-                if (!(arg instanceof Number) && !(parameterTypes[i].isAssignableFrom(arg.getClass())) && parameterTypes[i] != arg.getClass()) {
-                    throw new IllegalArgumentException("Unable to parse arg " + args[i] + " (" + (i) + ") to type " + parameterTypes[i].getSimpleName() + ".\n" +
-                            "Expected: " + parameterTypes[i].getSimpleName() + ", Got: " + arg.getClass());
+                if (!(p.isAssignableFrom(arg.getClass())) && p != arg.getClass()) {
+                    if (!(arg instanceof Number) && !(arg instanceof Boolean)) {
+                        throw new IllegalArgumentException("Unable to parse arg " + args[i] + " (" + (i) + ") to type " + parameterTypes[i].getSimpleName() + ".\n" +
+                                "Expected: " + parameterTypes[i].getSimpleName() + ", Got: " + arg.getClass());
+                    }
                 }
 
                 arguments.add(arg);
