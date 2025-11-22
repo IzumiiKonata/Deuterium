@@ -69,7 +69,7 @@ public class CommandValues {
         Class<?> type = field.getType();
 
         if (type == boolean.class) {
-            return "true(1)/false(0)";
+            return "true/false";
         } else if (type == int.class || type == long.class || type == float.class || type == double.class) {
 
             AllowedInts allowedInts = field.getAnnotation(AllowedInts.class);
