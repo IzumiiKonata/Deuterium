@@ -6,8 +6,10 @@ import lombok.Setter;
 import net.minecraft.util.EnumChatFormatting;
 import tritium.command.annotations.AllowedInts;
 import tritium.command.annotations.CommandDesc;
+import tritium.command.annotations.NumericRange;
 import tritium.management.CommandManager;
 import tritium.screens.ConsoleScreen;
+import tritium.settings.NumberSetting;
 import tritium.utils.other.Result;
 
 import java.lang.reflect.Field;
@@ -30,6 +32,18 @@ public class CommandValues {
         @CommandDesc("Swap hand side")
         @SerializedName("cl_righthand")
         public boolean cl_righthand = true;
+
+        @CommandDesc("Viewmodel offset x")
+        @SerializedName("viewmodel_offset_x")
+        public double viewmodel_offset_x = 0;
+
+        @CommandDesc("Viewmodel offset y")
+        @SerializedName("viewmodel_offset_y")
+        public double viewmodel_offset_y = 0;
+
+        @CommandDesc("Viewmodel offset z")
+        @SerializedName("viewmodel_offset_z")
+        public double viewmodel_offset_z = 0;
 
     }
 
@@ -75,6 +89,19 @@ public class CommandValues {
     public static String set(Field field, Object value) {
         SerializedName serializedName = field.getAnnotation(SerializedName.class);
         String name = serializedName.value();
+
+        if (value instanceof Number) {
+            NumericRange range = field.getAnnotation(NumericRange.class);
+
+            if (range != null) {
+                if (((Number) value).doubleValue() < range.min() || ((Number) value).doubleValue() > range.max()) {
+                    // clamp the value
+                    value = range.min() > ((Number) value).doubleValue() ? range.min() : range.max();
+                    // set to field type
+                    value = NumberSetting.cast((Class<? extends Number>) field.getType(), ((Number) value));
+                }
+            }
+        }
 
         try {
             field.set(values, value);

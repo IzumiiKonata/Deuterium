@@ -17,9 +17,7 @@ import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.Location;
-import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL11;
-import tritium.Tritium;
 import tritium.management.ModuleManager;
 import tritium.module.impl.render.BlockAnimations;
 import tritium.module.impl.render.Perspective;
@@ -214,7 +212,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
             if (itemstack == null) {
                 modelplayer.heldItemRight = 0;
             } else {
-                if (Minecraft.getMinecraft().getItemRenderer().twoHanding && ModuleManager.blockAnimations.twoHandedMode.getValue() == BlockAnimations.TwoHandedMode.StaticNoItem) {
+                if (Minecraft.getMinecraft().getItemRenderer().renderBothHands) {
                     modelplayer.heldItemRight = 0;
                 } else {
                     modelplayer.heldItemRight = 1;
@@ -225,7 +223,7 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 
                     if (enumaction == EnumAction.BLOCK) {
 
-                        if (Minecraft.getMinecraft().getItemRenderer().twoHanding && ModuleManager.blockAnimations.twoHandedMode.getValue() == BlockAnimations.TwoHandedMode.StaticNoItem) {
+                        if (Minecraft.getMinecraft().getItemRenderer().renderBothHands) {
                             modelplayer.heldItemRight = 0;
                         } else {
                             modelplayer.heldItemRight = 3;

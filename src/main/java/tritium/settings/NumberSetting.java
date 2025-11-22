@@ -79,7 +79,7 @@ public class NumberSetting<T extends Number> extends Setting<T> {
         this.setValue(cast((Class<T>) this.value.getClass(), Math.round(parse.doubleValue() * precision) / precision));
     }
 
-    public <A extends Number, V extends Number> A cast(Class<A> numberClass, final V value) {
+    public static <A extends Number, V extends Number> A cast(Class<A> numberClass, final V value) {
         numberClass = Primitives.wrap(numberClass);
         Object casted;
         if (numberClass == Byte.class) {

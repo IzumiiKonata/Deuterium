@@ -27,10 +27,12 @@ import net.minecraft.world.storage.MapData;
 import net.optifine.DynamicLights;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
+import tritium.command.CommandValues;
 import tritium.event.events.rendering.BlockAnimationEvent;
 import tritium.management.EventManager;
 import tritium.management.ModuleManager;
 import tritium.module.impl.render.BlockAnimations;
+import tritium.settings.ClientSettings;
 
 public class ItemRenderer {
     private static final Location RES_MAP_BACKGROUND = Location.of("textures/map/map_background.png");
@@ -120,6 +122,10 @@ public class ItemRenderer {
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
     }
 
+    private boolean isLeftHanded() {
+        return !CommandValues.getValues().cl_righthand;
+    }
+
     /**
      * Rotate the render according to the player's yaw and pitch
      */
@@ -128,8 +134,7 @@ public class ItemRenderer {
         float f1 = entityplayerspIn.prevRenderArmYaw + (entityplayerspIn.renderArmYaw - entityplayerspIn.prevRenderArmYaw) * partialTicks;
         GlStateManager.rotate((entityplayerspIn.rotationPitch - f) * 0.1F, 1.0F, 0.0F, 0.0F);
 
-        BlockAnimations ba = ModuleManager.blockAnimations;
-        if (ba.isEnabled() && ba.isLeftHanded()) {
+        if (this.isLeftHanded()) {
             GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * -0.1F, 0.0F, 1.0F, 0.0F);
             return;
         }
@@ -184,13 +189,9 @@ public class ItemRenderer {
 
     private void renderItemMap(AbstractClientPlayer clientPlayer, float pitch, float equipmentProgress, float swingProgress) {
 
-        if (ModuleManager.blockAnimations.isEnabled()) {
-            if (ModuleManager.blockAnimations.isLeftHanded()) {
-                GlStateManager.cullFace(GL11.GL_BACK);
-                GlStateManager.scale(-1, 1, 1);
-            } else {
-                GlStateManager.scale(1, 1, 1);
-            }
+        if (this.isLeftHanded()) {
+            GlStateManager.cullFace(GL11.GL_BACK);
+            GlStateManager.scale(-1, 1, 1);
         }
 
         float f = -0.4F * MathHelper.sin(MathHelper.sqrt_float(swingProgress) * (float) Math.PI);
@@ -304,15 +305,11 @@ public class ItemRenderer {
      */
     private void transformFirstPersonItem(float equipProgress, float swingProgress) {
 
-        if (ModuleManager.blockAnimations.isEnabled()) {
-            if (((this.itemToRender.getItem() == Items.compass) || (this.itemToRender.getItem() == Items.clock)) && ModuleManager.blockAnimations.isLeftHanded()) {
-                GlStateManager.cullFace(GL11.GL_BACK);
-                GlStateManager.translate(0.05, -0.63, -1.35);
-                GlStateManager.rotate(-50, 1, 0, 0);
-                GlStateManager.scale(1, 1, -1);
-            } else {
-                GlStateManager.scale(1, 1, 1);
-            }
+        if (this.isLeftHanded() && ((this.itemToRender.getItem() == Items.compass) || (this.itemToRender.getItem() == Items.clock))) {
+            GlStateManager.cullFace(GL11.GL_BACK);
+            GlStateManager.translate(0.05, -0.63, -1.35);
+            GlStateManager.rotate(-50, 1, 0, 0);
+            GlStateManager.scale(1, 1, -1);
         }
 
         if (ModuleManager.oldAnimation.isEnabled()) {
@@ -386,52 +383,24 @@ public class ItemRenderer {
 
             BlockAnimations ba = ModuleManager.blockAnimations;
             GlStateManager.pushMatrix();
-            if (ba.isEnabled()) {
+            int k = this.isLeftHanded() ? -1 : 1;
+            GlStateManager.translate(CommandValues.getValues().viewmodel_offset_x * k, CommandValues.getValues().viewmodel_offset_y, CommandValues.getValues().viewmodel_offset_z);
 
-                if (this.itemToRender != null && this.itemToRender.getItem() instanceof ItemSword) {
-                    int k = ba.isLeftHanded() ? -1 : 1;
-                    GlStateManager.translate(ba.x.getValue() * k, ba.y.getValue(), ba.z.getValue());
-                }
-
-                if (ba.isLeftHanded()) {
-                    GlStateManager.scale(-1, 1, 1);
-                    if (this.itemToRender != null) {
-                        GlStateManager.cullFace(GL11.GL_FRONT);
-                    } else {
-                        GlStateManager.cullFace(GL11.GL_BACK);
-                    }
+            if (this.isLeftHanded()) {
+                GlStateManager.scale(-1, 1, 1);
+                if (this.itemToRender != null) {
+                    GlStateManager.cullFace(GL11.GL_FRONT);
                 } else {
-                    GlStateManager.scale(1, 1, 1);
+                    GlStateManager.cullFace(GL11.GL_BACK);
                 }
             }
 
             this.renderItemSub(partialTicks);
             GlStateManager.popMatrix();
-
-            if (ba.isEnabled() && ba.twoHanded.getValue()) {
-                int k = ba.isLeftHanded() ? 1 : -1;
-                GlStateManager.translate(ba.x.getValue() * k, ba.y.getValue(), ba.z.getValue());
-                if (ba.isLeftHanded()) {
-                    GlStateManager.scale(1, 1, 1);
-                } else {
-                    GlStateManager.scale(-1, 1, 1);
-                    if (ba.twoHandedMode.getValue() != BlockAnimations.TwoHandedMode.StaticNoItem) {
-                        if (this.itemToRender != null) {
-                            GlStateManager.cullFace(GL11.GL_FRONT);
-                        } else {
-                            GlStateManager.cullFace(GL11.GL_BACK);
-                        }
-                    }
-                }
-
-                twoHanding = true;
-                this.renderItemSub(partialTicks);
-                twoHanding = false;
-            }
         }
     }
 
-    public boolean twoHanding = false;
+    public boolean renderBothHands = false;
 
     private void renderItemSub(float partialTicks) {
         float f = 1.0F - (this.prevEquippedProgress + (this.equippedProgress - this.prevEquippedProgress) * partialTicks);
@@ -446,54 +415,6 @@ public class ItemRenderer {
         GlStateManager.pushMatrix();
 
         BlockAnimations ba = ModuleManager.blockAnimations;
-        if (ba.isEnabled()) {
-            if (ba.twoHanded.getValue() && twoHanding) {
-
-                if (ba.twoHandedMode.getValue() != BlockAnimations.TwoHandedMode.Clone) {
-                    f1 = 1.0F;
-
-                    f = 0.0f;
-                }
-
-                if (ba.twoHandedMode.getValue() == BlockAnimations.TwoHandedMode.Static) {
-
-                    if (this.itemToRender != null) {
-                        if (this.itemToRender.getItem() instanceof ItemMap) {
-                            this.renderItemMap(abstractclientplayer, f2, f, f1);
-                        } else if (abstractclientplayer.getItemInUseCount() > 0) {
-                            this.transformFirstPersonItem(f, 0.0F);
-                        } else {
-                            this.doItemUsedTransformations(f1);
-                            this.transformFirstPersonItem(f, f1);
-                        }
-
-                        this.renderItem(abstractclientplayer, this.itemToRender, ItemCameraTransforms.TransformType.FIRST_PERSON);
-                    } else if (!abstractclientplayer.isInvisible()) {
-                        this.renderPlayerArm(abstractclientplayer, f, f1);
-                    }
-
-                    GlStateManager.popMatrix();
-                    GlStateManager.disableRescaleNormal();
-                    RenderHelper.disableStandardItemLighting();
-
-                    return;
-                }
-
-                if (ba.twoHandedMode.getValue() == BlockAnimations.TwoHandedMode.StaticNoItem) {
-
-                    if (!abstractclientplayer.isInvisible()) {
-                        this.renderPlayerArm(abstractclientplayer, f, f1);
-                    }
-
-                    GlStateManager.popMatrix();
-                    GlStateManager.disableRescaleNormal();
-                    RenderHelper.disableStandardItemLighting();
-
-                    return;
-                }
-
-            }
-        }
 
         if (this.itemToRender != null) {
             if (this.itemToRender.getItem() instanceof ItemMap) {

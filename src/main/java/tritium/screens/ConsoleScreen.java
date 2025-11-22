@@ -12,6 +12,7 @@ import tritium.command.Command;
 import tritium.management.CommandManager;
 import tritium.management.FontManager;
 import tritium.rendering.Rect;
+import tritium.rendering.entities.impl.TextField;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.LabelWidget;
@@ -23,6 +24,7 @@ import tritium.utils.other.info.Version;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author IzumiiKonata
@@ -234,6 +236,13 @@ public class ConsoleScreen extends BaseScreen {
                         }
                         return true;
                     }
+
+                    if (keyCode == Keyboard.KEY_TAB) {
+                        TextField.TextChangedCallback callback = this.textField.getTextField().callback;
+                        if (callback != null)
+                            callback.onTextChanged(null);
+                        return true;
+                    }
                 }
 
                 return false;
@@ -307,6 +316,85 @@ public class ConsoleScreen extends BaseScreen {
                 if (i == 0)
                     mc.displayGuiScreen(null);
                 return true;
+            });
+        }
+
+        // suggestions
+        {
+            RectWidget rw = new RectWidget();
+
+            rw.setColor(0xFF353535);
+            base.addChild(rw);
+
+            List<Command> suggestions = new CopyOnWriteArrayList<>();
+
+            rw.setBeforeRenderCallback(() -> {
+                rw.setBounds(0, base.getHeight() + 2, base.getWidth(), suggestions.size() * (FontManager.pf14.getFontHeight() + 4));
+            });
+
+            Panel p = new Panel();
+
+            rw.addChild(p);
+
+            p.setBeforeRenderCallback(() -> {
+                p.setMargin(0);
+
+                double offsetX = p.getX();
+                double offsetY = p.getY();
+
+                for (Command cmd : suggestions) {
+                    FontManager.pf14.drawString(cmd.getName().toLowerCase() + (cmd.getDescription() == null ? "" : " - " + cmd.getDescription()), offsetX + 2, offsetY + 2, -1);
+                    offsetY += FontManager.pf14.getFontHeight() + 4;
+                }
+            });
+
+            final int[] compIndex = {0};
+            final boolean[] discardNextCompletion = {false};
+
+            this.textField.setTextChangedCallback(text -> {
+
+                // completion
+                if (text == null) {
+
+                    if (suggestions.isEmpty())
+                        return;
+
+                    if (compIndex[0] > suggestions.size() - 1) {
+                        compIndex[0] = 0;
+                    }
+
+                    discardNextCompletion[0] = true;
+                    this.textField.setText(suggestions.get(compIndex[0]).getName().toLowerCase());
+                    compIndex[0]++;
+
+                } else {
+
+                    if (discardNextCompletion[0]) {
+                        discardNextCompletion[0] = false;
+                        return;
+                    }
+
+                    String[] s = text.split(" ");
+
+                    suggestions.clear();
+                    compIndex[0] = 0;
+
+                    if (s.length == 0) {
+                        return;
+                    }
+
+                    String name = s[0];
+
+                    if (name.isEmpty())
+                        return;
+
+                    for (Command cmd : CommandManager.getCommands()) {
+                        if (cmd.getName().toLowerCase().startsWith(name.toLowerCase())) {
+                            suggestions.add(cmd);
+                        }
+                    }
+                }
+
             });
         }
 

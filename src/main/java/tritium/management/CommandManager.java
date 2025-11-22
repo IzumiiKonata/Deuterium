@@ -97,7 +97,7 @@ public class CommandManager extends AbstractManager {
         }
 
         Command command;
-        commands.add(command = new Command(name, name, name, alias));
+        commands.add(command = new Command(name, null, name, alias));
         return command;
     }
 

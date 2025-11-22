@@ -32,35 +32,6 @@ public class BlockAnimations extends Module {
         });
     }
 
-    public NumberSetting<Double> x = new NumberSetting<>("X", 0.0, -1.0, 1.0, 0.05);
-    public NumberSetting<Double> y = new NumberSetting<>("Y", 0.15, -1.0, 1.0, 0.05);
-    public NumberSetting<Double> z = new NumberSetting<>("Z", 0.0, -1.0, 1.0, 0.05);
-    public BooleanSetting leftHanded = new BooleanSetting("Left-Handed", false);
-    public BindSetting leftHandedBind = new BindSetting("Left-Handed Bind", 0, () -> leftHanded.getValue());
-    public BooleanSetting twoHanded = new BooleanSetting("Two-Handed", false, () -> false);
-    public ModeSetting<TwoHandedMode> twoHandedMode = new ModeSetting<>("Two Handed Mode", TwoHandedMode.Clone, () -> twoHanded.getValue());
-
-    public enum TwoHandedMode {
-        Clone,
-        Static,
-        StaticNoItem
-    }
-
-    private boolean left = true;
-
-    @Handler
-    public void onKey(KeyPressedEvent event) {
-
-        if (leftHanded.getValue() && event.getKeyCode() == leftHandedBind.getValue()) {
-            left = !left;
-        }
-
-    }
-
-    public boolean isLeftHanded() {
-        return leftHanded.getValue() && left;
-    }
-
     /**
      * Performs transformations prior to the rendering of a held item in first person.
      */

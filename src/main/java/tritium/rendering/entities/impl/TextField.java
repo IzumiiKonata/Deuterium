@@ -44,7 +44,7 @@ public class TextField extends GuiTextField {
     public String placeholder = "";
     public boolean isPassword;
     @Setter
-    private TextChangedCallback callback = null;
+    public TextChangedCallback callback = null;
 
     @Getter
     public int cursorPosition;
