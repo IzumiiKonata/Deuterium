@@ -65,8 +65,16 @@ public class CommandManager extends AbstractManager {
         for (Command command : commands) {
             if (commandName.equalsIgnoreCase(command.getName()) || Arrays.asList(command.getAlias()).contains(commandName.toLowerCase())) {
                 foundCommand = true;
-                String[] args = new String[split.length - 1];
-                System.arraycopy(split, 1, args, 0, split.length - 1);
+                List<String> argsList = new ArrayList<>();
+
+                for (int i = 1; i < split.length; i++) {
+                    String s = split[i];
+
+                    if (!s.isEmpty())
+                        argsList.add(s);
+                }
+
+                String[] args = argsList.toArray(new String[0]);
 
                 try {
 
