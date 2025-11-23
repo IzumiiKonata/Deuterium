@@ -68,6 +68,7 @@ import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
 import tritium.Tritium;
+import tritium.command.CommandValues;
 import tritium.event.events.input.MouseXYChangeEvent;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.event.events.rendering.Render3DEvent;
@@ -1243,8 +1244,11 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 j = Math.max(j, 60);
                 long k = System.nanoTime() - nanoTime;
                 long l = Math.max((long) (1000000000 / j / 4) - k, 0L);
-                this.renderWorld(partialTicks, System.nanoTime() + l);
-
+                if (CommandValues.getValues().cl_skipworldrendering) {
+                    GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+                } else {
+                    this.renderWorld(partialTicks, System.nanoTime() + l);
+                }
 
                 renderEndNanoTime = System.nanoTime();
                 this.mc.mcProfiler.endStartSection("gui");

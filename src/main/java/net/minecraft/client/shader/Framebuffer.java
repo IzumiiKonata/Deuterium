@@ -256,14 +256,26 @@ public class Framebuffer {
             float f1 = (float) p_178038_2_;
             float f2 = (float) this.framebufferWidth / (float) this.framebufferTextureWidth;
             float f3 = (float) this.framebufferHeight / (float) this.framebufferTextureHeight;
-            Tessellator tessellator = Tessellator.getInstance();
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldrenderer.pos(0.0D, f1, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-            worldrenderer.pos(f, f1, 0.0D).tex(f2, 0.0D).color(255, 255, 255, 255).endVertex();
-            worldrenderer.pos(f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
-            worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, f3).color(255, 255, 255, 255).endVertex();
-            tessellator.draw();
+
+            GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+            GL11.glTexCoord2f(0.0F, f3);
+            GL11.glVertex2f(0.0F, 0.0F);
+            GL11.glTexCoord2f(0.0F, 0);
+            GL11.glVertex2f(0.0F, f1);
+            GL11.glTexCoord2f(f2, f3);
+            GL11.glVertex2f(f, 0.0F);
+            GL11.glTexCoord2f(f2, 0);
+            GL11.glVertex2f(f, f1);
+            GL11.glEnd();
+
+//            Tessellator tessellator = Tessellator.getInstance();
+//            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+//            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+//            worldrenderer.pos(0.0D, f1, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
+//            worldrenderer.pos(f, f1, 0.0D).tex(f2, 0.0D).color(255, 255, 255, 255).endVertex();
+//            worldrenderer.pos(f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
+//            worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, f3).color(255, 255, 255, 255).endVertex();
+//            tessellator.draw();
             this.unbindFramebufferTexture();
             GlStateManager.depthMask(true);
             GlStateManager.colorMask(true, true, true, true);

@@ -34,6 +34,10 @@ public class Launcher {
 
         Configuration.DISABLE_CHECKS.set(true);
         Configuration.DISABLE_FUNCTION_CHECKS.set(true);
+        Configuration.DISABLE_HASH_CHECKS.set(true);
+        Configuration.DEBUG.set(false);
+        Configuration.DEBUG_FUNCTIONS.set(false);
+
 
         System.setProperty("java.net.preferIPv4Stack", "true");
         OptionParser optionparser = new OptionParser();

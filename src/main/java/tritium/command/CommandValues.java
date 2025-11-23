@@ -33,6 +33,14 @@ public class CommandValues {
         @SerializedName("cl_righthand")
         public boolean cl_righthand = true;
 
+        @CommandDesc("Skip world rendering")
+        @SerializedName("cl_skipworldrendering")
+        public boolean cl_skipworldrendering = false;
+
+        @CommandDesc("Experimental world renderer optimization")
+        @SerializedName("experimental_worldrenderer_optimization")
+        public boolean experimental_worldrenderer_optimization = false;
+
         @CommandDesc("Viewmodel offset x")
         @SerializedName("viewmodel_offset_x")
         public double viewmodel_offset_x = 0;
