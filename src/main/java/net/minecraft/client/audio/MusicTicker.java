@@ -5,9 +5,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ITickable;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
+import tritium.management.CommandManager;
 import tritium.rendering.MusicToast;
 
-import java.util.Optional;
 import java.util.Random;
 
 public class MusicTicker implements ITickable {
@@ -45,6 +45,17 @@ public class MusicTicker implements ITickable {
         if (this.currentMusic == null && this.timeUntilNextMusic-- <= 0) {
             this.playNext(type);
         }
+    }
+
+    public void forcePlayNext() {
+        MusicTicker.MusicType type = this.mc.getAmbientMusicType();
+
+        this.stopCurrentPlaying();
+        this.currentMusic = null;
+        this.musicLocation = null;
+        this.timeUntilNextMusic = 0;
+
+        this.playNext(type);
     }
 
     public void playNext(MusicTicker.MusicType type) {
@@ -95,5 +106,11 @@ public class MusicTicker implements ITickable {
         public int getMaxDelay() {
             return this.maxDelay;
         }
+    }
+
+    static {
+        CommandManager.registerCommand("musicticker_play_next", () -> {
+            Minecraft.getMinecraft().getMusicTicker().forcePlayNext();
+        });
     }
 }

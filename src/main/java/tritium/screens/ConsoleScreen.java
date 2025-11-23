@@ -2,7 +2,6 @@ package tritium.screens;
 
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.multiplayer.GuiConnecting;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
@@ -53,18 +52,18 @@ public class ConsoleScreen extends BaseScreen {
 
         if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
             // reload the screen's layout
-            CommandManager.registerSimpleCommand("layout", this::layout).setDescription("Reload ConsoleScreen's layout");
+            CommandManager.registerCommand("layout", this::layout).setDescription("Reload ConsoleScreen's layout");
         }
 
-        CommandManager.registerSimpleCommand("clear", new String[] { "cls" }, () -> {
+        CommandManager.registerCommand("clear", new String[] { "cls" }, () -> {
             logsPanel.getChildren().clear();
         }).setDescription("Clear the console");
 
-        CommandManager.registerSimpleCommand("quit", () -> {
+        CommandManager.registerCommand("quit", () -> {
             Minecraft.getMinecraft().shutdown();
         }).setDescription("Quit the game");
 
-        CommandManager.registerSimpleCommand("disconnect", () -> {
+        CommandManager.registerCommand("disconnect", () -> {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.playerController.setNoCheckDisconnect(true);
 
@@ -73,7 +72,7 @@ public class ConsoleScreen extends BaseScreen {
 
         CommandManager.registerCommand("connect", GuiConnecting::connectTo, String.class, "server address").setDescription("Connect to a server");
 
-        CommandManager.registerSimpleCommand("help", () -> {
+        CommandManager.registerCommand("help", () -> {
             log("Available commands:");
 
             CommandManager.getCommands()

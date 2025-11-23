@@ -14,7 +14,6 @@ import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.TypeVariable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -208,12 +207,12 @@ public class CommandManager extends AbstractManager {
         return invokeInfo::setDesc;
     }
 
-    public static CommandRegisteredCallback registerSimpleCommand(String name, SimpleCommandCallback callback) {
-        return registerSimpleCommand(name, new String[0], callback);
+    public static CommandRegisteredCallback registerCommand(String name, SimpleCommandCallback callback) {
+        return registerCommand(name, new String[0], callback);
     }
 
     @SneakyThrows
-    public static CommandRegisteredCallback registerSimpleCommand(String name, String[] alias, SimpleCommandCallback callback) {
+    public static CommandRegisteredCallback registerCommand(String name, String[] alias, SimpleCommandCallback callback) {
         Command command = getOrCreateNew(name, alias);
 
         Method execute = callback.getClass().getDeclaredMethod("execute");
