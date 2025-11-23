@@ -54,8 +54,8 @@ public class AudioPlayer {
         if (!WidgetsManager.musicSpectrum.isEnabled() && !(Minecraft.getMinecraft().currentScreen instanceof NCMScreen))
             return;
 
-        if (visualizer == null || visualizer.getSampleRate() != CloudMusic.player.player.sampleRate() || visualizer.getFftSize() != JSynFFT.FFT_SIZE) {
-            visualizer = new ExtendedSpectrumVisualizer(CloudMusic.player.player.sampleRate(), JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
+        if (visualizer == null || visualizer.getSampleRate() != 44100 || visualizer.getFftSize() != JSynFFT.FFT_SIZE) {
+            visualizer = new ExtendedSpectrumVisualizer(44100, JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
         }
 
         bandValues = visualizer.processFFT(fft);
