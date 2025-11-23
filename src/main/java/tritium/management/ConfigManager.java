@@ -36,6 +36,7 @@ public class ConfigManager extends AbstractManager {
 
     public static final File configFile = new File(configDir, "Config.json");
     public static final File commandValuesFile = new File(configDir, "Commands.json");
+    public static final File keybindCommandsFile = new File(configDir, "KeybindCommands.json");
 
     static final Timer configSavingScheduler = new Timer();
 
@@ -119,6 +120,20 @@ public class ConfigManager extends AbstractManager {
             if (commandValuesFile.exists())
                 CommandValues.setValues(JsonUtils.parse(new FileReader(commandValuesFile), CommandValues.Values.class));
 
+            if (keybindCommandsFile.exists()) {
+                JsonObject keybinds = JsonUtils.parse(new FileReader(keybindCommandsFile), JsonObject.class);
+                for (Map.Entry<String, JsonElement> element : keybinds.entrySet()) {
+                    int key = Integer.parseInt(element.getKey());
+                    String cmd = element.getValue().getAsString();
+
+                    if (cmd.isEmpty())
+                        continue;
+
+                    CommandManager.getKeyToCommandMap().put(key, cmd);
+                }
+            }
+
+
         } catch (Throwable ignored) {
 
         }
@@ -133,34 +148,43 @@ public class ConfigManager extends AbstractManager {
             configDir.mkdir();
         }
 
-        File configFile = ConfigManager.configFile;
-        JsonObject jsonObject = new JsonObject();
+        {
+            File configFile = ConfigManager.configFile;
+            JsonObject jsonObject = new JsonObject();
 
-        JsonObject modules = new JsonObject();
-        ModuleManager.getModules().forEach(module -> {
-            modules.add(module.getInternalName(), module.saveConfig());
-        });
-        jsonObject.add("Modules", modules);
+            JsonObject modules = new JsonObject();
+            ModuleManager.getModules().forEach(module -> {
+                modules.add(module.getInternalName(), module.saveConfig());
+            });
+            jsonObject.add("Modules", modules);
 
-        JsonObject widgets = new JsonObject();
-        WidgetsManager.getWidgets().forEach(widget -> {
-            widgets.add(widget.getInternalName(), widget.saveConfig());
-        });
-        jsonObject.add("Widgets", widgets);
+            JsonObject widgets = new JsonObject();
+            WidgetsManager.getWidgets().forEach(widget -> {
+                widgets.add(widget.getInternalName(), widget.saveConfig());
+            });
+            jsonObject.add("Widgets", widgets);
 
-        JsonObject settings = new JsonObject();
-        ClientSettings.getSettings().forEach(val -> {
-            settings.addProperty(val.getInternalName(), val.getValueForConfig());
-        });
-        jsonObject.add("Settings", settings);
+            JsonObject settings = new JsonObject();
+            ClientSettings.getSettings().forEach(val -> {
+                settings.addProperty(val.getInternalName(), val.getValueForConfig());
+            });
+            jsonObject.add("Settings", settings);
 
-        configFile.createNewFile();
+            configFile.createNewFile();
 
-        Files.write(configFile.toPath(), JsonUtils.toJsonString(jsonObject).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+            Files.write(configFile.toPath(), JsonUtils.toJsonString(jsonObject).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+        }
 
         this.saveAlts();
 
         Files.write(commandValuesFile.toPath(), JsonUtils.toJsonString(CommandValues.getValues()).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+
+        {
+            JsonObject objKeys = new JsonObject();
+
+            CommandManager.getKeyToCommandMap().forEach((key, cmd) -> objKeys.addProperty(key.toString(), cmd));
+            Files.write(keybindCommandsFile.toPath(), JsonUtils.toJsonString(objKeys).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+        }
 
         if (!Tritium.getInstance().isObfuscated()) {
             logger.info("Config saved.");

@@ -120,6 +120,21 @@ public class ConsoleScreen extends BaseScreen {
             }
 
         }, String.class, "command name").setDescription("Show help for a command");
+
+        CommandManager.registerCommand("bind_key", (key, command) -> {
+
+            int keyIndex = Keyboard.getKeyIndex(key.startsWith("Key ") ? key : key.toUpperCase());
+
+            if (keyIndex == Keyboard.KEY_NONE) {
+                log(EnumChatFormatting.RED + "Invalid key: {}", key);
+                return;
+            }
+
+            CommandManager.getKeyToCommandMap().put(keyIndex, command);
+            log("Bound \"{}\" to \"{}\"", Keyboard.getKeyName(keyIndex), command);
+
+        }, String.class, String.class, "key", "command").setDescription("bind a command to the key");
+
     }
 
     private void addCommandHistory(String command) {
@@ -363,7 +378,7 @@ public class ConsoleScreen extends BaseScreen {
                     }
 
                     discardNextCompletion[0] = true;
-                    this.textField.setText(suggestions.get(compIndex[0]).getName().toLowerCase());
+                    this.textField.setText(suggestions.get(compIndex[0]).getName().toLowerCase() + " ");
                     compIndex[0]++;
 
                 } else {

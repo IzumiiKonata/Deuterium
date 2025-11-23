@@ -111,6 +111,18 @@ public class CommandValues {
         }
     }
 
+    public static Field get(String name) {
+        for (Field f : values.getClass().getDeclaredFields()) {
+            SerializedName serializedName = f.getAnnotation(SerializedName.class);
+
+            if (serializedName.value().equalsIgnoreCase(name)) {
+                return f;
+            }
+        }
+
+        return null;
+    }
+
     public static String set(String name, String rawValue) {
         Field field = null;
 
@@ -141,20 +153,20 @@ public class CommandValues {
         }
     }
 
-    private static <T> Result<T> parse(Class<T> type, String rawValue) {
+    public static <T> Result<T> parse(Class<T> type, String rawValue) {
         return Result.from(() -> {
 
             if (type == String.class)
                 return (T) rawValue;
-            else if (type == Integer.class)
+            else if (type == Integer.class || type == int.class)
                 return (T) Integer.valueOf(rawValue);
-            else if (type == Long.class)
+            else if (type == Long.class || type == long.class)
                 return (T) Long.valueOf(rawValue);
-            else if (type == Float.class)
+            else if (type == Float.class || type == float.class)
                 return (T) Float.valueOf(rawValue);
-            else if (type == Double.class)
+            else if (type == Double.class || type == double.class)
                 return (T) Double.valueOf(rawValue);
-            else if (type == Boolean.class) {
+            else if (type == Boolean.class || type == boolean.class) {
                 if (rawValue.equals("1") || rawValue.equals("true"))
                     return (T) Boolean.TRUE;
                 else

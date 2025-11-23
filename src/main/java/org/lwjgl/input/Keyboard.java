@@ -487,7 +487,7 @@ public class Keyboard {
         }
         Integer ret = reverseKeyMap.get(keyName);
         if (ret == null) {
-            if (keyName.matches("Key -?[0-9]+]")) {
+            if (keyName.matches("Key -?[0-9]+")) {
                 return Integer.parseInt(StringUtils.removeStart(keyName, "Key "));
             }
             return KEY_NONE;

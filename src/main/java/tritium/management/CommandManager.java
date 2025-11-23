@@ -7,6 +7,9 @@ import tritium.bridge.ExtensionCommandWrapper;
 import tritium.command.Command;
 import tritium.command.CommandHandler;
 import tritium.command.impl.*;
+import tritium.command.impl.Set;
+import tritium.event.eventapi.Handler;
+import tritium.event.events.game.KeyPressedEvent;
 import tritium.screens.ConsoleScreen;
 
 import java.io.PrintWriter;
@@ -14,9 +17,7 @@ import java.io.StringWriter;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author IzumiiKonata
@@ -29,6 +30,21 @@ public class CommandManager extends AbstractManager {
 
     public CommandManager() {
         super("CommandManager");
+    }
+
+    @Getter
+    private static final Map<Integer, String> keyToCommandMap = new HashMap<>();
+
+    @Handler
+    public void onKeyPressed(KeyPressedEvent event) {
+
+        int keyCode = event.getKeyCode();
+
+        String command = keyToCommandMap.get(keyCode);
+        if (command != null && !command.isEmpty()) {
+            execute(command);
+        }
+
     }
 
     public void execute(String unformattedCommand) {
@@ -56,6 +72,8 @@ public class CommandManager extends AbstractManager {
 
                     if (command instanceof ExtensionCommandWrapper wrapper) {
                         wrapper.execute(args);
+                    } else if (command instanceof Toggle t) {
+                        t.execute(args);
                     } else {
                         command.tryExecute(args);
                     }
