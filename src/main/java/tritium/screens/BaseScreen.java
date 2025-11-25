@@ -149,14 +149,9 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
         overrideMouseCursor = cursor;
     }
 
-    public final void drawScreen(double mX, double mY, float partialTicks) {
+    public final void drawScreen(double mouseX, double mouseY, float partialTicks) {
 
         overrideMouseCursor = CursorUtils.ARROW;
-
-        boolean fixedScale = ClientSettings.FIXED_SCALE.getValue();
-
-        double mouseX = fixedScale ? mX * RenderSystem.getScaleFactor() : mX;
-        double mouseY = fixedScale ? mY * RenderSystem.getScaleFactor() : mY;
 
         RenderSystem.resetColor();
 
@@ -201,13 +196,13 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
     @Override
     @Deprecated
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        this.handleMouseClicked(ClientSettings.FIXED_SCALE.getValue() ? mouseX * RenderSystem.getScaleFactor() : mouseX, ClientSettings.FIXED_SCALE.getValue() ? mouseY * RenderSystem.getScaleFactor() : mouseY, mouseButton);
+        this.handleMouseClicked(mouseX, mouseY, mouseButton);
     }
 
     @Override
     @Deprecated
     protected void mouseReleased(int mouseX, int mouseY, int mouseButton) {
-        this.handleMouseReleased(ClientSettings.FIXED_SCALE.getValue() ? mouseX * RenderSystem.getScaleFactor() : mouseX, ClientSettings.FIXED_SCALE.getValue() ? mouseY * RenderSystem.getScaleFactor() : mouseY, mouseButton);
+        this.handleMouseReleased(mouseX, mouseY, mouseButton);
     }
 
 }

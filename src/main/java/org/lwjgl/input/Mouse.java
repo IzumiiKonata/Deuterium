@@ -33,6 +33,14 @@ public class Mouse {
         return (int) y;
     }
 
+    public static double getXDouble() {
+        return x;
+    }
+
+    public static double getYDouble() {
+        return y;
+    }
+
     public static void addMoveEvent(double mouseX, double mouseY) {
         if (ignoreNextMove > 0) {
             ignoreNextMove--;

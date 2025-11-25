@@ -81,6 +81,7 @@ import tritium.module.impl.render.Perspective;
 import tritium.module.impl.render.WorldTime;
 import tritium.rendering.MusicToast;
 import tritium.rendering.ParticleCulling;
+import tritium.rendering.Rect;
 import tritium.rendering.TransitionAnimation;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
@@ -1230,8 +1231,20 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             final ScaledResolution scaledresolution = ScaledResolution.get();
             int i1 = scaledresolution.getScaledWidth();
             int j1 = scaledresolution.getScaledHeight();
-            final double k1 = Mouse.getX() * i1 / this.mc.displayWidth;
-            final double l1 = j1 - Mouse.getY() * j1 / this.mc.displayHeight - 1;
+
+            boolean fixedScale = ClientSettings.FIXED_SCALE.getValue();
+
+            double k1;
+            double l1;
+
+            if (fixedScale && mc.currentScreen instanceof BaseScreen) {
+                k1 = Mouse.getXDouble() / this.mc.displayWidth * RenderSystem.getFixedWidth() * .5;
+                l1 = (RenderSystem.getFixedHeight() - Mouse.getYDouble() / this.mc.displayHeight * RenderSystem.getFixedHeight()) * .5;
+            } else {
+                l1 = j1 - (double) (Mouse.getY() * j1) / this.mc.displayHeight - 1;
+                k1 = (double) (Mouse.getX() * i1) / this.mc.displayWidth;
+            }
+
             int i2 = this.mc.gameSettings.limitFramerate;
 
             /**
@@ -1260,24 +1273,21 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     //CLIENT
                     GL11.glPushMatrix();
 
-                    if (ClientSettings.FIXED_SCALE.getValue()) {
+                    if (fixedScale) {
                         GlStateManager.color(1f, 1f, 1f, 1f);
                         GlStateManager.clear(256);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.loadIdentity();
-                        GlStateManager.ortho(0.0D, mc.displayWidth / 2.0, mc.displayHeight / 2.0, 0.0D, 1000.0D, 3000.0D);
-                        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-                        GlStateManager.loadIdentity();
-                        GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+                        GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5, 0.0D, 1000.0D, 3000.0D);
                     } else {
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.loadIdentity();
                         GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(),
                                 0.0D, 1000.0D, 3000.0D);
-                        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-                        GlStateManager.loadIdentity();
-                        GlStateManager.translate(0.0F, 0.0F, -2000.0F);
                     }
+                    GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+                    GlStateManager.loadIdentity();
+                    GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
                     GlStateManager.enableBlend();
                     GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -1300,7 +1310,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                     GL11.glPopMatrix();
 
-                    if (ClientSettings.FIXED_SCALE.getValue()) {
+                    if (fixedScale) {
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.loadIdentity();
                         GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(),
@@ -1333,11 +1343,11 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.matrixMode(5888);
                 GlStateManager.loadIdentity();
 
-                if (this.mc.currentScreen instanceof BaseScreen && ClientSettings.FIXED_SCALE.getValue()) {
+                if (this.mc.currentScreen instanceof BaseScreen && fixedScale) {
                     GlStateManager.clear(256);
                     GlStateManager.matrixMode(GL11.GL_PROJECTION);
                     GlStateManager.loadIdentity();
-                    GlStateManager.ortho(0.0D, mc.displayWidth / 2.0d, mc.displayHeight / 2.0d,
+                    GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5,
                             0.0D, 1000.0D, 3000.0D);
                     GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                     GlStateManager.loadIdentity();
@@ -1356,13 +1366,13 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                 try {
 
-                    if (this.mc.currentScreen instanceof BaseScreen && ClientSettings.FIXED_SCALE.getValue()) {
+                    if (this.mc.currentScreen instanceof BaseScreen && fixedScale) {
                         GlStateManager.pushMatrix();
                         GlStateManager.clear(256);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.pushMatrix();
                         GlStateManager.loadIdentity();
-                        GlStateManager.ortho(0.0D, mc.displayWidth / 2.0d, mc.displayHeight / 2.0d,
+                        GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5,
                                 0.0D, 1000.0D, 3000.0D);
                         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                         GlStateManager.pushMatrix();
@@ -1423,15 +1433,18 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             List<String> hints = this.getHints();
             if (!this.hints.isEmpty()) {
-                GlStateManager.pushMatrix();
-                GlStateManager.clear(256);
-                GlStateManager.matrixMode(GL11.GL_PROJECTION);
-                GlStateManager.loadIdentity();
-                GlStateManager.ortho(0.0D, mc.displayWidth / 2.0d, mc.displayHeight / 2.0d,
-                        0.0D, 1000.0D, 3000.0D);
-                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-                GlStateManager.loadIdentity();
-                GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+
+                if (fixedScale) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.clear(256);
+                    GlStateManager.matrixMode(GL11.GL_PROJECTION);
+                    GlStateManager.loadIdentity();
+                    GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5,
+                            0.0D, 1000.0D, 3000.0D);
+                    GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+                    GlStateManager.loadIdentity();
+                    GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+                }
 
                 double offsetY = 4;
                 CFontRenderer fr = FontManager.pf18;
@@ -1441,7 +1454,9 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     offsetY += fr.getHeight() + 2;
                 }
 
-                GlStateManager.popMatrix();
+                if (fixedScale) {
+                    GlStateManager.popMatrix();
+                }
             }
         }
 

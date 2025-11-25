@@ -26,6 +26,9 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import tritium.event.events.game.RawKeyInputEvent;
 import tritium.management.EventManager;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.screens.BaseScreen;
+import tritium.settings.ClientSettings;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.timing.Timer;
@@ -503,8 +506,16 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
      * Handles mouse input.
      */
     public void handleMouseInput(int button, boolean pressed) throws IOException {
-        int i = (int) (Mouse.getX() * this.width / this.mc.displayWidth);
-        int j = (int) (this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1);
+        int i = Mouse.getX() * this.width / this.mc.displayWidth;
+        int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
+
+        if (ClientSettings.FIXED_SCALE.getValue() && this instanceof BaseScreen) {
+            i = (int) (Mouse.getXDouble() / this.mc.displayWidth * RenderSystem.getFixedWidth() * .5);
+            j = (int) ((RenderSystem.getFixedHeight() - Mouse.getYDouble() / this.mc.displayHeight * RenderSystem.getFixedHeight()) * .5);
+        }
+
+        //k1 = Mouse.getXDouble() / this.mc.displayWidth * RenderSystem.getFixedWidth() * .5;
+        //                l1 = (RenderSystem.getFixedHeight() - Mouse.getYDouble() / this.mc.displayHeight * RenderSystem.getFixedHeight()) * .5;
 
         if (pressed) {
             if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0) {

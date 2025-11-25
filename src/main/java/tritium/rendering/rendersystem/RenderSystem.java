@@ -21,6 +21,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Location;
 import net.minecraft.util.Timer;
+import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.input.Mouse;
 import tritium.rendering.RGBA;
@@ -87,7 +88,7 @@ public class RenderSystem {
             return ScaledResolution.get().getScaledWidth_double();
         }
 
-        return Minecraft.getMinecraft().displayWidth / 2.0;
+        return getFixedWidth() * .5;
     }
 
     public static double getHeight() {
@@ -96,7 +97,18 @@ public class RenderSystem {
             return ScaledResolution.get().getScaledHeight_double();
         }
 
-        return Minecraft.getMinecraft().displayHeight * .5;
+        return getFixedHeight() * .5;
+    }
+
+    public static double getFixedWidth() {
+        return 1920;
+    }
+
+    public static double getFixedHeight() {
+
+        double scaleFactor = Display.getWidth() / getFixedWidth();
+
+        return Display.getHeight() / scaleFactor;
     }
 
     public static void color(int color) {
