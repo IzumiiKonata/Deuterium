@@ -619,9 +619,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         double center = this.getCoverSizeMin();
         coverSize = Interpolations.interpBezier(coverSize, player == null || player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
 
+        double xOffset = (RenderSystem.getWidth() * .5 - center - this.getCoverSizeMax() * .5) * .05;
         if (prevCover != null && coverAlpha <= .9f) {
             GlStateManager.bindTexture(prevCover.getGlTextureId());
-            this.roundedRectTextured(center - coverSize * .5, center - coverSize * .5, coverSize, coverSize, 3, alpha);
+            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .55, coverSize, coverSize, 3, alpha);
         }
 
         Location musicCover = MusicInfoWidget.getMusicCover(CloudMusic.currentlyPlaying);
@@ -631,11 +632,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             coverAlpha = Interpolations.interpBezier(coverAlpha, 1.0f, 0.2f);
             GlStateManager.bindTexture(tex.getGlTextureId());
             tex.linearFilter();
-            this.roundedRectTextured(center - coverSize * .5, center - coverSize * .5, coverSize, coverSize, 3, alpha * coverAlpha);
+            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .55, coverSize, coverSize, 3, alpha * coverAlpha);
         }
 
-        double elementsXOffset = center - this.getCoverSizeMax() * .5;
-        double elementsYOffset = center + this.getCoverSizeMax() * .5 + 16;
+        double elementsXOffset = center - this.getCoverSizeMax() * .5 + xOffset;
+        double elementsYOffset = center + this.getCoverSizeMax() * .45 + 16;
 
         stMusicName.render(FontManager.pf28bold, CloudMusic.currentlyPlaying.getName(), elementsXOffset, elementsYOffset, this.getCoverSizeMax(), RGBA.color((float) 1, (float) 1, (float) 1, alpha));
         stArtists.render(FontManager.pf20bold, CloudMusic.currentlyPlaying.getArtistsName(), elementsXOffset, elementsYOffset + FontManager.pf20bold.getHeight() + 8, this.getCoverSizeMax(), RGBA.color((float) 1, (float) 1, (float) 1, alpha * .8f));
@@ -679,10 +680,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         String remainingTime = "-" + formatDuration(totalTimeMillis - currentTimeMillis);
         FontManager.pf12bold.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12bold.getStringWidthD(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
 
-        FontManager.music40.drawString("I", elementsXOffset - 8, height - 32, hexColor(1, 1, 1, alpha * .5f));
-        FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidthD("J") + 4, height - 32, hexColor(1, 1, 1, alpha * .5f));
+        FontManager.music40.drawString("I", elementsXOffset - 8, height - 36, hexColor(1, 1, 1, alpha * .5f));
+        FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidthD("J") + 4, height - 36, hexColor(1, 1, 1, alpha * .5f));
 
-        double volumeBarYOffset = height - 24;
+        double volumeBarYOffset = height - 28;
         double volumeBarWidth = this.getCoverSizeMax() - FontManager.music40.getStringWidthD("I") - FontManager.music40.getStringWidthD("J");
 
         double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidthD("I") - 2;
