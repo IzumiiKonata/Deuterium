@@ -101,14 +101,12 @@ public class RenderSystem {
     }
 
     public static double getFixedWidth() {
-        return 1920;
+        return Math.min(mc.displayWidth, 1920);
     }
 
     public static double getFixedHeight() {
-
-        double scaleFactor = Display.getWidth() / getFixedWidth();
-
-        return Display.getHeight() / scaleFactor;
+        double scaleFactor = mc.displayWidth / getFixedWidth();
+        return mc.displayHeight / scaleFactor;
     }
 
     public static void color(int color) {
