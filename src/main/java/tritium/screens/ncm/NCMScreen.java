@@ -18,6 +18,7 @@ import tritium.screens.clickgui.music.LoginRenderer;
 import tritium.screens.ncm.panels.ControlsBar;
 import tritium.screens.ncm.panels.HomePanel;
 import tritium.screens.ncm.panels.NavigateBar;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -195,12 +196,16 @@ public class NCMScreen extends BaseScreen {
 
             if (this.loginRenderer.canClose() && !OptionsUtil.getCookie().isEmpty()) {
                 this.loginRenderer = null;
-                CloudMusic.loadNCM(OptionsUtil.getCookie());
+                MultiThreadingUtil.runAsync(() -> {
+                    CloudMusic.loadNCM(OptionsUtil.getCookie());
 
-                this.layout();
+                    MultiThreadingUtil.runOnMainThread(() -> {
+                        this.layout();
 
-                if (CloudMusic.profile != null)
-                    this.setCurrentPanel(new HomePanel());
+                        if (CloudMusic.profile != null)
+                            this.setCurrentPanel(new HomePanel());
+                    });
+                });
             }
         }
 

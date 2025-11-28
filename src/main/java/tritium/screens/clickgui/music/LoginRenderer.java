@@ -16,7 +16,10 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Image;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.screens.ncm.NCMScreen;
 import tritium.utils.i18n.Localizable;
+
+import static tritium.screens.ncm.NCMScreen.ColorType.PRIMARY_TEXT;
 
 /**
  * @author IzumiiKonata
@@ -78,8 +81,10 @@ public class LoginRenderer implements SharedRenderingConstants {
 
         double startY = posY + height / 6.0;
 
+        int textColor = reAlpha(NCMScreen.getColor(PRIMARY_TEXT), alpha);
+
         for (String string : strings) {
-            FontManager.pf20.drawCenteredString(string, posX + width / 2.0, startY, ThemeManager.get(ThemeManager.ThemeColor.Text, (int) (alpha * 255)));
+            FontManager.pf20.drawCenteredString(string, posX + width / 2.0, startY, textColor);
             startY += FontManager.pf20.getHeight();
         }
 
@@ -95,7 +100,7 @@ public class LoginRenderer implements SharedRenderingConstants {
         }
 
         if (avatarLoaded) {
-            FontManager.pf25bold.drawCenteredString(tempUsername, posX + width / 2.0, posY + height / 4.0, ThemeManager.get(ThemeManager.ThemeColor.Text, (int) (alpha * 255)));
+            FontManager.pf25bold.drawCenteredString(tempUsername, posX + width / 2.0, posY + height / 4.0, textColor);
 
             ITextureObject tempAvatarTexture = textureManager.getTexture(tempAvatar);
             if (tempAvatarTexture != null) {
