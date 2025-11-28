@@ -910,6 +910,8 @@
     "version.outdated_new_commit": "One or more new commits",
     "version.error": "Failed to check for updates",
 
+    "setting.name tag background.name": "Name tag background",
+
     "clickgui.nosettingshere": "No Settings Here."
   }
 }

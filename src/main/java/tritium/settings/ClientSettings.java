@@ -115,6 +115,7 @@ public class ClientSettings {
     public static final BooleanSetting FIXED_SCALE = new BooleanSetting("Fixed Scale", true);
     public static final BooleanSetting NO_CLICK_DELAY = new BooleanSetting("No Click Delay", true);
     public static final BooleanSetting RENDER_SELF_NAME_TAG = new BooleanSetting("Render Player's Own Name Tag", true);
+    public static final BooleanSetting NAME_TAG_BACKGROUND = new BooleanSetting("Name Tag Background", true);
     public static final BooleanSetting RENDER_GLOW = new BooleanSetting("Render Glow", true);
     public static final BooleanSetting RENDER_BLUR = new BooleanSetting("Render Blur", true);
     public static final BooleanSetting CENTER_INVENTORY = new BooleanSetting("Center the Inventory", true);

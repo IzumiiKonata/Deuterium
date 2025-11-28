@@ -124,7 +124,7 @@
     "setting.theme.name": "主题",
     "setting.fixed scale.name": "固定gui缩放",
     "setting.no click delay.name": "移除点击延迟",
-    "setting.render player's own name tag.name": "渲染本地玩家NameTag",
+    "setting.render player's own name tag.name": "渲染本地玩家 NameTag",
     "setting.fullscreen resolution.name": "全屏分辨率",
     "panel.music.createdby": "歌单创建者: ",
     "panel.music.playall": "播放所有",
@@ -731,6 +731,8 @@
     "version.outdated_new_release": "有新的发行版",
     "version.outdated_new_commit": "有新的提交",
     "version.error": "检查更新失败",
+
+    "setting.name tag background.name": "显示 NameTag 背景",
 
     "clickgui.nosettingshere": "这里没有设置."
   }
