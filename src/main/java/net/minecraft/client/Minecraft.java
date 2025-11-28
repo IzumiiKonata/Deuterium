@@ -1151,21 +1151,15 @@ public class Minecraft implements IThreadListener {
         }
         GlStateManager.pushMatrix();
 
-        if (GLFW.glfwGetWindowAttrib(Display.getWindow(), GLFW.GLFW_DECORATED) == GLFW.GLFW_FALSE && !this.isFullScreen()) {
-            GL11.glClearColor(0, 0, 0, 0);
-            GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
-            this.framebufferMc.framebufferRenderExtRounded(this.displayWidth, this.displayHeight, true);
-        } else {
-            this.framebufferMc.framebufferRender(this.displayWidth, this.displayHeight);
+        this.framebufferMc.framebufferRender(this.displayWidth, this.displayHeight);
 
-            if (ClientSettings.FRAME_PREDICT.getValue() && lastFrameTex != -1) {
-                // update content
-                this.framebufferMc.bindFramebuffer(true);
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
-                GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, this.displayWidth, this.displayHeight);
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-                this.framebufferMc.unbindFramebuffer();
-            }
+        if (ClientSettings.FRAME_PREDICT.getValue() && lastFrameTex != -1) {
+            // update content
+            this.framebufferMc.bindFramebuffer(true);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
+            GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, this.displayWidth, this.displayHeight);
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+            this.framebufferMc.unbindFramebuffer();
         }
 
         GlStateManager.popMatrix();

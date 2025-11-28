@@ -1,10 +1,7 @@
 package net.minecraft.client.shader;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
@@ -225,107 +222,46 @@ public class Framebuffer {
         this.framebufferColor[3] = alpha;
     }
 
-    public void framebufferRender(int p_147615_1_, int p_147615_2_) {
-        this.framebufferRenderExt(p_147615_1_, p_147615_2_, true);
+    public void framebufferRender(int width, int height) {
+        this.framebufferRenderExt(width, height, true);
     }
 
-    public void framebufferRenderExt(int p_178038_1_, int p_178038_2_, boolean p_178038_3_) {
-        if (OpenGlHelper.isFramebufferEnabled()) {
-            GlStateManager.colorMask(true, true, true, true);
-            GlStateManager.disableDepth();
-            GlStateManager.depthMask(false);
-            GlStateManager.matrixMode(5889);
-            GlStateManager.loadIdentity();
-            GlStateManager.ortho(0.0D, p_178038_1_, p_178038_2_, 0.0D, 1000.0D, 3000.0D);
-            GlStateManager.matrixMode(5888);
-            GlStateManager.loadIdentity();
-            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
-            GlStateManager.viewport(0, 0, p_178038_1_, p_178038_2_);
-            GlStateManager.enableTexture2D();
-            GlStateManager.disableLighting();
-            GlStateManager.disableAlpha();
+    int renderCallList = -1;
+    float lastWidth = -1,  lastHeight = -1;
 
-            if (p_178038_3_) {
-                GlStateManager.disableBlend();
-                GlStateManager.enableColorMaterial();
-            }
+    private void updateRenderCallList(int width, int height) {
 
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.bindFramebufferTexture();
-            float f = (float) p_178038_1_;
-            float f1 = (float) p_178038_2_;
-            float f2 = (float) this.framebufferWidth / (float) this.framebufferTextureWidth;
-            float f3 = (float) this.framebufferHeight / (float) this.framebufferTextureHeight;
+        float f = (float) width;
+        float f1 = (float) height;
+        float f2 = (float) this.framebufferWidth / (float) this.framebufferTextureWidth;
+        float f3 = (float) this.framebufferHeight / (float) this.framebufferTextureHeight;
 
-            GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-            GL11.glTexCoord2f(0.0F, f3);
-            GL11.glVertex2f(0.0F, 0.0F);
-            GL11.glTexCoord2f(0.0F, 0);
-            GL11.glVertex2f(0.0F, f1);
-            GL11.glTexCoord2f(f2, f3);
-            GL11.glVertex2f(f, 0.0F);
-            GL11.glTexCoord2f(f2, 0);
-            GL11.glVertex2f(f, f1);
-            GL11.glEnd();
-
-//            Tessellator tessellator = Tessellator.getInstance();
-//            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-//            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-//            worldrenderer.pos(0.0D, f1, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-//            worldrenderer.pos(f, f1, 0.0D).tex(f2, 0.0D).color(255, 255, 255, 255).endVertex();
-//            worldrenderer.pos(f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
-//            worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, f3).color(255, 255, 255, 255).endVertex();
-//            tessellator.draw();
-            this.unbindFramebufferTexture();
-            GlStateManager.depthMask(true);
-            GlStateManager.colorMask(true, true, true, true);
+        if (renderCallList != -1) {
+            GLAllocation.deleteDisplayLists(renderCallList);
         }
+
+        renderCallList = GLAllocation.generateDisplayLists(1);
+
+        GL11.glNewList(this.renderCallList, GL11.GL_COMPILE);
+
+        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+        GL11.glTexCoord2f(0.0F, f3);
+        GL11.glVertex2f(0.0F, 0.0F);
+        GL11.glTexCoord2f(0.0F, 0);
+        GL11.glVertex2f(0.0F, f1);
+        GL11.glTexCoord2f(f2, f3);
+        GL11.glVertex2f(f, 0.0F);
+        GL11.glTexCoord2f(f2, 0);
+        GL11.glVertex2f(f, f1);
+        GL11.glEnd();
+
+        GL11.glEndList();
+
     }
 
-    public void framebufferRenderExt2(int p_178038_1_, int p_178038_2_, boolean p_178038_3_) {
+    public void framebufferRenderExt(int width, int height, boolean p_178038_3_) {
         if (OpenGlHelper.isFramebufferEnabled()) {
-            GlStateManager.colorMask(true, true, true, false);
-            GlStateManager.disableDepth();
-            GlStateManager.depthMask(false);
-            GlStateManager.matrixMode(5889);
-            GlStateManager.loadIdentity();
-            GlStateManager.ortho(0.0D, p_178038_1_, p_178038_2_, 0.0D, 1000.0D, 3000.0D);
-            GlStateManager.matrixMode(5888);
-            GlStateManager.loadIdentity();
-            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
-            GlStateManager.viewport(0, 0, p_178038_1_, p_178038_2_);
-            GlStateManager.enableTexture2D();
-            GlStateManager.disableLighting();
-            GlStateManager.disableAlpha();
-
-            if (p_178038_3_) {
-                GlStateManager.disableBlend();
-                GlStateManager.enableColorMaterial();
-            }
-
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.bindFramebufferTexture();
-            float f = (float) p_178038_1_;
-            float f1 = (float) p_178038_2_;
-            float f2 = (float) this.framebufferWidth / (float) this.framebufferTextureWidth;
-            float f3 = (float) this.framebufferHeight / (float) this.framebufferTextureHeight;
-            Tessellator tessellator = Tessellator.getInstance();
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-            worldrenderer.pos(0.0D, f1, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-            worldrenderer.pos(f, f1, 0.0D).tex(f2, 0.0D).color(255, 255, 255, 255).endVertex();
-            worldrenderer.pos(f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
-            worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, f3).color(255, 255, 255, 255).endVertex();
-            tessellator.draw();
-            this.unbindFramebufferTexture();
-            GlStateManager.depthMask(true);
             GlStateManager.colorMask(true, true, true, true);
-        }
-    }
-
-    public void framebufferRenderExtRounded(int width, int height, boolean colorMaterial) {
-        if (OpenGlHelper.isFramebufferEnabled()) {
-            GL11.glColorMask(true, true, true, true);
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
             GlStateManager.matrixMode(5889);
@@ -339,29 +275,22 @@ public class Framebuffer {
             GlStateManager.disableLighting();
             GlStateManager.disableAlpha();
 
-            if (colorMaterial) {
+            if (p_178038_3_) {
                 GlStateManager.disableBlend();
                 GlStateManager.enableColorMaterial();
             }
 
-            float f = (float) width;
-            float f1 = (float) height;
-            float f2 = (float) this.framebufferWidth / (float) this.framebufferTextureWidth;
-            float f3 = (float) this.framebufferHeight / (float) this.framebufferTextureHeight;
-
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.bindFramebufferTexture();
-            Shaders.RQT_SHADER.drawUpsideDown(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight,  10, 1);
+            float f = (float) width;
+            float f1 = (float) height;
 
+            if (lastWidth != f || lastHeight != f1) {
+                this.updateRenderCallList(width, height);
+            }
 
-//            Tessellator tessellator = Tessellator.getInstance();
-//            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-//            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-//            worldrenderer.pos(0.0D, f1, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
-//            worldrenderer.pos(f, f1, 0.0D).tex(f2, 0.0D).color(255, 255, 255, 255).endVertex();
-//            worldrenderer.pos(f, 0.0D, 0.0D).tex(f2, f3).color(255, 255, 255, 255).endVertex();
-//            worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, f3).color(255, 255, 255, 255).endVertex();
-//            tessellator.draw();
+            GlStateManager.callList(this.renderCallList);
+
             this.unbindFramebufferTexture();
             GlStateManager.depthMask(true);
             GlStateManager.colorMask(true, true, true, true);
