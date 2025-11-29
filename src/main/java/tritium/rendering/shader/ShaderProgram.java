@@ -1,6 +1,7 @@
 package tritium.rendering.shader;
 
 import lombok.Getter;
+import net.minecraft.client.renderer.GLAllocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import tritium.interfaces.SharedConstants;
@@ -44,8 +45,29 @@ public class ShaderProgram implements SharedConstants {
         GL11.glEnd();
     }
 
+    static double lastWidth = -1, lastHeight = -1;
+    static int callList = -1;
+
     public static void drawQuadFlipped() {
-        drawQuadFlipped(0.0, 0.0, RenderSystem.getWidth(), RenderSystem.getHeight());
+
+        if (lastWidth != RenderSystem.getWidth() || lastHeight != RenderSystem.getHeight()) {
+            lastWidth = RenderSystem.getWidth();
+            lastHeight = RenderSystem.getHeight();
+
+            if (callList != -1)
+                GLAllocation.deleteDisplayLists(callList);
+
+            callList = GLAllocation.generateDisplayLists(1);
+
+            GL11.glNewList(callList, GL11.GL_COMPILE);
+            drawQuadFlipped(0.0, 0.0, RenderSystem.getWidth(), RenderSystem.getHeight());
+            GL11.glEndList();
+
+        }
+
+        GL11.glCallList(callList);
+
+//        drawQuadFlipped(0.0, 0.0, RenderSystem.getWidth(), RenderSystem.getHeight());
     }
 
     public void start() {

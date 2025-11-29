@@ -21,7 +21,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Location;
 import net.minecraft.util.Timer;
-import org.lwjgl.opengl.Display;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.input.Mouse;
 import tritium.rendering.RGBA;
@@ -42,7 +41,6 @@ public class RenderSystem {
     public static final Object ASYNC_LOCK = new Object();
     public static final float DIVIDE_BY_255 = 0.003921568627451F;
     public static Minecraft mc = Minecraft.getMinecraft();
-    private static final int[] DISPLAY_LISTS_2D = new int[4];
     public static PlayerSkinTextureCache playerSkinTextureCache;
     @Getter
     @Setter
@@ -631,104 +629,6 @@ public class RenderSystem {
             alpha = 0;
         }
         return RGBA.color((color >> 16) & 0xFF, (color >> 8) & 0xFF, (color) & 0xFF, (int) (alpha * 255));
-    }
-
-    public static void quickDrawRect(final float x, final float y, final float x2, final float y2) {
-        GL11.glBegin(GL11.GL_QUADS);
-
-        GL11.glVertex2d(x2, y);
-        GL11.glVertex2d(x, y);
-        GL11.glVertex2d(x, y2);
-        GL11.glVertex2d(x2, y2);
-
-        GL11.glEnd();
-    }
-
-    public static void initDisplayList() {
-        for (int i = 0; i < DISPLAY_LISTS_2D.length; i++) {
-            DISPLAY_LISTS_2D[i] = GL11.glGenLists(1);
-        }
-
-        GL11.glNewList(DISPLAY_LISTS_2D[0], GL11.GL_COMPILE);
-
-        quickDrawRect(-7F, 2F, -4F, 3F);
-        quickDrawRect(4F, 2F, 7F, 3F);
-        quickDrawRect(-7F, 0.5F, -6F, 3F);
-        quickDrawRect(6F, 0.5F, 7F, 3F);
-
-        GL11.glEndList();
-
-        GL11.glNewList(DISPLAY_LISTS_2D[1], GL11.GL_COMPILE);
-
-        quickDrawRect(-7F, 3F, -4F, 3.3F);
-        quickDrawRect(4F, 3F, 7F, 3.3F);
-        quickDrawRect(-7.3F, 0.5F, -7F, 3.3F);
-        quickDrawRect(7F, 0.5F, 7.3F, 3.3F);
-
-        GL11.glEndList();
-
-        GL11.glNewList(DISPLAY_LISTS_2D[2], GL11.GL_COMPILE);
-
-        quickDrawRect(4F, -20F, 7F, -19F);
-        quickDrawRect(-7F, -20F, -4F, -19F);
-        quickDrawRect(6F, -20F, 7F, -17.5F);
-        quickDrawRect(-7F, -20F, -6F, -17.5F);
-
-        GL11.glEndList();
-
-        GL11.glNewList(DISPLAY_LISTS_2D[3], GL11.GL_COMPILE);
-
-        quickDrawRect(7F, -20F, 7.3F, -17.5F);
-        quickDrawRect(-7.3F, -20F, -7F, -17.5F);
-        quickDrawRect(4F, -20.3F, 7.3F, -20F);
-        quickDrawRect(-7.3F, -20.3F, -4F, -20F);
-
-        GL11.glEndList();
-    }
-
-    public static void draw2D(final BlockPos blockPos, final int color, final int backgroundColor) {
-        final RenderManager renderManager = mc.getRenderManager();
-
-        final double posX = (blockPos.getX() + 0.5) - renderManager.renderPosX;
-        final double posY = blockPos.getY() - renderManager.renderPosY;
-        final double posZ = (blockPos.getZ() + 0.5) - renderManager.renderPosZ;
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(posX, posY, posZ);
-        GlStateManager.rotate(-mc.getRenderManager().playerViewY, 0F, 1F, 0F);
-        GlStateManager.scale(-0.1D, -0.1D, 0.1D);
-
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        GlStateManager.depthMask(true);
-
-        color(color);
-
-        GL11.glCallList(DISPLAY_LISTS_2D[0]);
-
-        color(backgroundColor);
-
-        GL11.glCallList(DISPLAY_LISTS_2D[1]);
-
-        GlStateManager.translate(0, 9, 0);
-
-        color(color);
-
-        GL11.glCallList(DISPLAY_LISTS_2D[2]);
-
-        color(backgroundColor);
-
-        GL11.glCallList(DISPLAY_LISTS_2D[3]);
-
-        // Stop render
-        glEnable(GL11.GL_DEPTH_TEST);
-        glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-
-        GlStateManager.popMatrix();
     }
 
     public static void drawBlockBox(BlockPos blockPos, int color, final boolean outline) {

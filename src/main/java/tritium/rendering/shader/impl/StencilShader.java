@@ -34,7 +34,7 @@ public class StencilShader {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableAlpha();
-        ShaderProgram.drawQuadFlipped(x, y, RenderSystem.getWidth(), RenderSystem.getHeight());
+        ShaderProgram.drawQuadFlipped();
         ShaderProgram.stop();
 
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE16);
