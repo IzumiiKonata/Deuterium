@@ -13,7 +13,7 @@ import tritium.rendering.shader.uniform.Uniform1i;
  */
 public class StencilShader {
 
-    private final ShaderProgram stencilProgram = new ShaderProgram("stencil.fsh", "vertex.vsh");
+    private final ShaderProgram stencilProgram = new ShaderProgram("stencil.frag", "vertex.vsh");
     private final Uniform1i mixTexture = new Uniform1i(stencilProgram, "mixTexture");
     private final Uniform1i stencilTexture = new Uniform1i(stencilProgram, "stencilTexture");
 

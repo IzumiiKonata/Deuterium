@@ -14,7 +14,6 @@ import tritium.rendering.shader.impl.*;
 import tritium.screens.ncm.NCMScreen;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.Widget;
-import tritium.rendering.shader.impl.*;
 
 /**
  * @author IzumiiKonata
@@ -48,7 +47,6 @@ public class Reload extends Command {
         Shaders.UI_GAUSSIAN_BLUR_SHADER = Shaders.GAUSSIAN_BLUR_SHADER;
         Shaders.BLEND = new BlendShader();
         Shaders.MOTION = new MotionShader();
-        Shaders.COLOR = new ColorShader();
 
         Shaders.ROQ_SHADER = new ROQShader();
         Shaders.ROGQ_SHADER = new ROGQShader();

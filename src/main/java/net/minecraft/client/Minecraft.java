@@ -592,7 +592,6 @@ public class Minecraft implements IThreadListener {
         this.checkGLError("Startup");
         this.textureMapBlocks = new TextureMap("textures");
         this.textureMapBlocks.setMipmapLevels(this.gameSettings.mipmapLevels);
-        GlStateManager.pushAttrib();
         LoadingRenderer.setProgress(40, "Minecraft - Render Engine");
         this.renderEngine.loadTickableTexture(TextureMap.locationBlocksTexture, this.textureMapBlocks);
         this.textureMapBlocks.setBlurMipmapDirect(false, this.gameSettings.mipmapLevels > 0);
@@ -605,7 +604,6 @@ public class Minecraft implements IThreadListener {
         this.renderManager = new RenderManager(this.renderEngine, this.renderItem);
         this.itemRenderer = new ItemRenderer(this);
         this.mcResourceManager.registerReloadListener(this.renderItem);
-        GlStateManager.popAttrib();
         LoadingRenderer.setProgress(46, "Minecraft - Entity Renderer");
         this.entityRenderer = new EntityRenderer(this, this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.entityRenderer);

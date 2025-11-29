@@ -11,7 +11,6 @@ public class Shaders {
     public static GaussianBlurShader GAUSSIAN_BLUR_SHADER = new GaussianBlurShader();
     public static Shader UI_GAUSSIAN_BLUR_SHADER = GAUSSIAN_BLUR_SHADER;
     public static BlendShader BLEND = new BlendShader();
-    public static ColorShader COLOR = new ColorShader();
 
     public static MotionShader MOTION = new MotionShader();
 

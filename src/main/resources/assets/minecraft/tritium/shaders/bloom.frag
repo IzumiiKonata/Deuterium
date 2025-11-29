@@ -11,22 +11,20 @@ void main(void)
 {
     vec2 uv = gl_TexCoord[0].st;
 
-    // 检查是否需要丢弃
     if (u_direction.x == 0.0) {
         float alpha = texture2D(u_other_sampler, uv).a;
         if (alpha > 0.0) discard;
     }
 
     vec4 pixel_color = texture2D(u_diffuse_sampler, uv);
-    pixel_color.rgb *= pixel_color.a; // 预乘 Alpha
+    pixel_color.rgb *= pixel_color.a;
 
-    // 应用第一个核值
     pixel_color *= u_kernel[0];
 
     for (float f = 1.0; f <= u_radius; f++) {
         vec2 offset = f * u_texel_size * u_direction;
         vec4 smpl = texture2D(u_diffuse_sampler, uv + offset) + texture2D(u_diffuse_sampler, uv - offset);
-        smpl.rgb *= smpl.a; // 预乘 Alpha
+        smpl.rgb *= smpl.a;
         pixel_color += smpl * u_kernel[int(f)];
     }
 

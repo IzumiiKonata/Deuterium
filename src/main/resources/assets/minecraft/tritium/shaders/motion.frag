@@ -8,7 +8,6 @@ void main(void)
 {
     vec2 uv = gl_TexCoord[0].st;
 
-    // 获取当前帧和前一帧的像素颜色
     vec4 current = texture2D(currentTexture, uv);
     vec4 previous = texture2D(previousTexture, uv);
 
