@@ -61,7 +61,11 @@ public class MusicTicker implements ITickable {
     public void playNext(MusicTicker.MusicType type) {
         this.currentMusic = PositionedSoundRecord.create(type.getMusicLocation());
         Location location = this.mc.getSoundHandler().playSound(this.currentMusic);
-        MusicToast.pushMusicToast(location);
+
+        if (mc.gameSettings.getSoundLevel(SoundCategory.MUSIC) > 0) {
+            MusicToast.pushMusicToast(location);
+        }
+
         musicLocation = location;
 //        System.out.println("Playing: " + location);
         this.timeUntilNextMusic = Integer.MAX_VALUE;
