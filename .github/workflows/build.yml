@@ -16,6 +16,9 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -90,8 +93,6 @@ jobs:
       - name: Generate release notes
         id: release_notes
         run: |
-          git fetch --unshallow 2>/dev/null || git fetch --depth=1000
-          git fetch --tags
           PREV_TAG=$(gh api repos/${{ github.repository }}/releases -q 'map(select(.draft == false)) | .[0].tag_name' 2>/dev/null || echo "")
           
           if [ -n "$PREV_TAG" ]; then
