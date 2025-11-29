@@ -9,6 +9,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.util.Location;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import tritium.ncm.music.AudioPlayer;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.Music;
@@ -23,6 +24,7 @@ import tritium.rendering.Image;
 import tritium.rendering.Rect;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.utils.network.HttpUtils;
@@ -342,56 +344,76 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                         if (shouldClip) {
 
-                            stencilFb = RenderSystem.createFrameBuffer(stencilFb);
-                            stencilFb.bindFramebuffer(true);
-                            stencilFb.setFramebufferColor(1, 1, 1, 0);
-                            stencilFb.framebufferClearNoBinding();
+                            int scale = 2;
+                            int fbWidth = ((int) stringWidthD) * scale, fbHeight = (FontManager.pf65bold.getHeight() + 6) * scale;
 
+                            GlStateManager.matrixMode(GL11.GL_PROJECTION);
                             GlStateManager.pushMatrix();
-                            this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
-                            Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight() + 6, -1);
-                            RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 16, FontManager.pf65bold.getHeight() + 6, -1, 0);
-                            GlStateManager.popMatrix();
-
-                            baseFb = RenderSystem.createFrameBuffer(baseFb);
-                            baseFb.bindFramebuffer(true);
-                            baseFb.setFramebufferColor(1, 1, 1, 0);
-                            baseFb.framebufferClearNoBinding();
-
+                            GlStateManager.loadIdentity();
+                            GlStateManager.ortho(0.0D, fbWidth * .5, fbHeight* .5, 0.0D, 1000.0D, 3000.0D);
+                            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                             GlStateManager.pushMatrix();
-                            this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
+                            GlStateManager.loadIdentity();
+                            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
-                            int prog = (int) (progress * charArray.length);
+                            // stencil texture
+                            {
+                                stencilFb = RenderSystem.createFrameBuffer(stencilFb, fbWidth, fbHeight);
+                                stencilFb.bindFramebuffer(true);
+                                stencilFb.setFramebufferColor(1, 1, 1, 0);
+                                stencilFb.framebufferClearNoBinding();
 
-                            double x = 0;
-                            for (int j = 0; j < charArray.length; j++) {
-                                char c = charArray[j];
+                                Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight() + 6, -1);
+                                RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 16, FontManager.pf65bold.getHeight() + 6, -1, 0);
 
-                                if (j <= prog) {
-                                    if (lyric.renderEmphasizes)
-                                        word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
-                                }
-
-                                FontManager.pf65bold.drawString(String.valueOf(c), x, 2 - word.emphasizes[j], hexColor(1, 1, 1, alpha));
-                                x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
                             }
 
-                            GlStateManager.popMatrix();
+                            // base texture
+                            {
+                                baseFb = RenderSystem.createFrameBuffer(baseFb, fbWidth, fbHeight);
+                                baseFb.bindFramebuffer(true);
+                                baseFb.setFramebufferColor(1, 1, 1, 0);
+                                baseFb.framebufferClearNoBinding();
+
+                                int prog = (int) (progress * charArray.length);
+
+                                double x = 0;
+                                for (int j = 0; j < charArray.length; j++) {
+                                    char c = charArray[j];
+
+                                    if (j <= prog) {
+                                        if (lyric.renderEmphasizes)
+                                            word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
+                                    }
+
+                                    FontManager.pf65bold.drawString(String.valueOf(c), x, 2 - word.emphasizes[j], hexColor(1, 1, 1, alpha));
+                                    x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                                }
+                            }
 
                             Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
-                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture,  renderX, renderY - 2);
+                            GlStateManager.popMatrix();
+                            GlStateManager.matrixMode(GL11.GL_PROJECTION);
+                            GlStateManager.popMatrix();
+                            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture,  renderX, renderY - 2, fbWidth * .5, fbHeight * .5);
 
 //                            FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
 //                            FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
 //
+//                            Rect.draw(100, 100, fbWidth * .5, fbHeight * .5, 0xff0090ff);
+//
+//                            GlStateManager.enableTexture2D();
+//                            GlStateManager.color(1, 1, 1, 1);
 //                            GlStateManager.bindTexture(stencilFb.framebufferTexture);
-//                            ShaderProgram.drawQuadFlipped(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+//                            ShaderProgram.drawQuadFlipped(100, 100, fbWidth * .5, fbHeight * .5);
 //                            GlStateManager.bindTexture(baseFb.framebufferTexture);
-//                            ShaderProgram.drawQuadFlipped(100, 100, RenderSystem.getWidth(), RenderSystem.getHeight());
+//                            ShaderProgram.drawQuadFlipped(100, 100, fbWidth * .5, fbHeight * .5);
 
-//                            Image.draw(stencilFb.framebufferTexture, 50, 72, stencilFb.framebufferTextureWidth, stencilFb.framebufferTextureHeight, Image.Type.Normal);
-//                            Image.draw(baseFb.framebufferTexture, 50, 128, baseFb.framebufferTextureWidth, baseFb.framebufferTextureHeight, Image.Type.Normal);
+//                            Image.draw(stencilFb.framebufferTexture, 50, 72, stencilFb.framebufferTextureWidth * .5, stencilFb.framebufferTextureHeight * .5, Image.Type.Normal);
+//                            Image.draw(baseFb.framebufferTexture, 50, 128, baseFb.framebufferTextureWidth * .5, baseFb.framebufferTextureHeight * .5, Image.Type.Normal);
 //                            StencilClipManager.beginClip(() -> {
 //                                Rect.draw(finalRenderX, finalRenderY - word.emphasize, progress * stringWidthD, FontManager.pf65bold.getHeight(), -1);
 //                            });

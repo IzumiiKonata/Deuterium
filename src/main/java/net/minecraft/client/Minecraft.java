@@ -377,7 +377,9 @@ public class Minecraft implements IThreadListener {
         this.session = gameConfig.userInfo.session;
         logger.info("正在设置用户名: " + this.session.getUsername());
 //        logger.info("(Session ID is " + this.session.getSessionID() + ")");
-        this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
+        MultiThreadingUtil.runAsync(() -> {
+            this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
+        });
 
         this.isDemo = gameConfig.gameInfo.isDemo;
         this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
@@ -487,7 +489,7 @@ public class Minecraft implements IThreadListener {
         LoadingRenderer.init();
         LoadingRenderer.setProgress(0, "Minecraft - Init");
 
-        this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"), this.sessionService);
+        this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"));
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
         LoadingRenderer.setProgress(10, "Minecraft - Init");
         this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);

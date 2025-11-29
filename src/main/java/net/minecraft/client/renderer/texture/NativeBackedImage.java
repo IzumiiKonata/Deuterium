@@ -14,8 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
+import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Arrays;
 
 public class NativeBackedImage extends BufferedImage implements AutoCloseable {
 
@@ -174,7 +176,13 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         return null;
     }
 
+    private static final int TRANSFER_SIZE = 8192;
+    private static byte[] buf = new byte[0];
+
     private static ByteBuffer readResource(InputStream inputStream) throws IOException {
+
+        Arrays.fill(buf, (byte) 0);
+
         ByteBuffer byteBuffer;
         if (inputStream instanceof FileInputStream) {
             FileChannel fileChannel = ((FileInputStream) inputStream).getChannel();
@@ -190,9 +198,8 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
             }
 
             byteBuffer = MemoryTracker.memAlloc(sizeGuess * 2);
-            ReadableByteChannel readableByteChannel = new FastByteChannel(inputStream);
 
-            while (readableByteChannel.read(byteBuffer) != -1) {
+            while (read(byteBuffer, inputStream) != -1) {
                 // If we've filled the buffer, make it twice as large and reparse
                 if (byteBuffer.remaining() == 0) {
                     byteBuffer = MemoryTracker.memRealloc(byteBuffer, byteBuffer.capacity() * 2);
@@ -202,4 +209,36 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
 
         return byteBuffer;
     }
+
+    private static int read(ByteBuffer dst, InputStream in) throws IOException {
+        int len = dst.remaining();
+        int totalRead = 0;
+        int bytesRead = 0;
+        while (totalRead < len) {
+            int bytesToRead = Math.min((len - totalRead), TRANSFER_SIZE);
+            if (buf.length < bytesToRead) {
+                buf = new byte[bytesToRead];
+            }
+
+            if ((totalRead > 0) && !(in.available() > 0)) {
+                break; // block at most once
+            }
+
+            bytesRead = in.read(buf, 0, bytesToRead);
+
+            if (bytesRead < 0) {
+                break;
+            } else {
+                totalRead += bytesRead;
+            }
+            dst.put(buf, 0, bytesRead);
+        }
+
+        if ((bytesRead < 0) && (totalRead == 0)) {
+            return -1;
+        }
+
+        return totalRead;
+    }
+
 }

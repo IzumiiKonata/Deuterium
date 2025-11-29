@@ -47,7 +47,18 @@ public class DefaultResourcePack implements IResourcePack {
     }
 
     public boolean resourceExists(Location location) {
-        return this.getResourceStream(location) != null || this.mapAssets.containsKey(location.toString());
+        InputStream stream = this.getResourceStream(location);
+        boolean result = stream != null || this.mapAssets.containsKey(location.toString());
+
+        if (stream != null) {
+            try {
+                stream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return result;
     }
 
     public Set<String> getResourceDomains() {

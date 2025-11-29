@@ -89,14 +89,14 @@ public class PlayerProfileCache {
     /**
      * Add an entry to this cache
      */
-    private void addEntry(GameProfile gameProfile, Date expirationDate) {
+    private void addEntry(GameProfile gameProfile, Long expirationDate) {
         UUID uuid = gameProfile.getId();
 
         if (expirationDate == null) {
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-            calendar.add(2, 1);
-            expirationDate = calendar.getTime();
+            calendar.add(Calendar.MONTH, 1);
+            expirationDate = calendar.getTime().getTime();
         }
 
         String s = gameProfile.getName().toLowerCase(Locale.ROOT);
@@ -122,7 +122,7 @@ public class PlayerProfileCache {
         String s = username.toLowerCase(Locale.ROOT);
         ProfileEntry playerprofilecache$profileentry = this.usernameToProfileEntryMap.get(s);
 
-        if (playerprofilecache$profileentry != null && (new Date()).getTime() >= playerprofilecache$profileentry.expirationDate.getTime()) {
+        if (playerprofilecache$profileentry != null && (new Date()).getTime() >= playerprofilecache$profileentry.expirationStamp) {
             this.uuidToProfileEntryMap.remove(playerprofilecache$profileentry.getGameProfile().getId());
             this.usernameToProfileEntryMap.remove(playerprofilecache$profileentry.getGameProfile().getName().toLowerCase(Locale.ROOT));
             this.gameProfiles.remove(playerprofilecache$profileentry.getGameProfile());
@@ -192,7 +192,7 @@ public class PlayerProfileCache {
 
             for (ProfileEntry playerprofilecache$profileentry : Lists.reverse(list)) {
                 if (playerprofilecache$profileentry != null) {
-                    this.addEntry(playerprofilecache$profileentry.getGameProfile(), playerprofilecache$profileentry.getExpirationDate());
+                    this.addEntry(playerprofilecache$profileentry.getGameProfile(), playerprofilecache$profileentry.getExpirationStamp());
                 }
             }
         } catch (FileNotFoundException var9) {
@@ -242,7 +242,7 @@ public class PlayerProfileCache {
             jsonobject.addProperty("name", p_serialize_1_.getGameProfile().getName());
             UUID uuid = p_serialize_1_.getGameProfile().getId();
             jsonobject.addProperty("uuid", uuid == null ? "" : uuid.toString());
-            jsonobject.addProperty("expiresOn", PlayerProfileCache.dateFormat.format(p_serialize_1_.getExpirationDate()));
+            jsonobject.addProperty("expiresOn", p_serialize_1_.getExpirationStamp());
             return jsonobject;
         }
 
@@ -256,11 +256,16 @@ public class PlayerProfileCache {
                 if (jsonelement != null && jsonelement1 != null) {
                     String s = jsonelement1.getAsString();
                     String s1 = jsonelement.getAsString();
-                    Date date = null;
+                    Long date = null;
 
                     if (jsonelement2 != null) {
                         try {
-                            date = PlayerProfileCache.dateFormat.parse(jsonelement2.getAsString());
+                            JsonPrimitive primitive = jsonelement2.getAsJsonPrimitive();
+                            if (primitive.isNumber()) {
+                                date = primitive.getAsLong();
+                            } else {
+                                date = PlayerProfileCache.dateFormat.parse(primitive.getAsString()).getTime();
+                            }
                         } catch (ParseException var14) {
                             date = null;
                         }

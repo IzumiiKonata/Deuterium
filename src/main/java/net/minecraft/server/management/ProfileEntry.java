@@ -12,11 +12,11 @@ import java.util.Date;
 @Getter
 public class ProfileEntry {
     public final GameProfile gameProfile;
-    public final Date expirationDate;
+    public final Long expirationStamp;
 
-    ProfileEntry(GameProfile gameProfileIn, Date expirationDateIn) {
+    ProfileEntry(GameProfile gameProfileIn, Long expirationDateIn) {
         this.gameProfile = gameProfileIn;
-        this.expirationDate = expirationDateIn;
+        this.expirationStamp = expirationDateIn;
     }
 
 }

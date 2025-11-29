@@ -298,8 +298,6 @@ public class TextureUtil {
     }
 
     static {
-        int i = -16777216;
-        int j = -524040;
         int[] aint = new int[]{-524040, -524040, -524040, -524040, -524040, -524040, -524040, -524040};
         int[] aint1 = new int[]{-16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216, -16777216};
         int k = aint.length;
@@ -312,6 +310,7 @@ public class TextureUtil {
         }
 
         missingTexture.updateDynamicTexture();
+        missingTexture.clear();
         mipmapBuffer = new int[4];
     }
 }

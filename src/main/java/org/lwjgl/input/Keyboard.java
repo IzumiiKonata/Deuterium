@@ -7,6 +7,7 @@ import org.lwjglx.Sys;
 import org.lwjglx.input.KeyCodes;
 import org.lwjgl.opengl.Display;
 import tritium.Tritium;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
@@ -163,8 +164,6 @@ public class Keyboard {
     public static final int KEY_POWER = 0xDE;
     public static final int KEY_SLEEP = 0xDF;
 
-    public static final int keyCount;
-
     private static final Map<String, Integer> reverseKeyMap = new ConcurrentHashMap<>();
 
 
@@ -189,7 +188,7 @@ public class Keyboard {
 
     static {
 
-        if (Tritium.getInstance().isObfuscated()) {
+        MultiThreadingUtil.runAsync(() -> {
             reverseKeyMap.put("NONE", 0);
             reverseKeyMap.put("ESCAPE", 1);
             reverseKeyMap.put("1", 2);
@@ -321,39 +320,21 @@ public class Keyboard {
             reverseKeyMap.put("APPS", 221);
             reverseKeyMap.put("POWER", 222);
             reverseKeyMap.put("SLEEP", 223);
-        }
 
-        // Use reflection to find out key names
-        Field[] fields = Keyboard.class.getFields();
-        int keyCounter = 0;
-        try {
-            for (Field field : fields) {
-                if (Modifier.isStatic(field.getModifiers()) && Modifier.isPublic(field.getModifiers())
-                        && Modifier.isFinal(field.getModifiers())
-                        && field.getType()
-                        .equals(int.class)
-                        && field.getName()
-                        .startsWith("KEY_")
-                        && !field.getName()
-                        .endsWith("WIN")) {
-                    /* Don't use deprecated names */
-                    int key = field.getInt(null);
-                    String name = field.getName()
-                            .substring(4);
-                    unlocalizedKeyNameMiniLut[key] = name;
-                    keyCounter++;
+            for (Map.Entry<String, Integer> entry : reverseKeyMap.entrySet()) {
+                int key = entry.getValue();
+                String name = entry.getKey();
 
-                    reverseKeyMap.put(name, key);
+                unlocalizedKeyNameMiniLut[key] = name;
+            }
+
+            for (int i = 0; i < unlocalizedKeyNameMiniLut.length; i++) {
+                if (unlocalizedKeyNameMiniLut[i] == null) {
+                    unlocalizedKeyNameMiniLut[i] = "Key " + i;
                 }
             }
-        } catch (Exception e) {
-        }
-        keyCount = keyCounter;
-        for (int i = 0; i < unlocalizedKeyNameMiniLut.length; i++) {
-            if (unlocalizedKeyNameMiniLut[i] == null) {
-                unlocalizedKeyNameMiniLut[i] = "Key " + i;
-            }
-        }
+        });
+
         eventQueue.add(new KeyEvent(0, '\0', KeyState.RELEASE, Sys.getNanoTime()));
     }
 
@@ -419,7 +400,7 @@ public class Keyboard {
     }
 
     public static int getKeyCount() {
-        return keyCount;
+        return reverseKeyMap.size();
     }
 
     public static int getNumKeyboardEvents() {

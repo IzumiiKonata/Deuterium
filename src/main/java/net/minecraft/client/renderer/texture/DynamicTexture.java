@@ -202,6 +202,10 @@ public class DynamicTexture extends AbstractTexture {
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
     }
 
+    public void clear() {
+        this.dynamicTextureData = null;
+    }
+
     public int[] getTextureData() {
         return this.dynamicTextureData;
     }

@@ -30,15 +30,13 @@ public class SkinManager {
     private static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(0, 2, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue());
     private final TextureManager textureManager;
     private final File skinCacheDir;
-    private final MinecraftSessionService sessionService;
     private final LoadingCache<GameProfile, Map<Type, MinecraftProfileTexture>> skinCacheLoader;
 
     private final Map<Location, BufferedImage> imgData = new HashMap<>();
 
-    public SkinManager(TextureManager textureManagerInstance, File skinCacheDirectory, MinecraftSessionService sessionService) {
+    public SkinManager(TextureManager textureManagerInstance, File skinCacheDirectory) {
         this.textureManager = textureManagerInstance;
         this.skinCacheDir = skinCacheDirectory;
-        this.sessionService = sessionService;
         this.skinCacheLoader = CacheBuilder.newBuilder().expireAfterAccess(15L, TimeUnit.SECONDS).build(new CacheLoader<GameProfile, Map<Type, MinecraftProfileTexture>>() {
             public Map<Type, MinecraftProfileTexture> load(GameProfile p_load_1_) throws Exception {
                 return Minecraft.getMinecraft().getSessionService().getTextures(p_load_1_, false);
@@ -111,7 +109,7 @@ public class SkinManager {
 
             try
             {
-                map.putAll(SkinManager.this.sessionService.getTextures(profile, requireSecure));
+                map.putAll(Minecraft.getMinecraft().sessionService.getTextures(profile, requireSecure));
             }
             catch (InsecureTextureException ignored)
             {
@@ -121,7 +119,7 @@ public class SkinManager {
             {
                 profile.getProperties().clear();
                 profile.getProperties().putAll(Minecraft.getMinecraft().getProfileProperties());
-                map.putAll(SkinManager.this.sessionService.getTextures(profile, false));
+                map.putAll(Minecraft.getMinecraft().sessionService.getTextures(profile, false));
             }
 
             Minecraft.getMinecraft().addScheduledTask(() -> {

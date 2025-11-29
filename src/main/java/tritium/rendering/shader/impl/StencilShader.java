@@ -42,4 +42,29 @@ public class StencilShader {
         GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
     }
 
+    public void draw(int baseTexture, int stencilTexture, double x, double y, double width, double height) {
+
+        this.stencilProgram.start();
+
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
+        GlStateManager.bindTexture(stencilTexture);
+        RenderSystem.linearFilter();
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE16);
+        GlStateManager.bindTexture(baseTexture);
+        RenderSystem.linearFilter();
+
+        this.mixTexture.setValue(16);
+        this.stencilTexture.setValue(0);
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableAlpha();
+        ShaderProgram.drawQuadFlipped(x, y, width, height);
+        ShaderProgram.stop();
+
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE16);
+        GlStateManager.bindTexture(0);
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
+    }
+
 }
