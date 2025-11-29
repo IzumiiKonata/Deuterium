@@ -3,6 +3,7 @@ package tritium.screens.ncm.panels;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.Music;
@@ -88,7 +89,9 @@ public class MusicWidget extends RoundedRectWidget {
 
         lblMusicIndex.setClickable(false);
 
-        LabelWidget lblMusicName = new LabelWidget(music.getName(), FontManager.pf14bold);
+        String translatedNames = music.getTranslatedNames();
+
+        LabelWidget lblMusicName = new LabelWidget(music.getName() + (translatedNames.isEmpty() ? "" : EnumChatFormatting.GRAY + " (" + translatedNames + ")"), FontManager.pf14bold);
         this.addChild(lblMusicName);
 
         lblMusicName

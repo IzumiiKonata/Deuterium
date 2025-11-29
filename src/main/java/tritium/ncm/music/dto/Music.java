@@ -52,7 +52,7 @@ public class Music {
     @SerializedName("tns")
     private final List<String> translatedName;
 
-    private transient String artistsName;
+    private transient String artistsName, translatedNames;
 
     public String getArtistsName() {
         if (this.artistsName == null) {
@@ -66,8 +66,24 @@ public class Music {
         return this.artistsName;
     }
 
+    public String getTranslatedNames() {
+        if (this.translatedNames == null) {
+            this.translatedNames = this.buildTranslatedNames();
+        }
+
+        return this.translatedNames;
+    }
+
+    private String buildTranslatedNames() {
+
+        if (this.translatedName == null || this.translatedName.isEmpty())
+            return "";
+
+        return String.join(", ", this.translatedName);
+    }
+
     private String buildArtistsNames() {
-        List<String> artistsList = this.artists.stream().map(Artist::getName).collect(Collectors.toList());
+        List<String> artistsList = this.artists.stream().map(Artist::getName).toList();
 
         StringBuilder sb = new StringBuilder();
 
