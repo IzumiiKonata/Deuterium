@@ -61,7 +61,7 @@ public class RequestUtil {
 
     private static final AppConfig APP_CONF = AppConfig.builder()
             .domain("https://music.163.com")
-            .apiDomain("https://interface.music.163.com")
+            .apiDomain("https://interfacepc.music.163.com")
             .encrypt(true)
             .encryptResponse(false)
             .build();
@@ -497,6 +497,11 @@ public class RequestUtil {
             }
 
             connection.disconnect();
+
+//            System.out.println("POST " + url);
+//            System.out.println("Response: " + responseCode);
+//            System.out.println("Response Body: " + answer.toString());
+
             return answer;
 
         } catch (Exception e) {
