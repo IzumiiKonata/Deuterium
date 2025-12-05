@@ -75,13 +75,9 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
         }
 
         double width;
-        width = widthNotLimited ? font.getStringWidthD(lbl) : this.getMaxWidth();
+        double stringWidth = font.getStringWidthD(lbl);
+        width = widthNotLimited ? stringWidth : Math.min(this.getMaxWidth(), stringWidth);
         this.setBounds(width, font.getStringHeight(lbl));
-    }
-
-    @Override
-    public void addChild(AbstractWidget<?>... child) {
-        throw new UnsupportedOperationException("LabelWidget 不应该拥有子组件。");
     }
 
     public LabelWidget setWidthLimitType(WidthLimitType widthLimitType) {

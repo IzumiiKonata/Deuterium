@@ -18,6 +18,7 @@ import tritium.screens.ncm.NCMScreen;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
+import java.awt.*;
 import java.io.InputStream;
 
 /**
@@ -89,6 +90,9 @@ public class MusicWidget extends RoundedRectWidget {
 
         lblMusicIndex.setClickable(false);
 
+        boolean musicDirty = music.isDirty();
+        double dirtyIndicatorSize = 8;
+
         String translatedNames = music.getTranslatedNames();
 
         LabelWidget lblMusicName = new LabelWidget(music.getName() + (translatedNames.isEmpty() ? "" : EnumChatFormatting.GRAY + " (" + translatedNames + ")"), FontManager.pf14bold);
@@ -100,11 +104,33 @@ public class MusicWidget extends RoundedRectWidget {
                     lblMusicName.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
                     lblMusicName.centerVertically();
                     lblMusicName.setPosition(cover.getRelativeX() + cover.getWidth() + 4, lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2);
-                    lblMusicName.setMaxWidth(this.getWidth() - (cover.getRelativeX() + cover.getWidth() + 4 + 32));
+                    lblMusicName.setMaxWidth(this.getWidth() - (cover.getRelativeX() + cover.getWidth() + 4 + 32 + (musicDirty ? (dirtyIndicatorSize + 4) : 0)));
                 });
         lblMusicName.setClickable(false);
 
-        LabelWidget lblMusicArtist = new LabelWidget(music.getArtistsName() + " - " + music.getAlbum().getName(), FontManager.pf14bold);
+        if (musicDirty) {
+            RoundedRectWidget dirtyIndicator = new RoundedRectWidget(0, 0, dirtyIndicatorSize, dirtyIndicatorSize);
+            this.addChild(dirtyIndicator);
+            dirtyIndicator
+                    .setRadius(1.5)
+                    .setColor(Color.GRAY);
+
+            dirtyIndicator.setBeforeRenderCallback(() -> {
+//                dirtyIndicator.centerVertically();
+                dirtyIndicator.setPosition(lblMusicName.getRelativeX() + lblMusicName.getWidth() + 2, lblMusicName.getRelativeY() + lblMusicName.getHeight() * .5 - dirtyIndicatorSize * .5);
+            });
+
+            dirtyIndicator.setClickable(false);
+
+            LabelWidget lblDirty = new LabelWidget("E", FontManager.pf12bold);
+            dirtyIndicator.addChild(lblDirty);
+            lblDirty.setBeforeRenderCallback(() -> {
+                lblDirty.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+                lblDirty.center();
+            });
+        }
+
+        LabelWidget lblMusicArtist = new LabelWidget(music.getArtistsName() + " - " + music.getAlbum().getName(), FontManager.pf14);
         this.addChild(lblMusicArtist);
 
         lblMusicArtist
