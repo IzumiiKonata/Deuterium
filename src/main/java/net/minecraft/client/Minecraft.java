@@ -111,6 +111,7 @@ import tritium.management.ModuleManager;
 import tritium.rendering.TransitionAnimation;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.loading.LoadingRenderer;
+import tritium.screens.ConsoleScreen;
 import tritium.screens.MainMenu;
 import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
@@ -462,6 +463,8 @@ public class Minecraft implements IThreadListener {
             this.displayHeight = this.gameSettings.overrideHeight;
         }
 
+        ConsoleScreen.log("[LWJGL] Version: {}", Sys.getVersion());
+
         logger.info("LWJGL版本: " + Sys.getVersion());
         this.setInitialDisplayMode();
         this.createDisplay();
@@ -660,7 +663,7 @@ public class Minecraft implements IThreadListener {
 
         InputEvents.addKeyboardListener(new McKeybindHandler());
 
-        Tritium.getInstance().getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Launcher.startupTime) / 1000.0d);
+        Tritium.getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Launcher.startupTime) / 1000.0d);
 
         loaded = true;
     }

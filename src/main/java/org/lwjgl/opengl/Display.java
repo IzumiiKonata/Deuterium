@@ -12,6 +12,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjglx.opengl.ContextAttribs;
 import org.lwjglx.opengl.DisplayMode;
 import org.lwjglx.opengl.PixelFormat;
+import tritium.screens.ConsoleScreen;
 import tritium.settings.ClientSettings;
 
 import java.awt.*;
@@ -153,6 +154,10 @@ public class Display {
         drawable = new DrawableGL();
         GL.createCapabilities(false);
 
+        ConsoleScreen.log("[GL] OpenGL Version: {}", GL11.glGetString(GL11.GL_VERSION));
+        ConsoleScreen.log("[GL] Renderer: {}", GL11.glGetString(GL11.GL_RENDERER));
+        ConsoleScreen.log("[GL] Vendor: {}", GL11.glGetString(GL11.GL_VENDOR));
+
         GL11.glClearColor(0, 0, 0, 1);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
@@ -166,16 +171,12 @@ public class Display {
         Window.keyCallback = new GLFWKeyCallback() {
 
             public InputEvents.KeyAction parse(int action) {
-                switch (action) {
-                    case GLFW_PRESS:
-                        return InputEvents.KeyAction.PRESSED;
-                    case GLFW_RELEASE:
-                        return InputEvents.KeyAction.RELEASED;
-                    case GLFW_REPEAT:
-                        return InputEvents.KeyAction.REPEATED;
-                    default:
-                        return InputEvents.KeyAction.PRESSED;
-                }
+                return switch (action) {
+                    case GLFW_PRESS -> InputEvents.KeyAction.PRESSED;
+                    case GLFW_RELEASE -> InputEvents.KeyAction.RELEASED;
+                    case GLFW_REPEAT -> InputEvents.KeyAction.REPEATED;
+                    default -> InputEvents.KeyAction.PRESSED;
+                };
             }
 
             @Override
@@ -254,18 +255,13 @@ public class Display {
             }
 
             public char mapChar(int key) {
-                switch (key) {
-                    case GLFW_KEY_ENTER:
-                        return 0x0D;
-                    case GLFW_KEY_ESCAPE:
-                        return 0x1B;
-                    case GLFW_KEY_TAB:
-                        return 0x09;
-                    case GLFW_KEY_BACKSPACE:
-                        return 0x08;
-                    default:
-                        return '\0';
-                }
+                return switch (key) {
+                    case GLFW_KEY_ENTER -> 0x0D;
+                    case GLFW_KEY_ESCAPE -> 0x1B;
+                    case GLFW_KEY_TAB -> 0x09;
+                    case GLFW_KEY_BACKSPACE -> 0x08;
+                    default -> '\0';
+                };
             }
         };
 

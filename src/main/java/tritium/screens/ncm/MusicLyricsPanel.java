@@ -356,6 +356,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             GlStateManager.loadIdentity();
                             GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
+                            double gradientWidth = 16;
+
                             // stencil texture
                             {
                                 stencilFb = RenderSystem.createFrameBuffer(stencilFb, fbWidth, fbHeight);
@@ -363,9 +365,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                 stencilFb.setFramebufferColor(1, 1, 1, 0);
                                 stencilFb.framebufferClearNoBinding();
 
-                                Rect.draw(0, 0, progress * stringWidthD, FontManager.pf65bold.getHeight() + 6, -1);
-                                RenderSystem.drawGradientRectLeftToRight(progress * stringWidthD, 0, progress * stringWidthD + 16, FontManager.pf65bold.getHeight() + 6, -1, 0);
-
+                                double w = progress * (stringWidthD + gradientWidth);
+                                Rect.draw(0, 0, w - gradientWidth, FontManager.pf65bold.getHeight() + 6, -1);
+                                RenderSystem.drawGradientRectLeftToRight(w - gradientWidth, 0, w, FontManager.pf65bold.getHeight() + 6, -1, 0);
                             }
 
                             // base texture
