@@ -452,7 +452,12 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 }
 
                 if (lastBreakableIndex != -1) {
-                    return new LineBreakResult(lastBreakableIndex, lastBreakableIndex + 1);
+
+                    if (text.charAt(lastBreakableIndex) == ' ') {
+                        return new LineBreakResult(lastBreakableIndex, lastBreakableIndex + 1);
+                    }
+
+                    return new LineBreakResult(lastBreakableIndex + 1, lastBreakableIndex + 1);
                 }
 
                 if (i == startIndex) {
