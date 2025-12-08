@@ -496,19 +496,14 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             char breakableCharValue = breakableChars[c];
             boolean breakable = breakableCharValue > 0;
             if (breakable) {
-                // 如果是右括号，检查是否应该替换之前的左括号断点
                 if (breakableCharValue == 1) {
-                    // 向前查找匹配的左括号
                     int openIndex = findMatchingOpenBracket(text, i, startIndex);
 
-                    // 如果找到了左括号，且之前的断点就是这个左括号
                     if (openIndex != -1 && openIndex == lastBreakableIndex) {
-                        // 将断点更新为右括号之后（优先级设为2，与逗号等同）
                         lastBreakableIndexPriority = 2;
                         lastBreakableIndex = i;
                         lastBreakableTrimThisChar = false;
                     } else if (breakableCharValue >= lastBreakableIndexPriority) {
-                        // 否则正常处理右括号
                         lastBreakableIndexPriority = breakableCharValue;
                         lastBreakableIndex = i;
                     }
@@ -544,11 +539,16 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                     int lastBreakableCharValue = breakableChars[lastBreakableChar];
 
                     if (lastBreakableCharValue == 3) {
+                        if (lastBreakableIndex == startIndex) {
+                            if (i == startIndex) {
+                                return new LineBreakResult(startIndex + 1, startIndex + 1);
+                            }
+                            return new LineBreakResult(i, i);
+                        }
                         return new LineBreakResult(lastBreakableIndex, lastBreakableIndex);
                     }
 
-                    if (lastBreakableIndex != 0)
-                        return new LineBreakResult(lastBreakableIndex + 1, lastBreakableIndex + 1);
+                    return new LineBreakResult(lastBreakableIndex + 1, lastBreakableIndex + 1);
                 }
 
                 if (i == startIndex) {
