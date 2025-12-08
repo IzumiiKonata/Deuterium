@@ -427,9 +427,9 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     @Getter
     static final char[] breakableChars = new char['\uFFFF' + 1];
-    static String breakable = " .。,，!！?？;；、";
-    static String wrapStarts = "(（「『";
-    static String wrapEnds = ")）」』";
+    static String breakable  =  " .。,，!！?？;；、";
+    static String wrapStarts =  "(（「『{[【<";
+    static String wrapEnds   =  ")）」』}]】>";
     static {
         for (char c : breakable.toCharArray()) {
             breakableChars[c] = 2;
