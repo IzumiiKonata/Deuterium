@@ -1,5 +1,6 @@
 package tritium.rendering.font;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -419,13 +420,36 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             i = result.nextStartIndex;
         }
 
-        return lines.toArray(new String[0]);
+        String[] array = lines.toArray(new String[0]);
+//        System.out.println("Breaking \"" + text + "\" into [" + String.join("\", \"", array) + "]");
+        return array;
+    }
+
+    @Getter
+    static final char[] breakableChars = new char['\uFFFF' + 1];
+    static String breakable = " .。,，!！?？;；、";
+    static String wrapStarts = "(（「『";
+    static String wrapEnds = ")）」』";
+    static {
+        for (char c : breakable.toCharArray()) {
+            breakableChars[c] = 2;
+        }
+
+        for (char c : wrapStarts.toCharArray()) {
+            breakableChars[c] = 3;
+        }
+
+        for (char c : wrapEnds.toCharArray()) {
+            breakableChars[c] = 1;
+        }
     }
 
     private LineBreakResult findLineBreak(String text, int startIndex, double maxWidth) {
         double currentWidth = 0;
         int i = startIndex;
         int lastBreakableIndex = -1;
+        int lastBreakableIndexPriority = 0;
+        boolean lastBreakableTrimThisChar = false;
 
         while (i < text.length()) {
             char c = text.charAt(i);
@@ -439,25 +463,34 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 return new LineBreakResult(i, i + 1);
             }
 
-            boolean breakable = c == ' ' || c == '.' || c == ',' || c == '!' || c == '?' || c == '。' || c == '，' || c == '；' || c == ';' || c == '(' || c == ')';
+            char breakableCharValue = breakableChars[c];
+            boolean breakable = breakableCharValue > 0;
             if (breakable) {
-                lastBreakableIndex = i;
+                if (breakableCharValue >= lastBreakableIndexPriority) {
+                    lastBreakableIndexPriority = breakableCharValue;
+                    lastBreakableIndex = i;
+                    lastBreakableTrimThisChar = c == ' ';
+                }
             }
 
             double charWidth = getCharWidth(c);
 
             if (currentWidth + charWidth > maxWidth) {
-                if (breakable) {
-                    return new LineBreakResult(i, i + 1);
+                if (breakable && breakableCharValue >= lastBreakableIndexPriority) {
+                    if (lastBreakableTrimThisChar) {
+                        return new LineBreakResult(i, i + 1);
+                    }
+
+                    return new LineBreakResult(i, i);
                 }
 
                 if (lastBreakableIndex != -1) {
 
-                    if (text.charAt(lastBreakableIndex) == ' ') {
+                    if (lastBreakableTrimThisChar) {
                         return new LineBreakResult(lastBreakableIndex, lastBreakableIndex + 1);
                     }
 
-                    return new LineBreakResult(lastBreakableIndex + 1, lastBreakableIndex + 1);
+                    return new LineBreakResult(lastBreakableIndex, lastBreakableIndex);
                 }
 
                 if (i == startIndex) {

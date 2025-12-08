@@ -7,10 +7,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * 网易云音乐歌词解析器
- * NetEase Cloud Music Lyric Parser
- */
 public class LyricParser {
 
     public static List<LyricLine> parse(JsonObject input) {
@@ -18,19 +14,25 @@ public class LyricParser {
             return new ArrayList<>();
         }
 
-        List<LyricLine> lyricLines = new ArrayList<>(parseSingleLine(input.getAsJsonObject("lrc").get("lyric").getAsString()));
+        List<LyricLine> lyricLines = new ArrayList<>(parseSingleLine(replace(input.getAsJsonObject("lrc").get("lyric").getAsString())));
 
         processTranslationLyrics(input, lyricLines);
         processRomanizationLyrics(input, lyricLines);
 
         if (input.has("yrc")) {
-            String yrc = input.getAsJsonObject("yrc").get("lyric").getAsString();
+            String yrc = replace(input.getAsJsonObject("yrc").get("lyric").getAsString());
             parseYrc(yrc, lyricLines);
             processTranslationLyricsYRC(input, lyricLines);
             processRomanizationLyricsYRC(input, lyricLines);
         }
 
         return lyricLines;
+    }
+
+    private static String replace(String input) {
+        String s = input.replace(' ', ' ').replaceAll(" {2,}", " ");
+//        System.out.println(s);
+        return s;
     }
 
     private static void processTranslationLyricsYRC(JsonObject input, List<LyricLine> lyricLines) {
@@ -84,7 +86,7 @@ public class LyricParser {
     private static void processTranslationLyrics(JsonObject input, List<LyricLine> lyricLines) {
         if (!input.has("tlyric")) return;
 
-        String tLyric = input.getAsJsonObject("tlyric").get("lyric").getAsString();
+        String tLyric = replace(input.getAsJsonObject("tlyric").get("lyric").getAsString());
         if (tLyric.trim().isEmpty()) return;
 
         List<LyricLine> translates = parseSingleLine(tLyric);
@@ -105,7 +107,7 @@ public class LyricParser {
     private static void processRomanizationLyrics(JsonObject input, List<LyricLine> lyricLines) {
         if (!input.has("romalrc")) return;
 
-        String romanization = input.getAsJsonObject("romalrc").get("lyric").getAsString();
+        String romanization = replace(input.getAsJsonObject("romalrc").get("lyric").getAsString());
         if (romanization.isEmpty()) return;
 
         List<LyricLine> romanizations = parseSingleLine(romanization);

@@ -7,10 +7,6 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * 网易云音乐歌词解析器
- * NetEase Cloud Music Lyric Parser
- */
 public class LyricParser {
 
     public static List<LyricLine> parse(JsonObject input) {

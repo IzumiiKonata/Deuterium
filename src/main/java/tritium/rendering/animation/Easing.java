@@ -41,12 +41,7 @@ public enum Easing {
     EASE_IN_OUT_CIRC(x -> x < 0.5 ? (1 - Math.sqrt(1 - 4 * x * x)) / 2 : (Math.sqrt(1 - 4 * (x - 1) * x) + 1) / 2),
     SIGMOID(x -> 1 / (1 + Math.exp(-x))),
     EASE_OUT_ELASTIC(x -> x == 0 ? 0 : x == 1 ? 1 : pow(2, -10 * x) * sin((x * 10 - 0.75) * ((2 * Math.PI) / 3)) * 0.5 + 1),
-    EASE_IN_BACK(x -> (1.70158 + 1) * x * x * x - 1.70158 * x * x),
-    BEZIER(x -> {
-        double v = x < 0.2 ? 3.125 * StrictMath.pow(x, 2) : x > 0.8f ? -3.125 * StrictMath.pow(x, 2) + 6.25 * x - 2.125 : 1.25 * (x - 0.1);
-
-        return (v < 0.0d) ? 0.0d : Math.min(v, 1.0d);
-    });
+    EASE_IN_BACK(x -> (1.70158 + 1) * x * x * x - 1.70158 * x * x);
 
     private final Function<Double, Double> function;
 

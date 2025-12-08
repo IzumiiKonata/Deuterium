@@ -23,6 +23,7 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Image;
 import tritium.rendering.Rect;
 import tritium.rendering.entities.impl.ScrollText;
+import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
