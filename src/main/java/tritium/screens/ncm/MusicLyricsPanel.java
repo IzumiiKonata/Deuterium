@@ -247,6 +247,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         scrollOffset = Interpolations.interpBezier(scrollOffset, scrollTarget, 0.25f);
 
+        double lyricRenderOffsetX = RenderSystem.getWidth() * .5;
         for (LyricLine lyric : lyrics) {
 
             if (lyric.posY + lyric.height + getLyricLineSpacing() + scrollOffset < posY) {
@@ -258,7 +259,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             }
 
             lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.1f);
-            boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, RenderSystem.getWidth() * .5, lyric.posY, lyricsWidth, lyric.height);
+            boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics && lyric != currentDisplaying ? 1f : 0f, 0.1f);
 
@@ -276,9 +277,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             }
 
             if (lyric.hoveringAlpha >= .02f)
-                roundedRect(RenderSystem.getWidth() * .5 - 4, lyric.posY + scrollOffset + lyric.reboundAnimation, lyricsWidth + lyric.reboundAnimation, lyric.height + 2, 8, 4 + 2 * Easing.EASE_IN_OUT_QUAD.getFunction().apply((double) lyric.hoveringAlpha), 1, 1, 1, alpha * lyric.hoveringAlpha * .15f);
+                roundedRect(lyricRenderOffsetX - 4, lyric.posY + scrollOffset + lyric.reboundAnimation, lyricsWidth + lyric.reboundAnimation, lyric.height + 2, 8, 4 + 2 * Easing.EASE_IN_OUT_QUAD.getFunction().apply((double) lyric.hoveringAlpha), 1, 1, 1, alpha * lyric.hoveringAlpha * .15f);
 
-            double renderX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
+            double renderX = lyricRenderOffsetX + lyric.reboundAnimation;
             double renderY = lyric.posY + lyric.reboundAnimation + scrollOffset;
 
             lyric.reboundAnimation = Interpolations.interpBezier(lyric.reboundAnimation, lyric == currentDisplaying ? 2f : 0f, 0.1f);
@@ -289,8 +290,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     LyricLine.Word word = words.get(i);
                     double wordWidth = FontManager.pf65bold.getStringWidthD(word.word);
 
-                    if (renderX + wordWidth >= RenderSystem.getWidth() * .5 + lyricsWidth + lyric.reboundAnimation) {
-                        renderX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
+                    if (renderX + wordWidth >= lyricRenderOffsetX + lyricsWidth + lyric.reboundAnimation) {
+                        renderX = lyricRenderOffsetX + lyric.reboundAnimation;
                         renderY += FontManager.pf65bold.getHeight() * .85 + 4;
                     }
 
@@ -440,7 +441,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             }
 
             if (lyric.translationText != null) {
-                double translationX = RenderSystem.getWidth() * .5 + lyric.reboundAnimation;
+                double translationX = lyricRenderOffsetX + lyric.reboundAnimation;
                 double translationY = renderY + FontManager.pf65bold.getHeight() * .85 + 8;
 
                 String[] strings = FontManager.pf34bold.fitWidth(lyric.translationText, lyricsWidth);
@@ -451,11 +452,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 //                FontManager.pf34bold.drawString(lyric.translationText, translationX, translationY, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
             }
 
-            blurRects.add(() -> Rect.draw(RenderSystem.getWidth() * .5 - 4, lyric.posY + scrollOffset, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
+            blurRects.add(() -> Rect.draw(lyricRenderOffsetX - 4, lyric.posY + scrollOffset, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
         }
 
         GlStateManager.pushMatrix();
-        this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
+        this.scaleAtPos(lyricRenderOffsetX, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
         Shaders.GAUSSIAN_BLUR_SHADER.runNoCaching(blurRects);
 //        Shaders.UI_BLOOM_SHADER.runNoCaching(bloomRunnables);
         GlStateManager.popMatrix();
@@ -621,7 +622,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     }
 
     private double getCoverSizeMax() {
-        return RenderSystem.getWidth() * .25;
+        return RenderSystem.getHeight() * .5;
     }
 
     private double getCoverSizeMin() {
@@ -644,10 +645,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         double center = this.getCoverSizeMin();
         coverSize = Interpolations.interpBezier(coverSize, player == null || player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
 
-        double xOffset = (RenderSystem.getWidth() * .5 - center - this.getCoverSizeMax() * .5) * .05;
+        double xOffset = (RenderSystem.getWidth() * .5 - center - this.getCoverSizeMax() * .5) * 0;
         if (prevCover != null && coverAlpha <= .9f) {
             GlStateManager.bindTexture(prevCover.getGlTextureId());
-            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .55, coverSize, coverSize, 3, alpha);
+            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, 3, alpha);
         }
 
         Location musicCover = MusicInfoWidget.getMusicCover(CloudMusic.currentlyPlaying);
@@ -657,7 +658,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             coverAlpha = Interpolations.interpBezier(coverAlpha, 1.0f, 0.2f);
             GlStateManager.bindTexture(tex.getGlTextureId());
             tex.linearFilter();
-            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .55, coverSize, coverSize, 3, alpha * coverAlpha);
+            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, 3, alpha * coverAlpha);
         }
 
         double elementsXOffset = center - this.getCoverSizeMax() * .5 + xOffset;
@@ -705,11 +706,14 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         String remainingTime = "-" + formatDuration(totalTimeMillis - currentTimeMillis);
         FontManager.pf12bold.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12bold.getStringWidthD(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
 
-        FontManager.music40.drawString("I", elementsXOffset - 8, height - 36, hexColor(1, 1, 1, alpha * .5f));
-        FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidthD("J") + 4, height - 36, hexColor(1, 1, 1, alpha * .5f));
-
-        double volumeBarYOffset = height - 28;
+        double volumeBarYOffset = posY + height - (center - getCoverSizeMax() * .575 - NCMScreen.getInstance().getSpacing()) - FontManager.music40.getHeight() * .5 + 2;
         double volumeBarWidth = this.getCoverSizeMax() - FontManager.music40.getStringWidthD("I") - FontManager.music40.getStringWidthD("J");
+//        double v = (center - getCoverSizeMax() * .575 - NCMScreen.getInstance().getSpacing());
+//        Rect.draw(0, posY + height - v, width, v, -1);
+
+        double volumeIconY = volumeBarYOffset - FontManager.music40.getHeight() * .5 - .5;
+        FontManager.music40.drawString("I", elementsXOffset - 8, volumeIconY, hexColor(1, 1, 1, alpha * .5f));
+        FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidthD("J") + 4, volumeIconY, hexColor(1, 1, 1, alpha * .5f));
 
         double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidthD("I") - 2;
         roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha * .5f));
