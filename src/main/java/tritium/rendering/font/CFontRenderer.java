@@ -453,13 +453,20 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     private int findMatchingOpenBracket(String text, int closeIndex, int startIndex) {
         char closeChar = text.charAt(closeIndex);
         int closeCharType = wrapEnds.indexOf(closeChar);
-        if (closeCharType == -1) return -1;
+        if (closeCharType == -1) {
+            return -1;
+        }
 
         char openChar = wrapStarts.charAt(closeCharType);
-
         int depth = 1;
+
         for (int i = closeIndex - 1; i >= startIndex; i--) {
             char c = text.charAt(i);
+
+            if (i > startIndex && text.charAt(i - 1) == '\247') {
+                i--;
+                continue;
+            }
 
             if (c == closeChar) {
                 depth++;
@@ -476,16 +483,15 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
     private LineBreakResult findLineBreak(String text, int startIndex, double maxWidth) {
         double currentWidth = 0;
-        int i = startIndex;
         int lastBreakableIndex = -1;
         int lastBreakableIndexPriority = 0;
         boolean lastBreakableTrimThisChar = false;
 
-        while (i < text.length()) {
+        for (int i = startIndex; i < text.length(); i++) {
             char c = text.charAt(i);
 
             if (c == '\247' && i + 1 < text.length()) {
-                i += 2;
+                i++;
                 continue;
             }
 
@@ -493,12 +499,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 return new LineBreakResult(i, i + 1);
             }
 
-            char breakableCharValue = breakableChars[c];
-            boolean breakable = breakableCharValue > 0;
-            if (breakable) {
+            int breakableCharValue = breakableChars[c];
+            if (breakableCharValue > 0) {
                 if (breakableCharValue == 1) {
                     int openIndex = findMatchingOpenBracket(text, i, startIndex);
-
                     if (openIndex != -1 && openIndex == lastBreakableIndex) {
                         lastBreakableIndexPriority = 2;
                         lastBreakableIndex = i;
@@ -510,58 +514,65 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 } else if (breakableCharValue >= lastBreakableIndexPriority) {
                     lastBreakableIndexPriority = breakableCharValue;
                     lastBreakableIndex = i;
-                    lastBreakableTrimThisChar = c == ' ';
+                    lastBreakableTrimThisChar = (c == ' ');
                 }
             }
 
             double charWidth = getCharWidth(c);
 
             if (currentWidth + charWidth > maxWidth) {
-                if (breakable && breakableCharValue >= lastBreakableIndexPriority) {
-                    if (lastBreakableTrimThisChar) {
-                        return new LineBreakResult(i, i + 1);
-                    }
-
-                    if (breakableCharValue == 3) {
-                        return new LineBreakResult(i, i);
-                    }
-
-                    return new LineBreakResult(i + 1, i + 1);
+                if (breakableCharValue > 0 && breakableCharValue >= lastBreakableIndexPriority) {
+                    return handleBreakAtCurrentChar(i, breakableCharValue, lastBreakableTrimThisChar);
                 }
 
                 if (lastBreakableIndex != -1) {
-
-                    if (lastBreakableTrimThisChar) {
-                        return new LineBreakResult(lastBreakableIndex, lastBreakableIndex + 1);
-                    }
-
-                    char lastBreakableChar = text.charAt(lastBreakableIndex);
-                    int lastBreakableCharValue = breakableChars[lastBreakableChar];
-
-                    if (lastBreakableCharValue == 3) {
-                        if (lastBreakableIndex == startIndex) {
-                            if (i == startIndex) {
-                                return new LineBreakResult(startIndex + 1, startIndex + 1);
-                            }
-                            return new LineBreakResult(i, i);
-                        }
-                        return new LineBreakResult(lastBreakableIndex, lastBreakableIndex);
-                    }
-
-                    return new LineBreakResult(lastBreakableIndex + 1, lastBreakableIndex + 1);
+                    return handleBreakAtLastBreakable(text, lastBreakableIndex, lastBreakableTrimThisChar, startIndex, i);
                 }
 
                 if (i == startIndex) {
-                    return new LineBreakResult(i + 1, i + 1);
+                    return new LineBreakResult(startIndex + 1, startIndex + 1);
                 }
                 return new LineBreakResult(i, i);
             }
 
             currentWidth += charWidth;
-            i++;
         }
 
         return new LineBreakResult(text.length(), text.length());
+    }
+
+    private LineBreakResult handleBreakAtCurrentChar(int index, int breakableCharValue, boolean trimThisChar) {
+        if (trimThisChar) {
+            return new LineBreakResult(index, index + 1);
+        }
+
+        if (breakableCharValue == 3) {
+            return new LineBreakResult(index, index);
+        }
+
+        return new LineBreakResult(index + 1, index + 1);
+    }
+
+    private LineBreakResult handleBreakAtLastBreakable(String text, int lastBreakableIndex,
+                                                       boolean trimThisChar, int startIndex, int currentIndex) {
+        if (trimThisChar) {
+            return new LineBreakResult(lastBreakableIndex, lastBreakableIndex + 1);
+        }
+
+        char lastBreakableChar = text.charAt(lastBreakableIndex);
+        int lastBreakableCharValue = breakableChars[lastBreakableChar];
+
+        if (lastBreakableCharValue == 3) {
+            if (lastBreakableIndex == startIndex) {
+                if (currentIndex == startIndex) {
+                    return new LineBreakResult(startIndex + 1, startIndex + 1);
+                }
+                return new LineBreakResult(currentIndex, currentIndex);
+            }
+            return new LineBreakResult(lastBreakableIndex, lastBreakableIndex);
+        }
+
+        return new LineBreakResult(lastBreakableIndex + 1, lastBreakableIndex + 1);
     }
 
     private static class LineBreakResult {
