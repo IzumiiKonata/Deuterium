@@ -42,7 +42,7 @@ public abstract class PVRenderer {
             NativeBackedImage make;
             try {
                 make = NativeBackedImage.make(Minecraft.getMinecraft().mcDefaultResourcePack.getInputStream(t));
-            } catch (IOException e) {
+            } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
             Textures.triggerLoad(t, new DynamicTexture(make));

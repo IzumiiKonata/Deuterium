@@ -197,15 +197,13 @@ public interface SharedRenderingConstants {
 
     static void render2D(boolean shaders) {
 
-        PRE_SHADER.forEach(Runnable::run);
-
         if (shaders) {
 
             if (ClientSettings.RENDER_BLUR.getValue() && !BLUR.isEmpty())
-                Shaders.GAUSSIAN_BLUR_SHADER.run(BLUR);
+                Shaders.BLUR_SHADER.run(BLUR);
 
             if (ClientSettings.RENDER_GLOW.getValue() && !BLOOM.isEmpty())
-                Shaders.POST_BLOOM_SHADER.run(BLOOM);
+                Shaders.BLOOM_SHADER.run(BLOOM);
         }
 
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
@@ -272,8 +270,6 @@ public interface SharedRenderingConstants {
             EventManager.call(new Render2DEvent());
         }
 
-        AFTER.forEach(Runnable::run);
-
     }
 
     Timer updateTimer = new Timer();
@@ -281,15 +277,9 @@ public interface SharedRenderingConstants {
     static void clearRunnables() {
         BLUR.clear();
         BLOOM.clear();
-        PRE_SHADER.clear();
-        AFTER.clear();
-
     }
-
 
     List<Runnable> BLUR = new ArrayList<>();
     List<Runnable> BLOOM = new ArrayList<>();
-    List<Runnable> PRE_SHADER = new ArrayList<>();
-    List<Runnable> AFTER = new ArrayList<>();
 
 }

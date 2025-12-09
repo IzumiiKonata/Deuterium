@@ -40,11 +40,8 @@ public class Reload extends Command {
 
 //        Phosphate.getInstance().getConfigManager().loadConfig();
 
-        Shaders.POST_BLOOM_SHADER = new BloomShader();
-        Shaders.UI_BLOOM_SHADER = Shaders.POST_BLOOM_SHADER;
-        Shaders.UI_POST_BLOOM_SHADER = Shaders.POST_BLOOM_SHADER;
-        Shaders.GAUSSIAN_BLUR_SHADER = new GaussianBlurShader();
-        Shaders.UI_GAUSSIAN_BLUR_SHADER = Shaders.GAUSSIAN_BLUR_SHADER;
+        Shaders.BLOOM_SHADER = new BloomShader();
+        Shaders.BLUR_SHADER = new GaussianBlurShader();
         Shaders.BLEND = new BlendShader();
         Shaders.MOTION = new MotionShader();
 

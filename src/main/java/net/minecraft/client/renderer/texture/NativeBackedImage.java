@@ -176,12 +176,8 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         return null;
     }
 
-    private static final int TRANSFER_SIZE = 8192;
-    private static byte[] buf = new byte[0];
-
+    private static final int TRANSFER_SIZE = 16384;
     private static ByteBuffer readResource(InputStream inputStream) throws IOException {
-
-        Arrays.fill(buf, (byte) 0);
 
         ByteBuffer byteBuffer;
         if (inputStream instanceof FileInputStream) {
@@ -214,6 +210,7 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         int len = dst.remaining();
         int totalRead = 0;
         int bytesRead = 0;
+        byte[] buf = new byte[TRANSFER_SIZE];
         while (totalRead < len) {
             int bytesToRead = Math.min((len - totalRead), TRANSFER_SIZE);
             if (buf.length < bytesToRead) {

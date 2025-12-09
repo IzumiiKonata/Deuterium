@@ -8,6 +8,7 @@ import org.lwjglx.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.Display;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.settings.ClientSettings;
@@ -33,7 +34,7 @@ public class GaussianBlurShader extends Shader {
 
     boolean cache = false;
 
-    private final Uniform1f u_radius = new Uniform1f(blurProgram, "u_radius");
+    private final Uniform1i u_radius = new Uniform1i(blurProgram, "u_radius");
     private final UniformFB u_kernel = new UniformFB(blurProgram, "u_kernel");
 
     private final Uniform1i u_diffuse_sampler = new Uniform1i(blurProgram, "u_diffuse_sampler");
@@ -109,8 +110,7 @@ public class GaussianBlurShader extends Shader {
 
             // TODO: make radius and other things as a setting
             final int radius = 5;
-            final float compression = 1.5F;
-            final int programId = this.blurProgram.getProgramId();
+            final float compression = .5f;
 
             this.outputFramebuffer.bindFramebuffer(true);
             this.outputFramebuffer.framebufferClearNoBinding();
@@ -130,7 +130,8 @@ public class GaussianBlurShader extends Shader {
 
             u_diffuse_sampler.setValue(0);
             u_other_sampler.setValue(20);
-            u_texel_size.setValue(1.0F / mc.displayWidth * 0.5f, 1.0F / mc.displayHeight * 0.5f);
+            u_texel_size.setValue((float) (1.0F / RenderSystem.getWidth()), (float) (1.0F / RenderSystem.getHeight()));
+//            u_texel_size.setValue((float) (1.0F / mc.displayWidth * .5), (float) (1.0F / mc.displayHeight * .5));
             u_direction.setValue(compression, 0.0F);
 
             GlStateManager.enableBlend();

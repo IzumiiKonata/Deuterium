@@ -23,9 +23,7 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Image;
 import tritium.rendering.Rect;
 import tritium.rendering.entities.impl.ScrollText;
-import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.utils.network.HttpUtils;
@@ -248,7 +246,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         scrollOffset = Interpolations.interpBezier(scrollOffset, scrollTarget, 0.25f);
 
         double lyricRenderOffsetX = RenderSystem.getWidth() * .5;
-        for (LyricLine lyric : lyrics) {
+        for (int k = 0; k < lyrics.size(); k++) {
+            LyricLine lyric = lyrics.get(k);
 
             if (lyric.posY + lyric.height + getLyricLineSpacing() + scrollOffset < posY) {
                 continue;
@@ -258,10 +257,12 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 break;
             }
 
+            int indexOf = lyrics.indexOf(currentDisplaying);
+
             lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.1f);
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
-            lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics && lyric != currentDisplaying ? 1f : 0f, 0.1f);
+            lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.1f);
 
             if (isHovering && Mouse.isButtonDown(0) && !prevMouse) {
                 prevMouse = true;
@@ -352,7 +353,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             GlStateManager.matrixMode(GL11.GL_PROJECTION);
                             GlStateManager.pushMatrix();
                             GlStateManager.loadIdentity();
-                            GlStateManager.ortho(0.0D, fbWidth * .5, fbHeight* .5, 0.0D, 1000.0D, 3000.0D);
+                            GlStateManager.ortho(0.0D, fbWidth * .5, fbHeight * .5, 0.0D, 1000.0D, 3000.0D);
                             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                             GlStateManager.pushMatrix();
                             GlStateManager.loadIdentity();
@@ -402,7 +403,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             GlStateManager.popMatrix();
                             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 
-                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture,  renderX, renderY - 2, fbWidth * .5, fbHeight * .5);
+                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, renderX, renderY - 2, fbWidth * .5, fbHeight * .5);
 
 //                            FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
 //                            FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
@@ -457,7 +458,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         GlStateManager.pushMatrix();
         this.scaleAtPos(lyricRenderOffsetX, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
-        Shaders.GAUSSIAN_BLUR_SHADER.runNoCaching(blurRects);
+        Shaders.BLUR_SHADER.runNoCaching(blurRects);
 //        Shaders.UI_BLOOM_SHADER.runNoCaching(bloomRunnables);
         GlStateManager.popMatrix();
     }
@@ -662,7 +663,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         }
 
         double elementsXOffset = center - this.getCoverSizeMax() * .5 + xOffset;
-        double elementsYOffset = center + this.getCoverSizeMax() * .45 + 16;
+        double elementsYOffset = center + this.getCoverSizeMax() * .45 + 8;
 
         stMusicName.render(FontManager.pf28bold, CloudMusic.currentlyPlaying.getName(), elementsXOffset, elementsYOffset, this.getCoverSizeMax(), RGBA.color((float) 1, (float) 1, (float) 1, alpha));
         stArtists.render(FontManager.pf20bold, CloudMusic.currentlyPlaying.getArtistsName(), elementsXOffset, elementsYOffset + FontManager.pf20bold.getHeight() + 8, this.getCoverSizeMax(), RGBA.color((float) 1, (float) 1, (float) 1, alpha * .8f));
@@ -872,11 +873,13 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
             scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 + fftScale);
 
+            double bgSize = Math.max(width, height);
+
             if (prevBg != null && musicBgAlpha < 0.99f) {
                 GlStateManager.bindTexture(prevBg.getGlTextureId());
                 prevBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha);
-                Image.draw(posX, posY + height * .5 - width * .5, width, width, Image.Type.NoColor);
+                Image.draw(posX + width * .5 - bgSize * .5, posY + height * .5 - bgSize * .5, bgSize, bgSize, Image.Type.NoColor);
             }
 
             if (texBg != null) {
@@ -884,7 +887,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 GlStateManager.bindTexture(texBg.getGlTextureId());
                 texBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha * this.musicBgAlpha);
-                Image.draw(posX, posY + height * .5 - width * .5, width, width, Image.Type.NoColor);
+                Image.draw(posX + width * .5 - bgSize * .5, posY + height * .5 - bgSize * .5, bgSize, bgSize, Image.Type.NoColor);
             }
 
             GlStateManager.popMatrix();
