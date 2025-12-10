@@ -34,6 +34,8 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
     @Getter
     private static final List<Widget> widgets = new ArrayList<>();
 
+    public static final MusicSpectrumWidget musicSpectrum = new MusicSpectrumWidget();
+
     public static final Armor armor = new Armor();
     public static final Inventory inventory = new Inventory();
     public static final KeyStrokes keyStrokes = new KeyStrokes();
@@ -50,7 +52,6 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
     public static final BossBar bossBar = new BossBar();
     public static final MusicInfoWidget musicInfo = new MusicInfoWidget();
     public static final MusicLyricsWidget musicLyrics = new MusicLyricsWidget();
-    public static final MusicSpectrumWidget musicSpectrum = new MusicSpectrumWidget();
 
     @Handler
     public void onRender2D(Render2DEvent event) {
