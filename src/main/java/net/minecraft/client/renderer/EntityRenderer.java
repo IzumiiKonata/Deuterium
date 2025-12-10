@@ -770,7 +770,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 cp.offsetCamera();
             }
         } else {
-            GlStateManager.translate(0.0F, 0.0F, -0.1F);
+            GlStateManager.translate(0.0F, 0.0F, dbgDirectionRendering ? -.1f : .05F);
         }
 
         if (!this.mc.gameSettings.debugCamEnable) {
@@ -1518,6 +1518,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
     }
 
+    boolean dbgDirectionRendering = false;
+
     private void renderWorldDirections(float partialTicks) {
         if (this.mc.gameSettings.showDebugInfo && !this.mc.gameSettings.hideGUI && !this.mc.thePlayer.hasReducedDebug() && !this.mc.gameSettings.reducedDebugInfo) {
             Entity entity = this.mc.getRenderViewEntity();
@@ -1529,7 +1531,9 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             GlStateManager.pushMatrix();
             GlStateManager.matrixMode(5888);
             GlStateManager.loadIdentity();
+            dbgDirectionRendering = true;
             this.orientCamera(partialTicks);
+            dbgDirectionRendering = false;
             GlStateManager.translate(0.0F, entity.getEyeHeight(), 0.0F);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.005D, 1.0E-4D, 1.0E-4D), 255, 0, 0, 255);
             RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0E-4D, 1.0E-4D, 0.005D), 0, 0, 255, 255);
