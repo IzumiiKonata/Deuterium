@@ -424,7 +424,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                         // jump to next line offset
                         if (i == words.size() - 1) {
-                            timestamp = (long) Math.max(prevTiming, timestamp - JUMP_TO_NEXT_LINE_MILLIS * 1.2f);
+                            timestamp = (long) Math.max(prevTiming, timestamp - (JUMP_TO_NEXT_LINE_MILLIS + 25.0f));
                         }
 
                         double progress = Math.max(0, Math.min(1, (songProgress - lyric.timestamp - prevTiming) / (double) (timestamp - prevTiming)));
