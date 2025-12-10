@@ -102,10 +102,6 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
 
     public LabelWidget setLabel(Supplier<String> label) {
         this.label = label;
-
-        if (label.get() != null)
-            this.setHeight(font.getStringHeight(label.get()));
-
         return this;
     }
 }
