@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import tritium.management.FontManager;
 import tritium.rendering.font.CFontRenderer;
 import tritium.utils.timing.Timer;
@@ -20,7 +19,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class LyricLine {
     @Getter
     @NonNull
-    public Long timeStamp;  // 时间戳(ms)
+    public Long timestamp;  // 时间戳(ms)
 
     @Getter
     @Setter
@@ -39,16 +38,27 @@ public class LyricLine {
     public Timer delayTimer = new Timer();
     public boolean renderEmphasizes = true;
 
+    // MusicLyricsWidgets fields
+    public double scrollWidth = 0;
+    public double offsetX = 0;
+    public double targetOffsetX = 0;
+
+    public double offsetY = Double.MIN_VALUE;
+
     public final List<Word> words = new CopyOnWriteArrayList<>();
 
     public static class Word {
         public final String word;
-        public final long timing;
+        public final long timestamp;
         public final double[] emphasizes;
 
-        public Word(String word, long timing) {
+        // fields for MusicLyricsWidget
+        public float alpha = 0.0f;
+        public double interpPercent = 0.0;
+
+        public Word(String word, long timestamp) {
             this.word = word;
-            this.timing = timing;
+            this.timestamp = timestamp;
             this.emphasizes = new double[word.length()];
         }
     }

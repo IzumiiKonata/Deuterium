@@ -255,7 +255,6 @@ public class CloudMusic {
         }
 
         MusicLyricsWidget.allLyrics.clear();
-        MusicLyricsWidget.timings.clear();
         playList = songs;
 
         playThread = new PlayThread(songs, startIdx);
@@ -366,7 +365,6 @@ public class CloudMusic {
                 player.close();
 
                 MusicLyricsWidget.allLyrics.clear();
-                MusicLyricsWidget.timings.clear();
 
                 updateCurIdx();
 

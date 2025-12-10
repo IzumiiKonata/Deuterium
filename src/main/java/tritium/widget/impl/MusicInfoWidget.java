@@ -8,7 +8,6 @@ import net.minecraft.util.Location;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.Quality;
 import tritium.ncm.music.dto.Music;
-import tritium.ncm.music.lyric.LyricLine;
 import tritium.management.FontManager;
 import tritium.rendering.RGBA;
 import tritium.rendering.StencilClipManager;
@@ -16,6 +15,7 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.font.CFontRenderer;
+import tritium.screens.ncm.LyricLine;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
@@ -185,7 +185,7 @@ public class MusicInfoWidget extends Widget {
                 for (int i = 0; i < allLyrics.size(); i++) {
                     LyricLine lyric = allLyrics.get(i);
 
-                    if (lyric.getTimeStamp() > CloudMusic.player.getCurrentTimeMillis()) {
+                    if (lyric.getTimestamp() > CloudMusic.player.getCurrentTimeMillis()) {
                         if (i > 0) {
                             currentDisplaying = allLyrics.get(i - 1);
                         }
@@ -202,9 +202,9 @@ public class MusicInfoWidget extends Widget {
                     artists.setOneShot(true);
 
                     if (next != null) {
-                        artists.anim.setDuration(Duration.ofMillis(next.timeStamp - currentDisplaying.timeStamp - 500));
+                        artists.anim.setDuration(Duration.ofMillis(next.timestamp - currentDisplaying.timestamp - 500));
                     } else {
-                        artists.anim.setDuration(Duration.ofMillis((long) (CloudMusic.player.getCurrentTimeMillis() - currentDisplaying.timeStamp - 500)));
+                        artists.anim.setDuration(Duration.ofMillis((long) (CloudMusic.player.getCurrentTimeMillis() - currentDisplaying.timestamp - 500)));
                     }
 
                 } else {

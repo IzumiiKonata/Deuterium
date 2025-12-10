@@ -1,7 +1,6 @@
 package tritium.screens.ncm;
 
 import com.google.gson.JsonObject;
-import tritium.widget.impl.MusicLyricsWidget;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -45,14 +44,14 @@ public class LyricParser {
 
         Map<Long, String> transMap = new HashMap<>();
         for (LyricLine t : translates) {
-            transMap.put(t.timeStamp, t.lyric);
+            transMap.put(t.timestamp, t.lyric);
         }
 
         for (LyricLine l : lyricLines) {
-            String translation = transMap.get(l.timeStamp);
+            String translation = transMap.get(l.timestamp);
 
             if (translation == null) {
-                System.out.println("Translation not found for " + l.lyric + " at " + l.timeStamp);
+                System.out.println("Translation not found for " + l.lyric + " at " + l.timestamp);
                 continue;
             }
 
@@ -72,11 +71,11 @@ public class LyricParser {
 
         Map<Long, String> romaMap = new HashMap<>();
         for (LyricLine r : romanizations) {
-            romaMap.put(r.timeStamp, r.lyric);
+            romaMap.put(r.timestamp, r.lyric);
         }
 
         for (LyricLine l : lyricLines) {
-            String roma = romaMap.get(l.timeStamp);
+            String roma = romaMap.get(l.timestamp);
             if (roma != null && l.romanizationText == null) {
                 l.romanizationText = roma;
             }
@@ -93,11 +92,11 @@ public class LyricParser {
 
         Map<Long, String> transMap = new HashMap<>();
         for (LyricLine t : translates) {
-            transMap.put(t.timeStamp, t.lyric);
+            transMap.put(t.timestamp, t.lyric);
         }
 
         for (LyricLine l : lyricLines) {
-            String translation = transMap.get(l.timeStamp);
+            String translation = transMap.get(l.timestamp);
             if (translation != null && l.translationText == null) {
                 l.translationText = translation;
             }
@@ -114,11 +113,11 @@ public class LyricParser {
 
         Map<Long, String> romaMap = new HashMap<>();
         for (LyricLine r : romanizations) {
-            romaMap.put(r.timeStamp, r.lyric);
+            romaMap.put(r.timestamp, r.lyric);
         }
 
         for (LyricLine l : lyricLines) {
-            String roma = romaMap.get(l.timeStamp);
+            String roma = romaMap.get(l.timestamp);
             if (roma != null && l.romanizationText == null) {
                 l.romanizationText = roma;
             }
@@ -137,7 +136,7 @@ public class LyricParser {
             }
         }
 
-        lyricLines.sort(Comparator.comparingLong(LyricLine::getTimeStamp));
+        lyricLines.sort(Comparator.comparingLong(LyricLine::getTimestamp));
         return lyricLines;
     }
 

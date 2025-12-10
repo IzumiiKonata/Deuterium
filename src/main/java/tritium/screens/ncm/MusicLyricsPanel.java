@@ -81,14 +81,14 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         long longBreaksDuration = 3000L;
         if (lyrics.stream().allMatch(l -> l.words.isEmpty())) {
 
-            long timeStamp = lyrics.getFirst().getTimeStamp();
+            long timeStamp = lyrics.getFirst().getTimestamp();
             if (timeStamp >= longBreaksDuration) {
                 LyricLine line = new LyricLine(0L, "● ● ●");
 //                line.renderEmphasizes = false;
                 line.words.add(new LyricLine.Word("● ● ●", timeStamp));
 
                 lyrics.add(line);
-                lyrics.sort(Comparator.comparingLong(LyricLine::getTimeStamp));
+                lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
             }
 
             return;
@@ -100,22 +100,22 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         for (LyricLine lyric : lyrics) {
             long curDur = getLyricDuration(lyric);
-            long l = lyric.getTimeStamp() - last;
+            long l = lyric.getTimestamp() - last;
             if (l >= longBreaksDuration) {
                 LyricLine line = new LyricLine(last, "● ● ●");
 //                line.renderEmphasizes = false;
                 line.words.add(new LyricLine.Word("● ● ●", l));
                 breaksToAdd.add(line);
             }
-            last = lyric.getTimeStamp() + curDur;
+            last = lyric.getTimestamp() + curDur;
         }
 
         lyrics.addAll(breaksToAdd);
-        lyrics.sort(Comparator.comparingLong(LyricLine::getTimeStamp));
+        lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
     }
 
     private static long getLyricDuration(LyricLine line) {
-        return line.words.isEmpty() ? 0 : line.words.getLast().timing;
+        return line.words.isEmpty() ? 0 : line.words.getLast().timestamp;
     }
 
     private static void fetchTTMLLyrics(Music music, List<LyricLine> parsed) {
@@ -267,7 +267,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             if (isHovering && Mouse.isButtonDown(0) && !prevMouse) {
                 prevMouse = true;
                 if (CloudMusic.player != null) {
-                    CloudMusic.player.setPlaybackTime(lyric.timeStamp);
+                    CloudMusic.player.setPlaybackTime(lyric.timestamp);
                 }
 
                 if (scrollTarget != 0) {
@@ -325,8 +325,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     if (lyric == currentDisplaying) {
                         LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
 
-                        long prevTiming = i == 0 ? 0 : prev.timing;
-                        double progress = Math.max(0, Math.min(1, (songProgress - lyric.timeStamp - prevTiming) / (double) (word.timing - prevTiming)));
+                        long prevTiming = i == 0 ? 0 : prev.timestamp;
+                        double progress = Math.max(0, Math.min(1, (songProgress - lyric.timestamp - prevTiming) / (double) (word.timestamp - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
 
                         boolean shouldClip = progress > 0 && progress < 1;
@@ -589,7 +589,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         for (int i = 0; i < lyrics.size(); i++) {
             LyricLine lyric = lyrics.get(i);
 
-            if (lyric.getTimeStamp() > songProgress) {
+            if (lyric.getTimestamp() > songProgress) {
                 if (i > 0) {
                     currentDisplaying = lyrics.get(i - 1);
                 }

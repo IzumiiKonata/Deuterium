@@ -4,8 +4,6 @@ import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.Music;
-import tritium.ncm.music.lyric.LyricLine;
-import tritium.ncm.music.lyric.LyricParser;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.RGBA;
@@ -14,6 +12,8 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
+import tritium.screens.ncm.LyricLine;
+import tritium.screens.ncm.LyricParser;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
@@ -27,22 +27,16 @@ import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
- * 歌词显示Widget
  * @author IzumiiKonata
  * Date: 2025/2/14 20:34
  */
 public class MusicLyricsWidget extends Widget {
 
-    // 存储所有歌词行
     public static final List<LyricLine> allLyrics = new CopyOnWriteArrayList<>();
     static double scrollOffset = 0;
     public static LyricLine currentDisplaying = null;
 
-    // 歌词类型flags
     public static boolean hasTransLyrics = false, hasRomanization = false;
-
-    // 逐字歌词timing数据
-    public static List<ScrollTiming> timings = new CopyOnWriteArrayList<>();
 
     public ModeSetting<ScrollEffects> scrollEffects = new ModeSetting<>("Scroll Effects", ScrollEffects.Scroll);
     public ModeSetting<AlignMode> alignMode = new ModeSetting<>("Align Mode", AlignMode.Center);
@@ -76,70 +70,25 @@ public class MusicLyricsWidget extends Widget {
         showRoman.setShouldRender(() -> showTranslation.getValue());
     }
 
-    /**
-     * 逐行歌词的滚动时间信息
-     */
-    public static class ScrollTiming {
-        public long start, duration;
-        public String text;
-
-        // 分词Timing
-        public List<WordTiming> timings = new CopyOnWriteArrayList<>();
-//        public List<Long> timingsDuration = new CopyOnWriteArrayList<>();
-    }
-
-    /**
-     * 单个词的timing信息
-     */
-    public static class WordTiming {
-        public String word;
-        public long timing;
-
-        // 渲染效果相关
-        public float alpha = 0.0f;
-        public double interpPercent = 0.0;
-//        public double effectY = -1;
-
-//        public WordTiming(String word, long timing) {
-//            this.word = word;
-//            this.timing = timing;
-//        }
-
-        public WordTiming() {}
-    }
-
-    /**
-     * 初始化歌词数据
-     * Initialize lyrics with parsed data and fetch TTML if available
-     */
     public static void initLyric(JsonObject lyric, Music music) {
         // reset states
         hasTransLyrics = false;
         hasRomanization = false;
-        timings.clear();
 
+        if (lyric.has("tlyric") || lyric.has("ytlrc")) hasTransLyrics = true;
+        if (lyric.has("romalrc") || lyric.has("yromalrc")) hasRomanization = true;
         List<LyricLine> parsed = LyricParser.parse(lyric);
 
-        // 异步获取TTML歌词 (逐字歌词)
 //        fetchTTMLLyrics(music, parsed);
 
         synchronized (allLyrics) {
             allLyrics.clear();
-
-            // 如果有逐字歌词，需要merge timing信息
-            if (!timings.isEmpty()) {
-                mergeLyricsWithTimings(parsed);
-            }
-
             allLyrics.addAll(parsed);
         }
 
         scrollOffset = 0;
     }
 
-    /**
-     * 异步获取TTML歌词数据
-     */
     private static void fetchTTMLLyrics(Music music, List<LyricLine> parsed) {
         MultiThreadingUtil.runAsync(() -> {
             try {
@@ -149,88 +98,43 @@ public class MusicLyricsWidget extends Widget {
                 );
                 System.out.println("歌曲 " + music.getName() + " 存在 ttml 歌词, 获取中...");
 
-                timings.clear();
-                LyricParser.parseYrc(lrc);
+                ArrayList<LyricLine> lines = new ArrayList<>();
+                LyricParser.parseYrc(lrc, lines);
 
-                // 构建新的歌词列表
-                List<LyricLine> beans = buildLyricsFromTimings();
+                for (LyricLine bean : lines) {
 
-//                for (int i = 0; i < allLyrics.size(); i++) {
-//                    allLyrics.get(i).timeStamp = timings.get(i).start;
-//                }
+//                    System.out.println(bean.words.size());
 
-                for (LyricLine bean : beans) {
-
-                    for (LyricLine lyricLine : allLyrics) {
-                        if (lyricLine.getLyric().toLowerCase().replace(" ", "").equals(bean.lyric.toLowerCase().replace(" ", ""))) {
-                            bean.romanizationText = lyricLine.romanizationText;
-                            bean.translationText = lyricLine.translationText;
+                    for (LyricLine line : parsed) {
+                        if (line.getLyric().toLowerCase().replace(" ", "").equals(bean.lyric.toLowerCase().replace(" ", ""))) {
+                            bean.romanizationText = line.romanizationText;
+                            bean.translationText = line.translationText;
                             break;
                         }
                     }
 
                 }
 
-                allLyrics.clear();
-                allLyrics.addAll(beans);
+                synchronized (allLyrics) {
+                    allLyrics.addAll(lines);
+                }
             } catch (Exception ignored) {
-                // 获取失败，使用普通歌词
             }
         });
     }
 
-    /**
-     * 从timing数据构建歌词列表
-     */
-    private static List<LyricLine> buildLyricsFromTimings() {
-        List<LyricLine> beans = new ArrayList<>();
-        for (ScrollTiming timing : timings) {
-            StringBuilder sb = new StringBuilder();
-            for (WordTiming wordTiming : timing.timings) {
-                sb.append(wordTiming.word);
-            }
-            LyricLine lyricLine = new LyricLine(timing.start, "NONE", sb.toString());
-            beans.add(lyricLine);
-        }
-        return beans;
-    }
-
-    /**
-     * 合并歌词和timing信息
-     */
-    private static void mergeLyricsWithTimings(List<LyricLine> parsed) {
-        for (int i = 0; i < timings.size() && i < parsed.size(); i++) {
-            ScrollTiming timing = timings.get(i);
-            StringBuilder sb = new StringBuilder();
-            for (WordTiming wordTiming : timing.timings) {
-                sb.append(wordTiming.word);
-            }
-            LyricLine lyricLine = parsed.get(i);
-            lyricLine.lyric = sb.toString();
-            lyricLine.timeStamp = timing.start;
-        }
-    }
-
-    /**
-     * 快速重置进度
-     * Reset all lyrics state to specific progress
-     */
     public static void quickResetProgress(float progress) {
         if (allLyrics.isEmpty()) return;
 
         try {
-            // reset所有歌词行的渲染状态
             resetAllLyricsState();
 
-            // reset逐字歌词状态
-            resetWordTimingsState();
+            resetWordStates();
 
             scrollOffset = 0;
 
-            // 找到当前应该显示的歌词
             findCurrentLyric(progress);
 
-            // 计算滚动偏移
             scrollOffset = (allLyrics.indexOf(currentDisplaying)) * getLyricHeight();
         } catch (Exception e) {
             e.printStackTrace();
@@ -246,11 +150,11 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    private static void resetWordTimingsState() {
-        for (ScrollTiming t : timings) {
-            for (WordTiming timing : t.timings) {
-                timing.alpha = 0.0f;
-                timing.interpPercent = 0.0;
+    private static void resetWordStates() {
+        for (LyricLine allLyric : allLyrics) {
+            for (LyricLine.Word word : allLyric.words) {
+                word.alpha = 0.0f;
+                word.interpPercent = 0.0;
             }
         }
     }
@@ -258,9 +162,9 @@ public class MusicLyricsWidget extends Widget {
     private static void findCurrentLyric(float progress) {
         currentDisplaying = allLyrics.get(0);
 
-        for (LyricLine lyric : allLyrics) {
-            if (lyric.getTimeStamp() > progress) {
-                int i = allLyrics.indexOf(lyric);
+        for (LyricLine line : allLyrics) {
+            if (line.getTimestamp() > progress) {
+                int i = allLyrics.indexOf(line);
                 if (i > 0) {
                     currentDisplaying = allLyrics.get(i - 1);
                 }
@@ -269,28 +173,17 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 计算歌词行高度
-     */
     public static double getLyricHeight() {
         double baseHeight = getFontRenderer().getHeight();
         double adjustment = hasSecondaryLyrics() ? 0 : -getSmallFontRenderer().getHeight() - 4;
         return baseHeight + adjustment + WidgetsManager.musicLyrics.lyricHeight.getValue();
     }
 
-    /**
-     * 是否有副歌词（翻译/罗马音）
-     */
     public static boolean hasSecondaryLyrics() {
         return (hasTransLyrics || hasRomanization) && WidgetsManager.musicLyrics.showTranslation.getValue();
     }
 
-    /**
-     * 获取副歌词文本
-     * Get secondary lyrics based on current settings
-     */
     public static String getSecondaryLyrics(LyricLine bean) {
-        // 优先显示翻译
         if (hasTransLyrics) {
             if (!WidgetsManager.musicLyrics.showRoman.getValue()) {
                 return StringUtils.returnEmptyStringIfNull(bean.getTranslationText());
@@ -304,7 +197,7 @@ public class MusicLyricsWidget extends Widget {
             }
         }
 
-        // 只有罗马音的情况
+        // 只有罗马音
         if (hasRomanization) {
             if (WidgetsManager.musicLyrics.showRoman.getValue()) {
                 return StringUtils.returnEmptyStringIfNull(bean.getRomanizationText());
@@ -317,7 +210,6 @@ public class MusicLyricsWidget extends Widget {
     @Override
     public void onRender(boolean editing) {
 
-        // 检查是否需要渲染
         if (!shouldRender()) {
             return;
         }
@@ -344,21 +236,15 @@ public class MusicLyricsWidget extends Widget {
         StencilClipManager.endClip();
     }
 
-    /**
-     * 检查是否需要渲染
-     */
     private boolean shouldRender() {
         return CloudMusic.player != null && !CloudMusic.player.isFinished() && !allLyrics.isEmpty();
     }
 
-    /**
-     * 更新当前显示的歌词行
-     */
     private void updateCurrentDisplayingLyric(float songProgress) {
         for (int i = 0; i < allLyrics.size(); i++) {
-            LyricLine lyric = allLyrics.get(i);
+            LyricLine line = allLyrics.get(i);
 
-            if (lyric.getTimeStamp() > songProgress) {
+            if (line.getTimestamp() > songProgress) {
                 if (i > 0) {
                     currentDisplaying = allLyrics.get(i - 1);
                 }
@@ -369,9 +255,6 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 处理单行显示模式
-     */
     private void handleSingleLineMode(boolean shouldNotDisplayOtherLyrics) {
         if (shouldNotDisplayOtherLyrics && currentDisplaying == null) {
             if (!allLyrics.isEmpty()) {
@@ -380,9 +263,6 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 更新滚动偏移量
-     */
     private void updateScrollOffset(boolean shouldNotDisplayOtherLyrics) {
         int indexOf = allLyrics.indexOf(currentDisplaying);
 
@@ -390,32 +270,26 @@ public class MusicLyricsWidget extends Widget {
             if (currentDisplaying == null) {
                 scrollOffset = 0;
             } else {
-                // smooth scroll animation
                 scrollOffset = Interpolations.interpBezier(scrollOffset, (indexOf * getLyricHeight()), 0.2f);
             }
         }
     }
 
-    /**
-     * 渲染所有歌词行
-     */
     private void renderAllLyrics(boolean shouldNotDisplayOtherLyrics, float songProgress) {
         double offsetY = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0 - scrollOffset;
         int indexOf = allLyrics.indexOf(currentDisplaying);
 
         synchronized (allLyrics) {
             for (int i = 0; i < allLyrics.size(); i++) {
-                LyricLine lyric = allLyrics.get(i);
+                LyricLine line = allLyrics.get(i);
 
-                // 单行模式只渲染当前行
                 if (shouldNotDisplayOtherLyrics) {
                     if (i < indexOf) continue;
                     if (i > indexOf) break;
                 }
 
-                // 计算歌词位置
                 LyricRenderInfo renderInfo = calculateLyricPosition(
-                        lyric, i, indexOf, offsetY, shouldNotDisplayOtherLyrics
+                        line, i, indexOf, offsetY, shouldNotDisplayOtherLyrics
                 );
 
                 if (renderInfo.shouldSkip) {
@@ -427,15 +301,12 @@ public class MusicLyricsWidget extends Widget {
                     break;
                 }
 
-                // 更新歌词动画状态
-                updateLyricAnimation(lyric, i == indexOf);
+                updateLyricAnimation(line, i == indexOf);
 
-                // 渲染歌词
-                renderLyricText(lyric, renderInfo, i, indexOf);
+                renderLyricText(line, renderInfo, i, indexOf);
 
-                // 处理滚动效果
-                if (!timings.isEmpty() && lyric == currentDisplaying) {
-                    handleScrollEffects(lyric, renderInfo, songProgress);
+                if (line == currentDisplaying && !line.words.isEmpty()) {
+                    handleScrollEffects(line, renderInfo, songProgress);
                 }
 
                 offsetY += getLyricHeight();
@@ -443,27 +314,21 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 计算歌词渲染位置信息
-     */
-    private LyricRenderInfo calculateLyricPosition(LyricLine lyric, int index, int currentIndex,
+    private LyricRenderInfo calculateLyricPosition(LyricLine line, int index, int currentIndex,
                                                    double offsetY, boolean singleLineMode) {
         LyricRenderInfo info = new LyricRenderInfo();
 
         if (!singleLineMode) {
-            // 计算目标位置
             double dest = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0 +
                     index * getLyricHeight() - (currentIndex * getLyricHeight());
 
-            // 初始化或大幅度位置变化时直接设置
-            if (lyric.offsetY == Double.MIN_VALUE || Math.abs(lyric.offsetY - dest) > 100) {
-                lyric.offsetY = dest;
+            if (line.offsetY == Double.MIN_VALUE || Math.abs(line.offsetY - dest) > 100) {
+                line.offsetY = dest;
             }
 
-            // 检查是否在可视区域内
-            if (lyric.offsetY + getLyricHeight() < this.getY()) {
+            if (line.offsetY + getLyricHeight() < this.getY()) {
                 info.shouldSkip = true;
-                lyric.offsetY = dest;
+                line.offsetY = dest;
                 return info;
             }
 
@@ -472,23 +337,18 @@ public class MusicLyricsWidget extends Widget {
                 return info;
             }
 
-            // 平滑滚动动画
-            applyGraceScroll(lyric, index, currentIndex, dest);
+            applyGraceScroll(line, index, currentIndex, dest);
 
-            info.yPosition = this.graceScroll.getValue() ? lyric.offsetY : offsetY;
+            info.yPosition = this.graceScroll.getValue() ? line.offsetY : offsetY;
         } else {
             info.yPosition = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0;
-            lyric.offsetY = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0;
+            line.offsetY = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0;
         }
 
         return info;
     }
 
-    /**
-     * 应用平滑滚动效果
-     * Grace scroll animation for lyrics
-     */
-    private void applyGraceScroll(LyricLine lyric, int index, int currentIndex, double dest) {
+    private void applyGraceScroll(LyricLine line, int index, int currentIndex, double dest) {
         float speed = 0.15f;
         LyricLine prevLrc = null;
 
@@ -505,93 +365,65 @@ public class MusicLyricsWidget extends Widget {
 
             // 前一行接近目标位置时才开始滚动
             if (v < MusicLyricsWidget.getLyricHeight() * 0.55f) {
-                lyric.offsetY = Interpolations.interpBezier(lyric.offsetY, dest, speed);
+                line.offsetY = Interpolations.interpBezier(line.offsetY, dest, speed);
             }
         } else {
             // 第一行直接滚动
-            lyric.offsetY = Interpolations.interpBezier(lyric.offsetY, dest, speed);
+            line.offsetY = Interpolations.interpBezier(line.offsetY, dest, speed);
         }
     }
 
-    /**
-     * 更新歌词动画状态
-     */
-    private void updateLyricAnimation(LyricLine lyric, boolean isCurrent) {
-        // 透明度动画
-        lyric.alpha = Interpolations.interpBezier(
-                lyric.alpha,
+    private void updateLyricAnimation(LyricLine line, boolean isCurrent) {
+        line.alpha = Interpolations.interpBezier(
+                line.alpha,
                 isCurrent ? 1f : 60 / 255.0f,
                 0.1f
         );
-
-        // 缩放动画
-        lyric.scale = Interpolations.interpBezier(
-                lyric.scale,
-                isCurrent ? 1.0 : 0.8,
-                0.2f
-        );
     }
 
-    /**
-     * 渲染歌词文本
-     */
-    private void renderLyricText(LyricLine lyric, LyricRenderInfo renderInfo,
+    private void renderLyricText(LyricLine line, LyricRenderInfo renderInfo,
                                  int index, int currentIndex) {
-        boolean hasScrollTimings = !timings.isEmpty();
+        boolean hasWords = !line.words.isEmpty();
         boolean bSlideIn = this.scrollEffects.getValue() == ScrollEffects.SlideIn;
-        boolean shouldRender = !hasScrollTimings || !bSlideIn || index != currentIndex ||
+        boolean shouldRender = !hasWords || !bSlideIn || index != currentIndex ||
                 this.alignMode.getValue() == AlignMode.Left;
 
-        // 计算透明度
-        int alpha = calculateAlpha(lyric, index, currentIndex, hasScrollTimings);
+        int alpha = calculateAlpha(line, index, currentIndex, hasWords);
 
-        // 获取副歌词
-        String secondaryLyric = hasSecondaryLyrics() ? getSecondaryLyrics(lyric) : "";
+        String secondaryLyric = hasSecondaryLyrics() ? getSecondaryLyrics(line) : "";
         boolean secondaryLyricEmpty = secondaryLyric.isEmpty();
 
-        // 创建渲染任务
         Runnable renderTask = createRenderTask(
-                lyric, renderInfo, secondaryLyric, secondaryLyricEmpty,
+                line, renderInfo, secondaryLyric, secondaryLyricEmpty,
                 shouldRender, alpha, index <= currentIndex
         );
 
-        // 执行渲染
         renderTask.run();
     }
 
-    /**
-     * 计算歌词透明度
-     */
-    private int calculateAlpha(LyricLine lyric, int index, int currentIndex, boolean hasScrollTimings) {
-        if (hasScrollTimings) {
-            return index != currentIndex ? (int) (lyric.alpha * 255) : 80;
+    private int calculateAlpha(LyricLine line, int index, int currentIndex, boolean hasWords) {
+        if (hasWords) {
+            return index != currentIndex ? (int) (line.alpha * 255) : 80;
         } else {
-            return (int) (lyric.alpha * 255);
+            return (int) (line.alpha * 255);
         }
     }
 
-    /**
-     * 创建渲染任务
-     */
-    private Runnable createRenderTask(LyricLine lyric, LyricRenderInfo renderInfo,
+    private Runnable createRenderTask(LyricLine line, LyricRenderInfo renderInfo,
                                       String secondaryLyric, boolean secondaryLyricEmpty,
                                       boolean shouldRender, int alpha,
                                       boolean isActive) {
         return () -> {
             int hexColor = RGBA.color(255, 255, 255, alpha);
-            int rgb = RGBA.color(255, 255, 255, isActive ? (int) (lyric.alpha * 255) : 100);
+            int rgb = RGBA.color(255, 255, 255, isActive ? (int) (line.alpha * 255) : 100);
 
-            // 根据对齐方式渲染
-            renderByAlignment(lyric, renderInfo, secondaryLyric, secondaryLyricEmpty,
+            renderByAlignment(line, renderInfo, secondaryLyric, secondaryLyricEmpty,
                     shouldRender, hexColor, rgb);
 
         };
     }
 
-    /**
-     * 根据对齐方式渲染歌词
-     */
-    private void renderByAlignment(LyricLine lyric, LyricRenderInfo renderInfo,
+    private void renderByAlignment(LyricLine line, LyricRenderInfo renderInfo,
                                    String secondaryLyric, boolean secondaryLyricEmpty,
                                    boolean shouldRender, int hexColor, int rgb) {
         AlignMode alignMode = this.alignMode.getValue();
@@ -600,7 +432,7 @@ public class MusicLyricsWidget extends Widget {
         switch (alignMode) {
             case Left:
                 if (shouldRender) {
-                    bigFrString(lyric.getLyric(), this.getX(), y, hexColor);
+                    bigFrString(line.getLyric(), this.getX(), y, hexColor);
                 }
                 if (!secondaryLyricEmpty) {
                     smallFrString(secondaryLyric, this.getX(),
@@ -610,7 +442,7 @@ public class MusicLyricsWidget extends Widget {
             case Center:
                 double centerX = this.getX() + this.getWidth() / 2.0;
                 if (shouldRender) {
-                    bigFrStringCentered(lyric.getLyric(), centerX, y, hexColor);
+                    bigFrStringCentered(line.getLyric(), centerX, y, hexColor);
                 }
                 if (!secondaryLyricEmpty) {
                     smallFrStringCentered(secondaryLyric, centerX,
@@ -619,8 +451,8 @@ public class MusicLyricsWidget extends Widget {
                 break;
             case Right:
                 if (shouldRender) {
-                    bigFrString(lyric.getLyric(),
-                            this.getX() + this.getWidth() - getFontRenderer().getStringWidthD(lyric.getLyric()), y, hexColor);
+                    bigFrString(line.getLyric(),
+                            this.getX() + this.getWidth() - getFontRenderer().getStringWidthD(line.getLyric()), y, hexColor);
                 }
                 if (!secondaryLyricEmpty) {
                     smallFrString(secondaryLyric,
@@ -631,206 +463,154 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 处理歌词滚动效果
-     * Handle different scroll effects for karaoke-style lyrics
-     */
-    private void handleScrollEffects(LyricLine lyric, LyricRenderInfo renderInfo, float songProgress) {
-        ScrollTiming curTiming = findCurrentTiming(songProgress);
+    private void handleScrollEffects(LyricLine line, LyricRenderInfo renderInfo, float songProgress) {
+        WordInfo wordInfo = calculateCurrentWordInfo(line, songProgress);
 
-        if (curTiming == null) return;
+        updateScrollWidth(line, wordInfo, songProgress);
 
-        // 计算当前词和进度
-        WordTimingInfo wordInfo = calculateCurrentWordTiming(curTiming, songProgress);
-
-        // 更新滚动宽度
-        updateScrollWidth(lyric, curTiming, wordInfo, songProgress);
-
-        // 渲染滚动效果
-        renderScrollEffect(lyric, renderInfo, curTiming, wordInfo, songProgress);
+        renderScrollEffect(line, renderInfo, wordInfo, songProgress);
     }
 
-    /**
-     * 查找当前timing
-     */
-    private ScrollTiming findCurrentTiming(float songProgress) {
-        for (int j = 0; j < timings.size(); j++) {
-            ScrollTiming timing = timings.get(j);
-
-            if (j < timings.size() - 1 && songProgress < timings.get(j + 1).start || j == timings.size() - 1) {
-                return timing;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * 计算当前词的timing信息
-     */
-    private WordTimingInfo calculateCurrentWordTiming(ScrollTiming timing, float songProgress) {
-        WordTimingInfo info = new WordTimingInfo();
+    private WordInfo calculateCurrentWordInfo(LyricLine line, float songProgress) {
+        WordInfo info = new WordInfo();
 
         // find current word index
-        for (int k = 0; k < timing.timings.size(); k++) {
-            WordTiming wordTiming = timing.timings.get(k);
+        for (int k = 0; k < line.words.size(); k++) {
+            LyricLine.Word word = line.words.get(k);
 
-            if (wordTiming.timing > songProgress - timing.start) {
+            if (word.timestamp > songProgress - line.timestamp) {
                 info.currentIndex = k;
                 break;
-            } else if (k == timing.timings.size() - 1) {
+            } else if (k == line.words.size() - 1) {
                 info.currentIndex = k;
             }
         }
 
         // calculate text before current word
         for (int m = 0; m < info.currentIndex; m++) {
-            info.textBefore.append(timing.timings.get(m).word);
+            info.textBefore.append(line.words.get(m).word);
         }
 
         // calculate accumulated text
         for (int m = 0; m < info.currentIndex + 1; m++) {
-            info.textAccumulated.append(timing.timings.get(m).word);
+            info.textAccumulated.append(line.words.get(m).word);
         }
 
         return info;
     }
 
-    /**
-     * 更新滚动宽度
-     */
-    private void updateScrollWidth(LyricLine lyric, ScrollTiming timing, WordTimingInfo wordInfo, float songProgress) {
-        WordTiming prev = getPrevWordTiming(wordInfo.currentIndex, timings.indexOf(timing), timing);
-        WordTiming current = timing.timings.get(wordInfo.currentIndex);
+    private void updateScrollWidth(LyricLine line, WordInfo wordInfo, float songProgress) {
+        LyricLine.Word prev = getPrevWord(wordInfo.currentIndex, allLyrics.indexOf(line), line);
+        LyricLine.Word current = line.words.get(wordInfo.currentIndex);
 
-        long prevTiming = wordInfo.currentIndex == 0 ? 0 : prev.timing;
-        double progress = (songProgress - timing.start - prevTiming) / (double) (current.timing - prevTiming);
+        long prevWordTimestamp = wordInfo.currentIndex == 0 ? 0 : prev.timestamp;
+        double progress = (songProgress - line.timestamp - prevWordTimestamp) / (double) (current.timestamp - prevWordTimestamp);
 
         double offsetX = progress * getFontRenderer().getStringWidthD(current.word);
 
-        lyric.scrollWidth = getFontRenderer().getStringWidthD(wordInfo.textBefore.toString()) + offsetX;
+        line.scrollWidth = getFontRenderer().getStringWidthD(wordInfo.textBefore.toString()) + offsetX;
     }
 
-    /**
-     * 渲染滚动效果
-     */
-    private void renderScrollEffect(LyricLine lyric, LyricRenderInfo renderInfo, ScrollTiming timing, WordTimingInfo wordInfo, float songProgress) {
+    private void renderScrollEffect(LyricLine line, LyricRenderInfo renderInfo, WordInfo wordInfo, float songProgress) {
         ScrollEffects effectMode = this.scrollEffects.getValue();
 
         switch (effectMode) {
             case Scroll:
-                renderScrollMode(lyric, renderInfo);
+                renderScrollMode(line, renderInfo);
                 break;
             case FadeIn:
-                renderFadeInMode(lyric, renderInfo, timing, wordInfo, songProgress);
+                renderFadeInMode(line, renderInfo, wordInfo, songProgress);
                 break;
             case SlideIn:
-                renderSlideInMode(lyric, renderInfo, timing, wordInfo, songProgress);
+                renderSlideInMode(line, renderInfo, wordInfo, songProgress);
                 break;
         }
     }
 
-    /**
-     * 渲染Scroll模式
-     */
-    private void renderScrollMode(LyricLine lyric, LyricRenderInfo renderInfo) {
+    private void renderScrollMode(LyricLine line, LyricRenderInfo renderInfo) {
         AlignMode alignMode = this.alignMode.getValue();
-        double x = calculateAlignmentX(lyric.getLyric(), alignMode);
+        double x = calculateAlignmentX(line.getLyric(), alignMode);
 
         StencilClipManager.beginClip(() -> {
-            Rect.draw(x, renderInfo.yPosition, lyric.scrollWidth + 1, getFontRenderer().getHeight() + 4, -1);
+            Rect.draw(x, renderInfo.yPosition, line.scrollWidth + 1, getFontRenderer().getHeight() + 4, -1);
         });
 
-        renderAlignedText(lyric.getLyric(), renderInfo.yPosition, -1, alignMode);
+        renderAlignedText(line.getLyric(), renderInfo.yPosition, -1, alignMode);
 
         StencilClipManager.endClip();
     }
 
-    /**
-     * 渲染FadeIn模式
-     */
-    private void renderFadeInMode(LyricLine lyric, LyricRenderInfo renderInfo, ScrollTiming timing, WordTimingInfo wordInfo, float songProgress) {
+    private void renderFadeInMode(LyricLine line, LyricRenderInfo renderInfo, WordInfo wordInfo, float songProgress) {
         AlignMode alignMode = this.alignMode.getValue();
 
-        double offsetX = calculateAlignmentX(lyric.getLyric(), alignMode);
+        double offsetX = calculateAlignmentX(line.getLyric(), alignMode);
         for (int m = 0; m < wordInfo.currentIndex + 1; m++) {
-            WordTiming wordTiming = timing.timings.get(m);
-            String word = wordTiming.word;
+            LyricLine.Word word = line.words.get(m);
+            String wordText = word.word;
 
-            // 更新word的动画状态
             if (m == wordInfo.currentIndex) {
-                updateCurrentWordAnimation(wordTiming, timing, wordInfo.currentIndex, songProgress);
+                updateCurrentWordAnimation(word, line, wordInfo.currentIndex, songProgress);
             } else if (m < wordInfo.currentIndex) {
-                wordTiming.alpha = 1;
+                word.alpha = 1;
             }
 
-            double stWidth = getFontRenderer().getStringWidthD(word);
-            bigFrString(word, offsetX, renderInfo.yPosition,
-                    RGBA.color(255, 255, 255, (int) (wordTiming.alpha * 255)));
+            double stWidth = getFontRenderer().getStringWidthD(wordText);
+            bigFrString(wordText, offsetX, renderInfo.yPosition,
+                    RGBA.color(255, 255, 255, (int) (word.alpha * 255)));
 
             offsetX += stWidth;
         }
     }
 
-    /**
-     * 渲染SlideIn模式
-     */
-    private void renderSlideInMode(LyricLine lyric, LyricRenderInfo renderInfo, ScrollTiming timing, WordTimingInfo wordInfo, float songProgress) {
+    private void renderSlideInMode(LyricLine line, LyricRenderInfo renderInfo, WordInfo wordInfo, float songProgress) {
         AlignMode alignMode = this.alignMode.getValue();
 
-        // 计算目标X坐标
-        double targetX = calculateSlideInTargetX(lyric, alignMode);
+        double targetX = calculateSlideInTargetX(line, alignMode);
 
         Runnable renderTask = () -> {
             double offsetX = targetX;
             double targetOffsetX = 0;
 
             for (int m = 0; m < wordInfo.currentIndex + 1; m++) {
-                WordTiming wordTiming = timing.timings.get(m);
-                String word = wordTiming.word;
-                double stWidth = getFontRenderer().getStringWidthD(word);
+                LyricLine.Word word = line.words.get(m);
+                String wordText = word.word;
+                double stWidth = getFontRenderer().getStringWidthD(wordText);
 
                 if (m == wordInfo.currentIndex) {
-                    // 更新当前词动画
-                    updateCurrentWordAnimation(wordTiming, timing, wordInfo.currentIndex, songProgress);
+                    updateCurrentWordAnimation(word, line, wordInfo.currentIndex, songProgress);
 
                     Easing easeInOutQuad = Easing.EASE_IN_OUT_CUBIC;
-                    targetOffsetX += stWidth * easeInOutQuad.getFunction().apply(wordTiming.interpPercent);
+                    targetOffsetX += stWidth * easeInOutQuad.getFunction().apply(word.interpPercent);
                 } else if (m < wordInfo.currentIndex) {
-                    wordTiming.alpha = 1;
+                    word.alpha = 1;
                     targetOffsetX += stWidth;
                 }
 
-                bigFrString(word, offsetX, renderInfo.yPosition,
-                        RGBA.color(255, 255, 255, (int) (wordTiming.alpha * 255)));
+                bigFrString(wordText, offsetX, renderInfo.yPosition,
+                        RGBA.color(255, 255, 255, (int) (word.alpha * 255)));
 
                 offsetX += stWidth;
             }
 
-            lyric.targetOffsetX = targetOffsetX;
+            line.targetOffsetX = targetOffsetX;
         };
 
         renderTask.run();
     }
 
-    /**
-     * 更新当前词的动画状态
-     */
-    private void updateCurrentWordAnimation(WordTiming wordTiming, ScrollTiming timing,
+    private void updateCurrentWordAnimation(LyricLine.Word word, LyricLine line,
                                             int currentIndex, float songProgress) {
-        WordTiming prev = getPrevWordTiming(currentIndex, timings.indexOf(timing), timing);
-        long prevTiming = currentIndex == 0 ? 0 : prev.timing;
+        LyricLine.Word prev = getPrevWord(currentIndex, allLyrics.indexOf(line), line);
+        long prevWordTimestamp = currentIndex == 0 ? 0 : prev.timestamp;
 
-        double perc = (songProgress - timing.start - prevTiming) /
-                (double) (wordTiming.timing - prevTiming);
+        double perc = (songProgress - line.timestamp - prevWordTimestamp) /
+                (double) (word.timestamp - prevWordTimestamp);
         double clamped = Math.max(0, Math.min(1, perc));
 
-        wordTiming.interpPercent = Interpolations.interpBezier(wordTiming.interpPercent, clamped, 1);
-        wordTiming.alpha = (float) wordTiming.interpPercent;
+        word.interpPercent = Interpolations.interpBezier(word.interpPercent, clamped, 1);
+        word.alpha = (float) word.interpPercent;
     }
 
-    /**
-     * 计算对齐方式的X坐标
-     */
     private double calculateAlignmentX(String text, AlignMode alignMode) {
         if (alignMode == AlignMode.Left) {
             return this.getX();
@@ -841,22 +621,16 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 计算SlideIn模式的目标X坐标
-     */
-    private double calculateSlideInTargetX(LyricLine lyric, AlignMode alignMode) {
+    private double calculateSlideInTargetX(LyricLine line, AlignMode alignMode) {
         if (alignMode == AlignMode.Left) {
             return this.getX();
         } else if (alignMode == AlignMode.Center) {
-            return this.getX() + this.getWidth() / 2.0 - lyric.targetOffsetX / 2.0;
+            return this.getX() + this.getWidth() / 2.0 - line.targetOffsetX / 2.0;
         } else {
-            return this.getX() + this.getWidth() - lyric.targetOffsetX;
+            return this.getX() + this.getWidth() - line.targetOffsetX;
         }
     }
 
-    /**
-     * 根据对齐方式渲染文本
-     */
     private void renderAlignedText(String text, double y, int color, AlignMode alignMode) {
         if (alignMode == AlignMode.Left) {
             bigFrString(text, this.getX(), y, color);
@@ -867,34 +641,24 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 清理渲染状态
-     */
     private void cleanupRender() {
         GlStateManager.popMatrix();
         this.setWidth(this.width.getValue().floatValue());
         this.setHeight(this.height.getValue().floatValue());
     }
 
-    /**
-     * 渲染辅助类 - 歌词渲染信息
-     */
     private static class LyricRenderInfo {
         double yPosition;
         boolean shouldSkip = false;
         boolean shouldBreak = false;
     }
 
-    /**
-     * 渲染辅助类 - 词timing信息
-     */
-    private static class WordTimingInfo {
+    private static class WordInfo {
         int currentIndex = 0;
         StringBuilder textBefore = new StringBuilder();
         StringBuilder textAccumulated = new StringBuilder();
     }
 
-    // Font相关方法保持不变
     private static CFontRenderer getFontRenderer() {
         return FontManager.pf28bold;
     }
@@ -935,20 +699,16 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    /**
-     * 获取前一个WordTiming
-     * Get previous word timing with edge case handling
-     */
-    private static WordTiming getPrevWordTiming(int cur, int j, ScrollTiming timing) {
-        WordTiming prev;
+    private static LyricLine.Word getPrevWord(int cur, int j, LyricLine line) {
+        LyricLine.Word prev;
         if (cur - 1 < 0) {
             if (j - 1 < 0) {
-                prev = timing.timings.get(0);
+                prev = line.words.getFirst();
             } else {
-                prev = timings.get(j - 1).timings.get(timings.get(j - 1).timings.size() - 1);
+                prev = allLyrics.get(j - 1).words.getLast();
             }
         } else {
-            prev = timing.timings.get(cur - 1);
+            prev = line.words.get(cur - 1);
         }
         return prev;
     }
