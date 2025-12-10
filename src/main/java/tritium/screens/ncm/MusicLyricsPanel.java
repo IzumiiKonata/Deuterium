@@ -10,18 +10,18 @@ import net.minecraft.util.Location;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
-import tritium.ncm.music.AudioPlayer;
-import tritium.ncm.music.CloudMusic;
-import tritium.ncm.music.dto.Music;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
+import tritium.ncm.music.AudioPlayer;
+import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.dto.Music;
+import tritium.rendering.Image;
 import tritium.rendering.RGBA;
+import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.Image;
-import tritium.rendering.Rect;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shaders;
@@ -45,11 +45,45 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class MusicLyricsPanel implements SharedRenderingConstants {
 
-    private Music music;
+    public static final List<LyricLine> lyrics = new CopyOnWriteArrayList<>();
+    public static LyricLine currentDisplaying = null;
+
+    static double scrollOffset, scrollTarget;
+
+    double fftScale = 0;
+    float musicBgAlpha = 1.0f;
+    static ITextureObject prevBg = null, prevCover;
+    static Music prevMusic = null;
+
     float alpha = 0f;
     boolean closing = false;
 
-    public static final List<LyricLine> lyrics = new CopyOnWriteArrayList<>();
+    Framebuffer baseFb, stencilFb;
+
+    Timer scrollOffsetResetTimer = new Timer();
+
+    double coverSize = (CloudMusic.player == null || CloudMusic.player.isPausing()) ? this.getCoverSizeMin() : this.getCoverSizeMax();
+    float coverAlpha = 1f;
+
+    double progressBarHeight = 8, volumeBarHeight = 8;
+
+    boolean prevMouse = false;
+
+    ScrollText stMusicName = new ScrollText(), stArtists = new ScrollText();
+    IconWidget playPauseButton = new IconWidget("G", FontManager.music40, 0, 0, 24, 24);
+    IconWidget prev = new IconWidget("E", FontManager.music40, 0, 0, 32, 32);
+    IconWidget next = new IconWidget("H", FontManager.music40, 0, 0, 32, 32);
+
+    // 提前跳转到下一行
+    static final float JUMP_TO_NEXT_LINE_MILLIS = 300.0f;
+
+    private final Music music;
+    public MusicLyricsPanel(Music music) {
+        this.music = music;
+        float currentTimeMillis = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
+        updateCurrentDisplayingLyric(currentTimeMillis);
+        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
+    }
 
     public static void initLyric(JsonObject lyric, Music music) {
         // reset states
@@ -122,10 +156,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         MultiThreadingUtil.runAsync(() -> {
             try {
-                String lrc = HttpUtils.getString(
-                        "https://gitee.com/IzumiiKonata/amll-ttml-db/raw/main/ncm-lyrics/" + music.getId() + ".yrc",
-                        null
-                );
+                String lrc = HttpUtils.getString("https://gitee.com/IzumiiKonata/amll-ttml-db/raw/main/ncm-lyrics/" + music.getId() + ".yrc", null);
 //                System.out.println("歌曲 " + music.getName() + " 存在 ttml 歌词, 获取中...");
 
                 ArrayList<LyricLine> lyricLines = new ArrayList<>();
@@ -156,11 +187,95 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
-    public MusicLyricsPanel(Music music) {
-        this.music = music;
-        float currentTimeMillis = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
-        updateCurrentDisplayingLyric(currentTimeMillis);
-        updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
+    private static double getLyricWidthFactor() {
+        return .45;
+    }
+
+    private static double getLyricLineSpacing() {
+        return 24;
+    }
+
+    private static double lyricFraction() {
+        return .25;
+    }
+
+    private static void updateLyricPositionsImmediate(double width) {
+
+        if (currentDisplaying == null) return;
+
+        double offsetY = RenderSystem.getHeight() * lyricFraction() - getLyricLineSpacing();
+        int toIndex = lyrics.indexOf(currentDisplaying);
+
+        if (toIndex == -1 || toIndex >= lyrics.size()) return;
+
+        synchronized (lyrics) {
+            List<LyricLine> subList = lyrics.subList(0, toIndex);
+            for (int i = subList.size() - 1; i >= 0; i--) {
+                LyricLine lyric = subList.get(i);
+
+                if (i == subList.size() - 1) {
+                    lyric.computeHeight(width);
+                    offsetY -= lyric.height;
+                }
+
+                lyric.posY = offsetY;
+
+                lyric.computeHeight(width);
+                offsetY -= lyric.height + getLyricLineSpacing();
+            }
+
+            offsetY = RenderSystem.getHeight() * lyricFraction();
+            for (LyricLine lyric : lyrics.subList(toIndex, lyrics.size())) {
+                lyric.posY = offsetY;
+
+                lyric.computeHeight(width);
+                offsetY += lyric.height + getLyricLineSpacing();
+            }
+        }
+
+    }
+
+    /**
+     * 更新当前显示的歌词行
+     */
+    private static void updateCurrentDisplayingLyric(float songProgress) {
+
+        LyricLine cur = currentDisplaying;
+
+        for (int i = 0; i < lyrics.size(); i++) {
+            LyricLine lyric = lyrics.get(i);
+
+            if (lyric.getTimestamp() > songProgress + JUMP_TO_NEXT_LINE_MILLIS) {
+                if (i > 0) {
+                    currentDisplaying = lyrics.get(i - 1);
+                }
+                break;
+            } else if (i == lyrics.size() - 1) {
+                currentDisplaying = lyrics.get(i);
+            }
+        }
+
+        if (cur != currentDisplaying) {
+            resetLyricStatus();
+        }
+    }
+
+    private static long getLyricInterpolationWaitTimeMillis() {
+        return 75;
+    }
+
+    private static void resetLyricStatus() {
+        lyrics.forEach(l -> {
+            l.shouldUpdatePosition = false;
+
+            l.delayTimer.reset();
+
+            for (LyricLine.Word word : l.words) {
+                Arrays.fill(word.emphasizes, 0);
+            }
+
+            l.markDirty();
+        });
     }
 
     public void onInit() {
@@ -175,14 +290,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         return closing && alpha <= 0.02f;
     }
 
-    private static double getLyricWidthFactor() {
-        return .45;
-    }
-
     public void onRender(double mouseX, double mouseY, double posX, double posY, double width, double height, int dWheel) {
 
-        if (prevMouse && !Mouse.isButtonDown(0))
-            prevMouse = false;
+        if (prevMouse && !Mouse.isButtonDown(0)) prevMouse = false;
 
         alpha = Interpolations.interpBezier(alpha, closing ? 0.0f : 1f, 0.3f);
 
@@ -195,21 +305,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         GlStateManager.popMatrix();
     }
 
-    public static LyricLine currentDisplaying = null;
-
-    Framebuffer baseFb, stencilFb;
-
-    private static double getLyricLineSpacing() {
-        return 24;
-    }
-
-    static double scrollOffset, scrollTarget;
-    Timer scrollOffsetResetTimer = new Timer();
-
     private void renderLyrics(double mouseX, double mouseY, double posX, double posY, double width, double height, int dWheel, float alpha) {
 
-        if (lyrics.isEmpty())
-            return;
+        if (lyrics.isEmpty()) return;
 
         float songProgress = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
 
@@ -226,13 +324,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
             double strength = 24;
 
-            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT))
-                strength *= 2;
+            if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT)) strength *= 2;
 
-            if (dWheel > 0)
-                scrollTarget += strength;
-            else
-                scrollTarget -= strength;
+            if (dWheel > 0) scrollTarget += strength;
+            else scrollTarget -= strength;
 
             scrollOffsetResetTimer.reset();
 
@@ -296,8 +391,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                         renderY += FontManager.pf65bold.getHeight() * .85 + 4;
                     }
 
-                    if (!lyric.renderEmphasizes)
-                        Arrays.fill(word.emphasizes, 2);
+                    if (!lyric.renderEmphasizes) Arrays.fill(word.emphasizes, 2);
 
                     double emphasizeWholeWord = word.emphasizes[0];
 
@@ -326,7 +420,14 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                         LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
 
                         long prevTiming = i == 0 ? 0 : prev.timestamp;
-                        double progress = Math.max(0, Math.min(1, (songProgress - lyric.timestamp - prevTiming) / (double) (word.timestamp - prevTiming)));
+                        long timestamp = word.timestamp;
+
+                        // jump to next line offset
+                        if (i == words.size() - 1) {
+                            timestamp = (long) Math.max(prevTiming, timestamp - JUMP_TO_NEXT_LINE_MILLIS * 1.2f);
+                        }
+
+                        double progress = Math.max(0, Math.min(1, (songProgress - lyric.timestamp - prevTiming) / (double) (timestamp - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
 
                         boolean shouldClip = progress > 0 && progress < 1;
@@ -463,19 +564,13 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         GlStateManager.popMatrix();
     }
 
-    private static double lyricFraction() {
-        return .25;
-    }
-
     private void updateLyricPositions(double posY, double height, double width) {
 
-        if (currentDisplaying == null)
-            return;
+        if (currentDisplaying == null) return;
 
         int idxCurrent = lyrics.indexOf(currentDisplaying);
 
-        if (idxCurrent < 0 || idxCurrent >= lyrics.size())
-            return;
+        if (idxCurrent < 0 || idxCurrent >= lyrics.size()) return;
 //
         double offsetY = RenderSystem.getHeight() * lyricFraction()/* - (idxCurrent > 0 ? lyrics.get(idxCurrent - 1).height : 0)*/;
 
@@ -523,103 +618,20 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     break;
                 }
 
-                if (prev == null && !lyric.delayTimer.isDelayed(getLyricInterpolationWaitTimeMillis()))
-                    break;
+                if (prev == null && !lyric.delayTimer.isDelayed(getLyricInterpolationWaitTimeMillis())) break;
 
                 lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
 
                 if (offsetY + scrollOffset > posY + height) {
                     oobCounter += 1;
 
-                    if (oobCounter >= 4 && scrollTarget == 0)
-                        break;
+                    if (oobCounter >= 4 && scrollTarget == 0) break;
                 }
 
                 offsetY += lyric.height + getLyricLineSpacing();
             }
         }
 
-    }
-
-    private static void updateLyricPositionsImmediate(double width) {
-
-        if (currentDisplaying == null)
-            return;
-
-        double offsetY = RenderSystem.getHeight() * lyricFraction() - getLyricLineSpacing();
-        int toIndex = lyrics.indexOf(currentDisplaying);
-
-        if (toIndex == -1 || toIndex >= lyrics.size())
-            return;
-
-        synchronized (lyrics) {
-            List<LyricLine> subList = lyrics.subList(0, toIndex);
-            for (int i = subList.size() - 1; i >= 0; i--) {
-                LyricLine lyric = subList.get(i);
-
-                if (i == subList.size() - 1) {
-                    lyric.computeHeight(width);
-                    offsetY -= lyric.height;
-                }
-
-                lyric.posY = offsetY;
-
-                lyric.computeHeight(width);
-                offsetY -= lyric.height + getLyricLineSpacing();
-            }
-
-            offsetY = RenderSystem.getHeight() * lyricFraction();
-            for (LyricLine lyric : lyrics.subList(toIndex, lyrics.size())) {
-                lyric.posY = offsetY;
-
-                lyric.computeHeight(width);
-                offsetY += lyric.height + getLyricLineSpacing();
-            }
-        }
-
-    }
-
-    /**
-     * 更新当前显示的歌词行
-     */
-    private static void updateCurrentDisplayingLyric(float songProgress) {
-
-        LyricLine cur = currentDisplaying;
-
-        for (int i = 0; i < lyrics.size(); i++) {
-            LyricLine lyric = lyrics.get(i);
-
-            if (lyric.getTimestamp() > songProgress) {
-                if (i > 0) {
-                    currentDisplaying = lyrics.get(i - 1);
-                }
-                break;
-            } else if (i == lyrics.size() - 1) {
-                currentDisplaying = lyrics.get(i);
-            }
-        }
-
-        if (cur != currentDisplaying) {
-            resetLyricStatus();
-        }
-    }
-
-    private static long getLyricInterpolationWaitTimeMillis() {
-        return 75;
-    }
-
-    private static void resetLyricStatus() {
-        lyrics.forEach(l -> {
-            l.shouldUpdatePosition = false;
-
-            l.delayTimer.reset();
-
-            for (LyricLine.Word word : l.words) {
-                Arrays.fill(word.emphasizes, 0);
-            }
-
-            l.markDirty();
-        });
     }
 
     private double getCoverSizeMax() {
@@ -629,14 +641,6 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     private double getCoverSizeMin() {
         return getCoverSizeMax() * .8;
     }
-
-    double coverSize = (CloudMusic.player == null || CloudMusic.player.isPausing()) ? this.getCoverSizeMin() : this.getCoverSizeMax();
-    double progressBarHeight = 8, volumeBarHeight = 8;
-
-    float coverAlpha = 1f;
-    boolean prevMouse = false;
-
-    ScrollText stMusicName = new ScrollText(), stArtists = new ScrollText();
 
     private void renderControlsPart(double mouseX, double mouseY, double posX, double posY, double width, double height, float alpha) {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
@@ -752,10 +756,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
             if (i == 0) {
                 if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null) {
-                    if (CloudMusic.player.isPausing())
-                        CloudMusic.player.unpause();
-                    else
-                        CloudMusic.player.pause();
+                    if (CloudMusic.player.isPausing()) CloudMusic.player.unpause();
+                    else CloudMusic.player.pause();
 
                 }
             }
@@ -777,8 +779,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         prev.setOnClickCallback((x, y, i) -> {
 
             if (i == 0) {
-                if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
-                    CloudMusic.prev();
+                if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null) CloudMusic.prev();
             }
 
             return true;
@@ -796,8 +797,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         next.setOnClickCallback((x, y, i) -> {
 
             if (i == 0) {
-                if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null)
-                    CloudMusic.next();
+                if (CloudMusic.player != null && CloudMusic.currentlyPlaying != null) CloudMusic.next();
             }
 
             return true;
@@ -809,10 +809,6 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         prev.onMouseClickReceived(mouseX, mouseY, mouseButton);
         next.onMouseClickReceived(mouseX, mouseY, mouseButton);
     }
-
-    IconWidget playPauseButton = new IconWidget("G", FontManager.music40, 0, 0, 24, 24);
-    IconWidget prev = new IconWidget("E", FontManager.music40, 0, 0, 32, 32);
-    IconWidget next = new IconWidget("H", FontManager.music40, 0, 0, 32, 32);
 
     private String formatDuration(float totalMillis) {
         float totalSeconds = totalMillis / 1000;
@@ -833,11 +829,6 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         return sb.toString();
     }
 
-    float musicBgAlpha = 1.0f;
-    static ITextureObject prevBg = null, prevCover;
-    static Music prevMusic = null;
-    double fftScale = 0;
-
     private void renderBackground(double posX, double posY, double width, double height, float alpha) {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
         Location musicCoverBlured = CloudMusic.currentlyPlaying == null ? null : MusicInfoWidget.getMusicCoverBlurred(CloudMusic.currentlyPlaying);
@@ -845,8 +836,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying != prevMusic) {
 
-            if (prevMusic != null)
-                musicBgAlpha = 0.0f;
+            if (prevMusic != null) musicBgAlpha = 0.0f;
 
             prevBg = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCoverBlurred(prevMusic));
             prevCover = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCover(prevMusic));
@@ -863,11 +853,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 max = Math.max(max, AudioPlayer.bandValues[i]);
             }
 
-            if (!Double.isFinite(fftScale))
-                fftScale = 0;
+            if (!Double.isFinite(fftScale)) fftScale = 0;
 
-            if (!Float.isFinite(max) || max <= .1f)
-                max = 0;
+            if (!Float.isFinite(max) || max <= .1f) max = 0;
 
             fftScale = Interpolations.interpBezier(fftScale, max * .05, .4f);
 

@@ -154,7 +154,7 @@ public class MusicLyricsWidget extends Widget {
         for (LyricLine allLyric : allLyrics) {
             for (LyricLine.Word word : allLyric.words) {
                 word.alpha = 0.0f;
-                word.interpPercent = 0.0;
+                word.progress = 0.0;
             }
         }
     }
@@ -376,7 +376,7 @@ public class MusicLyricsWidget extends Widget {
     private void updateLyricAnimation(LyricLine line, boolean isCurrent) {
         line.alpha = Interpolations.interpBezier(
                 line.alpha,
-                isCurrent ? 1f : 60 / 255.0f,
+                isCurrent ? 1f : .25f,
                 0.1f
         );
     }
@@ -579,8 +579,8 @@ public class MusicLyricsWidget extends Widget {
                 if (m == wordInfo.currentIndex) {
                     updateCurrentWordAnimation(word, line, wordInfo.currentIndex, songProgress);
 
-                    Easing easeInOutQuad = Easing.EASE_IN_OUT_CUBIC;
-                    targetOffsetX += stWidth * easeInOutQuad.getFunction().apply(word.interpPercent);
+                    Easing easeInOutQuad = Easing.EASE_OUT_CUBIC;
+                    targetOffsetX += stWidth * easeInOutQuad.getFunction().apply(word.progress);
                 } else if (m < wordInfo.currentIndex) {
                     word.alpha = 1;
                     targetOffsetX += stWidth;
@@ -607,8 +607,8 @@ public class MusicLyricsWidget extends Widget {
                 (double) (word.timestamp - prevWordTimestamp);
         double clamped = Math.max(0, Math.min(1, perc));
 
-        word.interpPercent = Interpolations.interpBezier(word.interpPercent, clamped, 1);
-        word.alpha = (float) word.interpPercent;
+        word.progress = Interpolations.interpBezier(word.progress, clamped, 1);
+        word.alpha = (float) Math.min(1, clamped * 1.25f);
     }
 
     private double calculateAlignmentX(String text, AlignMode alignMode) {

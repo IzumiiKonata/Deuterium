@@ -54,7 +54,7 @@ public class LyricLine {
 
         // fields for MusicLyricsWidget
         public float alpha = 0.0f;
-        public double interpPercent = 0.0;
+        public double progress = 0.0;
 
         public Word(String word, long timestamp) {
             this.word = word;

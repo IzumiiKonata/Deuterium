@@ -98,8 +98,8 @@ public class MusicInfoWidget extends Widget {
 
             double imgSize = height - imgSpacing * 2;
 
-            double bgRound = 6;
-            double coverRound = bgRound * 1.4;
+            double coverRound = 6;
+            double bgRound = coverRound * 1.75;
 
             GlStateManager.pushMatrix();
 
@@ -127,20 +127,20 @@ public class MusicInfoWidget extends Widget {
                     if (prevBlurredBg != null && musicBgAlpha < 0.99f) {
                         GlStateManager.bindTexture(prevBlurredBg.getGlTextureId());
                         prevBlurredBg.linearFilter();
-                        this.roundedRectTextured(posX, posY, width, height + downloadProgHeight, 0, v, 1, v, coverRound, 1, alpha);
+                        this.roundedRectTextured(posX, posY, width, height + downloadProgHeight, 0, v, 1, v, bgRound, 1, alpha);
                     }
 
                     if (texBg != null) {
                         this.musicBgAlpha = Interpolations.interpBezier(this.musicBgAlpha, 1.0f, 0.3f);
                         GlStateManager.bindTexture(texBg.getGlTextureId());
                         texBg.linearFilter();
-                        this.roundedRectTextured(posX, posY, width, height + downloadProgHeight, 0, .5 - v * .5, 1, v, coverRound, 1, this.musicBgAlpha * alpha);
+                        this.roundedRectTextured(posX, posY, width, height + downloadProgHeight, 0, .5 - v * .5, 1, v, bgRound, 1, this.musicBgAlpha * alpha);
                     }
 
                 }
             }
 
-            this.roundedRect(this.getX(), this.getY(), width, height + downloadProgHeight, coverRound, 1, 0, 0, 0, alpha * 0.25f);
+            this.roundedRect(this.getX(), this.getY(), width, height + downloadProgHeight, bgRound, 1, 0, 0, 0, alpha * 0.25f);
 
             // render download panel
 
@@ -166,14 +166,14 @@ public class MusicInfoWidget extends Widget {
                 GlStateManager.bindTexture(prevBg.getGlTextureId());
                 prevBg.linearFilter();
                 double exp = 0;
-                this.roundedRectTextured(imgX - exp, imgY - exp, imgSize + exp * 2, imgSize + exp * 2, bgRound, alpha);
+                this.roundedRectTextured(imgX - exp, imgY - exp, imgSize + exp * 2, imgSize + exp * 2, coverRound, alpha);
             }
 
             if (texture != null) {
                 GlStateManager.bindTexture(texture.getGlTextureId());
                 texture.linearFilter();
                 double exp = 0;
-                this.roundedRectTextured(imgX - exp, imgY - exp, imgSize + exp * 2, imgSize + exp * 2, bgRound, this.musicBgAlpha * alpha);
+                this.roundedRectTextured(imgX - exp, imgY - exp, imgSize + exp * 2, imgSize + exp * 2, coverRound, this.musicBgAlpha * alpha);
             }
 
             String secondaryText = playingMusic.getArtistsName();
