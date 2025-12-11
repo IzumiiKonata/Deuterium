@@ -85,7 +85,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
-    public static void initLyric(JsonObject lyric, Music music) {
+    public static void initLyric(JsonObject lyric) {
         // reset states
 
         List<LyricLine> parsed = LyricParser.parse(lyric);
@@ -416,16 +416,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
                     }
 
-                    if (lyric == currentDisplaying) {
+                    if (lyrics.indexOf(currentDisplaying) - k <= 1) {
                         LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
 
                         long prevTiming = i == 0 ? 0 : prev.timestamp;
                         long timestamp = word.timestamp;
-
-                        // jump to next line offset
-                        if (i == words.size() - 1) {
-                            timestamp = (long) Math.max(prevTiming, timestamp - (JUMP_TO_NEXT_LINE_MILLIS + 25.0f));
-                        }
 
                         double progress = Math.max(0, Math.min(1, (songProgress - lyric.timestamp - prevTiming) / (double) (timestamp - prevTiming)));
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
@@ -441,7 +436,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                 if (lyric.renderEmphasizes)
                                     word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
 
-                                FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha));
+                                FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha * lyric.alpha));
                                 x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
                             }
                         }
@@ -492,7 +487,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                             word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
                                     }
 
-                                    FontManager.pf65bold.drawString(String.valueOf(c), x, 2 - word.emphasizes[j], hexColor(1, 1, 1, alpha));
+                                    FontManager.pf65bold.drawString(String.valueOf(c), x, 2 - word.emphasizes[j], hexColor(1, 1, 1, alpha * lyric.alpha));
                                     x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
                                 }
                             }
@@ -576,7 +571,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         synchronized (lyrics) {
             List<LyricLine> subList = lyrics.subList(0, idxCurrent);
-            float fraction = 0.1f;
+            double frameDeltaTime = RenderSystem.getFrameDeltaTime() * .0125;
             for (int i = subList.size() - 1; i >= 0; i--) {
                 LyricLine lyric = subList.get(i);
 
@@ -586,7 +581,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 if ((scrollTarget == 0 && (subList.size() - 1 - i) >= 3) && lyric.posY + lyric.height + getLyricLineSpacing() + 2 + scrollOffset < posY)
                     break;
 
-                lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
+//                lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
+                lyric.spring.setTargetPosition(offsetY);
+                lyric.spring.update(frameDeltaTime);
+                lyric.posY = lyric.spring.getCurrentPosition();
             }
 
             offsetY = RenderSystem.getHeight() * lyricFraction();
@@ -620,7 +618,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                 if (prev == null && !lyric.delayTimer.isDelayed(getLyricInterpolationWaitTimeMillis())) break;
 
-                lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
+                lyric.spring.setTargetPosition(offsetY);
+                lyric.spring.update(frameDeltaTime);
+                lyric.posY = lyric.spring.getCurrentPosition();
 
                 if (offsetY + scrollOffset > posY + height) {
                     oobCounter += 1;

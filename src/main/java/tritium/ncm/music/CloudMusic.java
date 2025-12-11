@@ -21,7 +21,6 @@ import org.kc7bfi.jflac.util.WavWriter;
 import tritium.management.CommandManager;
 import tritium.ncm.OptionsUtil;
 import tritium.ncm.api.CloudMusicApi;
-import tritium.ncm.music.dto.Artist;
 import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.dto.PlayList;
 import tritium.ncm.music.dto.User;
@@ -51,7 +50,6 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -735,7 +733,7 @@ public class CloudMusic {
                 JsonObject json = JsonUtils.toJsonObject(string);
 
                 MusicLyricsWidget.initLyric(json, song);
-                MusicLyricsPanel.initLyric(json, song);
+                MusicLyricsPanel.initLyric(json);
 
             }
         });

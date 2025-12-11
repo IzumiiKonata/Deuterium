@@ -5,6 +5,8 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import tritium.management.FontManager;
+import tritium.rendering.animation.spring.Spring;
+import tritium.rendering.animation.spring.SpringParams;
 import tritium.rendering.font.CFontRenderer;
 import tritium.utils.timing.Timer;
 
@@ -23,10 +25,13 @@ public class LyricLine {
 
     @Getter
     @Setter
-    @NonNull public String lyric;  // 歌词文本
+    @NonNull
+    public String lyric;  // 歌词文本
 
-    @Getter public String translationText;  // 翻译文本
-    @Getter public String romanizationText; // 罗马音文本
+    @Getter
+    public String translationText;  // 翻译文本
+    @Getter
+    public String romanizationText; // 罗马音文本
 
     public double posY = 0;
     public double height = 0;
@@ -37,6 +42,12 @@ public class LyricLine {
     public double reboundAnimation = 0;
     public Timer delayTimer = new Timer();
     public boolean renderEmphasizes = true;
+
+    public final Spring spring = new Spring(0);
+
+    {
+        spring.updateParams(new SpringParams(.9, 15, 90, false));
+    }
 
     // MusicLyricsWidgets fields
     public double scrollWidth = 0;
