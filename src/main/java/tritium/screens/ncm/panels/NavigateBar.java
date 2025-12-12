@@ -134,6 +134,10 @@ public class NavigateBar extends NCMPanel {
                     playList.musics = new CopyOnWriteArrayList<>();
                     PlaylistPanel panel = new PlaylistPanel(playList);
                     NCMScreen.getInstance().setCurrentPanel(panel);
+                    this.playlistPanel.getChildren().forEach(child -> {
+                        if (child instanceof PlaylistItem item)
+                            item.setSelected(false);
+                    });
 
                     MultiThreadingUtil.runAsync(() -> {
                         List<Music> search = CloudMusic.search(this.searchField.getText());
