@@ -37,7 +37,7 @@ public class SpringAnimation {
 
     public SpringAnimation(SpringParams params) {
         this();
-        this.updateParams(params);
+        this.setParams(params);
     }
 
     private DoubleUnaryOperator makeVelocityFunc(DoubleUnaryOperator f) {
@@ -77,7 +77,7 @@ public class SpringAnimation {
         if (this.queueParams != null) {
             this.queueParams.time -= delta;
             if (this.queueParams.time <= 0) {
-                this.updateParams(queueParams.params);
+                this.setParams(queueParams.params);
                 this.queueParams = null;
             }
         }
@@ -104,6 +104,10 @@ public class SpringAnimation {
     }
 
     public void setTargetPosition(double position, double delay) {
+
+        if (position == this.targetPosition && (this.queuePosition != null && this.queuePosition.time == delay))
+            return;
+
         if (delay > 0) {
             this.queuePosition = new QueuedPosition(position, delay);
         } else {
@@ -117,7 +121,7 @@ public class SpringAnimation {
         this.setTargetPosition(position, 0.0);
     }
 
-    public void updateParams(SpringParams newParams, double delay) {
+    public void setParams(SpringParams newParams, double delay) {
         if (delay > 0) {
             this.queueParams = new QueuedParams(newParams, delay);
         } else {
@@ -126,8 +130,8 @@ public class SpringAnimation {
         }
     }
 
-    public void updateParams(SpringParams newParams) {
-        this.updateParams(newParams, 0.0);
+    public void setParams(SpringParams newParams) {
+        this.setParams(newParams, 0.0);
     }
 
     public boolean isArrived() {
