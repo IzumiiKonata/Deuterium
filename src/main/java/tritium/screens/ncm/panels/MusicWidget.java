@@ -46,7 +46,7 @@ public class MusicWidget extends RoundedRectWidget {
 
             this.setBounds(this.getParentWidth(), 30);
 
-            if (CloudMusic.currentlyPlaying == music)
+            if (CloudMusic.currentlyPlaying.getId() == music.getId())
                 this.setColor(0xFFD60017);
             else if (this.isHovering())
                 this.setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER));
@@ -136,7 +136,7 @@ public class MusicWidget extends RoundedRectWidget {
         lblMusicArtist
                 .setWidthLimitType(LabelWidget.WidthLimitType.TRIM_TO_WIDTH)
                 .setBeforeRenderCallback(() -> {
-                    if (CloudMusic.currentlyPlaying == music)
+                    if (CloudMusic.currentlyPlaying.getId() == music.getId())
                         lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
                     else
                         lblMusicArtist.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));
@@ -150,7 +150,7 @@ public class MusicWidget extends RoundedRectWidget {
         LabelWidget lblMusicDuration = new LabelWidget(formatDuration(music.getDuration()), FontManager.pf14bold);
         this.addChild(lblMusicDuration);
         lblMusicDuration.setBeforeRenderCallback(() -> {
-            if (CloudMusic.currentlyPlaying == music)
+            if (CloudMusic.currentlyPlaying.getId() == music.getId())
                 lblMusicDuration.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
             else
                 lblMusicDuration.setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT));

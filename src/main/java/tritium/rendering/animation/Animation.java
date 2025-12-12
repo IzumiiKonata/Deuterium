@@ -96,9 +96,4 @@ public class Animation {
         this.finished = false;
     }
 
-    public void reset2() {
-        this.startTime = System.nanoTime();
-        this.value = startValue;
-        this.finished = false;
-    }
 }
