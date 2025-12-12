@@ -5,7 +5,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import tritium.management.FontManager;
-import tritium.rendering.animation.spring.Spring;
+import tritium.rendering.animation.spring.SpringAnimation;
 import tritium.rendering.animation.spring.SpringParams;
 import tritium.rendering.font.CFontRenderer;
 import tritium.utils.timing.Timer;
@@ -43,11 +43,7 @@ public class LyricLine {
     public Timer delayTimer = new Timer();
     public boolean renderEmphasizes = true;
 
-    public final Spring spring = new Spring(0);
-
-    {
-        spring.updateParams(new SpringParams(.9, 15, 90, false));
-    }
+    public final SpringAnimation spring = new SpringAnimation(new SpringParams(.9, 15, 90, false));
 
     // MusicLyricsWidgets fields
     public double scrollWidth = 0;

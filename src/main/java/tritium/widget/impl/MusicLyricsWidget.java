@@ -70,13 +70,28 @@ public class MusicLyricsWidget extends Widget {
         showRoman.setShouldRender(() -> showTranslation.getValue());
     }
 
+    private static boolean hasLyricsType(JsonObject lyric, String type) {
+        if (
+                lyric.has(type) &&
+                lyric.get(type).isJsonObject()
+        ) {
+            JsonObject lyricTypeObj = lyric.get(type).getAsJsonObject();
+            return lyricTypeObj.has("lyric") && !lyricTypeObj.get("lyric").getAsString().isEmpty();
+        }
+        return false;
+    }
+
+    private static void detectTranslations(JsonObject lyric) {
+        if (hasLyricsType(lyric, "tlyric") || hasLyricsType(lyric, "ytlrc")) hasTransLyrics = true;
+        if (hasLyricsType(lyric, "romalrc") || hasLyricsType(lyric, "yromalrc")) hasRomanization = true;
+    }
+
     public static void initLyric(JsonObject lyric, Music music) {
         // reset states
         hasTransLyrics = false;
         hasRomanization = false;
 
-        if (lyric.has("tlyric") || lyric.has("ytlrc")) hasTransLyrics = true;
-        if (lyric.has("romalrc") || lyric.has("yromalrc")) hasRomanization = true;
+        detectTranslations(lyric);
         List<LyricLine> parsed = LyricParser.parse(lyric);
 
 //        fetchTTMLLyrics(music, parsed);
