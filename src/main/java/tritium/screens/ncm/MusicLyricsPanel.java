@@ -219,6 +219,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 }
 
                 lyric.posY = offsetY;
+                lyric.spring.setPosition(offsetY);
 
                 lyric.computeHeight(width);
                 offsetY -= lyric.height + getLyricLineSpacing();
@@ -227,6 +228,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             offsetY = RenderSystem.getHeight() * lyricFraction();
             for (LyricLine lyric : lyrics.subList(toIndex, lyrics.size())) {
                 lyric.posY = offsetY;
+                lyric.spring.setPosition(offsetY);
 
                 lyric.computeHeight(width);
                 offsetY += lyric.height + getLyricLineSpacing();
