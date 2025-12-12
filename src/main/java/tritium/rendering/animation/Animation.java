@@ -87,6 +87,10 @@ public class Animation {
         return this.getProgress() == 1;
     }
 
+    public void setValue(final double value) {
+        this.destinationValue = this.value = value;
+    }
+
     /**
      * Resets the animation to the start value
      */
