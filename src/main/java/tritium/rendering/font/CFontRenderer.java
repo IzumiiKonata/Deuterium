@@ -111,6 +111,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         drawString(s,  x,  y, color.getRed() * RenderSystem.DIVIDE_BY_255, color.getGreen() * RenderSystem.DIVIDE_BY_255, color.getBlue() * RenderSystem.DIVIDE_BY_255, color.getAlpha());
     }
 
+    public void drawCenteredStringVertical(String text, double x, double y, int color) {
+        drawString(text, x, y - this.getFontHeight() * .5, color);
+    }
+
     private int getColorCode(char c) {
         return switch (c) {
             case '0' -> 0x000000;

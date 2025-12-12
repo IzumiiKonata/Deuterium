@@ -24,8 +24,10 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
+import tritium.settings.ClientSettings;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
@@ -503,17 +505,32 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                             Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, renderX, renderY - 2, fbWidth * .5, fbHeight * .5);
 
-//                            FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
-//                            FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
-//
-//                            Rect.draw(100, 100, fbWidth * .5, fbHeight * .5, 0xff0090ff);
-//
-//                            GlStateManager.enableTexture2D();
-//                            GlStateManager.color(1, 1, 1, 1);
-//                            GlStateManager.bindTexture(stencilFb.framebufferTexture);
-//                            ShaderProgram.drawQuadFlipped(100, 100, fbWidth * .5, fbHeight * .5);
-//                            GlStateManager.bindTexture(baseFb.framebufferTexture);
-//                            ShaderProgram.drawQuadFlipped(100, 100, fbWidth * .5, fbHeight * .5);
+                            if (ClientSettings.DEBUG_MODE.getValue()) {
+//                                FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
+//                                FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
+
+                                double spacing = NCMScreen.getInstance().getSpacing();
+                                Rect.draw(spacing, spacing, 400, (fbHeight * .5) * 3 + (20 * 2), 0xff000000);
+
+                                GlStateManager.enableTexture2D();
+                                GlStateManager.color(1, 1, 1, 1);
+
+                                GlStateManager.bindTexture(baseFb.framebufferTexture);
+                                double xOff = spacing + 120;
+                                ShaderProgram.drawQuadFlipped(xOff, spacing, fbWidth * .5, fbHeight * .5);
+
+                                FontManager.pf28bold.drawCenteredStringVertical("Base Texture", spacing + 8, spacing + fbHeight * .25, -1);
+
+                                GlStateManager.bindTexture(stencilFb.framebufferTexture);
+                                ShaderProgram.drawQuadFlipped(xOff, spacing + fbHeight * .5 + 20, fbWidth * .5, fbHeight * .5);
+
+                                FontManager.pf28bold.drawCenteredStringVertical("Stencil Texture", spacing + 8, spacing + fbHeight * .5 + 20 + fbHeight * .25, -1);
+
+                                Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, xOff, spacing + (fbHeight * .5) * 2 + 40, fbWidth * .5, fbHeight * .5);
+
+                                FontManager.pf28bold.drawCenteredStringVertical("Result", spacing + 8, spacing + (fbHeight * .5) * 2 + 40 + fbHeight * .25, -1);
+
+                            }
 
 //                            Image.draw(stencilFb.framebufferTexture, 50, 72, stencilFb.framebufferTextureWidth * .5, stencilFb.framebufferTextureHeight * .5, Image.Type.Normal);
 //                            Image.draw(baseFb.framebufferTexture, 50, 128, baseFb.framebufferTextureWidth * .5, baseFb.framebufferTextureHeight * .5, Image.Type.Normal);
