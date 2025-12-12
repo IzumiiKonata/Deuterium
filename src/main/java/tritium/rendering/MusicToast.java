@@ -10,11 +10,14 @@ import net.minecraft.util.Location;
 import tritium.interfaces.IFontRenderer;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
+import tritium.rendering.animation.Animation;
+import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.math.Mth;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -46,6 +49,7 @@ public class MusicToast implements SharedRenderingConstants {
         double contentWidth = musicNotesSize + spacing + FontManager.vanilla.getStringWidth(text);
 
         offset = -Math.max(120, contentWidth + 12) * 1.25;
+        animation.setValue(offset);
     }
 
     private int musicNoteColorTick;
@@ -55,6 +59,7 @@ public class MusicToast implements SharedRenderingConstants {
     private boolean forward = true;
     private double offset = -240;
     private long waitStart = -1L;
+    private final Animation animation = new Animation(Easing.EASE_OUT_QUART, Duration.ofMillis(750));
 
     public void tickMusicNotes() {
         long now;
@@ -75,7 +80,7 @@ public class MusicToast implements SharedRenderingConstants {
 
             double toastWidth = Math.max(120, contentWidth + 12), toastHeight = 24;
 
-            offset = Interpolations.interpBezier(offset, forward ? 0 : -toastWidth * 1.25, .1f);
+            offset = animation.run(forward ? 0 : -toastWidth * 1.25);
 
             double offsetX = offset + 1;
             double offsetY = 1;
