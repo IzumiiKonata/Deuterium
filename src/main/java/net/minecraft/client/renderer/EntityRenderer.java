@@ -1085,7 +1085,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             Mouse.setGrabbed(true);
         }
 
-        if (mc.theWorld != null && flag) {
+        if (mc.inGameHasFocus && flag) {
             float f = this.mc.gameSettings.mouseSensitivity * 0.6F + 0.2F;
             float f1 = f * f * f * 8.0F;
             float f2 = (float) dX * f1;

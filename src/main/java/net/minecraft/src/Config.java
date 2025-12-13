@@ -1457,8 +1457,8 @@ public class Config {
                 InputStream inputstream1 = null;
 
                 try {
-                    inputstream = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_16x16.png");
-                    inputstream1 = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_32x32.png");
+                    inputstream = Minecraft.getMinecraft().mcDefaultResourcePack.getInputStreamAssets(Location.of("icons/icon_16x16.png"));
+                    inputstream1 = Minecraft.getMinecraft().mcDefaultResourcePack.getInputStreamAssets(Location.of("icons/icon_32x32.png"));
 
                     if (inputstream != null && inputstream1 != null) {
                         ByteBuffer[] icons = {readIconImage(inputstream), readIconImage(inputstream1)};

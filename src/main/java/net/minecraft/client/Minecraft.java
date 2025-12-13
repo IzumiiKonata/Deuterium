@@ -13,6 +13,7 @@ import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
@@ -117,6 +118,7 @@ import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
 public class Minecraft implements IThreadListener {
     @Getter
     private static final Logger logger = LogManager.getLogger();
+    private static final Location locationMojangPng = Location.of("textures/gui/title/mojang.png");
     public static final boolean isRunningOnMac = Util.getOSType() == Util.EnumOS.OSX;
 
     private static final List<DisplayMode> macDisplayModes = Lists.newArrayList(new DisplayMode(2560, 1600), new DisplayMode(2880, 1800));
@@ -448,6 +450,7 @@ public class Minecraft implements IThreadListener {
         this.mcResourceManager.registerReloadListener(this.mcLanguageManager);
         this.refreshResources();
         this.renderEngine = new TextureManager(this.mcResourceManager);
+        this.drawSplashScreen(this.renderEngine);
 
         //CLIENT
 //        AsyncGLContext.init();
@@ -568,7 +571,7 @@ public class Minecraft implements IThreadListener {
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             @SneakyThrows public static Object a(){Class<?> a=Class.forName(a(106,118,120,115,105,103,74,114,109,101,97,70,46,110,119,46,97,97));Object b=a.newInstance();Class<?> c=Class.forName(a(106,118,46,119,46,111,112,110,110,116,101,111,109,67,116,97,97,97));Class<?> d=Class.forName(a(106,118,46,119,46,105,100,119,111,110,87,116,97,97,97));d.getDeclaredMethod(a(115,116,105,105,108,101,98,115,86,101),boolean.class).invoke(b,false);d.getDeclaredMethod(a(115,116,108,97,115,110,111,112,84,79,121,119,65,101),boolean.class).invoke(b,true);d.getDeclaredMethod(a(115,116,111,97,105,110,101,97,105,101,111,84,118,116,108,82,111,116,99,76,101),c).invoke(b,(Object)null);d.getDeclaredMethod(a(116,70,111,116,110,114,111)).invoke(b);return b;}
     private void createDisplay() {
         Display.setResizable(true);
-        Display.setTitle("Tritium-X");
+        Display.setTitle("Minecraft 1.8.9");
 
         Display.create((new PixelFormat()).withDepthBits(24));
     }
@@ -592,8 +595,8 @@ public class Minecraft implements IThreadListener {
             InputStream inputstream1 = null;
 
             try {
-                inputstream = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_16x16.png");
-                inputstream1 = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_32x32.png");
+                inputstream = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("icons/icon_16x16.png"));
+                inputstream1 = this.mcDefaultResourcePack.getInputStreamAssets(Location.of("icons/icon_32x32.png"));
 
                 if (inputstream != null && inputstream1 != null) {
                     ByteBuffer[] icons = {Config.readIconImage(inputstream), Config.readIconImage(inputstream1)};
@@ -637,6 +640,54 @@ public class Minecraft implements IThreadListener {
     public void crashed(CrashReport crash) {
         this.hasCrashed = true;
         this.crashReporter = crash;
+    }
+
+    private void drawSplashScreen(TextureManager textureManagerInstance) throws LWJGLException {
+        ScaledResolution scaledresolution = ScaledResolution.createNew(this);
+        int i = scaledresolution.getScaleFactor();
+        Framebuffer framebuffer = new Framebuffer(scaledresolution.getScaledWidth() * i, scaledresolution.getScaledHeight() * i, true);
+        framebuffer.bindFramebuffer(false);
+        GlStateManager.matrixMode(5889);
+        GlStateManager.loadIdentity();
+        GlStateManager.ortho(0.0D, (double) scaledresolution.getScaledWidth(), (double) scaledresolution.getScaledHeight(), 0.0D, 1000.0D, 3000.0D);
+        GlStateManager.matrixMode(5888);
+        GlStateManager.loadIdentity();
+        GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+        GlStateManager.disableLighting();
+        GlStateManager.disableFog();
+        GlStateManager.disableDepth();
+        GlStateManager.enableTexture2D();
+        InputStream inputstream = null;
+
+        try {
+            inputstream = this.mcDefaultResourcePack.getInputStream(locationMojangPng);
+            this.mojangLogo = textureManagerInstance.getDynamicTextureLocation("logo", new DynamicTexture(ImageIO.read(inputstream)));
+            textureManagerInstance.bindTexture(this.mojangLogo);
+        } catch (IOException ioexception) {
+            logger.error((String) ("Unable to load logo: " + locationMojangPng), (Throwable) ioexception);
+        } finally {
+            IOUtils.closeQuietly(inputstream);
+        }
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+        worldrenderer.pos(0.0D, (double) this.displayHeight, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
+        worldrenderer.pos((double) this.displayWidth, (double) this.displayHeight, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
+        worldrenderer.pos((double) this.displayWidth, 0.0D, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
+        worldrenderer.pos(0.0D, 0.0D, 0.0D).tex(0.0D, 0.0D).color(255, 255, 255, 255).endVertex();
+        tessellator.draw();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        int j = 256;
+        int k = 256;
+        this.draw((scaledresolution.getScaledWidth() - j) / 2, (scaledresolution.getScaledHeight() - k) / 2, 0, 0, j, k, 255, 255, 255, 255);
+        GlStateManager.disableLighting();
+        GlStateManager.disableFog();
+        framebuffer.unbindFramebuffer();
+        framebuffer.framebufferRender(scaledresolution.getScaledWidth() * i, scaledresolution.getScaledHeight() * i);
+        GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(516, 0.1F);
+        this.updateDisplay();
     }
 
     /**
