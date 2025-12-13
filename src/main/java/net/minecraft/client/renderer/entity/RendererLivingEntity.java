@@ -22,16 +22,8 @@ import net.optifine.EmissiveTextures;
 import net.optifine.entity.model.CustomEntityModels;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
-import tritium.Tritium;
-import tritium.event.events.rendering.RenderPlayerRotationsEvent;
-import tritium.management.EventManager;
-import tritium.management.ModuleManager;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.screens.altmanager.AltScreen;
-import tritium.settings.ClientSettings;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.widget.impl.PaperDoll;
 
 import java.awt.*;
 import java.nio.FloatBuffer;
@@ -144,24 +136,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
 
             float f7 = entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks;
-
-            //CLIENT
-            if (entity == Minecraft.getMinecraft().thePlayer) {
-                if (Tritium.getInstance().getEventManager().canReceive(RenderPlayerRotationsEvent.class)) {
-                    RenderPlayerRotationsEvent event = EventManager.call(new RenderPlayerRotationsEvent(Minecraft.getMinecraft().thePlayer.rotationYaw, Minecraft.getMinecraft().thePlayer.rotationPitch));
-
-                    if (event.getRotationYaw() != Minecraft.getMinecraft().thePlayer.rotationYaw || event.getRotationPitch() != Minecraft.getMinecraft().thePlayer.rotationPitch) {
-                        f = this.interpolateRotation(yaw, event.getRotationYaw(), partialTicks);
-                        f2 = this.interpolateRotation(yaw, event.getRotationYaw(), partialTicks) - f;
-                        f7 = pitch + (event.getRotationPitch() - pitch) * partialTicks;
-
-                        yaw = event.getRotationYaw();
-                        pitch = event.getRotationPitch();
-                    }
-                }
-
-            }
-            //END CLIENT
 
             this.renderLivingAt(entity, x, y, z);
             float f8 = this.handleRotationFloat(entity, partialTicks);
@@ -384,18 +358,10 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
 
             if (flag1) {
 
-                if (ModuleManager.hitColor.isEnabled()) {
-                    Color color = ModuleManager.hitColor.color.getValue().getColor();
-                    this.brightnessBuffer.put(color.getRed() * RenderSystem.DIVIDE_BY_255);
-                    this.brightnessBuffer.put(color.getGreen() * RenderSystem.DIVIDE_BY_255);
-                    this.brightnessBuffer.put(color.getBlue() * RenderSystem.DIVIDE_BY_255);
-                    this.brightnessBuffer.put(color.getAlpha() * RenderSystem.DIVIDE_BY_255);
-                } else {
-                    this.brightnessBuffer.put(1.0F);
-                    this.brightnessBuffer.put(0.0F);
-                    this.brightnessBuffer.put(0.0F);
-                    this.brightnessBuffer.put(0.3F);
-                }
+                this.brightnessBuffer.put(1.0F);
+                this.brightnessBuffer.put(0.0F);
+                this.brightnessBuffer.put(0.0F);
+                this.brightnessBuffer.put(0.3F);
 
                 if (Config.isShaders()) {
                     Shaders.setEntityColor(1.0F, 0.0F, 0.0F, 0.3F);
@@ -654,7 +620,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
         }
 
-        return !(Minecraft.getMinecraft().currentScreen instanceof AltScreen) && Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || ClientSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
+        return Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null;
     }
 
     public void setRenderOutlines(boolean renderOutlinesIn) {

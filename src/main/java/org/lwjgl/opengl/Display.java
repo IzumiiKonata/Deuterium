@@ -12,8 +12,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjglx.opengl.ContextAttribs;
 import org.lwjglx.opengl.DisplayMode;
 import org.lwjglx.opengl.PixelFormat;
-import tritium.screens.ConsoleScreen;
-import tritium.settings.ClientSettings;
 
 import java.awt.*;
 import java.nio.ByteBuffer;
@@ -154,19 +152,12 @@ public class Display {
         drawable = new DrawableGL();
         GL.createCapabilities(false);
 
-        ConsoleScreen.log("[GL] OpenGL Version: {}", GL11.glGetString(GL11.GL_VERSION));
-        ConsoleScreen.log("[GL] Renderer: {}", GL11.glGetString(GL11.GL_RENDERER));
-        ConsoleScreen.log("[GL] Vendor: {}", GL11.glGetString(GL11.GL_VENDOR));
-
         GL11.glClearColor(0, 0, 0, 1);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         update();
 
 //        System.out.println("GLFW.glfwRawMouseMotionSupported() = " + glfwRawMouseMotionSupported());
-
-        if (ClientSettings.RAW_INPUT.getValue() && glfwRawMouseMotionSupported())
-            GLFW.glfwSetInputMode(Display.getWindow(), GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 
         Window.keyCallback = new GLFWKeyCallback() {
 

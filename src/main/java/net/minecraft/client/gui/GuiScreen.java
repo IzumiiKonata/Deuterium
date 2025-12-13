@@ -24,14 +24,8 @@ import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import tritium.event.events.game.RawKeyInputEvent;
-import tritium.management.EventManager;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.screens.BaseScreen;
-import tritium.settings.ClientSettings;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.timing.Timer;
 
 import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
@@ -91,8 +85,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     private int touchValue;
     private URI clickedLinkURI;
 
-    public final Timer timer = new Timer();
-
     /**
      * Draws the screen and all the components in it. Args : mouseX, mouseY, renderPartialTicks
      */
@@ -111,9 +103,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
      * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (!this.timer.isDelayed(50))
-            return;
-
         if (keyCode == 1) {
             this.mc.displayGuiScreen(null);
 
@@ -475,8 +464,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
 
                 if (eventKeyState) {
 //                    System.out.println("1");
-                    EventManager.call(new RawKeyInputEvent(k));
-
                     if (this != this.mc.currentScreen) {
                         return;
                     }
@@ -508,11 +495,6 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     public void handleMouseInput(int button, boolean pressed) throws IOException {
         int i = Mouse.getX() * this.width / this.mc.displayWidth;
         int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
-
-        if (ClientSettings.FIXED_SCALE.getValue() && this instanceof BaseScreen) {
-            i = (int) (Mouse.getXDouble() / this.mc.displayWidth * RenderSystem.getFixedWidth() * .5);
-            j = (int) ((RenderSystem.getFixedHeight() - Mouse.getYDouble() / this.mc.displayHeight * RenderSystem.getFixedHeight()) * .5);
-        }
 
         //k1 = Mouse.getXDouble() / this.mc.displayWidth * RenderSystem.getFixedWidth() * .5;
         //                l1 = (RenderSystem.getFixedHeight() - Mouse.getYDouble() / this.mc.displayHeight * RenderSystem.getFixedHeight()) * .5;

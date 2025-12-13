@@ -11,18 +11,12 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import com.mojang.authlib.properties.PropertyMap;
 import com.mojang.authlib.yggdrasil.YggdrasilAuthenticationService;
-import ingameime.IngameIMEJNI;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
-import today.opai.api.interfaces.render.Font;
-import tritium.event.events.game.GameLoopEvent;
-import tritium.interfaces.IFontRenderer;
-import tritium.launch.Launcher;
-import tritium.rendering.StencilClipManager;
-import tritium.rendering.phosphor.api.ILightingEngineProvider;
+import phosphor.api.ILightingEngineProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.audio.MusicTicker;
@@ -98,28 +92,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import org.lwjglx.opengl.OpenGLException;
 import org.lwjglx.opengl.PixelFormat;
-import tritium.Tritium;
-import tritium.event.eventapi.State;
-import tritium.event.events.game.KeyPressedEvent;
-import tritium.event.events.rendering.DisplayResizedEvent;
-import tritium.event.events.world.TickEvent;
-import tritium.event.events.world.WorldChangedEvent;
-import tritium.rendering.ime.IngameIMERenderer;
-import tritium.management.EventManager;
-import tritium.management.FontManager;
-import tritium.management.ModuleManager;
-import tritium.rendering.TransitionAnimation;
-import tritium.rendering.animation.Interpolations;
-import tritium.rendering.loading.LoadingRenderer;
-import tritium.screens.ConsoleScreen;
-import tritium.screens.MainMenu;
-import tritium.screens.altmanager.AltScreen;
-import tritium.settings.ClientSettings;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
-import tritium.utils.optimization.Deduplicator;
-import tritium.widget.impl.keystrokes.CPSUtils;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -370,17 +344,11 @@ public class Minecraft implements IThreadListener {
         this.profileProperties = gameConfig.userInfo.profileProperties;
         this.mcDefaultResourcePack = new DefaultResourcePack((new ResourceIndex(gameConfig.folderInfo.assetsDir, gameConfig.folderInfo.assetIndex)).getResourceMap());
 
-        ClientSettings.initialize();
-
-        MultiThreadingUtil.runAsync(FontManager::loadFonts);
-
         this.proxy = gameConfig.userInfo.proxy == null ? Proxy.NO_PROXY : gameConfig.userInfo.proxy;
         this.session = gameConfig.userInfo.session;
         logger.info("正在设置用户名: " + this.session.getUsername());
 //        logger.info("(Session ID is " + this.session.getSessionID() + ")");
-        MultiThreadingUtil.runAsync(() -> {
-            this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
-        });
+        this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
 
         this.isDemo = gameConfig.gameInfo.isDemo;
         this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
@@ -463,8 +431,6 @@ public class Minecraft implements IThreadListener {
             this.displayHeight = this.gameSettings.overrideHeight;
         }
 
-        ConsoleScreen.log("[LWJGL] Version: {}", Sys.getVersion());
-
         logger.info("LWJGL版本: " + Sys.getVersion());
         this.setInitialDisplayMode();
         this.createDisplay();
@@ -488,13 +454,9 @@ public class Minecraft implements IThreadListener {
         //END CLIENT
 
         this.mcResourceManager.registerReloadListener(this.renderEngine);
-
-        LoadingRenderer.init();
-        LoadingRenderer.setProgress(0, "Minecraft - Init");
-
+        
         this.skinManager = new SkinManager(this.renderEngine, new File(this.fileAssets, "skins"));
         this.saveLoader = new AnvilSaveConverter(new File(this.mcDataDir, "saves"));
-        LoadingRenderer.setProgress(10, "Minecraft - Init");
         this.mcSoundHandler = new SoundHandler(this.mcResourceManager, this.gameSettings);
         this.mcResourceManager.registerReloadListener(this.mcSoundHandler);
         this.mcMusicTicker = new MusicTicker(this);
@@ -504,80 +466,11 @@ public class Minecraft implements IThreadListener {
             this.fontRendererObj.setBidiFlag(this.mcLanguageManager.isCurrentLanguageBidirectional());
         }
 
-        FontManager.vanilla = new IFontRenderer() {
-            @Override
-            public float drawString(String text, double x, double y, int color) {
-                return fontRendererObj.drawString(text, x + .5, y + 1, color);
-            }
-
-            @Override
-            public int drawStringWithShadow(String text, double x, double y, int color) {
-                return fontRendererObj.drawStringWithShadow(text, x + .5, y + 1, color);
-            }
-
-            @Override
-            public int getHeight() {
-                return fontRendererObj.FONT_HEIGHT;
-            }
-
-            @Override
-            public int getStringWidth(String text) {
-                return fontRendererObj.getStringWidth(text);
-            }
-
-            @Override
-            public void drawCenteredString(String text, double x, double y, int color) {
-                fontRendererObj.drawCenteredString(text, x + .5, y + 1, color);
-            }
-        };
-
-        FontManager.vanillaWrapper = new Font() {
-            @Override
-            public void close() {
-
-            }
-
-            @Override
-            public float drawString(String text, double x, double y, int color) {
-                return fontRendererObj.drawString(text, x + .5, y + 1, color);
-            }
-
-            @Override
-            public float drawStringWithShadow(String text, double x, double y, int color) {
-                return fontRendererObj.drawStringWithShadow(text, x + .5, y + 1, color);
-            }
-
-            @Override
-            public float drawCenteredString(String text, double x, double y, int color) {
-                fontRendererObj.drawCenteredString(text, x + .5, y + 1, color);
-                return fontRendererObj.getStringWidth(text);
-            }
-
-            @Override
-            public void drawCenteredStringWithShadow(String text, double x, double y, int color) {
-                fontRendererObj.drawStringWithShadow(text, x + .5 - fontRendererObj.getStringWidth(text) * .5, y + 1, color);
-            }
-
-            @Override
-            public int getWidth(String text) {
-                return fontRendererObj.getWidth(text);
-            }
-
-            @Override
-            public int getHeight() {
-                return fontRendererObj.FONT_HEIGHT;
-            }
-        };
-
-        LoadingRenderer.setProgress(20, "Minecraft - FontRenderer");
-
         this.standardGalacticFontRenderer = new FontRenderer(this.gameSettings, Location.of("textures/font/ascii_sga.png"), this.renderEngine, false);
         this.mcResourceManager.registerReloadListener(this.fontRendererObj);
         this.mcResourceManager.registerReloadListener(this.standardGalacticFontRenderer);
         this.mcResourceManager.registerReloadListener(new GrassColorReloadListener());
         this.mcResourceManager.registerReloadListener(new FoliageColorReloadListener());
-
-        LoadingRenderer.setProgress(30, "Minecraft - OpenGL Initialization");
         this.mouseHelper = new MouseHelper();
         this.checkGLError("Pre startup");
         GlStateManager.enableTexture2D();
@@ -595,27 +488,20 @@ public class Minecraft implements IThreadListener {
         this.checkGLError("Startup");
         this.textureMapBlocks = new TextureMap("textures");
         this.textureMapBlocks.setMipmapLevels(this.gameSettings.mipmapLevels);
-        LoadingRenderer.setProgress(40, "Minecraft - Render Engine");
         this.renderEngine.loadTickableTexture(TextureMap.locationBlocksTexture, this.textureMapBlocks);
         this.textureMapBlocks.setBlurMipmapDirect(false, this.gameSettings.mipmapLevels > 0);
-        LoadingRenderer.setProgress(42, "Minecraft - Model Manager");
-        Deduplicator.registerReloadListener();
         this.modelManager = new ModelManager(this.textureMapBlocks);
         this.mcResourceManager.registerReloadListener(this.modelManager);
         this.renderItem = new RenderItem(this.renderEngine, this.modelManager);
-        LoadingRenderer.setProgress(44, "Minecraft - Render Manager");
         this.renderManager = new RenderManager(this.renderEngine, this.renderItem);
         this.itemRenderer = new ItemRenderer(this);
         this.mcResourceManager.registerReloadListener(this.renderItem);
-        LoadingRenderer.setProgress(46, "Minecraft - Entity Renderer");
         this.entityRenderer = new EntityRenderer(this, this.mcResourceManager);
         this.mcResourceManager.registerReloadListener(this.entityRenderer);
         this.blockRenderDispatcher = new BlockRendererDispatcher(this.modelManager.getBlockModelShapes(), this.gameSettings);
         this.mcResourceManager.registerReloadListener(this.blockRenderDispatcher);
-        LoadingRenderer.setProgress(48, "Minecraft - Render Global");
         this.renderGlobal = new RenderGlobal(this);
         this.mcResourceManager.registerReloadListener(this.renderGlobal);
-        LoadingRenderer.setProgress(50, "Minecraft - Finish");
         this.effectRenderer = new EffectRenderer(this.theWorld, this.renderEngine);
         this.checkGLError("Post startup");
         GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
@@ -623,25 +509,12 @@ public class Minecraft implements IThreadListener {
 
         TextureUtils.registerResourceListener();
 
-        //CLIENT
-        Tritium.getInstance().run();
-        LoadingRenderer.notifyGameLoaded();
-        //END CLIENT
-
-        // 必须在主线程中处理窗口事件 不然在加载时拖动窗口或放大缩小会阻塞渲染
-//        while (!loadFinished.get())
-//            GLFW.glfwPollEvents();
-
-//        System.out.println("OK LOAD CLIENT");
-
-
         this.scaledResolution = ScaledResolution.createNew(this);
 
         if (this.serverName != null) {
-            this.displayGuiScreen(new GuiConnecting(MainMenu.getInstance(), this, this.serverName, this.serverPort));
+            this.displayGuiScreen(new GuiConnecting(new GuiMainMenu(), this, this.serverName, this.serverPort));
         } else {
-            this.displayGuiScreen(MainMenu.getInstance());
-//            this.displayGuiScreen(OpaiMainMenu.getInstance());
+            this.displayGuiScreen(new GuiMainMenu());
         }
 
 //        this.renderEngine.deleteTexture(this.mojangLogo);
@@ -662,8 +535,6 @@ public class Minecraft implements IThreadListener {
         this.renderGlobal.makeEntityOutlineShader();
 
         InputEvents.addKeyboardListener(new McKeybindHandler());
-
-        Tritium.getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Launcher.startupTime) / 1000.0d);
 
         loaded = true;
     }
@@ -729,7 +600,7 @@ public class Minecraft implements IThreadListener {
                     Display.setIcon(icons);
 
 //                    for (ByteBuffer icon : icons) {
-//                        MemoryTracker.memFree(icon);
+//                        MemoryUtil.memFree(icon);
 //                    }
                 }
             } catch (IOException ioexception) {
@@ -859,22 +730,6 @@ public class Minecraft implements IThreadListener {
             }
         }
 
-        if (this.isFullScreen()) {
-            String value = ClientSettings.FULL_SCREEN_RESOLUTION.getValue();
-
-            String[] split = value.split("x");
-            int w = Integer.parseInt(split[0]);
-            int h = Integer.parseInt(split[1]);
-
-            int refreshRate = glfwGetVideoMode(glfwGetPrimaryMonitor()).refreshRate();
-
-            if (!ClientSettings.FULL_SCREEN_REFRESH_RATE.getValue().equals("Auto")) {
-                refreshRate = Integer.parseInt(ClientSettings.FULL_SCREEN_REFRESH_RATE.getValue());
-            }
-
-            displaymode = new DisplayMode(w, h, glfwGetVideoMode(glfwGetPrimaryMonitor()).redBits() + glfwGetVideoMode(glfwGetPrimaryMonitor()).greenBits() + glfwGetVideoMode(glfwGetPrimaryMonitor()).blueBits(), refreshRate, true);
-        }
-
         Display.setDisplayMode(displaymode);
         this.displayWidth = displaymode.getWidth();
         this.displayHeight = displaymode.getHeight();
@@ -917,27 +772,17 @@ public class Minecraft implements IThreadListener {
      * Sets the argument GuiScreen as the main (topmost visible) screen.
      */
     public void displayGuiScreen(GuiScreen guiScreenIn) {
-
-        if (this.thePlayer == null && this.theWorld == null && this.currentScreen != null && this.currentScreen instanceof MainMenu) {
-            TransitionAnimation.task(() -> this.displayGuiScreen0(guiScreenIn));
-        } else {
-            this.displayGuiScreen0(guiScreenIn);
-        }
-
-    }
-
-    public void displayGuiScreen0(GuiScreen guiScreenIn) {
         if (this.currentScreen != null) {
             this.currentScreen.onGuiClosed();
         }
 
         if (guiScreenIn == null && this.theWorld == null) {
-            guiScreenIn = MainMenu.getInstance();
+            guiScreenIn = new GuiMainMenu();
         } else if (guiScreenIn == null && this.thePlayer.getHealth() <= 0.0F) {
             guiScreenIn = new GuiGameOver();
         }
 
-        if (guiScreenIn instanceof MainMenu) {
+        if (guiScreenIn instanceof GuiMainMenu) {
             this.gameSettings.showDebugInfo = false;
             this.ingameGUI.getChatGUI().clearChatMessages();
         }
@@ -1019,12 +864,6 @@ public class Minecraft implements IThreadListener {
             lastScaleFactor = gameSettings.guiScale;
         }
 
-        EventManager.call(new GameLoopEvent());
-
-        //CLIENT
-        Interpolations.calcFrameDelta();
-        //END CLIENT
-
         long i = System.nanoTime();
         this.mcProfiler.startSection("GameLoop Start");
 
@@ -1054,24 +893,7 @@ public class Minecraft implements IThreadListener {
         this.mcProfiler.startSection("tick");
 
         for (int j = 0; j < this.timer.elapsedTicks; ++j) {
-            //CLIENT
-            TickEvent tickEvent = new TickEvent(this.timer.elapsedTicks);
-            if (thePlayer != null && theWorld != null) {
-                tickEvent.setState(State.PRE);
-                EventManager.call(tickEvent);
-            }
-            //END CLIENT
-
             this.runTick();
-
-            //CLIENT
-            if (thePlayer != null && theWorld != null) {
-                tickEvent.setState(State.POST);
-                EventManager.call(tickEvent);
-            }
-
-            ingameGUI.dirty = true;
-            //END CLIENT
         }
 
         this.mcProfiler.endStartSection("preRenderErrors");
@@ -1088,7 +910,7 @@ public class Minecraft implements IThreadListener {
         this.mcProfiler.startSection("display");
         GlStateManager.enableTexture2D();
 
-        if (!(this.currentScreen instanceof AltScreen) && this.thePlayer != null && this.theWorld != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
+        if (this.thePlayer != null && this.theWorld != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
             this.gameSettings.thirdPersonView = 0;
         }
 
@@ -1118,63 +940,17 @@ public class Minecraft implements IThreadListener {
         int sync = this.getLimitFramerate();
         boolean needSync = this.isFramerateLimitBelowMax();
 
-        if (ClientSettings.FRAME_PREDICT.getValue()) {
-
-            if (lastFrameTex == -1) {
-                lastFrameTex = GlStateManager.generateTexture();
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
-
-                GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, this.displayWidth, this.displayHeight, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, (ByteBuffer) null);
-                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
-                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
-                GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-
-                this.framebufferMc.bindFramebuffer(true);
-                GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
-                GL11.glCopyTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, 0, 0, this.displayWidth, this.displayHeight, 0);
-                this.framebufferMc.unbindFramebuffer();
-            } else {
-                GlStateManager.matrixMode(5889);
-                GlStateManager.loadIdentity();
-                GlStateManager.ortho(0.0D, this.displayWidth, this.displayHeight, 0.0D, 1000.0D, 3000.0D);
-                GlStateManager.matrixMode(5888);
-                GlStateManager.loadIdentity();
-                GlStateManager.translate(0.0F, 0.0F, -2000.0F);
-                GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
-                GlStateManager.disableAlpha();
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                tritium.rendering.shader.Shaders.MOTION.run(framebufferMc.framebufferTexture, lastFrameTex, this.displayWidth, this.displayHeight);
-            }
-
-            this.updateDisplay();
-            if (needSync)
-                Display.sync(sync * 2);
-
-        }
         GlStateManager.pushMatrix();
 
         this.framebufferMc.framebufferRender(this.displayWidth, this.displayHeight);
-
-        if (ClientSettings.FRAME_PREDICT.getValue() && lastFrameTex != -1) {
-            // update content
-            this.framebufferMc.bindFramebuffer(true);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
-            GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, this.displayWidth, this.displayHeight);
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-            this.framebufferMc.unbindFramebuffer();
-        }
 
         GlStateManager.popMatrix();
 
         this.mcProfiler.startSection("GameLoop End");
 
-        if (ModuleManager.motionBlur.isEnabled()) {
-            ModuleManager.motionBlur.doMotionBlur();
-        }
         this.updateDisplay();
         if (needSync)
-            Display.sync(ClientSettings.FRAME_PREDICT.getValue() ? sync * 2 : sync);
+            Display.sync(sync);
 
 //        Thread.yield();
         this.checkGLError("Post render");
@@ -1202,9 +978,6 @@ public class Minecraft implements IThreadListener {
         Display.update();
         this.mcProfiler.endSection();
         this.checkWindowResize();
-        if (!StencilClipManager.stencilStack.isEmpty())
-            System.err.println("Stencil stack overflow");
-        StencilClipManager.currentStencilValue = 0;
         ++this.fpsCounter;
     }
 
@@ -1214,8 +987,6 @@ public class Minecraft implements IThreadListener {
             int j = this.displayHeight;
             this.displayWidth = Display.getWidth();
             this.displayHeight = Display.getHeight();
-
-            EventManager.call(new DisplayResizedEvent(i, j, this.displayWidth, this.displayHeight));
 
             if (this.displayWidth != i || this.displayHeight != j) {
                 if (this.displayWidth <= 0) {
@@ -1458,8 +1229,7 @@ public class Minecraft implements IThreadListener {
     }
 
     public void clickMouse() {
-        if (this.leftClickCounter <= 0 || ClientSettings.NO_CLICK_DELAY.getValue()) {
-            CPSUtils.addLeftCPS();
+        if (this.leftClickCounter <= 0) {
             this.thePlayer.swingItem();
 
             if (this.objectMouseOver == null) {
@@ -1499,7 +1269,6 @@ public class Minecraft implements IThreadListener {
      */
     public void rightClickMouse() {
         if (!this.playerController.getIsHittingBlock()) {
-            CPSUtils.addRightCPS();
             this.rightClickDelayTimer = 4;
             boolean flag = true;
             ItemStack itemstack = this.thePlayer.inventory.getCurrentItem();
@@ -1556,9 +1325,6 @@ public class Minecraft implements IThreadListener {
      * Toggles fullscreen mode.
      */
     public void toggleFullscreen() {
-        if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
-            IngameIMERenderer.destroyInputCtx();
-
         try {
             this.fullscreen = !this.fullscreen;
             this.gameSettings.fullScreen = this.fullscreen;
@@ -1593,10 +1359,6 @@ public class Minecraft implements IThreadListener {
             logger.error("Couldn't toggle fullscreen", exception);
         }
 
-        if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue()) {
-            IngameIMERenderer.createInputCtx();
-            IngameIMERenderer.setActivated(this.fullscreen);
-        }
     }
 
     /**
@@ -1740,9 +1502,6 @@ public class Minecraft implements IThreadListener {
 //                        System.out.println(m.isEnabled());
 //                    });
 
-
-            if (pressed)
-                EventManager.call(new KeyPressedEvent(button - 100));
         }
     }
 
@@ -1866,10 +1625,6 @@ public class Minecraft implements IThreadListener {
                         this.currentScreen.handleKeyboardInput(eventCharacter, k);
                     } else {
 
-                        //CLIENT
-                        EventManager.call(new KeyPressedEvent(k));
-                        //END CLIENT
-
                         if (k == 1) {
                             this.displayInGameMenu();
                         }
@@ -1899,10 +1654,6 @@ public class Minecraft implements IThreadListener {
 
                         if (k == 20 && Keyboard.isKeyDown(61)) {
                             this.refreshResources();
-                        }
-
-                        if (k == Keyboard.KEY_Y && Keyboard.isKeyDown(61)) {
-                            FontManager.deleteLoadedTextures();
                         }
 
                         if (k == 33 && Keyboard.isKeyDown(61)) {
@@ -2081,10 +1832,8 @@ public class Minecraft implements IThreadListener {
         }
 
         if (!this.isGamePaused) {
-            if (!(this.currentScreen instanceof AltScreen)) {
-                this.mcMusicTicker.update();
-                this.mcSoundHandler.update();
-            }
+            this.mcMusicTicker.update();
+            this.mcSoundHandler.update();
         }
 
         if (this.theWorld != null) {
@@ -2220,7 +1969,6 @@ public class Minecraft implements IThreadListener {
 
         this.mcSoundHandler.stopSounds();
         this.theWorld = worldClientIn;
-        EventManager.call(new WorldChangedEvent(worldClientIn));
 
         if (worldClientIn != null) {
             if (this.renderGlobal != null) {

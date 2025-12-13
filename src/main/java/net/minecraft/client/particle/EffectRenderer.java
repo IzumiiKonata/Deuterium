@@ -18,7 +18,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.src.Config;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
-import tritium.rendering.ParticleCulling;
 
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -183,10 +182,6 @@ public class EffectRenderer {
             for (EntityFX entityfx : entitiesFX) {
                 this.tickParticle(entityfx);
 
-                if (ParticleCulling.camera != null) {
-                    entityfx.patcher$setCullState(ParticleCulling.camera.isBoundingBoxInFrustum(entityfx.getEntityBoundingBox()) ? 1.0F : -1.0F);
-                }
-
                 if (entityfx.isDead) {
                     listOfEntityFXToRemove.add(entityfx);
                 }
@@ -287,9 +282,7 @@ public class EffectRenderer {
 
                             try {
                                 if (flag || !(entityfx instanceof EntitySuspendFX)) {
-                                    if (ParticleCulling.shouldRender(entityfx)) {
-                                        entityfx.renderParticle(worldrenderer, entityIn, partialTicks, f, f4, f1, f2, f3);
-                                    }
+                                    entityfx.renderParticle(worldrenderer, entityIn, partialTicks, f, f4, f1, f2, f3);
                                 }
                             } catch (Throwable throwable) {
                                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "粒子渲染");

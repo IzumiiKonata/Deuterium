@@ -2,10 +2,6 @@ package net.minecraft.util;
 
 import lombok.Getter;
 import net.minecraft.entity.Entity;
-import today.opai.api.interfaces.game.entity.raytrace.EmptyRaytraceResult;
-import today.opai.api.interfaces.game.entity.raytrace.RaytraceResult;
-import tritium.bridge.game.data.raytrace.BlockRaytraceResultWrapper;
-import tritium.bridge.game.data.raytrace.EntityRaytraceResultWrapper;
 
 public class MovingObjectPosition {
     private BlockPos blockPos;
@@ -38,40 +34,17 @@ public class MovingObjectPosition {
         this(entityIn, new Vec3(entityIn.posX, entityIn.posY, entityIn.posZ));
     }
 
-    @Getter
-    private RaytraceResult raytraceResult;
-
     public MovingObjectPosition(MovingObjectPosition.MovingObjectType typeOfHitIn, Vec3 hitVecIn, EnumFacing sideHitIn, BlockPos blockPosIn) {
         this.typeOfHit = typeOfHitIn;
         this.blockPos = blockPosIn;
         this.sideHit = sideHitIn;
         this.hitVec = new Vec3(hitVecIn.xCoord, hitVecIn.yCoord, hitVecIn.zCoord);
-        this.createRaytraceResult();
     }
 
     public MovingObjectPosition(Entity entityHitIn, Vec3 hitVecIn) {
         this.typeOfHit = MovingObjectPosition.MovingObjectType.ENTITY;
         this.entityHit = entityHitIn;
         this.hitVec = hitVecIn;
-        this.createRaytraceResult();
-    }
-
-    private void createRaytraceResult() {
-        switch (this.typeOfHit) {
-            case BLOCK:
-                this.raytraceResult = new BlockRaytraceResultWrapper(this);
-                break;
-
-            case ENTITY:
-                this.raytraceResult = new EntityRaytraceResultWrapper(this);
-                break;
-
-            case MISS:
-            default:
-                this.raytraceResult = new EmptyRaytraceResult() {
-                };
-                break;
-        }
     }
 
     public BlockPos getBlockPos() {

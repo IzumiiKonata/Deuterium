@@ -8,22 +8,13 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StringUtils;
-import tritium.event.events.ChatComponentEvent;
-import tritium.interfaces.IFontRenderer;
-import tritium.interfaces.SharedRenderingConstants;
-import tritium.management.EventManager;
-import tritium.management.FontManager;
-import tritium.management.ModuleManager;
-import tritium.module.impl.render.Chat;
-import tritium.rendering.animation.Interpolations;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Iterator;
 import java.util.List;
 
-public class GuiNewChat extends Gui implements SharedRenderingConstants {
+public class GuiNewChat extends Gui {
     private static final Logger logger = LogManager.getLogger();
     private final Minecraft mc;
     private final List<String> sentMessages = Lists.newArrayList();
@@ -31,31 +22,19 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
     public final List<ChatLine> drawnChatLines = Lists.newArrayList();
     public int scrollPos;
     public boolean isScrolled;
-    IFontRenderer fontRenderer;
 
     public GuiNewChat(Minecraft mcIn) {
         this.mc = mcIn;
-        this.fontRenderer = FontManager.vanilla;
     }
 
     //CLIENT
     public void drawChat(int updateCounter) {
         if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN) {
-            Chat chat = ModuleManager.chat;
-
-            if (chat.isEnabled() && chat.onlyVisibleWhileTyping.getValue() && !(mc.currentScreen instanceof GuiChat)) {
-                return;
-            }
-
-            if (chat.isEnabled() && chat.clientChat.getValue())
-                return;
-
             int lineCount = this.getLineCount();
             boolean chatOpen = false;
             int j = 0;
             int chatSize = this.drawnChatLines.size();
             float chatOpacity = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
-            fontRenderer = chat.isEnabled() && chat.clientChat.getValue() ? FontManager.pf25 : FontManager.vanilla;
 
             if (chatSize > 0) {
                 if (this.getChatOpen()) {
@@ -73,18 +52,6 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
 
                     if (chatline != null) {
                         int chatLineLength = MathHelper.ceiling_float_int((float) this.getChatWidth() / chatScale);
-
-                        if (chat.isEnabled() && chat.noLengthLimit.getValue()) {
-
-                            if (fontRenderer == FontManager.vanilla) {
-                                chatLineLength = Math.min(chatLineLength, fontRenderer.getStringWidth(chatline.getChatComponent().getFormattedText()) - 3);
-                            } else {
-                                chatLineLength = (int) Math.min(chatLineLength, fontRenderer.getStringWidth(chatline.getChatComponent().getFormattedText()) / 1.5f - 3);
-                            }
-
-                            chatLineLength = Math.max(MathHelper.ceiling_float_int((float) calculateChatboxWidth(this.mc.gameSettings.chatWidth) / chatScale), chatLineLength);
-
-                        }
 
                         int updateTicksLeft = updateCounter - chatline.getUpdatedCounter();
 
@@ -106,50 +73,30 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
 
                             if (alpha > 3) {
                                 int xOffset = 0;
-                                int chatLineY = -chatLineIndex * 9 + (chat.isEnabled() ? chat.yOffset.getValue() : 0);
+                                int chatLineY = -chatLineIndex * 9;
 
-                                double chatLineYTop = chat.isEnabled() ? ((chat.animation.getValue() && updateTicksLeft < 200) ? (chatline.rectY - 9) : chatLineY - 9) : chatLineY - 9;
-                                double chatLineYBottom = chat.isEnabled() ? ((chat.animation.getValue() && updateTicksLeft < 200) ? (chatline.rectY) : chatLineY) : chatLineY;
+                                int chatLineYTop = chatLineY - 9;
 
-                                if (!chat.fastChat.getValue() || !chat.isEnabled()) {
-                                    GlStateManager.resetColor();
+                                GlStateManager.resetColor();
 
-                                    RenderSystem.drawRect(xOffset, chatLineYTop + 1, xOffset + chatLineLength + 4, chatLineYBottom + 1, alpha / 2 << 24);
-                                }
+                                Gui.drawRect(xOffset, chatLineYTop + 1, xOffset + chatLineLength + 4, chatLineY + 1, alpha / 2 << 24);
 
                                 String s = chatline.getChatComponent().getFormattedText();
                                 GlStateManager.enableBlend();
 
-                                if (fontRenderer == FontManager.vanilla) {
-                                    fontRenderer.drawStringWithShadow(s, (float) xOffset, chat.isEnabled() ? (chat.animation.getValue() && updateTicksLeft < 200 ? chatline.textY : chatLineY - 8) : chatLineY - 8, 16777215 + (alpha << 24));
-                                } else {
-                                    GlStateManager.pushMatrix();
-
-                                    double v = ((chat.animation.getValue() && updateTicksLeft < 200) ? chatline.textY : (chatLineY - 8)) - 1;
-                                    GlStateManager.translate((float) xOffset, (chat.isEnabled() ? v : (chatLineY - 8) - 1) + 0.5, 0);
-                                    double scale = 1 / 1.5;
-                                    GlStateManager.scale(scale, scale, 0);
-
-                                    String font = s.replaceAll("，", ",").replaceAll("：", ":").replaceAll("；", ";").replaceAll("？", "?");
-
-                                    int color = 16777215 + (alpha << 24);
-                                    fontRenderer.drawString(StringUtils.stripControlCodes(font), 0.5, 0.5, hexColor(0, 0, 0, alpha));
-                                    fontRenderer.drawString(font, 0, 0, color);
-
-                                    GlStateManager.popMatrix();
-                                }
+                                mc.fontRendererObj.drawStringWithShadow(s, (float) xOffset, (double) (chatLineY - 8), 16777215 + (alpha << 24));
 
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
-                                chatline.rectY = Interpolations.interpBezier(chatline.rectY, chatLineY, 0.4f);
-                                chatline.textY = Interpolations.interpBezier(chatline.textY, chatLineY - 8, 0.4f);
+                                chatline.rectY = chatLineY;
+                                chatline.textY = chatLineY - 8;
                             }
                         }
                     }
                 }
 
                 if (chatOpen) {
-                    int k2 = fontRenderer.getHeight();
+                    int k2 = mc.fontRendererObj.getHeight();
                     GlStateManager.translate(-3.0F, 0.0F, 0.0F);
                     int l2 = chatSize * k2 + chatSize;
                     int i3 = j * k2 + j;
@@ -190,13 +137,6 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
      */
     public void printChatMessageWithOptionalDeletion(IChatComponent chatComponent, int chatLineId) {
         chat.info(chatComponent.getUnformattedText());
-
-        //CLIENT
-        ChatComponentEvent event = EventManager.call(new ChatComponentEvent(chatComponent, this.drawnChatLines));
-        if (event.isCancelled()) {
-            return;
-        }
-        //END CLIENT
         this.setChatLine(chatComponent, chatLineId, this.mc.ingameGUI.getUpdateCounter(), false);
     }
 
@@ -218,19 +158,15 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
             this.drawnChatLines.add(0, new ChatLine(updateCounter, ichatcomponent, chatLineId));
         }
 
-        if (!ModuleManager.chat.isEnabled() || !ModuleManager.chat.noChatClear.getValue()) {
-            while (this.drawnChatLines.size() > 100) {
-                this.drawnChatLines.remove(this.drawnChatLines.size() - 1);
-            }
+        while (this.drawnChatLines.size() > 100) {
+            this.drawnChatLines.remove(this.drawnChatLines.size() - 1);
         }
 
         if (!displayOnly) {
             this.chatLines.add(0, new ChatLine(updateCounter, chatComponent, chatLineId));
 
-            if (!ModuleManager.chat.isEnabled() || !ModuleManager.chat.noChatClear.getValue()) {
-                while (this.chatLines.size() > 100) {
-                    this.chatLines.remove(this.chatLines.size() - 1);
-                }
+            while (this.chatLines.size() > 100) {
+                this.chatLines.remove(this.chatLines.size() - 1);
             }
         }
     }
@@ -298,17 +234,11 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
             return null;
         } else {
 
-            if (ModuleManager.chat.isEnabled() && ModuleManager.chat.clientChat.getValue())
-                return ModuleManager.chat.getChatComponent();
-
             ScaledResolution scaledresolution = ScaledResolution.get();
             int i = scaledresolution.getScaleFactor();
             float f = this.getChatScale();
             int j = mouseX / i;
             int k = mouseY / i - 39;
-
-            if (ModuleManager.chat.isEnabled())
-                k += ModuleManager.chat.yOffset.getValue();
 
             j = MathHelper.floor_float((float) j / f);
             k = MathHelper.floor_float((float) k / f);
@@ -317,10 +247,6 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
                 int l = Math.min(this.getLineCount(), this.drawnChatLines.size());
 
                 int chatLineLength = MathHelper.floor_float((float) this.getChatWidth() / this.getChatScale());
-
-                if (ModuleManager.chat.isEnabled() && ModuleManager.chat.noLengthLimit.getValue()) {
-                    chatLineLength = Integer.MAX_VALUE;
-                }
 
                 if (j <= chatLineLength && k < this.mc.fontRendererObj.FONT_HEIGHT * l + l) {
                     int i1 = k / this.mc.fontRendererObj.FONT_HEIGHT + this.scrollPos;
@@ -386,10 +312,6 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
     }
 
     public int getChatWidth() {
-
-        if (ModuleManager.chat.isEnabled() && ModuleManager.chat.noLengthLimit.getValue())
-            return 0x557ef44;
-
         return calculateChatboxWidth(this.mc.gameSettings.chatWidth);
     }
 

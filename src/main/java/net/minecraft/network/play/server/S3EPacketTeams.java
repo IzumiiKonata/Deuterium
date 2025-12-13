@@ -6,13 +6,13 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
-import today.opai.api.interfaces.game.network.server.SPacket3ETeams;
+
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 
-public class S3EPacketTeams implements Packet<INetHandlerPlayClient>, SPacket3ETeams {
+public class S3EPacketTeams implements Packet<INetHandlerPlayClient> {
     private String name = "";
     private String displayName = "";
     private String prefix = "";
@@ -159,58 +159,47 @@ public class S3EPacketTeams implements Packet<INetHandlerPlayClient>, SPacket3ET
         return this.nameTagVisibility;
     }
 
-    @Override
     public String getNametagVisibility() {
         return this.getNameTagVisibility();
     }
 
-    @Override
     public Collection<String> getPlayerList() {
         return this.getPlayers();
     }
 
-    @Override
     public void setName(String name) {
         this.name = name;
     }
 
-    @Override
     public void setDisplayName(String displayName) {
         this.displayName = displayName;
     }
 
-    @Override
     public void setPrefix(String prefix) {
         this.prefix = prefix;
     }
 
-    @Override
     public void setSuffix(String suffix) {
         this.suffix = suffix;
     }
 
-    @Override
     public void setNametagVisibility(String nametagVisibility) {
         this.nameTagVisibility = nametagVisibility;
     }
 
-    @Override
     public void setPlayerList(Collection<String> playerList) {
         this.players.clear();
         this.players.addAll(playerList);
     }
 
-    @Override
     public void setAction(int action) {
         this.action = action;
     }
 
-    @Override
     public void setFriendlyFlags(int friendlyFlags) {
         this.friendlyFlags = friendlyFlags;
     }
 
-    @Override
     public void setColor(int color) {
         this.color = color;
     }

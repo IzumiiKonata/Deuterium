@@ -12,13 +12,10 @@ import net.optifine.http.HttpPipeline;
 import net.optifine.http.HttpRequest;
 import net.optifine.http.HttpResponse;
 import net.optifine.player.CapeImageBuffer;
-import net.optifine.shaders.MultiTexID;
 import net.optifine.shaders.ShadersTex;
 import org.apache.commons.io.FileUtils;
-import tritium.rendering.async.AsyncGLContext;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -117,7 +114,7 @@ public class ThreadDownloadImageData extends SimpleTexture {
     protected void loadTextureFromServer() {
         textureRequested = true;
 
-        MultiThreadingUtil.runAsync(() -> {
+        new Thread(() -> {
             HttpURLConnection httpurlconnection = null;
             ThreadDownloadImageData.logger.debug("Downloading http texture from {} to {}", ThreadDownloadImageData.this.imageUrl, ThreadDownloadImageData.this.cacheFile);
 
@@ -162,7 +159,7 @@ public class ThreadDownloadImageData extends SimpleTexture {
                     ThreadDownloadImageData.this.loadingFinished();
                 }
             }
-        });
+        }).start();
     }
 
     private boolean shouldPipeline() {

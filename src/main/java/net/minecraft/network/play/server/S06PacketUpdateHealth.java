@@ -3,11 +3,11 @@ package net.minecraft.network.play.server;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import today.opai.api.interfaces.game.network.server.SPacket06UpdateHealth;
+
 
 import java.io.IOException;
 
-public class S06PacketUpdateHealth implements Packet<INetHandlerPlayClient>, SPacket06UpdateHealth {
+public class S06PacketUpdateHealth implements Packet<INetHandlerPlayClient> {
     private float health;
     private int foodLevel;
     private float saturationLevel;
@@ -58,22 +58,18 @@ public class S06PacketUpdateHealth implements Packet<INetHandlerPlayClient>, SPa
         return this.saturationLevel;
     }
 
-    @Override
     public float getSaturation() {
         return this.getSaturationLevel();
     }
 
-    @Override
     public void setHealth(float health) {
         this.health = health;
     }
 
-    @Override
     public void setSaturation(float saturation) {
         this.saturationLevel = saturation;
     }
 
-    @Override
     public void setFoodLevel(int foodLevel) {
         this.foodLevel = foodLevel;
     }

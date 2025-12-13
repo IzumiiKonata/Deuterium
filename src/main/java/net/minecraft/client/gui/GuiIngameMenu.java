@@ -1,7 +1,6 @@
 package net.minecraft.client.gui;
 
 import net.minecraft.client.resources.I18n;
-import tritium.screens.MainMenu;
 
 import java.io.IOException;
 
@@ -52,9 +51,9 @@ public class GuiIngameMenu extends GuiScreen {
                 this.mc.loadWorld(null);
 
                 if (flag) {
-                    this.mc.displayGuiScreen(MainMenu.getInstance());
+                    this.mc.displayGuiScreen(new GuiMainMenu());
                 } else {
-                    this.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.getInstance()));
+                    this.mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
                 }
 
             case 2:

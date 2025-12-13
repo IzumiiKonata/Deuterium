@@ -29,10 +29,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import tritium.bridge.entity.EntityWrapper;
-import tritium.event.events.player.MoveEntityRotationEvent;
-import tritium.management.EventManager;
-import tritium.rendering.EntityLighter;
 
 import java.util.List;
 import java.util.Random;
@@ -289,9 +285,6 @@ public abstract class Entity implements ICommandSender {
         this.setDead();
     }
 
-    @Getter
-    protected EntityWrapper wrapper;
-
     public Entity(World worldIn) {
         this.entityId = nextEntityID++;
         this.renderDistanceWeight = 1.0D;
@@ -318,12 +311,6 @@ public abstract class Entity implements ICommandSender {
         this.dataWatcher.addObject(2, "");
         this.dataWatcher.addObject(4, (byte) 0);
         this.entityInit();
-
-        this.createWrapper();
-    }
-
-    protected void createWrapper() {
-        this.wrapper = new EntityWrapper(this);
     }
 
     protected abstract void entityInit();
@@ -1106,23 +1093,14 @@ public abstract class Entity implements ICommandSender {
             float f1 = MathHelper.sin(this.rotationYaw * (float) Math.PI / 180.0F);
             float f2 = MathHelper.cos(this.rotationYaw * (float) Math.PI / 180.0F);
 
-            //CLIENT
-            if (this instanceof EntityPlayerSP) {
-                MoveEntityRotationEvent moveEntityRotationEvent = EventManager.call(new MoveEntityRotationEvent(this.rotationYaw));
-                f1 = MathHelper.sin(moveEntityRotationEvent.rotationYaw * (float) Math.PI / 180.0F);
-                f2 = MathHelper.cos(moveEntityRotationEvent.rotationYaw * (float) Math.PI / 180.0F);
-            }
-            //END CLIENT
-
             this.motionX += strafe * f2 - forward * f1;
             this.motionZ += forward * f2 + strafe * f1;
         }
     }
 
     public int getBrightnessForRender(float partialTicks) {
-        return EntityLighter.getBlendedLight(this, partialTicks);
-//        BlockPos blockpos = new BlockPos(this.posX, this.posY + (double) this.getEyeHeight(), this.posZ);
-//        return /*this.worldObj.isBlockLoaded(blockpos) ? */this.worldObj.getCombinedLight(blockpos, 0)/* : 0*/;
+        BlockPos blockpos = new BlockPos(this.posX, this.posY + (double) this.getEyeHeight(), this.posZ);
+        return /*this.worldObj.isBlockLoaded(blockpos) ? */this.worldObj.getCombinedLight(blockpos, 0)/* : 0*/;
     }
 
     /**

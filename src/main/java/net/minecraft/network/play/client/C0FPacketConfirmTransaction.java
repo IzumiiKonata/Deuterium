@@ -3,11 +3,11 @@ package net.minecraft.network.play.client;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
-import today.opai.api.interfaces.game.network.client.CPacket0FTransaction;
+
 
 import java.io.IOException;
 
-public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer>, CPacket0FTransaction {
+public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer> {
     private int windowId;
     private short uid;
     private boolean accepted;

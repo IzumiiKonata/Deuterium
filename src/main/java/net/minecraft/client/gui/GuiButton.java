@@ -5,7 +5,6 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
-import tritium.rendering.rendersystem.RenderSystem;
 
 public class GuiButton extends Gui {
     protected static final Location buttonTextures = Location.of("textures/gui/widgets.png");
@@ -95,10 +94,6 @@ public class GuiButton extends Gui {
             GlStateManager.blendFunc(770, 771);
             this.drawTexturedModalRect(this.xPosition, this.yPosition, 0, 46 + i * 20, this.width / 2, this.height);
             this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, 200 - this.width / 2, 46 + i * 20, this.width / 2, this.height);
-
-            if (i == 2) {
-                RenderSystem.drawOutLine(this.xPosition + 1, this.yPosition + 1, this.width - 2, this.height - 2, 1, -1);
-            }
 
             this.mouseDragged(mc, mouseX, mouseY);
             int j = 14737632;

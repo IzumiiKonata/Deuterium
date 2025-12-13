@@ -24,7 +24,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.LoggingPrintStream;
 import net.minecraft.util.StringUtils;
 import net.minecraft.world.World;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.PrintStream;

@@ -11,7 +11,7 @@ import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
 import org.apache.commons.io.Charsets;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;

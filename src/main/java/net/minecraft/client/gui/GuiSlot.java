@@ -8,8 +8,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import tritium.rendering.animation.Animation;
-import tritium.rendering.animation.Easing;
 
 import java.time.Duration;
 
@@ -82,9 +80,6 @@ public abstract class GuiSlot {
     protected boolean hasListHeader;
     protected int headerPadding;
     private boolean enabled = true;
-
-    private Animation animation = new Animation(Easing.EASE_IN_OUT_CUBIC, Duration.ZERO);
-    private float end = 0f;
 
     public GuiSlot(Minecraft mcIn, int width, int height, int topIn, int bottomIn, int slotHeightIn) {
         this.mc = mcIn;
@@ -222,18 +217,6 @@ public abstract class GuiSlot {
         }
     }
 
-    private void setAnimation() {
-        end = amountScrolled;
-
-        if (end != animation.getDestinationValue()) {
-            double prevVal = animation.getValue();
-            animation = new Animation(Easing.EASE_OUT_QUART, Duration.ofMillis(200));
-            animation.setValue(prevVal);
-        }
-
-        amountScrolled = (float) animation.run(end);
-    }
-
     public void drawScreen(int mouseXIn, int mouseYIn, float p_148128_3_) {
         if (this.field_178041_q) {
             this.mouseX = mouseXIn;
@@ -242,8 +225,6 @@ public abstract class GuiSlot {
             int i = this.getScrollBarX();
             int j = i + 6;
             this.bindAmountScrolled();
-
-            this.setAnimation();
 
             GlStateManager.disableLighting();
             GlStateManager.disableFog();
@@ -320,7 +301,6 @@ public abstract class GuiSlot {
         if (!Mouse.isButtonDown(0))
             initialClickY = -1;
 
-        amountScrolled = end;
     }
 
     public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {

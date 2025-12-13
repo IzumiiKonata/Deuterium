@@ -6,14 +6,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import today.opai.api.interfaces.dataset.Vector3d;
-import today.opai.api.interfaces.game.network.server.SPacket27Explosion;
-import tritium.bridge.misc.math.Vector3dImpl;
+
 
 import java.io.IOException;
 import java.util.List;
 
-public class S27PacketExplosion implements Packet<INetHandlerPlayClient>, SPacket27Explosion {
+public class S27PacketExplosion implements Packet<INetHandlerPlayClient> {
     private double posX;
     private double posY;
     private double posZ;
@@ -142,15 +140,4 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient>, SPacke
         this.posZ = z;
     }
 
-    @Override
-    public Vector3d getMotion() {
-        return new Vector3dImpl(this.motionX, this.motionY, this.motionZ);
-    }
-
-    @Override
-    public void setMotion(Vector3d vector3d) {
-        this.motionX = (float) vector3d.getX();
-        this.motionY = (float) vector3d.getY();
-        this.motionZ = (float) vector3d.getZ();
-    }
 }

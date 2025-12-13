@@ -1,7 +1,7 @@
 package net.minecraft.client.gui;
 
 import net.minecraft.client.resources.I18n;
-import tritium.screens.MainMenu;
+
 
 import java.io.IOException;
 
@@ -21,7 +21,7 @@ public class GuiMemoryErrorScreen extends GuiScreen {
      */
     protected void actionPerformed(GuiButton button) throws IOException {
         if (button.id == 0) {
-            this.mc.displayGuiScreen(MainMenu.getInstance());
+            this.mc.displayGuiScreen(new GuiMainMenu());
         } else if (button.id == 1) {
             this.mc.shutdown();
         }

@@ -22,8 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.NoiseGeneratorPerlin;
 import net.minecraft.world.gen.feature.*;
-import tritium.utils.i18n.Localizable;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
@@ -123,7 +122,6 @@ public abstract class BiomeGenBase {
     protected static final NoiseGeneratorPerlin GRASS_COLOR_NOISE;
     protected static final WorldGenDoublePlant DOUBLE_PLANT_GENERATOR;
     public String biomeName;
-    public Localizable lBiomeName;
     public int color;
     public int field_150609_ah;
 
@@ -294,7 +292,6 @@ public abstract class BiomeGenBase {
 
     protected BiomeGenBase setBiomeName(String name) {
         this.biomeName = name;
-        this.lBiomeName = Localizable.of("biome." + name + ".name");
         return this;
     }
 

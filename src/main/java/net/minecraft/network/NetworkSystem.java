@@ -23,7 +23,7 @@ import net.minecraft.network.play.server.S40PacketDisconnect;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.NetHandlerHandshakeTCP;
 import net.minecraft.util.*;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;

@@ -5,15 +5,13 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import today.opai.api.enums.EnumDiggingAction;
-import today.opai.api.enums.EnumDirection;
-import today.opai.api.interfaces.dataset.Vector3i;
-import today.opai.api.interfaces.game.network.client.CPacket07Digging;
-import tritium.bridge.misc.math.Vector3iImpl;
+
+
+
 
 import java.io.IOException;
 
-public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CPacket07Digging {
+public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer> {
     private BlockPos position;
     private EnumFacing facing;
 
@@ -75,58 +73,6 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CP
         DROP_ALL_ITEMS,
         DROP_ITEM,
         RELEASE_USE_ITEM;
-
-        public EnumDiggingAction toEnumDiggingAction() {
-            switch (this) {
-                case START_DESTROY_BLOCK:
-                    return EnumDiggingAction.START_DESTROY_BLOCK;
-                case ABORT_DESTROY_BLOCK:
-                    return EnumDiggingAction.ABORT_DESTROY_BLOCK;
-                case STOP_DESTROY_BLOCK:
-                    return EnumDiggingAction.STOP_DESTROY_BLOCK;
-                case DROP_ALL_ITEMS:
-                    return EnumDiggingAction.DROP_ALL_ITEMS;
-                case DROP_ITEM:
-                    return EnumDiggingAction.DROP_ITEM;
-                case RELEASE_USE_ITEM:
-                    return EnumDiggingAction.RELEASE_USE_ITEM;
-                default:
-                    throw new IllegalArgumentException("Unknown action " + this);
-            }
-        }
-
-        public static Action fromEnumDiggingAction(EnumDiggingAction action) {
-            switch (action) {
-                case START_DESTROY_BLOCK:
-                    return START_DESTROY_BLOCK;
-                case ABORT_DESTROY_BLOCK:
-                    return ABORT_DESTROY_BLOCK;
-                case STOP_DESTROY_BLOCK:
-                    return STOP_DESTROY_BLOCK;
-                case DROP_ALL_ITEMS:
-                    return DROP_ALL_ITEMS;
-                case DROP_ITEM:
-                    return DROP_ITEM;
-                case RELEASE_USE_ITEM:
-                    return RELEASE_USE_ITEM;
-                default:
-                    throw new IllegalArgumentException("Unknown action " + action);
-            }
-        }
     }
 
-    @Override
-    public EnumDiggingAction getAction() {
-        return this.status.toEnumDiggingAction();
-    }
-
-    @Override
-    public Vector3i getPosition() {
-        return new Vector3iImpl(this.position.getX(), this.position.getY(), this.position.getZ());
-    }
-
-    @Override
-    public EnumDirection getDirection() {
-        return this.facing.toEnumDirection();
-    }
 }

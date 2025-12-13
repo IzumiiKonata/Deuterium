@@ -20,9 +20,6 @@ import net.minecraft.network.play.client.*;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
-import tritium.event.events.player.AttackEvent;
-import tritium.management.EventManager;
-import tritium.screens.ConsoleScreen;
 
 public class PlayerControllerMP {
     /**
@@ -314,10 +311,10 @@ public class PlayerControllerMP {
                     IChatComponent exitMessage = nm.getExitMessage();
                     if (exitMessage != null) {
                         if (!exitMessage.getUnformattedText().equals("Quitting"))
-                            ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: {}", exitMessage.getFormattedText());
+                            System.err.println("Failed to connect: " + exitMessage.getFormattedText());
 
                     } else if (nm.getNetHandler() != null) {
-                        ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: Disconnected");
+                        System.err.println("Failed to connect: Disconnected");
                     }
                 }
             }
@@ -428,14 +425,6 @@ public class PlayerControllerMP {
      * Attacks an entity
      */
     public void attackEntity(EntityPlayer playerIn, Entity targetEntity) {
-
-        //CLIENT
-        AttackEvent event = EventManager.call(new AttackEvent(targetEntity));
-        if (event.isCancelled()) {
-            return;
-        }
-        //END CLIENT
-
         this.syncCurrentPlayItem();
         this.netClientHandler.addToSendQueue(new C02PacketUseEntity(targetEntity, C02PacketUseEntity.Action.ATTACK));
 

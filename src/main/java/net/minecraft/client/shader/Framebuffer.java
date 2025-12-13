@@ -7,12 +7,8 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
-import tritium.rendering.FramebufferCaching;
-import tritium.rendering.shader.Shaders;
 
 import java.nio.ByteBuffer;
-
-import static tritium.rendering.rendersystem.RenderSystem.DIVIDE_BY_255;
 
 public class Framebuffer {
     public int framebufferTextureWidth;
@@ -169,12 +165,6 @@ public class Framebuffer {
     }
 
     public void bindFramebuffer(boolean p_147610_1_) {
-
-        if (this == Minecraft.getMinecraft().getFramebuffer() && FramebufferCaching.getOverridingFramebuffer() != null && FramebufferCaching.getOverridingFramebuffer() != Minecraft.getMinecraft().getFramebuffer()) {
-            FramebufferCaching.getOverridingFramebuffer().bindFramebuffer(p_147610_1_);
-            return;
-        }
-
         if (this == currentlyBinding)
             return;
 
@@ -191,11 +181,6 @@ public class Framebuffer {
 
     public void unbindFramebuffer() {
 
-        if (this == Minecraft.getMinecraft().getFramebuffer() && FramebufferCaching.getOverridingFramebuffer() != null && FramebufferCaching.getOverridingFramebuffer() != Minecraft.getMinecraft().getFramebuffer()) {
-            FramebufferCaching.getOverridingFramebuffer().unbindFramebuffer();
-            return;
-        }
-
         currentlyBinding = null;
 
         if (OpenGlHelper.isFramebufferEnabled()) {
@@ -208,18 +193,6 @@ public class Framebuffer {
         this.framebufferColor[1] = p_147604_2_;
         this.framebufferColor[2] = p_147604_3_;
         this.framebufferColor[3] = p_147604_4_;
-    }
-
-    public void setFramebufferColor(int rgb, float alpha) {
-
-        float f1 = (rgb >> 16 & 255) * DIVIDE_BY_255;
-        float f2 = (rgb >> 8 & 255) * DIVIDE_BY_255;
-        float f3 = (rgb & 255) * DIVIDE_BY_255;
-
-        this.framebufferColor[0] = f1;
-        this.framebufferColor[1] = f2;
-        this.framebufferColor[2] = f3;
-        this.framebufferColor[3] = alpha;
     }
 
     public void framebufferRender(int width, int height) {

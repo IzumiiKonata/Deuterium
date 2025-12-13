@@ -3,7 +3,6 @@ package net.minecraft.client.gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.EnumChatFormatting;
-import tritium.screens.MainMenu;
 
 import java.io.IOException;
 
@@ -60,7 +59,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback {
 
             case 1:
                 if (this.mc.theWorld.getWorldInfo().isHardcoreModeEnabled()) {
-                    this.mc.displayGuiScreen(MainMenu.getInstance());
+                    this.mc.displayGuiScreen(new GuiMainMenu());
                 } else {
                     GuiYesNo guiyesno = new GuiYesNo(this, I18n.format("deathScreen.quit.confirm"), "", I18n.format("deathScreen.titleScreen"), I18n.format("deathScreen.respawn"), 0);
                     this.mc.displayGuiScreen(guiyesno);
@@ -73,7 +72,7 @@ public class GuiGameOver extends GuiScreen implements GuiYesNoCallback {
         if (result) {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
             this.mc.loadWorld(null);
-            this.mc.displayGuiScreen(MainMenu.getInstance());
+            this.mc.displayGuiScreen(new GuiMainMenu());
         } else {
             this.mc.thePlayer.respawnPlayer();
             this.mc.displayGuiScreen(null);

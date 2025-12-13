@@ -40,9 +40,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
 import net.minecraft.world.*;
-import tritium.bridge.entity.PlayerWrapper;
-import tritium.management.ModuleManager;
-import tritium.rendering.waveycapes.simulation.StickSimulation;
 
 import java.util.Collection;
 import java.util.List;
@@ -177,11 +174,6 @@ public abstract class EntityPlayer extends EntityLivingBase {
         this.fireResistance = 20;
     }
 
-    @Override
-    protected void createWrapper() {
-        this.wrapper = new PlayerWrapper<>(this);
-    }
-
     protected void applyEntityAttributes() {
         super.applyEntityAttributes();
         this.getAttributeMap().registerAttribute(SharedMonsterAttributes.attackDamage).setBaseValue(1.0D);
@@ -249,12 +241,6 @@ public abstract class EntityPlayer extends EntityLivingBase {
      * Called to update the entity's position/logic.
      */
     public void onUpdate() {
-
-        if (ModuleManager.waveyCapes.isEnabled()) {
-            if (!(ModuleManager.waveyCapes.onlyLocalPlayer.getValue() && this != Minecraft.getMinecraft().thePlayer)) {
-                this.simulate();
-            }
-        }
 
         this.noClip = this.isSpectator();
 
@@ -1844,12 +1830,7 @@ public abstract class EntityPlayer extends EntityLivingBase {
     }
 
     private String getSpoofedName() {
-
-        if (!ModuleManager.nameSpoof.isEnabled())
-            return this.getName();
-
-        return ModuleManager.nameSpoof.getSpoofedName();
-
+        return this.getName();
     }
 
     /**
@@ -2032,56 +2013,5 @@ public abstract class EntityPlayer extends EntityLivingBase {
         OTHER_PROBLEM,
         NOT_SAFE
     }
-
-    //CLIENT
-    private final StickSimulation stickSimulation = new StickSimulation();
-
-    public StickSimulation getSimulation() {
-        return this.stickSimulation;
-    }
-
-    public void updateSimulation(int partCount) {
-        StickSimulation simulation = this.getSimulation();
-        boolean dirty = false;
-        if (simulation.points.size() != partCount) {
-            simulation.points.clear();
-            simulation.sticks.clear();
-            for (int i = 0; i < partCount; ++i) {
-                final StickSimulation.Point point = new StickSimulation.Point();
-                point.position.y = -i;
-                point.locked = (i == 0);
-                simulation.points.add(point);
-                if (i > 0) {
-                    simulation.sticks.add(new StickSimulation.Stick(simulation.points.get(i - 1), point, 1.0f));
-                }
-            }
-            dirty = true;
-        }
-        if (dirty) {
-            for (int i = 0; i < 10; ++i) {
-                this.simulate();
-            }
-        }
-    }
-
-    public void simulate() {
-        final StickSimulation simulation = this.getSimulation();
-        if (simulation.points.isEmpty()) {
-            return;
-        }
-        simulation.points.get(0).prevPosition.copy(simulation.points.get(0).position);
-        final double d = this.chasingPosX - this.posX;
-        final double m = this.chasingPosZ - this.posZ;
-        final float n = this.prevRenderYawOffset + this.renderYawOffset - this.prevRenderYawOffset;
-        final double o = MathHelper.sin(n * 0.017453292f);
-        final double p = -MathHelper.cos(n * 0.017453292f);
-        final float heightMul = ModuleManager.waveyCapes.heightMultiplier.getValue();
-        final double fallHack = MathHelper.clamp_double(simulation.points.get(0).position.y - this.posY * heightMul, 0.0, 1.0);
-        final StickSimulation.Vector2 position = simulation.points.get(0).position;
-        position.x += (float) (d * o + m * p + fallHack);
-        simulation.points.get(0).position.y = (float) (this.posY * heightMul + (this.isSneaking() ? -4 : 0));
-        simulation.simulate();
-    }
-    //END CLIENT
 
 }

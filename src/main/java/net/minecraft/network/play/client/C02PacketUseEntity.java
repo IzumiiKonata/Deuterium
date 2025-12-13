@@ -6,15 +6,13 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import today.opai.api.enums.EnumEntityAction;
-import today.opai.api.enums.EnumUseEntityAction;
-import today.opai.api.interfaces.dataset.Vector3d;
-import today.opai.api.interfaces.game.network.client.CPacket02UseEntity;
-import tritium.bridge.misc.math.Vector3dImpl;
+
+
+
 
 import java.io.IOException;
 
-public class C02PacketUseEntity implements Packet<INetHandlerPlayServer>, CPacket02UseEntity {
+public class C02PacketUseEntity implements Packet<INetHandlerPlayServer> {
     private int entityId;
     private C02PacketUseEntity.Action action;
     private Vec3 hitVec;
@@ -86,32 +84,9 @@ public class C02PacketUseEntity implements Packet<INetHandlerPlayServer>, CPacke
         INTERACT,
         ATTACK,
         INTERACT_AT;
-
-        public EnumUseEntityAction toOpai() {
-            switch (this) {
-                case INTERACT:
-                    return EnumUseEntityAction.INTERACT;
-                case ATTACK:
-                    return EnumUseEntityAction.ATTACK;
-                case INTERACT_AT:
-                    return EnumUseEntityAction.INTERACT_AT;
-                default:
-                    throw new IllegalArgumentException("Unknown use entity action: " + this);
-            }
-        }
     }
 
     public int getEntityId() {
         return this.entityId;
-    }
-
-    @Override
-    public EnumUseEntityAction getAction() {
-        return this.getPacketAction().toOpai();
-    }
-
-    @Override
-    public Vector3d getHitVec() {
-        return new Vector3dImpl(this.hitVec.xCoord, this.hitVec.yCoord, this.hitVec.zCoord);
     }
 }

@@ -43,8 +43,7 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldInfo;
-import tritium.management.ModuleManager;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.*;
@@ -169,7 +168,7 @@ public class WorldServer extends World implements IThreadListener {
 
         this.worldInfo.setWorldTotalTime(this.worldInfo.getWorldTotalTime() + 1L);
 
-        if (this.getGameRules().getBoolean("doDaylightCycle") && !ModuleManager.worldTime.isEnabled()) {
+        if (this.getGameRules().getBoolean("doDaylightCycle")) {
             this.worldInfo.setWorldTime(this.worldInfo.getWorldTime() + 1L);
         }
 

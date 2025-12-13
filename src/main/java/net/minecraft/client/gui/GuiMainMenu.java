@@ -21,8 +21,7 @@ import org.apache.commons.io.Charsets;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -387,7 +386,8 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
      */
     private void rotateAndBlurSkybox(float p_73968_1_) {
         this.mc.getTextureManager().bindTexture(this.backgroundTexture);
-        RenderSystem.linearFilter();
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
         GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, 256, 256);
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);

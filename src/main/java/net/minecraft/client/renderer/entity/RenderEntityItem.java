@@ -9,8 +9,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
-import tritium.management.ModuleManager;
-import tritium.rendering.ItemPhysicRender;
+
+
 
 import java.util.Random;
 
@@ -75,11 +75,6 @@ public class RenderEntityItem extends Render<EntityItem> {
      * Renders the desired {@code T} type Entity.
      */
     public void doRender(EntityItem entity, double x, double y, double z, float entityYaw, float partialTicks) {
-        //CLIENT
-        if (ModuleManager.itemPhysic.isEnabled()) {
-            ItemPhysicRender.doRenderItemPhysic(entity, x, y, z, entityYaw, partialTicks);
-            return;
-        }
         ItemStack itemstack = entity.getEntityItem();
         this.field_177079_e.setSeed(187L);
         boolean flag = false;

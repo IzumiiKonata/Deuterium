@@ -1,7 +1,7 @@
 package net.minecraft.network.play.server;
 
 import com.google.common.collect.Lists;
-import tritium.rendering.phosphor.api.ILightingEngineProvider;
+import phosphor.api.ILightingEngineProvider;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;

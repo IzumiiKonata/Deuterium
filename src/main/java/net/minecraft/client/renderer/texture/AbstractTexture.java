@@ -6,8 +6,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.optifine.shaders.MultiTexID;
 import net.optifine.shaders.ShadersTex;
 import org.lwjgl.opengl.GL11;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 public abstract class AbstractTexture implements ITextureObject {
     protected int glTextureId = -1;
@@ -61,24 +59,6 @@ public abstract class AbstractTexture implements ITextureObject {
     @Getter
     private FilterState filterState = FilterState.NEAREST;
 
-    @Override
-    public void linearFilter() {
-
-        if (this.filterState != FilterState.LINEAR) {
-            RenderSystem.linearFilter();
-        }
-
-    }
-
-    @Override
-    public void nearestFilter() {
-
-        if (this.filterState != FilterState.NEAREST) {
-            RenderSystem.nearestFilter();
-        }
-
-    }
-
     public void deleteGlTexture() {
         ShadersTex.deleteTextures(this, this.glTextureId);
 
@@ -108,14 +88,6 @@ public abstract class AbstractTexture implements ITextureObject {
             return;
         }
 
-        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            GlStateManager.deleteTexture(this.getGlTextureId());
-        } else {
-            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
-                GL11.glDeleteTextures(this.getGlTextureId());
-                return null;
-            });
-        }
-
+        GlStateManager.deleteTexture(this.getGlTextureId());
     }
 }

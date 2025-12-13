@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Files;
 import com.google.gson.*;
 import org.apache.commons.io.IOUtils;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedWriter;

@@ -6,8 +6,6 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.src.Config;
 import org.lwjgl.opengl.*;
 import org.lwjglx.opengl.GLContext;
-import tritium.screens.ConsoleScreen;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
@@ -259,18 +257,12 @@ public class OpenGlHelper {
             }
         }
 
-        MultiThreadingUtil.runAsync(() -> {
-            try {
-                cpu = Advapi32Util.registryGetStringValue
-                        (HKEY_LOCAL_MACHINE,
-                                "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0\\",
-                                "ProcessorNameString");
-            } catch (Throwable var5) {
-            }
-        });
-
-        for (String s : getLogText().split("\n")) {
-            ConsoleScreen.log("[GL] {}", s);
+        try {
+            cpu = Advapi32Util.registryGetStringValue
+                    (HKEY_LOCAL_MACHINE,
+                            "HARDWARE\\DESCRIPTION\\System\\CentralProcessor\\0\\",
+                            "ProcessorNameString");
+        } catch (Throwable var5) {
         }
 
     }

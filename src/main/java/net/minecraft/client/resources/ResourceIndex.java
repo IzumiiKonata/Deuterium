@@ -3,13 +3,10 @@ package net.minecraft.client.resources;
 import com.google.common.base.Charsets;
 import com.google.common.collect.Maps;
 import com.google.common.io.Files;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import net.minecraft.util.JsonUtils;
 import org.apache.commons.io.IOUtils;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.BufferedReader;
@@ -30,7 +27,7 @@ public class ResourceIndex {
 
             try {
                 bufferedreader = Files.newReader(file2, Charsets.UTF_8);
-                JsonObject jsonobject = tritium.utils.json.JsonUtils.parse(bufferedreader, JsonObject.class);
+                JsonObject jsonobject = new Gson().fromJson(bufferedreader, JsonObject.class);
                 JsonObject jsonobject1 = JsonUtils.getJsonObject(jsonobject, "objects", null);
 
                 if (jsonobject1 != null) {

@@ -5,12 +5,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.MathHelper;
 import org.apache.commons.lang3.Validate;
-import today.opai.api.dataset.Vec3Data;
-import today.opai.api.interfaces.game.network.server.SPacket29Sound;
+
+
 
 import java.io.IOException;
 
-public class S29PacketSoundEffect implements Packet<INetHandlerPlayClient>, SPacket29Sound {
+public class S29PacketSoundEffect implements Packet<INetHandlerPlayClient> {
     private String soundName;
     private int posX;
     private int posY = Integer.MAX_VALUE;
@@ -87,29 +87,14 @@ public class S29PacketSoundEffect implements Packet<INetHandlerPlayClient>, SPac
         handler.handleSoundEffect(this);
     }
 
-    @Override
-    public Vec3Data getPosition() {
-        return new Vec3Data(getX(), getY(), getZ());
-    }
-
-    @Override
     public String getSound() {
         return this.soundName;
     }
 
-    @Override
     public void setSound(String sound) {
         this.soundName = sound;
     }
 
-    @Override
-    public void setPosition(Vec3Data position) {
-        this.posX = (int) (position.getX() * 8.0D);
-        this.posY = (int) (position.getY() * 8.0D);
-        this.posZ = (int) (position.getZ() * 8.0D);
-    }
-
-    @Override
     public void setVolume(float volume) {
         this.soundVolume = volume;
     }

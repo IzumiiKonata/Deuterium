@@ -5,9 +5,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import lombok.Getter;
-import tritium.bridge.game.WorldWrapper;
-import tritium.rendering.phosphor.api.ILightingEngineProvider;
-import tritium.rendering.phosphor.mod.world.lighting.LightingEngine;
+import net.minecraft.client.Minecraft;
+import phosphor.api.ILightingEngineProvider;
+import phosphor.mod.world.lighting.LightingEngine;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -34,14 +34,11 @@ import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.MapStorage;
 import net.minecraft.world.storage.WorldInfo;
-import tritium.interfaces.SharedConstants;
-import tritium.management.ModuleManager;
-import tritium.module.impl.render.WorldTime;
 
 import java.util.*;
 import java.util.concurrent.Callable;
 
-public abstract class World implements IBlockAccess, SharedConstants, ILightingEngineProvider {
+public abstract class World implements IBlockAccess, ILightingEngineProvider {
     private int seaLevel = 63;
 
     /**
@@ -157,9 +154,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
      */
     int[] lightUpdateBlockList;
 
-    @Getter
-    private final WorldWrapper wrapper;
-
     protected World(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client) {
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.spawnHostileMobs = true;
@@ -172,7 +166,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         this.isRemote = client;
         this.worldBorder = providerIn.getWorldBorder();
         this.lightingEngine = new LightingEngine(this);
-        this.wrapper = new WorldWrapper(this);
     }
 
     public World init() {
@@ -2910,11 +2903,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     }
 
     public float getThunderStrength(float delta) {
-
-        if (ModuleManager.worldTime.isEnabled() && ModuleManager.worldTime.weather.getValue() != WorldTime.Weather.None) {
-            return ModuleManager.worldTime.weatherStrength.getValue();
-        }
-
         return (this.prevThunderingStrength + (this.thunderingStrength - this.prevThunderingStrength) * delta) * this.getRainStrength(delta);
     }
 
@@ -2930,15 +2918,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
      * Returns rain strength.
      */
     public float getRainStrength(float delta) {
-
-        if (ModuleManager.worldTime.isEnabled()) {
-
-            if (ModuleManager.worldTime.weather.getValue() == WorldTime.Weather.None)
-                return 0.0f;
-
-            return ModuleManager.worldTime.weatherStrength.getValue();
-        }
-
         return this.prevRainingStrength + (this.rainingStrength - this.prevRainingStrength) * delta;
     }
 
@@ -3208,7 +3187,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     }
 
     public boolean isSingleplayer() {
-        return this.mc.isIntegratedServerRunning();
+        return Minecraft.getMinecraft().isIntegratedServerRunning();
     }
 
 }

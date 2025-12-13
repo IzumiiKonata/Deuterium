@@ -4,12 +4,12 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
-import today.opai.api.enums.EnumEntityAction;
-import today.opai.api.interfaces.game.network.client.CPacket0BEntityAction;
+
+
 
 import java.io.IOException;
 
-public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPacket0BEntityAction {
+public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer> {
     private int entityID;
     private C0BPacketEntityAction.Action action;
     private int auxData;
@@ -52,10 +52,6 @@ public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPa
         handler.processEntityAction(this);
     }
 
-    public EnumEntityAction getAction() {
-        return this.action.toOpai();
-    }
-
     public int getAuxData() {
         return this.auxData;
     }
@@ -68,56 +64,10 @@ public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPa
         STOP_SPRINTING,
         RIDING_JUMP,
         OPEN_INVENTORY;
-
-        public static Action fromOpai(EnumEntityAction action) {
-            switch (action) {
-                case START_SNEAKING:
-                    return START_SNEAKING;
-                case STOP_SNEAKING:
-                    return STOP_SNEAKING;
-                case START_SPRINTING:
-                    return START_SPRINTING;
-                case STOP_SPRINTING:
-                    return STOP_SPRINTING;
-                case RIDING_JUMP:
-                    return RIDING_JUMP;
-                case OPEN_INVENTORY:
-                    return OPEN_INVENTORY;
-                case STOP_SLEEPING:
-                    return STOP_SLEEPING;
-                default:
-                    throw new IllegalArgumentException();
-            }
-        }
-
-        public EnumEntityAction toOpai() {
-            switch (this) {
-                case START_SNEAKING:
-                    return EnumEntityAction.START_SNEAKING;
-                case STOP_SNEAKING:
-                    return EnumEntityAction.STOP_SNEAKING;
-                case START_SPRINTING:
-                    return EnumEntityAction.START_SPRINTING;
-                case STOP_SPRINTING:
-                    return EnumEntityAction.STOP_SPRINTING;
-                case RIDING_JUMP:
-                    return EnumEntityAction.RIDING_JUMP;
-                case OPEN_INVENTORY:
-                    return EnumEntityAction.OPEN_INVENTORY;
-                case STOP_SLEEPING:
-                    return EnumEntityAction.STOP_SLEEPING;
-                default:
-                    throw new IllegalArgumentException();
-            }
-        }
     }
 
     public Action getPacketAction() {
         return this.action;
     }
 
-    @Override
-    public void setAction(EnumEntityAction action) {
-        this.action = Action.fromOpai(action);
-    }
 }

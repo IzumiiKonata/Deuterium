@@ -4,12 +4,10 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.IChatComponent;
-import today.opai.api.interfaces.game.network.server.SPacket45Title;
-import tritium.management.ModuleManager;
 
 import java.io.IOException;
 
-public class S45PacketTitle implements Packet<INetHandlerPlayClient>, SPacket45Title {
+public class S45PacketTitle implements Packet<INetHandlerPlayClient> {
     private S45PacketTitle.Type type;
     private IChatComponent message;
     private int fadeInTime;
@@ -43,9 +41,6 @@ public class S45PacketTitle implements Packet<INetHandlerPlayClient>, SPacket45T
 
         if (this.type == S45PacketTitle.Type.TITLE || this.type == S45PacketTitle.Type.SUBTITLE) {
             this.message = buf.readChatComponent();
-
-            if (ModuleManager.nameSpoof.isEnabled())
-                ModuleManager.nameSpoof.replaceChatComponent(this.message);
         }
 
         if (this.type == S45PacketTitle.Type.TIMES) {
@@ -128,38 +123,20 @@ public class S45PacketTitle implements Packet<INetHandlerPlayClient>, SPacket45T
         }
     }
 
-    @Override
     public String getMessage() {
         return IChatComponent.Serializer.componentToJson(this.message);
     }
 
-    @Override
     public String getType() {
         return this.type.name();
     }
 
-    @Override
     public void setType(String type) {
         this.type = S45PacketTitle.Type.byName(type);
     }
 
-    @Override
     public void setMessage(String message) {
         this.message = IChatComponent.Serializer.jsonToComponent(message);
     }
 
-    @Override
-    public void setFadeInTime(int fadeInTime) {
-        this.fadeInTime = fadeInTime;
-    }
-
-    @Override
-    public void setDisplayTime(int displayTime) {
-        this.displayTime = displayTime;
-    }
-
-    @Override
-    public void setFadeOutTime(int fadeOutTime) {
-        this.fadeOutTime = fadeOutTime;
-    }
 }

@@ -2,7 +2,7 @@ package net.minecraft.util;
 
 import com.google.common.collect.Maps;
 import org.apache.commons.lang3.Validate;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.Collections;

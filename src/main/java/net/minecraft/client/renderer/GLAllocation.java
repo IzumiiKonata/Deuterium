@@ -3,7 +3,7 @@ package net.minecraft.client.renderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjglx.util.glu.GLU;
-import tritium.utils.other.MemoryTracker;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -44,7 +44,7 @@ public class GLAllocation {
      * Creates and returns a direct byte buffer with the specified capacity. Applies native ordering to speed up access.
      */
     public static synchronized ByteBuffer createDirectByteBuffer(int capacity) {
-        return MemoryTracker.memAlloc(capacity);
+        return MemoryUtil.memAlloc(capacity);
     }
 
     /**

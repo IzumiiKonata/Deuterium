@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.MathHelper;
-import tritium.rendering.rendersystem.RenderSystem;
 
 public class GuiOptionSlider extends GuiButton {
     private float sliderValue;
@@ -50,11 +49,6 @@ public class GuiOptionSlider extends GuiButton {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             this.drawTexturedModalRect(this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)), this.yPosition, 0, 66, 4, 20);
             this.drawTexturedModalRect(this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)) + 4, this.yPosition, 196, 66, 4, 20);
-
-            if (this.hovered) {
-                RenderSystem.drawOutLine(this.xPosition + (int) (this.sliderValue * (float) (this.width - 8)) + 1, this.yPosition + 1, 8 - 2, this.height - 2, 1, -1);
-            }
-
         }
     }
 

@@ -4,11 +4,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
-import today.opai.api.interfaces.game.network.client.CPacket0EClickWindow;
+
 
 import java.io.IOException;
 
-public class C0EPacketClickWindow implements Packet<INetHandlerPlayServer>, CPacket0EClickWindow {
+public class C0EPacketClickWindow implements Packet<INetHandlerPlayServer> {
     /**
      * The id of the window which was clicked. 0 for player inventory.
      */
@@ -108,10 +108,5 @@ public class C0EPacketClickWindow implements Packet<INetHandlerPlayServer>, CPac
 
     public int getPacketActionNumber() {
         return this.actionNumber;
-    }
-
-    @Override
-    public today.opai.api.interfaces.game.item.ItemStack getItem() {
-        return this.getClickedItem().getWrapper();
     }
 }

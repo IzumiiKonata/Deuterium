@@ -15,7 +15,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
-import tritium.bridge.game.item.InventoryWrapper;
 
 import java.util.Arrays;
 import java.util.List;
@@ -49,12 +48,8 @@ public class InventoryPlayer implements IInventory {
      */
     public boolean inventoryChanged;
 
-    @Getter
-    private final InventoryWrapper wrapper;
-
     public InventoryPlayer(EntityPlayer playerIn) {
         this.player = playerIn;
-        this.wrapper = new InventoryWrapper(this);
     }
 
     /**

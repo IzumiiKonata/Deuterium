@@ -5,13 +5,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import today.opai.api.interfaces.dataset.Vector3d;
-import today.opai.api.interfaces.game.network.server.SPacket12Velocity;
-import tritium.bridge.misc.math.Vector3dImpl;
+
 
 import java.io.IOException;
 
-public class S12PacketEntityVelocity implements Packet<INetHandlerPlayClient>, SPacket12Velocity {
+public class S12PacketEntityVelocity implements Packet<INetHandlerPlayClient> {
     private int entityID;
     public double motionX;
     public double motionY;
@@ -128,15 +126,4 @@ public class S12PacketEntityVelocity implements Packet<INetHandlerPlayClient>, S
         this.motionZ = z;
     }
 
-    @Override
-    public Vector3d getMotion() {
-        return new Vector3dImpl(this.motionX, this.motionY, this.motionZ);
-    }
-
-    @Override
-    public void setMotion(Vector3d vector3d) {
-        this.motionX = vector3d.getX();
-        this.motionY = vector3d.getY();
-        this.motionZ = vector3d.getZ();
-    }
 }

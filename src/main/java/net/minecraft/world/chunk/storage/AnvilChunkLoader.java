@@ -1,8 +1,8 @@
 package net.minecraft.world.chunk.storage;
 
-import tritium.rendering.phosphor.api.IChunkLightingData;
-import tritium.rendering.phosphor.api.ILightingEngineProvider;
-import tritium.rendering.phosphor.mod.world.lighting.LightingHooks;
+import phosphor.api.IChunkLightingData;
+import phosphor.api.ILightingEngineProvider;
+import phosphor.mod.world.lighting.LightingHooks;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -20,7 +20,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.NibbleArray;
 import net.minecraft.world.storage.IThreadedFileIO;
 import net.minecraft.world.storage.ThreadedFileIOBase;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.DataInputStream;

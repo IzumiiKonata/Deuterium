@@ -24,7 +24,6 @@ import net.optifine.util.MemoryMonitor;
 import net.optifine.util.NativeMemory;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.Display;
-import tritium.rendering.MusicToast;
 
 import java.util.List;
 import java.util.Map.Entry;
@@ -215,19 +214,6 @@ public class GuiOverlayDebug extends Gui {
                 BlockPos blockpos1 = this.mc.objectMouseOver.getBlockPos();
                 list.add(String.format("Looking at: %d %d %d", blockpos1.getX(), blockpos1.getY(), blockpos1.getZ()));
             }
-
-            list.add("");
-            list.add("[MusicTicker]");
-            int ticks = mc.getMusicTicker().getTimeUntilNextMusic();
-
-            if (ticks < Integer.MAX_VALUE) {
-                list.add("Wait Ticks: " + ticks);
-            }
-
-            Location loc = mc.getMusicTicker().getMusicLocation();
-
-            if (loc != null)
-                list.add("Current: " + MusicToast.getLocationToName().get(loc.toString()));
 
             return list;
         }

@@ -60,12 +60,7 @@ import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
-import tritium.event.eventapi.State;
-import tritium.event.events.player.RespawnEvent;
-import tritium.management.EventManager;
-import tritium.screens.ConsoleScreen;
-import tritium.screens.MainMenu;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
@@ -138,17 +133,13 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         this.gameController.gameSettings.difficulty = packetIn.getDifficulty();
         this.gameController.loadWorld(this.clientWorldController);
         this.gameController.thePlayer.dimension = packetIn.getDimension();
-        if (!(this.gameController.currentScreen instanceof ConsoleScreen))
-            this.gameController.displayGuiScreen(/*new GuiDownloadTerrain(this)*/null);
+        this.gameController.displayGuiScreen(new GuiDownloadTerrain(this));
         this.gameController.thePlayer.setEntityId(packetIn.getEntityId());
         this.currentServerMaxPlayers = packetIn.getMaxPlayers();
         this.gameController.thePlayer.setReducedDebug(packetIn.isReducedDebugInfo());
         this.gameController.playerController.setGameType(packetIn.getGameType());
         this.gameController.gameSettings.sendSettingsToServer();
         this.netManager.sendPacket(new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
-        //CLIENT
-        EventManager.call(new RespawnEvent());
-        //END CLIENT
     }
 
     /**
@@ -493,8 +484,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
             this.gameController.thePlayer.prevPosY = this.gameController.thePlayer.posY;
             this.gameController.thePlayer.prevPosZ = this.gameController.thePlayer.posZ;
             this.doneLoadingTerrain = true;
-            if (!(this.gameController.currentScreen instanceof ConsoleScreen))
-                this.gameController.displayGuiScreen(null);
+            this.gameController.displayGuiScreen(null);
         }
     }
 
@@ -556,17 +546,12 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
      */
     public void onDisconnect(IChatComponent reason) {
 
-        if (this.gameController.currentScreen instanceof ConsoleScreen) {
-            ConsoleScreen.log("Lost connection: {}", reason.getFormattedText());
-            return;
-        }
-
         this.gameController.loadWorld(null);
 
         if (this.guiScreenServer != null) {
             this.gameController.displayGuiScreen(new GuiDisconnected(this.guiScreenServer, "disconnect.lost", reason));
         } else {
-            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(MainMenu.getInstance()), "disconnect.lost", reason));
+            this.gameController.displayGuiScreen(new GuiDisconnected(new GuiMultiplayer(new GuiMainMenu()), "disconnect.lost", reason));
         }
     }
 
@@ -773,15 +758,11 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
             this.clientWorldController.setWorldScoreboard(scoreboard);
             this.gameController.loadWorld(this.clientWorldController);
             this.gameController.thePlayer.dimension = packetIn.getDimensionID();
-            if (!(this.gameController.currentScreen instanceof ConsoleScreen))
-                this.gameController.displayGuiScreen(/*new GuiDownloadTerrain(this)*/null);
+            this.gameController.displayGuiScreen(new GuiDownloadTerrain(this));
         }
 
         this.gameController.setDimensionAndSpawnPlayer(packetIn.getDimensionID());
         this.gameController.playerController.setGameType(packetIn.getGameType());
-        //CLIENT
-        EventManager.call(new RespawnEvent());
-        //END CLIENT
     }
 
     /**

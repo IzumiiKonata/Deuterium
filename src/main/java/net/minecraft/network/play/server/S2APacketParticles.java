@@ -4,12 +4,12 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.EnumParticleTypes;
-import today.opai.api.dataset.Vec3Data;
-import today.opai.api.interfaces.game.network.server.SPacket2AParticles;
+
+
 
 import java.io.IOException;
 
-public class S2APacketParticles implements Packet<INetHandlerPlayClient>, SPacket2AParticles {
+public class S2APacketParticles implements Packet<INetHandlerPlayClient> {
     private EnumParticleTypes particleType;
     private float xCoord;
     private float yCoord;
@@ -170,37 +170,21 @@ public class S2APacketParticles implements Packet<INetHandlerPlayClient>, SPacke
         handler.handleParticles(this);
     }
 
-    @Override
     public int[] getArgs() {
         return this.getParticleArgs();
     }
 
-    @Override
     public String getType() {
         return this.particleType.getParticleName();
     }
-
-    @Override
-    public Vec3Data getPosition() {
-        return new Vec3Data(this.getXCoordinate(), this.getYCoordinate(), this.getZCoordinate());
-    }
-
-    @Override
-    public Vec3Data getOffset() {
-        return new Vec3Data(this.getXOffset(), this.getYOffset(), this.getZOffset());
-    }
-
-    @Override
     public float getSpeed() {
         return this.getParticleSpeed();
     }
 
-    @Override
     public int getCount() {
         return this.getParticleCount();
     }
 
-    @Override
     public void setType(String type) {
         for (EnumParticleTypes value : EnumParticleTypes.values()) {
             if (value.getParticleName().equals(type)) {
@@ -210,36 +194,18 @@ public class S2APacketParticles implements Packet<INetHandlerPlayClient>, SPacke
         }
     }
 
-    @Override
-    public void setPosition(Vec3Data position) {
-        this.xCoord = (float) position.getX();
-        this.yCoord = (float) position.getY();
-        this.zCoord = (float) position.getZ();
-    }
-
-    @Override
-    public void setOffset(Vec3Data offset) {
-        this.xOffset = (float) offset.getX();
-        this.yOffset = (float) offset.getY();
-        this.zOffset = (float) offset.getZ();
-    }
-
-    @Override
     public void setSpeed(float speed) {
         this.particleSpeed = speed;
     }
 
-    @Override
     public void setCount(int count) {
         this.particleCount = count;
     }
 
-    @Override
     public void setLongDistance(boolean longDistance) {
         this.longDistance = longDistance;
     }
 
-    @Override
     public void setArgs(int[] args) {
         this.particleArguments = args;
     }

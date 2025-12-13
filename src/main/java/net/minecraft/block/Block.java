@@ -20,7 +20,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import tritium.bridge.game.data.BlockWrapper;
 
 import java.util.List;
 import java.util.Random;
@@ -265,9 +264,6 @@ public class Block {
         return state;
     }
 
-    @Getter
-    private final BlockWrapper wrapper;
-
     public Block(Material blockMaterialIn, MapColor blockMapColorIn) {
         this.enableStats = true;
         this.stepSound = soundTypeStone;
@@ -281,7 +277,6 @@ public class Block {
         this.translucent = !blockMaterialIn.blocksLight();
         this.blockState = this.createBlockState();
         this.setDefaultState(this.blockState.getBaseState());
-        this.wrapper = new BlockWrapper(this);
     }
 
     protected Block(Material materialIn) {

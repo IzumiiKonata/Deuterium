@@ -5,7 +5,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.ChunkPrimer;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
-import tritium.utils.i18n.Localizable;
 
 import java.util.Random;
 
@@ -17,7 +16,6 @@ public class BiomeGenMutated extends BiomeGenBase {
         this.baseBiome = biome;
         this.func_150557_a(biome.color, true);
         this.biomeName = biome.biomeName + " M";
-        this.lBiomeName = Localizable.of("biome." + biomeName + ".name");
         this.topBlock = biome.topBlock;
         this.fillerBlock = biome.fillerBlock;
         this.fillerBlockMetadata = biome.fillerBlockMetadata;

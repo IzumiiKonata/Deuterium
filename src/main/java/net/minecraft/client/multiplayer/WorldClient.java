@@ -31,7 +31,6 @@ import net.minecraft.world.storage.WorldInfo;
 import net.optifine.CustomGuis;
 import net.optifine.DynamicLights;
 import net.optifine.override.PlayerControllerOF;
-import tritium.management.ModuleManager;
 
 import java.util.Random;
 import java.util.Set;
@@ -78,7 +77,7 @@ public class WorldClient extends World {
 
         this.setTotalWorldTime(this.getTotalWorldTime() + 1L);
 
-        if (this.getGameRules().getBoolean("doDaylightCycle") && !ModuleManager.worldTime.isEnabled()) {
+        if (this.getGameRules().getBoolean("doDaylightCycle")) {
             this.setWorldTime(this.getWorldTime() + 1L);
         }
 

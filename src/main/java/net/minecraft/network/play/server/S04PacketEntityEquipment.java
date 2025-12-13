@@ -5,11 +5,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import today.opai.api.interfaces.game.network.server.SPacket04Equipment;
+
 
 import java.io.IOException;
 
-public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient>, SPacket04Equipment {
+public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient> {
     private int entityID;
     private int equipmentSlot;
     private ItemStack itemStack;
@@ -60,27 +60,14 @@ public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient>, 
         return this.equipmentSlot;
     }
 
-    @Override
     public int getEntityId() {
         return this.getEntityID();
     }
 
-    @Override
     public int getSlot() {
         return this.getEquipmentSlot();
     }
 
-    @Override
-    public today.opai.api.interfaces.game.item.ItemStack getItemStack() {
-        return this.getStack().getWrapper();
-    }
-
-    @Override
-    public void setItemStack(today.opai.api.interfaces.game.item.ItemStack itemStack) {
-        this.itemStack = ItemStack.fromOpai(itemStack);
-    }
-
-    @Override
     public void setSlot(int slot) {
         this.equipmentSlot = slot;
     }

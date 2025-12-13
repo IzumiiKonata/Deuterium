@@ -69,11 +69,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.input.Keyboard;
 import org.lwjglx.util.vector.Vector3f;
 import org.lwjglx.util.vector.Vector4f;
-import tritium.event.events.rendering.BlockOverlayEvent;
-import tritium.management.EventManager;
-import tritium.management.ModuleManager;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -229,12 +225,9 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         this.vertexBufferFormat = new VertexFormat();
         this.vertexBufferFormat.addElement(new VertexFormatElement(0, VertexFormatElement.EnumType.FLOAT, VertexFormatElement.EnumUsage.POSITION, 3));
 
-        synchronized (RenderSystem.ASYNC_LOCK) {
-            this.generateStars();
-            this.generateSky();
-            this.generateSky2();
-        }
-
+        this.generateStars();
+        this.generateSky();
+        this.generateSky2();
     }
 
     public void onResourceManagerReload(IResourceManager resourceManager) {
@@ -519,11 +512,9 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 this.renderChunkFactory = new VboChunkFactory();
             }
 
-            synchronized (RenderSystem.ASYNC_LOCK) {
-                this.generateStars();
-                this.generateSky();
-                this.generateSky2();
-            }
+            this.generateStars();
+            this.generateSky();
+            this.generateSky2();
 
             if (this.viewFrustum != null) {
                 this.viewFrustum.deleteGlResources();
@@ -1442,7 +1433,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 GlStateManager.shadeModel(7425);
                 GlStateManager.pushMatrix();
                 GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
-                GlStateManager.rotate(MathHelper.sin(this.theWorld.getCelestialAngleRadians(ModuleManager.worldTime.isEnabled() ? 0.0F : partialTicks)) < 0.0F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
+                GlStateManager.rotate(MathHelper.sin(this.theWorld.getCelestialAngleRadians(partialTicks)) < 0.0F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
                 GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
                 float f6 = afloat[0];
                 float f7 = afloat[1];
@@ -2175,12 +2166,6 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 if (block$enumoffsettype != Block.EnumOffsetType.NONE) {
                     axisalignedbb = BlockModelUtils.getOffsetBoundingBox(axisalignedbb, block$enumoffsettype, blockpos);
                 }
-
-                BlockOverlayEvent event = new BlockOverlayEvent(
-                        axisalignedbb.expand(0.002F, 0.002F, 0.002F).offset(-d0, -d1, -d2));
-                EventManager.call(event);
-                if (!event.isCancelled())
-                    drawSelectionBoundingBox(event.getBB());
 
             }
 

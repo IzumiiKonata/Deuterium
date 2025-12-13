@@ -2,17 +2,12 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import ingameime.IngameIMEJNI;
-import ingameime.PreEditRect;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
-import tritium.rendering.ime.IngameIMERenderer;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.timing.Timer;
 
 public class GuiTextField extends Gui {
     private final int id;
@@ -472,29 +467,12 @@ public class GuiTextField extends Gui {
                 }
             }
 
-            if (IngameIMERenderer.canRender() && this.isFocused()) {
-                if (updInputCTXPositionTimer.isDelayed(100)) {
-                    updInputCTXPositionTimer.reset();
-                    PreEditRect rect = new PreEditRect();
-                    rect.setX((int) (k1 * RenderSystem.getScaleFactor()) * 2);
-                    rect.setY((int) ((i1 + fontRendererInstance.FONT_HEIGHT) * RenderSystem.getScaleFactor()) * 2);
-                    IngameIMERenderer.InputCtx.setPreEditRect(rect);
-                }
-            }
-
             if (k != j) {
                 int l1 = l + this.fontRendererInstance.getStringWidth(s.substring(0, k));
                 this.drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + this.fontRendererInstance.FONT_HEIGHT);
             }
-
-//            SharedRenderingConstants.NORMAL.add(() -> {
-            if (this.isFocused() && IngameIMERenderer.canRender())
-                IngameIMERenderer.draw(k1 * RenderSystem.getScaleFactor(), this.yPosition * RenderSystem.getScaleFactor(), true);
-//            });
         }
     }
-
-    Timer updInputCTXPositionTimer = new Timer();
 
     /**
      * draws the vertical line cursor in the textbox

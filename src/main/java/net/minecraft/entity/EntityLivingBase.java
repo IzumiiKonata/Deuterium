@@ -31,15 +31,10 @@ import net.minecraft.scoreboard.Team;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import tritium.bridge.entity.LivingEntityWrapper;
-import tritium.event.events.player.JumpEvent;
-import tritium.management.EventManager;
-import tritium.utils.timing.Timer;
 
 import java.util.*;
 
 public abstract class EntityLivingBase extends Entity {
-    public final Timer attackTimer = new Timer();
     private static final UUID sprintingSpeedBoostModifierUUID = UUID.fromString("662A6B8D-DA3E-4C1C-8813-96EA6097278D");
     private static final AttributeModifier sprintingSpeedBoostModifier = (new AttributeModifier(sprintingSpeedBoostModifierUUID, "Sprinting speed boost", 0.30000001192092896D, 2)).setSaved(false);
     private BaseAttributeMap attributeMap;
@@ -227,11 +222,6 @@ public abstract class EntityLivingBase extends Entity {
         this.rotationYaw = (float) (Math.random() * Math.PI * 2.0D);
         this.rotationYawHead = this.rotationYaw;
         this.stepHeight = 0.6F;
-    }
-
-    @Override
-    protected void createWrapper() {
-        this.wrapper = new LivingEntityWrapper(this);
     }
 
     protected void entityInit() {
@@ -1352,17 +1342,6 @@ public abstract class EntityLivingBase extends Entity {
     protected void jump() {
 
         float yaw = this.rotationYaw;
-
-        if (Minecraft.getMinecraft().thePlayer != null && this.getEntityId() == Minecraft.getMinecraft().thePlayer.getEntityId()) {
-            JumpEvent jumpEvent = new JumpEvent(yaw);
-
-            EventManager.call(jumpEvent);
-
-            if (jumpEvent.isCancelled())
-                return;
-
-            yaw = jumpEvent.getRotationYaw();
-        }
 
         this.motionY = this.getJumpUpwardsMotion();
 

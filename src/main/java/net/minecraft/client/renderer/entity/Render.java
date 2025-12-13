@@ -20,11 +20,6 @@ import net.minecraft.world.World;
 import net.optifine.entity.model.IEntityRenderer;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
-import tritium.event.events.rendering.RenderNameTagEvent;
-import tritium.management.EventManager;
-import tritium.module.impl.render.Perspective;
-import tritium.settings.ClientSettings;
-import tritium.widget.impl.PaperDoll;
 
 public abstract class Render<T extends Entity> implements IEntityRenderer {
     private static final Location shadowTextures = Location.of("textures/misc/shadow.png");
@@ -65,11 +60,6 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
 
     protected void renderName(T entity, double x, double y, double z) {
         if (this.canRenderName(entity)) {
-            RenderNameTagEvent event = EventManager.call(new RenderNameTagEvent());
-
-            if (event.isCancelled())
-                return;
-
             this.renderLivingLabel(entity, entity.getDisplayName().getFormattedText(), x, y, z, 64);
         }
     }
@@ -351,17 +341,12 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
             GlStateManager.translate((float) x + 0.0F, (float) y + entityIn.height + 0.5F, (float) z);
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
 
-            if (!PaperDoll.isRendering) {
-                int thirdPersonView = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-                int k = thirdPersonView == 2 ? -180 : 0;
-                int l = thirdPersonView == 2 ? -1 : 1;
+            int thirdPersonView = Minecraft.getMinecraft().gameSettings.thirdPersonView;
+            int k = thirdPersonView == 2 ? -180 : 0;
+            int l = thirdPersonView == 2 ? -1 : 1;
 
-                GlStateManager.rotate(/*-this.renderManager.playerViewY*/ -Perspective.getCameraYaw() - k, 0.0F, 1.0F, 0.0F);
-                GlStateManager.rotate(/*this.renderManager.playerViewX*/Perspective.getCameraPitch() * l, 1.0F, 0.0F, 0.0F);
-            } else {
-                GlStateManager.rotate(this.renderManager.playerViewY * (this.renderManager.livingPlayer.isSneaking() ? -1 : 1), 0.0F, 1.0F, 0.0F);
-//                PaperDoll.isRendering = false;
-            }
+            GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+            GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
 //            GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
 //            GlStateManager.rotate(entityIn == Minecraft.getMinecraft().getRenderViewEntity() && Minecraft.getMinecraft().gameSettings.thirdPersonView == 2 ? -this.renderManager.playerViewX : this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
             GlStateManager.scale(-f1, -f1, f1);
@@ -379,16 +364,6 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
             }
 
             int j = fontrenderer.getStringWidth(str) / 2;
-
-            if (ClientSettings.NAME_TAG_BACKGROUND.getValue()) {
-                GlStateManager.disableTexture2D();
-                worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-                worldrenderer.pos(-j - 1, -1 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                worldrenderer.pos(-j - 1, 8 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                worldrenderer.pos(j + 1, 8 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                worldrenderer.pos(j + 1, -1 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                tessellator.draw();
-            }
 
             GlStateManager.enableTexture2D();
             fontrenderer.drawString(str, -fontrenderer.getStringWidth(str) / 2, i, 553648127);

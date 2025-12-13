@@ -28,7 +28,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.*;
@@ -474,7 +474,7 @@ public class GameSettings {
 //            if (mc.theWorld != null) {
 //                mc.displayGuiScreen(new GuiVideoSettings(new GuiOptions(new GuiIngameMenu(), mc.gameSettings), mc.gameSettings));
 //            } else {
-//                mc.displayGuiScreen(new GuiVideoSettings(new GuiOptions(MainMenu.getInstance(), mc.gameSettings), mc.gameSettings));
+//                mc.displayGuiScreen(new GuiVideoSettings(new GuiOptions(new GuiMainMenu(), mc.gameSettings), mc.gameSettings));
 //            }
         }
 

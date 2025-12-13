@@ -32,12 +32,6 @@ import net.minecraft.util.*;
 import net.minecraft.world.border.WorldBorder;
 import net.optifine.CustomColors;
 import org.lwjgl.opengl.GL11;
-import tritium.management.ModuleManager;
-import tritium.management.WidgetsManager;
-import tritium.rendering.RGBA;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.ShaderProgram;
-import tritium.settings.ClientSettings;
 
 import java.util.Collection;
 import java.util.List;
@@ -151,216 +145,166 @@ public class GuiIngame extends Gui {
         this.titleFadeOut = 20;
     }
 
-    public boolean dirty = true;
-
-    public Framebuffer buf;
-
     public void renderGameOverlay(float partialTicks) {
         ScaledResolution scaledresolution = ScaledResolution.get();
 
-        if (ClientSettings.GUIINGAME_CACHE.getValue()) {
 
-            int i = scaledresolution.getScaledWidth();
-            int j = scaledresolution.getScaledHeight();
-            this.mc.entityRenderer.setupOverlayRendering();
+        int i = scaledresolution.getScaledWidth();
+        int j = scaledresolution.getScaledHeight();
+        this.mc.entityRenderer.setupOverlayRendering();
 
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.enableBlend();
+        OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.mc.getTextureManager().bindTexture(icons);
-            GlStateManager.enableBlend();
+        ItemStack itemstack = this.mc.thePlayer.inventory.armorItemInSlot(3);
 
-            if (this.showCrosshair()) {
-                GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
-                GlStateManager.enableAlpha();
-                this.drawTexturedModalRect(i / 2 - 7, j / 2 - 7, 0, 0, 16, 16);
-            }
+        if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.getItem() == Item.getItemFromBlock(Blocks.pumpkin)) {
+            this.renderPumpkinOverlay(scaledresolution);
+        }
 
-            if (buf == null || dirty) {
-                buf = RenderSystem.createFrameBuffer(buf);
-                buf.setFramebufferColor(0.0f, 0.0f, 0.0f, 0.0f);
-                buf.bindFramebuffer(true);
-                buf.framebufferClearNoBinding();
+        if (!this.mc.thePlayer.isPotionActive(Potion.confusion)) {
+            float f = this.mc.thePlayer.prevTimeInPortal + (this.mc.thePlayer.timeInPortal - this.mc.thePlayer.prevTimeInPortal) * partialTicks;
+
+            if (f > 0.0F) {
+                this.renderPortal(f, scaledresolution);
             }
         }
 
-        // 这里是方块人原版的 GuiIngame的内容
-        if (!ClientSettings.GUIINGAME_CACHE.getValue() || dirty) {
-            int i = scaledresolution.getScaledWidth();
-            int j = scaledresolution.getScaledHeight();
-            this.mc.entityRenderer.setupOverlayRendering();
+        if (this.mc.playerController.isSpectator()) {
+            this.spectatorGui.renderTooltip(scaledresolution, partialTicks);
+        } else {
+            this.renderTooltip(scaledresolution, partialTicks);
+        }
 
-            GlStateManager.enableBlend();
-            OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-            ItemStack itemstack = this.mc.thePlayer.inventory.armorItemInSlot(3);
-
-            if (this.mc.gameSettings.thirdPersonView == 0 && itemstack != null && itemstack.getItem() == Item.getItemFromBlock(Blocks.pumpkin)) {
-                this.renderPumpkinOverlay(scaledresolution);
-            }
-
-            if (!this.mc.thePlayer.isPotionActive(Potion.confusion)) {
-                float f = this.mc.thePlayer.prevTimeInPortal + (this.mc.thePlayer.timeInPortal - this.mc.thePlayer.prevTimeInPortal) * partialTicks;
-
-                if (f > 0.0F) {
-                    this.renderPortal(f, scaledresolution);
-                }
-            }
-
-            if (this.mc.playerController.isSpectator()) {
-                this.spectatorGui.renderTooltip(scaledresolution, partialTicks);
-            } else {
-                if (ClientSettings.GUIINGAME_CACHE.getValue()) {
-                    GL11.glCullFace(GL11.GL_BACK);
-                }
-
-                this.renderTooltip(scaledresolution, partialTicks);
-            }
-
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            this.mc.getTextureManager().bindTexture(icons);
-            GlStateManager.enableBlend();
-            if (!ClientSettings.GUIINGAME_CACHE.getValue() && this.showCrosshair()) {
-                GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
-                GlStateManager.enableAlpha();
-                this.drawTexturedModalRect(i / 2 - 7, j / 2 - 7, 0, 0, 16, 16);
-            }
-
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        this.mc.getTextureManager().bindTexture(icons);
+        GlStateManager.enableBlend();
+        if (this.showCrosshair()) {
+            GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
             GlStateManager.enableAlpha();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            this.mc.mcProfiler.startSection("bossHealth");
-            this.renderBossHealth();
+            this.drawTexturedModalRect(i / 2 - 7, j / 2 - 7, 0, 0, 16, 16);
+        }
+
+        GlStateManager.enableAlpha();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        this.mc.mcProfiler.startSection("bossHealth");
+        this.renderBossHealth();
+        this.mc.mcProfiler.endSection();
+
+        if (this.mc.playerController.shouldDrawHUD()) {
+            this.renderPlayerStats(scaledresolution);
+
+        }
+
+        GlStateManager.disableBlend();
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        int k1 = i / 2 - 91;
+
+        if (this.mc.thePlayer.isRidingHorse()) {
+            this.renderHorseJumpBar(scaledresolution, k1);
+        } else if (this.mc.playerController.gameIsSurvivalOrAdventure()) {
+            this.renderExpBar(scaledresolution, k1);
+        }
+
+        if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator()) {
+            this.renderSelectedItem(scaledresolution);
+        } else if (this.mc.thePlayer.isSpectator()) {
+            this.spectatorGui.renderSelectedItem(scaledresolution);
+        }
+
+        if (this.mc.isDemo()) {
+            this.renderDemo(scaledresolution);
+        }
+
+        if (this.mc.gameSettings.showDebugInfo) {
+            this.overlayDebug.renderDebugInfo(scaledresolution);
+        }
+
+        if (this.titlesTimer > 0) {
+            this.mc.mcProfiler.startSection("titleAndSubtitle");
+            float f3 = (float) this.titlesTimer - partialTicks;
+            int i2 = 255;
+
+            if (this.titlesTimer > this.titleFadeOut + this.titleDisplayTime) {
+                float f4 = (float) (this.titleFadeIn + this.titleDisplayTime + this.titleFadeOut) - f3;
+                i2 = (int) (f4 * 255.0F / (float) this.titleFadeIn);
+            }
+
+            if (this.titlesTimer <= this.titleFadeOut) {
+                i2 = (int) (f3 * 255.0F / (float) this.titleFadeOut);
+            }
+
+            i2 = MathHelper.clamp_int(i2, 0, 255);
+
+            if (i2 > 8) {
+                GlStateManager.pushMatrix();
+                GlStateManager.translate((float) (i / 2), (float) (j / 2), 0.0F);
+                GlStateManager.enableBlend();
+                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(4.0F, 4.0F, 4.0F);
+                int j2 = i2 << 24 & -16777216;
+                this.getFontRenderer().drawString(this.displayedTitle, (float) (-this.getFontRenderer().getStringWidth(this.displayedTitle) / 2), -10.0F, 16777215 | j2, true);
+                GlStateManager.popMatrix();
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(2.0F, 2.0F, 2.0F);
+                this.getFontRenderer().drawString(this.displayedSubTitle, (float) (-this.getFontRenderer().getStringWidth(this.displayedSubTitle) / 2), 5.0F, 16777215 | j2, true);
+                GlStateManager.popMatrix();
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
+            }
+
             this.mc.mcProfiler.endSection();
-
-            if (this.mc.playerController.shouldDrawHUD()) {
-                this.renderPlayerStats(scaledresolution);
-
-            }
-
-            GlStateManager.disableBlend();
-
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            int k1 = i / 2 - 91;
-
-            if (this.mc.thePlayer.isRidingHorse()) {
-                this.renderHorseJumpBar(scaledresolution, k1);
-            } else if (this.mc.playerController.gameIsSurvivalOrAdventure()) {
-                this.renderExpBar(scaledresolution, k1);
-            }
-
-            if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator()) {
-                this.renderSelectedItem(scaledresolution);
-            } else if (this.mc.thePlayer.isSpectator()) {
-                this.spectatorGui.renderSelectedItem(scaledresolution);
-            }
-
-            if (this.mc.isDemo()) {
-                this.renderDemo(scaledresolution);
-            }
-
-            if (this.mc.gameSettings.showDebugInfo) {
-                this.overlayDebug.renderDebugInfo(scaledresolution);
-            }
-
-            if (this.titlesTimer > 0) {
-                this.mc.mcProfiler.startSection("titleAndSubtitle");
-                float f3 = (float) this.titlesTimer - partialTicks;
-                int i2 = 255;
-
-                if (this.titlesTimer > this.titleFadeOut + this.titleDisplayTime) {
-                    float f4 = (float) (this.titleFadeIn + this.titleDisplayTime + this.titleFadeOut) - f3;
-                    i2 = (int) (f4 * 255.0F / (float) this.titleFadeIn);
-                }
-
-                if (this.titlesTimer <= this.titleFadeOut) {
-                    i2 = (int) (f3 * 255.0F / (float) this.titleFadeOut);
-                }
-
-                i2 = MathHelper.clamp_int(i2, 0, 255);
-
-                if (i2 > 8) {
-                    GlStateManager.pushMatrix();
-                    GlStateManager.translate((float) (i / 2), (float) (j / 2), 0.0F);
-                    GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-                    GlStateManager.pushMatrix();
-                    GlStateManager.scale(4.0F, 4.0F, 4.0F);
-                    int j2 = i2 << 24 & -16777216;
-                    this.getFontRenderer().drawString(this.displayedTitle, (float) (-this.getFontRenderer().getStringWidth(this.displayedTitle) / 2), -10.0F, 16777215 | j2, true);
-                    GlStateManager.popMatrix();
-                    GlStateManager.pushMatrix();
-                    GlStateManager.scale(2.0F, 2.0F, 2.0F);
-                    this.getFontRenderer().drawString(this.displayedSubTitle, (float) (-this.getFontRenderer().getStringWidth(this.displayedSubTitle) / 2), 5.0F, 16777215 | j2, true);
-                    GlStateManager.popMatrix();
-                    GlStateManager.disableBlend();
-                    GlStateManager.popMatrix();
-                }
-
-                this.mc.mcProfiler.endSection();
-            }
+        }
 
 
 //            GlStateManager.disableAlpha();
 
 //            GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
 
-            GlStateManager.disableAlpha();
+        GlStateManager.disableAlpha();
 
 //            GlStateManager.alphaFunc(516, 0F);
 
-            Scoreboard scoreboard = this.mc.theWorld.getScoreboard();
-            ScoreObjective scoreobjective = null;
-            ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(this.mc.thePlayer.getName());
+        Scoreboard scoreboard = this.mc.theWorld.getScoreboard();
+        ScoreObjective scoreobjective = null;
+        ScorePlayerTeam scoreplayerteam = scoreboard.getPlayersTeam(this.mc.thePlayer.getName());
 
-            if (scoreplayerteam != null) {
-                int i1 = scoreplayerteam.getChatFormat().getColorIndex();
+        if (scoreplayerteam != null) {
+            int i1 = scoreplayerteam.getChatFormat().getColorIndex();
 
-                if (i1 >= 0) {
-                    scoreobjective = scoreboard.getObjectiveInDisplaySlot(3 + i1);
-                }
+            if (i1 >= 0) {
+                scoreobjective = scoreboard.getObjectiveInDisplaySlot(3 + i1);
             }
-
-            ScoreObjective scoreobjective1 = scoreobjective != null ? scoreobjective : scoreboard.getObjectiveInDisplaySlot(1);
-
-            if (!WidgetsManager.scoreBoard.isEnabled()) {
-                if (scoreobjective1 != null) {
-                    this.renderScoreboard(scoreobjective1, scaledresolution);
-                }
-            }
-
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            GlStateManager.disableAlpha();
-
-            scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
-
-            if (this.mc.gameSettings.keyBindPlayerList.isKeyDown() && (!this.mc.isIntegratedServerRunning() || this.mc.thePlayer.sendQueue.getPlayerInfoMap().size() > 1 || scoreobjective1 != null)) {
-                this.overlayPlayerList.updatePlayerList(true);
-
-                GlStateManager.pushMatrix();
-                GlStateManager.translate(0, (double) 0, 0);
-                this.overlayPlayerList.renderPlayerlist(i, scoreboard, scoreobjective1);
-                GlStateManager.popMatrix();
-            } else {
-                this.overlayPlayerList.updatePlayerList(false);
-            }
-
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager.disableLighting();
-            GlStateManager.enableAlpha();
         }
 
-        if (ClientSettings.GUIINGAME_CACHE.getValue()) {
-            mc.getFramebuffer().bindFramebuffer(true);
-            dirty = false;
+        ScoreObjective scoreobjective1 = scoreobjective != null ? scoreobjective : scoreboard.getObjectiveInDisplaySlot(1);
 
-            GlStateManager.bindTexture(buf.framebufferTexture);
-            GlStateManager.enableTexture2D();
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            ShaderProgram.drawQuadFlipped(0, 0, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
+        if (scoreobjective1 != null) {
+            this.renderScoreboard(scoreobjective1, scaledresolution);
         }
+
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.disableAlpha();
+
+        scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
+
+        if (this.mc.gameSettings.keyBindPlayerList.isKeyDown() && (!this.mc.isIntegratedServerRunning() || this.mc.thePlayer.sendQueue.getPlayerInfoMap().size() > 1 || scoreobjective1 != null)) {
+            this.overlayPlayerList.updatePlayerList(true);
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(0, (double) 0, 0);
+            this.overlayPlayerList.renderPlayerlist(i, scoreboard, scoreobjective1);
+            GlStateManager.popMatrix();
+        } else {
+            this.overlayPlayerList.updatePlayerList(false);
+        }
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.disableLighting();
+        GlStateManager.enableAlpha();
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, (float) (scaledresolution.getScaledHeight() - 48), 0.0F);
@@ -368,10 +312,6 @@ public class GuiIngame extends Gui {
         this.persistantChatGUI.drawChat(this.updateCounter);
         this.mc.mcProfiler.endSection();
         GlStateManager.popMatrix();
-
-        if (ModuleManager.motionBlur.isEnabled()) {
-            ModuleManager.motionBlur.doFramebuffer();
-        }
 
     }
 
@@ -398,7 +338,6 @@ public class GuiIngame extends Gui {
         if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {
             EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            RenderSystem.resetColor();
 
             this.mc.getTextureManager().bindTexture(widgetsTexPath);
             int i = sr.getScaledWidth() / 2;
@@ -546,10 +485,6 @@ public class GuiIngame extends Gui {
                 return false;
             }
         } else {
-
-            if (ModuleManager.cameraPositions.isEnabled() && ModuleManager.cameraPositions.movementCamera.getValue() && mc.gameSettings.thirdPersonView == 1)
-                return false;
-
             return true;
         }
     }
@@ -708,10 +643,8 @@ public class GuiIngame extends Gui {
 
                 if (flag) {
 
-                    if (!ModuleManager.oldAnimation.isEnabled() || ModuleManager.oldAnimation.health.getValue()) {
-                        if (i6 * 2 + 1 < j) {
-                            this.drawTexturedModalRect(i4, j4, j6 + 54, 9 * k4, 9, 9);
-                        }
+                    if (i6 * 2 + 1 < j) {
+                        this.drawTexturedModalRect(i4, j4, j6 + 54, 9 * k4, 9, 9);
                     }
 
                     if (i6 * 2 + 1 == j) {
@@ -847,10 +780,6 @@ public class GuiIngame extends Gui {
      * Renders dragon's (boss) health on the HUD
      */
     private void renderBossHealth() {
-
-        if (WidgetsManager.bossBar.isEnabled())
-            return;
-
         if (BossStatus.bossName != null && BossStatus.statusBarTime > 0) {
             --BossStatus.statusBarTime;
             FontRenderer fontrenderer = this.mc.fontRendererObj;

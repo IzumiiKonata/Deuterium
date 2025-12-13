@@ -2,7 +2,7 @@ package net.optifine.shaders;
 
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.resources.IResourceManager;
-import tritium.rendering.async.AsyncGLContext;
+
 
 public class DefaultTexture extends AbstractTexture {
     public DefaultTexture() {

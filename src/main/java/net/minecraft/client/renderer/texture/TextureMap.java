@@ -18,7 +18,7 @@ import net.optifine.*;
 import net.optifine.shaders.ShadersTex;
 import net.optifine.util.CounterInt;
 import net.optifine.util.TextureUtils;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;

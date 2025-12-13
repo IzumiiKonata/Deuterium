@@ -19,7 +19,7 @@ import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
-import tritium.utils.other.MemoryTracker;
+import org.lwjgl.system.MemoryUtil;
 
 public class ShadersTex {
     public static Map<Integer, MultiTexID> multiTexMap = new HashMap();
@@ -161,7 +161,7 @@ public class ShadersTex {
     }
     public static void updateDynTexSubImage1(int[] src, int width, int height, int posX, int posY, int page) {
         int i = width * height;
-        IntBuffer intbuffer = MemoryTracker.memAllocInt(roundUpPOT(i) * 4);
+        IntBuffer intbuffer = MemoryUtil.memAllocInt(roundUpPOT(i) * 4);
         intbuffer.clear();
         int j = page * i;
 
@@ -170,7 +170,7 @@ public class ShadersTex {
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, posX, posY, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, intbuffer);
         }
 
-        MemoryTracker.memFree(intbuffer);
+        MemoryUtil.memFree(intbuffer);
     }
 
     public static ITextureObject createDefaultTexture() {
@@ -298,7 +298,7 @@ public class ShadersTex {
         int i = linear ? 9729 : 9728;
         int j = clamp ? 33071 : 10497;
         int k = width * height;
-        IntBuffer intbuffer = MemoryTracker.memAllocInt(roundUpPOT(k) * 4);
+        IntBuffer intbuffer = MemoryUtil.memAllocInt(roundUpPOT(k) * 4);
         intbuffer.clear();
         intbuffer.put(src, 0, k).position(0).limit(k);
         GlStateManager.bindTexture(multiTex.base);
@@ -323,7 +323,7 @@ public class ShadersTex {
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, j);
         GlStateManager.bindTexture(multiTex.base);
 
-        MemoryTracker.memFree(intbuffer);
+        MemoryUtil.memFree(intbuffer);
     }
 
     public static Location getNSMapLocation(Location location, String mapName) {

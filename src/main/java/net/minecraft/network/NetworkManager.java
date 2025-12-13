@@ -24,12 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
-import tritium.event.events.packet.ReceivePacketEvent;
-import tritium.event.events.packet.SendPacketEvent;
-import tritium.management.EventManager;
-import tritium.screens.ConsoleScreen;
-import tritium.utils.timing.Counter;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.crypto.SecretKey;
@@ -126,17 +121,10 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 
     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) throws Exception {
         if (this.channel.isOpen()) {
-            //CLIENT
-            ReceivePacketEvent receivePacketEvent = EventManager.call(new ReceivePacketEvent(p_channelRead0_2_));
-            if (receivePacketEvent.isCancelled()) {
-                return;
-            }
-
             try {
-                ((Packet) receivePacketEvent.getPacket()).processPacket(this.packetListener);
+                (p_channelRead0_2_).processPacket(this.packetListener);
             } catch (ThreadQuickExitException var4) {
             }
-            //END CLIENT
         }
     }
 
@@ -152,22 +140,14 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 
     public void sendPacket(Packet packetIn) {
 
-        SendPacketEvent sendPacketEvent = EventManager.call(new SendPacketEvent(packetIn));
         if (this.isChannelOpen()) {
             this.flushOutboundQueue();
-            //CLIENT
-            Counter.pps.add();
-            if (!sendPacketEvent.isCancelled()) {
-                this.dispatchPacket(sendPacketEvent.getPacket(), null);
-            }
-            //END CLIENT
+            this.dispatchPacket(packetIn, null);
         } else {
             this.readWriteLock.writeLock().lock();
 
             try {
-                //CLIENT
-                this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(sendPacketEvent.getPacket(), (GenericFutureListener[]) null));
-                //END CLIENT
+                this.outboundPacketsQueue.add(new NetworkManager.InboundHandlerTuplePacketListener(packetIn, (GenericFutureListener[]) null));
             } finally {
                 this.readWriteLock.writeLock().unlock();
             }

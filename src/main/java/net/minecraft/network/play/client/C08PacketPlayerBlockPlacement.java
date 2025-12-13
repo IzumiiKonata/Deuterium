@@ -5,13 +5,11 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraft.util.BlockPos;
-import today.opai.api.interfaces.dataset.Vector3i;
-import today.opai.api.interfaces.game.network.client.CPacket08Placement;
-import tritium.bridge.misc.math.Vector3iImpl;
+
 
 import java.io.IOException;
 
-public class C08PacketPlayerBlockPlacement implements Packet<INetHandlerPlayServer>, CPacket08Placement {
+public class C08PacketPlayerBlockPlacement implements Packet<INetHandlerPlayServer> {
     private static final BlockPos field_179726_a = new BlockPos(-1, -1, -1);
     private BlockPos position;
     private int placedBlockDirection;
@@ -116,13 +114,4 @@ public class C08PacketPlayerBlockPlacement implements Packet<INetHandlerPlayServ
         return this.facingZ;
     }
 
-    @Override
-    public today.opai.api.interfaces.game.item.ItemStack getItemStack() {
-        return this.stack.getWrapper();
-    }
-
-    @Override
-    public Vector3i getPosition() {
-        return new Vector3iImpl(this.position.getX(), this.position.getY(), this.position.getZ());
-    }
 }

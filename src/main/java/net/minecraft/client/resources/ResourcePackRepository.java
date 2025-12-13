@@ -23,10 +23,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.comparator.LastModifiedFileComparator;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import tritium.rendering.ResPackPreview;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
@@ -292,17 +290,6 @@ public class ResourcePackRepository {
         private BufferedImage texturePackIcon;
         private Location locationTexturePackIcon;
 
-        @Getter
-        private final List<ResPackPreview> previewImages = new ArrayList<>();
-
-        @Getter
-        private final List<String> resPackInfo = new CopyOnWriteArrayList<>();
-
-        @Getter
-        private final AtomicBoolean previewsLoaded = new AtomicBoolean(false);
-
-        public boolean triggeredLoading = false;
-
         private Entry(File resourcePackFileIn) {
             this.resourcePackFile = resourcePackFileIn;
         }
@@ -323,107 +310,6 @@ public class ResourcePackRepository {
             this.closeResourcePack();
         }
 
-        public void loadPreviewsIfNotLoaded() {
-
-            if (!this.triggeredLoading) {
-                this.triggeredLoading = true;
-
-                MultiThreadingUtil.runAsync(() -> {
-                    try {
-                        this.genPreviewImages();
-                        this.detectResPackInfo();
-                    } catch (Throwable t) {
-                        t.printStackTrace();
-                    }
-                    this.closeResourcePack();
-                });
-            }
-
-        }
-
-        private void detectResPackInfo() {
-            this.resPackInfo.add("Animations: " + (this.reResourcePack.hasAnimations() ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕"));
-            this.resPackInfo.add("Lightmap: " + (this.hasLightMap() ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕"));
-            this.resPackInfo.add("Sounds: " + (this.reResourcePack.hasSounds() ? EnumChatFormatting.GREEN + "✔" : EnumChatFormatting.RED + "✕"));
-        }
-
-        private boolean hasLightMap() {
-            boolean b = this.reResourcePack.resourceExists(Location.of("mcpatcher/lightmap/world0.png"));
-            boolean b1 = this.reResourcePack.resourceExists(Location.of("mcpatcher/lightmap/world1.png"));
-            boolean b2 = this.reResourcePack.resourceExists(Location.of("mcpatcher/lightmap/world-1.png"));
-            
-            return b || b1 || b2;
-        }
-
-        /**
-         * 获取资源包中的图片
-         * @param loc 位置
-         * @return 图片, 是否从vanilla资源包中加载
-         */
-        @SneakyThrows
-        private Tuple<NativeBackedImage, Boolean> getTextureImg(Location loc) {
-            InputStream is = null;
-
-            try {
-                is = this.reResourcePack.getInputStream(loc);
-            } catch (IOException e) {
-            }
-
-            boolean fromDefault = false;
-
-            if (is == null) {
-                is = ResourcePackRepository.this.rprDefaultResourcePack.getInputStream(loc);
-                fromDefault = true;
-            }
-
-            assert is != null;
-
-            return Tuple.of(NativeBackedImage.make(is), fromDefault);
-        }
-
-        private void genPreviewImages() {
-            List<String> listTextures = Arrays.asList(
-                    "textures/blocks/stone.png",
-                    "textures/blocks/cobblestone.png",
-                    "textures/blocks/log_oak.png",
-                    "textures/blocks/planks_oak.png",
-                    "textures/blocks/diamond_ore.png",
-                    "textures/items/bucket_water.png",
-                    "textures/items/bucket_lava.png",
-                    "textures/items/apple_golden.png",
-                    "textures/items/ender_pearl.png",
-                    "textures/items/bow_standby.png",
-                    "textures/items/diamond_sword.png",
-                    "textures/items/iron_sword.png",
-                    "textures/items/diamond_pickaxe.png",
-                    "textures/items/iron_pickaxe.png",
-                    "textures/items/diamond_chestplate.png",
-                    "textures/items/iron_chestplate.png"
-            );
-
-            int maxSize = -1;
-
-            for (String listTexture : listTextures) {
-                Tuple<NativeBackedImage, Boolean> tuple = this.getTextureImg(Location.of(listTexture));
-                NativeBackedImage img = tuple.getA();
-
-                boolean loadedFromDefaultRespack = tuple.getB();
-                if (!loadedFromDefaultRespack) {
-                    if (img.getWidth() == img.getHeight())
-                        maxSize = Math.max(maxSize, img.getWidth());
-
-                }
-                this.previewImages.add(new ResPackPreview(reResourcePack, img, listTexture));
-            }
-
-            if (maxSize != -1)
-                this.resPackInfo.add("Res: " + EnumChatFormatting.GREEN + maxSize + "x");
-            else
-                this.resPackInfo.add("Res: " + EnumChatFormatting.YELLOW + "Unknown");
-
-            previewsLoaded.set(true);
-        }
-
         @SneakyThrows
         public void bindTexturePackIcon(TextureManager textureManagerIn) {
             if (this.locationTexturePackIcon == null) {
@@ -439,10 +325,6 @@ public class ResourcePackRepository {
             if (this.reResourcePack instanceof Closeable) {
                 IOUtils.closeQuietly((Closeable) this.reResourcePack);
             }
-        }
-
-        public void cleanUp() {
-            this.previewImages.forEach(ResPackPreview::cleanUp);
         }
 
         public IResourcePack getResourcePack() {

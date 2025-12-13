@@ -13,11 +13,8 @@ import net.optifine.shaders.ShadersTex;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.system.MemoryUtil;
-import tritium.rendering.async.AsyncGLContext;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.other.DevUtils;
-import tritium.utils.other.MemoryTracker;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -101,23 +98,19 @@ public class SimpleTexture extends AbstractTexture {
                 padd = (4 - dynamicTextureData.length % 4);
             }
 
-            IntBuffer buffer = MemoryTracker.memAllocInt(dynamicTextureData.length + padd);
+            IntBuffer buffer = MemoryUtil.memAllocInt(dynamicTextureData.length + padd);
             buffer.clear();
             buffer.put(dynamicTextureData, 0, dynamicTextureData.length);
             buffer.flip();
 
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, width, height, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, buffer);
 
-            MemoryTracker.memFree(buffer);
-
-            if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ direct subImage2D")) {
-                DevUtils.printCurrentInvokeStack();
-            }
+            MemoryUtil.memFree(buffer);
 
         } else {
 
             // creates a 16 MB buffer
-            IntBuffer dataBuffer = MemoryTracker.memAllocInt(4194304);
+            IntBuffer dataBuffer = MemoryUtil.memAllocInt(4194304);
 
             int i = 4194304 / width;
             int j;
@@ -140,7 +133,7 @@ public class SimpleTexture extends AbstractTexture {
                 GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
             }
 
-            MemoryTracker.memFree(dataBuffer);
+            MemoryUtil.memFree(dataBuffer);
 
         }
 

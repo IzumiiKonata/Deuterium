@@ -21,8 +21,4 @@ public interface IResourcePack {
     BufferedImage getPackImage() throws IOException;
 
     String getPackName();
-
-    boolean hasAnimations();
-
-    boolean hasSounds();
 }

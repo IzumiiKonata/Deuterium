@@ -18,12 +18,6 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
-import tritium.management.ModuleManager;
-import tritium.module.impl.render.BlockAnimations;
-import tritium.module.impl.render.Perspective;
-import tritium.rendering.waveycapes.layers.CustomCapeRenderLayer;
-import tritium.settings.ClientSettings;
-import tritium.widget.impl.PaperDoll;
 
 public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
 
@@ -42,7 +36,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
         this.addLayer(new LayerDeadmau5Head(this));
         this.addLayer(new LayerCape(this));
         this.addLayer(new LayerCustomHead(this.getMainModel().bipedHead));
-        this.addLayer(new CustomCapeRenderLayer(this, this.getMainModel()));
     }
 
     public ModelPlayer getMainModel() {
@@ -84,18 +77,8 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate((float)x + 0.0F, (float)y + entity.height + 0.5F, (float)z);
                 GL11.glNormal3f(0.0F, 1.0F, 0.0F);
-//                GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
-//                GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
-                if (!PaperDoll.isRendering) {
-                    int thirdPersonView = Minecraft.getMinecraft().gameSettings.thirdPersonView;
-                    int k = thirdPersonView == 2 ? -180 : 0;
-                    int l = thirdPersonView == 2 ? -1 : 1;
-
-                    GlStateManager.rotate(-Perspective.getCameraYaw() - k, 0.0F, 1.0F, 0.0F);
-                    GlStateManager.rotate(Perspective.getCameraPitch() * l, 1.0F, 0.0F, 0.0F);
-                } else {
-                    GlStateManager.rotate(this.renderManager.playerViewY * (this.renderManager.livingPlayer.isSneaking() ? -1 : 1), 0.0F, 1.0F, 0.0F);
-                }
+                GlStateManager.rotate(-this.renderManager.playerViewY, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotate(this.renderManager.playerViewX, 1.0F, 0.0F, 0.0F);
                 GlStateManager.scale(-f1, -f1, f1);
                 GlStateManager.disableLighting();
                 GlStateManager.depthMask(false);
@@ -112,16 +95,6 @@ public class RenderPlayer extends RendererLivingEntity<AbstractClientPlayer> {
                 }
 
                 int j = fontrenderer.getStringWidth(str) / 2;
-
-                if (ClientSettings.NAME_TAG_BACKGROUND.getValue()) {
-                    GlStateManager.disableTexture2D();
-                    worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-                    worldrenderer.pos(-j - 1, -1 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                    worldrenderer.pos(-j - 1, 8 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                    worldrenderer.pos(j + 1, 8 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                    worldrenderer.pos(j + 1, -1 + i, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                    tessellator.draw();
-                }
 
                 GlStateManager.enableTexture2D();
 

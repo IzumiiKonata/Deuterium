@@ -34,10 +34,7 @@ import net.minecraft.world.storage.ISaveFormat;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import org.apache.commons.lang3.Validate;
-import tritium.event.eventapi.State;
-import tritium.event.events.world.WorldTickEvent;
-import tritium.management.EventManager;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -656,10 +653,6 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
 
                 this.theProfiler.startSection("tick");
 
-                WorldTickEvent worldTickEvent = new WorldTickEvent();
-                worldTickEvent.setState(State.PRE);
-                EventManager.call(worldTickEvent);
-
                 try {
                     worldserver.tick();
                 } catch (Throwable throwable1) {
@@ -667,9 +660,6 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
                     worldserver.addWorldInfoToCrashReport(crashreport);
                     throw new ReportedException(crashreport);
                 }
-
-                worldTickEvent.setState(State.POST);
-                EventManager.call(worldTickEvent);
 
                 try {
                     worldserver.updateEntities();

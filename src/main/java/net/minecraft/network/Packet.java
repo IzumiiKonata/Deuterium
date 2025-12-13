@@ -1,11 +1,10 @@
 package net.minecraft.network;
 
 import net.minecraft.client.Minecraft;
-import today.opai.api.interfaces.game.network.NetPacket;
 
 import java.io.IOException;
 
-public interface Packet<T extends INetHandler> extends NetPacket {
+public interface Packet<T extends INetHandler> {
     /**
      * Reads the raw packet data from the data stream.
      */

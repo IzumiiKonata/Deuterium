@@ -9,7 +9,6 @@ import net.minecraft.src.Config;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.optifine.util.LinkedList;
 import org.lwjgl.system.MemoryUtil;
-import tritium.utils.other.MemoryTracker;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
@@ -202,8 +201,8 @@ public class VboRegion {
         OpenGlHelper.glBindBuffer(OpenGlHelper.GL_COPY_READ_BUFFER, 0);
         OpenGlHelper.glBindBuffer(OpenGlHelper.GL_COPY_WRITE_BUFFER, 0);
         OpenGlHelper.glDeleteBuffers(this.glBufferId);
-        MemoryTracker.memFree(this.bufferIndexVertex);
-        MemoryTracker.memFree(this.bufferCountVertex);
+        MemoryUtil.memFree(this.bufferIndexVertex);
+        MemoryUtil.memFree(this.bufferCountVertex);
         this.bufferIndexVertex = GLAllocation.createDirectIntBuffer(i);
         this.bufferCountVertex = GLAllocation.createDirectIntBuffer(i);
         this.glBufferId = l;

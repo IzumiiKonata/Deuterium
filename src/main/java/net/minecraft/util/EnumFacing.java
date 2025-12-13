@@ -3,7 +3,6 @@ package net.minecraft.util;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Maps;
-import today.opai.api.enums.EnumDirection;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -365,14 +364,6 @@ public enum EnumFacing implements IStringSerializable {
      */
     public Vec3i getDirectionVec() {
         return this.directionVec;
-    }
-
-    public EnumDirection toEnumDirection() {
-        return EnumDirection.values()[this.index];
-    }
-
-    public static EnumFacing fromEnumDirection(EnumDirection direction) {
-        return VALUES[direction.ordinal()];
     }
 
     static {

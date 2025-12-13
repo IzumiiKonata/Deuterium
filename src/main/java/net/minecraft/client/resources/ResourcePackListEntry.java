@@ -6,10 +6,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Location;
-import tritium.rendering.RGBA;
-import tritium.rendering.ResPackPreview;
-import tritium.rendering.Rect;
-import tritium.rendering.rendersystem.RenderSystem;
 
 import java.util.List;
 
@@ -99,48 +95,6 @@ public abstract class ResourcePackListEntry implements GuiListExtended.IGuiListE
 
         for (int l = 0; l < 2 && l < list.size(); ++l) {
             this.mc.fontRendererObj.drawStringWithShadow(list.get(l), (float) (x + 32 + 2), (float) (y + 12 + 10 * l), 8421504);
-        }
-
-        if (RenderSystem.isHovered(mouseX, mouseY, x - 1, y - 1, listWidth - 9, slotHeight + 1) && !(this instanceof ResourcePackListEntryDefault)) {
-
-            ResourcePackRepository.Entry entry = ((ResourcePackListEntryFound) this).getEntry();
-
-            entry.loadPreviewsIfNotLoaded();
-
-            if (entry.getPreviewsLoaded().get()) {
-                resourcePacksGUI.renderCalls.add(() -> {
-                    double posX = mouseX + 4;
-                    double posY = mouseY + 4;
-
-                    Rect.draw(posX, posY, 215, 40, RGBA.color(255, 255, 255, 50));
-
-                    double startX = posX + 4;
-                    double startY = posY + 4;
-
-                    List<ResPackPreview> previewImages = entry.getPreviewImages();
-                    for (int i = 0; i < previewImages.size(); i++) {
-                        ResPackPreview previewImage = previewImages.get(i);
-                        previewImage.render(startX, startY, 16, 16);
-                        startX += 17;
-
-                        if (i == 7) {
-                            startX = posX + 4;
-                            startY += 17;
-                        }
-                    }
-//
-//                Image.draw(((ResourcePackListEntryFound) this).getEntry().getLocationPreview(), posX + 4, posY + 4, 135, 33, Image.Type.Normal);
-
-                    Rect.draw(posX + 4 + 135 + 4 - .5, posY + 4, 1, 32, -1);
-
-                    List<String> resPackInfo = entry.getResPackInfo();
-                    double yOffset = posY + 3;
-                    for (String s : resPackInfo) {
-                        mc.fontRendererObj.drawStringWithShadow(s, posX + 4 + 135 + 4 + 4, yOffset, 16777215);
-                        yOffset += mc.fontRendererObj.FONT_HEIGHT;
-                    }
-                });
-            }
         }
     }
 

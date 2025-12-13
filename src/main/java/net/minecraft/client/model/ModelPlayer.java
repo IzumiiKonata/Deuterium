@@ -4,7 +4,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
-import tritium.management.ModuleManager;
 
 public class ModelPlayer extends ModelBiped {
     public ModelRenderer bipedLeftArmwear;
@@ -99,12 +98,6 @@ public class ModelPlayer extends ModelBiped {
     }
 
     public void renderCape(float p_178728_1_, AbstractClientPlayer player) {
-        if (ModuleManager.waveyCapes.isEnabled()) {
-            if (ModuleManager.waveyCapes.onlyLocalPlayer.getValue() && player != Minecraft.getMinecraft().thePlayer) {
-                this.bipedCape.render(p_178728_1_);
-            }
-            return;
-        }
         this.bipedCape.render(p_178728_1_);
     }
 

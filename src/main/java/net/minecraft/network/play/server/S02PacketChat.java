@@ -4,11 +4,11 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.IChatComponent;
-import today.opai.api.interfaces.game.network.server.SPacket02Chat;
+
 
 import java.io.IOException;
 
-public class S02PacketChat implements Packet<INetHandlerPlayClient>, SPacket02Chat {
+public class S02PacketChat implements Packet<INetHandlerPlayClient> {
     private IChatComponent chatComponent;
     private byte type;
 
@@ -63,17 +63,14 @@ public class S02PacketChat implements Packet<INetHandlerPlayClient>, SPacket02Ch
         return this.type;
     }
 
-    @Override
     public String getMessage() {
         return IChatComponent.Serializer.componentToJson(this.chatComponent);
     }
 
-    @Override
     public void setType(byte b) {
         this.type = b;
     }
 
-    @Override
     public void setMessage(String message) {
         this.chatComponent = IChatComponent.Serializer.jsonToComponent(message);
     }

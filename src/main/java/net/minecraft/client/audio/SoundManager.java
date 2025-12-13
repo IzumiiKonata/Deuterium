@@ -12,9 +12,8 @@ import org.lwjgl.openal.ALC10;
 import org.lwjgl.system.MemoryUtil;
 import paulscode.sound.*;
 import paulscode.sound.codecs.CodecJOrbis;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -256,19 +255,16 @@ public class SoundManager {
 
     private void checkSoundSystemStatus() {
         if (deviceDisconnected()) {
-            MultiThreadingUtil.runAsync(() -> {
+            new Thread(() -> {
                 reconnect("Sound device lost");
                 this.systemDevice = systemDevice();
-            });
+            }).start();
             return;
         }
         if (this.tick >= 20) {
             this.tick = 0;
 
-            MultiThreadingUtil.runAsync(() -> {
-                systemDeviceChanged(() -> reconnect("System device changed"));
-            });
-
+            systemDeviceChanged(() -> reconnect("System device changed"));
         }
         ++this.tick;
     }

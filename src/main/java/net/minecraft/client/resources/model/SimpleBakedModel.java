@@ -7,7 +7,7 @@ import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.block.model.ModelBlock;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.util.EnumFacing;
-import tritium.utils.optimization.Deduplicator;
+
 
 import java.util.List;
 
@@ -105,13 +105,11 @@ public class SimpleBakedModel implements IBakedModel {
         }
 
         public SimpleBakedModel.Builder addFaceQuad(EnumFacing facing, BakedQuad quad) {
-            Deduplicator.deduplicate(quad);
             this.builderFaceQuads.get(facing.ordinal()).add(quad);
             return this;
         }
 
         public SimpleBakedModel.Builder addGeneralQuad(BakedQuad quad) {
-            Deduplicator.deduplicate(quad);
             this.builderGeneralQuads.add(quad);
             return this;
         }

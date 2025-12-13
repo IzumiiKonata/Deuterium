@@ -84,13 +84,4 @@ public class DefaultResourcePack implements IResourcePack {
         return "Default";
     }
 
-    @Override
-    public boolean hasAnimations() {
-        return false;
-    }
-
-    @Override
-    public boolean hasSounds() {
-        return true;
-    }
 }

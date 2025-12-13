@@ -9,9 +9,6 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
-import tritium.utils.other.DevUtils;
-import tritium.utils.other.MemoryTracker;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -93,15 +90,6 @@ public class DynamicTexture extends AbstractTexture {
     }
 
     public void allocateTexture(int textureWidth, int textureHeight) {
-
-        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
-                this.allocateTextureImpl(0, textureWidth, textureHeight);
-                return null;
-            });
-            return;
-        }
-
         this.allocateTextureImpl(0, textureWidth, textureHeight);
     }
 
@@ -137,29 +125,16 @@ public class DynamicTexture extends AbstractTexture {
     protected boolean linear = false;
 
     static final int BUFFER_SIZE = 2097152;
-    static final IntBuffer DATA_BUFFER = MemoryTracker.memAllocInt(BUFFER_SIZE);
+    static final IntBuffer DATA_BUFFER = MemoryUtil.memAllocInt(BUFFER_SIZE);
 
     @SneakyThrows
     public void updateDynamicTexture() {
-
-        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
-                this.updateDynamicTexture();
-                return null;
-            });
-            return;
-        }
-
         this.bindTexture();
 
         TextureUtil.setTextureBlurMipmap(isLinear(), false);
         TextureUtil.setTextureClamped(false);
 
         Minecraft mc = Minecraft.getMinecraft();
-
-        if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ pre")) {
-            DevUtils.printCurrentInvokeStack();
-        }
 
         IntBuffer dataBuffer = DATA_BUFFER;
         dataBuffer.clear();
@@ -190,10 +165,6 @@ public class DynamicTexture extends AbstractTexture {
                 else
                     GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
             }
-        }
-
-        if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ indirect subImage2D")) {
-            DevUtils.printCurrentInvokeStack();
         }
 
         if (this.clearable)

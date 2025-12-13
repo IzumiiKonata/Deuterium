@@ -29,7 +29,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.storage.MapData;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
-import tritium.settings.ClientSettings;
 
 public class RenderItemFrame extends Render<EntityItemFrame> {
     private static final Location mapBackgroundTextures = Location.of("textures/map/map_background.png");
@@ -195,16 +194,6 @@ public class RenderItemFrame extends Render<EntityItemFrame> {
                     Tessellator tessellator = Tessellator.getInstance();
                     WorldRenderer worldrenderer = tessellator.getWorldRenderer();
                     int i = fontrenderer.getStringWidth(s) / 2;
-
-                    if (ClientSettings.NAME_TAG_BACKGROUND.getValue()) {
-                        GlStateManager.disableTexture2D();
-                        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-                        worldrenderer.pos(-i - 1, -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos(-i - 1, 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos(i + 1, 8.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        worldrenderer.pos(i + 1, -1.0D, 0.0D).color(0.0F, 0.0F, 0.0F, 0.25F).endVertex();
-                        tessellator.draw();
-                    }
 
                     GlStateManager.enableTexture2D();
                     GlStateManager.depthMask(true);

@@ -1,7 +1,6 @@
 package net.minecraft.scoreboard;
 
 import net.minecraft.client.Minecraft;
-import tritium.management.ModuleManager;
 
 public class ScoreObjective {
     private final Scoreboard theScoreboard;
@@ -19,11 +18,6 @@ public class ScoreObjective {
         this.name = nameIn;
         this.objectiveCriteria = objectiveCriteriaIn;
         this.displayName = nameIn;
-
-        if (ModuleManager.nameSpoof.isEnabled() && displayName != null) {
-            displayName = displayName.replace(Minecraft.getMinecraft().getSession().getUsername(), ModuleManager.nameSpoof.getSpoofedName());
-        }
-
         this.renderType = objectiveCriteriaIn.getRenderType();
     }
 

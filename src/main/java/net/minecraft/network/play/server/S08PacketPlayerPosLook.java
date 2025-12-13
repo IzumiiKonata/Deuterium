@@ -3,17 +3,15 @@ package net.minecraft.network.play.server;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import today.opai.api.interfaces.dataset.Vector2f;
-import today.opai.api.interfaces.dataset.Vector3d;
-import today.opai.api.interfaces.game.network.server.SPacket08SetPosition;
-import tritium.bridge.misc.math.Vector2fImpl;
-import tritium.bridge.misc.math.Vector3dImpl;
+
+
+
 
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.Set;
 
-public class S08PacketPlayerPosLook implements Packet<INetHandlerPlayClient>, SPacket08SetPosition {
+public class S08PacketPlayerPosLook implements Packet<INetHandlerPlayClient> {
     private double x;
     private double y;
     private double z;
@@ -137,26 +135,4 @@ public class S08PacketPlayerPosLook implements Packet<INetHandlerPlayClient>, SP
         this.pitch = pitch;
     }
 
-    @Override
-    public Vector3d getPosition() {
-        return new Vector3dImpl(x, y, z);
-    }
-
-    @Override
-    public Vector2f getRotation() {
-        return new Vector2fImpl(yaw, pitch);
-    }
-
-    @Override
-    public void setPosition(Vector3d vector3d) {
-        this.x = vector3d.getX();
-        this.y = vector3d.getY();
-        this.z = vector3d.getZ();
-    }
-
-    @Override
-    public void setRotation(Vector2f vector2f) {
-        this.yaw = vector2f.getX();
-        this.pitch = vector2f.getY();
-    }
 }

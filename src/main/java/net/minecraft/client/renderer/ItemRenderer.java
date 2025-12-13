@@ -27,12 +27,6 @@ import net.minecraft.world.storage.MapData;
 import net.optifine.DynamicLights;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
-import tritium.command.CommandValues;
-import tritium.event.events.rendering.BlockAnimationEvent;
-import tritium.management.EventManager;
-import tritium.management.ModuleManager;
-import tritium.module.impl.render.BlockAnimations;
-import tritium.settings.ClientSettings;
 
 public class ItemRenderer {
     private static final Location RES_MAP_BACKGROUND = Location.of("textures/map/map_background.png");
@@ -122,10 +116,6 @@ public class ItemRenderer {
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, f, f1);
     }
 
-    private boolean isLeftHanded() {
-        return !CommandValues.getValues().cl_righthand;
-    }
-
     /**
      * Rotate the render according to the player's yaw and pitch
      */
@@ -133,11 +123,6 @@ public class ItemRenderer {
         float f = entityplayerspIn.prevRenderArmPitch + (entityplayerspIn.renderArmPitch - entityplayerspIn.prevRenderArmPitch) * partialTicks;
         float f1 = entityplayerspIn.prevRenderArmYaw + (entityplayerspIn.renderArmYaw - entityplayerspIn.prevRenderArmYaw) * partialTicks;
         GlStateManager.rotate((entityplayerspIn.rotationPitch - f) * 0.1F, 1.0F, 0.0F, 0.0F);
-
-        if (this.isLeftHanded()) {
-            GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * -0.1F, 0.0F, 1.0F, 0.0F);
-            return;
-        }
 
         GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * 0.1F, 0.0F, 1.0F, 0.0F);
     }
@@ -188,11 +173,6 @@ public class ItemRenderer {
     }
 
     private void renderItemMap(AbstractClientPlayer clientPlayer, float pitch, float equipmentProgress, float swingProgress) {
-
-        if (this.isLeftHanded()) {
-            GlStateManager.cullFace(GL11.GL_BACK);
-            GlStateManager.scale(-1, 1, 1);
-        }
 
         float f = -0.4F * MathHelper.sin(MathHelper.sqrt_float(swingProgress) * (float) Math.PI);
         float f1 = 0.2F * MathHelper.sin(MathHelper.sqrt_float(swingProgress) * (float) Math.PI * 2.0F);
@@ -305,24 +285,11 @@ public class ItemRenderer {
      */
     private void transformFirstPersonItem(float equipProgress, float swingProgress) {
 
-        if (this.isLeftHanded() && ((this.itemToRender.getItem() == Items.compass) || (this.itemToRender.getItem() == Items.clock))) {
+        if (false && ((this.itemToRender.getItem() == Items.compass) || (this.itemToRender.getItem() == Items.clock))) {
             GlStateManager.cullFace(GL11.GL_BACK);
             GlStateManager.translate(0.05, -0.63, -1.35);
             GlStateManager.rotate(-50, 1, 0, 0);
             GlStateManager.scale(1, 1, -1);
-        }
-
-        if (ModuleManager.oldAnimation.isEnabled()) {
-
-            if (itemToRender.getItem() instanceof ItemBow && ModuleManager.oldAnimation.bow.getValue()) {
-                GlStateManager.translate(-0.01f, 0.05f, -0.06f);
-            }
-
-            if (itemToRender.getItem() instanceof ItemFishingRod && ModuleManager.oldAnimation.rod.getValue()) {
-                GlStateManager.translate(0.08f, -0.027f, -0.33f);
-                GlStateManager.scale(0.93f, 1.0f, 1.0f);
-            }
-
         }
 
         GlStateManager.translate(0.56F, -0.52F, -0.71999997F);
@@ -381,20 +348,7 @@ public class ItemRenderer {
     public void renderItemInFirstPerson(float partialTicks) {
         if (!Config.isShaders() || !Shaders.isSkipRenderHand()) {
 
-            BlockAnimations ba = ModuleManager.blockAnimations;
             GlStateManager.pushMatrix();
-            int k = this.isLeftHanded() ? -1 : 1;
-            GlStateManager.translate(CommandValues.getValues().viewmodel_offset_x * k, CommandValues.getValues().viewmodel_offset_y, CommandValues.getValues().viewmodel_offset_z);
-
-            if (this.isLeftHanded()) {
-                GlStateManager.scale(-1, 1, 1);
-                if (this.itemToRender != null) {
-                    GlStateManager.cullFace(GL11.GL_FRONT);
-                } else {
-                    GlStateManager.cullFace(GL11.GL_BACK);
-                }
-            }
-
             this.renderItemSub(partialTicks);
             GlStateManager.popMatrix();
         }
@@ -414,8 +368,6 @@ public class ItemRenderer {
         GlStateManager.enableRescaleNormal();
         GlStateManager.pushMatrix();
 
-        BlockAnimations ba = ModuleManager.blockAnimations;
-
         if (this.itemToRender != null) {
             if (this.itemToRender.getItem() instanceof ItemMap) {
                 this.renderItemMap(abstractclientplayer, f2, f, f1);
@@ -430,16 +382,12 @@ public class ItemRenderer {
                     case EAT:
                     case DRINK:
                         this.performDrinking(abstractclientplayer, partialTicks);
-                        this.transformFirstPersonItem(f, ba.isEnabled() ? f1 : f);
+                        this.transformFirstPersonItem(f, f);
                         break;
 
                     case BLOCK:
-
-                        BlockAnimationEvent event = EventManager.call(new BlockAnimationEvent(f, f1, f2, f3));
-                        if (!event.isCancelled()) {
-                            this.transformFirstPersonItem(f, 0.0F);
-                            this.doBlockTransformations();
-                        }
+                        this.transformFirstPersonItem(f, 0.0F);
+                        this.doBlockTransformations();
                         break;
 
                     case BOW:

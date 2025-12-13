@@ -7,12 +7,12 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import today.opai.api.dataset.Vec3Data;
-import today.opai.api.interfaces.game.network.server.SPacket23BlockChange;
+
+
 
 import java.io.IOException;
 
-public class S23PacketBlockChange implements Packet<INetHandlerPlayClient>, SPacket23BlockChange {
+public class S23PacketBlockChange implements Packet<INetHandlerPlayClient> {
     private BlockPos blockPosition;
     private IBlockState blockState;
 
@@ -55,13 +55,4 @@ public class S23PacketBlockChange implements Packet<INetHandlerPlayClient>, SPac
         return this.blockPosition;
     }
 
-    @Override
-    public today.opai.api.interfaces.game.world.Block getBlock() {
-        return this.blockState.getBlock().getWrapper();
-    }
-
-    @Override
-    public Vec3Data getPosition() {
-        return new Vec3Data(this.blockPosition.getX(), this.blockPosition.getY(), this.blockPosition.getZ());
-    }
 }

@@ -46,8 +46,7 @@ import org.lwjglx.BufferUtils;
 import org.lwjgl.opengl.*;
 import org.lwjglx.util.glu.GLU;
 import org.lwjglx.util.vector.Vector4f;
-import tritium.rendering.rendersystem.RenderSystem;
-import tritium.utils.other.MemoryTracker;
+import org.lwjgl.system.MemoryUtil;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -1066,12 +1065,12 @@ public class Shaders {
             } else {
                 byte[] abyte = Config.readAll(inputstream);
                 IOUtils.closeQuietly(inputstream);
-                ByteBuffer bytebuffer = MemoryTracker.memAlloc(abyte.length);
+                ByteBuffer bytebuffer = MemoryUtil.memAlloc(abyte.length);
                 bytebuffer.put(abyte);
                 bytebuffer.flip();
                 TextureMetadataSection texturemetadatasection = SimpleShaderTexture.loadTextureMetadataSection(s, new TextureMetadataSection(true, true, new ArrayList()));
                 CustomTextureRaw customtextureraw = new CustomTextureRaw(type, internalFormat, width, height, depth, pixelFormat, pixelType, bytebuffer, textureUnit, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
-                MemoryTracker.memFree(bytebuffer);
+                MemoryUtil.memFree(bytebuffer);
                 return customtextureraw;
             }
         } catch (IOException ioexception) {
@@ -2594,7 +2593,7 @@ public class Shaders {
                 abyte[i - 1] = 10;
             }
 
-            MemoryTracker.memFree(bytebuffer);
+            MemoryUtil.memFree(bytebuffer);
 
             String s = new String(abyte, Charsets.US_ASCII);
             s = StrUtils.trim(s, " \n\r\t");
@@ -3096,7 +3095,8 @@ public class Shaders {
             GlStateManager.bindTexture(dfbColorTexturesFlip.getA(k));
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-            RenderSystem.linearFilter();
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+ GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, gbuffersFormat[k], renderWidth, renderHeight, 0, getPixelFormat(gbuffersFormat[k]), GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) ((ByteBuffer) null));
             EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + k, 3553, dfbColorTexturesFlip.getA(k), 0);
             checkGLError("FT c");
@@ -3106,7 +3106,8 @@ public class Shaders {
             GlStateManager.bindTexture(dfbColorTexturesFlip.getB(l));
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, GL12.GL_CLAMP_TO_EDGE);
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
-            RenderSystem.linearFilter();
+            GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR);
+ GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_LINEAR);
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, gbuffersFormat[l], renderWidth, renderHeight, 0, getPixelFormat(gbuffersFormat[l]), GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) ((ByteBuffer) null));
             checkGLError("FT ca");
         }

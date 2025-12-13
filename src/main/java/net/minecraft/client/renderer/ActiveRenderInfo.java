@@ -11,8 +11,8 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.util.glu.GLU;
-import tritium.management.ModuleManager;
-import tritium.module.impl.render.Perspective;
+
+
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -77,13 +77,8 @@ public class ActiveRenderInfo {
         position = new Vec3(OBJECTCOORDS.get(0), OBJECTCOORDS.get(1), OBJECTCOORDS.get(2));
         int i = p_74583_1_ ? 1 : 0;
         float f2, f3;
-        if (!ModuleManager.perspective.isEnabled()) {
-            f2 = entityplayerIn.rotationPitch;
-            f3 = entityplayerIn.rotationYaw;
-        } else {
-            f2 = Perspective.getCameraPitch();
-            f3 = Perspective.getCameraYaw();
-        }
+        f2 = entityplayerIn.rotationPitch;
+        f3 = entityplayerIn.rotationYaw;
         rotationX = MathHelper.cos(f3 * (float) Math.PI / 180.0F) * (float) (1 - i * 2);
         rotationZ = MathHelper.sin(f3 * (float) Math.PI / 180.0F) * (float) (1 - i * 2);
         rotationYZ = -rotationZ * MathHelper.sin(f2 * (float) Math.PI / 180.0F) * (float) (1 - i * 2);

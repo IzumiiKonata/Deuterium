@@ -1,8 +1,6 @@
 package net.minecraft.util;
 
 import net.minecraft.client.settings.GameSettings;
-import tritium.event.events.player.MovementInputEvent;
-import tritium.management.EventManager;
 
 public class MovementInputFromOptions extends MovementInput {
     private final GameSettings gameSettings;
@@ -30,12 +28,6 @@ public class MovementInputFromOptions extends MovementInput {
         if (this.gameSettings.keyBindRight.isKeyDown()) {
             --this.moveStrafe;
         }
-
-        MovementInputEvent movementInputEvent = new MovementInputEvent(this.moveForward, this.moveStrafe);
-        EventManager.call(movementInputEvent);
-
-        this.moveForward = movementInputEvent.getForward();
-        this.moveStrafe = movementInputEvent.getStrafe();
 
         this.jump = this.gameSettings.keyBindJump.isKeyDown();
         this.sneak = this.gameSettings.keyBindSneak.isKeyDown();

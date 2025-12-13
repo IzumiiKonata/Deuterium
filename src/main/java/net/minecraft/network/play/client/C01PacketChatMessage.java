@@ -3,11 +3,11 @@ package net.minecraft.network.play.client;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
-import today.opai.api.interfaces.game.network.client.CPacket01Chat;
+
 
 import java.io.IOException;
 
-public class C01PacketChatMessage implements Packet<INetHandlerPlayServer>, CPacket01Chat {
+public class C01PacketChatMessage implements Packet<INetHandlerPlayServer> {
     private String message;
 
     public C01PacketChatMessage() {

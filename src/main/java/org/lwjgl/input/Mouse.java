@@ -6,7 +6,6 @@ import org.lwjgl.glfw.GLFW;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.input.Cursor;
 import org.lwjgl.opengl.Display;
-import tritium.rendering.loading.LoadingRenderer;
 
 public class Mouse {
 
@@ -53,7 +52,7 @@ public class Mouse {
             y = latestY;
         }
 
-        if (LoadingRenderer.hide && Minecraft.getMinecraft() != null && Minecraft.getMinecraft().entityRenderer != null) {
+        if (Minecraft.getMinecraft() != null && Minecraft.getMinecraft().entityRenderer != null) {
             Minecraft.getMinecraft().entityRenderer.onMouseEvent(mouseX - latestX, Display.getHeight() - mouseY - latestY);
         }
 

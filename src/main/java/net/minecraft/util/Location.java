@@ -2,7 +2,6 @@ package net.minecraft.util;
 
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
-import tritium.utils.optimization.IdentifierCaches;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,8 +11,8 @@ public class Location {
     protected final String resourcePath;
 
     protected Location(String resourceDomain, String resourcePath) {
-        this.resourceDomain = IdentifierCaches.NAMESPACES.deduplicate(org.apache.commons.lang3.StringUtils.isEmpty(resourceDomain) ? "minecraft" : resourceDomain.toLowerCase());
-        this.resourcePath = IdentifierCaches.PATH.deduplicate(resourcePath);
+        this.resourceDomain = org.apache.commons.lang3.StringUtils.isEmpty(resourceDomain) ? "minecraft" : resourceDomain.toLowerCase();
+        this.resourcePath = resourcePath;
         Validate.notNull(this.resourcePath);
     }
 

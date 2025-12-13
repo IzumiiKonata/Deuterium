@@ -27,7 +27,7 @@ import net.optifine.util.PropertiesOrdered;
 import net.optifine.util.TextureUtils;
 import net.optifine.util.TimedEvent;
 import org.apache.commons.io.IOUtils;
-import tritium.utils.logging.LogManager;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.Sys;
@@ -1465,7 +1465,7 @@ public class Config {
                         Display.setIcon(icons);
 
 //                        for (ByteBuffer icon : icons) {
-//                            MemoryTracker.memFree(icon);
+//                            MemoryUtil.memFree(icon);
 //                        }
                     }
                 } catch (IOException ioexception) {

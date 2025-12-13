@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiDisconnected;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.network.NetHandlerLoginClient;
-import net.minecraft.client.network.NetHandlerLoginClientAdapter;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetworkManager;
@@ -13,16 +12,9 @@ import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.IChatComponent;
-import tritium.event.eventapi.Handler;
-import tritium.event.events.game.GameLoopEvent;
-import tritium.event.events.world.TickEvent;
-import tritium.event.events.world.WorldChangedEvent;
-import tritium.management.EventManager;
-import tritium.screens.ConsoleScreen;
-import tritium.screens.MainMenu;
-import tritium.utils.logging.LogManager;
+
+
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
@@ -91,80 +83,6 @@ public class GuiConnecting extends GuiScreen {
 
                     GuiConnecting.this.mc.displayGuiScreen(new GuiDisconnected(GuiConnecting.this.previousGuiScreen, "connect.failed", new ChatComponentTranslation("disconnect.genericReason", s)));
                 }
-            }
-        }).start();
-    }
-
-    public static void connectTo(String addr) {
-        ServerAddress serveraddress = ServerAddress.fromString(addr);
-        Minecraft mc = Minecraft.getMinecraft();
-//        mc.loadWorld(null);
-        ServerData prevServerData = mc.getCurrentServerData();
-        mc.setServerData(new ServerData("Server", addr, false));
-        String ip = serveraddress.getIP();
-        int port = serveraddress.getPort();
-        logger.info("Connecting to " + ip + ", " + port);
-        ConsoleScreen.log("Connecting to {}, {}", ip, port);
-        (new Thread("Server Connector #" + CONNECTION_ID.incrementAndGet()) {
-            NetworkManager networkManager;
-            public void run() {
-                EventManager.register(this);
-                InetAddress inetaddress = null;
-
-                try {
-                    inetaddress = InetAddress.getByName(ip);
-                    networkManager = NetworkManager.createNetworkManagerAndConnect(inetaddress, port, mc.gameSettings.isUsingNativeTransport());
-                    networkManager.setNetHandler(new NetHandlerLoginClientAdapter(networkManager, mc, MainMenu.getInstance()));
-                    ConsoleScreen.log("Sending C00Handshake with protocol {}", 47);
-                    networkManager.sendPacket(new C00Handshake(47, ip, port, EnumConnectionState.LOGIN));
-                    ConsoleScreen.log("Sending C00PacketLoginStart");
-                    networkManager.sendPacket(new C00PacketLoginStart(mc.getSession().getProfile()));
-                } catch (UnknownHostException unknownhostexception) {
-                    GuiConnecting.logger.error("Couldn't connect to server", unknownhostexception);
-                    ConsoleScreen.log(EnumChatFormatting.RED + "Couldn't connect to server: Unknown Host");
-                    EventManager.unregister(this);
-                    mc.setServerData(prevServerData);
-                } catch (Exception exception) {
-                    GuiConnecting.logger.error("Couldn't connect to server", exception);
-                    String s = exception.toString();
-
-                    if (inetaddress != null) {
-                        String s1 = inetaddress + ":" + port;
-                        s = s.replaceAll(s1, "");
-                    }
-
-                    ConsoleScreen.log(EnumChatFormatting.RED + "Couldn't connect to server: {}", s);
-                    EventManager.unregister(this);
-                    mc.setServerData(prevServerData);
-                }
-            }
-
-            @Handler
-            public void onTick(GameLoopEvent event) {
-                if (this.networkManager != null) {
-                    if (this.networkManager.isChannelOpen()) {
-                        this.networkManager.processReceivedPackets();
-                    } else {
-                        if (!this.networkManager.isDisconnected()) {
-                            this.networkManager.setDisconnected(true);
-                            IChatComponent exitMessage = this.networkManager.getExitMessage();
-                            if (exitMessage != null) {
-                                if (!exitMessage.getUnformattedText().equals("Quitting"))
-                                    ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: {}", exitMessage.getFormattedText());
-                            } else if (this.networkManager.getNetHandler() != null) {
-                                ConsoleScreen.log(EnumChatFormatting.RED + "Failed to connect: Disconnected");
-                            }
-
-                            EventManager.unregister(this);
-                            mc.setServerData(prevServerData);
-                        }
-                    }
-                }
-            }
-
-            @Handler
-            public void worldChanged(WorldChangedEvent event) {
-                EventManager.unregister(this);
             }
         }).start();
     }

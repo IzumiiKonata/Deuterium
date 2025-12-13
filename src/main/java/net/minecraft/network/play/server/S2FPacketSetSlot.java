@@ -6,11 +6,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import today.opai.api.interfaces.game.network.server.SPacket2FSetSlot;
+
 
 import java.io.IOException;
 
-public class S2FPacketSetSlot implements Packet<INetHandlerPlayClient>, SPacket2FSetSlot {
+public class S2FPacketSetSlot implements Packet<INetHandlerPlayClient> {
     private int windowId;
     private int slot;
     private ItemStack item;
@@ -61,33 +61,20 @@ public class S2FPacketSetSlot implements Packet<INetHandlerPlayClient>, SPacket2
         return this.item;
     }
 
-    @Override
-    public today.opai.api.interfaces.game.item.ItemStack getItemStack() {
-        return this.item.getWrapper();
-    }
-
-    @Override
     public int getWindowId() {
         return this.windowId;
     }
 
-    @Override
     public int getSlot() {
         return this.slot;
     }
 
-    @Override
     public void setWindowId(int windowId) {
         this.windowId = windowId;
     }
 
-    @Override
     public void setSlot(int slot) {
         this.slot = slot;
     }
 
-    @Override
-    public void setItemStack(today.opai.api.interfaces.game.item.ItemStack itemStack) {
-        this.item = ItemStack.fromOpai(itemStack);
-    }
 }

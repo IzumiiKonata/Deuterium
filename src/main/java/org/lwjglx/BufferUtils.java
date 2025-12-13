@@ -16,7 +16,7 @@
 package org.lwjglx;
 
 import org.lwjgl.system.MemoryUtil;
-import tritium.utils.other.MemoryTracker;
+import org.lwjgl.system.MemoryUtil;
 
 import java.nio.*;
 
@@ -35,7 +35,7 @@ public final class BufferUtils {
      * @return a ByteBuffer
      */
     public static ByteBuffer createByteBuffer(int size) {
-        return MemoryTracker.memAlloc(size);
+        return MemoryUtil.memAlloc(size);
     }
 
     /**

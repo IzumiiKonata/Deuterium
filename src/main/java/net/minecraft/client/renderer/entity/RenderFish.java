@@ -9,7 +9,6 @@ import net.minecraft.entity.projectile.EntityFishHook;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
-import tritium.management.ModuleManager;
 
 public class RenderFish extends Render<EntityFishHook> {
     private static final Location FISH_PARTICLES = Location.of("textures/particle/particles.png");
@@ -55,11 +54,7 @@ public class RenderFish extends Render<EntityFishHook> {
             float f8 = MathHelper.sin(MathHelper.sqrt_float(f7) * (float) Math.PI);
             Vec3 vec3;
 
-            if (ModuleManager.oldAnimation.isEnabled() && ModuleManager.oldAnimation.rod.getValue()) {
-                vec3 = new Vec3(-0.26D, 0D, 0.35D);
-            } else {
-                vec3 = new Vec3(-0.36D, 0.03D, 0.35D);
-            }
+            vec3 = new Vec3(-0.36D, 0.03D, 0.35D);
 
             vec3 = vec3.rotatePitch(-(entity.angler.prevRotationPitch + (entity.angler.rotationPitch - entity.angler.prevRotationPitch) * partialTicks) * (float) Math.PI / 180.0F);
             vec3 = vec3.rotateYaw(-(entity.angler.prevRotationYaw + (entity.angler.rotationYaw - entity.angler.prevRotationYaw) * partialTicks) * (float) Math.PI / 180.0F);
