@@ -628,7 +628,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
      */
     private void orientCamera(float partialTicks) {
         Entity entity = this.mc.getRenderViewEntity();
-        float f = this.getEntityEyeHeight(entity);
+        float f = entity.getEyeHeight();
         double d0 = entity.prevPosX + (entity.posX - entity.prevPosX) * (double) partialTicks;
         double d1 = entity.prevPosY + (entity.posY - entity.prevPosY) * (double) partialTicks + (double) f;
         double d2 = entity.prevPosZ + (entity.posZ - entity.prevPosZ) * (double) partialTicks;
@@ -651,10 +651,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.rotate(entity.prevRotationPitch + (entity.rotationPitch - entity.prevRotationPitch) * partialTicks, -1.0F, 0.0F, 0.0F);
             }
         } else if (this.mc.gameSettings.thirdPersonView > 0) {
-
-            this.thirdPersonDistance = 4;
-
-            double d3 = thirdPersonDistance;
+            double d3 = this.thirdPersonDistanceTemp + (this.thirdPersonDistance - this.thirdPersonDistanceTemp) * partialTicks;
 
             if (this.mc.gameSettings.debugCamEnable) {
                 GlStateManager.translate(0.0F, 0.0F, (float) (-d3));
@@ -692,14 +689,14 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
                 }
 
-                GlStateManager.rotate(entity.rotationPitch, 1.0F, 0.0F, 0.0F);
-                GlStateManager.rotate(entity.rotationYaw, 0.0F, 1.0F, 0.0F);
+                GlStateManager.rotate(entity.rotationPitch - f2, 1.0F, 0.0F, 0.0F);
+                GlStateManager.rotate(entity.rotationYaw - f1, 0.0F, 1.0F, 0.0F);
                 GlStateManager.translate(0.0F, 0.0F, (float) (-d3));
                 GlStateManager.rotate(f1 - entity.rotationYaw, 0.0F, 1.0F, 0.0F);
                 GlStateManager.rotate(f2 - entity.rotationPitch, 1.0F, 0.0F, 0.0F);
             }
         } else {
-            GlStateManager.translate(0.0F, 0.0F, dbgDirectionRendering ? -.1f : .05F);
+            GlStateManager.translate(0.0F, 0.0F, -0.1F);
         }
 
         if (!this.mc.gameSettings.debugCamEnable) {
