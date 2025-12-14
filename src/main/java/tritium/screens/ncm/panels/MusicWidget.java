@@ -192,13 +192,11 @@ public class MusicWidget extends RoundedRectWidget {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
 
                     if (img != null) {
-                        MultiThreadingUtil.runAsync(() -> {
-                            if (textureManager.getTexture(coverLoc) != null) {
-                                textureManager.deleteTexture(coverLoc);
-                            }
-                            Textures.loadTexture(coverLoc, img);
-                            img.close();
-                        });
+                        if (textureManager.getTexture(coverLoc) != null) {
+                            textureManager.deleteTexture(coverLoc);
+                        }
+                        Textures.loadTexture(coverLoc, img);
+                        img.close();
                     }
                 }
             } catch (Exception e) {

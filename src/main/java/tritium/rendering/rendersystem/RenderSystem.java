@@ -118,13 +118,13 @@ public class RenderSystem {
 
     public static void drawRect(double left, double top, double right, double bottom, int color) {
 
-        if (left < right) {
+        if (left > right) {
             double i = left;
             left = right;
             right = i;
         }
 
-        if (top < bottom) {
+        if (top > bottom) {
             double j = top;
             top = bottom;
             bottom = j;

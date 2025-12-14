@@ -317,16 +317,14 @@ public class PlaylistPanel extends NCMPanel {
             try (InputStream inputStream = HttpUtils.downloadStream(playList.getCoverUrl() + "?param=256y256")) {
                 if (inputStream != null) {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
-                    MultiThreadingUtil.runAsync(() -> {
-                        if (textureManager.getTexture(coverLoc) != null) {
-                            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
-                                textureManager.deleteTexture(coverLoc);
-                                return null;
-                            });
-                        }
-                        Textures.loadTexture(coverLoc, img);
-                        img.close();
-                    });
+                    if (textureManager.getTexture(coverLoc) != null) {
+                        MultiThreadingUtil.runOnMainThreadBlocking(() -> {
+                            textureManager.deleteTexture(coverLoc);
+                            return null;
+                        });
+                    }
+                    Textures.loadTexture(coverLoc, img);
+                    img.close();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
