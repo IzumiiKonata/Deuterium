@@ -876,20 +876,21 @@ public class FontRenderer implements IResourceManagerReloadListener {
      * Inserts newline and formatting into a string to wrap it within the specified width.
      */
     String wrapFormattedStringToWidth(String str, int wrapWidth) {
-        if (str.length() <= 1) {
+        int i = this.sizeStringToWidth(str, wrapWidth);
+
+        if (str.length() <= i) {
             return str;
         } else {
-            int i = this.sizeStringToWidth(str, wrapWidth);
-
-            if (str.length() <= i) {
-                return str;
-            } else {
-                String s = str.substring(0, i);
-                char c0 = str.charAt(i);
-                boolean flag = c0 == 32 || c0 == 10;
-                String s1 = getFormatFromString(s) + str.substring(i + (flag ? 1 : 0));
-                return s + "\n" + this.wrapFormattedStringToWidth(s1, wrapWidth);
+            // at least advance 1 char
+            if (i <= 0) {
+                i = 1;
             }
+
+            String s = str.substring(0, i);
+            char c0 = str.charAt(i);
+            boolean flag = c0 == 32 || c0 == 10;
+            String s1 = getFormatFromString(s) + str.substring(i + (flag ? 1 : 0));
+            return s + "\n" + this.wrapFormattedStringToWidth(s1, wrapWidth);
         }
     }
 
