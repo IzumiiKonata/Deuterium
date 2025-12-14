@@ -11,7 +11,10 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.EnumDifficulty;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
     private static final GameSettings.Options[] field_146440_f = new GameSettings.Options[]{GameSettings.Options.FOV};
@@ -90,8 +93,8 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
         this.buttonList.add(new GuiButton(105, this.width / 2 - 155, this.height / 6 + 144 - 6, 150, 20, I18n.format("options.resourcepack")));
 
         GuiButton gb;
-        this.buttonList.add(gb = new GuiButton(104, this.width / 2 + 5, this.height / 6 + 144 - 6, 150, 20, "Do u really need snooper?"));
-        gb.enabled = false;
+        this.buttonList.add(gb = new GuiButton(104, this.width / 2 + 5, this.height / 6 + 144 - 6, 150, 20, "Load Optimal Options"));
+//        gb.enabled = false;
 
         this.buttonList.add(new GuiButton(200, this.width / 2 - 100, this.height / 6 + 168, I18n.format("gui.done")));
     }
@@ -113,6 +116,35 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
             this.field_175356_r.enabled = false;
             this.field_175357_i.enabled = false;
         }
+    }
+
+    private void extract(String path) {
+        String fileName = path.substring(path.lastIndexOf("/") + 1);
+        File file = new File(mc.mcDataDir, fileName);
+
+        if (file.exists())
+            file.delete();
+
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            InputStream is = getClass().getResourceAsStream(path);
+            byte[] buf = new byte[1024];
+            int len;
+            while ((len = is.read(buf)) > 0) {
+                fos.write(buf, 0, len);
+            }
+            fos.close();
+            is.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void loadOptimalOptions() {
+        this.extract("/assets/minecraft/tritium/optimal_options/options.txt");
+        this.extract("/assets/minecraft/tritium/optimal_options/optionsof.txt");
+        mc.gameSettings.loadOptions();
+        mc.refreshResources();
     }
 
     /**
@@ -165,6 +197,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
             }
 
             if (button.id == 104) {
+                this.loadOptimalOptions();
 //                this.mc.gameSettings.saveOptions();
 //                this.mc.displayGuiScreen(new GuiSnooper(this, this.game_settings_1));
             }
