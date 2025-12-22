@@ -91,13 +91,7 @@ public class Music {
             String artistName = artistsList.get(i);
 
             if (i != artistsList.size() - 1) {
-                sb.append(artistName);
-
-                if (i != artistsList.size() - 2) {
-                    sb.append("& ");
-                }
-
-                sb.append(", ");
+                sb.append(artistName).append(", ");
             } else {
                 sb.append(artistName);
             }
