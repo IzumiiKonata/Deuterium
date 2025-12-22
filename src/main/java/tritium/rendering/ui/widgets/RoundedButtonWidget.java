@@ -23,6 +23,8 @@ public class RoundedButtonWidget extends RoundedRectWidget {
         lw.setBeforeRenderCallback(() -> {
             lw.center();
         });
+
+        this.setShouldSetMouseCursor(true);
     }
 
     public RoundedButtonWidget(String label, CFontRenderer fr) {

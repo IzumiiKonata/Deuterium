@@ -115,6 +115,7 @@ import tritium.screens.ConsoleScreen;
 import tritium.screens.MainMenu;
 import tritium.screens.altmanager.AltScreen;
 import tritium.settings.ClientSettings;
+import tritium.utils.cursor.CursorUtils;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
@@ -1022,6 +1023,7 @@ public class Minecraft implements IThreadListener {
         EventManager.call(new GameLoopEvent());
 
         //CLIENT
+        CursorUtils.resetOverride();
         Interpolations.calcFrameDelta();
         //END CLIENT
 
@@ -1114,6 +1116,8 @@ public class Minecraft implements IThreadListener {
 
         this.framebufferMc.unbindFramebuffer();
         GlStateManager.popMatrix();
+
+        CursorUtils.setOverride();
 
         int sync = this.getLimitFramerate();
         boolean needSync = this.isFramerateLimitBelowMax();

@@ -138,7 +138,8 @@ public class MusicSpectrumWidget extends Widget {
                         target = 0;
                     }
 
-                    renderSpectrum[i] = Interpolations.interpBezier(renderSpectrum[i], target, (float) (2f - (this.absVol.getValue() ? 0 : .5f * (1 - WidgetsManager.musicInfo.volume.getValue()))) * 1.5f);
+                    float factor = 1f;
+                    renderSpectrum[i] = Interpolations.interpBezier(renderSpectrum[i], target, (float) (2f - (this.absVol.getValue() ? 0 : .5f * (1 - WidgetsManager.musicInfo.volume.getValue()))) * factor);
                     maximumSpectrum = (Math.max(maximumSpectrum, target));
                 }
 
@@ -231,8 +232,9 @@ public class MusicSpectrumWidget extends Widget {
                 if (compatMode) {
                     GL11.glVertex2d(this.getX() + 4, this.getY() + this.getHeight() - shrink);
                     spectrumWidth.set((this.getWidth() - shrink * 2) / ((double) renderSpectrum.length / step));
-                } else
+                } else {
                     GL11.glVertex2d(0, RenderSystem.getHeight());
+                }
 
                 for (int i = 0; i < renderSpectrum.length; i += step) {
                     GlStateManager.color(1, 1, 1, 1);
@@ -246,8 +248,9 @@ public class MusicSpectrumWidget extends Widget {
 
                 if (compatMode) {
                     GL11.glVertex2d(this.getX() + this.getWidth() - shrink, this.getY() + this.getHeight() - shrink);
-                } else
+                } else {
                     GL11.glVertex2d(RenderSystem.getWidth(), RenderSystem.getHeight());
+                }
 
                 GL11.glEnd();
                 GL11.glEnable(GL11.GL_TEXTURE_2D);

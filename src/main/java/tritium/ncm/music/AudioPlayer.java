@@ -49,6 +49,8 @@ public class AudioPlayer {
     public static float[] bandValues = new float[1];
     public static ExtendedSpectrumVisualizer visualizer;
 
+    static int skipCount = 0;
+
     public static final JSynFFT.FFTCalcCallback callback = fft -> {
 
         if (!WidgetsManager.musicSpectrum.isEnabled() && !(Minecraft.getMinecraft().currentScreen instanceof NCMScreen))
@@ -58,7 +60,14 @@ public class AudioPlayer {
             visualizer = new ExtendedSpectrumVisualizer(44100, JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
         }
 
-        bandValues = visualizer.processFFT(fft);
+        int skipAmount = 4;
+
+        if (skipCount < skipAmount) {
+            skipCount++;
+        } else {
+            skipCount = 0;
+            bandValues = visualizer.processFFT(fft);
+        }
     };
 
     @Getter

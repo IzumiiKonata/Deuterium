@@ -143,15 +143,7 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
         this.drawScreen((double) mouseX, (double) mouseY, partialTicks);
     }
 
-    private long overrideMouseCursor = CursorUtils.ARROW;
-
-    public void setCursor(long cursor) {
-        overrideMouseCursor = cursor;
-    }
-
     public final void drawScreen(double mouseX, double mouseY, float partialTicks) {
-
-        overrideMouseCursor = CursorUtils.ARROW;
 
         RenderSystem.resetColor();
 
@@ -182,8 +174,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
             if (this.dialog.canClose())
                 this.dialog = null;
         }
-
-        CursorUtils.setCursor(overrideMouseCursor);
 
     }
 

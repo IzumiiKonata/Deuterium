@@ -4,6 +4,7 @@ import lombok.Getter;
 import tritium.rendering.entities.impl.TextField;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
+import tritium.utils.cursor.CursorUtils;
 
 import java.awt.*;
 
@@ -19,6 +20,7 @@ public class TextFieldWidget extends AbstractWidget<TextFieldWidget> {
     public TextFieldWidget(CFontRenderer fontRenderer) {
         this.textField = new TextField(0, 0, 0, 0, 0);
         this.textField.setFontRenderer(fontRenderer);
+        this.setShouldSetMouseCursor(true);
     }
 
     @Override
@@ -30,6 +32,11 @@ public class TextFieldWidget extends AbstractWidget<TextFieldWidget> {
         this.textField.enabledColor = this.getHexColor();
         this.textField.setWholeAlpha(this.getAlpha());
         this.textField.drawTextBox((int) mouseX, (int) mouseY);
+    }
+
+    @Override
+    public long getHoveringCursorType() {
+        return CursorUtils.TEXT;
     }
 
     @Override

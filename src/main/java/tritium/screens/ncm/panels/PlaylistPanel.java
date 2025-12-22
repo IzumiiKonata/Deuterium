@@ -244,7 +244,7 @@ public class PlaylistPanel extends NCMPanel {
         });
 
         playList.loadMusicsWithCallback(musics -> {
-            musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music))).collect(Collectors.toList()));
+            musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music)).setShouldSetMouseCursor(true)).collect(Collectors.toList()));
         });
 
         if (this.tfSearch != null) {

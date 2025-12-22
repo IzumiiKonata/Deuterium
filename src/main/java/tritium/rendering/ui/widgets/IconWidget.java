@@ -19,7 +19,6 @@ import java.awt.*;
 public class IconWidget extends AbstractWidget<IconWidget> {
 
     @Getter
-    @Setter
     private String icon;
 
     public CFontRenderer fr;
@@ -28,6 +27,7 @@ public class IconWidget extends AbstractWidget<IconWidget> {
         this.icon = icon;
         this.fr = fr;
         this.setBounds(x, y, width, height);
+        this.setShouldSetMouseCursor(true);
     }
 
     float alphaAnim = 0f, alphaAnim2 = 0f;
@@ -81,5 +81,10 @@ public class IconWidget extends AbstractWidget<IconWidget> {
         this.run = true;
 
         return super.onMouseClicked(relativeX, relativeY, mouseButton);
+    }
+
+    public IconWidget setIcon(String icon) {
+        this.icon = icon;
+        return this;
     }
 }

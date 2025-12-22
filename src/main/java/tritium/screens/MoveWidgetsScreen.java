@@ -96,13 +96,12 @@ public class MoveWidgetsScreen extends BaseScreen {
         }
 
         if (draggingWidget != null || hoveredWidget != null) {
-            this.setCursor(CursorUtils.RESIZE_NWSE);
+            CursorUtils.setOverride(CursorUtils.RESIZE_NWSE);
         }
     }
 
     @Override
     public void onGuiClosed() {
-        CursorUtils.setCursor(CursorUtils.ARROW);
         EventManager.unregister(this);
     }
 

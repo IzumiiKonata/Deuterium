@@ -86,8 +86,9 @@ public class HomePanel extends NCMPanel {
         int margin = 12;
 
         lblWelcome.setBeforeRenderCallback(() -> {
-            lblWelcome.setPosition(margin, margin);
-            lblWelcome.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            lblWelcome
+                    .setPosition(margin, margin)
+                    .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
         });
 
         LabelWidget lblRecommendations = new LabelWidget("推荐歌单", FontManager.pf14bold);
@@ -95,8 +96,9 @@ public class HomePanel extends NCMPanel {
         this.addChild(lblRecommendations);
 
         lblRecommendations.setBeforeRenderCallback(() -> {
-            lblRecommendations.setPosition(margin, lblWelcome.getRelativeY() + lblWelcome.getHeight() + 2 + margin * .5 - lblRecommendations.getHeight() * .5);
-            lblRecommendations.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            lblRecommendations
+                    .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
+                    .setPosition(margin, lblWelcome.getRelativeY() + lblWelcome.getHeight() + 2 + margin * .5 - lblRecommendations.getHeight() * .5);
         });
 
         scrollPanel = new ScrollPanel();
@@ -109,11 +111,17 @@ public class HomePanel extends NCMPanel {
         scrollPanel
                 .setAlignment(ScrollPanel.Alignment.VERTICAL_WITH_HORIZONTAL_FILL)
                 .setBeforeRenderCallback(() -> {
-                    scrollPanel.setMargin(margin);
-                    scrollPanel.setBounds(scrollPanel.getRelativeX(), scrollPanel.getRelativeY() + lblWelcome.getHeight() + margin, scrollPanel.getWidth(), scrollPanel.getHeight() - lblWelcome.getHeight() - margin);
+                    scrollPanel
+                            .setMargin(margin)
+                            .setBounds(
+                                    scrollPanel.getRelativeX(),
+                                    scrollPanel.getRelativeY() + lblWelcome.getHeight() + margin,
+                                    scrollPanel.getWidth(),
+                                    scrollPanel.getHeight() - lblWelcome.getHeight() - margin
+                            );
                 });
 
-        playLists.forEach(pl -> scrollPanel.addChild(new PlaylistWidget(pl)));
+        playLists.forEach(pl -> scrollPanel.addChild(new PlaylistWidget(pl).setShouldSetMouseCursor(true)));
 
     }
 

@@ -21,7 +21,6 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
     CFontRenderer font = FontManager.pf18;
 
     @Getter
-    @Setter
     double maxWidth = -1;
 
     @Getter
@@ -78,6 +77,11 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
         double stringWidth = font.getStringWidthD(lbl);
         width = widthNotLimited ? stringWidth : Math.min(this.getMaxWidth(), stringWidth);
         this.setBounds(width, font.getStringHeight(lbl));
+    }
+
+    public LabelWidget setMaxWidth(double maxWidth) {
+        this.maxWidth = maxWidth;
+        return this;
     }
 
     public LabelWidget setWidthLimitType(WidthLimitType widthLimitType) {

@@ -12,6 +12,7 @@ import org.lwjgl.opengl.Display;
 public class CursorUtils {
 
     public static final long ARROW = GLFW.glfwCreateStandardCursor(GLFW.GLFW_ARROW_CURSOR);
+    public static final long HAND = GLFW.glfwCreateStandardCursor(GLFW.GLFW_HAND_CURSOR);
     public static final long TEXT = GLFW.glfwCreateStandardCursor(GLFW.GLFW_IBEAM_CURSOR);
     public static final long NOT_ALLOWED = GLFW.glfwCreateStandardCursor(GLFW.GLFW_NOT_ALLOWED_CURSOR);
     public static final long RESIZE_EW = GLFW.glfwCreateStandardCursor(GLFW.GLFW_RESIZE_EW_CURSOR);
@@ -20,6 +21,19 @@ public class CursorUtils {
     public static final long RESIZE_NESW = GLFW.glfwCreateStandardCursor(GLFW.GLFW_RESIZE_NESW_CURSOR);
 
     private static long curCursor = ARROW;
+    private static long overrideCursor = ARROW;
+
+    public void resetOverride() {
+        overrideCursor = ARROW;
+    }
+
+    public void setOverride(long cursor) {
+        overrideCursor = cursor;
+    }
+
+    public void setOverride() {
+        setCursor(overrideCursor);
+    }
 
     public void setCursor(long cursor) {
 

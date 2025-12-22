@@ -90,13 +90,15 @@ public class NavigateBar extends NCMPanel {
             }
         });
 
-        searchBar.setBeforeRenderCallback(() -> {
-            searchBar.setAlpha(1f);
-            searchBar.setColor(0xFF5E5E5E);
-            searchBar.setMargin(8);
-            searchBar.setHeight(16);
-            searchBar.setRadius(3.5);
-        });
+        searchBar
+//            .setShouldSetMouseCursor(true)
+            .setBeforeRenderCallback(() -> {
+                searchBar.setAlpha(1f);
+                searchBar.setColor(0xFF5E5E5E);
+                searchBar.setMargin(8);
+                searchBar.setHeight(16);
+                searchBar.setRadius(3.5);
+            });
 
         RoundedRectWidget searchBarBg = new RoundedRectWidget();
         searchBar.addChild(searchBarBg);
@@ -187,6 +189,8 @@ public class NavigateBar extends NCMPanel {
                 NCMScreen.getInstance().setCurrentPanel(new HomePanel());
             });
 
+            item.setShouldSetMouseCursor(true);
+
             this.playlistPanel.addChild(item);
         }
 
@@ -201,12 +205,13 @@ public class NavigateBar extends NCMPanel {
         List<PlayList> pl = CloudMusic.playLists;
 
         if (pl != null) {
-            List<PlayList> playLists = pl.stream().filter(playList -> !playList.isSubscribed()).collect(Collectors.toList());
+            List<PlayList> playLists = pl.stream().filter(playList -> !playList.isSubscribed()).toList();
             for (int i = 0; i < playLists.size(); i++) {
                 PlayList playList = playLists.get(i);
-                PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", () -> Color.GRAY.getRGB(), () -> playList.getName(), () -> {
+                PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", Color.GRAY::getRGB, playList::getName, () -> {
                     NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
                 });
+                item.setShouldSetMouseCursor(true);
 
                 this.playlistPanel.addChild(item);
             }
@@ -221,10 +226,11 @@ public class NavigateBar extends NCMPanel {
         this.playlistPanel.addChild(lblSubscribed);
 
         if (pl != null) {
-            pl.stream().filter(playList -> playList.isSubscribed()).forEach(playList -> {
-                PlaylistItem item = new PlaylistItem("D", () -> Color.GRAY.getRGB(), () -> playList.getName(), () -> {
+            pl.stream().filter(PlayList::isSubscribed).forEach(playList -> {
+                PlaylistItem item = new PlaylistItem("D", Color.GRAY::getRGB, playList::getName, () -> {
                     NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
                 });
+                item.setShouldSetMouseCursor(true);
 
                 this.playlistPanel.addChild(item);
             });
