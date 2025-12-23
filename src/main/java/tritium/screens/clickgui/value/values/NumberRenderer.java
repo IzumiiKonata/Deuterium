@@ -80,12 +80,14 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
             }
         };
 
-        background.setBounds(this.getWidth(), 2);
-        background.setPosition(0, FontManager.pf14.getHeight() + 8);
-        background.setColor(ClickGui.getColor(25));
-        background.setBeforeRenderCallback(() -> {
-            background.setColor(ClickGui.getColor(25));
-        });
+        background
+                .setShouldSetMouseCursor(true)
+                .setBounds(this.getWidth(), 2)
+                .setColor(ClickGui.getColor(25))
+                .setPosition(0, FontManager.pf14.getHeight() + 8)
+                .setBeforeRenderCallback(() -> {
+                    background.setColor(ClickGui.getColor(25));
+                });
 
         this.addChild(background);
 

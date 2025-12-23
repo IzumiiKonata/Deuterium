@@ -25,37 +25,45 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
 
         if (!this.module.getSettings().isEmpty()) {
             RectWidget settingsRect = new RectWidget();
-            settingsRect.setBounds(132, 0, 10, this.getHeight());
-            settingsRect.setColor(ClickGui.getColor(8));
-            settingsRect.setBeforeRenderCallback(() -> {
-                settingsRect.setColor(settingsRect.isHovering() ? ClickGui.getColor(12) : ClickGui.getColor(11));
-            });
+            settingsRect
+                    .setBounds(132, 0, 10, this.getHeight())
+                    .setColor(ClickGui.getColor(8))
+                    .setShouldSetMouseCursor(true)
+                    .setBeforeRenderCallback(() -> {
+                        settingsRect.setColor(settingsRect.isHovering() ? ClickGui.getColor(12) : ClickGui.getColor(11));
+                    });
 
             RectWidget dotCenter = new RectWidget();
-            dotCenter.setBounds(1, 1);
-            dotCenter.setColor(ClickGui.getColor(16));
-            dotCenter.setClickable(false);
+            dotCenter
+                    .setBounds(1, 1)
+                    .setColor(ClickGui.getColor(16))
+                    .setClickable(false);
             settingsRect.addChild(dotCenter);
-            dotCenter.center();
-            dotCenter.setBeforeRenderCallback(() -> dotCenter.setColor(ClickGui.getColor(16)));
+            dotCenter
+                    .center()
+                    .setBeforeRenderCallback(() -> dotCenter.setColor(ClickGui.getColor(16)));
 
             RectWidget dotTop = new RectWidget();
-            dotTop.setBounds(1, 1);
-            dotTop.setColor(ClickGui.getColor(16));
-            dotTop.setClickable(false);
+            dotTop
+                    .setBounds(1, 1)
+                    .setColor(ClickGui.getColor(16))
+                    .setClickable(false);
             settingsRect.addChild(dotTop);
-            dotTop.center();
-            dotTop.setPosition(dotTop.getRelativeX(), dotTop.getRelativeY() - 3);
-            dotTop.setBeforeRenderCallback(() -> dotTop.setColor(ClickGui.getColor(16)));
+            dotTop
+                    .center()
+                    .setPosition(dotTop.getRelativeX(), dotTop.getRelativeY() - 3)
+                    .setBeforeRenderCallback(() -> dotTop.setColor(ClickGui.getColor(16)));
 
             RectWidget dotBottom = new RectWidget();
-            dotBottom.setBounds(1, 1);
-            dotBottom.setColor(ClickGui.getColor(16));
-            dotBottom.setClickable(false);
+            dotBottom
+                    .setBounds(1, 1)
+                    .setColor(ClickGui.getColor(16))
+                    .setClickable(false);
             settingsRect.addChild(dotBottom);
-            dotBottom.center();
-            dotBottom.setPosition(dotBottom.getRelativeX(), dotBottom.getRelativeY() + 3);
-            dotBottom.setBeforeRenderCallback(() -> dotBottom.setColor(ClickGui.getColor(16)));
+            dotBottom
+                    .center()
+                    .setPosition(dotBottom.getRelativeX(), dotBottom.getRelativeY() + 3)
+                    .setBeforeRenderCallback(() -> dotBottom.setColor(ClickGui.getColor(16)));
 
             this.addChild(settingsRect);
 
@@ -80,6 +88,8 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
         }
 
         this.moduleEnableAlpha = module.isEnabled() ? 1f : 0f;
+
+        this.setShouldSetMouseCursor(true);
 
         this.setOnClickCallback((rx, ry, i) -> {
 

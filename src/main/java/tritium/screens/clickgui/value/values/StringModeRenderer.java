@@ -31,10 +31,11 @@ public class StringModeRenderer extends AbstractWidget<StringModeRenderer> {
         this.setBounds(142, height);
 
         LabelWidget label = new LabelWidget(() -> setting.getName().get(), pf14);
-        label.setBeforeRenderCallback(() -> {
-            label.setColor(ClickGui.getColor(20));
-        });
-        label.setPosition(0, height * .5 - pf14.getHeight() * .5);
+        label
+            .setPosition(0, height * .5 - pf14.getHeight() * .5)
+            .setBeforeRenderCallback(() -> {
+                label.setColor(ClickGui.getColor(20));
+            });
         this.addChild(label);
 
         RectWidget button = new RectWidget() {
@@ -117,6 +118,8 @@ public class StringModeRenderer extends AbstractWidget<StringModeRenderer> {
                 return pf14.getHeight() + 4;
             }
         };
+
+        button.setShouldSetMouseCursor(true);
 
         this.addChild(button);
     }

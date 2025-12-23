@@ -28,6 +28,7 @@ import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.settings.ClientSettings;
+import tritium.utils.cursor.CursorUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
@@ -362,6 +363,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.1f);
+
+            if (isHovering) {
+                CursorUtils.setOverride(CursorUtils.HAND);
+            }
 
             if (isHovering && Mouse.isButtonDown(0) && !prevMouse) {
                 prevMouse = true;
@@ -754,6 +759,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             double percent = xDelta / volumeBarWidth;
 
             WidgetsManager.musicInfo.volume.setValue(percent);
+        }
+
+        if (hoveringProgressBar || hoveringVolumeBar) {
+            CursorUtils.setOverride(CursorUtils.HAND);
         }
 
         playPauseButton.setAlpha(alpha);

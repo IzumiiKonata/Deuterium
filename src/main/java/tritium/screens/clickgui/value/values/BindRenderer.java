@@ -39,67 +39,67 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
         RectWidget rw = new RectWidget();
         this.addChild(rw);
 
-        rw.setBeforeRenderCallback(() -> {
-            String keyName = this.getKeyName();
+        rw
+            .setShouldSetMouseCursor(true)
+            .setBeforeRenderCallback(() -> {
+                String keyName = this.getKeyName();
 
-            double width = Math.max(8, FontManager.pf14.getStringWidthD(keyName) + 4);
-            rw.setPosition(this.getWidth() - rw.getWidth(), 0);
-            rw.setBounds(width, height);
-            rw.setColor(rw.isHovering() ? ClickGui.getColor(24) : ClickGui.getColor(23));
-        });
+                double width = Math.max(8, FontManager.pf14.getStringWidthD(keyName) + 4);
+                rw.setPosition(this.getWidth() - rw.getWidth(), 0);
+                rw.setBounds(width, height);
+                rw.setColor(rw.isHovering() ? ClickGui.getColor(24) : ClickGui.getColor(23));
+            })
+            .setOnClickCallback((mouseX, mouseY, mouseButton) -> {
+                if (mouseButton == 0) {
+                    if (!listening.get()) {
+                        this.listening.set(true);
 
-        rw.setOnClickCallback((mouseX, mouseY, mouseButton) -> {
-            if (mouseButton == 0) {
-                if (!listening.get()) {
-                    this.listening.set(true);
+                        EventManager.register(new Object() {
 
-                    EventManager.register(new Object() {
+                            boolean skipFirst = false;
 
-                        boolean skipFirst = false;
+                            @Handler
+                            public void onKeyEvent(KeyPressedEvent event) {
 
-                        @Handler
-                        public void onKeyEvent(KeyPressedEvent event) {
+                                if (event.getKeyCode() < 0 && !skipFirst) {
+                                    skipFirst = true;
+                                    return;
+                                }
 
-                            if (event.getKeyCode() < 0 && !skipFirst) {
-                                skipFirst = true;
-                                return;
+                                if (event.getKeyCode() < 0 && BindRenderer.this.listening.get()) {
+                                    BindRenderer.this.listening.set(false);
+                                    setting.setValue(event.getKeyCode());
+                                    EventManager.unregister(this);
+                                    return;
+                                }
+
+                                if (!BindRenderer.this.listening.get()) {
+                                    EventManager.unregister(this);
+                                }
+
                             }
 
-                            if (event.getKeyCode() < 0 && BindRenderer.this.listening.get()) {
-                                BindRenderer.this.listening.set(false);
-                                setting.setValue(event.getKeyCode());
-                                EventManager.unregister(this);
-                                return;
-                            }
+                        });
 
-                            if (!BindRenderer.this.listening.get()) {
-                                EventManager.unregister(this);
-                            }
+                        return true;
+                    }
+                }
 
-                        }
+                return true;
+            })
+            .setOnKeyTypedCallback((character, keyCode) -> {
+                if (this.listening.get()) {
+                    listening.set(false);
 
-                    });
+                    if (keyCode == Keyboard.KEY_ESCAPE)
+                        keyCode = Keyboard.KEY_NONE;
 
+                    setting.setValue(keyCode);
                     return true;
                 }
-            }
 
-            return true;
-        });
-
-        rw.setOnKeyTypedCallback((character, keyCode) -> {
-            if (this.listening.get()) {
-                listening.set(false);
-
-                if (keyCode == Keyboard.KEY_ESCAPE)
-                    keyCode = Keyboard.KEY_NONE;
-
-                setting.setValue(keyCode);
-                return true;
-            }
-
-            return false;
-        });
+                return false;
+            });
 
         LabelWidget lblKeyName = new LabelWidget(this::getKeyName, FontManager.pf14);
         rw.addChild(lblKeyName);

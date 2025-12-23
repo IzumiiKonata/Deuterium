@@ -129,13 +129,15 @@ public class CategoriesWindow extends Window {
             double totalHeight = numbersOfCategories * (40 + spacing) - spacing;
 
             Panel categoriesPanel = new Panel();
-            categoriesPanel.setBounds(40, totalHeight);
 
             this.bottomRect.addChild(categoriesPanel);
-            categoriesPanel.setPosition(
+
+            categoriesPanel
+                .setBounds(40, totalHeight)
+                .setPosition(
                     categoriesPanel.getParentWidth() * .5 - categoriesPanel.getWidth() * .5,
                     (categoriesPanel.getParentHeight() - (14 * categories.size())) * .5 - categoriesPanel.getHeight() * .5
-            );
+                );
 
             categoryButtons.clear();
 
@@ -146,25 +148,26 @@ public class CategoriesWindow extends Window {
                 categoryButtons.add(button);
             }
 
-            this.categoryButtons.get(0).setSelected(true);
+            this.categoryButtons.getFirst().setSelected(true);
         }
 
         // edit button
         {
             LabelWidget edit = new LabelWidget("b", FontManager.tritium42);
-            edit.setColor(this.getColor(4));
-            edit.setBeforeRenderCallback(() -> {
-                edit.setColor(this.getColor(edit.isHovering() ? 5 : 4));
-                edit.centerHorizontally();
-                edit.setPosition(edit.getRelativeX(), edit.getParentHeight() - 24 - edit.getHeight());
-            });
-
-            edit.setOnClickCallback((rx, ry, i) -> {
-                if (i == 0) {
-                    Minecraft.getMinecraft().displayGuiScreen(new MoveWidgetsScreen());
-                }
-                return true;
-            });
+            edit
+                    .setShouldSetMouseCursor(true)
+                    .setColor(this.getColor(4))
+                    .setBeforeRenderCallback(() -> {
+                        edit.setColor(this.getColor(edit.isHovering() ? 5 : 4));
+                        edit.centerHorizontally();
+                        edit.setPosition(edit.getRelativeX(), edit.getParentHeight() - 24 - edit.getHeight());
+                    })
+                    .setOnClickCallback((rx, ry, i) -> {
+                        if (i == 0) {
+                            Minecraft.getMinecraft().displayGuiScreen(new MoveWidgetsScreen());
+                        }
+                        return true;
+                    });
 
             Localizable lEditText = Localizable.of("clickgui.edit");
 

@@ -42,24 +42,22 @@ public class ValueWindow extends Window {
 
         LabelWidget back = new LabelWidget("-", FontManager.pf25bold);
 
-        back.setColor(ClickGui.getColor(17));
-        back.setPosition(4, 2);
+        back
+            .setPosition(4, 2)
+            .setShouldSetMouseCursor(true)
+            .setColor(ClickGui.getColor(17))
+            .setBeforeRenderCallback(() -> {
+                back.setColor(back.isHovering() ? ClickGui.getColor(18) : ClickGui.getColor(17));
+            })
+            .setOnClickCallback((mouseX, mouseY, mouseButton) -> {
+                if (mouseButton == 0) {
+                    ModuleListWindow moduleListWindow = ClickGui.getInstance().getModuleListWindow();
 
-        back.setBeforeRenderCallback(() -> {
-            back.setColor(back.isHovering() ? ClickGui.getColor(18) : ClickGui.getColor(17));
-        });
-
-        back.setOnClickCallback((mouseX, mouseY, mouseButton) -> {
-
-            if (mouseButton == 0) {
-                ModuleListWindow moduleListWindow = ClickGui.getInstance().getModuleListWindow();
-
-                moduleListWindow.setLastOnSetting(moduleListWindow.getOnSetting());
-                moduleListWindow.setOnSetting(null);
-            }
-
-            return true;
-        });
+                    moduleListWindow.setLastOnSetting(moduleListWindow.getOnSetting());
+                    moduleListWindow.setOnSetting(null);
+                }
+                return true;
+            });
 
         this.baseRect.addChild(back);
 
@@ -67,9 +65,10 @@ public class ValueWindow extends Window {
 
         this.baseRect.addChild(settingsPanel);
 
-        settingsPanel.setMargin(4);
-        settingsPanel.setBounds(settingsPanel.getRelativeX(), settingsPanel.getRelativeY() + 16, settingsPanel.getWidth(), settingsPanel.getHeight() - 16);
-        settingsPanel.setSpacing(4);
+        settingsPanel
+            .setMargin(4)
+            .setSpacing(4)
+            .setBounds(settingsPanel.getRelativeX(), settingsPanel.getRelativeY() + 16, settingsPanel.getWidth(), settingsPanel.getHeight() - 16);
     }
 
     @Override

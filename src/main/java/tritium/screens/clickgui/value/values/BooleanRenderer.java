@@ -23,15 +23,16 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
         this.setBounds(142, height);
 
         LabelWidget label = new LabelWidget(() -> setting.getName().get(), FontManager.pf14);
-        label.setBeforeRenderCallback(() -> {
-            label.setColor(ClickGui.getColor(20));
-        });
-        label.setPosition(0, height * .5 - FontManager.pf14.getHeight() * .5);
+        label
+                .setClickable(false)
+                .setPosition(0, height * .5 - FontManager.pf14.getHeight() * .5)
+                .setBeforeRenderCallback(() -> {
+                    label.setColor(ClickGui.getColor(20));
+                });
         this.addChild(label);
 
         RoundedRectWidget rect = new RoundedRectWidget() {
-
-            CheckRenderer cr = new CheckRenderer();
+            final CheckRenderer cr = new CheckRenderer();
 
             @Override
             public void onRender(double mouseX, double mouseY) {
@@ -41,17 +42,19 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
             }
         };
 
-        rect.setBounds(this.getWidth() - height, 0, height, height);
-        rect.setBeforeRenderCallback(() -> {
-            rect.setColor(rect.isHovering() ? ClickGui.getColor(22) : ClickGui.getColor(21));
-        });
-        rect.setRadius(2);
-        rect.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
-            if (mouseButton == 0) {
-                setting.toggle();
-            }
-            return true;
-        });
+        rect
+            .setShouldSetMouseCursor(true)
+            .setBounds(this.getWidth() - height, 0, height, height)
+            .setBeforeRenderCallback(() -> {
+                rect.setColor(rect.isHovering() ? ClickGui.getColor(22) : ClickGui.getColor(21));
+            })
+            .setRadius(2)
+            .setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+                if (mouseButton == 0) {
+                    setting.toggle();
+                }
+                return true;
+            });
 
         this.addChild(rect);
     }

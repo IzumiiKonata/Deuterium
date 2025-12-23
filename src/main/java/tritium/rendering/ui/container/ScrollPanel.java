@@ -15,10 +15,9 @@ import java.util.List;
  * @author IzumiiKonata
  * Date: 2025/7/8 21:45
  */
-public class ScrollPanel extends Panel {
+public class ScrollPanel extends AbstractWidget<ScrollPanel> {
 
     @Getter
-    @Setter
     private double spacing = 0;
     public double actualScrollOffset = 0, targetScrollOffset = 0;
 
@@ -58,6 +57,17 @@ public class ScrollPanel extends Panel {
 
         // 设置子组件的垂直位置
         this.alignChildren();
+    }
+
+    @Override
+    protected void renderDebugLayout() {
+        super.renderDebugLayout();
+        Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), reAlpha(0x00F50EE8, this.getAlpha() * .05f));
+    }
+
+    public ScrollPanel setSpacing(double spacing) {
+        this.spacing = spacing;
+        return this;
     }
 
     @Override
