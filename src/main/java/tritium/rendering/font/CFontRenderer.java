@@ -1,12 +1,16 @@
 package tritium.rendering.font;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import tritium.Tritium;
+import tritium.command.CommandValues;
 import tritium.interfaces.IFontRenderer;
 import tritium.rendering.RGBA;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -137,6 +141,19 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         };
     }
 
+//    @EqualsAndHashCode
+//    @AllArgsConstructor
+//    private static class StringRenderCall {
+//        public String s;
+//        public float r, g, b, a;
+//
+//        public static StringRenderCall of(String s, float r, float g, float b, float a) {
+//            return new StringRenderCall(s, r, g, b, a);
+//        }
+//    }
+
+    private final Map<String, Integer> callListMap = new HashMap<>();
+
     public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
         GlStateManager.pushMatrix();
 
@@ -155,6 +172,14 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         GL11.glTexEnvi(GL11.GL_TEXTURE_ENV, GL11.GL_TEXTURE_ENV_MODE, GL11.GL_MODULATE);
 
+        boolean callLists = CommandValues.getValues().experimental_fontrenderer_optimization;
+        boolean allLoaded = callLists ? drawStringWithCallList(s, x, y, r, g, b, a) : drawStringImmediateMode(s, x, y, r, g, b, a);
+
+        GlStateManager.popMatrix();
+        return allLoaded;
+    }
+
+    private boolean drawStringImmediateMode(String s, double x, double y, float r, float g, float b, float a) {
         boolean allLoaded = true;
         double xOffset = 0;
         double yOffset = 0;
@@ -222,8 +247,121 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         }
 
         GL11.glEnd();
+        return allLoaded;
+    }
 
-        GlStateManager.popMatrix();
+    private boolean drawStringWithCallList(String s, double x, double y, float r, float g, float b, float a) {
+        boolean allLoaded = true;
+
+        Integer value = callListMap.get(s);
+
+        if (value != null) {
+            GL11.glCallList(value);
+            GL11.glColor4f(1, 1, 1, 1);
+            GlStateManager.resetColor();
+            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
+            return true;
+        }
+
+        {
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+
+                if (c == '§') {
+                    i++;
+                    continue;
+                }
+
+                Glyph gly = locateGlyph(c);
+                if (gly == null) {
+                    allLoaded = false;
+                    break;
+                }
+            }
+
+            double xOffset = 0;
+            double yOffset = 0;
+            boolean inSel = false;
+
+            int callList = -1;
+
+            if (allLoaded) {
+                callList = GLAllocation.generateDisplayLists(1);
+                GL11.glNewList(callList, GL11.GL_COMPILE);
+            }
+
+            GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+
+            for (int i = 0; i < s.length(); i++) {
+                char c = s.charAt(i);
+
+                if (inSel) {
+                    inSel = false;
+                    if (c == 'r') {
+                        GL11.glColor3f(r, g, b);
+                    } else {
+                        int colorCode = this.getColorCode(c);
+                        if (colorCode != Integer.MIN_VALUE) {
+                            int red = colorCode >> 8 * 2 & 0xFF;
+                            int green = colorCode >> 8 & 0xFF;
+                            int blue = colorCode & 0xFF;
+                            GL11.glColor3f(red * RenderSystem.DIVIDE_BY_255, green * RenderSystem.DIVIDE_BY_255, blue * RenderSystem.DIVIDE_BY_255);
+                        }
+                    }
+                    continue;
+                }
+
+                if (c == '§') {
+                    inSel = true;
+//                    i++;
+                    continue;
+                }
+                if (c == '\n') {
+                    yOffset += this.getHeight() * 2 + 4;
+                    xOffset = 0;
+                    GL11.glEnd();
+                    GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+                    continue;
+                }
+
+                if (c == '（') c = '(';
+                if (c == '）') c = ')';
+
+                Glyph glyph = locateGlyph(c);
+                if (glyph != null && glyph.uploaded) {
+                    float x0 = (float) xOffset;
+                    float y0 = (float) yOffset;
+                    float x1 = x0 + glyph.width;
+                    float y1 = y0 + glyph.height;
+
+                    GL11.glTexCoord2f(glyph.u0, glyph.v0);
+                    GL11.glVertex2f(x0, y0);
+
+                    GL11.glTexCoord2f(glyph.u0, glyph.v1);
+                    GL11.glVertex2f(x0, y1);
+
+                    GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                    GL11.glVertex2f(x1, y0);
+
+                    GL11.glTexCoord2f(glyph.u1, glyph.v1);
+                    GL11.glVertex2f(x1, y1);
+
+                    xOffset += glyph.width;
+                }
+            }
+
+            GL11.glEnd();
+
+            if (allLoaded) {
+                GL11.glEndList();
+                callListMap.put(s, callList);
+                GL11.glCallList(callList);
+                GL11.glColor4f(1, 1, 1, 1);
+                GlStateManager.resetColor();
+                GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
+            }
+        }
+
         return allLoaded;
     }
 
@@ -373,6 +511,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         atlas.init();
         allGlyphs = new Glyph['\uFFFF' + 1];
         stringWidthMapD.clear();
+        callListMap.values().forEach(GLAllocation::deleteDisplayLists);
+        callListMap.clear();
         fontHeight = -1;
     }
 

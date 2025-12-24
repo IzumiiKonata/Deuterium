@@ -1,6 +1,7 @@
 package net.minecraft.client.gui;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -13,11 +14,13 @@ import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
+import net.minecraft.util.Tuple;
 import net.optifine.CustomColors;
 import net.optifine.render.GlBlendState;
 import net.optifine.util.FontUtils;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
+import tritium.command.CommandValues;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,6 +52,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
      */
     private final int[] colorCode = new int[32];
     private Location locationFontTexture;
+    private boolean asciiTexturesLoaded = false;
 
     /**
      * The RenderEngine used to load and setup glyph textures.
@@ -173,14 +177,14 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
     public void onResourceManagerReload(IResourceManager resourceManager) {
         this.locationFontTexture = FontUtils.getHdFontLocation(this.locationFontTextureBase);
-
-        for (int i = 0; i < unicodePageLocations.length; ++i) {
-            unicodePageLocations[i] = null;
-        }
+        this.asciiTexturesLoaded = false;
+        Arrays.fill(unicodePageLocations, null);
 
         this.readFontTexture();
         this.readGlyphSizes();
         stringWidthMap.clear();
+        callLists.values().forEach(GLAllocation::deleteDisplayLists);
+        callLists.clear();
     }
 
     private void readFontTexture() {
@@ -286,6 +290,8 @@ public class FontRenderer implements IResourceManagerReloadListener {
         int j = ch / 16 * 8;
         int k = italic ? 1 : 0;
         this.bindTexture(this.locationFontTexture);
+        if (!asciiTexturesLoaded)
+            asciiTexturesLoaded = true;
         float f = this.charWidthFloat[ch];
         float f1 = 7.99F;
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
@@ -464,17 +470,181 @@ public class FontRenderer implements IResourceManagerReloadListener {
         }
     }
 
+    Map<Tuple<String, Boolean>, Integer> callLists = new HashMap<>();
+
+    private boolean isUnicodeCharLoaded(char ch) {
+        int i = ch / 256;
+        return unicodePageLocations[i] != null;
+    }
+
+    private void renderStringAtPosCallLists(String text, boolean shadow) {
+
+        GlStateManager.enableTexture2D();
+
+        Tuple<String, Boolean> key = Tuple.of(text, shadow);
+        Integer callList = callLists.get(key);
+        if (callList != null) {
+            // get current binding texture
+//            int texture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
+            GlStateManager.translate(this.posX, this.posY, 0);
+            GlStateManager.callList(callList);
+            GlStateManager.translate(-this.posX, -this.posY, 0);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
+            GlStateManager.resetColor();
+            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
+            return;
+        }
+
+        char[] charArray = text.toCharArray();
+        int length = text.length();
+        boolean canCompile = true;
+
+        for (int i = 0; i < length; ++i) {
+            char currentChar = charArray[i];
+
+            if (currentChar == '\247' && i + 1 < length) {
+                char next = charArray[i + 1];
+                if (next == 'k') {
+                    canCompile = false;
+                    break;
+                }
+                continue;
+            }
+
+            int idx = charMap[currentChar];
+            boolean canRenderThisChar = idx != -1 && !this.unicodeFlag ? this.asciiTexturesLoaded : this.isUnicodeCharLoaded(currentChar);
+            if (!canRenderThisChar) {
+                canCompile = false;
+                break;
+            }
+        }
+
+        int cl = -1;
+        float x = this.posX, y = this.posY;
+        if (canCompile) {
+            cl = GLAllocation.generateDisplayLists(1);
+            GL11.glNewList(cl, GL11.GL_COMPILE);
+            this.posX = this.posY = 0;
+        }
+
+        for (int i = 0; i < length; ++i) {
+            char currentChar = charArray[i];
+
+            if (currentChar == '\247' && i + 1 < length) {
+                char next = charArray[i + 1];
+
+                if (next >= '0' && next <= 'r') {
+                    if (next <= 'f') {
+                        this.randomStyle = false;
+                        this.boldStyle = false;
+                        this.strikethroughStyle = false;
+                        this.underlineStyle = false;
+                        this.italicStyle = false;
+
+                        int colorIndex = ((next - 'a') >= 0 ? (next - 'a' + 10) : (next - '0')) + (shadow ? 16 : 0);
+
+                        int hexColor = this.colorCode[colorIndex];
+
+                        if (Config.isCustomColors()) {
+                            hexColor = CustomColors.getTextColor(colorIndex, hexColor);
+                        }
+
+                        this.textColor = hexColor;
+                        GL11.glColor3f((float) (hexColor >> 16) / 255.0F, (float) (hexColor >> 8 & 255) / 255.0F, (float) (hexColor & 255) / 255.0F);
+                    } else if (next == 'k') {
+                        this.randomStyle = true;
+                    } else if (next == 'l') {
+                        this.boldStyle = true;
+                    } else if (next == 'm') {
+                        this.strikethroughStyle = true;
+                    } else if (next == 'n') {
+                        this.underlineStyle = true;
+                    } else if (next == 'o') {
+                        this.italicStyle = true;
+                    } else if (next == 'r') {
+                        this.randomStyle = false;
+                        this.boldStyle = false;
+                        this.strikethroughStyle = false;
+                        this.underlineStyle = false;
+                        this.italicStyle = false;
+                        GL11.glColor3f(this.red, this.blue, this.green);
+                    }
+                }
+
+                ++i;
+            } else {
+                int randomCharValue = -1;
+
+                if (currentChar < charMap.length && (randomCharValue = charMap[currentChar]) != -1 && this.randomStyle) {
+                    int desiredCharWidth = this.getCharWidth(currentChar);
+                    char charWithTheSameWidth;
+
+                    do {
+                        randomCharValue = this.fontRandom.nextInt(asciiCharsArray.length);
+                        charWithTheSameWidth = asciiCharsArray[randomCharValue];
+                    } while (desiredCharWidth != this.getCharWidth(charWithTheSameWidth));
+
+                    currentChar = charWithTheSameWidth;
+                }
+
+                boolean canCharBeRandomized = randomCharValue != -1;
+
+                float boldOffset = canCharBeRandomized && !this.unicodeFlag ? this.offsetBold : 0.5F;
+                boolean flag = (currentChar == 0 || !canCharBeRandomized || this.unicodeFlag) && shadow;
+
+                if (flag) {
+                    this.posX -= boldOffset;
+                    this.posY -= boldOffset;
+                }
+
+                float charWidth = this.renderChar(currentChar, this.italicStyle);
+
+                if (flag) {
+                    this.posX += boldOffset;
+                    this.posY += boldOffset;
+                }
+
+                if (this.boldStyle) {
+                    this.posX += boldOffset;
+
+                    if (flag) {
+                        this.posX -= boldOffset;
+                        this.posY -= boldOffset;
+                    }
+
+                    this.renderChar(currentChar, this.italicStyle);
+                    this.posX -= boldOffset;
+
+                    if (flag) {
+                        this.posX += boldOffset;
+                        this.posY += boldOffset;
+                    }
+
+                    charWidth += boldOffset;
+                }
+
+                this.doDraw(charWidth);
+            }
+        }
+
+        if (canCompile) {
+            GL11.glEndList();
+            callLists.put(key, cl);
+            this.posX = x;
+            this.posY = y;
+            GlStateManager.translate(this.posX, this.posY, 0);
+            GlStateManager.callList(cl);
+            GlStateManager.translate(-this.posX, -this.posY, 0);
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
+            GlStateManager.resetColor();
+            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
+        }
+    }
+
     /**
      * Render a single line string at the current (posX,posY) and update posX
      */
     private void renderStringAtPos(String text, boolean shadow) {
-
-//        RenderTextEvent call = EventManager.call(new RenderTextEvent(text));
-//
-//        if (call.isCancelled())
-//            return;
-
-//        text = call.getText();
 
         GlStateManager.enableTexture2D();
 
@@ -641,7 +811,10 @@ public class FontRenderer implements IResourceManagerReloadListener {
             this.setColor(this.red, this.blue, this.green, this.alpha);
             this.posX = x;
             this.posY = y;
-            this.renderStringAtPos(text, dropShadow);
+            if (CommandValues.getValues().experimental_fontrenderer_optimization)
+                this.renderStringAtPosCallLists(text, dropShadow);
+            else
+                this.renderStringAtPos(text, dropShadow);
             return (int) this.posX;
         }
     }

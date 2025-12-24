@@ -37,9 +37,9 @@ public class CommandValues {
         @SerializedName("cl_skipworldrendering")
         public boolean cl_skipworldrendering = false;
 
-        @CommandDesc("Experimental world renderer optimization")
-        @SerializedName("experimental_worldrenderer_optimization")
-        public boolean experimental_worldrenderer_optimization = false;
+        @CommandDesc("Experimental font renderer optimization")
+        @SerializedName("experimental_fontrenderer_optimization")
+        public boolean experimental_fontrenderer_optimization = true;
 
         @CommandDesc("Viewmodel offset x")
         @SerializedName("viewmodel_offset_x")
