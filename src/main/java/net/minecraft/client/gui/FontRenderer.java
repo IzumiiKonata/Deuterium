@@ -487,6 +487,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
             // get current binding texture
 //            int texture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
             GlStateManager.translate(this.posX, this.posY, 0);
+            GL11.glColor4f(this.red, this.green, this.blue, this.alpha);
             GlStateManager.callList(callList);
             GlStateManager.translate(-this.posX, -this.posY, 0);
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
