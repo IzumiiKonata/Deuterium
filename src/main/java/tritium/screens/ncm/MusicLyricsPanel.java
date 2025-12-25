@@ -362,7 +362,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.1f);
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
-            lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.1f);
+            lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.05f);
 
             if (isHovering) {
                 CursorUtils.setOverride(CursorUtils.HAND);
