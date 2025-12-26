@@ -460,7 +460,7 @@ public class GuiIngame extends Gui {
 
         if (this.mc.thePlayer.experienceLevel > 0) {
             this.mc.mcProfiler.startSection("expLevel");
-            int k1 = 8453920;
+            int k1 = RGBA.color(128, 255, 32);
 
             if (Config.isCustomColors()) {
                 k1 = CustomColors.getExpBarTextColor(k1);

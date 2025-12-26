@@ -39,7 +39,7 @@ public class CommandValues {
 
         @CommandDesc("Experimental font renderer optimization")
         @SerializedName("experimental_fontrenderer_optimization")
-        public boolean experimental_fontrenderer_optimization = false;
+        public boolean experimental_fontrenderer_optimization = true;
 
         @CommandDesc("Viewmodel offset x")
         @SerializedName("viewmodel_offset_x")

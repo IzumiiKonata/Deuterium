@@ -1,7 +1,9 @@
 package net.minecraft.util;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@Getter
 @EqualsAndHashCode
 public class Tuple<A, B> {
     private final A a;
@@ -30,11 +32,4 @@ public class Tuple<A, B> {
         return this.b;
     }
 
-    public A getA() {
-        return a;
-    }
-
-    public B getB() {
-        return b;
-    }
 }

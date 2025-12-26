@@ -332,8 +332,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             callLists.add(Tuple.of(this.compile(builder.toString()), (curR == r && curG == g && curB == b) ? Integer.MIN_VALUE : RGBA.color(curR, curG, curB)));
             this.callLists = callLists.stream().mapToInt(Tuple::getA).toArray();
             this.colors = callLists.stream().mapToInt(Tuple::getB).toArray();
-
-//            System.out.println("Compiled: " + s);
             return true;
         }
 

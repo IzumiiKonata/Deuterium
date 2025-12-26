@@ -7,6 +7,7 @@ import tritium.management.FontManager;
 import tritium.module.Module;
 import tritium.ncm.music.CloudMusic;
 import tritium.rendering.MusicToast;
+import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.font.CFontRenderer;
