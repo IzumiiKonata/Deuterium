@@ -1,12 +1,10 @@
 package tritium.rendering.font;
 
-import lombok.AllArgsConstructor;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.SneakyThrows;
+import lombok.*;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
+import net.minecraft.util.Tuple;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import tritium.Tritium;
@@ -152,8 +150,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 //        }
 //    }
 
-    private final Map<String, Integer> callListMap = new HashMap<>();
-
     public boolean drawString(String s, double x, double y, float r, float g, float b, float a) {
         GlStateManager.pushMatrix();
 
@@ -250,21 +246,44 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return allLoaded;
     }
 
-    private boolean drawStringWithCallList(String s, double x, double y, float r, float g, float b, float a) {
-        boolean allLoaded = true;
+    private final Map<String, StringRenderCall> callListMap = new HashMap<>();
 
-        Integer value = callListMap.get(s);
+    @RequiredArgsConstructor
+    private class StringRenderCall {
+        public final String s;
 
-        if (value != null) {
-            GL11.glCallList(value);
-            GL11.glColor4f(1, 1, 1, 1);
-            GlStateManager.resetColor();
-            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
-            return true;
+        private int[] callLists;
+        private int[] colors;
+        double xOffset = 0;
+        double yOffset = 0;
+
+        public boolean render(float r, float g, float b, float a) {
+
+            if (callLists != null) {
+                for (int i = 0; i < callLists.length; i++) {
+                    int color = colors[i];
+
+                    if (color != Integer.MIN_VALUE)
+                        RenderSystem.color(RenderSystem.reAlpha(color, a));
+                    else
+                        GlStateManager.color(r, g, b, a);
+                    GL11.glCallList(callLists[i]);
+                }
+
+                return true;
+            }
+
+            if (this.compile(r, g, b)) {
+                this.render(r, g, b, a);
+                return true;
+            }
+
+            return false;
         }
 
-        {
-            for (int i = 0; i < s.length(); i++) {
+        public boolean compile(float r, float g, float b) {
+            int length = s.length();
+            for (int i = 0; i < length; i++) {
                 char c = s.charAt(i);
 
                 if (c == '§') {
@@ -274,50 +293,61 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
                 Glyph gly = locateGlyph(c);
                 if (gly == null) {
-                    allLoaded = false;
-                    break;
+                    return false;
                 }
             }
 
-            double xOffset = 0;
-            double yOffset = 0;
-            boolean inSel = false;
-
-            int callList = -1;
-
-            if (allLoaded) {
-                callList = GLAllocation.generateDisplayLists(1);
-                GL11.glNewList(callList, GL11.GL_COMPILE);
-            }
-
-            GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-
-            for (int i = 0; i < s.length(); i++) {
+            List<Tuple<Integer, Integer>> callLists = new ArrayList<>();
+            StringBuilder builder = new StringBuilder();
+            float curR = r, curG = g, curB = b;
+            for (int i = 0; i < length; i++) {
                 char c = s.charAt(i);
 
-                if (inSel) {
-                    inSel = false;
-                    if (c == 'r') {
-                        GL11.glColor3f(r, g, b);
+                if (c == '§' && i < length - 1) {
+                    char next = s.charAt(i + 1);
+                    if (next == 'r') {
+                        int color = (curR == r && curG == g && curB == b) ? Integer.MIN_VALUE : RGBA.color(curR, curG, curB);
+                        callLists.add(Tuple.of(this.compile(builder.toString()), color));
+                        builder.setLength(0);
+                        curR = r;
+                        curG = g;
+                        curB = b;
                     } else {
-                        int colorCode = this.getColorCode(c);
+                        int colorCode = CFontRenderer.this.getColorCode(next);
                         if (colorCode != Integer.MIN_VALUE) {
-                            int red = colorCode >> 8 * 2 & 0xFF;
-                            int green = colorCode >> 8 & 0xFF;
-                            int blue = colorCode & 0xFF;
-                            GL11.glColor3f(red * RenderSystem.DIVIDE_BY_255, green * RenderSystem.DIVIDE_BY_255, blue * RenderSystem.DIVIDE_BY_255);
+                            int color = (curR == r && curG == g && curB == b) ? Integer.MIN_VALUE : RGBA.color(curR, curG, curB);
+                            callLists.add(Tuple.of(this.compile(builder.toString()), color));
+                            builder.setLength(0);
+                            curR = RGBA.redFloat(colorCode);
+                            curG = RGBA.greenFloat(colorCode);
+                            curB = RGBA.blueFloat(colorCode);
                         }
                     }
+                    i++;
                     continue;
                 }
 
-                if (c == '§') {
-                    inSel = true;
-//                    i++;
-                    continue;
-                }
+                builder.append(c);
+            }
+            callLists.add(Tuple.of(this.compile(builder.toString()), (curR == r && curG == g && curB == b) ? Integer.MIN_VALUE : RGBA.color(curR, curG, curB)));
+            this.callLists = callLists.stream().mapToInt(Tuple::getA).toArray();
+            this.colors = callLists.stream().mapToInt(Tuple::getB).toArray();
+
+//            System.out.println("Compiled: " + s);
+            return true;
+        }
+
+        private int compile(String string) {
+            int callList = GL11.glGenLists(1);
+
+            GL11.glNewList(callList, GL11.GL_COMPILE);
+            GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+
+            for (int i = 0; i < string.length(); i++) {
+                char c = string.charAt(i);
+
                 if (c == '\n') {
-                    yOffset += this.getHeight() * 2 + 4;
+                    yOffset += CFontRenderer.this.getHeight() * 2 + 4;
                     xOffset = 0;
                     GL11.glEnd();
                     GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
@@ -351,18 +381,25 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             }
 
             GL11.glEnd();
+            GL11.glEndList();
 
-            if (allLoaded) {
-                GL11.glEndList();
-                callListMap.put(s, callList);
-                GL11.glCallList(callList);
-                GL11.glColor4f(1, 1, 1, 1);
-                GlStateManager.resetColor();
-                GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
-            }
+            return callList;
+        }
+    }
+
+    private boolean drawStringWithCallList(String s, double x, double y, float r, float g, float b, float a) {
+
+        StringRenderCall value = callListMap.computeIfAbsent(s, StringRenderCall::new);
+
+        if (value.render(r, g, b, a)) {
+            GlStateManager.resetColor();
+            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
+            return true;
         }
 
-        return allLoaded;
+        this.drawStringImmediateMode(s, x, y, r, g, b, a);
+
+        return false;
     }
 
     public void drawCenteredString(String s, double x, double y, int color) {
@@ -511,7 +548,13 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         atlas.init();
         allGlyphs = new Glyph['\uFFFF' + 1];
         stringWidthMapD.clear();
-        callListMap.values().forEach(GLAllocation::deleteDisplayLists);
+        callListMap.values().forEach(cl -> {
+            if (cl.callLists != null) {
+                for (int callList : cl.callLists) {
+                    GLAllocation.deleteDisplayLists(callList);
+                }
+            }
+        });
         callListMap.clear();
         fontHeight = -1;
     }

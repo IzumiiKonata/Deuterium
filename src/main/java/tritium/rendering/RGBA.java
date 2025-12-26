@@ -1,6 +1,7 @@
 package tritium.rendering;
 
 import lombok.experimental.UtilityClass;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.math.Mth;
 
 /**
@@ -100,7 +101,7 @@ public class RGBA {
     }
 
     private static float from8BitChannel(int value) {
-        return (float)value / 255.0f;
+        return (float)value * RenderSystem.DIVIDE_BY_255;
     }
 
     public static int toABGR(int color) {
