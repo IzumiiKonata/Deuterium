@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class DefaultResourcePack implements IResourcePack {
-    public static final Set<String> defaultResourceDomains = ImmutableSet.of("minecraft", "realms");
+    public static final Set<String> defaultResourceDomains = ImmutableSet.of("minecraft");
     private final Map<String, File> mapAssets;
 
     public DefaultResourcePack(Map<String, File> mapAssetsIn) {

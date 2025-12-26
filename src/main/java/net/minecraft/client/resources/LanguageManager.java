@@ -57,6 +57,17 @@ public class LanguageManager implements IResourceManagerReloadListener {
         }
 
         currentLocale.loadLocaleDataFiles(resourceManager, list);
+
+        if ("zh_CN".equals(this.currentLanguage)) {
+            currentLocale.properties.put("options.loadOptimal", "加载最优视频设置");
+            currentLocale.properties.put("options.superSecretSettings", "超机密设置...");
+        }
+
+        if ("en_US".equals(this.currentLanguage)) {
+            currentLocale.properties.put("options.loadOptimal", "Load Optimal Video Settings");
+            currentLocale.properties.put("options.superSecretSettings", "Super Secret Settings...");
+        }
+
         StringTranslate.replaceWith(currentLocale.properties);
     }
 
