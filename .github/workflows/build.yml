@@ -77,13 +77,38 @@ jobs:
 
       - name: Update Tritium.json with build info
         run: |
-          cp Releases/Tritium.json release/Tritium/Tritium.json
+          cp Release/Tritium.json release/Tritium/Tritium.json
           
           jq --arg sha1 "${{ steps.calculate_sha1.outputs.SHA1 }}" \
              --arg size "${{ steps.calculate_sha1.outputs.SIZE }}" \
              '.downloads.client.sha1 = $sha1 | .downloads.client.size = ($size | tonumber)' \
              release/Tritium/Tritium.json > release/Tritium/Tritium.json.tmp
           mv release/Tritium/Tritium.json.tmp release/Tritium/Tritium.json
+
+      - name: Add launcher specified files
+        run: |
+          cp Release/icon.png release/Tritium/icon.png
+          mkdir release/Tritium/PCL
+          cp Release/icon.png release/Tritium/PCL/Logo.png
+          cat > release/Tritium/PCL/Setup.ini << EOF
+          State:1
+          Info:Tritium Client
+          Logo:PCL\Logo.png
+          ReleaseTime:2015-12-03 17:24
+          VersionFabric:
+          VersionOptiFine:M6_pre2
+          VersionLiteLoader:False
+          VersionForge:
+          VersionNeoForge:
+          VersionApiCode:-1
+          VersionOriginal:1.8.9
+          VersionOriginalMain:8
+          VersionOriginalSub:9
+          VersionArgumentIndieV2:True
+          LogoCustom:True
+          DisplayType:3
+          CustomInfo:Tritium Client
+          EOF
 
       - name: Create release package
         run: |
