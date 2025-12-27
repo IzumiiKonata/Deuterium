@@ -698,44 +698,34 @@ public class FontRenderer implements IResourceManagerReloadListener {
 
         Tuple<String, Boolean> key = Tuple.of(text, shadow);
         StringRenderCall callList = callLists.computeIfAbsent(key, t -> new StringRenderCall(text, shadow));
-        GlStateManager.translate(this.posX, this.posY, 0);
+        
+        float originalPosX = this.posX;
+        float originalPosY = this.posY;
+        
+        this.posX = 0;
+        this.posY = 0;
+        
+        GlStateManager.translate(originalPosX, originalPosY, 0);
+        
         if (callList.render(this.red, this.green, this.blue, this.alpha)) {
-            GlStateManager.translate(-this.posX, -this.posY, 0);
+            GlStateManager.translate(-originalPosX, -originalPosY, 0);
+            
+            this.posX = originalPosX + this.getStringWidth(text);
+            this.posY = originalPosY;
+            
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
             GlStateManager.resetColor();
             GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
             return;
         }
-        GlStateManager.translate(-this.posX, -this.posY, 0);
+        
+        GlStateManager.translate(-originalPosX, -originalPosY, 0);
+        
+        this.posX = originalPosX;
+        this.posY = originalPosY;
 
         this.renderStringAtPos(text, shadow);
-//        if (callList.render) {
-            // get current binding texture
-//            int texture = GL11.glGetInteger(GL11.GL_TEXTURE_BINDING_2D);
-//            GlStateManager.translate(this.posX, this.posY, 0);
-//            GL11.glColor4f(this.red, this.green, this.blue, this.alpha);
-//            GlStateManager.callList(callList);
-//            GlStateManager.translate(-this.posX, -this.posY, 0);
-//            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
-//            GlStateManager.resetColor();
-//            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
-            return;
-//        }
-
-
-
-//        if (canCompile) {
-//            GL11.glEndList();
-//            callLists.put(key, cl);
-//            this.posX = x;
-//            this.posY = y;
-//            GlStateManager.translate(this.posX, this.posY, 0);
-//            GlStateManager.callList(cl);
-//            GlStateManager.translate(-this.posX, -this.posY, 0);
-//            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
-//            GlStateManager.resetColor();
-//            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
-//        }
+        return;
     }
 
     /**

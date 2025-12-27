@@ -431,44 +431,44 @@ public class GuiTextField extends Gui {
                 drawRect(this.xPosition, this.yPosition, this.xPosition + this.width, this.yPosition + this.height, -16777216);
             }
 
-            int i = this.isEnabled ? this.enabledColor : this.disabledColor;
-            int j = this.cursorPosition - this.lineScrollOffset;
-            int k = this.selectionEnd - this.lineScrollOffset;
-            String s = this.fontRendererInstance.trimStringToWidth(this.text.substring(this.lineScrollOffset), this.getWidth());
-            boolean flag = j >= 0 && j <= s.length();
-            boolean flag1 = this.isFocused && this.cursorCounter / 6 % 2 == 0 && flag;
-            int l = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
-            int i1 = this.enableBackgroundDrawing ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
-            int j1 = l;
+            int textColor = this.isEnabled ? this.enabledColor : this.disabledColor;
+            int visibleCursorPosition = this.cursorPosition - this.lineScrollOffset;
+            int visibleSelectionEnd = this.selectionEnd - this.lineScrollOffset;
+            String visibleText = this.fontRendererInstance.trimStringToWidth(this.text.substring(this.lineScrollOffset), this.getWidth());
+            boolean isCursorVisible = visibleCursorPosition >= 0 && visibleCursorPosition <= visibleText.length();
+            boolean shouldDrawCursor = this.isFocused && this.cursorCounter / 6 % 2 == 0 && isCursorVisible;
+            int textStartX = this.enableBackgroundDrawing ? this.xPosition + 4 : this.xPosition;
+            int textStartY = this.enableBackgroundDrawing ? this.yPosition + (this.height - 8) / 2 : this.yPosition;
+            int textEndX = textStartX;
 
-            if (k > s.length()) {
-                k = s.length();
+            if (visibleSelectionEnd > visibleText.length()) {
+                visibleSelectionEnd = visibleText.length();
             }
 
-            if (s.length() > 0) {
-                String s1 = flag ? s.substring(0, j) : s;
-                j1 = this.fontRendererInstance.drawStringWithShadow(s1, (float) l, (float) i1, i);
+            if (!visibleText.isEmpty()) {
+                String textBeforeCursor = isCursorVisible ? visibleText.substring(0, visibleCursorPosition) : visibleText;
+                textEndX = this.fontRendererInstance.drawStringWithShadow(textBeforeCursor, (float) textStartX, (float) textStartY, textColor);
             }
 
-            boolean flag2 = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
-            int k1 = j1;
+            boolean canShowCursorAtEnd = this.cursorPosition < this.text.length() || this.text.length() >= this.getMaxStringLength();
+            int cursorX = textEndX;
 
-            if (!flag) {
-                k1 = j > 0 ? l + this.width : l;
-            } else if (flag2) {
-                k1 = j1 - 1;
-                --j1;
+            if (!isCursorVisible) {
+                cursorX = visibleCursorPosition > 0 ? textStartX + this.width : textStartX;
+            } else if (canShowCursorAtEnd) {
+                cursorX = textEndX - 1;
+                --textEndX;
             }
 
-            if (s.length() > 0 && flag && j < s.length()) {
-                j1 = this.fontRendererInstance.drawStringWithShadow(s.substring(j), (float) j1, (float) i1, i);
+            if (!visibleText.isEmpty() && isCursorVisible && visibleCursorPosition < visibleText.length()) {
+                this.fontRendererInstance.drawStringWithShadow(visibleText.substring(visibleCursorPosition), (float) textEndX, (float) textStartY, textColor);
             }
 
-            if (flag1) {
-                if (flag2) {
-                    Gui.drawRect(k1, i1 - 1, k1 + 1, i1 + 1 + this.fontRendererInstance.FONT_HEIGHT, -3092272);
+            if (shouldDrawCursor) {
+                if (canShowCursorAtEnd) {
+                    Gui.drawRect(cursorX, textStartY - 1, cursorX + 1, textStartY + 1 + this.fontRendererInstance.FONT_HEIGHT, -3092272);
                 } else {
-                    this.fontRendererInstance.drawStringWithShadow("_", (float) k1, (float) i1, i);
+                    this.fontRendererInstance.drawStringWithShadow("_", (float) cursorX, (float) textStartY, textColor);
                 }
             }
 
@@ -476,20 +476,20 @@ public class GuiTextField extends Gui {
                 if (updInputCTXPositionTimer.isDelayed(100)) {
                     updInputCTXPositionTimer.reset();
                     PreEditRect rect = new PreEditRect();
-                    rect.setX((int) (k1 * RenderSystem.getScaleFactor()) * 2);
-                    rect.setY((int) ((i1 + fontRendererInstance.FONT_HEIGHT) * RenderSystem.getScaleFactor()) * 2);
+                    rect.setX((int) (cursorX * RenderSystem.getScaleFactor()) * 2);
+                    rect.setY((int) ((textStartY + fontRendererInstance.FONT_HEIGHT) * RenderSystem.getScaleFactor()) * 2);
                     IngameIMERenderer.InputCtx.setPreEditRect(rect);
                 }
             }
 
-            if (k != j) {
-                int l1 = l + this.fontRendererInstance.getStringWidth(s.substring(0, k));
-                this.drawCursorVertical(k1, i1 - 1, l1 - 1, i1 + 1 + this.fontRendererInstance.FONT_HEIGHT);
+            if (visibleSelectionEnd != visibleCursorPosition) {
+                int selectionEndX = textStartX + this.fontRendererInstance.getStringWidth(visibleText.substring(0, visibleSelectionEnd));
+                this.drawCursorVertical(cursorX, textStartY - 1, selectionEndX - 1, textStartY + 1 + this.fontRendererInstance.FONT_HEIGHT);
             }
 
 //            SharedRenderingConstants.NORMAL.add(() -> {
             if (this.isFocused() && IngameIMERenderer.canRender())
-                IngameIMERenderer.draw(k1 * RenderSystem.getScaleFactor(), this.yPosition * RenderSystem.getScaleFactor(), true);
+                IngameIMERenderer.draw(cursorX * RenderSystem.getScaleFactor(), this.yPosition * RenderSystem.getScaleFactor(), true);
 //            });
         }
     }
