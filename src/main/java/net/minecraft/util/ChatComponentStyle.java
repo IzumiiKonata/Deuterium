@@ -54,7 +54,7 @@ public abstract class ChatComponentStyle implements IChatComponent {
     }
 
     public Iterator<IChatComponent> iterator() {
-        return Iterators.concat(Iterators.<IChatComponent>forArray(new ChatComponentStyle[]{this}), createDeepCopyIterator(this.siblings));
+        return Iterators.concat(Iterators.<IChatComponent>forArray(this), createDeepCopyIterator(this.siblings));
     }
 
     /**
@@ -90,19 +90,65 @@ public abstract class ChatComponentStyle implements IChatComponent {
     }
 
     public static Iterator<IChatComponent> createDeepCopyIterator(Iterable<IChatComponent> components) {
-        Iterator<IChatComponent> iterator = Iterators.concat(Iterators.transform(components.iterator(), new Function<IChatComponent, Iterator<IChatComponent>>() {
-            public Iterator<IChatComponent> apply(IChatComponent p_apply_1_) {
-                return p_apply_1_.iterator();
+        return new DeepCopyIterator(components);
+    }
+
+    /**
+     * Memory-optimized iterator that performs deep copying lazily
+     */
+    private static class DeepCopyIterator implements Iterator<IChatComponent> {
+        private final Iterator<IChatComponent> componentsIterator;
+        private Iterator<IChatComponent> currentComponentIterator;
+        private IChatComponent nextComponent;
+
+        public DeepCopyIterator(Iterable<IChatComponent> components) {
+            this.componentsIterator = components.iterator();
+            this.currentComponentIterator = null;
+            this.nextComponent = null;
+            advance();
+        }
+
+        private void advance() {
+            while (true) {
+                if (currentComponentIterator != null && currentComponentIterator.hasNext()) {
+                    // Get next component from current iterator and create deep copy
+                    IChatComponent original = currentComponentIterator.next();
+                    IChatComponent copy = original.createCopy();
+                    copy.setChatStyle(copy.getChatStyle().createDeepCopy());
+                    nextComponent = copy;
+                    return;
+                }
+
+                if (!componentsIterator.hasNext()) {
+                    nextComponent = null;
+                    return;
+                }
+
+                // Move to next component's iterator
+                IChatComponent nextOriginal = componentsIterator.next();
+                currentComponentIterator = nextOriginal.iterator();
             }
-        }));
-        iterator = Iterators.transform(iterator, new Function<IChatComponent, IChatComponent>() {
-            public IChatComponent apply(IChatComponent p_apply_1_) {
-                IChatComponent ichatcomponent = p_apply_1_.createCopy();
-                ichatcomponent.setChatStyle(ichatcomponent.getChatStyle().createDeepCopy());
-                return ichatcomponent;
+        }
+
+        @Override
+        public boolean hasNext() {
+            return nextComponent != null;
+        }
+
+        @Override
+        public IChatComponent next() {
+            if (nextComponent == null) {
+                throw new java.util.NoSuchElementException();
             }
-        });
-        return iterator;
+            IChatComponent result = nextComponent;
+            advance();
+            return result;
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
     public boolean equals(Object p_equals_1_) {
