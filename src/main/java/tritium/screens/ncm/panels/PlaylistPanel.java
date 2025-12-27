@@ -295,15 +295,25 @@ public class PlaylistPanel extends NCMPanel {
         return sb.toString();
     }
 
+    String cached = "";
+    int lastSize = -1;
+
     private String getPlayListInfo() {
         if (!playList.musicsLoaded)
             return "";
 
         List<Music> musics = playList.musics;
-        if (musics.isEmpty())
-            return playList.getCount() + "首歌曲";
 
-        return musics.size() + "首歌曲 · " + this.formatDuration(musics.stream().mapToLong(Music::getDuration).sum());
+        if (lastSize != musics.size()) {
+            lastSize = musics.size();
+            if (musics.isEmpty()) {
+                cached = playList.getCount() + "首歌曲";
+            } else {
+                cached = musics.size() + "首歌曲 · " + this.formatDuration(musics.stream().mapToLong(Music::getDuration).sum());
+            }
+        }
+
+        return cached;
     }
 
     private void loadCover() {

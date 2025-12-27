@@ -52,21 +52,16 @@ public class ScrollText {
             this.reset();
         }
 
-        StencilClipManager.beginClip(() -> {
-            double exp = 2;
-            Rect.draw(x, y - exp, width, fr.getHeight() + exp * 2, -1, Rect.RectType.EXPAND);
-        });
-
-        fr.drawString(text, x + scrollOffset, y, color);
-
-        int w = fr.getStringWidth(text);
+        double w = fr.getStringWidthD(text);
 
         if (w > width) {
 
-            // wait time
-//            if (t.isDelayed(waitTime)) {
-//
-//            }
+            StencilClipManager.beginClip(() -> {
+                double exp = 2;
+                Rect.draw(x, y - exp, width, fr.getHeight() + exp * 2, -1, Rect.RectType.EXPAND);
+            });
+
+            fr.drawString(text, x + scrollOffset, y, color);
 
             double dest = -(w - width + 4);
 
@@ -91,18 +86,13 @@ public class ScrollText {
 
             }
 
-//            if (scrollOffset - dest < 0.2) {
-//                if (!oneShot) {
-//                    t.reset();
-//                }
-//            }
+            StencilClipManager.endClip();
 
         } else {
             scrollOffset = 0;
+            fr.drawString(text, x, y, color);
         }
 
-
-        StencilClipManager.endClip();
     }
 
 }
