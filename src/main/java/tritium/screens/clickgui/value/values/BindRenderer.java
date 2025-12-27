@@ -39,6 +39,8 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
         RectWidget rw = new RectWidget();
         this.addChild(rw);
 
+        final Object[] lastEventReceiver = {null};
+
         rw
             .setShouldSetMouseCursor(true)
             .setBeforeRenderCallback(() -> {
@@ -50,16 +52,22 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
                 rw.setColor(rw.isHovering() ? ClickGui.getColor(24) : ClickGui.getColor(23));
             })
             .setOnClickCallback((mouseX, mouseY, mouseButton) -> {
+                if (listening.get())
+                    return false;
+
                 if (mouseButton == 0) {
                     if (!listening.get()) {
                         this.listening.set(true);
-
-                        EventManager.register(new Object() {
+                        EventManager.register(lastEventReceiver[0] = new Object() {
 
                             boolean skipFirst = false;
 
                             @Handler
                             public void onKeyEvent(KeyPressedEvent event) {
+                                if (!BindRenderer.this.listening.get()) {
+                                    EventManager.unregister(this);
+                                    skipFirst = false;
+                                }
 
                                 if (event.getKeyCode() < 0 && !skipFirst) {
                                     skipFirst = true;
@@ -70,11 +78,8 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
                                     BindRenderer.this.listening.set(false);
                                     setting.setValue(event.getKeyCode());
                                     EventManager.unregister(this);
-                                    return;
-                                }
-
-                                if (!BindRenderer.this.listening.get()) {
-                                    EventManager.unregister(this);
+                                    lastEventReceiver[0] = null;
+                                    skipFirst = false;
                                 }
 
                             }
@@ -90,6 +95,9 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
             .setOnKeyTypedCallback((character, keyCode) -> {
                 if (this.listening.get()) {
                     listening.set(false);
+
+                    if (lastEventReceiver[0] != null)
+                        EventManager.unregister(lastEventReceiver[0]);
 
                     if (keyCode == Keyboard.KEY_ESCAPE)
                         keyCode = Keyboard.KEY_NONE;
