@@ -283,6 +283,10 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         return this.isAreaLoaded(center.getX() - radius, center.getY() - radius, center.getZ() - radius, center.getX() + radius, center.getY() + radius, center.getZ() + radius, allowEmpty);
     }
 
+    public boolean isAreaLoaded(int centerX, int centerY, int centerZ, int radius, boolean allowEmpty) {
+        return this.isAreaLoaded(centerX - radius, centerY - radius, centerZ - radius, centerX + radius, centerY + radius, centerZ + radius, allowEmpty);
+    }
+
     public boolean isAreaLoaded(BlockPos from, BlockPos to) {
         return this.isAreaLoaded(from, to, true);
     }
@@ -2311,6 +2315,17 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         return flag;
     }
 
+    public boolean checkLight(int x, int y, int z) {
+        boolean flag = false;
+
+        if (!this.provider.getHasNoSky()) {
+            flag |= this.checkLightFor(EnumSkyBlock.SKY, x, y, z);
+        }
+
+        flag = flag | this.checkLightFor(EnumSkyBlock.BLOCK, x, y, z);
+        return flag;
+    }
+
     /**
      * gets the light level at the supplied position
      */
@@ -2350,6 +2365,17 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 return i;
             }
         }
+    }
+
+    public boolean checkLightFor(EnumSkyBlock lightType, int x, int y, int z) {
+
+        if (!this.isAreaLoaded(x, y, z, 16, false)) {
+            return false;
+        }
+
+        this.lightingEngine.scheduleLightUpdate(lightType, x, y, z);
+
+        return true;
     }
 
     public boolean checkLightFor(EnumSkyBlock lightType, BlockPos pos) {

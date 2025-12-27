@@ -1210,7 +1210,9 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             lightRecheckSpeed = 32;
         }
 
-        BlockPos blockpos = new BlockPos(this.xPosition << 4, 0, this.zPosition << 4);
+        int baseX = this.xPosition << 4;
+        int baseY = 0;
+        int baseZ = this.zPosition << 4;
         for (int i = 0; i < lightRecheckSpeed; ++i) {
 
             int j = this.queuedLightChecks % 16;
@@ -1220,19 +1222,25 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 
             for (int y = 0; y < 16; ++y) {
                 ExtendedBlockStorage storage = this.storageArrays[j];
-                BlockPos blockpos1 = blockpos.add(k, (j << 4) + y, l);
+//                BlockPos blockpos1 = blockpos.add(k, (j << 4) + y, l);
+                int newX = baseX + k;
+                int newY = baseY + (j << 4) + y;
+                int newZ = baseZ + l;
                 boolean flag = y == 0 || y == 15 || k == 0 || k == 15 || l == 0 || l == 15;
 
                 if (storage == null && flag || storage != null && storage.getBlockByExtId(k, y, l).getMaterial() == Material.air) {
                     for (EnumFacing enumfacing : EnumFacing.VALUES) {
-                        BlockPos blockpos2 = blockpos1.offset(enumfacing);
+//                        BlockPos blockpos2 = blockpos1.offset(enumfacing);
+                        int offsetX = newX + enumfacing.getFrontOffsetX();
+                        int offsetY = newY + enumfacing.getFrontOffsetY();
+                        int offsetZ = newZ + enumfacing.getFrontOffsetZ();
 
-                        if (this.worldObj.getBlockState(blockpos2).getBlock().getLightValue() > 0) {
-                            this.worldObj.checkLight(blockpos2);
+                        if (this.worldObj.getBlockState(offsetX, offsetY, offsetZ).getBlock().getLightValue() > 0) {
+                            this.worldObj.checkLight(offsetX, offsetY, offsetZ);
                         }
                     }
 
-                    this.worldObj.checkLight(blockpos1);
+                    this.worldObj.checkLight(newX, newY, newZ);
                 }
             }
         }

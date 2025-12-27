@@ -139,6 +139,16 @@ public class LightingEngine implements ILightingEngine {
         }
     }
 
+    public void scheduleLightUpdate(final EnumSkyBlock lightType, final int x, final int y, final int z) {
+        this.acquireLock();
+
+        try {
+            this.scheduleLightUpdate(lightType, encodeWorldCoord(x, y, z));
+        } finally {
+            this.releaseLock();
+        }
+    }
+
     /**
      * Schedules a light update for the specified light type and position to be processed later by {@link ILightingEngine#processLightUpdates()}
      */
