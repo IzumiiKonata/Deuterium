@@ -45,7 +45,7 @@ public class MovingObjectPosition {
         this.typeOfHit = typeOfHitIn;
         this.blockPos = blockPosIn;
         this.sideHit = sideHitIn;
-        this.hitVec = new Vec3(hitVecIn.xCoord, hitVecIn.yCoord, hitVecIn.zCoord);
+        this.hitVec = hitVecIn;
         this.createRaytraceResult();
     }
 

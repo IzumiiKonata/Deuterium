@@ -16,6 +16,7 @@ import net.minecraft.util.Location;
 
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntitySkull> {
     private static final Location SKELETON_TEXTURES = Location.of("textures/entity/skeleton/skeleton.png");
@@ -25,6 +26,9 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
     public static TileEntitySkullRenderer instance;
     private final ModelSkeletonHead skeletonHead = new ModelSkeletonHead(0, 0, 64, 32);
     public ModelSkeletonHead humanoidHead = new ModelHumanoidHead();
+    
+    // Cache for player skin textures to avoid repeated loading and memory allocation
+    private final Map<GameProfile, Location> skinTextureCache = new ConcurrentHashMap<>();
 
     public void renderTileEntityAt(TileEntitySkull te, double x, double y, double z, float partialTicks, int destroyStage) {
         EnumFacing enumfacing = EnumFacing.getFront(te.getBlockMetadata() & 7);
@@ -67,14 +71,20 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
                     Location resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
 
                     if (p_180543_7_ != null) {
-                        Minecraft minecraft = Minecraft.getMinecraft();
-                        Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(p_180543_7_);
+                        resourcelocation = skinTextureCache.get(p_180543_7_);
+                        
+                        if (resourcelocation == null) {
+                            Minecraft minecraft = Minecraft.getMinecraft();
+                            Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(p_180543_7_);
 
-                        if (map.containsKey(Type.SKIN)) {
-                            resourcelocation = minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
-                        } else {
-                            UUID uuid = EntityPlayer.getUUID(p_180543_7_);
-                            resourcelocation = DefaultPlayerSkin.getDefaultSkin(uuid);
+                            if (map.containsKey(Type.SKIN)) {
+                                resourcelocation = minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
+                                skinTextureCache.put(p_180543_7_, resourcelocation);
+                            } else {
+                                UUID uuid = EntityPlayer.getUUID(p_180543_7_);
+                                resourcelocation = DefaultPlayerSkin.getDefaultSkin(uuid);
+                                skinTextureCache.put(p_180543_7_, resourcelocation);
+                            }
                         }
                     }
 

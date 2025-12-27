@@ -643,7 +643,7 @@ public class Block {
 
         Vec3 vec36 = null;
 
-        if (vec3 != null && (vec36 == null || start.squareDistanceTo(vec3) < start.squareDistanceTo(vec36))) {
+        if (vec3 != null) {
             vec36 = vec3;
         }
 
