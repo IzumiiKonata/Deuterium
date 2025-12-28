@@ -116,7 +116,8 @@ public class DependencyDownloader {
 //        System.out.println("Args: " + String.join(" ", jvmArgs));
 
         ProcessBuilder game = new ProcessBuilder(jvmArgs);
-        game.inheritIO().start();
+        Process proc = game.inheritIO().start();
+        proc.waitFor();
     }
 
     /**
