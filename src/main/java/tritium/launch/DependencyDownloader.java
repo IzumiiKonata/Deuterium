@@ -24,10 +24,9 @@ public class DependencyDownloader {
     final File tritiumDir = new File("Tritium");
     final File depsDir = new File(tritiumDir, "deps");
 
-
     public DependencyDownloader() {
-    }
 
+    }
 
     public void run(String[] args) {
         if (!tritiumDir.exists()) {

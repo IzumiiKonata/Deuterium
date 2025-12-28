@@ -1,10 +1,10 @@
-package tritium.versionchecker;
+package net.minecraft.client.main;
 
 import javax.swing.*;
 import java.awt.*;
 import java.lang.reflect.Method;
 
-public class VersionChecker {
+public class Main {
     
     public static void main(String[] args) {
         String javaVersion = System.getProperty("java.version");
@@ -17,9 +17,10 @@ public class VersionChecker {
             showJavaVersionWarning();
         } else {
             try {
-                Class<?> mainClass = Class.forName("net.minecraft.client.main.Main");
-                Method mainMethod = mainClass.getMethod("main", String[].class);
-                mainMethod.invoke(null, (Object) args);
+                Class<?> mainClass = Class.forName("tritium.launch.DependencyDownloader");
+                Object o = mainClass.getConstructor().newInstance();
+                Method mainMethod = mainClass.getMethod("run", String[].class);
+                mainMethod.invoke(o, (Object) args);
             } catch (Exception e) {
                 System.err.println("无法启动主类: " + e.getMessage());
                 e.printStackTrace();

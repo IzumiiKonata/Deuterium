@@ -1,5 +1,4 @@
 import lombok.SneakyThrows;
-import net.minecraft.client.main.Main;
 import tritium.Tritium;
 import tritium.launch.Launcher;
 
