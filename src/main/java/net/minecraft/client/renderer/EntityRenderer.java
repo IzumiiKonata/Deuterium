@@ -93,6 +93,7 @@ import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.info.UpdateChecker;
 import tritium.utils.other.info.Version;
+import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.IOException;
 import java.nio.FloatBuffer;
@@ -196,7 +197,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     /**
      * Is set, updateCameraAndRender() calls updateLightmap(); set by updateTorchFlicker()
      */
-    private boolean lightmapUpdateNeeded;
+    public boolean lightmapUpdateNeeded;
 
     /**
      * Torch flicker X
@@ -369,7 +370,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
 
         this.updateFovModifierHand();
-        this.updateTorchFlicker();
         this.fogColor2 = this.fogColor1;
         this.thirdPersonDistanceTemp = this.thirdPersonDistance;
 
@@ -392,8 +392,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             this.mc.setRenderViewEntity(this.mc.thePlayer);
         }
 
-        Entity entity = this.mc.getRenderViewEntity();
-        float f2 = this.mc.theWorld.getLightBrightness(new BlockPos(mc.getRenderViewEntity().getPositionEyes(1.0F)));
+        Vec3 positionEyes = mc.getRenderViewEntity().getPositionEyes(1.0F);
+        float f2 = this.mc.theWorld.getLightBrightness(MathHelper.floor_double(positionEyes.xCoord), MathHelper.floor_double(positionEyes.yCoord), MathHelper.floor_double(positionEyes.zCoord));
         float f3 = (float) this.mc.gameSettings.renderDistanceChunks / 16.0F;
         f3 = MathHelper.clamp_float(f3, 0.0F, 1.0F);
         float f4 = f2 * (1.0F - f3) + f3;
@@ -991,16 +991,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
     }
 
-    /**
-     * Recompute a random value that is applied to block color in updateLightmap()
-     */
-    private void updateTorchFlicker() {
-        this.torchFlickerDX = (float) ((double) this.torchFlickerDX + (Math.random() - Math.random()) * Math.random() * Math.random());
-        this.torchFlickerDX = (float) ((double) this.torchFlickerDX * 0.9D);
-        this.torchFlickerX += (this.torchFlickerDX - this.torchFlickerX);
-        this.lightmapUpdateNeeded = true;
-    }
-
     private void updateLightmap(float partialTicks) {
 
         if (ModuleManager.nightVision.isEnabled() && this.patcher$createdLightmap) {
@@ -1008,132 +998,134 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
 
         if (this.lightmapUpdateNeeded) {
-            World world = this.mc.theWorld;
+            MultiThreadingUtil.runAsync(() -> {
+                World world = this.mc.theWorld;
 
-            if (world != null) {
-                if (Config.isCustomColors() && CustomColors.updateLightmap(world, this.torchFlickerX, this.lightmapColors, this.mc.thePlayer.isPotionActive(Potion.nightVision), partialTicks)) {
+                if (world != null) {
+                    if (Config.isCustomColors() && CustomColors.updateLightmap(world, this.torchFlickerX, this.lightmapColors, this.mc.thePlayer.isPotionActive(Potion.nightVision), partialTicks)) {
+                        this.lightmapTexture.updateDynamicTexture();
+                        this.lightmapUpdateNeeded = false;
+                        return;
+                    }
+
+                    float f = world.getSunBrightness(1.0F);
+                    float f1 = f * 0.95F + 0.05F;
+
+                    for (int i = 0; i < 256; ++i) {
+                        float f2 = world.provider.getLightBrightnessTable()[i / 16] * f1;
+                        float f3 = world.provider.getLightBrightnessTable()[i % 16] * (this.torchFlickerX * 0.1F + 1.5F);
+
+                        if (world.getLastLightningBolt() > 0) {
+                            f2 = world.provider.getLightBrightnessTable()[i / 16];
+                        }
+
+                        float f4 = f2 * (f * 0.65F + 0.35F);
+                        float f5 = f2 * (f * 0.65F + 0.35F);
+                        float f6 = f3 * ((f3 * 0.6F + 0.4F) * 0.6F + 0.4F);
+                        float f7 = f3 * (f3 * f3 * 0.6F + 0.4F);
+                        float f8 = f4 + f3;
+                        float f9 = f5 + f6;
+                        float f10 = f2 + f7;
+                        f8 = f8 * 0.96F + 0.03F;
+                        f9 = f9 * 0.96F + 0.03F;
+                        f10 = f10 * 0.96F + 0.03F;
+
+                        if (this.bossColorModifier > 0.0F) {
+                            float f11 = this.bossColorModifierPrev + (this.bossColorModifier - this.bossColorModifierPrev) * partialTicks;
+                            f8 = f8 * (1.0F - f11) + f8 * 0.7F * f11;
+                            f9 = f9 * (1.0F - f11) + f9 * 0.6F * f11;
+                            f10 = f10 * (1.0F - f11) + f10 * 0.6F * f11;
+                        }
+
+                        if (world.provider.getDimensionId() == 1) {
+                            f8 = 0.22F + f3 * 0.75F;
+                            f9 = 0.28F + f6 * 0.75F;
+                            f10 = 0.25F + f7 * 0.75F;
+                        }
+
+                        if (this.mc.thePlayer.isPotionActive(Potion.nightVision)) {
+                            float f15 = this.getNightVisionBrightness(this.mc.thePlayer, partialTicks);
+                            float f12 = 1.0F / f8;
+
+                            if (f12 > 1.0F / f9) {
+                                f12 = 1.0F / f9;
+                            }
+
+                            if (f12 > 1.0F / f10) {
+                                f12 = 1.0F / f10;
+                            }
+
+                            f8 = f8 * (1.0F - f15) + f8 * f12 * f15;
+                            f9 = f9 * (1.0F - f15) + f9 * f12 * f15;
+                            f10 = f10 * (1.0F - f15) + f10 * f12 * f15;
+                        }
+
+                        if (f8 > 1.0F) {
+                            f8 = 1.0F;
+                        }
+
+                        if (f9 > 1.0F) {
+                            f9 = 1.0F;
+                        }
+
+                        if (f10 > 1.0F) {
+                            f10 = 1.0F;
+                        }
+
+                        float f16 = this.mc.gameSettings.gammaSetting;
+                        float f17 = 1.0F - f8;
+                        float f13 = 1.0F - f9;
+                        float f14 = 1.0F - f10;
+                        f17 = 1.0F - f17 * f17 * f17 * f17;
+                        f13 = 1.0F - f13 * f13 * f13 * f13;
+                        f14 = 1.0F - f14 * f14 * f14 * f14;
+                        f8 = f8 * (1.0F - f16) + f17 * f16;
+                        f9 = f9 * (1.0F - f16) + f13 * f16;
+                        f10 = f10 * (1.0F - f16) + f14 * f16;
+                        f8 = f8 * 0.96F + 0.03F;
+                        f9 = f9 * 0.96F + 0.03F;
+                        f10 = f10 * 0.96F + 0.03F;
+
+                        if (f8 > 1.0F) {
+                            f8 = 1.0F;
+                        }
+
+                        if (f9 > 1.0F) {
+                            f9 = 1.0F;
+                        }
+
+                        if (f10 > 1.0F) {
+                            f10 = 1.0F;
+                        }
+
+                        if (f8 < 0.0F) {
+                            f8 = 0.0F;
+                        }
+
+                        if (f9 < 0.0F) {
+                            f9 = 0.0F;
+                        }
+
+                        if (f10 < 0.0F) {
+                            f10 = 0.0F;
+                        }
+
+                        int j = 255;
+                        int k = (int) (f8 * 255.0F);
+                        int l = (int) (f9 * 255.0F);
+                        int i1 = (int) (f10 * 255.0F);
+                        this.lightmapColors[i] = j << 24 | k << 16 | l << 8 | i1;
+                    }
+
                     this.lightmapTexture.updateDynamicTexture();
                     this.lightmapUpdateNeeded = false;
-                    return;
+                    this.patcher$createdLightmap = true;
                 }
-
-                float f = world.getSunBrightness(1.0F);
-                float f1 = f * 0.95F + 0.05F;
-
-                for (int i = 0; i < 256; ++i) {
-                    float f2 = world.provider.getLightBrightnessTable()[i / 16] * f1;
-                    float f3 = world.provider.getLightBrightnessTable()[i % 16] * (this.torchFlickerX * 0.1F + 1.5F);
-
-                    if (world.getLastLightningBolt() > 0) {
-                        f2 = world.provider.getLightBrightnessTable()[i / 16];
-                    }
-
-                    float f4 = f2 * (f * 0.65F + 0.35F);
-                    float f5 = f2 * (f * 0.65F + 0.35F);
-                    float f6 = f3 * ((f3 * 0.6F + 0.4F) * 0.6F + 0.4F);
-                    float f7 = f3 * (f3 * f3 * 0.6F + 0.4F);
-                    float f8 = f4 + f3;
-                    float f9 = f5 + f6;
-                    float f10 = f2 + f7;
-                    f8 = f8 * 0.96F + 0.03F;
-                    f9 = f9 * 0.96F + 0.03F;
-                    f10 = f10 * 0.96F + 0.03F;
-
-                    if (this.bossColorModifier > 0.0F) {
-                        float f11 = this.bossColorModifierPrev + (this.bossColorModifier - this.bossColorModifierPrev) * partialTicks;
-                        f8 = f8 * (1.0F - f11) + f8 * 0.7F * f11;
-                        f9 = f9 * (1.0F - f11) + f9 * 0.6F * f11;
-                        f10 = f10 * (1.0F - f11) + f10 * 0.6F * f11;
-                    }
-
-                    if (world.provider.getDimensionId() == 1) {
-                        f8 = 0.22F + f3 * 0.75F;
-                        f9 = 0.28F + f6 * 0.75F;
-                        f10 = 0.25F + f7 * 0.75F;
-                    }
-
-                    if (this.mc.thePlayer.isPotionActive(Potion.nightVision)) {
-                        float f15 = this.getNightVisionBrightness(this.mc.thePlayer, partialTicks);
-                        float f12 = 1.0F / f8;
-
-                        if (f12 > 1.0F / f9) {
-                            f12 = 1.0F / f9;
-                        }
-
-                        if (f12 > 1.0F / f10) {
-                            f12 = 1.0F / f10;
-                        }
-
-                        f8 = f8 * (1.0F - f15) + f8 * f12 * f15;
-                        f9 = f9 * (1.0F - f15) + f9 * f12 * f15;
-                        f10 = f10 * (1.0F - f15) + f10 * f12 * f15;
-                    }
-
-                    if (f8 > 1.0F) {
-                        f8 = 1.0F;
-                    }
-
-                    if (f9 > 1.0F) {
-                        f9 = 1.0F;
-                    }
-
-                    if (f10 > 1.0F) {
-                        f10 = 1.0F;
-                    }
-
-                    float f16 = this.mc.gameSettings.gammaSetting;
-                    float f17 = 1.0F - f8;
-                    float f13 = 1.0F - f9;
-                    float f14 = 1.0F - f10;
-                    f17 = 1.0F - f17 * f17 * f17 * f17;
-                    f13 = 1.0F - f13 * f13 * f13 * f13;
-                    f14 = 1.0F - f14 * f14 * f14 * f14;
-                    f8 = f8 * (1.0F - f16) + f17 * f16;
-                    f9 = f9 * (1.0F - f16) + f13 * f16;
-                    f10 = f10 * (1.0F - f16) + f14 * f16;
-                    f8 = f8 * 0.96F + 0.03F;
-                    f9 = f9 * 0.96F + 0.03F;
-                    f10 = f10 * 0.96F + 0.03F;
-
-                    if (f8 > 1.0F) {
-                        f8 = 1.0F;
-                    }
-
-                    if (f9 > 1.0F) {
-                        f9 = 1.0F;
-                    }
-
-                    if (f10 > 1.0F) {
-                        f10 = 1.0F;
-                    }
-
-                    if (f8 < 0.0F) {
-                        f8 = 0.0F;
-                    }
-
-                    if (f9 < 0.0F) {
-                        f9 = 0.0F;
-                    }
-
-                    if (f10 < 0.0F) {
-                        f10 = 0.0F;
-                    }
-
-                    int j = 255;
-                    int k = (int) (f8 * 255.0F);
-                    int l = (int) (f9 * 255.0F);
-                    int i1 = (int) (f10 * 255.0F);
-                    this.lightmapColors[i] = j << 24 | k << 16 | l << 8 | i1;
-                }
-
-                this.lightmapTexture.updateDynamicTexture();
-                this.lightmapUpdateNeeded = false;
-                this.patcher$createdLightmap = true;
-            }
+            });
         }
     }
 
-    private boolean patcher$createdLightmap;
+    public boolean patcher$createdLightmap;
 
     public float getNightVisionBrightness(EntityLivingBase entitylivingbaseIn, float partialTicks) {
         int i = entitylivingbaseIn.getActivePotionEffect(Potion.nightVision).getDuration();

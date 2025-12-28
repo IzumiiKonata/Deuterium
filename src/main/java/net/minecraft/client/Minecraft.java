@@ -1054,6 +1054,7 @@ public class Minecraft implements IThreadListener {
             //END CLIENT
 
             this.runTick();
+            entityRenderer.lightmapUpdateNeeded = true;
 
             //CLIENT
             if (thePlayer != null && theWorld != null) {

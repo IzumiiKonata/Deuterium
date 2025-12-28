@@ -8,6 +8,24 @@ import tritium.module.Module;
 
 public class NightVision extends Module {
 
+    @Override
+    public void onEnable() {
+        mc.entityRenderer.patcher$createdLightmap = false;
+        mc.entityRenderer.lightmapUpdateNeeded = true;
+
+        PotionEffect effect = new PotionEffect(Potion.nightVision.id, 1000000, 1, false, false);
+        effect.setPotionDurationMax(true);
+        mc.thePlayer.addPotionEffect(effect);
+    }
+
+    @Override
+    public void onDisable() {
+        mc.entityRenderer.patcher$createdLightmap = false;
+        mc.entityRenderer.lightmapUpdateNeeded = true;
+
+        mc.thePlayer.removePotionEffect(Potion.nightVision.id);
+    }
+
     @Handler
     public void onTick(TickEvent event) {
         if (mc.thePlayer == null || mc.theWorld == null)

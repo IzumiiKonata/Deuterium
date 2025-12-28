@@ -726,6 +726,10 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         return this.provider.getLightBrightnessTable()[this.getLightFromNeighbors(pos.getX(), pos.getY(), pos.getZ())];
     }
 
+    public float getLightBrightness(int x, int y, int z) {
+        return this.provider.getLightBrightnessTable()[this.getLightFromNeighbors(x, y, z)];
+    }
+
     public IBlockState getBlockState(BlockPos pos) {
         if (!this.isValid(pos.getX(), pos.getY(), pos.getZ())) {
             return Blocks.air.getDefaultState();
