@@ -69,55 +69,55 @@ public class DependencyDownloader {
             }
         }
 
-        URLClassLoader classLoader = new ChildFirstURLClassLoader(paths.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
+//        URLClassLoader classLoader = new ChildFirstURLClassLoader(paths.toArray(URL[]::new), Thread.currentThread().getContextClassLoader());
+//
+//        Class<?> aClass = classLoader.loadClass(Launcher.class.getName());
+//        aClass.getMethod("main", String[].class).invoke(null, new Object[]{args});
+//        classLoader.close();
 
-        Class<?> aClass = classLoader.loadClass(Launcher.class.getName());
-        aClass.getMethod("main", String[].class).invoke(null, new Object[]{args});
-        classLoader.close();
+        StringBuilder libs = new StringBuilder();
 
-//        StringBuilder libs = new StringBuilder();
-//
-//        for (File file : depsDir.listFiles()) {
-//            libs.append(file.getAbsolutePath()).append(File.pathSeparator);
-//        }
-//
-//        String classPathBuilder = "\"" + System.getProperty("java.class.path") + File.pathSeparator + libs + "\"";
-//
-//        ArrayList<String> jvmArgs = new ArrayList<>();
-//
-//        String javaHome = System.getProperty("java.home");
-//        File javaBinDir = new File(javaHome, "bin");
-//        File javaExecutable = findJavaExecutable(javaBinDir);
-//
-//        if (javaExecutable == null) {
-//            System.err.println("无法找到Java可执行文件，退出...");
-//            System.err.println("Cannot find Java executable, exiting...");
-//            System.exit(-1);
-//        }
-//
-//        jvmArgs.add(javaExecutable.getAbsolutePath());
-//
-//        // dbg
-//        if (args == null || args.length == 0) {
-//            args = new String[] {
-//                "--version", "mcp",
-//                "--accessToken", "0",
-//                "--assetsDir", "assets",
-//                "--assetIndex", "1.8",
-//                "--userProperties", "{}"
-//            };
-//        }
-//
-//        jvmArgs.add("-Dfile.encoding=UTF-8");
-//        jvmArgs.add("-cp");
-//        jvmArgs.add(classPathBuilder);
-//        jvmArgs.add("tritium.launch.Launcher");
-//        jvmArgs.addAll(Arrays.asList(args));
-//
+        for (File file : depsDir.listFiles()) {
+            libs.append(file.getAbsolutePath()).append(File.pathSeparator);
+        }
+
+        String classPathBuilder = "\"" + System.getProperty("java.class.path") + File.pathSeparator + libs + "\"";
+
+        ArrayList<String> jvmArgs = new ArrayList<>();
+
+        String javaHome = System.getProperty("java.home");
+        File javaBinDir = new File(javaHome, "bin");
+        File javaExecutable = findJavaExecutable(javaBinDir);
+
+        if (javaExecutable == null) {
+            System.err.println("无法找到Java可执行文件，退出...");
+            System.err.println("Cannot find Java executable, exiting...");
+            System.exit(-1);
+        }
+
+        jvmArgs.add(javaExecutable.getAbsolutePath());
+
+        // dbg
+        if (args == null || args.length == 0) {
+            args = new String[] {
+                "--version", "mcp",
+                "--accessToken", "0",
+                "--assetsDir", "assets",
+                "--assetIndex", "1.8",
+                "--userProperties", "{}"
+            };
+        }
+
+        jvmArgs.add("-Dfile.encoding=UTF-8");
+        jvmArgs.add("-cp");
+        jvmArgs.add(classPathBuilder);
+        jvmArgs.add("tritium.launch.Launcher");
+        jvmArgs.addAll(Arrays.asList(args));
+
 //        System.out.println("Args: " + String.join(" ", jvmArgs));
-//
-//        ProcessBuilder game = new ProcessBuilder(jvmArgs);
-//        game.inheritIO().start();
+
+        ProcessBuilder game = new ProcessBuilder(jvmArgs);
+        game.inheritIO().start();
     }
 
     /**
