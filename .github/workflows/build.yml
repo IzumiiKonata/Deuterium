@@ -56,6 +56,12 @@ jobs:
           }
           EOF
 
+      - name: Build version checker and install
+        run: |
+          cd java-version-checker
+          mvn clean install
+          cd ..
+
       - name: Build with Maven
         run: mvn clean package -DskipTests -T 1C
 

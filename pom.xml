@@ -42,6 +42,12 @@
     <dependencies>
 
         <dependency>
+            <groupId>tritium</groupId>
+            <artifactId>java-version-checker</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.github.opai-client</groupId>
             <artifactId>opensource-components</artifactId>
             <version>-SNAPSHOT</version>
@@ -80,7 +86,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.32</version>
+            <version>1.18.42</version>
         </dependency>
 
         <dependency>
@@ -215,6 +221,22 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.42</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            
+            
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
                 <version>3.5.1</version>
                 <executions>
@@ -229,9 +251,16 @@
 
                             <artifactSet>
                                 <includes>
+                                    <include>tritium:java-version-checker</include>
                                     <include>com.github.opai-client:opensource-components</include>
                                 </includes>
                             </artifactSet>
+                            
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>tritium.versionchecker.VersionChecker</mainClass>
+                                </transformer>
+                            </transformers>
 
                             <filters>
                                 <filter>
