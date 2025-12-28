@@ -1069,7 +1069,7 @@ public class Minecraft implements IThreadListener {
         this.mcSoundHandler.setListener(this.thePlayer, this.timer.renderPartialTicks);
 
         GlStateManager.pushMatrix();
-        GlStateManager.clear(16640);
+//        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
         this.framebufferMc.bindFramebuffer(true);
         GlStateManager.enableTexture2D();
 
