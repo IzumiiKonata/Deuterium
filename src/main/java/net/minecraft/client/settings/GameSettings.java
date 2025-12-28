@@ -153,7 +153,6 @@ public class GameSettings {
      * true if debug info should be displayed instead of version
      */
     public boolean showDebugInfo;
-    public boolean showDebugProfilerChart;
     public boolean showLagometer;
 
     /**
@@ -205,7 +204,6 @@ public class GameSettings {
     public int ofBetterGrass = 3;
     public int ofAutoSaveTicks = 4000;
     public boolean ofLagometer = false;
-    public boolean ofProfiler = false;
     public boolean ofShowFps = false;
     public boolean ofWeather = true;
     public boolean ofSky = true;
@@ -1516,10 +1514,6 @@ public class GameSettings {
             this.updateWaterOpacity();
         }
 
-        if (p_setOptionValueOF_1_ == GameSettings.Options.PROFILER) {
-            this.ofProfiler = !this.ofProfiler;
-        }
-
         if (p_setOptionValueOF_1_ == GameSettings.Options.BETTER_SNOW) {
             this.ofBetterSnow = !this.ofBetterSnow;
             this.mc.renderGlobal.loadRenderers();
@@ -1936,8 +1930,6 @@ public class GameSettings {
             return this.ofAaLevel == 0 ? s + Lang.getOff() + s3 : s + this.ofAaLevel + s3;
         } else if (p_getKeyBindingOF_1_ == GameSettings.Options.AF_LEVEL) {
             return this.ofAfLevel == 1 ? s + Lang.getOff() : s + this.ofAfLevel;
-        } else if (p_getKeyBindingOF_1_ == GameSettings.Options.PROFILER) {
-            return this.ofProfiler ? s + Lang.getOn() : s + Lang.getOff();
         } else if (p_getKeyBindingOF_1_ == GameSettings.Options.BETTER_SNOW) {
             return this.ofBetterSnow ? s + Lang.getOn() : s + Lang.getOff();
         } else if (p_getKeyBindingOF_1_ == GameSettings.Options.SWAMP_COLORS) {
@@ -2233,10 +2225,6 @@ public class GameSettings {
                         this.ofAfLevel = Config.limit(this.ofAfLevel, 1, 16);
                     }
 
-                    if (astring[0].equals("ofProfiler") && astring.length >= 2) {
-                        this.ofProfiler = Boolean.parseBoolean(astring[1]);
-                    }
-
                     if (astring[0].equals("ofBetterSnow") && astring.length >= 2) {
                         this.ofBetterSnow = Boolean.parseBoolean(astring[1]);
                     }
@@ -2407,7 +2395,6 @@ public class GameSettings {
             printwriter.println("ofClearWater:" + this.ofClearWater);
             printwriter.println("ofAaLevel:" + this.ofAaLevel);
             printwriter.println("ofAfLevel:" + this.ofAfLevel);
-            printwriter.println("ofProfiler:" + this.ofProfiler);
             printwriter.println("ofBetterSnow:" + this.ofBetterSnow);
             printwriter.println("ofSwampColors:" + this.ofSwampColors);
             printwriter.println("ofRandomEntities:" + this.ofRandomEntities);
@@ -2513,7 +2500,6 @@ public class GameSettings {
         this.ofAutoSaveTicks = 4000;
         this.ofLagometer = false;
         this.ofShowFps = false;
-        this.ofProfiler = false;
         this.ofWeather = true;
         this.ofSky = true;
         this.ofStars = true;
@@ -2699,7 +2685,6 @@ public class GameSettings {
         PORTAL_PARTICLES("of.options.PORTAL_PARTICLES", false, false),
         POTION_PARTICLES("of.options.POTION_PARTICLES", false, false),
         FIREWORK_PARTICLES("of.options.FIREWORK_PARTICLES", false, false),
-        PROFILER("of.options.PROFILER", false, false),
         DRIPPING_WATER_LAVA("of.options.DRIPPING_WATER_LAVA", false, false),
         BETTER_SNOW("of.options.BETTER_SNOW", false, false),
         FULLSCREEN_MODE("of.options.FULLSCREEN_MODE", true, false, 0.0F, (float) Config.getDisplayModes().length, 1.0F),

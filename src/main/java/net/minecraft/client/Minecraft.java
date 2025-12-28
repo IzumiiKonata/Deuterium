@@ -74,7 +74,6 @@ import net.minecraft.network.NetworkManager;
 import net.minecraft.network.handshake.client.C00Handshake;
 import net.minecraft.network.login.client.C00PacketLoginStart;
 import net.minecraft.network.play.client.C16PacketClientStatus;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.src.Config;
 import net.minecraft.tileentity.TileEntity;
@@ -292,11 +291,6 @@ public class Minecraft implements IThreadListener {
     private boolean integratedServerIsRunning;
 
     public boolean loaded = false;
-
-    /**
-     * The profiler instance
-     */
-    public final Profiler mcProfiler = new Profiler();
 
     /**
      * Keeps track of how long the debug crash keycombo (F3+C) has been pressed for, in order to crash after 10 seconds.
@@ -1028,7 +1022,6 @@ public class Minecraft implements IThreadListener {
         //END CLIENT
 
         long i = System.nanoTime();
-        this.mcProfiler.startSection("GameLoop Start");
 
         if (Display.isCreated() && Display.isCloseRequested()) {
             this.shutdown();
@@ -1042,18 +1035,13 @@ public class Minecraft implements IThreadListener {
             this.timer.updateTimer();
         }
 
-        this.mcProfiler.startSection("scheduledExecutables");
-
         synchronized (this.scheduledTasks) {
             while (!this.scheduledTasks.isEmpty()) {
                 Util.runTask((FutureTask<?>) this.scheduledTasks.poll(), logger);
             }
         }
 
-        this.mcProfiler.endSection();
         long l = System.nanoTime();
-
-        this.mcProfiler.startSection("tick");
 
         for (int j = 0; j < this.timer.elapsedTicks; ++j) {
             //CLIENT
@@ -1076,43 +1064,24 @@ public class Minecraft implements IThreadListener {
             //END CLIENT
         }
 
-        this.mcProfiler.endStartSection("preRenderErrors");
         long i1 = System.nanoTime() - l;
         this.checkGLError("Pre render");
-        this.mcProfiler.endStartSection("sound");
         this.mcSoundHandler.setListener(this.thePlayer, this.timer.renderPartialTicks);
-        this.mcProfiler.endSection();
-        this.mcProfiler.startSection("render");
 
         GlStateManager.pushMatrix();
         GlStateManager.clear(16640);
         this.framebufferMc.bindFramebuffer(true);
-        this.mcProfiler.startSection("display");
         GlStateManager.enableTexture2D();
 
         if (!(this.currentScreen instanceof AltScreen) && this.thePlayer != null && this.theWorld != null && this.thePlayer.isEntityInsideOpaqueBlock()) {
             this.gameSettings.thirdPersonView = 0;
         }
 
-        this.mcProfiler.endSection();
-
         if (!this.skipRenderWorld) {
-            this.mcProfiler.endStartSection("gameRenderer");
             this.entityRenderer.updateCameraAndRender(this.timer.renderPartialTicks, i);
-            this.mcProfiler.endSection();
         }
 
-        if (this.gameSettings.showDebugInfo && this.gameSettings.showDebugProfilerChart && !this.gameSettings.hideGUI) {
-            if (!this.mcProfiler.profilingEnabled) {
-                this.mcProfiler.clearProfiling();
-            }
-
-            this.mcProfiler.profilingEnabled = true;
-            this.displayDebugInfo(i1);
-        } else {
-            this.mcProfiler.profilingEnabled = false;
-            this.prevFrameTime = System.nanoTime();
-        }
+        this.prevFrameTime = System.nanoTime();
 
         this.framebufferMc.unbindFramebuffer();
         GlStateManager.popMatrix();
@@ -1171,8 +1140,6 @@ public class Minecraft implements IThreadListener {
 
         GlStateManager.popMatrix();
 
-        this.mcProfiler.startSection("GameLoop End");
-
         if (ModuleManager.motionBlur.isEnabled()) {
             ModuleManager.motionBlur.doMotionBlur();
         }
@@ -1196,15 +1163,12 @@ public class Minecraft implements IThreadListener {
 
         }
 
-        this.mcProfiler.endSection();
     }
 
     int lastFrameTex = -1;
 
     public void updateDisplay() {
-        this.mcProfiler.startSection("display_update");
         Display.update();
-        this.mcProfiler.endSection();
         this.checkWindowResize();
         if (!StencilClipManager.stencilStack.isEmpty())
             System.err.println("Stencil stack overflow");
@@ -1264,136 +1228,6 @@ public class Minecraft implements IThreadListener {
         }
 
         System.gc();
-    }
-
-    /**
-     * Update debugProfilerName in response to number keys in debug screen
-     */
-    private void updateDebugProfilerName(int keyCount) {
-        List<Profiler.Result> list = this.mcProfiler.getProfilingData(this.debugProfilerName);
-
-        if (list != null && !list.isEmpty()) {
-            Profiler.Result profiler$result = list.remove(0);
-
-            if (keyCount == 0) {
-                if (profiler$result.field_76331_c.length() > 0) {
-                    int i = this.debugProfilerName.lastIndexOf(".");
-
-                    if (i >= 0) {
-                        this.debugProfilerName = this.debugProfilerName.substring(0, i);
-                    }
-                }
-            } else {
-                --keyCount;
-
-                if (keyCount < list.size() && !list.get(keyCount).field_76331_c.equals("unspecified")) {
-                    if (this.debugProfilerName.length() > 0) {
-                        this.debugProfilerName = this.debugProfilerName + ".";
-                    }
-
-                    this.debugProfilerName = this.debugProfilerName + list.get(keyCount).field_76331_c;
-                }
-            }
-        }
-    }
-
-    /**
-     * Parameter appears to be unused
-     */
-    private void displayDebugInfo(long elapsedTicksTime) {
-        if (this.mcProfiler.profilingEnabled) {
-            List<Profiler.Result> list = this.mcProfiler.getProfilingData(this.debugProfilerName);
-            Profiler.Result profiler$result = list.remove(0);
-            GlStateManager.clear(256);
-            GlStateManager.matrixMode(GL11.GL_PROJECTION);
-            GlStateManager.enableColorMaterial();
-            GlStateManager.loadIdentity();
-            GlStateManager.ortho(0.0D, this.displayWidth, this.displayHeight, 0.0D, 1000.0D, 3000.0D);
-            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-            GlStateManager.loadIdentity();
-            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
-            GL11.glLineWidth(1.0F);
-            GlStateManager.disableTexture2D();
-            Tessellator tessellator = Tessellator.getInstance();
-            WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-            int i = 160;
-            int j = this.displayWidth - i - 10;
-            int k = this.displayHeight - i * 2;
-            GlStateManager.enableBlend();
-            worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-            worldrenderer.pos((float) j - (float) i * 1.1F, (float) k - (float) i * 0.6F - 16.0F, 0.0D).color(200, 0, 0, 0).endVertex();
-            worldrenderer.pos((float) j - (float) i * 1.1F, k + i * 2, 0.0D).color(200, 0, 0, 0).endVertex();
-            worldrenderer.pos((float) j + (float) i * 1.1F, k + i * 2, 0.0D).color(200, 0, 0, 0).endVertex();
-            worldrenderer.pos((float) j + (float) i * 1.1F, (float) k - (float) i * 0.6F - 16.0F, 0.0D).color(200, 0, 0, 0).endVertex();
-            tessellator.draw();
-            GlStateManager.disableBlend();
-            double d0 = 0.0D;
-
-            for (Profiler.Result profiler$result1 : list) {
-                int i1 = MathHelper.floor_double(profiler$result1.field_76332_a / 4.0D) + 1;
-                worldrenderer.begin(6, DefaultVertexFormats.POSITION_COLOR);
-                int j1 = profiler$result1.getColor();
-                int k1 = j1 >> 16 & 255;
-                int l1 = j1 >> 8 & 255;
-                int i2 = j1 & 255;
-                worldrenderer.pos(j, k, 0.0D).color(k1, l1, i2, 255).endVertex();
-
-                for (int j2 = i1; j2 >= 0; --j2) {
-                    float f = (float) ((d0 + profiler$result1.field_76332_a * (double) j2 / (double) i1) * Math.PI * 2.0D / 100.0D);
-                    float f1 = MathHelper.sin(f) * (float) i;
-                    float f2 = MathHelper.cos(f) * (float) i * 0.5F;
-                    worldrenderer.pos((float) j + f1, (float) k - f2, 0.0D).color(k1, l1, i2, 255).endVertex();
-                }
-
-                tessellator.draw();
-                worldrenderer.begin(5, DefaultVertexFormats.POSITION_COLOR);
-
-                for (int i3 = i1; i3 >= 0; --i3) {
-                    float f3 = (float) ((d0 + profiler$result1.field_76332_a * (double) i3 / (double) i1) * Math.PI * 2.0D / 100.0D);
-                    float f4 = MathHelper.sin(f3) * (float) i;
-                    float f5 = MathHelper.cos(f3) * (float) i * 0.5F;
-                    worldrenderer.pos((float) j + f4, (float) k - f5, 0.0D).color(k1 >> 1, l1 >> 1, i2 >> 1, 255).endVertex();
-                    worldrenderer.pos((float) j + f4, (float) k - f5 + 10.0F, 0.0D).color(k1 >> 1, l1 >> 1, i2 >> 1, 255).endVertex();
-                }
-
-                tessellator.draw();
-                d0 += profiler$result1.field_76332_a;
-            }
-
-            DecimalFormat decimalformat = new DecimalFormat("##0.00");
-            GlStateManager.enableTexture2D();
-            String s = "";
-
-            if (!profiler$result.field_76331_c.equals("unspecified")) {
-                s = s + "[0] ";
-            }
-
-            if (profiler$result.field_76331_c.length() == 0) {
-                s = s + "ROOT ";
-            } else {
-                s = s + profiler$result.field_76331_c + " ";
-            }
-
-            int l2 = 16777215;
-            this.fontRendererObj.drawStringWithShadow(s, (float) (j - i), (float) (k - i / 2 - 16), l2);
-            this.fontRendererObj.drawStringWithShadow(s = decimalformat.format(profiler$result.field_76330_b) + "%", (float) (j + i - this.fontRendererObj.getStringWidth(s)), (float) (k - i / 2 - 16), l2);
-
-            for (int k2 = 0; k2 < list.size(); ++k2) {
-                Profiler.Result profiler$result2 = list.get(k2);
-                String s1 = "";
-
-                if (profiler$result2.field_76331_c.equals("unspecified")) {
-                    s1 = s1 + "[?] ";
-                } else {
-                    s1 = s1 + "[" + (k2 + 1) + "] ";
-                }
-
-                s1 = s1 + profiler$result2.field_76331_c;
-                this.fontRendererObj.drawStringWithShadow(s1, (float) (j - i), (float) (k + i / 2 + k2 * 8 + 20), profiler$result2.getColor());
-                this.fontRendererObj.drawStringWithShadow(s1 = decimalformat.format(profiler$result2.field_76332_a) + "%", (float) (j + i - 50 - this.fontRendererObj.getStringWidth(s1)), (float) (k + i / 2 + k2 * 8 + 20), profiler$result2.getColor());
-                this.fontRendererObj.drawStringWithShadow(s1 = decimalformat.format(profiler$result2.field_76330_b) + "%", (float) (j + i - this.fontRendererObj.getStringWidth(s1)), (float) (k + i / 2 + k2 * 8 + 20), profiler$result2.getColor());
-            }
-        }
     }
 
     /**
@@ -1760,21 +1594,15 @@ public class Minecraft implements IThreadListener {
             --this.rightClickDelayTimer;
         }
 
-        this.mcProfiler.startSection("gui");
-
         if (!this.isGamePaused) {
             this.ingameGUI.updateTick();
         }
 
-        this.mcProfiler.endSection();
         this.entityRenderer.getMouseOver(1.0F);
-        this.mcProfiler.startSection("gameMode");
 
         if (!this.isGamePaused && this.theWorld != null) {
             this.playerController.updateController();
         }
-
-        this.mcProfiler.endStartSection("textures");
 
         if (!this.isGamePaused) {
             this.renderEngine.tick();
@@ -1831,13 +1659,10 @@ public class Minecraft implements IThreadListener {
         }
 
         if (this.currentScreen == null || this.currentScreen.allowUserInput) {
-            this.mcProfiler.endStartSection("mouse");
 
             if (this.leftClickCounter > 0) {
                 --this.leftClickCounter;
             }
-
-            this.mcProfiler.endStartSection("keyboard");
 
             while (Keyboard.next()) {
                 char eventCharacter = Keyboard.getEventCharacter();
@@ -1937,7 +1762,6 @@ public class Minecraft implements IThreadListener {
 
                         if (k == 61) {
                             this.gameSettings.showDebugInfo = !this.gameSettings.showDebugInfo;
-                            this.gameSettings.showDebugProfilerChart = GuiScreen.isShiftKeyDown();
                             this.gameSettings.showLagometer = GuiScreen.isAltKeyDown();
                         }
 
@@ -1959,18 +1783,6 @@ public class Minecraft implements IThreadListener {
 
                         if (this.gameSettings.keyBindSmoothCamera.getKeyCode() > 0 && this.gameSettings.keyBindSmoothCamera.isPressed()) {
                             this.gameSettings.smoothCamera = !this.gameSettings.smoothCamera;
-                        }
-                    }
-
-                    if (this.gameSettings.showDebugInfo && this.gameSettings.showDebugProfilerChart) {
-                        if (k == 11) {
-                            this.updateDebugProfilerName(0);
-                        }
-
-                        for (int j1 = 0; j1 < 9; ++j1) {
-                            if (k == 2 + j1) {
-                                this.updateDebugProfilerName(j1 + 1);
-                            }
                         }
                     }
                 }
@@ -2055,23 +1867,15 @@ public class Minecraft implements IThreadListener {
                 }
             }
 
-            this.mcProfiler.endStartSection("gameRenderer");
-
             if (!this.isGamePaused) {
                 this.entityRenderer.updateRenderer();
             }
 
-            this.mcProfiler.endStartSection("lighting");
-
             ((ILightingEngineProvider) this.theWorld).getLightingEngine().processLightUpdates();
-
-            this.mcProfiler.endStartSection("levelRenderer");
 
             if (!this.isGamePaused) {
                 this.renderGlobal.updateClouds();
             }
-
-            this.mcProfiler.endStartSection("level");
 
             if (!this.isGamePaused) {
                 if (this.theWorld.getLastLightningBolt() > 0) {
@@ -2117,17 +1921,13 @@ public class Minecraft implements IThreadListener {
 //                this.theWorld.doVoidFogParticles(MathHelper.floor_double(this.thePlayer.posX), MathHelper.floor_double(this.thePlayer.posY), MathHelper.floor_double(this.thePlayer.posZ));
 //            }
 
-            this.mcProfiler.endStartSection("particles");
-
             if (!this.isGamePaused) {
                 this.effectRenderer.updateEffects();
             }
         } else if (this.myNetworkManager != null) {
-            this.mcProfiler.endStartSection("pendingConnection");
             this.myNetworkManager.processReceivedPackets();
         }
 
-        this.mcProfiler.endSection();
         this.systemTime = getSystemTime();
     }
 
@@ -2526,7 +2326,7 @@ public class Minecraft implements IThreadListener {
         });
         theCrash.getCategory().addCrashSectionCallable("分析器断点", new Callable<String>() {
             public String call() {
-                return Minecraft.this.mcProfiler.profilingEnabled ? Minecraft.this.mcProfiler.getNameOfLastSection() : "N/A (已关闭)";
+                return "N/A (已关闭)";
             }
         });
         theCrash.getCategory().addCrashSectionCallable("CPU", new Callable<String>() {

@@ -340,7 +340,6 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 //        }
 //
 //        this.worldObj.theProfiler.endSection();
-        this.worldObj.theProfiler.startSection("recheckGaps");
 
         WorldChunkSlice slice = new WorldChunkSlice(this.worldObj, this.xPosition, this.zPosition);
 
@@ -349,8 +348,6 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
                 for (int z = 0; z < 16; ++z) {
                     if (this.recheckGapsForColumn(slice, x, z)) {
                         if (p_150803_1_) {
-                            this.worldObj.theProfiler.endSection();
-
                             return;
                         }
                     }
@@ -360,7 +357,6 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             this.isGapLightingUpdated = false;
         }
 
-        this.worldObj.theProfiler.endSection();
     }
 
     /**

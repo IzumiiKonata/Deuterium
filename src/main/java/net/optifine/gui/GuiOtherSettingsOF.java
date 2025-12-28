@@ -9,7 +9,7 @@ public class GuiOtherSettingsOF extends GuiScreen implements GuiYesNoCallback {
     protected String title;
     private final GameSettings settings;
     private static final GameSettings.Options[] enumOptions = new GameSettings.Options[]{GameSettings.Options.LAGOMETER,
-            GameSettings.Options.PROFILER, GameSettings.Options.SHOW_FPS, GameSettings.Options.ADVANCED_TOOLTIPS,
+            GameSettings.Options.SHOW_FPS, GameSettings.Options.ADVANCED_TOOLTIPS,
             GameSettings.Options.WEATHER, GameSettings.Options.TIME, GameSettings.Options.USE_FULLSCREEN,
             GameSettings.Options.FULLSCREEN_MODE, GameSettings.Options.ANAGLYPH, GameSettings.Options.AUTOSAVE_TICKS,
             GameSettings.Options.SCREENSHOT_SIZE, GameSettings.Options.SHOW_GL_ERRORS};

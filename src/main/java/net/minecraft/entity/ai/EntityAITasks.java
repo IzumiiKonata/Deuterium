@@ -1,7 +1,6 @@
 package net.minecraft.entity.ai;
 
 import com.google.common.collect.Lists;
-import net.minecraft.profiler.Profiler;
 
 import java.util.Iterator;
 import java.util.List;
@@ -10,14 +9,10 @@ public class EntityAITasks {
     private final List<EntityAITasks.EntityAITaskEntry> taskEntries = Lists.newArrayList();
     private final List<EntityAITasks.EntityAITaskEntry> executingTaskEntries = Lists.newArrayList();
 
-    /**
-     * Instance of Profiler.
-     */
-    private final Profiler theProfiler;
     private int tickCount;
 
-    public EntityAITasks(Profiler profilerIn) {
-        this.theProfiler = profilerIn;
+    public EntityAITasks() {
+
     }
 
     /**
@@ -49,8 +44,6 @@ public class EntityAITasks {
     }
 
     public void onUpdateTasks() {
-        this.theProfiler.startSection("goalSetup");
-
         int tickRate = 3;
         if (this.tickCount++ % tickRate == 0) {
             Iterator iterator = this.taskEntries.iterator();
@@ -96,14 +89,9 @@ public class EntityAITasks {
             }
         }
 
-        this.theProfiler.endSection();
-        this.theProfiler.startSection("goalTick");
-
         for (EntityAITasks.EntityAITaskEntry entityaitasks$entityaitaskentry2 : this.executingTaskEntries) {
             entityaitasks$entityaitaskentry2.action.updateTask();
         }
-
-        this.theProfiler.endSection();
     }
 
     /**

@@ -153,7 +153,6 @@ public class ShadersRender {
     public static void renderShadowMap(EntityRenderer entityRenderer, int pass, float partialTicks, long finishTimeNano) {
         if (Shaders.usedShadowDepthBuffers > 0 && --Shaders.shadowPassCounter <= 0) {
             Minecraft minecraft = Minecraft.getMinecraft();
-            minecraft.mcProfiler.endStartSection("shadow pass");
             RenderGlobal renderglobal = minecraft.renderGlobal;
             Shaders.isShadowPass = true;
             Shaders.shadowPassCounter = Shaders.shadowPassInterval;
@@ -164,10 +163,8 @@ public class ShadersRender {
             GL11.glPushMatrix();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glPushMatrix();
-            minecraft.mcProfiler.endStartSection("shadow clear");
             EXTFramebufferObject.glBindFramebufferEXT(36160, Shaders.sfb);
             Shaders.checkGLError("shadow bind sfb");
-            minecraft.mcProfiler.endStartSection("shadow camera");
             entityRenderer.setupCameraTransform(partialTicks, 2);
             Shaders.setCameraShadow(partialTicks);
             Shaders.checkGLError("shadow camera");
@@ -184,9 +181,7 @@ public class ShadersRender {
             GL11.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
             GL11.glClear(Shaders.usedShadowColorBuffers != 0 ? GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT : GL11.GL_DEPTH_BUFFER_BIT);
             Shaders.checkGLError("shadow clear");
-            minecraft.mcProfiler.endStartSection("shadow frustum");
             ClippingHelper clippinghelper = ClippingHelperShadow.getInstance();
-            minecraft.mcProfiler.endStartSection("shadow culling");
             Frustum frustum = new Frustum(clippinghelper);
             Entity entity = minecraft.getRenderViewEntity();
             double d0 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) partialTicks;
@@ -199,15 +194,11 @@ public class ShadersRender {
             GlStateManager.depthMask(true);
             GlStateManager.colorMask(true, true, true, true);
             GlStateManager.disableCull();
-            minecraft.mcProfiler.endStartSection("shadow prepareterrain");
             minecraft.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-            minecraft.mcProfiler.endStartSection("shadow setupterrain");
             int i = 0;
             i = entityRenderer.frameCount;
             entityRenderer.frameCount = i + 1;
             renderglobal.setupTerrain(entity, partialTicks, frustum, i, minecraft.thePlayer.isSpectator());
-            minecraft.mcProfiler.endStartSection("shadow updatechunks");
-            minecraft.mcProfiler.endStartSection("shadow terrain");
             GlStateManager.matrixMode(5888);
             GlStateManager.pushMatrix();
             GlStateManager.disableAlpha();
@@ -225,7 +216,6 @@ public class ShadersRender {
             GlStateManager.matrixMode(5888);
             GlStateManager.popMatrix();
             GlStateManager.pushMatrix();
-            minecraft.mcProfiler.endStartSection("shadow entities");
 
             renderglobal.renderEntities(entity, frustum, partialTicks);
             Shaders.checkGLError("shadow entities");
@@ -252,7 +242,6 @@ public class ShadersRender {
             Shaders.checkGLError("shadow drawbuffers pre-translucent");
             Shaders.checkFramebufferStatus("shadow pre-translucent");
             if (Shaders.isRenderShadowTranslucent()) {
-                minecraft.mcProfiler.endStartSection("shadow translucent");
                 renderglobal.renderBlockLayer(EnumWorldBlockLayer.TRANSLUCENT, partialTicks, 2, entity);
                 Shaders.checkGLError("shadow translucent");
             }
@@ -265,7 +254,6 @@ public class ShadersRender {
             Shaders.checkGLError("shadow flush");
             Shaders.isShadowPass = false;
             minecraft.gameSettings.thirdPersonView = Shaders.preShadowPassThirdPersonView;
-            minecraft.mcProfiler.endStartSection("shadow postprocess");
             if (Shaders.hasGlGenMipmap) {
                 if (Shaders.usedShadowDepthBuffers >= 1) {
                     if (Shaders.shadowMipmapEnabled[0]) {

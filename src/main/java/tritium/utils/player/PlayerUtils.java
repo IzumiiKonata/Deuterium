@@ -61,7 +61,6 @@ public class PlayerUtils {
         if (var2 == null || mc.theWorld == null) {
             return null;
         }
-        mc.mcProfiler.startSection("pick");
         Vec3 eyePos = var2.getPositionEyes(0.0f);
         Vec3 var4 = var2.getLook(0.0f);
         Vec3 var5 = eyePos.addVector(var4.xCoord * distance, var4.yCoord * distance, var4.zCoord * distance);
@@ -108,7 +107,6 @@ public class PlayerUtils {
         if (var2 == null || mc.theWorld == null) {
             return null;
         }
-        mc.mcProfiler.startSection("pick");
         Vec3 eyePos = var2.getPositionEyes(0.0f);
         Vec3 playerLook = var2.getLook(0.0f);
         Vec3 end = eyePos.addVector(playerLook.xCoord * distance, playerLook.yCoord * distance, playerLook.zCoord * distance);
@@ -130,7 +128,6 @@ public class PlayerUtils {
                 }
             }
         }
-        mc.mcProfiler.endSection();
         return result;
     }
 
@@ -206,7 +203,6 @@ public class PlayerUtils {
                 result = new MovingObjectPosition(pointedEntity, vec33);
             }
 
-            mc.mcProfiler.endSection();
         }
 
         return result;
@@ -224,7 +220,6 @@ public class PlayerUtils {
         if (ent == null || mc.theWorld == null) {
             return null;
         }
-        mc.mcProfiler.startSection("pick");
         Vec3 var3 = ent.getPositionEyes(0.0f);
         Vec3 var4 = ent.getLookWithGivenRotation(0.0f, prevRotationYaw, prevRotationPitch, rotationYaw, rotationPitch);
         Vec3 var5 = var3.addVector(var4.xCoord * distance, var4.yCoord * distance, var4.zCoord * distance);
@@ -272,7 +267,6 @@ public class PlayerUtils {
         if (var2 == null || mc.theWorld == null) {
             return null;
         }
-        mc.mcProfiler.startSection("pick");
         Vec3 var3 = var2.getPositionEyes(0.0f);
         Vec3 var4 = var2.getLookWithGivenRotation(0.0f, prevRotationYaw, prevRotationPitch, rotationYaw, rotationPitch);
         Vec3 var5 = var3.addVector(var4.xCoord * distance, var4.yCoord * distance, var4.zCoord * distance);
@@ -333,7 +327,6 @@ public class PlayerUtils {
         if (var2 == null || mc.theWorld == null) {
             return null;
         }
-        mc.mcProfiler.startSection("pick");
         Vec3 var3 = var2.getPositionEyes(0.0f);
         Vec3 var4 = getLook(0.0f, yaw, pitch, prevYaw, prevPitch);
         Vec3 var5 = var3.addVector(var4.xCoord * distance, var4.yCoord * distance, var4.zCoord * distance);
@@ -378,7 +371,6 @@ public class PlayerUtils {
         if (var13 < var5 && !(entity instanceof EntityLivingBase) && !(entity instanceof EntityItemFrame)) {
             entity = null;
         }
-        mc.mcProfiler.endSection();
         if (entity == null || var10 == null) {
             return null;
         }

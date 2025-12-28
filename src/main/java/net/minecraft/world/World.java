@@ -19,7 +19,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
@@ -121,7 +120,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     protected boolean findingSpawnPoint;
     protected MapStorage mapStorage;
     protected VillageCollection villageCollectionObj;
-    public final Profiler theProfiler;
     private final Calendar theCalendar = Calendar.getInstance();
     protected Scoreboard worldScoreboard = new Scoreboard();
 
@@ -160,13 +158,12 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     @Getter
     private final WorldWrapper wrapper;
 
-    protected World(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, Profiler profilerIn, boolean client) {
+    protected World(ISaveHandler saveHandlerIn, WorldInfo info, WorldProvider providerIn, boolean client) {
         this.ambientTickCountdown = this.rand.nextInt(12000);
         this.spawnHostileMobs = true;
         this.spawnPeacefulMobs = true;
         this.lightUpdateBlockList = new int[32768];
         this.saveHandler = saveHandlerIn;
-        this.theProfiler = profilerIn;
         this.worldInfo = info;
         this.provider = providerIn;
         this.isRemote = client;
@@ -364,9 +361,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 Block block1 = iblockstate.getBlock();
 
                 if (block.getLightOpacity() != block1.getLightOpacity() || block.getLightValue() != block1.getLightValue()) {
-                    this.theProfiler.startSection("checkLight");
                     this.checkLight(pos);
-                    this.theProfiler.endSection();
                 }
 
                 if ((flags & 2) != 0 && (!this.isRemote || (flags & 4) == 0) && chunk.isPopulated()) {
@@ -1380,9 +1375,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
      * Updates (and cleans up) entities and tile entities
      */
     public void updateEntities() {
-        this.theProfiler.startSection("entities");
-        this.theProfiler.startSection("global");
-
         for (int i = 0; i < this.weatherEffects.size(); ++i) {
             final Entity entity = this.weatherEffects.get(i);
 
@@ -1407,7 +1399,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             }
         }
 
-        this.theProfiler.endStartSection("remove");
         this.loadedEntityList.removeAll(this.unloadedEntityList);
 
         for (Entity entity1 : this.unloadedEntityList) {
@@ -1424,7 +1415,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         }
 
         this.unloadedEntityList.clear();
-        this.theProfiler.endStartSection("regular");
 
         for (int i1 = 0; i1 < this.loadedEntityList.size(); ++i1) {
             Entity entity2 = this.loadedEntityList.get(i1);
@@ -1438,8 +1428,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 entity2.ridingEntity = null;
             }
 
-            this.theProfiler.startSection("tick");
-
             if (!entity2.isDead) {
                 try {
                     this.updateEntity(entity2);
@@ -1450,9 +1438,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                     throw new ReportedException(crashreport1);
                 }
             }
-
-            this.theProfiler.endSection();
-            this.theProfiler.startSection("remove");
 
             if (entity2.isDead) {
                 int k1 = entity2.chunkCoordX;
@@ -1465,11 +1450,8 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 this.loadedEntityList.remove(i1--);
                 this.onEntityRemoved(entity2);
             }
-
-            this.theProfiler.endSection();
         }
 
-        this.theProfiler.endStartSection("blockEntities");
         this.processingLoadedTiles = true;
         Iterator<TileEntity> iterator = this.tickableTileEntities.iterator();
 
@@ -1519,8 +1501,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             this.tileEntitiesToBeRemoved.clear();
         }
 
-        this.theProfiler.endStartSection("pendingBlockEntities");
-
         if (!this.addedTileEntityList.isEmpty()) {
             for (TileEntity tileentity1 : this.addedTileEntityList) {
                 if (!tileentity1.isInvalid()) {
@@ -1539,8 +1519,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             this.addedTileEntityList.clear();
         }
 
-        this.theProfiler.endSection();
-        this.theProfiler.endSection();
     }
 
     public boolean addTileEntity(TileEntity tile) {
@@ -1600,8 +1578,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 }
             }
 
-            this.theProfiler.startSection("chunkCheck");
-
             if (Double.isNaN(entityIn.posX) || Double.isInfinite(entityIn.posX)) {
                 entityIn.posX = entityIn.lastTickPosX;
             }
@@ -1638,8 +1614,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                     entityIn.addedToChunk = false;
                 }
             }
-
-            this.theProfiler.endSection();
 
             if (forceUpdate && entityIn.addedToChunk && entityIn.riddenByEntity != null) {
                 if (!entityIn.riddenByEntity.isDead && entityIn.riddenByEntity.ridingEntity == entityIn) {
@@ -2169,7 +2143,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
 
     protected void setActivePlayerChunksAndCheckLight() {
         this.activeChunkSet.clear();
-        this.theProfiler.startSection("buildList");
 
         for (EntityPlayer entityplayer : this.playerEntities) {
             int j = MathHelper.floor_double(entityplayer.posX / 16.0D);
@@ -2183,13 +2156,9 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             }
         }
 
-        this.theProfiler.endSection();
-
         if (this.ambientTickCountdown > 0) {
             --this.ambientTickCountdown;
         }
-
-        this.theProfiler.startSection("playerCheckLight");
 
         if (!this.playerEntities.isEmpty()) {
             int k1 = this.rand.nextInt(this.playerEntities.size());
@@ -2200,14 +2169,11 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             this.checkLight(new BlockPos(l1, i2, j2));
         }
 
-        this.theProfiler.endSection();
     }
 
     protected abstract int getRenderDistanceChunks();
 
     protected void playMoodSoundAndCheckLight(int p_147467_1_, int p_147467_2_, Chunk chunkIn) {
-        this.theProfiler.endStartSection("moodSound");
-
         if (this.ambientTickCountdown == 0 && !this.isRemote) {
             this.updateLCG = this.updateLCG * 3 + 1013904223;
             int i = this.updateLCG >> 2;
@@ -2229,7 +2195,6 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             }
         }
 
-        this.theProfiler.endStartSection("checkLight");
         chunkIn.enqueueRelightChecks();
     }
 

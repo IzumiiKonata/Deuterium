@@ -10,7 +10,6 @@ import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -31,7 +30,7 @@ import java.util.List;
 
 public class FakeWorld extends WorldClient {
     public FakeWorld(final WorldSettings worldSettings, final FakeNetHandlerPlayClient netHandler) {
-        super((NetHandlerPlayClient) netHandler, worldSettings, 0, EnumDifficulty.HARD, new Profiler());
+        super((NetHandlerPlayClient) netHandler, worldSettings, 0, EnumDifficulty.HARD);
         this.provider.registerWorld((World) this);
     }
 

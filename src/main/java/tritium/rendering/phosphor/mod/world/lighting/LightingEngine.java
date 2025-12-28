@@ -5,7 +5,6 @@ import tritium.rendering.phosphor.api.ILightingEngine;
 import tritium.rendering.phosphor.mod.collections.PooledLongQueue;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
@@ -27,8 +26,6 @@ public class LightingEngine implements ILightingEngine {
     private final Thread ownedThread = Thread.currentThread();
 
     private final World world;
-
-    private final Profiler profiler;
 
     //Layout of longs: [padding(4)] [y(8)] [x(26)] [z(26)]
     private final PooledLongQueue[] queuedLightUpdates = new PooledLongQueue[EnumSkyBlock.values().length];
@@ -100,7 +97,6 @@ public class LightingEngine implements ILightingEngine {
 
     public LightingEngine(final World world) {
         this.world = world;
-        this.profiler = world.theProfiler;
         isDynamicLightsLoaded = false;
 
         PooledLongQueue.Pool pool = new PooledLongQueue.Pool();
@@ -230,10 +226,6 @@ public class LightingEngine implements ILightingEngine {
 
         this.curChunkIdentifier = -1; //reset chunk cache
 
-        this.profiler.startSection("lighting");
-
-        this.profiler.startSection("checking");
-
         this.queueIt = queue.iterator();
 
         //process the queued updates and enqueue them for further processing
@@ -276,12 +268,8 @@ public class LightingEngine implements ILightingEngine {
             }
         }
 
-        this.profiler.endSection();
-
         //Iterate through enqueued updates (brightening and darkening in parallel) from brightest to darkest so that we only need to iterate once
         for (int curLight = MAX_LIGHT; curLight >= 0; --curLight) {
-            this.profiler.startSection("darkening");
-
             this.queueIt = this.queuedDarkenings[curLight].iterator();
 
             while (this.nextItem()) {
@@ -340,8 +328,6 @@ public class LightingEngine implements ILightingEngine {
                 }
             }
 
-            this.profiler.endStartSection("brightening");
-
             this.queueIt = this.queuedBrightenings[curLight].iterator();
 
             while (this.nextItem()) {
@@ -357,10 +343,7 @@ public class LightingEngine implements ILightingEngine {
                 }
             }
 
-            this.profiler.endSection();
         }
-
-        this.profiler.endSection();
 
         this.updating = false;
     }
