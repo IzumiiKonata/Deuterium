@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.world.*;
 import net.optifine.util.TextureUtils;
 import today.opai.api.interfaces.render.Font;
+import tritium.command.CommandValues;
 import tritium.event.events.game.GameLoopEvent;
 import tritium.interfaces.IFontRenderer;
 import tritium.launch.Launcher;
@@ -133,6 +134,7 @@ import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -956,8 +958,7 @@ public class Minecraft implements IThreadListener {
      * Checks for an OpenGL error. If there is one, prints the error ID and error string.
      */
     public boolean checkGLError(String message) {
-        boolean enableGLErrorChecking = true;
-        if (enableGLErrorChecking) {
+        if (CommandValues.getValues().cl_enable_ogl_error_checking) {
             int i = GL11.glGetError();
 
             if (i != 0) {
@@ -1000,6 +1001,8 @@ public class Minecraft implements IThreadListener {
     }
 
     private int lastWidth, lastHeight, lastScaleFactor;
+    private tritium.utils.timing.Timer soundPosUpdTimer = new tritium.utils.timing.Timer();
+    private double soundPosUpdInterval = 1.0 / 120.0 * 1000000000.0;
 
     /**
      * Called repeatedly from run()
@@ -1041,8 +1044,6 @@ public class Minecraft implements IThreadListener {
             }
         }
 
-        long l = System.nanoTime();
-
         for (int j = 0; j < this.timer.elapsedTicks; ++j) {
             //CLIENT
             TickEvent tickEvent = new TickEvent(this.timer.elapsedTicks);
@@ -1064,9 +1065,11 @@ public class Minecraft implements IThreadListener {
             //END CLIENT
         }
 
-        long i1 = System.nanoTime() - l;
         this.checkGLError("Pre render");
-        this.mcSoundHandler.setListener(this.thePlayer, this.timer.renderPartialTicks);
+        if (this.soundPosUpdTimer.isDelayed(soundPosUpdInterval)) {
+            soundPosUpdTimer.reset();
+            this.mcSoundHandler.setListener(this.thePlayer, this.timer.renderPartialTicks);
+        }
 
         GlStateManager.pushMatrix();
 //        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
@@ -1108,10 +1111,10 @@ public class Minecraft implements IThreadListener {
                 GL11.glCopyTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA8, 0, 0, this.displayWidth, this.displayHeight, 0);
                 this.framebufferMc.unbindFramebuffer();
             } else {
-                GlStateManager.matrixMode(5889);
+                GlStateManager.matrixMode(GL11.GL_PROJECTION);
                 GlStateManager.loadIdentity();
                 GlStateManager.ortho(0.0D, this.displayWidth, this.displayHeight, 0.0D, 1000.0D, 3000.0D);
-                GlStateManager.matrixMode(5888);
+                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 GlStateManager.loadIdentity();
                 GlStateManager.translate(0.0F, 0.0F, -2000.0F);
                 GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);

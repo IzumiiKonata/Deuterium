@@ -78,12 +78,12 @@ public class Lagometer {
         if ((gameSettings != null) && (gameSettings.ofLagometer || gameSettings.showLagometer)) {
             final long i = System.nanoTime();
             GlStateManager.clear(256);
-            GlStateManager.matrixMode(5889);
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
             GlStateManager.pushMatrix();
             GlStateManager.enableColorMaterial();
             GlStateManager.loadIdentity();
             GlStateManager.ortho(0.0D, mc.displayWidth, mc.displayHeight, 0.0D, 1000.0D, 3000.0D);
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.pushMatrix();
             GlStateManager.loadIdentity();
             GlStateManager.translate(0.0F, 0.0F, -2000.0F);
@@ -119,9 +119,9 @@ public class Lagometer {
             mc.fontRendererObj.drawString("30", 1, k2, -3881788);
             mc.fontRendererObj.drawString("60", 2, j2 + 1, -8947849);
             mc.fontRendererObj.drawString("60", 1, j2, -3881788);
-            GlStateManager.matrixMode(5889);
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
             GlStateManager.popMatrix();
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.popMatrix();
             GlStateManager.enableTexture2D();
             float f1 = 1.0F - (float) ((System.currentTimeMillis() - MemoryMonitor.getStartTimeMs()) / 1000.0D);

@@ -4,6 +4,7 @@ import net.minecraft.client.model.ModelChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.tileentity.TileEntityEnderChest;
 import net.minecraft.util.Location;
+import org.lwjgl.opengl.GL11;
 
 public class TileEntityEnderChestRenderer extends TileEntitySpecialRenderer<TileEntityEnderChest> {
     private static final Location ENDER_CHEST_TEXTURE = Location.of("textures/entity/chest/ender.png");
@@ -22,7 +23,7 @@ public class TileEntityEnderChestRenderer extends TileEntitySpecialRenderer<Tile
             GlStateManager.pushMatrix();
             GlStateManager.scale(4.0F, 4.0F, 1.0F);
             GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         } else {
             this.bindTexture(ENDER_CHEST_TEXTURE);
         }
@@ -65,7 +66,7 @@ public class TileEntityEnderChestRenderer extends TileEntitySpecialRenderer<Tile
         if (destroyStage >= 0) {
             GlStateManager.matrixMode(5890);
             GlStateManager.popMatrix();
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         }
     }
 }

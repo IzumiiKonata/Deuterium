@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Location;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Map;
 import java.util.UUID;
@@ -49,7 +50,7 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
             GlStateManager.pushMatrix();
             GlStateManager.scale(4.0F, 2.0F, 1.0F);
             GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         } else {
             switch (p_180543_6_) {
                 case 0:
@@ -134,7 +135,7 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
         if (p_180543_8_ >= 0) {
             GlStateManager.matrixMode(5890);
             GlStateManager.popMatrix();
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         }
     }
 }

@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.entity.RenderWither;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
+import org.lwjgl.opengl.GL11;
 
 public class LayerWitherAura implements LayerRenderer<EntityWither> {
     private static final Location WITHER_ARMOR = Location.of("textures/entity/wither/wither_armor.png");
@@ -26,7 +27,7 @@ public class LayerWitherAura implements LayerRenderer<EntityWither> {
             float f1 = MathHelper.cos(f * 0.02F) * 3.0F;
             float f2 = f * 0.01F;
             GlStateManager.translate(f1, f2, 0.0F);
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.enableBlend();
             float f3 = 0.5F;
             GlStateManager.color(f3, f3, f3, 1.0F);
@@ -37,7 +38,7 @@ public class LayerWitherAura implements LayerRenderer<EntityWither> {
             this.witherModel.render(entitylivingbaseIn, p_177141_2_, p_177141_3_, p_177141_5_, p_177141_6_, p_177141_7_, scale);
             GlStateManager.matrixMode(5890);
             GlStateManager.loadIdentity();
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.enableLighting();
             GlStateManager.disableBlend();
         }

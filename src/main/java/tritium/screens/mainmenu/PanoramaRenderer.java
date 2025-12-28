@@ -132,11 +132,11 @@ public class PanoramaRenderer implements SharedConstants {
     private void drawPanorama(float particalTicks) {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        GlStateManager.matrixMode(5889);
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         Project.gluPerspective(120.0F, 1.0F, 0.05F, 10.0F);
-        GlStateManager.matrixMode(5888);
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -212,9 +212,9 @@ public class PanoramaRenderer implements SharedConstants {
 
         worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);
         GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.matrixMode(5889);
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.popMatrix();
-        GlStateManager.matrixMode(5888);
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.popMatrix();
         GlStateManager.depthMask(true);
         GlStateManager.enableCull();

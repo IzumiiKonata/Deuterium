@@ -7,6 +7,7 @@ import net.minecraft.src.Config;
 import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.Location;
 import net.optifine.shaders.ShadersRender;
+import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 import java.util.Random;
@@ -98,7 +99,7 @@ public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer<TileE
                 worldrenderer.pos(x + 1.0D, y + (double) f3, z).color(f11, f12, f13, 1.0F).endVertex();
                 tessellator.draw();
                 GlStateManager.popMatrix();
-                GlStateManager.matrixMode(5888);
+                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 this.bindTexture(END_SKY_TEXTURE);
             }
 

@@ -26,6 +26,7 @@ import net.optifine.shaders.ShadersRender;
 import net.optifine.util.PropertiesOrdered;
 import net.optifine.util.ResUtils;
 import net.optifine.util.StrUtils;
+import org.lwjgl.opengl.GL11;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -592,7 +593,7 @@ public class CustomItems {
                     GlStateManager.enableBlend();
                     GlStateManager.blendFunc(770, 771);
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                    GlStateManager.matrixMode(5888);
+                    GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                     GlStateManager.enableLighting();
                     GlStateManager.depthFunc(515);
                     GlStateManager.depthMask(true);
@@ -645,7 +646,7 @@ public class CustomItems {
                                     GlStateManager.scale(f1, f1 / 2.0F, f1);
                                     final float f2 = customitemproperties.speed * (Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
                                     GlStateManager.translate(0.0F, f2, 0.0F);
-                                    GlStateManager.matrixMode(5888);
+                                    GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                                     model.render(entity, limbSwing, prevLimbSwing, timeLimbSwing, yaw, pitch, scale);
                                 }
                             }
@@ -659,7 +660,7 @@ public class CustomItems {
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     GlStateManager.matrixMode(5890);
                     GlStateManager.loadIdentity();
-                    GlStateManager.matrixMode(5888);
+                    GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                     GlStateManager.enableLighting();
                     GlStateManager.depthMask(true);
                     GlStateManager.depthFunc(515);

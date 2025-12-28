@@ -37,6 +37,10 @@ public class CommandValues {
         @SerializedName("cl_skipworldrendering")
         public boolean cl_skipworldrendering = false;
 
+        @CommandDesc("Enable opengl error checking")
+        @SerializedName("cl_enable_ogl_error_checking")
+        public boolean cl_enable_ogl_error_checking = false;
+
         @CommandDesc("Experimental font renderer optimization")
         @SerializedName("experimental_fontrenderer_optimization")
         public boolean experimental_fontrenderer_optimization = true;

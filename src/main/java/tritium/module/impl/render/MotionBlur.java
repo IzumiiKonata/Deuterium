@@ -88,7 +88,7 @@ public class MotionBlur extends Module {
                 val sr = ScaledResolution.get();
                 val width = mc.getFramebuffer().framebufferWidth;
                 val height = mc.getFramebuffer().framebufferHeight;
-                GlStateManager.matrixMode(5889);
+                GlStateManager.matrixMode(GL11.GL_PROJECTION);
                 GlStateManager.loadIdentity();
                 GlStateManager.ortho(
                         0.0,
@@ -98,7 +98,7 @@ public class MotionBlur extends Module {
                         2000.0,
                         4000.0
                 );
-                GlStateManager.matrixMode(5888);
+                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 GlStateManager.loadIdentity();
                 GlStateManager.translate(0f, 0f, -2000f);
                 blurBufferMain = checkFramebufferSizes(blurBufferMain, width, height);

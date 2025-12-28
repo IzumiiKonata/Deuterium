@@ -12,6 +12,7 @@ import net.minecraft.util.Location;
 import net.optifine.CustomItems;
 import net.optifine.shaders.Shaders;
 import net.optifine.shaders.ShadersRender;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Map;
 
@@ -125,13 +126,13 @@ public abstract class LayerArmorBase<T extends ModelBase> implements LayerRender
                 GlStateManager.scale(f3, f3, f3);
                 GlStateManager.rotate(30.0F - (float) i * 60.0F, 0.0F, 0.0F, 1.0F);
                 GlStateManager.translate(0.0F, f * (0.001F + (float) i * 0.003F) * 20.0F, 0.0F);
-                GlStateManager.matrixMode(5888);
+                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 modelbaseIn.render(entitylivingbaseIn, p_177183_3_, p_177183_4_, p_177183_6_, p_177183_7_, p_177183_8_, scale);
             }
 
             GlStateManager.matrixMode(5890);
             GlStateManager.loadIdentity();
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.enableLighting();
             GlStateManager.depthMask(true);
             GlStateManager.depthFunc(515);

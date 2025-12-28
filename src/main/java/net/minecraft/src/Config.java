@@ -1203,10 +1203,6 @@ public class Config {
         return gameSettings.ofConnectedTextures == 2;
     }
 
-    public static boolean isFastRender() {
-        return gameSettings.ofFastRender;
-    }
-
     public static boolean isTranslucentBlocksFancy() {
         return gameSettings.ofTranslucentBlocks == 0 ? gameSettings.fancyGraphics : gameSettings.ofTranslucentBlocks == 2;
     }

@@ -228,7 +228,6 @@ public class GameSettings {
     public boolean ofNaturalTextures = false;
     public boolean ofEmissiveTextures = true;
     public boolean ofFastMath = false;
-    public boolean ofFastRender = false;
     public int ofTranslucentBlocks = 0;
     public boolean ofDynamicFov = true;
     public boolean ofAlternateBlocks = true;
@@ -2480,7 +2479,6 @@ public class GameSettings {
         this.ofLazyChunkLoading = false;
         this.ofRenderRegions = false;
         this.ofFastMath = false;
-        this.ofFastRender = false;
         this.ofTranslucentBlocks = 0;
         this.ofDynamicFov = true;
         this.ofAlternateBlocks = true;

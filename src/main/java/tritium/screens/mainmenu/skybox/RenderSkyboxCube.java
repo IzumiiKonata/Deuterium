@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Location;
 import net.minecraft.util.Matrix4f;
+import org.lwjgl.opengl.GL11;
 import tritium.rendering.rendersystem.RenderSystem;
 
 public class RenderSkyboxCube {
@@ -21,11 +22,11 @@ public class RenderSkyboxCube {
     public void render(Minecraft mc, float pitch, float yaw, float alpha) {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer bufferbuilder = tessellator.getWorldRenderer();
-        GlStateManager.matrixMode(5889);
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         GlStateManager.multMatrix(Matrix4f.perspective(85.0D, (float) RenderSystem.getWidth() / (float) RenderSystem.getHeight(), 0.05F, 10.0F));
-        GlStateManager.matrixMode(5888);
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -102,9 +103,9 @@ public class RenderSkyboxCube {
         }
 
         GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.matrixMode(5889);
+        GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.popMatrix();
-        GlStateManager.matrixMode(5888);
+        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.popMatrix();
         GlStateManager.depthMask(true);
         GlStateManager.enableCull();

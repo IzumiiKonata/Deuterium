@@ -73,7 +73,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
             }
         } else {
             GlStateManager.clear(256);
-            GlStateManager.matrixMode(5889);
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
             GlStateManager.loadIdentity();
 
             if (OpenGlHelper.isFramebufferEnabled()) {
@@ -84,7 +84,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
                 GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(), 0.0D, 100.0D, 300.0D);
             }
 
-            GlStateManager.matrixMode(5888);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.loadIdentity();
             GlStateManager.translate(0.0F, 0.0F, -200.0F);
         }
@@ -135,10 +135,10 @@ public class LoadingScreenRenderer implements IProgressUpdate {
                 }
 
                 this.framebuffer.bindFramebuffer(false);
-                GlStateManager.matrixMode(5889);
+                GlStateManager.matrixMode(GL11.GL_PROJECTION);
                 GlStateManager.loadIdentity();
                 GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(), 0.0D, 100.0D, 300.0D);
-                GlStateManager.matrixMode(5888);
+                GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                 GlStateManager.loadIdentity();
                 GlStateManager.translate(0.0F, 0.0F, -200.0F);
 
