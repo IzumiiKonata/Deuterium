@@ -620,30 +620,22 @@ public class CloudMusic {
     @SneakyThrows
     private static void downloadMusic(String playUrl, File music) {
 
-        boolean enabled = WidgetsManager.musicInfo.isEnabled();
-
-        if (enabled) {
-            WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = true;
-            WidgetsManager.musicInfo.downloadProgress = NCMScreen.getInstance().downloadProgress = 0;
-            WidgetsManager.musicInfo.downloadSpeed = NCMScreen.getInstance().downloadSpeed = "0 b/s";
-        }
+        WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = true;
+        WidgetsManager.musicInfo.downloadProgress = NCMScreen.getInstance().downloadProgress = 0;
+        WidgetsManager.musicInfo.downloadSpeed = NCMScreen.getInstance().downloadSpeed = "0 b/s";
 
         try {
-
             InputStream stream = new WrappedInputStream(HttpUtils.get(playUrl, null), new WrappedInputStream.ProgressListener() {
 
                 tritium.utils.timing.Timer timer = new tritium.utils.timing.Timer();
 
                 @Override
                 public void onProgress(double progress) {
-                    if (enabled) {
-
-                        if (progress >= 1) {
-                            WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = false;
-                        }
-
-                        WidgetsManager.musicInfo.downloadProgress = NCMScreen.getInstance().downloadProgress = progress;
+                    if (progress >= 1) {
+                        WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = false;
                     }
+
+                    WidgetsManager.musicInfo.downloadProgress = NCMScreen.getInstance().downloadProgress = progress;
                 }
 
                 final long kilo = 1024;
@@ -700,9 +692,7 @@ public class CloudMusic {
         } catch (Throwable t) {
             t.printStackTrace();
 
-            if (enabled) {
-                WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = false;
-            }
+            WidgetsManager.musicInfo.downloading = NCMScreen.getInstance().downloading = false;
 
             music.delete();
         }
