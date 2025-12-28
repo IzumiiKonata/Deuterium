@@ -58,7 +58,7 @@ public class Main {
         mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         
         JPanel iconPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JLabel iconLabel = new JLabel("⚠️");
+        JLabel iconLabel = new JLabel("⚠");
         iconLabel.setFont(new Font("SansSerif", Font.PLAIN, 48));
         iconPanel.add(iconLabel);
         
