@@ -179,21 +179,21 @@ public class ScrollPanel extends AbstractWidget<ScrollPanel> {
             case VERTICAL -> {
                 double childrenHeightSum = this.getChildrenHeightSum();
                 if (childrenHeightSum > this.getHeight())
-                    yield this.targetScrollOffset == childrenHeightSum - this.getHeight();
+                    yield this.targetScrollOffset >= childrenHeightSum - this.getHeight();
                 else
                     yield this.targetScrollOffset == 0;
             }
             case HORIZONTAL -> {
                 double childrenWidthSum = this.getChildrenWidthSum();
                 if (childrenWidthSum > this.getWidth())
-                    yield this.targetScrollOffset == childrenWidthSum - this.getWidth();
+                    yield this.targetScrollOffset >= childrenWidthSum - this.getWidth();
                 else
                     yield this.targetScrollOffset == 0;
             }
             case VERTICAL_WITH_HORIZONTAL_FILL -> {
                 double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
                 if (childrenHeightSum > this.getHeight())
-                    yield this.targetScrollOffset == childrenHeightSum - this.getHeight();
+                    yield this.targetScrollOffset >= childrenHeightSum - this.getHeight();
                 else
                     yield this.targetScrollOffset == 0;
             }
@@ -208,6 +208,36 @@ public class ScrollPanel extends AbstractWidget<ScrollPanel> {
             offsetY = -this.actualScrollOffset;
         else
             offsetX = -this.actualScrollOffset;
+
+        switch (this.alignment) {
+            case VERTICAL -> {
+                double childrenHeightSum = this.getChildrenHeightSum();
+
+                if (childrenHeightSum < this.getHeight())
+                    this.targetScrollOffset = 0;
+                else if (this.targetScrollOffset > childrenHeightSum - this.getHeight()) {
+                    this.targetScrollOffset = childrenHeightSum - this.getHeight();
+                }
+            }
+            case HORIZONTAL -> {
+                double childrenWidthSum = this.getChildrenWidthSum();
+
+                if (childrenWidthSum < this.getWidth())
+                    this.targetScrollOffset = 0;
+                else if (this.targetScrollOffset > childrenWidthSum - this.getWidth()) {
+                    this.targetScrollOffset = childrenWidthSum - this.getWidth();
+                }
+            }
+            case VERTICAL_WITH_HORIZONTAL_FILL -> {
+                double childrenHeightSum = this.getChildrenHeightSumHorizontalFill();
+
+                if (childrenHeightSum < this.getHeight())
+                    this.targetScrollOffset = 0;
+                else if (this.targetScrollOffset > childrenHeightSum - this.getHeight()) {
+                    this.targetScrollOffset = childrenHeightSum - this.getHeight();
+                }
+            }
+        };
 
         for (AbstractWidget<?> child : this.getChildren()) {
 
