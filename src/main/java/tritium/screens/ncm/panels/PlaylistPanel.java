@@ -129,6 +129,13 @@ public class PlaylistPanel extends NCMPanel {
 
             searchBar.setBeforeRenderCallback(() -> {
                 tfOpenAnimation = Interpolations.interpBezier(tfOpenAnimation, this.tfSearch.isFocused() ? 80 : 20, .3f);
+
+                if (!this.tfSearch.isFocused() && tfOpenAnimation < 21) {
+                    this.tfSearch.setHidden(true);
+                } else {
+                    this.tfSearch.setHidden(false);
+                }
+
                 searchBar.setAlpha(1f);
                 searchBar.setColor(0xFF5E5E5E);
                 searchBar.setWidth(tfOpenAnimation);
