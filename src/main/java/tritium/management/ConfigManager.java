@@ -134,8 +134,8 @@ public class ConfigManager extends AbstractManager {
             }
 
 
-        } catch (Throwable ignored) {
-
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
 
         CommandValues.registerCommands();
@@ -172,18 +172,18 @@ public class ConfigManager extends AbstractManager {
 
             configFile.createNewFile();
 
-            Files.write(configFile.toPath(), JsonUtils.toJsonString(jsonObject).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+            Files.writeString(configFile.toPath(), JsonUtils.toJsonString(jsonObject), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         }
 
         this.saveAlts();
 
-        Files.write(commandValuesFile.toPath(), JsonUtils.toJsonString(CommandValues.getValues()).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+        Files.writeString(commandValuesFile.toPath(), JsonUtils.toJsonString(CommandValues.getValues()), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
 
         {
             JsonObject objKeys = new JsonObject();
 
             CommandManager.getKeyToCommandMap().forEach((key, cmd) -> objKeys.addProperty(key.toString(), cmd));
-            Files.write(keybindCommandsFile.toPath(), JsonUtils.toJsonString(objKeys).getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+            Files.writeString(keybindCommandsFile.toPath(), JsonUtils.toJsonString(objKeys), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
         }
 
         if (!Tritium.getInstance().isObfuscated()) {
@@ -195,7 +195,7 @@ public class ConfigManager extends AbstractManager {
     public void loadAlts() {
         try {
             if (!ALT.exists()) {
-                PrintWriter printWriter = new PrintWriter(ALT, "UTF-8");
+                PrintWriter printWriter = new PrintWriter(ALT, StandardCharsets.UTF_8);
                 printWriter.println("[]");
                 printWriter.close();
             } else {
@@ -219,7 +219,7 @@ public class ConfigManager extends AbstractManager {
     @SneakyThrows
     public void saveAlts() {
         try {
-            PrintWriter printWriter = new PrintWriter(ALT, "UTF-8");
+            PrintWriter printWriter = new PrintWriter(ALT, StandardCharsets.UTF_8);
             printWriter.println(JsonUtils.toJsonString(AltManager.getAlts()));
             printWriter.close();
         } catch (FileNotFoundException e) {

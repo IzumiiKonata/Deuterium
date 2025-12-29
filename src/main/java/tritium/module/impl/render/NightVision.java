@@ -13,9 +13,11 @@ public class NightVision extends Module {
         mc.entityRenderer.patcher$createdLightmap = false;
         mc.entityRenderer.lightmapUpdateNeeded = true;
 
-        PotionEffect effect = new PotionEffect(Potion.nightVision.id, 1000000, 1, false, false);
-        effect.setPotionDurationMax(true);
-        mc.thePlayer.addPotionEffect(effect);
+        if (mc.thePlayer != null) {
+            PotionEffect effect = new PotionEffect(Potion.nightVision.id, 1000000, 1, false, false);
+            effect.setPotionDurationMax(true);
+            mc.thePlayer.addPotionEffect(effect);
+        }
     }
 
     @Override
@@ -23,7 +25,9 @@ public class NightVision extends Module {
         mc.entityRenderer.patcher$createdLightmap = false;
         mc.entityRenderer.lightmapUpdateNeeded = true;
 
-        mc.thePlayer.removePotionEffect(Potion.nightVision.id);
+        if (mc.thePlayer != null) {
+            mc.thePlayer.removePotionEffect(Potion.nightVision.id);
+        }
     }
 
     @Handler
