@@ -13,9 +13,7 @@ import tritium.settings.NumberSetting;
 import tritium.utils.other.Result;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.stream.IntStream;
 
 /**
  * @author IzumiiKonata
@@ -34,8 +32,8 @@ public class CommandValues {
         public boolean cl_righthand = true;
 
         @CommandDesc("Skip world rendering")
-        @SerializedName("cl_skipworldrendering")
-        public boolean cl_skipworldrendering = false;
+        @SerializedName("cl_skip_world_rendering")
+        public boolean cl_skip_world_rendering = false;
 
         @CommandDesc("Enable opengl error checking")
         @SerializedName("cl_enable_ogl_error_checking")
