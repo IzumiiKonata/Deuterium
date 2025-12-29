@@ -39,6 +39,14 @@ public class CommandValues {
         @SerializedName("cl_enable_ogl_error_checking")
         public boolean cl_enable_ogl_error_checking = false;
 
+        @CommandDesc("Show Hotbar")
+        @SerializedName("cl_show_hotbar")
+        public boolean cl_show_hotbar = true;
+
+        @CommandDesc("Show Crosshair")
+        @SerializedName("cl_show_crosshair")
+        public boolean cl_show_crosshair = true;
+
         @CommandDesc("Experimental font renderer optimization")
         @SerializedName("experimental_fontrenderer_optimization")
         public boolean experimental_fontrenderer_optimization = true;

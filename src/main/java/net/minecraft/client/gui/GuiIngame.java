@@ -32,6 +32,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.border.WorldBorder;
 import net.optifine.CustomColors;
 import org.lwjgl.opengl.GL11;
+import tritium.command.CommandValues;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.RGBA;
@@ -208,14 +209,18 @@ public class GuiIngame extends Gui {
                 }
             }
 
-            if (this.mc.playerController.isSpectator()) {
-                this.spectatorGui.renderTooltip(scaledresolution, partialTicks);
-            } else {
-                if (ClientSettings.GUIINGAME_CACHE.getValue()) {
-                    GL11.glCullFace(GL11.GL_BACK);
-                }
+            boolean bShowHotbar = CommandValues.getValues().cl_show_hotbar;
 
-                this.renderTooltip(scaledresolution, partialTicks);
+            if (bShowHotbar) {
+                if (this.mc.playerController.isSpectator()) {
+                    this.spectatorGui.renderTooltip(scaledresolution, partialTicks);
+                } else {
+                    if (ClientSettings.GUIINGAME_CACHE.getValue()) {
+                        GL11.glCullFace(GL11.GL_BACK);
+                    }
+
+                    this.renderTooltip(scaledresolution, partialTicks);
+                }
             }
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
@@ -231,9 +236,8 @@ public class GuiIngame extends Gui {
             GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
             this.renderBossHealth();
 
-            if (this.mc.playerController.shouldDrawHUD()) {
+            if (bShowHotbar && this.mc.playerController.shouldDrawHUD()) {
                 this.renderPlayerStats(scaledresolution);
-
             }
 
             GlStateManager.disableBlend();
@@ -241,16 +245,18 @@ public class GuiIngame extends Gui {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             int k1 = i / 2 - 91;
 
-            if (this.mc.thePlayer.isRidingHorse()) {
-                this.renderHorseJumpBar(scaledresolution, k1);
-            } else if (this.mc.playerController.gameIsSurvivalOrAdventure()) {
-                this.renderExpBar(scaledresolution, k1);
-            }
+            if (bShowHotbar) {
+                if (this.mc.thePlayer.isRidingHorse()) {
+                    this.renderHorseJumpBar(scaledresolution, k1);
+                } else if (this.mc.playerController.gameIsSurvivalOrAdventure()) {
+                    this.renderExpBar(scaledresolution, k1);
+                }
 
-            if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator()) {
-                this.renderSelectedItem(scaledresolution);
-            } else if (this.mc.thePlayer.isSpectator()) {
-                this.spectatorGui.renderSelectedItem(scaledresolution);
+                if (this.mc.gameSettings.heldItemTooltips && !this.mc.playerController.isSpectator()) {
+                    this.renderSelectedItem(scaledresolution);
+                } else if (this.mc.thePlayer.isSpectator()) {
+                    this.spectatorGui.renderSelectedItem(scaledresolution);
+                }
             }
 
             if (this.mc.isDemo()) {
@@ -513,6 +519,11 @@ public class GuiIngame extends Gui {
     }
 
     public boolean showCrosshair() {
+
+        if (!CommandValues.getValues().cl_show_crosshair) {
+            return false;
+        }
+
         if (this.mc.gameSettings.showDebugInfo && !this.mc.thePlayer.hasReducedDebug() && !this.mc.gameSettings.reducedDebugInfo) {
             return false;
         } else if (this.mc.playerController.isSpectator()) {
