@@ -1017,7 +1017,7 @@ public class Minecraft implements IThreadListener {
             lastScaleFactor = gameSettings.guiScale;
         }
 
-        EventManager.call(new GameLoopEvent());
+        EventManager.call(GameLoopEvent.getINSTANCE());
 
         //CLIENT
         CursorUtils.resetOverride();
@@ -1187,7 +1187,7 @@ public class Minecraft implements IThreadListener {
             this.displayWidth = Display.getWidth();
             this.displayHeight = Display.getHeight();
 
-            EventManager.call(new DisplayResizedEvent(i, j, this.displayWidth, this.displayHeight));
+            EventManager.call(DisplayResizedEvent.of(i, j, this.displayWidth, this.displayHeight));
 
             if (this.displayWidth != i || this.displayHeight != j) {
                 if (this.displayWidth <= 0) {
@@ -1584,7 +1584,7 @@ public class Minecraft implements IThreadListener {
 
 
             if (pressed)
-                EventManager.call(new KeyPressedEvent(button - 100));
+                EventManager.call(KeyPressedEvent.of(button - 100));
         }
     }
 
@@ -1700,7 +1700,7 @@ public class Minecraft implements IThreadListener {
                     } else {
 
                         //CLIENT
-                        EventManager.call(new KeyPressedEvent(k));
+                        EventManager.call(KeyPressedEvent.of(k));
                         //END CLIENT
 
                         if (k == 1) {
@@ -2028,7 +2028,7 @@ public class Minecraft implements IThreadListener {
 
         this.mcSoundHandler.stopSounds();
         this.theWorld = worldClientIn;
-        EventManager.call(new WorldChangedEvent(worldClientIn));
+        EventManager.call(WorldChangedEvent.of(worldClientIn));
 
         if (worldClientIn != null) {
             if (this.renderGlobal != null) {

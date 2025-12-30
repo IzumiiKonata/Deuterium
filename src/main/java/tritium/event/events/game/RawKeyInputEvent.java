@@ -1,16 +1,21 @@
 package tritium.event.events.game;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import tritium.event.eventapi.Event;
 
-@Getter
-
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class RawKeyInputEvent extends Event {
 
-    private final int keyCode;
+    public static final RawKeyInputEvent INSTANCE = new RawKeyInputEvent(-1);
 
-    public RawKeyInputEvent(int keyCode) {
-        this.keyCode = keyCode;
+    @Getter
+    private int keyCode;
+
+    public static RawKeyInputEvent of(int keyCode) {
+        INSTANCE.keyCode = keyCode;
+        return INSTANCE;
     }
 
 }

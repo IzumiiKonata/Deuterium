@@ -16,7 +16,6 @@ import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Team;
 import net.minecraft.src.Config;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.optifine.EmissiveTextures;
 import net.optifine.entity.model.CustomEntityModels;
@@ -148,7 +147,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             //CLIENT
             if (entity == Minecraft.getMinecraft().thePlayer) {
                 if (Tritium.getInstance().getEventManager().canReceive(RenderPlayerRotationsEvent.class)) {
-                    RenderPlayerRotationsEvent event = EventManager.call(new RenderPlayerRotationsEvent(Minecraft.getMinecraft().thePlayer.rotationYaw, Minecraft.getMinecraft().thePlayer.rotationPitch));
+                    RenderPlayerRotationsEvent event = EventManager.call(RenderPlayerRotationsEvent.of(Minecraft.getMinecraft().thePlayer.rotationYaw, Minecraft.getMinecraft().thePlayer.rotationPitch));
 
                     if (event.getRotationYaw() != Minecraft.getMinecraft().thePlayer.rotationYaw || event.getRotationPitch() != Minecraft.getMinecraft().thePlayer.rotationPitch) {
                         f = this.interpolateRotation(yaw, event.getRotationYaw(), partialTicks);

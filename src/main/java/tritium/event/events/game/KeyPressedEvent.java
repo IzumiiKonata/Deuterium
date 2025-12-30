@@ -1,5 +1,7 @@
 package tritium.event.events.game;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import tritium.event.eventapi.Event;
 
@@ -7,13 +9,17 @@ import tritium.event.eventapi.Event;
  * @author IzumiiKonata
  * @since 5/1/2023 5:50 PM
  */
-@Getter
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class KeyPressedEvent extends Event {
 
-    private final int keyCode;
+    private static final KeyPressedEvent INSTANCE = new KeyPressedEvent(0);
 
-    public KeyPressedEvent(int keyCode) {
-        this.keyCode = keyCode;
+    @Getter
+    private int keyCode;
+
+    public static KeyPressedEvent of(int keyCode) {
+        INSTANCE.keyCode = keyCode;
+        return INSTANCE;
     }
 
 }

@@ -111,7 +111,7 @@ public class ItemRenderer {
      * Set the OpenGL LightMapTextureCoords based on the AbstractClientPlayer
      */
     private void setLightMapFromPlayer(AbstractClientPlayer clientPlayer) {
-        int i = this.mc.theWorld.getCombinedLight(new BlockPos(clientPlayer.posX, clientPlayer.posY + (double) clientPlayer.getEyeHeight(), clientPlayer.posZ), 0);
+        int i = this.mc.theWorld.getCombinedLight(MathHelper.floor_double(clientPlayer.posX), MathHelper.floor_double(clientPlayer.posY + (double) clientPlayer.getEyeHeight()), MathHelper.floor_double(clientPlayer.posZ), 0);
 
         if (Config.isDynamicLights()) {
             i = DynamicLights.getCombinedLight(this.mc.getRenderViewEntity(), i);
@@ -435,7 +435,7 @@ public class ItemRenderer {
 
                     case BLOCK:
 
-                        BlockAnimationEvent event = EventManager.call(new BlockAnimationEvent(f, f1, f2, f3));
+                        BlockAnimationEvent event = EventManager.call(BlockAnimationEvent.of(f, f1, f2, f3));
                         if (!event.isCancelled()) {
                             this.transformFirstPersonItem(f, 0.0F);
                             this.doBlockTransformations();

@@ -65,7 +65,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
 
     protected void renderName(T entity, double x, double y, double z) {
         if (this.canRenderName(entity)) {
-            RenderNameTagEvent event = EventManager.call(new RenderNameTagEvent());
+            RenderNameTagEvent event = EventManager.call(RenderNameTagEvent.getINSTANCE());
 
             if (event.isCancelled())
                 return;

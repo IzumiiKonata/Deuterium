@@ -26,6 +26,18 @@ public class AxisAlignedBB {
         this.maxZ = pos2.getZ();
     }
 
+    private static final AxisAlignedBB DUMMY = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
+
+    public static AxisAlignedBB getInstanced(double x1, double y1, double z1, double x2, double y2, double z2) {
+        DUMMY.minX = Math.min(x1, x2);
+        DUMMY.minY = Math.min(y1, y2);
+        DUMMY.minZ = Math.min(z1, z2);
+        DUMMY.maxX = Math.max(x1, x2);
+        DUMMY.maxY = Math.max(y1, y2);
+        DUMMY.maxZ = Math.max(z1, z2);
+        return DUMMY;
+    }
+
     public void setValue(double x1, double y1, double z1, double x2, double y2, double z2) {
         this.minX = Math.min(x1, x2);
         this.minY = Math.min(y1, y2);

@@ -108,7 +108,7 @@ public class EventManager extends AbstractManager implements SharedConstants {
     /**
      * 是否有方法可以接受这个 event
      *
-     * @param eventClass event类型
+     * @param eventClass event 类型
      * @return 是否有方法可以接受这个 event
      */
     @SneakyThrows
@@ -116,24 +116,26 @@ public class EventManager extends AbstractManager implements SharedConstants {
         List<Target> methodList = registrationMap.get(eventClass);
 
         if (methodList != null) {
-            for (Target target : methodList) {
-                if (target.getType() == eventClass) {
-                    return true;
-                }
-            }
+            return !methodList.isEmpty();
         }
 
         return false;
     }
 
     /**
-     * 调用所有注册的 event
+     * 为给定的 event 触发所有可以接受该 event 类型的回调
      *
      * @param event event 类型
      */
     @SneakyThrows
     public static <T extends Event> T call(T event) {
         List<Target> methodList = registrationMap.get(event.getClass());
+
+        if (event instanceof EventCancellable ec) {
+            ec.cancelled = false;
+        }
+
+        event.setResponded(false);
 
         if (methodList != null) {
             for (Target target : methodList) {

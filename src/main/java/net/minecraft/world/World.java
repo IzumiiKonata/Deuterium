@@ -638,6 +638,49 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         }
     }
 
+    public int getLightFromNeighborsFor(EnumSkyBlock type, int x, int y, int z) {
+        if (this.provider.getHasNoSky() && type == EnumSkyBlock.SKY) {
+            return 0;
+        } else {
+            if (y < 0) {
+                y = 0;
+            }
+
+            if (!this.isValid(x, y, z)) {
+                return type.defaultLightValue;
+            } else if (!this.isBlockLoaded(x, y, z)) {
+                return type.defaultLightValue;
+            } else if (this.getBlockState(x, y, z).getBlock().getUseNeighborBrightness()) {
+                int i1 = this.getLightFor(type, x, y + 1, z);
+                int i = this.getLightFor(type, x + 1, y, z);
+                int j = this.getLightFor(type, x - 1, y, z);
+                int k = this.getLightFor(type, x, y, z + 1);
+                int l = this.getLightFor(type, x, y, z - 1);
+
+                if (i > i1) {
+                    i1 = i;
+                }
+
+                if (j > i1) {
+                    i1 = j;
+                }
+
+                if (k > i1) {
+                    i1 = k;
+                }
+
+                if (l > i1) {
+                    i1 = l;
+                }
+
+                return i1;
+            } else {
+                Chunk chunk = this.getChunkFromBlockCoords(x, z);
+                return chunk.getLightFor(type, x, y, z);
+            }
+        }
+    }
+
     public int getLightFromNeighborsFor(EnumSkyBlock type, BlockPos pos) {
         if (this.provider.getHasNoSky() && type == EnumSkyBlock.SKY) {
             return 0;
@@ -714,6 +757,17 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     public int getCombinedLight(BlockPos pos, int lightValue) {
         int i = this.getLightFromNeighborsFor(EnumSkyBlock.SKY, pos);
         int j = this.getLightFromNeighborsFor(EnumSkyBlock.BLOCK, pos);
+
+        if (j < lightValue) {
+            j = lightValue;
+        }
+
+        return i << 20 | j << 4;
+    }
+
+    public int getCombinedLight(int x, int y, int z, int lightValue) {
+        int i = this.getLightFromNeighborsFor(EnumSkyBlock.SKY, x, y, z);
+        int j = this.getLightFromNeighborsFor(EnumSkyBlock.BLOCK, x, y, z);
 
         if (j < lightValue) {
             j = lightValue;

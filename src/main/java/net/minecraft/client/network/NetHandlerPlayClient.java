@@ -147,7 +147,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         this.gameController.gameSettings.sendSettingsToServer();
         this.netManager.sendPacket(new C17PacketCustomPayload("MC|Brand", (new PacketBuffer(Unpooled.buffer())).writeString(ClientBrandRetriever.getClientModName())));
         //CLIENT
-        EventManager.call(new RespawnEvent());
+        EventManager.call(RespawnEvent.getINSTANCE());
         //END CLIENT
     }
 
@@ -780,7 +780,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         this.gameController.setDimensionAndSpawnPlayer(packetIn.getDimensionID());
         this.gameController.playerController.setGameType(packetIn.getGameType());
         //CLIENT
-        EventManager.call(new RespawnEvent());
+        EventManager.call(RespawnEvent.getINSTANCE());
         //END CLIENT
     }
 

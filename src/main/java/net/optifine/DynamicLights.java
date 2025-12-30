@@ -154,6 +154,12 @@ public class DynamicLights {
         return combinedLight;
     }
 
+    public static int getCombinedLight(int x, int y, int z, int combinedLight) {
+        final double d0 = getLightLevel(x, y, z);
+        combinedLight = getCombinedLight(d0, combinedLight);
+        return combinedLight;
+    }
+
     public static int getCombinedLight(final Entity entity, int combinedLight) {
         final double d0 = getLightLevel(entity);
         combinedLight = getCombinedLight(d0, combinedLight);
@@ -170,6 +176,38 @@ public class DynamicLights {
             }
         }
         return combinedLight;
+    }
+
+    public static double getLightLevel(int x, int y, int z) {
+        double d0 = 0.0D;
+        synchronized (mapDynamicLights) {
+            final List<DynamicLight> list = mapDynamicLights.valueList();
+            for (final DynamicLight dynamiclight : list) {
+                int k = dynamiclight.getLastLightLevel();
+                if (k > 0) {
+                    final double d1 = dynamiclight.getLastPosX();
+                    final double d2 = dynamiclight.getLastPosY();
+                    final double d3 = dynamiclight.getLastPosZ();
+                    final double d4 = x - d1;
+                    final double d5 = y - d2;
+                    final double d6 = z - d3;
+                    double d7 = d4 * d4 + d5 * d5 + d6 * d6;
+                    if (dynamiclight.isUnderwater() && !Config.isClearWater()) {
+                        k = Config.limit(k - 2, 0, 15);
+                        d7 *= 2.0D;
+                    }
+                    if (d7 <= 56.25D) {
+                        final double d8 = Math.sqrt(d7);
+                        final double d9 = 1.0D - d8 / 7.5D;
+                        final double d10 = d9 * k;
+                        if (d10 > d0) {
+                            d0 = d10;
+                        }
+                    }
+                }
+            }
+        }
+        return Config.limit(d0, 0.0D, 15.0D);
     }
 
     public static double getLightLevel(final BlockPos pos) {

@@ -475,7 +475,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
 
                 if (eventKeyState) {
 //                    System.out.println("1");
-                    EventManager.call(new RawKeyInputEvent(k));
+                    EventManager.call(RawKeyInputEvent.of(k));
 
                     if (this != this.mc.currentScreen) {
                         return;

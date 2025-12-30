@@ -273,8 +273,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
      * Sends a chat message from the player. Args: chatMessage
      */
     public void sendChatMessage(String message) {
-
-        ChatEvent event = EventManager.call(new ChatEvent(message));
+        ChatEvent event = EventManager.call(ChatEvent.of(message));
 
         if (event.isCancelled())
             return;
@@ -683,7 +682,7 @@ public class EntityPlayerSP extends AbstractClientPlayer {
         boolean flag2 = this.movementInput.moveForward >= f;
         this.movementInput.updatePlayerMoveState();
 
-        SlowDownEvent slowDownEvent = EventManager.call(new SlowDownEvent());
+        SlowDownEvent slowDownEvent = EventManager.call(SlowDownEvent.get());
         if ((this.isUsingItem() || slowDownEvent.shouldSlowDown) && !this.isRiding()) {
 
             if (!slowDownEvent.isCancelled()) {

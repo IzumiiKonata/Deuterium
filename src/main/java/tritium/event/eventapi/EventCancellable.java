@@ -9,7 +9,7 @@ import lombok.Getter;
 public class EventCancellable extends Event {
 
     @Getter
-    boolean cancelled = false;
+    public boolean cancelled = false;
 
     public void setCancelled() {
         this.cancelled = true;

@@ -1509,9 +1509,9 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             this.orientCamera(partialTicks);
             dbgDirectionRendering = false;
             GlStateManager.translate(0.0F, entity.getEyeHeight(), 0.0F);
-            RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.005D, 1.0E-4D, 1.0E-4D), 255, 0, 0, 255);
-            RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0E-4D, 1.0E-4D, 0.005D), 0, 0, 255, 255);
-            RenderGlobal.drawOutlinedBoundingBox(new AxisAlignedBB(0.0D, 0.0D, 0.0D, 1.0E-4D, 0.0033D, 1.0E-4D), 0, 255, 0, 255);
+            RenderGlobal.drawOutlinedBoundingBox(AxisAlignedBB.getInstanced(0.0D, 0.0D, 0.0D, 0.005D, 1.0E-4D, 1.0E-4D), 255, 0, 0, 255);
+            RenderGlobal.drawOutlinedBoundingBox(AxisAlignedBB.getInstanced(0.0D, 0.0D, 0.0D, 1.0E-4D, 1.0E-4D, 0.005D), 0, 0, 255, 255);
+            RenderGlobal.drawOutlinedBoundingBox(AxisAlignedBB.getInstanced(0.0D, 0.0D, 0.0D, 1.0E-4D, 0.0033D, 1.0E-4D), 0, 255, 0, 255);
             GlStateManager.popMatrix();
             GlStateManager.depthMask(true);
             GlStateManager.enableTexture2D();
@@ -1835,8 +1835,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         //CLIENT
         GL11.glPushMatrix();
-        EventManager.call(new Render3DEvent.OldRender3DEvent(partialTicks));
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        EventManager.call(Render3DEvent.Render3DBeforeEntityPassEvent.of(partialTicks));
         GL11.glPopMatrix();
         //END CLIENT
 
@@ -1865,7 +1864,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         GlStateManager.pushMatrix();
 //        GlStateManager.pushAttrib();
         setupCameraTransform(partialTicks, 2);
-        EventManager.call(new Render3DEvent(partialTicks));
+        EventManager.call(Render3DEvent.of(partialTicks));
 
 //        RendererLivingEntity.SHADER_RENDERING = true;
 //        SharedRenderingConstants.render3DRunnables();

@@ -612,6 +612,12 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         return this.getCachedLightFor(p_177413_1_, pos);
     }
 
+    public int getLightFor(EnumSkyBlock p_177413_1_, int x, int y, int z) {
+        this.getLightingEngine().processLightUpdatesForType(p_177413_1_);
+
+        return this.getCachedLightFor(p_177413_1_, x, y, z);
+    }
+
     public void setLightFor(EnumSkyBlock p_177431_1_, BlockPos pos, int value) {
         int i = pos.getX() & 15;
         int j = pos.getY();
@@ -738,6 +744,13 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         int i = pos.getX() & 15;
         int j = pos.getY();
         int k = pos.getZ() & 15;
+        return j >= this.heightMap[k << 4 | i];
+    }
+
+    public boolean canSeeSky(int x, int y, int z) {
+        int i = x & 15;
+        int j = y;
+        int k = z & 15;
         return j >= this.heightMap[k << 4 | i];
     }
 
@@ -1551,6 +1564,34 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 
         if (storage == null) {
             if (this.canSeeSky(pos)) {
+                return type.defaultLightValue;
+            } else {
+                return 0;
+            }
+        } else if (type == EnumSkyBlock.SKY) {
+            if (this.worldObj.provider.getHasNoSky()) {
+                return 0;
+            } else {
+                return storage.getExtSkylightValue(i, j & 15, k);
+            }
+        } else {
+            if (type == EnumSkyBlock.BLOCK) {
+                return storage.getExtBlocklightValue(i, j & 15, k);
+            } else {
+                return type.defaultLightValue;
+            }
+        }
+    }
+
+    public int getCachedLightFor(EnumSkyBlock type, int x, int y, int z) {
+        int i = x & 15;
+        int j = y;
+        int k = z & 15;
+
+        ExtendedBlockStorage storage = this.storageArrays[j >> 4];
+
+        if (storage == null) {
+            if (this.canSeeSky(x, y, z)) {
                 return type.defaultLightValue;
             } else {
                 return 0;

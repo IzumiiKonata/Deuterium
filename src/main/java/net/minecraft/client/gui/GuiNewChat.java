@@ -192,7 +192,7 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
         chat.info(chatComponent.getUnformattedText());
 
         //CLIENT
-        ChatComponentEvent event = EventManager.call(new ChatComponentEvent(chatComponent, this.drawnChatLines));
+        ChatComponentEvent event = EventManager.call(ChatComponentEvent.of(chatComponent, this.drawnChatLines));
         if (event.isCancelled()) {
             return;
         }

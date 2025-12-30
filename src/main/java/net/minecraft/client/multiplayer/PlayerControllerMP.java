@@ -430,7 +430,7 @@ public class PlayerControllerMP {
     public void attackEntity(EntityPlayer playerIn, Entity targetEntity) {
 
         //CLIENT
-        AttackEvent event = EventManager.call(new AttackEvent(targetEntity));
+        AttackEvent event = EventManager.call(AttackEvent.of(targetEntity));
         if (event.isCancelled()) {
             return;
         }

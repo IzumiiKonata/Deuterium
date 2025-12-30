@@ -14,7 +14,7 @@ public class Wings
     RenderWings wings = new RenderWings();
 
     @Handler
-    public void onRender3D(Render3DEvent.OldRender3DEvent event) {
+    public void onRender3D(Render3DEvent.Render3DBeforeEntityPassEvent event) {
         if (!mc.thePlayer.isInvisible()) {
             this.wings.renderWings(mc.thePlayer, event.partialTicks);
         }

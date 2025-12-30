@@ -1099,7 +1099,7 @@ public abstract class Entity implements ICommandSender {
 
             //CLIENT
             if (this instanceof EntityPlayerSP) {
-                MoveEntityRotationEvent moveEntityRotationEvent = EventManager.call(new MoveEntityRotationEvent(this.rotationYaw));
+                MoveEntityRotationEvent moveEntityRotationEvent = EventManager.call(MoveEntityRotationEvent.of(this.rotationYaw));
                 f1 = MathHelper.sin(moveEntityRotationEvent.rotationYaw * (float) Math.PI / 180.0F);
                 f2 = MathHelper.cos(moveEntityRotationEvent.rotationYaw * (float) Math.PI / 180.0F);
             }

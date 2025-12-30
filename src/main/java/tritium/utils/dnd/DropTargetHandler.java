@@ -28,7 +28,7 @@ public class DropTargetHandler {
         this.isDragging = true;
 
         List<String> fileNames = Arrays.asList(formats);
-        EventManager.call(new FileDraggedInEvent(fileNames));
+        EventManager.call(FileDraggedInEvent.of(fileNames));
     }
 
     public void onDragLeaveImpl() {
@@ -41,7 +41,7 @@ public class DropTargetHandler {
 
     public void onDropImpl(int x, int y, int effect, String[] formats) {
         List<String> fileNames = Arrays.asList(formats);
-        EventManager.call(new FileDroppedEvent(fileNames));
+        EventManager.call(FileDroppedEvent.of(fileNames));
         this.isDragging = false;
     }
 

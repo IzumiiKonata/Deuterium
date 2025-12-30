@@ -420,6 +420,16 @@ public class WorldClient extends World {
         return i;
     }
 
+    public int getCombinedLight(int x, int y, int z, int lightValue) {
+        int i = super.getCombinedLight(x, y, z, lightValue);
+
+        if (Config.isDynamicLights()) {
+            i = DynamicLights.getCombinedLight(x, y, z, i);
+        }
+
+        return i;
+    }
+
     /**
      * Sets the block state at a given location. Flag 1 will cause a block update. Flag 2 will send the change to
      * clients (you almost always want this). Flag 4 prevents the block from being re-rendered, if this is a client

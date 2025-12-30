@@ -243,7 +243,7 @@ public interface SharedRenderingConstants {
 
                 RenderSystem.setFrameDeltaTime(Math.max(deltaTime, delta));
 
-                EventManager.call(new Render2DEvent());
+                EventManager.call(Render2DEvent.getINSTANCE());
 
                 RenderSystem.setFrameDeltaTime(deltaTime);
 
@@ -268,7 +268,7 @@ public interface SharedRenderingConstants {
 
 
         } else {
-            EventManager.call(new Render2DEvent());
+            EventManager.call(Render2DEvent.getINSTANCE());
         }
 
     }
