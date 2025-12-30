@@ -936,7 +936,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                     i1 = MathHelper.floor_double(vec31.yCoord) - (enumfacing == EnumFacing.UP ? 1 : 0);
                     j1 = MathHelper.floor_double(vec31.zCoord) - (enumfacing == EnumFacing.SOUTH ? 1 : 0);
                     blockpos = new BlockPos(l, i1, j1);
-                    IBlockState iblockstate1 = this.getBlockState(blockpos);
+                    IBlockState iblockstate1 = this.getBlockState(l, i1, j1);
                     Block block1 = iblockstate1.getBlock();
 
                     if (!ignoreBlockWithoutBoundingBox || block1.getCollisionBoundingBox(this, blockpos, iblockstate1) != null) {
