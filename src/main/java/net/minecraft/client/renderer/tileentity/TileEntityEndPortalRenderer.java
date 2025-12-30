@@ -39,7 +39,7 @@ public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer<TileE
                     f4 = 65.0F;
                     f5 = 0.125F;
                     GlStateManager.enableBlend();
-                    GlStateManager.blendFunc(770, 771);
+                    GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 }
 
                 if (i >= 1) {
@@ -48,7 +48,7 @@ public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer<TileE
 
                 if (i == 1) {
                     GlStateManager.enableBlend();
-                    GlStateManager.blendFunc(1, 1);
+                    GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
                     f5 = 0.5F;
                 }
 
@@ -58,20 +58,20 @@ public class TileEntityEndPortalRenderer extends TileEntitySpecialRenderer<TileE
                 float f10 = f8 / f9;
                 f10 = (float) (y + (double) f3) + f10;
                 GlStateManager.translate(f, f10, f2);
-                GlStateManager.texGen(GlStateManager.TexGen.S, 9217);
-                GlStateManager.texGen(GlStateManager.TexGen.T, 9217);
-                GlStateManager.texGen(GlStateManager.TexGen.R, 9217);
-                GlStateManager.texGen(GlStateManager.TexGen.Q, 9216);
-                GlStateManager.texGen(GlStateManager.TexGen.S, 9473, this.func_147525_a(1.0F, 0.0F, 0.0F, 0.0F));
-                GlStateManager.texGen(GlStateManager.TexGen.T, 9473, this.func_147525_a(0.0F, 0.0F, 1.0F, 0.0F));
-                GlStateManager.texGen(GlStateManager.TexGen.R, 9473, this.func_147525_a(0.0F, 0.0F, 0.0F, 1.0F));
-                GlStateManager.texGen(GlStateManager.TexGen.Q, 9474, this.func_147525_a(0.0F, 1.0F, 0.0F, 0.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.S, GL11.GL_OBJECT_LINEAR);
+                GlStateManager.texGen(GlStateManager.TexGen.T, GL11.GL_OBJECT_LINEAR);
+                GlStateManager.texGen(GlStateManager.TexGen.R, GL11.GL_OBJECT_LINEAR);
+                GlStateManager.texGen(GlStateManager.TexGen.Q, GL11.GL_EYE_LINEAR);
+                GlStateManager.texGen(GlStateManager.TexGen.S, GL11.GL_OBJECT_PLANE, this.func_147525_a(1.0F, 0.0F, 0.0F, 0.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.T, GL11.GL_OBJECT_PLANE, this.func_147525_a(0.0F, 0.0F, 1.0F, 0.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.R, GL11.GL_OBJECT_PLANE, this.func_147525_a(0.0F, 0.0F, 0.0F, 1.0F));
+                GlStateManager.texGen(GlStateManager.TexGen.Q, GL11.GL_EYE_PLANE, this.func_147525_a(0.0F, 1.0F, 0.0F, 0.0F));
                 GlStateManager.enableTexGenCoord(GlStateManager.TexGen.S);
                 GlStateManager.enableTexGenCoord(GlStateManager.TexGen.T);
                 GlStateManager.enableTexGenCoord(GlStateManager.TexGen.R);
                 GlStateManager.enableTexGenCoord(GlStateManager.TexGen.Q);
                 GlStateManager.popMatrix();
-                GlStateManager.matrixMode(5890);
+                GlStateManager.matrixMode(GL11.GL_TEXTURE);
                 GlStateManager.pushMatrix();
                 GlStateManager.loadIdentity();
                 GlStateManager.translate(0.0F, (float) (Minecraft.getSystemTime() % 700000L) / 700000.0F, 0.0F);

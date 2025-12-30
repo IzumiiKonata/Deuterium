@@ -28,6 +28,7 @@ import net.optifine.override.ChunkCacheOF;
 import net.optifine.render.AabbFrame;
 import net.optifine.render.RenderEnv;
 import net.optifine.shaders.SVertexBuilder;
+import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
 import java.util.BitSet;
@@ -344,7 +345,7 @@ public class RenderChunk {
         GlStateManager.translate(-8.0F, -8.0F, -8.0F);
         GlStateManager.scale(f, f, f);
         GlStateManager.translate(8.0F, 8.0F, 8.0F);
-        GlStateManager.getFloat(2982, this.modelviewMatrix);
+        GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, this.modelviewMatrix);
         GlStateManager.popMatrix();
     }
 

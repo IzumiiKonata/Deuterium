@@ -32,7 +32,7 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer<TileEntit
 
     public void renderTileEntityAt(TileEntityChest te, double x, double y, double z, float partialTicks, int destroyStage) {
         GlStateManager.enableDepth();
-        GlStateManager.depthFunc(515);
+        GlStateManager.depthFunc(GL11.GL_LEQUAL);
         GlStateManager.depthMask(true);
         int i;
 
@@ -58,7 +58,7 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer<TileEntit
 
                 if (destroyStage >= 0) {
                     this.bindTexture(DESTROY_STAGES[destroyStage]);
-                    GlStateManager.matrixMode(5890);
+                    GlStateManager.matrixMode(GL11.GL_TEXTURE);
                     GlStateManager.pushMatrix();
                     GlStateManager.scale(4.0F, 4.0F, 1.0F);
                     GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
@@ -75,7 +75,7 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer<TileEntit
 
                 if (destroyStage >= 0) {
                     this.bindTexture(DESTROY_STAGES[destroyStage]);
-                    GlStateManager.matrixMode(5890);
+                    GlStateManager.matrixMode(GL11.GL_TEXTURE);
                     GlStateManager.pushMatrix();
                     GlStateManager.scale(8.0F, 4.0F, 1.0F);
                     GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
@@ -154,7 +154,7 @@ public class TileEntityChestRenderer extends TileEntitySpecialRenderer<TileEntit
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
             if (destroyStage >= 0) {
-                GlStateManager.matrixMode(5890);
+                GlStateManager.matrixMode(GL11.GL_TEXTURE);
                 GlStateManager.popMatrix();
                 GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             }

@@ -7,6 +7,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.LazyLoadBase;
 import net.minecraft.util.Location;
+import org.lwjgl.opengl.GL11;
 import tritium.interfaces.IFontRenderer;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
@@ -111,7 +112,7 @@ public class MusicToast implements SharedRenderingConstants {
 
                 GlStateManager.disableAlpha();
                 GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 Gui.drawModalRectWithCustomSizedTexture(offsetX, offsetY, 0, 0, 4, toastHeight, 120, 24);
                 Gui.drawModalRectWithCustomSizedTexture(offsetX + toastWidth - 4, offsetY, 116, 0, 4, toastHeight, 120, 24);

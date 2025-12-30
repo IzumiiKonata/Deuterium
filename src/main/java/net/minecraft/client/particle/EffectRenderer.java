@@ -18,6 +18,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.src.Config;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 import tritium.rendering.ParticleCulling;
 
 import java.util.*;
@@ -247,8 +248,8 @@ public class EffectRenderer {
         EntityFX.interpPosY = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * (double) partialTicks;
         EntityFX.interpPosZ = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * (double) partialTicks;
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(770, 771);
-        GlStateManager.alphaFunc(516, 0.003921569F);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
         Block block = ActiveRenderInfo.getBlockAtEntityViewpoint(this.worldObj, entityIn, partialTicks);
         boolean flag = block.getMaterial() == Material.water;
 
@@ -318,7 +319,7 @@ public class EffectRenderer {
 
         GlStateManager.depthMask(true);
         GlStateManager.disableBlend();
-        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
     }
 
     public void renderLitParticles(Entity entityIn, float partialTick) {

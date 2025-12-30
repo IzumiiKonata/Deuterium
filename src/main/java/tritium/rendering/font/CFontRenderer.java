@@ -390,7 +390,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         StringRenderCall value = callListMap.computeIfAbsent(s, StringRenderCall::new);
 
         if (value.render(r, g, b, a)) {
-            GlStateManager.resetColor();
+//            GlStateManager.resetColor();
             GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
             return true;
         }

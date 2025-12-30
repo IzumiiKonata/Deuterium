@@ -66,8 +66,8 @@ public class MotionBlur extends Module {
             int filter
     ) {
         GlStateManager.enableTexture2D();
-        GL11.glTexParameteri(3553, 10241, filter);
-        GL11.glTexParameteri(3553, 10240, filter);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 10241, filter);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 10240, filter);
         val tessellator = Tessellator.getInstance();
         val worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
@@ -76,8 +76,8 @@ public class MotionBlur extends Module {
         worldrenderer.pos(x + width, y, 0.0).tex(uMax, vMin).endVertex();
         worldrenderer.pos(x, y, 0.0).tex(uMin, vMin).endVertex();
         tessellator.draw();
-        GL11.glTexParameteri(3553, 10241, 9728);
-        GL11.glTexParameteri(3553, 10240, 9728);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 10241, 9728);
+        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 10240, 9728);
     }
 
     public void doFramebuffer() {

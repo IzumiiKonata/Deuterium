@@ -413,7 +413,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
         if (this.blend) {
             GlStateManager.getBlendState(this.oldBlendState);
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         }
 
         this.resetStyles();
@@ -441,7 +441,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
         if (this.blend) {
             GlStateManager.getBlendState(this.oldBlendState);
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         }
 
         this.resetStyles();
@@ -713,8 +713,8 @@ public class FontRenderer implements IResourceManagerReloadListener {
             this.posX = originalPosX + this.getStringWidth(text);
             this.posY = originalPosY;
             
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
-            GlStateManager.resetColor();
+//            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0f);
+//            GlStateManager.resetColor();
             GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = -1;
             return;
         }
@@ -880,14 +880,14 @@ public class FontRenderer implements IResourceManagerReloadListener {
 //            worldrenderer.pos(this.posX, this.posY + (float) (this.FONT_HEIGHT / 2) - 1.0F, 0.0D).endVertex();
 //            tessellator.draw();
 //            GlStateManager.enableTexture2D();
-            GL11.glDisable(3553);
-            GL11.glBegin(7);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBegin(GL11.GL_QUADS);
             GL11.glVertex2f(this.posX, this.posY + (float) (this.FONT_HEIGHT / 2));
             GL11.glVertex2f(this.posX + p_doDraw_1_, this.posY + (float) (this.FONT_HEIGHT / 2));
             GL11.glVertex2f(this.posX + p_doDraw_1_, this.posY + (float) (this.FONT_HEIGHT / 2) - 1.0F);
             GL11.glVertex2f(this.posX, this.posY + (float) (this.FONT_HEIGHT / 2) - 1.0F);
             GL11.glEnd();
-            GL11.glEnable(3553);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
         }
 
         if (this.underlineStyle) {
@@ -902,14 +902,14 @@ public class FontRenderer implements IResourceManagerReloadListener {
 //            worldrenderer1.pos(this.posX + (float) i, this.posY + (float) this.FONT_HEIGHT - 1.0F, 0.0D).endVertex();
 //            tessellator1.draw();
 //            GlStateManager.enableTexture2D();
-            GL11.glDisable(3553);
-            GL11.glBegin(7);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBegin(GL11.GL_QUADS);
             GL11.glVertex2f(this.posX + (float) i, this.posY + (float) this.FONT_HEIGHT);
             GL11.glVertex2f(this.posX + p_doDraw_1_, this.posY + (float) this.FONT_HEIGHT);
             GL11.glVertex2f(this.posX + p_doDraw_1_, this.posY + (float) this.FONT_HEIGHT - 1.0F);
             GL11.glVertex2f(this.posX + (float) i, this.posY + (float) this.FONT_HEIGHT - 1.0F);
             GL11.glEnd();
-            GL11.glEnable(3553);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
         }
 
         this.posX += p_doDraw_1_;
@@ -1118,7 +1118,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
         if (this.blend) {
             GlStateManager.getBlendState(this.oldBlendState);
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         }
 
         this.resetStyles();

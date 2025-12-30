@@ -218,7 +218,7 @@ public class LoadingRenderer {
         GlStateManager.depthFunc(GL11.GL_LEQUAL);
         GlStateManager.enableAlpha();
         GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
-        GlStateManager.cullFace(1029);
+        GlStateManager.cullFace(GL11.GL_BACK);
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);

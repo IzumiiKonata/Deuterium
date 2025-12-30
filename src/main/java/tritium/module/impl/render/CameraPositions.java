@@ -177,7 +177,7 @@ public class CameraPositions extends Module {
         this.mc.getTextureManager().bindTexture(Gui.icons);
         GlStateManager.enableBlend();
 
-        GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.enableAlpha();
         double size = 48;
         boolean bCull = GL11.glIsEnabled(GL11.GL_CULL_FACE);

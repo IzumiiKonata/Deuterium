@@ -110,17 +110,17 @@ public abstract class LayerArmorBase<T extends ModelBase> implements LayerRender
             }
 
             GlStateManager.enableBlend();
-            GlStateManager.depthFunc(514);
+            GlStateManager.depthFunc(GL11.GL_EQUAL);
             GlStateManager.depthMask(false);
             float f1 = 0.5F;
             GlStateManager.color(f1, f1, f1, 1.0F);
 
             for (int i = 0; i < 2; ++i) {
                 GlStateManager.disableLighting();
-                GlStateManager.blendFunc(768, 1);
+                GlStateManager.blendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
                 float f2 = 0.76F;
                 GlStateManager.color(0.5F * f2, 0.25F * f2, 0.8F * f2, 1.0F);
-                GlStateManager.matrixMode(5890);
+                GlStateManager.matrixMode(GL11.GL_TEXTURE);
                 GlStateManager.loadIdentity();
                 float f3 = 0.33333334F;
                 GlStateManager.scale(f3, f3, f3);
@@ -130,12 +130,12 @@ public abstract class LayerArmorBase<T extends ModelBase> implements LayerRender
                 modelbaseIn.render(entitylivingbaseIn, p_177183_3_, p_177183_4_, p_177183_6_, p_177183_7_, p_177183_8_, scale);
             }
 
-            GlStateManager.matrixMode(5890);
+            GlStateManager.matrixMode(GL11.GL_TEXTURE);
             GlStateManager.loadIdentity();
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.enableLighting();
             GlStateManager.depthMask(true);
-            GlStateManager.depthFunc(515);
+            GlStateManager.depthFunc(GL11.GL_LEQUAL);
             GlStateManager.disableBlend();
 
             if (Config.isShaders()) {

@@ -66,7 +66,7 @@ public class BreadCrumbs extends Module {
 //        GL11.glDepthMask(false);
 
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(770, 771);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         GlStateManager.disableTexture2D();
 

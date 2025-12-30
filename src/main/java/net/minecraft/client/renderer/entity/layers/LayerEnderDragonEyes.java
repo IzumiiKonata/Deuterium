@@ -7,6 +7,7 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.optifine.shaders.Shaders;
+import org.lwjgl.opengl.GL11;
 
 public class LayerEnderDragonEyes implements LayerRenderer<EntityDragon> {
     private static final Location TEXTURE = Location.of("textures/entity/enderdragon/dragon_eyes.png");
@@ -20,9 +21,9 @@ public class LayerEnderDragonEyes implements LayerRenderer<EntityDragon> {
         this.dragonRenderer.bindTexture(TEXTURE);
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.blendFunc(1, 1);
+        GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
         GlStateManager.disableLighting();
-        GlStateManager.depthFunc(514);
+        GlStateManager.depthFunc(GL11.GL_EQUAL);
         int i = 61680;
         int j = i % 65536;
         int k = i / 65536;
@@ -45,7 +46,7 @@ public class LayerEnderDragonEyes implements LayerRenderer<EntityDragon> {
         this.dragonRenderer.setLightmap(entitylivingbaseIn, partialTicks);
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
-        GlStateManager.depthFunc(515);
+        GlStateManager.depthFunc(GL11.GL_LEQUAL);
     }
 
     public boolean shouldCombineTextures() {

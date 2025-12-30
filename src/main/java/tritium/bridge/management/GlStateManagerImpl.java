@@ -50,12 +50,12 @@ public class GlStateManagerImpl implements GLStateManager {
 
     @Override
     public void enableLight(int light) {
-        net.minecraft.client.renderer.GlStateManager.enableLight(light);
+        net.minecraft.client.renderer.GlStateManager.enableLight(GL11.GL_LIGHT0 + light);
     }
 
     @Override
     public void disableLight(int light) {
-        net.minecraft.client.renderer.GlStateManager.disableLight(light);
+        net.minecraft.client.renderer.GlStateManager.disableLight(GL11.GL_LIGHT0 + light);
     }
 
     @Override

@@ -13,6 +13,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityPiston;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 public class TileEntityPistonRenderer extends TileEntitySpecialRenderer<TileEntityPiston> {
     private final BlockRendererDispatcher blockRenderer = Minecraft.getMinecraft().getBlockRendererDispatcher();
@@ -27,14 +28,14 @@ public class TileEntityPistonRenderer extends TileEntitySpecialRenderer<TileEnti
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             this.bindTexture(TextureMap.locationBlocksTexture);
             RenderHelper.disableStandardItemLighting();
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.enableBlend();
             GlStateManager.disableCull();
 
             if (Minecraft.isAmbientOcclusionEnabled()) {
-                GlStateManager.shadeModel(7425);
+                GlStateManager.shadeModel(GL11.GL_SMOOTH);
             } else {
-                GlStateManager.shadeModel(7424);
+                GlStateManager.shadeModel(GL11.GL_FLAT);
             }
 
             worldrenderer.begin(7, DefaultVertexFormats.BLOCK);

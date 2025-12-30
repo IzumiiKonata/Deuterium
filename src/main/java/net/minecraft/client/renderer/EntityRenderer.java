@@ -65,6 +65,7 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.NVFogDistance;
 import org.lwjglx.opengl.GLContext;
 import org.lwjglx.util.glu.Project;
 import tritium.Tritium;
@@ -965,7 +966,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
     public void enableLightmap() {
         GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-        GlStateManager.matrixMode(5890);
+        GlStateManager.matrixMode(GL11.GL_TEXTURE);
         GlStateManager.loadIdentity();
         float f = 0.00390625F;
         GlStateManager.scale(f, f, f);
@@ -1245,15 +1246,15 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                 renderEndNanoTime = System.nanoTime();
                 if (!this.mc.gameSettings.hideGUI || this.mc.currentScreen != null) {
-                    GlStateManager.alphaFunc(516, 0.1F);
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                     //CLIENT
                     GL11.glPushMatrix();
 
                     if (fixedScale) {
                         GlStateManager.color(1f, 1f, 1f, 1f);
-                        GlStateManager.clear(256);
+                        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.loadIdentity();
                         GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5, 0.0D, 1000.0D, 3000.0D);
@@ -1268,7 +1269,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
                     GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                     GlStateManager.enableDepth();
 
@@ -1321,7 +1322,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.loadIdentity();
 
                 if (this.mc.currentScreen instanceof BaseScreen && fixedScale) {
-                    GlStateManager.clear(256);
+                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                     GlStateManager.matrixMode(GL11.GL_PROJECTION);
                     GlStateManager.loadIdentity();
                     GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5,
@@ -1339,13 +1340,13 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             }
 
             if (this.mc.currentScreen != null) {
-                GlStateManager.clear(256);
+                GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 
                 try {
 
                     if (this.mc.currentScreen instanceof BaseScreen && fixedScale) {
                         GlStateManager.pushMatrix();
-                        GlStateManager.clear(256);
+                        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.pushMatrix();
                         GlStateManager.loadIdentity();
@@ -1413,7 +1414,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                 if (fixedScale) {
                     GlStateManager.pushMatrix();
-                    GlStateManager.clear(256);
+                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                     GlStateManager.matrixMode(GL11.GL_PROJECTION);
                     GlStateManager.loadIdentity();
                     GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5,
@@ -1497,7 +1498,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         if (this.mc.gameSettings.showDebugInfo && !this.mc.gameSettings.hideGUI && !this.mc.thePlayer.hasReducedDebug() && !this.mc.gameSettings.reducedDebugInfo) {
             Entity entity = this.mc.getRenderViewEntity();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GL11.glLineWidth(1.0F);
             GlStateManager.disableTexture2D();
             GlStateManager.depthMask(false);
@@ -1533,7 +1534,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         GlStateManager.enableDepth();
         GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 
         if (this.mc.gameSettings.anaglyph) {
             anaglyphField = 0;
@@ -1568,7 +1569,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
 
         this.updateFogColor(partialTicks);
-        GlStateManager.clear(16640);
+        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
 
         if (flag) {
             Shaders.clearRenderBuffer();
@@ -1624,7 +1625,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
 
         this.setupFog(0, partialTicks);
-        GlStateManager.shadeModel(7425);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
         if (entity.posY + (double) entity.getEyeHeight() < 128.0D + (double) (this.mc.gameSettings.ofCloudsHeight * 128.0F)) {
             this.renderCloudsCheck(renderglobal, partialTicks, pass);
@@ -1697,8 +1698,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
 
         Lagometer.timerTerrain.end();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 
         if (!this.debugView) {
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
@@ -1737,14 +1738,14 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         if (!renderglobal.damagedBlocks.isEmpty()) {
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
             texture.setBlurMipmap(false, false);
             renderglobal.drawBlockDamageTexture(Tessellator.getInstance(), Tessellator.getInstance().getWorldRenderer(), entity, partialTicks);
             texture.restoreLastBlurMipmap();
             GlStateManager.disableBlend();
         }
 
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.disableBlend();
 
         if (!this.debugView) {
@@ -1799,13 +1800,13 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         GlStateManager.disableBlend();
         GlStateManager.enableCull();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         this.setupFog(0, partialTicks);
         GlStateManager.enableBlend();
         GlStateManager.depthMask(false);
         this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-        GlStateManager.shadeModel(7425);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
 
         if (flag) {
             Shaders.beginWater();
@@ -1822,7 +1823,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             Shaders.endWater();
         }
 
-        GlStateManager.shadeModel(7424);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
         GlStateManager.depthMask(true);
         GlStateManager.enableCull();
         GlStateManager.disableBlend();
@@ -1846,7 +1847,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 Shaders.renderCompositeFinal();
             }
 
-            GlStateManager.clear(256);
+            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 
             if (flag) {
                 ShadersRender.renderFPOverlay(this, partialTicks, pass);
@@ -1993,8 +1994,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             // 法线
             GL11.glNormal3f(0.0F, 1.0F, 0.0F);
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            GlStateManager.alphaFunc(516, 0.1F);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
             double renderX = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) partialTicks;
             double renderY = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) partialTicks;
             double renderZ = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) partialTicks;
@@ -2111,7 +2112,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             worldrenderer.setTranslation(0.0D, 0.0D, 0.0D);
             GlStateManager.enableCull();
             GlStateManager.disableBlend();
-            GlStateManager.alphaFunc(516, 0.1F);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
             this.disableLightmap();
         }
     }
@@ -2121,7 +2122,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
      */
     public void setupOverlayRendering() {
         ScaledResolution scaledresolution = ScaledResolution.get();
-        GlStateManager.clear(256);
+        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();
         GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
@@ -2326,7 +2327,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 f4 = 5.0F + (this.farPlaneDistance - 5.0F) * (1.0F - (float) i / 20.0F);
             }
 
-            GlStateManager.setFog(9729);
+            GlStateManager.setFog(GL11.GL_LINEAR);
 
             if (startCoords == -1) {
                 GlStateManager.setFogStart(0.0F);
@@ -2337,13 +2338,13 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             }
 
             if (GLContext.getCapabilities().GL_NV_fog_distance && Config.isFogFancy()) {
-                GL11.glFogi(34138, 34139);
+                GL11.glFogi(NVFogDistance.GL_FOG_DISTANCE_MODE_NV, NVFogDistance.GL_EYE_RADIAL_NV);
             }
         } else if (this.cloudFog) {
-            GlStateManager.setFog(2048);
+            GlStateManager.setFog(GL11.GL_EXP);
             GlStateManager.setFogDensity(0.1F);
         } else if (block.getMaterial() == Material.water) {
-            GlStateManager.setFog(2048);
+            GlStateManager.setFog(GL11.GL_EXP);
             float f1 = Config.isClearWater() ? 0.02F : 0.1F;
 
             if (entity instanceof EntityLivingBase && ((EntityLivingBase) entity).isPotionActive(Potion.waterBreathing)) {
@@ -2353,12 +2354,12 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.setFogDensity(Config.limit(f2, 0.0F, f1));
             }
         } else if (block.getMaterial() == Material.lava) {
-            GlStateManager.setFog(2048);
+            GlStateManager.setFog(GL11.GL_EXP);
             GlStateManager.setFogDensity(2.0F);
         } else {
             float f3 = this.farPlaneDistance;
             this.fogStandard = true;
-            GlStateManager.setFog(9729);
+            GlStateManager.setFog(GL11.GL_LINEAR);
 
             if (startCoords == -1) {
                 GlStateManager.setFogStart(0.0F);
@@ -2370,11 +2371,11 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
             if (GLContext.getCapabilities().GL_NV_fog_distance) {
                 if (Config.isFogFancy()) {
-                    GL11.glFogi(34138, 34139);
+                    GL11.glFogi(NVFogDistance.GL_FOG_DISTANCE_MODE_NV, NVFogDistance.GL_EYE_RADIAL_NV);
                 }
 
                 if (Config.isFogFast()) {
-                    GL11.glFogi(34138, 34140);
+                    GL11.glFogi(NVFogDistance.GL_FOG_DISTANCE_MODE_NV, NVFogDistance.GL_EYE_PLANE_ABSOLUTE_NV);
                 }
             }
 
@@ -2386,7 +2387,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         GlStateManager.enableColorMaterial();
         GlStateManager.enableFog();
-        GlStateManager.colorMaterial(1028, 4608);
+        GlStateManager.colorMaterial(GL11.GL_FRONT, GL11.GL_AMBIENT);
     }
 
     /**

@@ -11,6 +11,7 @@ import net.minecraft.network.play.client.C16PacketClientStatus;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
 import org.apache.commons.io.Charsets;
+import org.lwjgl.opengl.GL11;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -203,7 +204,7 @@ public class GuiWinGame extends GuiScreen {
         GlStateManager.popMatrix();
         this.mc.getTextureManager().bindTexture(VIGNETTE_TEXTURE);
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(0, 769);
+        GlStateManager.blendFunc(GL11.GL_ZERO, GL11.GL_ONE_MINUS_SRC_COLOR);
         int j1 = this.width;
         int k1 = this.height;
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);

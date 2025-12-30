@@ -12,6 +12,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
+import org.lwjgl.opengl.GL11;
 
 public class LayerMooshroomMushroom implements LayerRenderer<EntityMooshroom> {
     private final RenderMooshroom mooshroomRenderer;
@@ -47,7 +48,7 @@ public class LayerMooshroomMushroom implements LayerRenderer<EntityMooshroom> {
             }
 
             GlStateManager.enableCull();
-            GlStateManager.cullFace(1028);
+            GlStateManager.cullFace(GL11.GL_FRONT);
             GlStateManager.pushMatrix();
             GlStateManager.scale(1.0F, -1.0F, 1.0F);
             GlStateManager.translate(0.2F, 0.35F, 0.5F);
@@ -89,7 +90,7 @@ public class LayerMooshroomMushroom implements LayerRenderer<EntityMooshroom> {
             }
 
             GlStateManager.popMatrix();
-            GlStateManager.cullFace(1029);
+            GlStateManager.cullFace(GL11.GL_BACK);
             GlStateManager.disableCull();
         }
     }

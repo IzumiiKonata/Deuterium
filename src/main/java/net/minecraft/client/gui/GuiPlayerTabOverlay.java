@@ -17,6 +17,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.WorldSettings;
+import org.lwjgl.opengl.GL11;
 import tritium.management.ModuleManager;
 
 import java.util.Comparator;
@@ -166,7 +167,7 @@ public class GuiPlayerTabOverlay extends Gui {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             GlStateManager.enableAlpha();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             if (k4 < list.size()) {
                 NetworkPlayerInfo networkplayerinfo1 = list.get(k4);

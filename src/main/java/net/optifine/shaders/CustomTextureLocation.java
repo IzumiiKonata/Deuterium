@@ -6,6 +6,7 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
+import org.lwjgl.opengl.GL11;
 
 public class CustomTextureLocation implements ICustomTexture {
     private int textureUnit = -1;
@@ -66,7 +67,7 @@ public class CustomTextureLocation implements ICustomTexture {
     }
 
     public int getTarget() {
-        return 3553;
+        return GL11.GL_TEXTURE_2D;
     }
 
     public String toString() {

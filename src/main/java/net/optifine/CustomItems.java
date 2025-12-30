@@ -571,9 +571,9 @@ public class CustomItems {
                                     if (!flag) {
                                         flag = true;
                                         GlStateManager.depthMask(false);
-                                        GlStateManager.depthFunc(514);
+                                        GlStateManager.depthFunc(GL11.GL_EQUAL);
                                         GlStateManager.disableLighting();
-                                        GlStateManager.matrixMode(5890);
+                                        GlStateManager.matrixMode(GL11.GL_TEXTURE);
                                     }
                                     Blender.setupBlend(customitemproperties.blend, 1.0F);
                                     GlStateManager.pushMatrix();
@@ -591,11 +591,11 @@ public class CustomItems {
                 if (flag) {
                     GlStateManager.enableAlpha();
                     GlStateManager.enableBlend();
-                    GlStateManager.blendFunc(770, 771);
+                    GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                     GlStateManager.enableLighting();
-                    GlStateManager.depthFunc(515);
+                    GlStateManager.depthFunc(GL11.GL_LEQUAL);
                     GlStateManager.depthMask(true);
                     texturemanager.bindTexture(TextureMap.locationBlocksTexture);
                 }
@@ -634,12 +634,12 @@ public class CustomItems {
                                             ShadersRender.renderEnchantedGlintBegin();
                                         }
                                         GlStateManager.enableBlend();
-                                        GlStateManager.depthFunc(514);
+                                        GlStateManager.depthFunc(GL11.GL_EQUAL);
                                         GlStateManager.depthMask(false);
                                     }
                                     Blender.setupBlend(customitemproperties.blend, 1.0F);
                                     GlStateManager.disableLighting();
-                                    GlStateManager.matrixMode(5890);
+                                    GlStateManager.matrixMode(GL11.GL_TEXTURE);
                                     GlStateManager.loadIdentity();
                                     GlStateManager.rotate(customitemproperties.rotation, 0.0F, 0.0F, 1.0F);
                                     final float f1 = f / 8.0F;
@@ -656,14 +656,14 @@ public class CustomItems {
                 if (flag) {
                     GlStateManager.enableAlpha();
                     GlStateManager.enableBlend();
-                    GlStateManager.blendFunc(770, 771);
+                    GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-                    GlStateManager.matrixMode(5890);
+                    GlStateManager.matrixMode(GL11.GL_TEXTURE);
                     GlStateManager.loadIdentity();
                     GlStateManager.matrixMode(GL11.GL_MODELVIEW);
                     GlStateManager.enableLighting();
                     GlStateManager.depthMask(true);
-                    GlStateManager.depthFunc(515);
+                    GlStateManager.depthFunc(GL11.GL_LEQUAL);
                     GlStateManager.disableBlend();
                     if (Config.isShaders()) {
                         ShadersRender.renderEnchantedGlintEnd();

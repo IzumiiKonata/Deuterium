@@ -16,6 +16,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 import java.util.Set;
@@ -120,7 +121,7 @@ public abstract class GuiContainer extends GuiScreen {
         // fix alpha blending
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         this.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
         GlStateManager.disableRescaleNormal();
@@ -285,7 +286,7 @@ public abstract class GuiContainer extends GuiScreen {
                 // fix blending
                 GlStateManager.enableBlend();
                 GlStateManager.enableAlpha();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 this.drawTexturedModalRect(i, j, textureatlassprite, 16, 16);
                 GlStateManager.enableLighting();

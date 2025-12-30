@@ -17,6 +17,7 @@ import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.ImageWidget;
@@ -265,7 +266,7 @@ public class AltScreen extends BaseScreen {
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.bindTexture(playerPreviewFb.framebufferTexture);
         ShaderProgram.drawQuadFlipped();
 

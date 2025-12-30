@@ -14,6 +14,7 @@ import net.optifine.*;
 import net.optifine.entity.model.CustomEntityModels;
 import net.optifine.shaders.MultiTexID;
 import net.optifine.shaders.Shaders;
+import org.lwjgl.opengl.EXTTextureFilterAnisotropic;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjglx.BufferUtils;
@@ -345,10 +346,10 @@ public class TextureUtils {
 
     public static void applyAnisotropicLevel() {
         if (GLContext.getCapabilities().GL_EXT_texture_filter_anisotropic) {
-            float f = GL11.glGetFloat(34047);
+            float f = GL11.glGetFloat(EXTTextureFilterAnisotropic.GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT);
             float f1 = (float) Config.getAnisotropicFilterLevel();
             f1 = Math.min(f1, f);
-            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, 34046, f1);
+            GL11.glTexParameterf(GL11.GL_TEXTURE_2D, EXTTextureFilterAnisotropic.GL_TEXTURE_MAX_ANISOTROPY_EXT, f1);
         }
     }
 
@@ -550,9 +551,9 @@ public class TextureUtils {
 
     public static int getGLMaximumTextureSize() {
         for (int i = 65536; i > 0; i >>= 1) {
-            GlStateManager.glTexImage2D(32868, 0, 6408, i, i, 0, 6408, 5121, null);
+            GlStateManager.glTexImage2D(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_RGBA, i, i, 0, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, null);
             int j = GL11.glGetError();
-            int k = GlStateManager.glGetTexLevelParameteri(32868, 0, 4096);
+            int k = GlStateManager.glGetTexLevelParameteri(GL11.GL_PROXY_TEXTURE_2D, 0, GL11.GL_TEXTURE_WIDTH);
 
             if (k != 0) {
                 return i;

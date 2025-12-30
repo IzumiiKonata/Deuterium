@@ -68,8 +68,8 @@ public class ActiveRenderInfo {
      * Updates the current render info and camera location based on entity look angles and 1st/3rd person view mode
      */
     public static void updateRenderInfo(EntityPlayer entityplayerIn, boolean p_74583_1_) {
-        GlStateManager.getFloat(2982, MODELVIEW);
-        GlStateManager.getFloat(2983, PROJECTION);
+        GlStateManager.getFloat(GL11.GL_MODELVIEW_MATRIX, MODELVIEW);
+        GlStateManager.getFloat(GL11.GL_PROJECTION_MATRIX, PROJECTION);
         GL11.glGetIntegerv(GL11.GL_VIEWPORT, VIEWPORT);
         float f = (float) ((VIEWPORT.get(0) + VIEWPORT.get(2)) / 2);
         float f1 = (float) ((VIEWPORT.get(1) + VIEWPORT.get(3)) / 2);

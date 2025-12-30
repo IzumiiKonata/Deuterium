@@ -62,7 +62,7 @@ public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntity
 
         if (destroyStage >= 0) {
             this.bindTexture(DESTROY_STAGES[destroyStage]);
-            GlStateManager.matrixMode(5890);
+            GlStateManager.matrixMode(GL11.GL_TEXTURE);
             GlStateManager.pushMatrix();
             GlStateManager.scale(4.0F, 2.0F, 1.0F);
             GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
@@ -116,7 +116,7 @@ public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntity
         GlStateManager.popMatrix();
 
         if (destroyStage >= 0) {
-            GlStateManager.matrixMode(5890);
+            GlStateManager.matrixMode(GL11.GL_TEXTURE);
             GlStateManager.popMatrix();
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         }

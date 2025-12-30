@@ -35,7 +35,7 @@ public class RenderSkyboxCube {
         GlStateManager.disableAlpha();
         GlStateManager.disableCull();
         GlStateManager.depthMask(false);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         int i = 2;
 
         for (int j = 0; j < 4; ++j) {

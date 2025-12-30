@@ -42,7 +42,7 @@ public class ItemPhysicRender {
             GlStateManager.enableRescaleNormal();
             GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1f);
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.pushMatrix();
             IBakedModel ibakedmodel = renderItem.getItemModelMesher().getItemModel(itemstack);
             int i = func_177077_a(item, x, y - 0.1f, z, par9, ibakedmodel);

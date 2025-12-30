@@ -72,7 +72,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
                 throw new MinecraftError();
             }
         } else {
-            GlStateManager.clear(256);
+            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
             GlStateManager.matrixMode(GL11.GL_PROJECTION);
             GlStateManager.loadIdentity();
 
@@ -131,7 +131,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
                 if (OpenGlHelper.isFramebufferEnabled()) {
                     this.framebuffer.framebufferClear();
                 } else {
-                    GlStateManager.clear(256);
+                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                 }
 
                 this.framebuffer.bindFramebuffer(false);
@@ -143,7 +143,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
                 GlStateManager.translate(0.0F, 0.0F, -200.0F);
 
                 if (!OpenGlHelper.isFramebufferEnabled()) {
-                    GlStateManager.clear(16640);
+                    GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
                 }
 
                 boolean flag = true;
@@ -185,7 +185,7 @@ public class LoadingScreenRenderer implements IProgressUpdate {
                 }
 
                 GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 this.mc.fontRendererObj.drawStringWithShadow(this.currentlyDisplayedText, (float) ((k - this.mc.fontRendererObj.getStringWidth(this.currentlyDisplayedText)) / 2), (float) (l / 2 - 4 - 16), 16777215);
                 this.mc.fontRendererObj.drawStringWithShadow(this.message, (float) ((k - this.mc.fontRendererObj.getStringWidth(this.message)) / 2), (float) (l / 2 - 4 + 8), 16777215);
 

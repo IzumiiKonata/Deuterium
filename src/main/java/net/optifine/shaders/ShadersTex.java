@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.client.renderer.texture.*;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.system.MemoryUtil;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -107,12 +108,12 @@ public class ShadersTex {
     }
 
     public static void bindNSTextures(int normTex, int specTex) {
-        if (Shaders.isRenderingWorld && GlStateManager.getActiveTextureUnit() == 33984) {
-            GlStateManager.setActiveTexture(33986);
+        if (Shaders.isRenderingWorld && GlStateManager.getActiveTextureUnit() == GL13.GL_TEXTURE0) {
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE2);
             GlStateManager.bindTexture(normTex);
-            GlStateManager.setActiveTexture(33987);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE3);
             GlStateManager.bindTexture(specTex);
-            GlStateManager.setActiveTexture(33984);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         }
     }
 
@@ -121,18 +122,18 @@ public class ShadersTex {
     }
 
     public static void bindTextures(MultiTexID multiTex) {
-        if (Shaders.isRenderingWorld && GlStateManager.getActiveTextureUnit() == 33984) {
+        if (Shaders.isRenderingWorld && GlStateManager.getActiveTextureUnit() == GL13.GL_TEXTURE0) {
             if (Shaders.configNormalMap) {
-                GlStateManager.setActiveTexture(33986);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE2);
                 GlStateManager.bindTexture(multiTex.norm);
             }
 
             if (Shaders.configSpecularMap) {
-                GlStateManager.setActiveTexture(33987);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE3);
                 GlStateManager.bindTexture(multiTex.spec);
             }
 
-            GlStateManager.setActiveTexture(33984);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         }
 
         GlStateManager.bindTexture(multiTex.base);
@@ -142,7 +143,7 @@ public class ShadersTex {
         int i = tex.getGlTextureId();
         bindTextures(tex.getMultiTexID());
 
-        if (GlStateManager.getActiveTextureUnit() == 33984) {
+        if (GlStateManager.getActiveTextureUnit() == GL13.GL_TEXTURE0) {
             int j = Shaders.atlasSizeX;
             int k = Shaders.atlasSizeY;
 

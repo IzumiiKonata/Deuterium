@@ -282,7 +282,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     public void renderEntityOutlineFramebuffer() {
         if (this.isRenderEntityOutlines()) {
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 0, 1);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
             this.entityOutlineFramebuffer.framebufferRenderExt(this.mc.displayWidth, this.mc.displayHeight, false);
             GlStateManager.disableBlend();
         }
@@ -614,7 +614,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             }
 
             if (this.isRenderEntityOutlines()) {
-                GlStateManager.depthFunc(519);
+                GlStateManager.depthFunc(GL11.GL_ALWAYS);
                 GlStateManager.disableFog();
                 this.entityOutlineFramebuffer.bindFramebuffer(false);
                 this.entityOutlineFramebuffer.framebufferClearNoBinding();
@@ -640,7 +640,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 GlStateManager.enableFog();
                 GlStateManager.enableBlend();
                 GlStateManager.enableColorMaterial();
-                GlStateManager.depthFunc(515);
+                GlStateManager.depthFunc(GL11.GL_LEQUAL);
                 GlStateManager.enableDepth();
                 GlStateManager.enableAlpha();
             }
@@ -1269,7 +1269,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             GlStateManager.disableFog();
             GlStateManager.disableAlpha();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             RenderHelper.disableStandardItemLighting();
             GlStateManager.depthMask(false);
             this.renderEngine.bindTexture(locationEndSkyPng);
@@ -1399,7 +1399,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
             GlStateManager.disableAlpha();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             RenderHelper.disableStandardItemLighting();
             float[] afloat = this.theWorld.provider.calcSunriseSunsetColors(this.theWorld.getCelestialAngle(partialTicks), partialTicks);
 
@@ -1410,7 +1410,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                     Shaders.disableTexture2D();
                 }
 
-                GlStateManager.shadeModel(7425);
+                GlStateManager.shadeModel(GL11.GL_SMOOTH);
                 GlStateManager.pushMatrix();
                 GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
                 GlStateManager.rotate(MathHelper.sin(this.theWorld.getCelestialAngleRadians(ModuleManager.worldTime.isEnabled() ? 0.0F : partialTicks)) < 0.0F ? 180.0F : 0.0F, 0.0F, 0.0F, 1.0F);
@@ -1441,7 +1441,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
                 tessellator.draw();
                 GlStateManager.popMatrix();
-                GlStateManager.shadeModel(7424);
+                GlStateManager.shadeModel(GL11.GL_FLAT);
             }
 
             GlStateManager.enableTexture2D();
@@ -1450,7 +1450,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 Shaders.enableTexture2D();
             }
 
-            GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.pushMatrix();
             float f15 = 1.0F - this.theWorld.getRainStrength(partialTicks);
             GlStateManager.color(1.0F, 1.0F, 1.0F, f15);
@@ -1599,11 +1599,11 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             if (Config.isSkyEnabled()) {
                 if (this.vboEnabled) {
                     this.sky2VBO.bindBuffer();
-                    GlStateManager.glEnableClientState(32884);
-                    GlStateManager.glVertexPointer(3, 5126, 12, 0);
+                    GlStateManager.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+                    GlStateManager.glVertexPointer(3, GL11.GL_FLOAT, 12, 0);
                     this.sky2VBO.drawArrays(7);
                     this.sky2VBO.unbindBuffer();
-                    GlStateManager.glDisableClientState(32884);
+                    GlStateManager.glDisableClientState(GL11.GL_VERTEX_ARRAY);
                 } else {
                     GlStateManager.callList(this.glSkyList2);
                 }
@@ -1639,7 +1639,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                     WorldRenderer worldrenderer = tessellator.getWorldRenderer();
                     this.renderEngine.bindTexture(locationCloudsPng);
                     GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                     Vec3 vec3 = this.theWorld.getCloudColour(partialTicks);
                     float f = (float) vec3.xCoord;
                     float f1 = (float) vec3.yCoord;
@@ -1724,7 +1724,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
         d2 = d2 - (double) (j * 2048);
         this.renderEngine.bindTexture(locationCloudsPng);
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         Vec3 vec3 = this.theWorld.getCloudColour(partialTicks);
         float f4 = (float) vec3.xCoord;
         float f5 = (float) vec3.yCoord;
@@ -1940,7 +1940,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             double d3 = entityIn.lastTickPosY + (entityIn.posY - entityIn.lastTickPosY) * (double) partialTicks;
             double d4 = entityIn.lastTickPosZ + (entityIn.posZ - entityIn.lastTickPosZ) * (double) partialTicks;
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
             this.renderEngine.bindTexture(locationForcefieldPng);
             GlStateManager.depthMask(false);
             GlStateManager.pushMatrix();
@@ -1951,7 +1951,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             GlStateManager.color(f, f1, f2, (float) d1);
             GlStateManager.doPolygonOffset(-3.0F, -3.0F);
             GlStateManager.enablePolygonOffset();
-            GlStateManager.alphaFunc(516, 0.1F);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
             GlStateManager.enableAlpha();
             GlStateManager.disableCull();
             float f3 = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F;
@@ -2029,7 +2029,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             GlStateManager.doPolygonOffset(0.0F, 0.0F);
             GlStateManager.disablePolygonOffset();
             GlStateManager.enableAlpha();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
             GlStateManager.depthMask(true);
@@ -2041,12 +2041,12 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     }
 
     private void preRenderDamagedBlocks() {
-        GlStateManager.tryBlendFuncSeparate(774, 768, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_DST_COLOR, GL11.GL_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.enableBlend();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 0.5F);
         GlStateManager.doPolygonOffset(-1.0F, -10.0F);
         GlStateManager.enablePolygonOffset();
-        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.enableAlpha();
         GlStateManager.pushMatrix();
 
@@ -2121,7 +2121,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     public void drawSelectionBox(EntityPlayer player, MovingObjectPosition movingObjectPositionIn, int execute, float partialTicks) {
         if (execute == 0 && movingObjectPositionIn.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.color(0.0F, 0.0F, 0.0F, 0.4F);
             GL11.glLineWidth(2.0F);
             GlStateManager.disableTexture2D();

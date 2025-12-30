@@ -151,7 +151,7 @@ public class MusicSpectrumWidget extends Widget {
 
                 GlStateManager.enableBlend();
                 GlStateManager.disableTexture2D();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 GlStateManager.pushMatrix();
 
@@ -217,7 +217,7 @@ public class MusicSpectrumWidget extends Widget {
 
             if (line) {
                 GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 GlStateManager.color(1, 1, 1, 1);
                 GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -281,7 +281,7 @@ public class MusicSpectrumWidget extends Widget {
         if (bb != null) {
             GlStateManager.disableAlpha();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
             GL11.glDisable(GL11.GL_TEXTURE_2D);
 

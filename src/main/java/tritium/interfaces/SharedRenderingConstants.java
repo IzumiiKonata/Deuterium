@@ -4,6 +4,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.Display;
+import org.lwjgl.opengl.GL11;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.EventManager;
 import tritium.rendering.RGBA;
@@ -263,7 +264,7 @@ public interface SharedRenderingConstants {
             GlStateManager.bindTexture(buf.framebufferTexture);
             ShaderProgram.drawQuadFlipped();
 
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
 
         } else {

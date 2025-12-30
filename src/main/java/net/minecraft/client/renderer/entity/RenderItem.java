@@ -169,16 +169,16 @@ public class RenderItem implements IResourceManagerReloadListener {
         if (!Config.isCustomItems() || CustomItems.isUseGlint()) {
             if (!Config.isShaders() || !Shaders.isShadowPass) {
                 GlStateManager.depthMask(false);
-                GlStateManager.depthFunc(514);
+                GlStateManager.depthFunc(GL11.GL_EQUAL);
                 GlStateManager.disableLighting();
-                GlStateManager.blendFunc(768, 1);
+                GlStateManager.blendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
                 this.textureManager.bindTexture(RES_ITEM_GLINT);
 
                 if (Config.isShaders() && !this.renderItemGui) {
                     ShadersRender.renderEnchantedGlintBegin();
                 }
 
-                GlStateManager.matrixMode(5890);
+                GlStateManager.matrixMode(GL11.GL_TEXTURE);
                 GlStateManager.pushMatrix();
                 GlStateManager.scale(8.0F, 8.0F, 8.0F);
                 float f = (float) (Minecraft.getSystemTime() % 3000L) / 3000.0F / 8.0F;
@@ -194,9 +194,9 @@ public class RenderItem implements IResourceManagerReloadListener {
                 this.renderModel(model, -8372020);
                 GlStateManager.popMatrix();
                 GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-                GlStateManager.blendFunc(770, 771);
+                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GlStateManager.enableLighting();
-                GlStateManager.depthFunc(515);
+                GlStateManager.depthFunc(GL11.GL_LEQUAL);
                 GlStateManager.depthMask(true);
                 this.textureManager.bindTexture(TextureMap.locationBlocksTexture);
 
@@ -328,20 +328,20 @@ public class RenderItem implements IResourceManagerReloadListener {
         this.textureManager.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
         this.preTransform(stack);
         GlStateManager.enableRescaleNormal();
-        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.pushMatrix();
 
         ItemCameraTransforms itemcameratransforms = model.getItemCameraTransforms();
         itemcameratransforms.applyTransform(cameraTransformType);
 
         if (this.isThereOneNegativeScale(itemcameratransforms.getTransform(cameraTransformType))) {
-            GlStateManager.cullFace(1028);
+            GlStateManager.cullFace(GL11.GL_FRONT);
         }
 
         this.renderItem(stack, model);
-        GlStateManager.cullFace(1029);
+        GlStateManager.cullFace(GL11.GL_BACK);
         GlStateManager.popMatrix();
         GlStateManager.disableRescaleNormal();
         GlStateManager.disableBlend();
@@ -366,9 +366,9 @@ public class RenderItem implements IResourceManagerReloadListener {
         this.textureManager.getTexture(TextureMap.locationBlocksTexture).setBlurMipmap(false, false);
         GlStateManager.enableRescaleNormal();
         GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(516, 0.1F);
+        GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(770, 771);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         this.setupGuiTransform(x, y, ibakedmodel.isGui3d());
 

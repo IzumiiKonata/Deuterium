@@ -12,10 +12,7 @@ import net.minecraft.src.Config;
 import net.minecraft.tileentity.TileEntityEndPortal;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.minecraft.util.Location;
-import org.lwjgl.opengl.EXTFramebufferObject;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL20;
-import org.lwjgl.opengl.GL30;
+import org.lwjgl.opengl.*;
 
 import java.nio.IntBuffer;
 
@@ -58,11 +55,11 @@ public class ShadersRender {
     public static void beginTranslucent() {
         if (Shaders.isRenderingWorld) {
             if (Shaders.usedDepthBuffers >= 2) {
-                GlStateManager.setActiveTexture(33995);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE11);
                 Shaders.checkGLError("pre copy depth");
                 GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, Shaders.renderWidth, Shaders.renderHeight);
                 Shaders.checkGLError("copy depth");
-                GlStateManager.setActiveTexture(33984);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
             }
             Shaders.useProgram(Shaders.ProgramWater);
         }
@@ -109,7 +106,7 @@ public class ShadersRender {
         Shaders.setRenderingFirstPersonHand(true);
         GlStateManager.depthMask(true);
         if (renderTranslucent) {
-            GlStateManager.depthFunc(519);
+            GlStateManager.depthFunc(GL11.GL_ALWAYS);
             GL11.glPushMatrix();
             IntBuffer intbuffer = Shaders.activeDrawBuffers;
             Shaders.setDrawBuffers(Shaders.drawBuffersNone);
@@ -119,7 +116,7 @@ public class ShadersRender {
             Shaders.setDrawBuffers(intbuffer);
             GL11.glPopMatrix();
         }
-        GlStateManager.depthFunc(515);
+        GlStateManager.depthFunc(GL11.GL_LEQUAL);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         itemRenderer.renderItemInFirstPerson(par1);
         Shaders.setRenderingFirstPersonHand(false);
@@ -163,7 +160,7 @@ public class ShadersRender {
             GL11.glPushMatrix();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
             GL11.glPushMatrix();
-            EXTFramebufferObject.glBindFramebufferEXT(36160, Shaders.sfb);
+            EXTFramebufferObject.glBindFramebufferEXT(GL30.GL_FRAMEBUFFER, Shaders.sfb);
             Shaders.checkGLError("shadow bind sfb");
             entityRenderer.setupCameraTransform(partialTicks, 2);
             Shaders.setCameraShadow(partialTicks);
@@ -171,11 +168,11 @@ public class ShadersRender {
             Shaders.useProgram(Shaders.ProgramShadow);
             GL20.glDrawBuffers(Shaders.sfbDrawBuffers);
             Shaders.checkGLError("shadow drawbuffers");
-            GL11.glReadBuffer(0);
+            GL11.glReadBuffer(GL11.GL_NONE);
             Shaders.checkGLError("shadow readbuffer");
-            EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, Shaders.sfbDepthTextures.get(0), 0);
+            EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, Shaders.sfbDepthTextures.get(0), 0);
             if (Shaders.usedShadowColorBuffers != 0) {
-                EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064, 3553, Shaders.sfbColorTextures.get(0), 0);
+                EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, Shaders.sfbColorTextures.get(0), 0);
             }
             Shaders.checkFramebufferStatus("shadow fb");
             GL11.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
@@ -188,9 +185,9 @@ public class ShadersRender {
             double d1 = entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * (double) partialTicks;
             double d2 = entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * (double) partialTicks;
             frustum.setPosition(d0, d1, d2);
-            GlStateManager.shadeModel(7425);
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
             GlStateManager.enableDepth();
-            GlStateManager.depthFunc(515);
+            GlStateManager.depthFunc(GL11.GL_LEQUAL);
             GlStateManager.depthMask(true);
             GlStateManager.colorMask(true, true, true, true);
             GlStateManager.disableCull();
@@ -211,8 +208,8 @@ public class ShadersRender {
             renderglobal.renderBlockLayer(EnumWorldBlockLayer.CUTOUT, partialTicks, 2, entity);
             Shaders.checkGLError("shadow terrain cutout");
             minecraft.getTextureManager().getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
-            GlStateManager.shadeModel(7424);
-            GlStateManager.alphaFunc(516, 0.1F);
+            GlStateManager.shadeModel(GL11.GL_FLAT);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GlStateManager.popMatrix();
             GlStateManager.pushMatrix();
@@ -224,19 +221,19 @@ public class ShadersRender {
             GlStateManager.depthMask(true);
             GlStateManager.disableBlend();
             GlStateManager.enableCull();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-            GlStateManager.alphaFunc(516, 0.1F);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
             if (Shaders.usedShadowDepthBuffers >= 2) {
-                GlStateManager.setActiveTexture(33989);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE5);
                 Shaders.checkGLError("pre copy shadow depth");
                 GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, Shaders.shadowMapWidth, Shaders.shadowMapHeight);
                 Shaders.checkGLError("copy shadow depth");
-                GlStateManager.setActiveTexture(33984);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
             }
             GlStateManager.disableBlend();
             GlStateManager.depthMask(true);
             minecraft.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
-            GlStateManager.shadeModel(7425);
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
             Shaders.checkGLError("shadow pre-translucent");
             GL20.glDrawBuffers(Shaders.sfbDrawBuffers);
             Shaders.checkGLError("shadow drawbuffers pre-translucent");
@@ -246,7 +243,7 @@ public class ShadersRender {
                 Shaders.checkGLError("shadow translucent");
             }
 
-            GlStateManager.shadeModel(7424);
+            GlStateManager.shadeModel(GL11.GL_FLAT);
             GlStateManager.depthMask(true);
             GlStateManager.enableCull();
             GlStateManager.disableBlend();
@@ -257,41 +254,41 @@ public class ShadersRender {
             if (Shaders.hasGlGenMipmap) {
                 if (Shaders.usedShadowDepthBuffers >= 1) {
                     if (Shaders.shadowMipmapEnabled[0]) {
-                        GlStateManager.setActiveTexture(33988);
+                        GlStateManager.setActiveTexture(GL13.GL_TEXTURE4);
                         GlStateManager.bindTexture(Shaders.sfbDepthTextures.get(0));
-                        GL30.glGenerateMipmap(3553);
+                        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
                         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
                                 Shaders.shadowFilterNearest[0] ? GL11.GL_NEAREST_MIPMAP_NEAREST : GL11.GL_LINEAR_MIPMAP_LINEAR);
                     }
                     if (Shaders.usedShadowDepthBuffers >= 2 && Shaders.shadowMipmapEnabled[1]) {
-                        GlStateManager.setActiveTexture(33989);
+                        GlStateManager.setActiveTexture(GL13.GL_TEXTURE5);
                         GlStateManager.bindTexture(Shaders.sfbDepthTextures.get(1));
-                        GL30.glGenerateMipmap(3553);
+                        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
                         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
                                 Shaders.shadowFilterNearest[1] ? GL11.GL_NEAREST_MIPMAP_NEAREST : GL11.GL_LINEAR_MIPMAP_LINEAR);
                     }
-                    GlStateManager.setActiveTexture(33984);
+                    GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
                 }
                 if (Shaders.usedShadowColorBuffers >= 1) {
                     if (Shaders.shadowColorMipmapEnabled[0]) {
-                        GlStateManager.setActiveTexture(33997);
+                        GlStateManager.setActiveTexture(GL13.GL_TEXTURE13);
                         GlStateManager.bindTexture(Shaders.sfbColorTextures.get(0));
-                        GL30.glGenerateMipmap(3553);
+                        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
                         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
                                 Shaders.shadowColorFilterNearest[0] ? GL11.GL_NEAREST_MIPMAP_NEAREST : GL11.GL_LINEAR_MIPMAP_LINEAR);
                     }
                     if (Shaders.usedShadowColorBuffers >= 2 && Shaders.shadowColorMipmapEnabled[1]) {
-                        GlStateManager.setActiveTexture(33998);
+                        GlStateManager.setActiveTexture(GL13.GL_TEXTURE14);
                         GlStateManager.bindTexture(Shaders.sfbColorTextures.get(1));
-                        GL30.glGenerateMipmap(3553);
+                        GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
                         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
                                 Shaders.shadowColorFilterNearest[1] ? GL11.GL_NEAREST_MIPMAP_NEAREST : GL11.GL_LINEAR_MIPMAP_LINEAR);
                     }
-                    GlStateManager.setActiveTexture(33984);
+                    GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
                 }
             }
             Shaders.checkGLError("shadow postprocess");
-            EXTFramebufferObject.glBindFramebufferEXT(36160, Shaders.dfb);
+            EXTFramebufferObject.glBindFramebufferEXT(GL30.GL_FRAMEBUFFER, Shaders.dfb);
             GL11.glViewport(0, 0, Shaders.renderWidth, Shaders.renderHeight);
             Shaders.activeDrawBuffers = null;
             minecraft.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);

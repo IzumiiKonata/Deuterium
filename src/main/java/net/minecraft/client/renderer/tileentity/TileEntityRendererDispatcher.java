@@ -18,6 +18,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ReportedException;
 import net.minecraft.world.World;
 import net.optifine.EmissiveTextures;
+import org.lwjgl.opengl.GL11;
+
 import java.util.Map;
 
 public class TileEntityRendererDispatcher {
@@ -176,14 +178,14 @@ public class TileEntityRendererDispatcher {
     public void drawBatch(int p_drawBatch_1_) {
         this.renderEngine.bindTexture(TextureMap.locationBlocksTexture);
         RenderHelper.disableStandardItemLighting();
-        GlStateManager.blendFunc(770, 771);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableBlend();
         GlStateManager.disableCull();
 
         if (Minecraft.isAmbientOcclusionEnabled()) {
-            GlStateManager.shadeModel(7425);
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
         } else {
-            GlStateManager.shadeModel(7424);
+            GlStateManager.shadeModel(GL11.GL_FLAT);
         }
 
         if (p_drawBatch_1_ > 0) {

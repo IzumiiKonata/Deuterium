@@ -7,6 +7,7 @@ import net.optifine.texture.PixelType;
 import net.optifine.texture.TextureType;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL31;
 
 import java.nio.ByteBuffer;
 
@@ -49,11 +50,11 @@ public class CustomTextureRaw implements ICustomTexture {
                 break;
 
             case TEXTURE_RECTANGLE:
-                GL11.glTexImage2D(34037, 0, internalFormat.getId(), width, height, 0, pixelFormat.getId(), pixelType.getId(), data);
-                GL11.glTexParameteri(34037, GL11.GL_TEXTURE_WRAP_S, i);
-                GL11.glTexParameteri(34037, GL11.GL_TEXTURE_WRAP_T, i);
-                GL11.glTexParameteri(34037, GL11.GL_TEXTURE_MAG_FILTER, j);
-                GL11.glTexParameteri(34037, GL11.GL_TEXTURE_MIN_FILTER, j);
+                GL11.glTexImage2D(GL31.GL_TEXTURE_RECTANGLE, 0, internalFormat.getId(), width, height, 0, pixelFormat.getId(), pixelType.getId(), data);
+                GL11.glTexParameteri(GL31.GL_TEXTURE_RECTANGLE, GL11.GL_TEXTURE_WRAP_S, i);
+                GL11.glTexParameteri(GL31.GL_TEXTURE_RECTANGLE, GL11.GL_TEXTURE_WRAP_T, i);
+                GL11.glTexParameteri(GL31.GL_TEXTURE_RECTANGLE, GL11.GL_TEXTURE_MAG_FILTER, j);
+                GL11.glTexParameteri(GL31.GL_TEXTURE_RECTANGLE, GL11.GL_TEXTURE_MIN_FILTER, j);
         }
 
         GL11.glBindTexture(this.getTarget(), 0);

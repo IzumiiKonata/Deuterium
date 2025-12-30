@@ -3,6 +3,7 @@ package tritium.rendering;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
@@ -50,8 +51,8 @@ public class RenderWings
         }
         GL11.glColor3f(1.0f, 1.0f, 1.0f);
         this.mc.getTextureManager().bindTexture(this.location);
+        GlStateManager.enableCull();
         for (int j = 0; j < 2; ++j) {
-            GL11.glEnable(2884);
             float f11 = (float) (System.currentTimeMillis() % 1000L) / 1000.0f * (float) Math.PI * 2.0f;
             this.wing.rotateAngleX = (float) Math.toRadians(-80.0) - (float) Math.cos(f11) * 0.2f;
             this.wing.rotateAngleY = (float) Math.toRadians(20.0) + (float) Math.sin(f11) * 0.4f;
@@ -60,10 +61,10 @@ public class RenderWings
             this.wing.render(0.0625f);
             GL11.glScalef(-1.0f, 1.0f, 1.0f);
             if (j != 0) continue;
-            GL11.glCullFace(1028);
+            GlStateManager.cullFace(GL11.GL_FRONT);
         }
-        GL11.glCullFace(1029);
-        GL11.glDisable(2884);
+        GlStateManager.cullFace(GL11.GL_BACK);
+        GlStateManager.disableCull();
         GL11.glColor3f(255.0f, 255.0f, 255.0f);
         GL11.glPopMatrix();
     }

@@ -7,6 +7,7 @@ import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.optifine.shaders.Shaders;
+import org.lwjgl.opengl.GL11;
 
 public class LayerEndermanEyes implements LayerRenderer<EntityEnderman> {
     private static final Location RES_ENDERMAN_EYES = Location.of("textures/entity/enderman/enderman_eyes.png");
@@ -20,7 +21,7 @@ public class LayerEndermanEyes implements LayerRenderer<EntityEnderman> {
         this.endermanRenderer.bindTexture(RES_ENDERMAN_EYES);
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.blendFunc(1, 1);
+        GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
         GlStateManager.disableLighting();
         GlStateManager.depthMask(!entitylivingbaseIn.isInvisible());
         int i = 61680;

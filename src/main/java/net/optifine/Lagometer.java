@@ -77,7 +77,7 @@ public class Lagometer {
     public static void showLagometer(final ScaledResolution scaledResolution) {
         if ((gameSettings != null) && (gameSettings.ofLagometer || gameSettings.showLagometer)) {
             final long i = System.nanoTime();
-            GlStateManager.clear(256);
+            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
             GlStateManager.matrixMode(GL11.GL_PROJECTION);
             GlStateManager.pushMatrix();
             GlStateManager.enableColorMaterial();

@@ -287,13 +287,13 @@ public class Config {
             GlVersion glversion = getGlVersion();
 
             if (glversion.getMajor() >= 3) {
-                int i = GL11.glGetInteger(33309);
+                int i = GL11.glGetInteger(GL30.GL_NUM_EXTENSIONS);
 
                 if (i > 0) {
                     String[] astring = new String[i];
 
                     for (int j = 0; j < i; ++j) {
-                        astring[j] = GL30.glGetStringi(7939, j);
+                        astring[j] = GL30.glGetStringi(GL11.GL_EXTENSIONS, j);
                     }
 
                     return astring;

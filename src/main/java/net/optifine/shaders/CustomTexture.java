@@ -2,6 +2,7 @@ package net.optifine.shaders;
 
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import org.lwjgl.opengl.GL11;
 
 public class CustomTexture implements ICustomTexture {
     private int textureUnit = -1;
@@ -35,7 +36,7 @@ public class CustomTexture implements ICustomTexture {
     }
 
     public int getTarget() {
-        return 3553;
+        return GL11.GL_TEXTURE_2D;
     }
 
     public String toString() {

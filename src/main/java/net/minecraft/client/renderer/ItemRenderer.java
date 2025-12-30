@@ -549,7 +549,7 @@ public class ItemRenderer {
             float f = this.mc.thePlayer.getBrightness(partialTicks);
             GlStateManager.color(f, f, f, 0.5F);
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.pushMatrix();
             float f1 = 4.0F;
             float f2 = -1.0F;
@@ -580,10 +580,10 @@ public class ItemRenderer {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 0.9F);
-        GlStateManager.depthFunc(519);
+        GlStateManager.depthFunc(GL11.GL_ALWAYS);
         GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         float f = 1.0F;
 
         for (int i = 0; i < 2; ++i) {
@@ -614,7 +614,7 @@ public class ItemRenderer {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableBlend();
         GlStateManager.depthMask(true);
-        GlStateManager.depthFunc(515);
+        GlStateManager.depthFunc(GL11.GL_LEQUAL);
     }
 
     public void updateEquippedItem() {

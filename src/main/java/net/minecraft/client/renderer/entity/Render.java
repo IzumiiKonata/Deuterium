@@ -116,7 +116,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
     private void renderEntityOnFire(Entity entity, double x, double y, double z, float partialTicks) {
 
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(770, 771);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.enableAlpha();
 
         GlStateManager.disableLighting();
@@ -190,7 +190,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
     private void renderShadow(Entity entityIn, double x, double y, double z, float shadowAlpha, float partialTicks) {
         if (!Config.isShaders() || !Shaders.shouldSkipDefaultShadow) {
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             this.renderManager.renderEngine.bindTexture(shadowTextures);
             World world = this.getWorldFromRenderManager();
             GlStateManager.depthMask(false);
@@ -369,7 +369,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
             GlStateManager.depthMask(false);
             GlStateManager.disableDepth();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             Tessellator tessellator = Tessellator.getInstance();
             WorldRenderer worldrenderer = tessellator.getWorldRenderer();
             int i = 0;

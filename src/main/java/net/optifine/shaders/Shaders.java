@@ -445,7 +445,7 @@ public class Shaders {
     static final IntBuffer dfbDrawBuffers = nextIntBuffer(8);
     static final IntBuffer sfbDrawBuffers = nextIntBuffer(8);
     static final IntBuffer drawBuffersNone = (IntBuffer) nextIntBuffer(8).limit(0);
-    static final IntBuffer drawBuffersColorAtt0 = (IntBuffer) nextIntBuffer(8).put(36064).position(0).limit(1);
+    static final IntBuffer drawBuffersColorAtt0 = (IntBuffer) nextIntBuffer(8).put(GL30.GL_COLOR_ATTACHMENT0).position(0).limit(1);
     static final FlipTextures dfbColorTexturesFlip = new FlipTextures(dfbColorTextures, 8);
     static Map<Block, Integer> mapBlockToEntityData;
     private static final String[] formatNames = new String[]{"R8", "RG8", "RGB8", "RGBA8", "R8_SNORM", "RG8_SNORM", "RGB8_SNORM", "RGBA8_SNORM", "R16", "RG16", "RGB16", "RGBA16", "R16_SNORM", "RG16_SNORM", "RGB16_SNORM", "RGBA16_SNORM", "R16F", "RG16F", "RGB16F", "RGBA16F", "R32F", "RG32F", "RGB32F", "RGBA32F", "R32I", "RG32I", "RGB32I", "RGBA32I", "R32UI", "RG32UI", "RGB32UI", "RGBA32UI", "R3_G3_B2", "RGB5_A1", "RGB10_A2", "R11F_G11F_B10F", "RGB9_E5"};
@@ -1252,11 +1252,11 @@ public class Shaders {
     private static void bindCustomTextures(ICustomTexture[] cts) {
         if (cts != null) {
             for (ICustomTexture icustomtexture : cts) {
-                GlStateManager.setActiveTexture(33984 + icustomtexture.getTextureUnit());
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + icustomtexture.getTextureUnit());
                 int j = icustomtexture.getTextureId();
                 int k = icustomtexture.getTarget();
 
-                if (k == 3553) {
+                if (k == GL11.GL_TEXTURE_2D) {
                     GlStateManager.bindTexture(j);
                 } else {
                     GL11.glBindTexture(k, j);
@@ -1530,7 +1530,7 @@ public class Shaders {
     }
 
     public static int checkFramebufferStatus(String location) {
-        int i = EXTFramebufferObject.glCheckFramebufferStatusEXT(36160);
+        int i = EXTFramebufferObject.glCheckFramebufferStatusEXT(GL30.GL_FRAMEBUFFER);
 
         if (i != 36053) {
             System.err.format("FramebufferStatus 0x%04X at %s\n", new Object[]{i, location});
@@ -1561,7 +1561,7 @@ public class Shaders {
         StringBuilder stringbuilder = new StringBuilder();
 
         if (errorCode == 1286) {
-            int i = EXTFramebufferObject.glCheckFramebufferStatusEXT(36160);
+            int i = EXTFramebufferObject.glCheckFramebufferStatusEXT(GL30.GL_FRAMEBUFFER);
             String s = getFramebufferStatusText(i);
             String s1 = ", fbStatus: " + i + " (" + s + ")";
             stringbuilder.append(s1);
@@ -1895,7 +1895,7 @@ public class Shaders {
             dfbColorTexturesFlip.reset();
 
             for (int i1 = 0; i1 < usedDrawBuffers; ++i1) {
-                dfbDrawBuffers.put(i1, 36064 + i1);
+                dfbDrawBuffers.put(i1, GL30.GL_COLOR_ATTACHMENT0 + i1);
             }
 
             int j1 = GL11.glGetInteger(GL20.GL_MAX_DRAW_BUFFERS);
@@ -1907,7 +1907,7 @@ public class Shaders {
             sfbDrawBuffers.position(0).limit(usedShadowColorBuffers);
 
             for (int k1 = 0; k1 < usedShadowColorBuffers; ++k1) {
-                sfbDrawBuffers.put(k1, 36064 + k1);
+                sfbDrawBuffers.put(k1, GL30.GL_COLOR_ATTACHMENT0 + k1);
             }
 
             for (Program program1 : ProgramsAll) {
@@ -1999,7 +1999,7 @@ public class Shaders {
 
             if (p == ProgramShadow) {
                 if (j >= 0 && j <= 1) {
-                    i = j + 36064;
+                    i = j + GL30.GL_COLOR_ATTACHMENT0;
                     usedShadowColorBuffers = Math.max(usedShadowColorBuffers, j);
                 }
 
@@ -2007,7 +2007,7 @@ public class Shaders {
             } else {
                 if (j >= 0 && j <= 7) {
                     p.getToggleColorTextures()[j] = true;
-                    i = j + 36064;
+                    i = j + GL30.GL_COLOR_ATTACHMENT0;
                     usedColorAttachs = Math.max(usedColorAttachs, j);
                     usedColorBuffers = Math.max(usedColorBuffers, j);
                 }
@@ -3073,9 +3073,9 @@ public class Shaders {
         GlStateManager.generateTextures((IntBuffer) dfbColorTextures.clear().limit(16));
         dfbDepthTextures.position(0);
         dfbColorTextures.position(0);
-        EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
-        GL20.glDrawBuffers(0);
-        GL11.glReadBuffer(0);
+        EXTFramebufferObject.glBindFramebufferEXT(GL30.GL_FRAMEBUFFER, dfb);
+        GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+        GL11.glReadBuffer(GL30.GL_COLOR_ATTACHMENT0);
 
         for (int i = 0; i < usedDepthBuffers; ++i) {
             GlStateManager.bindTexture(dfbDepthTextures.get(i));
@@ -3087,9 +3087,9 @@ public class Shaders {
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_DEPTH_COMPONENT, renderWidth, renderHeight, 0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, (FloatBuffer) ((FloatBuffer) null));
         }
 
-        EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, dfbDepthTextures.get(0), 0);
+        EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, dfbDepthTextures.get(0), 0);
         GL20.glDrawBuffers(dfbDrawBuffers);
-        GL11.glReadBuffer(0);
+        GL11.glReadBuffer(GL11.GL_NONE);
         checkGLError("FT d");
 
         for (int k = 0; k < usedColorBuffers; ++k) {
@@ -3098,7 +3098,7 @@ public class Shaders {
             GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, GL12.GL_CLAMP_TO_EDGE);
             RenderSystem.linearFilter();
             GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, gbuffersFormat[k], renderWidth, renderHeight, 0, getPixelFormat(gbuffersFormat[k]), GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) ((ByteBuffer) null));
-            EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + k, 3553, dfbColorTexturesFlip.getA(k), 0);
+            EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + k, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getA(k), 0);
             checkGLError("FT c");
         }
 
@@ -3111,7 +3111,7 @@ public class Shaders {
             checkGLError("FT ca");
         }
 
-        int i1 = EXTFramebufferObject.glCheckFramebufferStatusEXT(36160);
+        int i1 = EXTFramebufferObject.glCheckFramebufferStatusEXT(GL30.GL_FRAMEBUFFER);
 
         if (i1 == 36058) {
             printChatAndLogError("[Shaders] Error: Failed framebuffer incomplete formats");
@@ -3119,11 +3119,11 @@ public class Shaders {
             for (int j = 0; j < usedColorBuffers; ++j) {
                 GlStateManager.bindTexture(dfbColorTexturesFlip.getA(j));
                 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, renderWidth, renderHeight, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) ((ByteBuffer) null));
-                EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + j, 3553, dfbColorTexturesFlip.getA(j), 0);
+                EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + j, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getA(j), 0);
                 checkGLError("FT c");
             }
 
-            i1 = EXTFramebufferObject.glCheckFramebufferStatusEXT(36160);
+            i1 = EXTFramebufferObject.glCheckFramebufferStatusEXT(GL30.GL_FRAMEBUFFER);
 
             if (i1 == 36053) {
                 SMCLog.info("complete");
@@ -3165,9 +3165,9 @@ public class Shaders {
             }
 
             sfb = EXTFramebufferObject.glGenFramebuffersEXT();
-            EXTFramebufferObject.glBindFramebufferEXT(36160, sfb);
-            GL11.glDrawBuffer(0);
-            GL11.glReadBuffer(0);
+            EXTFramebufferObject.glBindFramebufferEXT(GL30.GL_FRAMEBUFFER, sfb);
+            GL11.glDrawBuffer(GL11.GL_NONE);
+            GL11.glReadBuffer(GL11.GL_NONE);
             GlStateManager.generateTextures((IntBuffer) sfbDepthTextures.clear().limit(usedShadowDepthBuffers));
             GlStateManager.generateTextures((IntBuffer) sfbColorTextures.clear().limit(usedShadowColorBuffers));
             sfbDepthTextures.position(0);
@@ -3188,7 +3188,7 @@ public class Shaders {
                 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_DEPTH_COMPONENT, shadowMapWidth, shadowMapHeight, 0, GL11.GL_DEPTH_COMPONENT, GL11.GL_FLOAT, (FloatBuffer) ((FloatBuffer) null));
             }
 
-            EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, sfbDepthTextures.get(0), 0);
+            EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, sfbDepthTextures.get(0), 0);
             checkGLError("FT sd");
 
             for (int k = 0; k < usedShadowColorBuffers; ++k) {
@@ -3199,7 +3199,7 @@ public class Shaders {
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, i1);
                 GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, i1);
                 GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, shadowMapWidth, shadowMapHeight, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, (ByteBuffer) ((ByteBuffer) null));
-                EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + k, 3553, sfbColorTextures.get(k), 0);
+                EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + k, GL11.GL_TEXTURE_2D, sfbColorTextures.get(k), 0);
                 checkGLError("FT sc");
             }
 
@@ -3209,7 +3209,7 @@ public class Shaders {
                 GL20.glDrawBuffers(sfbDrawBuffers);
             }
 
-            int l = EXTFramebufferObject.glCheckFramebufferStatusEXT(36160);
+            int l = EXTFramebufferObject.glCheckFramebufferStatusEXT(GL30.GL_FRAMEBUFFER);
 
             if (l != 36053) {
                 printChatAndLogError("[Shaders] Error: Failed creating shadow framebuffer! (Status " + l + ")");
@@ -3341,10 +3341,10 @@ public class Shaders {
         modelView.position(0);
         checkGLError("beginRender");
         ShadersRender.renderShadowMap(entityRenderer, 0, partialTicks, finishTimeNano);
-        EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
+        EXTFramebufferObject.glBindFramebufferEXT(GL30.GL_FRAMEBUFFER, dfb);
 
         for (int j = 0; j < usedColorBuffers; ++j) {
-            EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + j, 3553, dfbColorTexturesFlip.getA(j), 0);
+            EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + j, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getA(j), 0);
         }
 
         checkGLError("end beginRender");
@@ -3352,16 +3352,16 @@ public class Shaders {
 
     private static void bindGbuffersTextures() {
         if (usedShadowDepthBuffers >= 1) {
-            GlStateManager.setActiveTexture(33988);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE4);
             GlStateManager.bindTexture(sfbDepthTextures.get(0));
 
             if (usedShadowDepthBuffers >= 2) {
-                GlStateManager.setActiveTexture(33989);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE5);
                 GlStateManager.bindTexture(sfbDepthTextures.get(1));
             }
         }
 
-        GlStateManager.setActiveTexture(33984);
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
 
         for (int i = 0; i < usedColorBuffers; ++i) {
             GlStateManager.bindTexture(dfbColorTexturesFlip.getA(i));
@@ -3375,35 +3375,35 @@ public class Shaders {
         GlStateManager.bindTexture(0);
 
         for (int j = 0; j < 4 && 4 + j < usedColorBuffers; ++j) {
-            GlStateManager.setActiveTexture(33991 + j);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE7 + j);
             GlStateManager.bindTexture(dfbColorTexturesFlip.getA(4 + j));
         }
 
-        GlStateManager.setActiveTexture(33990);
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE6);
         GlStateManager.bindTexture(dfbDepthTextures.get(0));
 
         if (usedDepthBuffers >= 2) {
-            GlStateManager.setActiveTexture(33995);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE11);
             GlStateManager.bindTexture(dfbDepthTextures.get(1));
 
             if (usedDepthBuffers >= 3) {
-                GlStateManager.setActiveTexture(33996);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE12);
                 GlStateManager.bindTexture(dfbDepthTextures.get(2));
             }
         }
 
         for (int k = 0; k < usedShadowColorBuffers; ++k) {
-            GlStateManager.setActiveTexture(33997 + k);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE13 + k);
             GlStateManager.bindTexture(sfbColorTextures.get(k));
         }
 
         if (noiseTextureEnabled) {
-            GlStateManager.setActiveTexture(33984 + noiseTexture.getTextureUnit());
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + noiseTexture.getTextureUnit());
             GlStateManager.bindTexture(noiseTexture.getTextureId());
         }
 
         bindCustomTextures(customTexturesGbuffers);
-        GlStateManager.setActiveTexture(33984);
+        GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
     }
 
     public static void checkWorldChanged(World world) {
@@ -3433,7 +3433,7 @@ public class Shaders {
 
     public static void beginRenderPass(int pass, float partialTicks, long finishTimeNano) {
         if (!isShadowPass) {
-            EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
+            EXTFramebufferObject.glBindFramebufferEXT(GL30.GL_FRAMEBUFFER, dfb);
             GL11.glViewport(0, 0, renderWidth, renderHeight);
             activeDrawBuffers = null;
             ShadersTex.bindNSTextures(defaultTexture.getMultiTexID());
@@ -3449,7 +3449,7 @@ public class Shaders {
             GL11.glViewport(0, 0, shadowMapWidth, shadowMapHeight);
         } else {
             GL11.glViewport(0, 0, renderWidth, renderHeight);
-            EXTFramebufferObject.glBindFramebufferEXT(36160, dfb);
+            EXTFramebufferObject.glBindFramebufferEXT(GL30.GL_FRAMEBUFFER, dfb);
             isRenderingDfb = true;
             GlStateManager.enableCull();
             GlStateManager.enableDepth();
@@ -3484,7 +3484,7 @@ public class Shaders {
     public static void clearRenderBuffer() {
         if (isShadowPass) {
             checkGLError("shadow clear pre");
-            EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, sfbDepthTextures.get(0), 0);
+            EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, sfbDepthTextures.get(0), 0);
             GL11.glClearColor(1.0F, 1.0F, 1.0F, 1.0F);
             GL20.glDrawBuffers(ProgramShadow.getDrawBuffers());
             checkFramebufferStatus("shadow clear");
@@ -3501,14 +3501,14 @@ public class Shaders {
                 }
 
                 if (dfbColorTexturesFlip.isChanged(0)) {
-                    EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064, 3553, dfbColorTexturesFlip.getB(0), 0);
-                    GL20.glDrawBuffers(36064);
-                    GL11.glClear(16384);
-                    EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064, 3553, dfbColorTexturesFlip.getA(0), 0);
+                    EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getB(0), 0);
+                    GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+                    EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getA(0), 0);
                 }
 
-                GL20.glDrawBuffers(36064);
-                GL11.glClear(16384);
+                GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
             }
 
             if (gbuffersClear[1]) {
@@ -3520,14 +3520,14 @@ public class Shaders {
                 }
 
                 if (dfbColorTexturesFlip.isChanged(1)) {
-                    EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36065, 3553, dfbColorTexturesFlip.getB(1), 0);
-                    GL20.glDrawBuffers(36065);
-                    GL11.glClear(16384);
-                    EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36065, 3553, dfbColorTexturesFlip.getA(1), 0);
+                    EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getB(1), 0);
+                    GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT1);
+                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+                    EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT1, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getA(1), 0);
                 }
 
-                GL20.glDrawBuffers(36065);
-                GL11.glClear(16384);
+                GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT1);
+                GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
             }
 
             for (int i = 2; i < usedColorBuffers; ++i) {
@@ -3540,14 +3540,14 @@ public class Shaders {
                     }
 
                     if (dfbColorTexturesFlip.isChanged(i)) {
-                        EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + i, 3553, dfbColorTexturesFlip.getB(i), 0);
-                        GL20.glDrawBuffers(36064 + i);
-                        GL11.glClear(16384);
-                        EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + i, 3553, dfbColorTexturesFlip.getA(i), 0);
+                        EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getB(i), 0);
+                        GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0 + i);
+                        GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
+                        EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getA(i), 0);
                     }
 
-                    GL20.glDrawBuffers(36064 + i);
-                    GL11.glClear(16384);
+                    GL20.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0 + i);
+                    GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
                 }
             }
 
@@ -3731,13 +3731,13 @@ public class Shaders {
         if (hasGlGenMipmap) {
             for (int i = 0; i < usedColorBuffers; ++i) {
                 if ((activeCompositeMipmapSetting & 1 << i) != 0) {
-                    GlStateManager.setActiveTexture(33984 + colorTextureImageUnit[i]);
+                    GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + colorTextureImageUnit[i]);
                     GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_LINEAR_MIPMAP_LINEAR);
-                    GL30.glGenerateMipmap(3553);
+                    GL30.glGenerateMipmap(GL11.GL_TEXTURE_2D);
                 }
             }
 
-            GlStateManager.setActiveTexture(33984);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         }
     }
 
@@ -3796,7 +3796,7 @@ public class Shaders {
                 bindGbuffersTextures();
 
                 for (int i = 0; i < usedColorBuffers; ++i) {
-                    EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + i, 3553, dfbColorTexturesFlip.getA(i), 0);
+                    EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + i, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getA(i), 0);
                 }
 
                 if (ProgramWater.getDrawBuffers() != null) {
@@ -3805,7 +3805,7 @@ public class Shaders {
                     setDrawBuffers(dfbDrawBuffers);
                 }
 
-                GlStateManager.setActiveTexture(33984);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
                 mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
             }
         }
@@ -3846,45 +3846,45 @@ public class Shaders {
             GlStateManager.disableAlpha();
             GlStateManager.disableBlend();
             GlStateManager.enableDepth();
-            GlStateManager.depthFunc(519);
+            GlStateManager.depthFunc(GL11.GL_ALWAYS);
             GlStateManager.depthMask(false);
             GlStateManager.disableLighting();
 
             if (usedShadowDepthBuffers >= 1) {
-                GlStateManager.setActiveTexture(33988);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE4);
                 GlStateManager.bindTexture(sfbDepthTextures.get(0));
 
                 if (usedShadowDepthBuffers >= 2) {
-                    GlStateManager.setActiveTexture(33989);
+                    GlStateManager.setActiveTexture(GL13.GL_TEXTURE5);
                     GlStateManager.bindTexture(sfbDepthTextures.get(1));
                 }
             }
 
             for (int i = 0; i < usedColorBuffers; ++i) {
-                GlStateManager.setActiveTexture(33984 + colorTextureImageUnit[i]);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + colorTextureImageUnit[i]);
                 GlStateManager.bindTexture(dfbColorTexturesFlip.getA(i));
             }
 
-            GlStateManager.setActiveTexture(33990);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE6);
             GlStateManager.bindTexture(dfbDepthTextures.get(0));
 
             if (usedDepthBuffers >= 2) {
-                GlStateManager.setActiveTexture(33995);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE11);
                 GlStateManager.bindTexture(dfbDepthTextures.get(1));
 
                 if (usedDepthBuffers >= 3) {
-                    GlStateManager.setActiveTexture(33996);
+                    GlStateManager.setActiveTexture(GL13.GL_TEXTURE12);
                     GlStateManager.bindTexture(dfbDepthTextures.get(2));
                 }
             }
 
             for (int k = 0; k < usedShadowColorBuffers; ++k) {
-                GlStateManager.setActiveTexture(33997 + k);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE13 + k);
                 GlStateManager.bindTexture(sfbColorTextures.get(k));
             }
 
             if (noiseTextureEnabled) {
-                GlStateManager.setActiveTexture(33984 + noiseTexture.getTextureUnit());
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + noiseTexture.getTextureUnit());
                 GlStateManager.bindTexture(noiseTexture.getTextureId());
             }
 
@@ -3894,13 +3894,13 @@ public class Shaders {
                 bindCustomTextures(customTexturesDeferred);
             }
 
-            GlStateManager.setActiveTexture(33984);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
 
             for (int l = 0; l < usedColorBuffers; ++l) {
-                EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + l, 3553, dfbColorTexturesFlip.getB(l), 0);
+                EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + l, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getB(l), 0);
             }
 
-            EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36096, 3553, dfbDepthTextures.get(0), 0);
+            EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_DEPTH_ATTACHMENT, GL11.GL_TEXTURE_2D, dfbDepthTextures.get(0), 0);
             GL20.glDrawBuffers(dfbDrawBuffers);
             checkGLError("pre-composite");
 
@@ -3920,13 +3920,13 @@ public class Shaders {
                     for (int j = 0; j < usedColorBuffers; ++j) {
                         if (program.getToggleColorTextures()[j]) {
                             dfbColorTexturesFlip.flip(j);
-                            GlStateManager.setActiveTexture(33984 + colorTextureImageUnit[j]);
+                            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0 + colorTextureImageUnit[j]);
                             GlStateManager.bindTexture(dfbColorTexturesFlip.getA(j));
-                            EXTFramebufferObject.glFramebufferTexture2DEXT(36160, 36064 + j, 3553, dfbColorTexturesFlip.getB(j), 0);
+                            EXTFramebufferObject.glFramebufferTexture2DEXT(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0 + j, GL11.GL_TEXTURE_2D, dfbColorTexturesFlip.getB(j), 0);
                         }
                     }
 
-                    GlStateManager.setActiveTexture(33984);
+                    GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
                 }
             }
 
@@ -3941,7 +3941,7 @@ public class Shaders {
             GlStateManager.enableTexture2D();
             GlStateManager.enableAlpha();
             GlStateManager.enableBlend();
-            GlStateManager.depthFunc(515);
+            GlStateManager.depthFunc(GL11.GL_LEQUAL);
             GlStateManager.depthMask(true);
             GL11.glPopMatrix();
             GL11.glMatrixMode(GL11.GL_MODELVIEW);
@@ -3973,7 +3973,7 @@ public class Shaders {
     private static void renderFinal() {
         isRenderingDfb = false;
         mc.getFramebuffer().forceBind(true);
-        OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, 3553, mc.getFramebuffer().framebufferTexture, 0);
+        OpenGlHelper.glFramebufferTexture2D(OpenGlHelper.GL_FRAMEBUFFER, OpenGlHelper.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, mc.getFramebuffer().framebufferTexture, 0);
         GL11.glViewport(0, 0, mc.displayWidth, mc.displayHeight);
 
         if (EntityRenderer.anaglyphEnable) {
@@ -3989,7 +3989,7 @@ public class Shaders {
         GlStateManager.disableAlpha();
         GlStateManager.disableBlend();
         GlStateManager.enableDepth();
-        GlStateManager.depthFunc(519);
+        GlStateManager.depthFunc(GL11.GL_ALWAYS);
         GlStateManager.depthMask(false);
         checkGLError("pre-final");
         useProgram(ProgramFinal);
@@ -4172,8 +4172,8 @@ public class Shaders {
         if (isRenderingWorld && ProgramSpiderEyes.getId() != ProgramNone.getId()) {
             useProgram(ProgramSpiderEyes);
             GlStateManager.enableAlpha();
-            GlStateManager.alphaFunc(516, 0.0F);
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.0F);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         }
     }
 
@@ -4304,14 +4304,14 @@ public class Shaders {
     public static void beginWeather() {
         if (!isShadowPass) {
             if (usedDepthBuffers >= 3) {
-                GlStateManager.setActiveTexture(33996);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE12);
                 GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, renderWidth, renderHeight);
-                GlStateManager.setActiveTexture(33984);
+                GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
             }
 
             GlStateManager.enableDepth();
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.enableAlpha();
             useProgram(ProgramWeather);
         }
@@ -4324,11 +4324,11 @@ public class Shaders {
 
     public static void preWater() {
         if (usedDepthBuffers >= 2) {
-            GlStateManager.setActiveTexture(33995);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE11);
             checkGLError("pre copy depth");
             GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, renderWidth, renderHeight);
             checkGLError("copy depth");
-            GlStateManager.setActiveTexture(33984);
+            GlStateManager.setActiveTexture(GL13.GL_TEXTURE0);
         }
 
         ShadersTex.bindNSTextures(defaultTexture.getMultiTexID());
@@ -4387,7 +4387,7 @@ public class Shaders {
         GL11.glPopMatrix();
         GL11.glMatrixMode(GL11.GL_MODELVIEW);
         GL11.glPopMatrix();
-        GlStateManager.blendFunc(770, 771);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         checkGLError("endHand");
     }
 
@@ -4402,7 +4402,7 @@ public class Shaders {
     public static void glEnableWrapper(int cap) {
         GL11.glEnable(cap);
 
-        if (cap == 3553) {
+        if (cap == GL11.GL_TEXTURE_2D) {
             enableTexture2D();
         } else if (cap == 2912) {
             enableFog();
@@ -4412,7 +4412,7 @@ public class Shaders {
     public static void glDisableWrapper(int cap) {
         GL11.glDisable(cap);
 
-        if (cap == 3553) {
+        if (cap == GL11.GL_TEXTURE_2D) {
             disableTexture2D();
         } else if (cap == 2912) {
             disableFog();

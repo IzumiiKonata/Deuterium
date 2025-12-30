@@ -63,7 +63,7 @@ public class ScreenShotHelper {
                 Config.getGameSettings().guiScale = j * k;
                 resize(width * k, height * k);
                 GlStateManager.pushMatrix();
-                GlStateManager.clear(16640);
+                GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
                 minecraft.getFramebuffer().bindFramebuffer(true);
                 minecraft.entityRenderer.updateCameraAndRender(Config.renderPartialTicks, System.nanoTime());
             }

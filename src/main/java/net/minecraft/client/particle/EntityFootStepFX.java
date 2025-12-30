@@ -10,6 +10,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Location;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
 
 public class EntityFootStepFX extends EntityFX {
     private static final Location FOOTPRINT_TEXTURE = Location.of("textures/particle/footprint.png");
@@ -45,7 +46,7 @@ public class EntityFootStepFX extends EntityFX {
         float f6 = this.worldObj.getLightBrightness(new BlockPos(this));
         this.currentFootSteps.bindTexture(FOOTPRINT_TEXTURE);
         GlStateManager.enableBlend();
-        GlStateManager.blendFunc(770, 771);
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         worldRendererIn.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
         worldRendererIn.pos(f3 - 0.125F, f4, f5 + 0.125F).tex(0.0D, 1.0D).color(f6, f6, f6, f1).endVertex();
         worldRendererIn.pos(f3 + 0.125F, f4, f5 + 0.125F).tex(1.0D, 1.0D).color(f6, f6, f6, f1).endVertex();

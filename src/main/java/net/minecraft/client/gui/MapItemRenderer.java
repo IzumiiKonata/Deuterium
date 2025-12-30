@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.Location;
 import net.minecraft.util.Vec4b;
 import net.minecraft.world.storage.MapData;
+import org.lwjgl.opengl.GL11;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -98,7 +99,7 @@ public class MapItemRenderer {
             float f = 0.0F;
             MapItemRenderer.this.textureManager.bindTexture(this.location);
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ZERO, GL11.GL_ONE);
             GlStateManager.disableAlpha();
             worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
             worldrenderer.pos((float) (i) + f, (float) (j + 128) - f, -0.009999999776482582D).tex(0.0D, 1.0D).endVertex();

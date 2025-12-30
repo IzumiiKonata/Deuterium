@@ -173,7 +173,7 @@ public class GuiIngame extends Gui {
             GlStateManager.enableBlend();
 
             if (this.showCrosshair()) {
-                GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
                 GlStateManager.enableAlpha();
                 this.drawTexturedModalRect(i / 2 - 7, j / 2 - 7, 0, 0, 16, 16);
             }
@@ -227,13 +227,13 @@ public class GuiIngame extends Gui {
             this.mc.getTextureManager().bindTexture(icons);
             GlStateManager.enableBlend();
             if (!ClientSettings.GUIINGAME_CACHE.getValue() && this.showCrosshair()) {
-                GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
                 GlStateManager.enableAlpha();
                 this.drawTexturedModalRect(i / 2 - 7, j / 2 - 7, 0, 0, 16, 16);
             }
 
             GlStateManager.enableAlpha();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             this.renderBossHealth();
 
             if (bShowHotbar && this.mc.playerController.shouldDrawHUD()) {
@@ -286,7 +286,7 @@ public class GuiIngame extends Gui {
                     GlStateManager.pushMatrix();
                     GlStateManager.translate((float) (i / 2), (float) (j / 2), 0.0F);
                     GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                     GlStateManager.pushMatrix();
                     GlStateManager.scale(4.0F, 4.0F, 4.0F);
                     int j2 = i2 << 24 & -16777216;
@@ -305,11 +305,11 @@ public class GuiIngame extends Gui {
 
 //            GlStateManager.disableAlpha();
 
-//            GlStateManager.tryBlendFuncSeparate(775, 769, 1, 0);
+//            GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
 
             GlStateManager.disableAlpha();
 
-//            GlStateManager.alphaFunc(516, 0F);
+//            GlStateManager.alphaFunc(GL11.GL_GREATER, 0F);
 
             Scoreboard scoreboard = this.mc.theWorld.getScoreboard();
             ScoreObjective scoreobjective = null;
@@ -332,7 +332,7 @@ public class GuiIngame extends Gui {
             }
 
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             GlStateManager.disableAlpha();
 
             scoreobjective1 = scoreboard.getObjectiveInDisplaySlot(0);
@@ -360,7 +360,7 @@ public class GuiIngame extends Gui {
             GlStateManager.bindTexture(buf.framebufferTexture);
             GlStateManager.enableTexture2D();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             ShaderProgram.drawQuadFlipped(0, 0, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
         }
 
@@ -409,7 +409,7 @@ public class GuiIngame extends Gui {
             this.zLevel = f;
             GlStateManager.enableRescaleNormal();
             GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
             RenderHelper.enableGUIStandardItemLighting();
 
             for (int j = 0; j < 9; ++j) {
@@ -496,7 +496,7 @@ public class GuiIngame extends Gui {
             if (k > 0) {
                 GlStateManager.pushMatrix();
                 GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                 this.getFontRenderer().drawStringWithShadow(s, (float) i, (float) j, 16777215 + (k << 24));
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
@@ -860,7 +860,7 @@ public class GuiIngame extends Gui {
     private void renderPumpkinOverlay(ScaledResolution scaledRes) {
         GlStateManager.disableDepth();
         GlStateManager.depthMask(false);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.disableAlpha();
         this.mc.getTextureManager().bindTexture(pumpkinBlurTexPath);
@@ -887,7 +887,7 @@ public class GuiIngame extends Gui {
     private void renderVignette(float lightLevel, ScaledResolution scaledRes) {
         if (!Config.isVignetteEnabled()) {
             GlStateManager.enableDepth();
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         } else {
             lightLevel = 1.0F - lightLevel;
             lightLevel = MathHelper.clamp_float(lightLevel, 0.0F, 1.0F);
@@ -925,7 +925,7 @@ public class GuiIngame extends Gui {
             GlStateManager.depthMask(true);
             GlStateManager.enableDepth();
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         }
     }
 
@@ -939,7 +939,7 @@ public class GuiIngame extends Gui {
         GlStateManager.disableAlpha();
         GlStateManager.disableDepth();
         GlStateManager.depthMask(false);
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
         GlStateManager.color(1.0F, 1.0F, 1.0F, timeInPortal);
         this.mc.getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
         TextureAtlasSprite textureatlassprite = this.mc.getBlockRendererDispatcher().getBlockModelShapes().getTexture(Blocks.portal.getDefaultState());

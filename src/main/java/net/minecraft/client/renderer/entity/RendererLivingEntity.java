@@ -326,15 +326,15 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 0.15F);
                 GlStateManager.depthMask(false);
                 GlStateManager.enableBlend();
-                GlStateManager.blendFunc(770, 771);
-                GlStateManager.alphaFunc(516, 0.003921569F);
+                GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.alphaFunc(GL11.GL_GREATER, 0.003921569F);
             }
 
             this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
 
             if (flag1) {
                 GlStateManager.disableBlend();
-                GlStateManager.alphaFunc(516, 0.1F);
+                GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
                 GlStateManager.popMatrix();
                 GlStateManager.depthMask(true);
             }
@@ -585,7 +585,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             if (d0 < (double) (f * f)) {
                 String s = entity.getDisplayName().getFormattedText();
                 float f1 = 0.02666667F;
-                GlStateManager.alphaFunc(516, 0.1F);
+                GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 
                 if (entity.isSneaking()) {
                     FontRenderer fontrenderer = this.getFontRendererFromRenderManager();
@@ -600,7 +600,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                     GlStateManager.depthMask(false);
                     GlStateManager.enableBlend();
                     GlStateManager.disableTexture2D();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                     int i = fontrenderer.getStringWidth(s) / 2;
                     Tessellator tessellator = Tessellator.getInstance();
                     WorldRenderer worldrenderer = tessellator.getWorldRenderer();

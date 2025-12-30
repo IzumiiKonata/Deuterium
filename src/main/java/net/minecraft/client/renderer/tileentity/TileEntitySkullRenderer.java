@@ -46,7 +46,7 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
 
         if (p_180543_8_ >= 0) {
             this.bindTexture(DESTROY_STAGES[p_180543_8_]);
-            GlStateManager.matrixMode(5890);
+            GlStateManager.matrixMode(GL11.GL_TEXTURE);
             GlStateManager.pushMatrix();
             GlStateManager.scale(4.0F, 2.0F, 1.0F);
             GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
@@ -133,7 +133,7 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
         GlStateManager.popMatrix();
 
         if (p_180543_8_ >= 0) {
-            GlStateManager.matrixMode(5890);
+            GlStateManager.matrixMode(GL11.GL_TEXTURE);
             GlStateManager.popMatrix();
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         }

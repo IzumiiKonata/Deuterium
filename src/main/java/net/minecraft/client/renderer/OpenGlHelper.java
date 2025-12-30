@@ -127,7 +127,7 @@ public class OpenGlHelper {
         } else {
             logText = logText + "正在使用 GL 1.3 多重纹理.\n";
         }
-        defaultTexUnit = 33984;
+        defaultTexUnit = GL13.GL_TEXTURE0;
         lightmapTexUnit = 33985;
         GL_TEXTURE2 = 33986;
 
@@ -166,10 +166,10 @@ public class OpenGlHelper {
             if (contextcapabilities.OpenGL30) {
                 logText = logText + "支持 OpenGL 3.0, 并支持分离混合.\n";
                 framebufferType = 0;
-                GL_FRAMEBUFFER = 36160;
+                GL_FRAMEBUFFER = GL30.GL_FRAMEBUFFER;
                 GL_RENDERBUFFER = 36161;
-                GL_COLOR_ATTACHMENT0 = 36064;
-                GL_DEPTH_ATTACHMENT = 36096;
+                GL_COLOR_ATTACHMENT0 = GL30.GL_COLOR_ATTACHMENT0;
+                GL_DEPTH_ATTACHMENT = GL30.GL_DEPTH_ATTACHMENT;
                 GL_FRAMEBUFFER_COMPLETE = 36053;
                 GL_FB_INCOMPLETE_ATTACHMENT = 36054;
                 GL_FB_INCOMPLETE_MISS_ATTACH = 36055;
@@ -178,10 +178,10 @@ public class OpenGlHelper {
             } else if (contextcapabilities.GL_ARB_framebuffer_object) {
                 logText = logText + "支持 ARB_framebuffer_object, 并支持分离混合.\n";
                 framebufferType = 1;
-                GL_FRAMEBUFFER = 36160;
+                GL_FRAMEBUFFER = GL30.GL_FRAMEBUFFER;
                 GL_RENDERBUFFER = 36161;
-                GL_COLOR_ATTACHMENT0 = 36064;
-                GL_DEPTH_ATTACHMENT = 36096;
+                GL_COLOR_ATTACHMENT0 = GL30.GL_COLOR_ATTACHMENT0;
+                GL_DEPTH_ATTACHMENT = GL30.GL_DEPTH_ATTACHMENT;
                 GL_FRAMEBUFFER_COMPLETE = 36053;
                 GL_FB_INCOMPLETE_MISS_ATTACH = 36055;
                 GL_FB_INCOMPLETE_ATTACHMENT = 36054;
@@ -190,10 +190,10 @@ public class OpenGlHelper {
             } else if (contextcapabilities.GL_EXT_framebuffer_object) {
                 logText = logText + "支持 EXT_framebuffer_object.\n";
                 framebufferType = 2;
-                GL_FRAMEBUFFER = 36160;
+                GL_FRAMEBUFFER = GL30.GL_FRAMEBUFFER;
                 GL_RENDERBUFFER = 36161;
-                GL_COLOR_ATTACHMENT0 = 36064;
-                GL_DEPTH_ATTACHMENT = 36096;
+                GL_COLOR_ATTACHMENT0 = GL30.GL_COLOR_ATTACHMENT0;
+                GL_DEPTH_ATTACHMENT = GL30.GL_DEPTH_ATTACHMENT;
                 GL_FRAMEBUFFER_COMPLETE = 36053;
                 GL_FB_INCOMPLETE_MISS_ATTACH = 36055;
                 GL_FB_INCOMPLETE_ATTACHMENT = 36054;

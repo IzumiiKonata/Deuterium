@@ -12,6 +12,7 @@ import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.util.Location;
 import net.minecraft.util.MathHelper;
+import org.lwjgl.opengl.GL11;
 
 public class RenderDragon extends RenderLiving<EntityDragon> {
     private static final Location enderDragonCrystalBeamTextures = Location.of("textures/entity/endercrystal/endercrystal_beam.png");
@@ -55,28 +56,28 @@ public class RenderDragon extends RenderLiving<EntityDragon> {
     protected void renderModel(EntityDragon entitylivingbaseIn, float p_77036_2_, float p_77036_3_, float p_77036_4_, float p_77036_5_, float p_77036_6_, float scaleFactor) {
         if (entitylivingbaseIn.deathTicks > 0) {
             float f = (float) entitylivingbaseIn.deathTicks / 200.0F;
-            GlStateManager.depthFunc(515);
+            GlStateManager.depthFunc(GL11.GL_LEQUAL);
             GlStateManager.enableAlpha();
-            GlStateManager.alphaFunc(516, f);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, f);
             this.bindTexture(enderDragonExplodingTextures);
             this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
-            GlStateManager.alphaFunc(516, 0.1F);
-            GlStateManager.depthFunc(514);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
+            GlStateManager.depthFunc(GL11.GL_EQUAL);
         }
 
         this.bindEntityTexture(entitylivingbaseIn);
         this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
 
         if (entitylivingbaseIn.hurtTime > 0) {
-            GlStateManager.depthFunc(514);
+            GlStateManager.depthFunc(GL11.GL_EQUAL);
             GlStateManager.disableTexture2D();
             GlStateManager.enableBlend();
-            GlStateManager.blendFunc(770, 771);
+            GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.color(1.0F, 0.0F, 0.0F, 0.5F);
             this.mainModel.render(entitylivingbaseIn, p_77036_2_, p_77036_3_, p_77036_4_, p_77036_5_, p_77036_6_, scaleFactor);
             GlStateManager.enableTexture2D();
             GlStateManager.disableBlend();
-            GlStateManager.depthFunc(515);
+            GlStateManager.depthFunc(GL11.GL_LEQUAL);
         }
     }
 
@@ -113,7 +114,7 @@ public class RenderDragon extends RenderLiving<EntityDragon> {
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableCull();
         this.bindTexture(enderDragonCrystalBeamTextures);
-        GlStateManager.shadeModel(7425);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
         float f7 = 0.0F - ((float) dragon.ticksExisted + p_180574_8_) * 0.01F;
         float f8 = MathHelper.sqrt_float(f2 * f2 + f3 * f3 + f4 * f4) / 32.0F - ((float) dragon.ticksExisted + p_180574_8_) * 0.01F;
         worldrenderer.begin(5, DefaultVertexFormats.POSITION_TEX_COLOR);
@@ -129,7 +130,7 @@ public class RenderDragon extends RenderLiving<EntityDragon> {
 
         tessellator.draw();
         GlStateManager.enableCull();
-        GlStateManager.shadeModel(7424);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
         RenderHelper.enableStandardItemLighting();
         GlStateManager.popMatrix();
     }

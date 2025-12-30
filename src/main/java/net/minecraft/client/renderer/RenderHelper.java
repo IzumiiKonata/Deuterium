@@ -21,8 +21,8 @@ public class RenderHelper {
      */
     public static void disableStandardItemLighting() {
         GlStateManager.disableLighting();
-        GlStateManager.disableLight(0);
-        GlStateManager.disableLight(1);
+        GlStateManager.disableLight(GL11.GL_LIGHT0);
+        GlStateManager.disableLight(GL11.GL_LIGHT1);
         GlStateManager.disableColorMaterial();
     }
 
@@ -31,10 +31,10 @@ public class RenderHelper {
      */
     public static void enableStandardItemLighting() {
         GlStateManager.enableLighting();
-        GlStateManager.enableLight(0);
-        GlStateManager.enableLight(1);
+        GlStateManager.enableLight(GL11.GL_LIGHT0);
+        GlStateManager.enableLight(GL11.GL_LIGHT1);
         GlStateManager.enableColorMaterial();
-        GlStateManager.colorMaterial(1032, 5634);
+        GlStateManager.colorMaterial(GL11.GL_FRONT_AND_BACK, GL11.GL_AMBIENT_AND_DIFFUSE);
         float f = 0.4F;
         float f1 = 0.6F;
         float f2 = 0.0F;
@@ -46,29 +46,30 @@ public class RenderHelper {
         GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, setColorBuffer(f1, f1, f1, 1.0F));
         GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_AMBIENT, setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
         GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_SPECULAR, setColorBuffer(f2, f2, f2, 1.0F));
-        GlStateManager.shadeModel(7424);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
         GL11.glLightModelfv(GL11.GL_LIGHT_MODEL_AMBIENT, setColorBuffer(f, f, f, 1.0F));
     }
 
     public static void enablePaperDollLighting() {
-        GlStateManager.enableLighting();
-        GlStateManager.enableLight(0);
-        GlStateManager.enableLight(1);
-        GlStateManager.enableColorMaterial();
-        GlStateManager.colorMaterial(1032, 5634);
-        float f = 0.4F;
-        float f1 = 0.6F;
-        float f2 = 0.0F;
-        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_POSITION, setColorBuffer(LIGHT0_POS_PAPERDOLL.xCoord, LIGHT0_POS_PAPERDOLL.yCoord, LIGHT0_POS_PAPERDOLL.zCoord, 0.0D));
-        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, setColorBuffer(f1, f1, f1, 1.0F));
-        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_AMBIENT, setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
-        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_SPECULAR, setColorBuffer(f2, f2, f2, 1.0F));
-        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_POSITION, setColorBuffer(LIGHT1_POS_PAPERDOLL.xCoord, LIGHT1_POS_PAPERDOLL.yCoord, LIGHT1_POS_PAPERDOLL.zCoord, 0.0D));
-        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, setColorBuffer(f1, f1, f1, 1.0F));
-        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_AMBIENT, setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
-        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_SPECULAR, setColorBuffer(f2, f2, f2, 1.0F));
-        GlStateManager.shadeModel(7424);
-        GL11.glLightModelfv(GL11.GL_LIGHT_MODEL_AMBIENT, setColorBuffer(f, f, f, 1.0F));
+        enableStandardItemLighting();
+//        GlStateManager.enableLighting();
+//        GlStateManager.enableLight(0);
+//        GlStateManager.enableLight(1);
+//        GlStateManager.enableColorMaterial();
+//        GlStateManager.colorMaterial(1032, 5634);
+//        float f = 0.4F;
+//        float f1 = 0.6F;
+//        float f2 = 0.0F;
+//        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_POSITION, setColorBuffer(LIGHT0_POS_PAPERDOLL.xCoord, LIGHT0_POS_PAPERDOLL.yCoord, LIGHT0_POS_PAPERDOLL.zCoord, 0.0D));
+//        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_DIFFUSE, setColorBuffer(f1, f1, f1, 1.0F));
+//        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_AMBIENT, setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
+//        GL11.glLightfv(GL11.GL_LIGHT0, GL11.GL_SPECULAR, setColorBuffer(f2, f2, f2, 1.0F));
+//        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_POSITION, setColorBuffer(LIGHT1_POS_PAPERDOLL.xCoord, LIGHT1_POS_PAPERDOLL.yCoord, LIGHT1_POS_PAPERDOLL.zCoord, 0.0D));
+//        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_DIFFUSE, setColorBuffer(f1, f1, f1, 1.0F));
+//        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_AMBIENT, setColorBuffer(0.0F, 0.0F, 0.0F, 1.0F));
+//        GL11.glLightfv(GL11.GL_LIGHT1, GL11.GL_SPECULAR, setColorBuffer(f2, f2, f2, 1.0F));
+//        GlStateManager.shadeModel(GL11.GL_FLAT);
+//        GL11.glLightModelfv(GL11.GL_LIGHT_MODEL_AMBIENT, setColorBuffer(f, f, f, 1.0F));
     }
 
     /**

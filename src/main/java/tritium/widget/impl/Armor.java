@@ -35,7 +35,7 @@ public class Armor extends Widget {
 //            GlStateManager.disableCull();
 //            GlStateManager.disableBlend();
             GlStateManager.disableLighting();
-//            GlStateManager.clear(256);
+//            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
             mc.fontRendererObj.drawStringWithShadow(String.valueOf(damage), x + 18, y + 5, -1);
             y += 18;
         }

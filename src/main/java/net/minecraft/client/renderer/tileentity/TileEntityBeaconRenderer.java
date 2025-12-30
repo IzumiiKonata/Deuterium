@@ -24,7 +24,7 @@ public class TileEntityBeaconRenderer extends TileEntitySpecialRenderer<TileEnti
                 Shaders.beginBeacon();
             }
 
-            GlStateManager.alphaFunc(516, 0.1F);
+            GlStateManager.alphaFunc(GL11.GL_GREATER, 0.1F);
 
             if (f > 0.0F) {
                 Tessellator tessellator = Tessellator.getInstance();
@@ -42,7 +42,7 @@ public class TileEntityBeaconRenderer extends TileEntitySpecialRenderer<TileEnti
                     GlStateManager.disableCull();
                     GlStateManager.disableBlend();
                     GlStateManager.depthMask(true);
-                    GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
                     double d0 = (double) te.getWorld().getTotalWorldTime() + (double) partialTicks;
                     double d1 = MathHelper.func_181162_h(-d0 * 0.2D - (double) MathHelper.floor_double(-d0 * 0.1D));
                     float f1 = tileentitybeacon$beamsegment.getColors()[0];
@@ -81,7 +81,7 @@ public class TileEntityBeaconRenderer extends TileEntitySpecialRenderer<TileEnti
                     worldrenderer.pos(x + d4, y + (double) k, z + d5).tex(0.0D, d15).color(f1, f2, f3, 1.0F).endVertex();
                     tessellator.draw();
                     GlStateManager.enableBlend();
-                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                     GlStateManager.depthMask(false);
                     d2 = 0.2D;
                     d3 = 0.2D;

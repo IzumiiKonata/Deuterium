@@ -7,6 +7,7 @@ import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.optifine.shaders.Shaders;
+import org.lwjgl.opengl.GL11;
 
 public class LayerSpiderEyes implements LayerRenderer<EntitySpider> {
     private static final Location SPIDER_EYES = Location.of("textures/entity/spider_eyes.png");
@@ -20,7 +21,7 @@ public class LayerSpiderEyes implements LayerRenderer<EntitySpider> {
         this.spiderRenderer.bindTexture(SPIDER_EYES);
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GlStateManager.blendFunc(1, 1);
+        GlStateManager.blendFunc(GL11.GL_ONE, GL11.GL_ONE);
 
         GlStateManager.depthMask(!entitylivingbaseIn.isInvisible());
 

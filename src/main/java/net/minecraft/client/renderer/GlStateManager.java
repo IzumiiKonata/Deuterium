@@ -49,7 +49,8 @@ public class GlStateManager {
     private static boolean creatingDisplayList = false;
 
     public static void pushAttrib() {
-        GL11.glPushAttrib(8256);
+        // 0x2040: 0x2000 | 0x40
+        GL11.glPushAttrib(GL11.GL_ENABLE_BIT | GL11.GL_LIGHTING_BIT);
     }
 
     public static void popAttrib() {
@@ -93,11 +94,11 @@ public class GlStateManager {
     }
 
     public static void enableLight(int light) {
-        lightState[light].setEnabled();
+        lightState[light - GL11.GL_LIGHT0].setEnabled();
     }
 
     public static void disableLight(int light) {
-        lightState[light].setDisabled();
+        lightState[light - GL11.GL_LIGHT0].setDisabled();
     }
 
     public static void enableColorMaterial() {
@@ -552,20 +553,20 @@ public class GlStateManager {
         colorState.red = colorState.green = colorState.blue = colorState.alpha = -1.0F;
     }
 
-    public static void glVertexPointer(int p_glVertexPointer_0_, int p_glVertexPointer_1_, int p_glVertexPointer_2_, int p_glVertexPointer_3_) {
-        GL11.glVertexPointer(p_glVertexPointer_0_, p_glVertexPointer_1_, p_glVertexPointer_2_, p_glVertexPointer_3_);
+    public static void glVertexPointer(int size, int type, int stride, int pointer) {
+        GL11.glVertexPointer(size, type, stride, pointer);
     }
 
-    public static void glDisableClientState(int p_glDisableClientState_0_) {
-        GL11.glDisableClientState(p_glDisableClientState_0_);
+    public static void glDisableClientState(int clientState) {
+        GL11.glDisableClientState(clientState);
     }
 
-    public static void glEnableClientState(int p_glEnableClientState_0_) {
-        GL11.glEnableClientState(p_glEnableClientState_0_);
+    public static void glEnableClientState(int clientState) {
+        GL11.glEnableClientState(clientState);
     }
 
-    public static void glDrawArrays(int p_glDrawArrays_0_, int p_glDrawArrays_1_, int p_glDrawArrays_2_) {
-        GL11.glDrawArrays(p_glDrawArrays_0_, p_glDrawArrays_1_, p_glDrawArrays_2_);
+    public static void glDrawArrays(int mode, int first, int count) {
+        GL11.glDrawArrays(mode, first, count);
 
         if (Config.isShaders() && !creatingDisplayList) {
             int i = Shaders.activeProgram.getCountInstances();
@@ -573,7 +574,7 @@ public class GlStateManager {
             if (i > 1) {
                 for (int j = 1; j < i; ++j) {
                     Shaders.uniform_instanceId.setValue(j);
-                    GL11.glDrawArrays(p_glDrawArrays_0_, p_glDrawArrays_1_, p_glDrawArrays_2_);
+                    GL11.glDrawArrays(mode, first, count);
                 }
 
                 Shaders.uniform_instanceId.setValue(0);
@@ -624,16 +625,16 @@ public class GlStateManager {
         return GL11.glGetError();
     }
 
-    public static void glTexImage2D(int p_glTexImage2D_0_, int p_glTexImage2D_1_, int p_glTexImage2D_2_, int p_glTexImage2D_3_, int p_glTexImage2D_4_, int p_glTexImage2D_5_, int p_glTexImage2D_6_, int p_glTexImage2D_7_, IntBuffer p_glTexImage2D_8_) {
-        GL11.glTexImage2D(p_glTexImage2D_0_, p_glTexImage2D_1_, p_glTexImage2D_2_, p_glTexImage2D_3_, p_glTexImage2D_4_, p_glTexImage2D_5_, p_glTexImage2D_6_, p_glTexImage2D_7_, p_glTexImage2D_8_);
+    public static void glTexImage2D(int target, int level, int internalFormat, int width, int height, int border, int format, int type, IntBuffer pixels) {
+        GL11.glTexImage2D(target, level, internalFormat, width, height, border, format, type, pixels);
     }
 
-    public static void glTexParameteri(int p_glTexParameteri_0_, int p_glTexParameteri_1_, int p_glTexParameteri_2_) {
-        GL11.glTexParameteri(p_glTexParameteri_0_, p_glTexParameteri_1_, p_glTexParameteri_2_);
+    public static void glTexParameteri(int target, int pname, int param) {
+        GL11.glTexParameteri(target, pname, param);
     }
 
-    public static int glGetTexLevelParameteri(int p_glGetTexLevelParameteri_0_, int p_glGetTexLevelParameteri_1_, int p_glGetTexLevelParameteri_2_) {
-        return GL11.glGetTexLevelParameteri(p_glGetTexLevelParameteri_0_, p_glGetTexLevelParameteri_1_, p_glGetTexLevelParameteri_2_);
+    public static int glGetTexLevelParameteri(int target, int level, int pname) {
+        return GL11.glGetTexLevelParameteri(target, level, pname);
     }
 
     public static int getActiveTextureUnit() {
@@ -726,8 +727,8 @@ public class GlStateManager {
         }
     }
 
-    public static void glMultiDrawArrays(int p_glMultiDrawArrays_0_, IntBuffer p_glMultiDrawArrays_1_, IntBuffer p_glMultiDrawArrays_2_) {
-        GL14.glMultiDrawArrays(p_glMultiDrawArrays_0_, p_glMultiDrawArrays_1_, p_glMultiDrawArrays_2_);
+    public static void glMultiDrawArrays(int mode, IntBuffer first, IntBuffer count) {
+        GL14.glMultiDrawArrays(mode, first, count);
 
         if (Config.isShaders() && !creatingDisplayList) {
             int i = Shaders.activeProgram.getCountInstances();
@@ -735,7 +736,7 @@ public class GlStateManager {
             if (i > 1) {
                 for (int j = 1; j < i; ++j) {
                     Shaders.uniform_instanceId.setValue(j);
-                    GL14.glMultiDrawArrays(p_glMultiDrawArrays_0_, p_glMultiDrawArrays_1_, p_glMultiDrawArrays_2_);
+                    GL14.glMultiDrawArrays(mode, first, count);
                 }
 
                 Shaders.uniform_instanceId.setValue(0);
@@ -745,7 +746,7 @@ public class GlStateManager {
 
     static {
         for (int i = 0; i < 8; ++i) {
-            lightState[i] = new GlStateManager.BooleanState(16384 + i);
+            lightState[i] = new GlStateManager.BooleanState(GL11.GL_LIGHT0 + i);
         }
 
         for (int j = 0; j < textureState.length; ++j) {
@@ -759,7 +760,7 @@ public class GlStateManager {
         public float ref;
 
         private AlphaState() {
-            this.alphaTest = new GlStateManager.BooleanState(3008);
+            this.alphaTest = new GlStateManager.BooleanState(GL11.GL_ALPHA_TEST);
             this.func = 519;
             this.ref = -1.0F;
         }
@@ -773,7 +774,7 @@ public class GlStateManager {
         public int dstFactorAlpha;
 
         private BlendState() {
-            this.blend = new GlStateManager.BooleanState(3042);
+            this.blend = new GlStateManager.BooleanState(GL11.GL_BLEND);
             this.srcFactor = 1;
             this.dstFactor = 0;
             this.srcFactorAlpha = 1;
@@ -844,7 +845,7 @@ public class GlStateManager {
         public int opcode;
 
         private ColorLogicState() {
-            this.colorLogicOp = new GlStateManager.BooleanState(3058);
+            this.colorLogicOp = new GlStateManager.BooleanState(GL11.GL_COLOR_LOGIC_OP);
             this.opcode = 5379;
         }
     }
@@ -869,7 +870,7 @@ public class GlStateManager {
         public int mode;
 
         private ColorMaterialState() {
-            this.colorMaterial = new GlStateManager.BooleanState(2903);
+            this.colorMaterial = new GlStateManager.BooleanState(GL11.GL_COLOR_MATERIAL);
             this.face = 1032;
             this.mode = 5634;
         }
@@ -880,7 +881,7 @@ public class GlStateManager {
         public int mode;
 
         private CullState() {
-            this.cullFace = new GlStateManager.BooleanState(2884);
+            this.cullFace = new GlStateManager.BooleanState(GL11.GL_CULL_FACE);
             this.mode = 1029;
         }
     }
@@ -891,7 +892,7 @@ public class GlStateManager {
         public int depthFunc;
 
         private DepthState() {
-            this.depthTest = new GlStateManager.BooleanState(2929);
+            this.depthTest = new GlStateManager.BooleanState(GL11.GL_DEPTH_TEST);
             this.maskEnabled = true;
             this.depthFunc = 513;
         }
@@ -905,7 +906,7 @@ public class GlStateManager {
         public float end;
 
         private FogState() {
-            this.fog = new GlStateManager.BooleanState(2912);
+            this.fog = new GlStateManager.BooleanState(GL11.GL_FOG);
             this.mode = 2048;
             this.density = 1.0F;
             this.start = 0.0F;
@@ -920,8 +921,8 @@ public class GlStateManager {
         public float units;
 
         private PolygonOffsetState() {
-            this.polygonOffsetFill = new GlStateManager.BooleanState(32823);
-            this.polygonOffsetLine = new GlStateManager.BooleanState(10754);
+            this.polygonOffsetFill = new GlStateManager.BooleanState(GL11.GL_POLYGON_OFFSET_FILL);
+            this.polygonOffsetLine = new GlStateManager.BooleanState(GL11.GL_POLYGON_OFFSET_LINE);
             this.factor = 0.0F;
             this.units = 0.0F;
         }
@@ -951,9 +952,9 @@ public class GlStateManager {
         public int coord;
         public int param = -1;
 
-        public TexGenCoord(int p_i46254_1_, int p_i46254_2_) {
-            this.coord = p_i46254_1_;
-            this.textureGen = new GlStateManager.BooleanState(p_i46254_2_);
+        public TexGenCoord(int coord, int textureGen) {
+            this.coord = coord;
+            this.textureGen = new GlStateManager.BooleanState(textureGen);
         }
     }
 
@@ -964,10 +965,10 @@ public class GlStateManager {
         public GlStateManager.TexGenCoord q;
 
         private TexGenState() {
-            this.s = new GlStateManager.TexGenCoord(8192, 3168);
-            this.t = new GlStateManager.TexGenCoord(8193, 3169);
-            this.r = new GlStateManager.TexGenCoord(8194, 3170);
-            this.q = new GlStateManager.TexGenCoord(8195, 3171);
+            this.s = new GlStateManager.TexGenCoord(GL11.GL_S, GL11.GL_TEXTURE_GEN_S);
+            this.t = new GlStateManager.TexGenCoord(GL11.GL_T, GL11.GL_TEXTURE_GEN_T);
+            this.r = new GlStateManager.TexGenCoord(GL11.GL_R, GL11.GL_TEXTURE_GEN_R);
+            this.q = new GlStateManager.TexGenCoord(GL11.GL_Q, GL11.GL_TEXTURE_GEN_Q);
         }
     }
 
@@ -976,7 +977,7 @@ public class GlStateManager {
         public int textureName;
 
         private TextureState() {
-            this.texture2DState = new GlStateManager.BooleanState(3553);
+            this.texture2DState = new GlStateManager.BooleanState(GL11.GL_TEXTURE_2D);
             this.textureName = 0;
         }
     }
