@@ -20,16 +20,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author IzumiiKonata
  * @since 3/25/2023 11:04 PM
  */
-public class EventManager<T extends Event> extends AbstractManager implements SharedConstants {
+public class EventManager extends AbstractManager implements SharedConstants {
     // 方法Map
-    private final Map<Type, List<Target>> registrationMap = new HashMap<>();
+    private static final Map<Type, List<Target>> registrationMap = new HashMap<>();
 
     public EventManager() {
         super("EventManager");
-    }
-
-    public static void register(Object obj) {
-        client.getEventManager()._register(obj);
     }
 
     static MethodHandles.Lookup lookup = MethodHandles.lookup();
@@ -40,7 +36,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
      * @param obj 类实例
      */
     @SneakyThrows
-    public void _register(Object obj) {
+    public static void register(Object obj) {
         for (Method method : obj.getClass().getDeclaredMethods()) {
 
             if (method.isAnnotationPresent(Handler.class)) {
@@ -82,16 +78,13 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
 
     }
 
-    public static void unregister(Object source) {
-        client.getEventManager()._unregister(source);
-    }
 
     /**
      * 取消订阅指定类实例中的带有 @Handler 注解的方法.
      *
      * @param source 类实例
      */
-    public void _unregister(Object source) {
+    public static void unregister(Object source) {
         for (List<Target> dataList : registrationMap.values()) {
             dataList.removeIf(data -> data.getSource().equals(source));
         }
@@ -102,7 +95,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
     /**
      * 清理 Map 中的空 Entry
      */
-    public void cleanMap(boolean onlyEmptyEntries) {
+    public static void cleanMap(boolean onlyEmptyEntries) {
         Iterator<Map.Entry<Type, List<Target>>> mapIterator = registrationMap.entrySet().iterator();
 
         while (mapIterator.hasNext()) {
@@ -133,17 +126,13 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
         return false;
     }
 
-    public static <T extends Event> T call(T event) {
-        return (T) client.getEventManager()._call(event);
-    }
-
     /**
      * 调用所有注册的 event
      *
      * @param event event 类型
      */
     @SneakyThrows
-    public T _call(T event) {
+    public static <T extends Event> T call(T event) {
         List<Target> methodList = registrationMap.get(event.getClass());
 
         if (methodList != null) {
@@ -171,7 +160,7 @@ public class EventManager<T extends Event> extends AbstractManager implements Sh
 
     @Getter
     @AllArgsConstructor
-    private class Target {
+    private static class Target {
         private MethodHandle targetMethod;
         private Type type;
         private Object source;

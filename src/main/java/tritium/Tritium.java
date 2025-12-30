@@ -50,7 +50,7 @@ public class Tritium {
     private FontManager fontManager;
 
     @Getter
-    private EventManager<Event> eventManager;
+    private EventManager eventManager;
 
     @Getter
     private Localizer localizer;
@@ -106,7 +106,7 @@ public class Tritium {
         LoadingRenderer.setProgress(90, NAME + " - Managers");
 
         this.fontManager = new FontManager();
-        this.eventManager = new EventManager<>();
+        this.eventManager = new EventManager();
         this.localizer = new Localizer();
         this.moduleManager = new ModuleManager();
         this.widgetsManager = new WidgetsManager();
