@@ -37,9 +37,6 @@ public class Tritium {
 
     public static final String NAME = "Tritium";
 
-    /**
-     * 客户端实例
-     */
     @Getter
     private static final Tritium instance = new Tritium();
 
@@ -89,9 +86,6 @@ public class Tritium {
 
     }
 
-    /**
-     * Called when the client is being initialized.
-     */
     public void run() {
 
         logger.debug("run() 方法 已被调用");
@@ -153,9 +147,6 @@ public class Tritium {
         UpdateChecker.check();
     }
 
-    /**
-     * Called when the jvm is shutting down.
-     */
     public void stop() {
         logger.debug("stop() 方法 已被调用");
 
