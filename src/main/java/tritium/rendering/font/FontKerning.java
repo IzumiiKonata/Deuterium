@@ -1,0 +1,165 @@
+package tritium.rendering.font;
+
+import org.lwjgl.PointerBuffer;
+import org.lwjgl.system.MemoryStack;
+import org.lwjgl.util.freetype.FT_Face;
+import org.lwjgl.util.harfbuzz.hb_glyph_position_t;
+
+import java.io.File;
+import java.nio.ByteBuffer;
+
+import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.util.freetype.FreeType.*;
+import static org.lwjgl.util.harfbuzz.HarfBuzz.*;
+import static org.lwjgl.util.harfbuzz.OpenType.hb_ot_font_set_funcs;
+
+public final class FontKerning {
+
+    private final long hbFont;
+    private final long hbBuffer;
+    private final long hbBlob;
+
+    private final long ftLibrary;
+    private final long ftFaceAddress;
+    private final FT_Face ftFace;
+    private final ByteBuffer fontData;
+
+    public FontKerning(File fontFile) {
+        try {
+            long tempLibrary;
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                PointerBuffer libraryPtr = stack.mallocPointer(1);
+                checkFT(FT_Init_FreeType(libraryPtr));
+                tempLibrary = libraryPtr.get();
+            }
+            ftLibrary = tempLibrary;
+
+            byte[] fileBytes = java.nio.file.Files.readAllBytes(fontFile.toPath());
+            fontData = memAlloc(fileBytes.length);
+            fontData.put(fileBytes);
+            fontData.flip();
+
+            long tempFace;
+            try (MemoryStack stack = MemoryStack.stackPush()) {
+                PointerBuffer facePtr = stack.mallocPointer(1);
+                checkFT(FT_New_Memory_Face(
+                        ftLibrary,
+                        fontData,
+                        0,
+                        facePtr
+                ));
+                tempFace = facePtr.get(0);
+            }
+
+            if (tempFace == NULL) {
+                throw new RuntimeException("FT_New_Memory_Face returned NULL face");
+            }
+
+            ftFaceAddress = tempFace;
+            ftFace = FT_Face.create(ftFaceAddress);
+
+            checkFT(FT_Select_Charmap(ftFace, FT_ENCODING_UNICODE));
+            checkFT(FT_Set_Pixel_Sizes(ftFace, 0, 16));
+
+            hbBlob = hb_blob_create(
+                    fontData,
+                    fontData.remaining(),
+                    HB_MEMORY_MODE_READONLY,
+                    null
+            );
+
+            if (hbBlob == NULL) {
+                throw new RuntimeException("Failed to create HarfBuzz blob");
+            }
+
+            long hbFace = hb_face_create(hbBlob, 0);
+            if (hbFace == NULL) {
+                throw new RuntimeException("Failed to create HarfBuzz face");
+            }
+
+            hbFont = hb_font_create(hbFace);
+            hb_face_destroy(hbFace);
+
+            if (hbFont == NULL) {
+                throw new RuntimeException("Failed to create HarfBuzz font");
+            }
+
+            hb_font_set_scale(hbFont, 16 * 64, 16 * 64);
+            hb_font_set_ppem(hbFont, 16, 16);
+
+            hb_ot_font_set_funcs(hbFont);
+
+            hbBuffer = hb_buffer_create();
+            if (hbBuffer == NULL || !hb_buffer_allocation_successful(hbBuffer)) {
+                throw new RuntimeException("Failed to allocate HarfBuzz buffer");
+            }
+
+        } catch (Exception e) {
+            dispose();
+            throw new RuntimeException("Failed to init FontKerning", e);
+        }
+    }
+
+    public float getKerning(char left, char right, float fontSizePx) {
+        setFontSize(fontSizePx);
+
+        float advL  = shapeAdvancePx(String.valueOf(left));
+        float advR  = shapeAdvancePx(String.valueOf(right));
+        float advLR = shapeAdvancePx("" + left + right);
+
+        return advLR - advL - advR;
+    }
+
+    private float shapeAdvancePx(String text) {
+        hb_buffer_reset(hbBuffer);
+
+        hb_buffer_add_utf8(hbBuffer, text, 0, -1);
+
+        hb_buffer_guess_segment_properties(hbBuffer);
+
+        hb_shape(hbFont, hbBuffer, null);
+
+        hb_glyph_position_t.Buffer pos = hb_buffer_get_glyph_positions(hbBuffer);
+
+        float advance = 0.0f;
+        for (int i = 0; i < pos.remaining(); i++) {
+            advance += pos.get(i).x_advance();
+        }
+        return advance / 64.0f;
+    }
+
+    private void setFontSize(float px) {
+        checkFT(FT_Set_Pixel_Sizes(ftFace, 0, (int) px));
+
+        int scale = (int) (px * 64);
+        hb_font_set_scale(hbFont, scale, scale);
+        hb_font_set_ppem(hbFont, (int) px, (int) px);
+    }
+
+    public void dispose() {
+        if (hbBuffer != NULL) {
+            hb_buffer_destroy(hbBuffer);
+        }
+        if (hbFont != NULL) {
+            hb_font_destroy(hbFont);
+        }
+        if (hbBlob != NULL) {
+            hb_blob_destroy(hbBlob);
+        }
+        if (ftFaceAddress != NULL) {
+            FT_Done_Face(ftFace);
+        }
+        if (ftLibrary != NULL) {
+            FT_Done_FreeType(ftLibrary);
+        }
+        if (fontData != null) {
+            memFree(fontData);
+        }
+    }
+
+    private static void checkFT(int err) {
+        if (err != FT_Err_Ok) {
+            throw new RuntimeException("FreeType error: " + err);
+        }
+    }
+}

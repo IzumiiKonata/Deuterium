@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import tritium.bridge.rendering.font.FontWrapper;
 import tritium.interfaces.IFontRenderer;
 import tritium.rendering.font.CFontRenderer;
+import tritium.rendering.font.FontKerning;
 
 import java.awt.*;
 import java.io.File;
@@ -159,6 +160,7 @@ public class FontManager extends AbstractManager {
     }
     
     private static final HashMap<String, Font> fonts = new HashMap<>();
+    private static final HashMap<String, FontKerning> fontKernings = new HashMap<>();
     
     private static Font readFont(String path) {
         return fonts.computeIfAbsent(path, p -> {
@@ -173,13 +175,33 @@ public class FontManager extends AbstractManager {
             }
         });
     }
+    
+    private static FontKerning readFontKerning(String path) {
+        return fontKernings.computeIfAbsent(path, p -> {
+            try {
+                // 获取字体文件的绝对路径
+                String fontPath = FontManager.class.getResource(p).getPath();
+                // 如果路径包含空格或其他特殊字符，需要处理
+                if (fontPath.startsWith("/")) {
+                    fontPath = fontPath.substring(1);
+                }
+                fontPath = fontPath.replace("/", "\\");
+                File fontFile = new File(fontPath);
+                return new FontKerning(fontFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return null;
+            }
+        });
+    }
 
     @SneakyThrows
     public static CFontRenderer create(float size, InputStream fontStream) {
         Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream);
 
         Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_normal.ttf");
-        return new CFontRenderer(font, size * 0.5f, fallback);
+        FontKerning fallbackKerning = readFontKerning("/assets/minecraft/tritium/fonts/pf_normal.ttf");
+        return new CFontRenderer(font, size * 0.5f, fallbackKerning, fallback);
     }
 
     @SneakyThrows
@@ -187,13 +209,15 @@ public class FontManager extends AbstractManager {
         Font font = Font.createFont(Font.TRUETYPE_FONT, fontStream);
         Font fallBack = Font.createFont(Font.TRUETYPE_FONT, fallBackStream);
 
-        return new CFontRenderer(font, size * 0.5f, fallBack);
+        FontKerning fontKerning = readFontKerning("/assets/minecraft/tritium/fonts/pf_normal.ttf");
+        return new CFontRenderer(font, size * 0.5f, fontKerning, fallBack);
     }
 
     @SneakyThrows
     public static CFontRenderer create(float size, String name) {
 
         Font font = readFont("/assets/minecraft/tritium/fonts/" + name + ".ttf");
+        FontKerning kerning = readFontKerning("/assets/minecraft/tritium/fonts/" + name + ".ttf");
 
         // 中文字体默认使用 SF Pro 作为主字体
         // 因为它们的英文字母太他妈难看了
@@ -201,21 +225,25 @@ public class FontManager extends AbstractManager {
         return switch (name) {
             case "googlesans", "product", "tahoma" -> {
                 Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_normal.ttf");
-                yield new CFontRenderer(font, size * 0.5f, fallback);
+                FontKerning fallbackKerning = readFontKerning("/assets/minecraft/tritium/fonts/pf_normal.ttf");
+                yield new CFontRenderer(font, size * 0.5f, kerning, fallback);
             }
             case "googlesansbold" -> {
                 Font fallback = readFont("/assets/minecraft/tritium/fonts/pf_middleblack.ttf");
-                yield new CFontRenderer(font, size * 0.5f, fallback);
+                FontKerning fallbackKerning = readFontKerning("/assets/minecraft/tritium/fonts/pf_middleblack.ttf");
+                yield new CFontRenderer(font, size * 0.5f, kerning, fallback);
             }
             case "pf_normal" -> {
                 Font main = readFont("/assets/minecraft/tritium/fonts/sfregular.otf");
-                yield new CFontRenderer(main, size * 0.5f, font);
+                FontKerning mainKerning = readFontKerning("/assets/minecraft/tritium/fonts/sfregular.otf");
+                yield new CFontRenderer(main, size * 0.5f, mainKerning, font);
             }
             case "pf_middleblack" -> {
                 Font main = readFont("/assets/minecraft/tritium/fonts/sfbold.otf");
-                yield new CFontRenderer(main, size * 0.5f, font);
+                FontKerning mainKerning = readFontKerning("/assets/minecraft/tritium/fonts/sfbold.otf");
+                yield new CFontRenderer(main, size * 0.5f, mainKerning, font);
             }
-            default -> new CFontRenderer(font, size * 0.5f, font);
+            default -> new CFontRenderer(font, size * 0.5f, kerning, font);
         };
 
     }

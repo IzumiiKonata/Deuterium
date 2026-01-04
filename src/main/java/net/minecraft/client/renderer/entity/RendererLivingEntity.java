@@ -653,7 +653,8 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             }
         }
 
-        return !(Minecraft.getMinecraft().currentScreen instanceof AltScreen) && Minecraft.isGuiEnabled() && (entity != this.renderManager.livingPlayer || ClientSettings.RENDER_SELF_NAME_TAG.getValue()) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
+        boolean self = ClientSettings.RENDER_SELF_NAME_TAG.getValue();
+        return !(Minecraft.getMinecraft().currentScreen instanceof AltScreen) && (Minecraft.isGuiEnabled() || self) && (entity != this.renderManager.livingPlayer || self) && !entity.isInvisibleToPlayer(entityplayersp) && entity.riddenByEntity == null && !PaperDoll.isRendering;
     }
 
     public void setRenderOutlines(boolean renderOutlinesIn) {

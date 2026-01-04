@@ -32,6 +32,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     public Font[] fallBackFonts;
     public float sizePx;
     private TextureAtlas atlas;
+    private FontKerning fontKerning;
 
     public CFontRenderer(Font font, float sizePx) {
         this.sizePx = sizePx;
@@ -51,6 +52,11 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
 //        this.fallBackFonts[fallBackFonts.length] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/NotoColorEmoji.ttf")).deriveFont(sizePx * 2);
 //        this.fallBackFonts[fallBackFonts.length + 1] = Font.createFont(Font.TRUETYPE_FONT, FontManager.class.getResourceAsStream("/assets/minecraft/tritium/fonts/Symbola.ttf")).deriveFont(sizePx * 2);
+    }
+
+    public CFontRenderer(Font font, float sizePx, FontKerning fontKerning, Font... fallBackFonts) {
+        this(font, sizePx, fallBackFonts);
+        this.fontKerning = fontKerning;
     }
 
     public static String stripControlCodes(String text) {
@@ -185,6 +191,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
+            char nextChar = i + 1 < s.length() ? s.charAt(i + 1) : '\0';
 
             if (inSel) {
                 inSel = false;
@@ -237,6 +244,11 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 GL11.glVertex2f(x1, y1);
 
                 xOffset += glyph.width;
+                
+                // 添加字间距
+                if (fontKerning != null && nextChar != '\0' && nextChar != '§' && nextChar != '\n') {
+                    xOffset += fontKerning.getKerning(c, nextChar, sizePx) * 4;
+                }
             } else {
                 allLoaded = false;
             }
@@ -343,6 +355,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
             for (int i = 0; i < string.length(); i++) {
                 char c = string.charAt(i);
+                char nextChar = i + 1 < string.length() ? string.charAt(i + 1) : '\0';
 
                 if (c == '\n') {
                     yOffset += CFontRenderer.this.getHeight() * 2 + 4;
@@ -375,6 +388,11 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                     GL11.glVertex2f(x1, y1);
 
                     xOffset += glyph.width;
+                    
+                    // 添加字间距
+                    if (fontKerning != null && nextChar != '\0' && nextChar != '§' && nextChar != '\n') {
+                        xOffset += fontKerning.getKerning(c, nextChar, sizePx) * 4;
+                    }
                 }
             }
 
@@ -503,7 +521,10 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         char[] c = stripControlCodes(text).toCharArray();
         double currentLine = 0;
         double maxPreviousLines = 0;
-        for (char c1 : c) {
+        for (int i = 0; i < c.length; i++) {
+            char c1 = c[i];
+            char c2 = i + 1 < c.length ? c[i + 1] : '\0';
+            
             if (c1 == '\n') {
                 maxPreviousLines = Math.max(currentLine, maxPreviousLines);
                 currentLine = 0;
@@ -516,7 +537,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (c1 == '）')
                 c1 = ')';
 
-            float charWidth = getCharWidth(c1);
+            float charWidth = getCharWidth(c1, c2);
 
             if (!shouldntAdd) {
                 shouldntAdd = charWidth == 0;
@@ -575,12 +596,23 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     float getCharWidth(char ch) {
+        return getCharWidth(ch, '\0');
+    }
+
+    float getCharWidth(char ch, char nextChar) {
         Glyph glyph = allGlyphs[ch];
 
         if (glyph == null)
             return .0f;
 
-        return glyph.width * .5f;
+        float width = glyph.width * .5f;
+        
+        // 添加字间距
+        if (fontKerning != null && nextChar != '\0') {
+            width += fontKerning.getKerning(ch, nextChar, sizePx) * 2;
+        }
+        
+        return width;
     }
 
     public double getStringHeight(String text) {
@@ -674,6 +706,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
         for (int i = startIndex; i < text.length(); i++) {
             char c = text.charAt(i);
+            char nextChar = i + 1 < text.length() ? text.charAt(i + 1) : '\0';
 
             if (c == '\247' && i + 1 < text.length()) {
                 i++;
@@ -703,7 +736,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 }
             }
 
-            double charWidth = getCharWidth(c);
+            double charWidth = getCharWidth(c, nextChar);
 
             if (currentWidth + charWidth > maxWidth) {
                 if (breakableCharValue > 0 && breakableCharValue >= lastBreakableIndexPriority) {

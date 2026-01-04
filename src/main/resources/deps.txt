@@ -15,6 +15,10 @@ org.lwjgl:lwjgl-opengl:3.3.6
 org.lwjgl:lwjgl-stb:3.3.6
 org.lwjgl:lwjgl:3.3.6
 org.lwjgl:lwjgl-jemalloc:3.3.6
+org.lwjgl:lwjgl-freetype:3.3.6
+org.lwjgl:lwjgl-harfbuzz:3.3.6
+org.lwjgl:lwjgl-freetype:natives-windows:3.3.6
+org.lwjgl:lwjgl-harfbuzz:natives-windows:3.3.6
 org.lwjgl:lwjgl:natives-windows:3.3.6
 org.lwjgl:lwjgl-jemalloc:natives-windows:3.3.6
 # org.lwjgl:lwjgl-glfw:natives-windows:3.3.6
