@@ -7,6 +7,8 @@ import org.lwjgl.util.harfbuzz.hb_glyph_position_t;
 
 import java.io.File;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Objects;
 
 import static org.lwjgl.system.MemoryUtil.*;
 import static org.lwjgl.util.freetype.FreeType.*;
@@ -100,14 +102,26 @@ public final class FontKerning {
         }
     }
 
+    private final HashMap<Long, Float> kerningCache = new HashMap<>();
+
     public float getKerning(char left, char right, float fontSizePx) {
+
+        long key = Objects.hash(left, right, fontSizePx);
+        if (kerningCache.containsKey(key)) {
+            return kerningCache.get(key);
+        }
+
         setFontSize(fontSizePx);
 
         float advL  = shapeAdvancePx(String.valueOf(left));
         float advR  = shapeAdvancePx(String.valueOf(right));
         float advLR = shapeAdvancePx("" + left + right);
 
-        return advLR - advL - advR;
+        float result = advLR - advL - advR;
+
+        kerningCache.put(key, result);
+
+        return result;
     }
 
     private float shapeAdvancePx(String text) {
