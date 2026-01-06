@@ -187,8 +187,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         double yOffset = 0;
         boolean inSel = false;
 
-        // TODO: replace with GL_TRIANGLE_STRIP for a better performance
-        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glBegin(GL11.GL_TRIANGLES);
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -217,8 +216,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (c == '\n') {
                 yOffset += this.getHeight() * 2 + 4;
                 xOffset = 0;
-//                GL11.glEnd();
-//                GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
                 continue;
             }
 
@@ -232,17 +229,29 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 float x1 = x0 + glyph.width;
                 float y1 = y0 + glyph.height;
 
-                GL11.glTexCoord2f(glyph.u0, glyph.v0);
-                GL11.glVertex2f(x0, y0);
+                // first triangle
+                {
+                    GL11.glTexCoord2f(glyph.u0, glyph.v0);
+                    GL11.glVertex2f(x0, y0);
 
-                GL11.glTexCoord2f(glyph.u0, glyph.v1);
-                GL11.glVertex2f(x0, y1);
+                    GL11.glTexCoord2f(glyph.u0, glyph.v1);
+                    GL11.glVertex2f(x0, y1);
 
-                GL11.glTexCoord2f(glyph.u1, glyph.v1);
-                GL11.glVertex2f(x1, y1);
+                    GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                    GL11.glVertex2f(x1, y0);
+                }
 
-                GL11.glTexCoord2f(glyph.u1, glyph.v0);
-                GL11.glVertex2f(x1, y0);
+                // second
+                {
+                    GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                    GL11.glVertex2f(x1, y0);
+
+                    GL11.glTexCoord2f(glyph.u0, glyph.v1);
+                    GL11.glVertex2f(x0, y1);
+
+                    GL11.glTexCoord2f(glyph.u1, glyph.v1);
+                    GL11.glVertex2f(x1, y1);
+                }
 
                 xOffset += glyph.width;
                 
@@ -352,7 +361,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             int callList = GL11.glGenLists(1);
 
             GL11.glNewList(callList, GL11.GL_COMPILE);
-            GL11.glBegin(GL11.GL_QUADS);
+            GL11.glBegin(GL11.GL_TRIANGLES);
 
             for (int i = 0; i < string.length(); i++) {
                 char c = string.charAt(i);
@@ -361,8 +370,6 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 if (c == '\n') {
                     yOffset += CFontRenderer.this.getHeight() * 2 + 4;
                     xOffset = 0;
-//                    GL11.glEnd();
-//                    GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
                     continue;
                 }
 
@@ -376,17 +383,29 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                     float x1 = x0 + glyph.width;
                     float y1 = y0 + glyph.height;
 
-                    GL11.glTexCoord2f(glyph.u0, glyph.v0);
-                    GL11.glVertex2f(x0, y0);
+                    // first triangle
+                    {
+                        GL11.glTexCoord2f(glyph.u0, glyph.v0);
+                        GL11.glVertex2f(x0, y0);
 
-                    GL11.glTexCoord2f(glyph.u0, glyph.v1);
-                    GL11.glVertex2f(x0, y1);
+                        GL11.glTexCoord2f(glyph.u0, glyph.v1);
+                        GL11.glVertex2f(x0, y1);
 
-                    GL11.glTexCoord2f(glyph.u1, glyph.v1);
-                    GL11.glVertex2f(x1, y1);
+                        GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                        GL11.glVertex2f(x1, y0);
+                    }
 
-                    GL11.glTexCoord2f(glyph.u1, glyph.v0);
-                    GL11.glVertex2f(x1, y0);
+                    // second
+                    {
+                        GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                        GL11.glVertex2f(x1, y0);
+
+                        GL11.glTexCoord2f(glyph.u0, glyph.v1);
+                        GL11.glVertex2f(x0, y1);
+
+                        GL11.glTexCoord2f(glyph.u1, glyph.v1);
+                        GL11.glVertex2f(x1, y1);
+                    }
 
                     xOffset += glyph.width;
                     
