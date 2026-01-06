@@ -117,7 +117,7 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
             }
         };
 
-        button.setShouldSetMouseCursor(true);
+        button.setShouldOverrideMouseCursor(true);
 
         this.addChild(button);
     }

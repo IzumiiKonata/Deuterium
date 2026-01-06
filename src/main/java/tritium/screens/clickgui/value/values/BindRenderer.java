@@ -42,7 +42,7 @@ public class BindRenderer extends AbstractWidget<BindRenderer> {
         final Object[] lastEventReceiver = {null};
 
         rw
-            .setShouldSetMouseCursor(true)
+            .setShouldOverrideMouseCursor(true)
             .setBeforeRenderCallback(() -> {
                 String keyName = this.getKeyName();
 

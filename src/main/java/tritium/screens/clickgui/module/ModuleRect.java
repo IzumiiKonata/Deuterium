@@ -28,7 +28,7 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
             settingsRect
                     .setBounds(132, 0, 10, this.getHeight())
                     .setColor(ClickGui.getColor(8))
-                    .setShouldSetMouseCursor(true)
+                    .setShouldOverrideMouseCursor(true)
                     .setBeforeRenderCallback(() -> {
                         settingsRect.setColor(settingsRect.isHovering() ? ClickGui.getColor(12) : ClickGui.getColor(11));
                     });
@@ -89,7 +89,7 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
 
         this.moduleEnableAlpha = module.isEnabled() ? 1f : 0f;
 
-        this.setShouldSetMouseCursor(true);
+        this.setShouldOverrideMouseCursor(true);
 
         this.setOnClickCallback((rx, ry, i) -> {
 

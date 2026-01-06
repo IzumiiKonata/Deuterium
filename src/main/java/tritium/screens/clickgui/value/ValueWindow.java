@@ -44,7 +44,7 @@ public class ValueWindow extends Window {
 
         back
             .setPosition(4, 2)
-            .setShouldSetMouseCursor(true)
+            .setShouldOverrideMouseCursor(true)
             .setColor(ClickGui.getColor(17))
             .setBeforeRenderCallback(() -> {
                 back.setColor(back.isHovering() ? ClickGui.getColor(18) : ClickGui.getColor(17));

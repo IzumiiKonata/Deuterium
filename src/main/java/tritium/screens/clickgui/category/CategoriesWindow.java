@@ -155,7 +155,7 @@ public class CategoriesWindow extends Window {
         {
             LabelWidget edit = new LabelWidget("b", FontManager.tritium42);
             edit
-                    .setShouldSetMouseCursor(true)
+                    .setShouldOverrideMouseCursor(true)
                     .setColor(this.getColor(4))
                     .setBeforeRenderCallback(() -> {
                         edit.setColor(this.getColor(edit.isHovering() ? 5 : 4));

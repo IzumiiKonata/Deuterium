@@ -81,7 +81,7 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
         };
 
         background
-                .setShouldSetMouseCursor(true)
+                .setShouldOverrideMouseCursor(true)
                 .setBounds(this.getWidth(), 2)
                 .setColor(ClickGui.getColor(25))
                 .setPosition(0, FontManager.pf14.getHeight() + 8)

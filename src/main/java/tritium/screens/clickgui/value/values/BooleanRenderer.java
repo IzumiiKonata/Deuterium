@@ -4,7 +4,6 @@ import tritium.management.FontManager;
 import tritium.rendering.CheckRenderer;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
-import tritium.rendering.ui.widgets.RectWidget;
 import tritium.rendering.ui.widgets.RoundedRectWidget;
 import tritium.screens.ClickGui;
 import tritium.settings.BooleanSetting;
@@ -43,7 +42,7 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
         };
 
         rect
-            .setShouldSetMouseCursor(true)
+            .setShouldOverrideMouseCursor(true)
             .setBounds(this.getWidth() - height, 0, height, height)
             .setBeforeRenderCallback(() -> {
                 rect.setColor(rect.isHovering() ? ClickGui.getColor(22) : ClickGui.getColor(21));

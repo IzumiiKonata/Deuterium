@@ -1,7 +1,6 @@
 package tritium.rendering.ui;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.rendering.RGBA;
@@ -95,7 +94,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
      * 是否应在被指向时更改鼠标指针类型
      */
     @Getter
-    private boolean shouldSetMouseCursor = false;
+    private boolean shouldOverrideMouseCursor = false;
     @Getter
     private boolean bloom = false;
     @Getter
@@ -219,7 +218,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
         // 如果所有的子组件都没有被选中, 且这个组件被选中, 才设置这个组件的 hovering 为 true.
         this.hovering = !childHovering && this.testHovered(mouseX, mouseY);
 
-        if (this.hovering && this.isShouldSetMouseCursor() && this.isClickable()) {
+        if (this.hovering && this.isShouldOverrideMouseCursor()) {
             CursorUtils.setOverride(this.getHoveringCursorType());
         }
 
@@ -227,8 +226,8 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
             this.onDWheelReceived(mouseX, mouseY, dWheel);
     }
 
-    public SELF setShouldSetMouseCursor(boolean shouldSetMouseCursor) {
-        this.shouldSetMouseCursor = shouldSetMouseCursor;
+    public SELF setShouldOverrideMouseCursor(boolean shouldOverrideMouseCursor) {
+        this.shouldOverrideMouseCursor = shouldOverrideMouseCursor;
         return (SELF) this;
     }
 

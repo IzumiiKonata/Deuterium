@@ -119,7 +119,7 @@ public class StringModeRenderer extends AbstractWidget<StringModeRenderer> {
             }
         };
 
-        button.setShouldSetMouseCursor(true);
+        button.setShouldOverrideMouseCursor(true);
 
         this.addChild(button);
     }

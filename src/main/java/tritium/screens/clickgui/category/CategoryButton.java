@@ -35,7 +35,7 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
         this.textSupplier = textSupplier;
         this.onClick = onClick;
 
-        this.setShouldSetMouseCursor(true);
+        this.setShouldOverrideMouseCursor(true);
 
         this.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
 

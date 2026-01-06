@@ -1,16 +1,11 @@
 package tritium.rendering.ui.widgets;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.renderer.GlStateManager;
-import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
-import tritium.settings.ClientSettings;
-
-import java.awt.*;
 
 /**
  * @author IzumiiKonata
@@ -27,7 +22,7 @@ public class IconWidget extends AbstractWidget<IconWidget> {
         this.icon = icon;
         this.fr = fr;
         this.setBounds(x, y, width, height);
-        this.setShouldSetMouseCursor(true);
+        this.setShouldOverrideMouseCursor(true);
     }
 
     float alphaAnim = 0f, alphaAnim2 = 0f;

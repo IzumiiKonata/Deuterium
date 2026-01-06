@@ -12,7 +12,6 @@ import tritium.management.FontManager;
 import tritium.ncm.api.CloudMusicApi;
 import tritium.ncm.music.dto.PlayList;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.AbstractWidget;
@@ -121,7 +120,7 @@ public class HomePanel extends NCMPanel {
                             );
                 });
 
-        playLists.forEach(pl -> scrollPanel.addChild(new PlaylistWidget(pl).setShouldSetMouseCursor(true)));
+        playLists.forEach(pl -> scrollPanel.addChild(new PlaylistWidget(pl).setShouldOverrideMouseCursor(true)));
 
     }
 
@@ -208,7 +207,10 @@ public class HomePanel extends NCMPanel {
                     if (inputStream != null) {
                         NativeBackedImage img = NativeBackedImage.make(inputStream);
                         if (textureManager.getTexture(coverLoc) != null) {
-                            textureManager.deleteTexture(coverLoc);
+                            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
+                                textureManager.deleteTexture(coverLoc);
+                                return null;
+                            });
                         }
                         Textures.loadTexture(coverLoc, img);
                         img.close();

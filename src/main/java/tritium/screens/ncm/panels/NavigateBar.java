@@ -7,13 +7,11 @@ import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import org.lwjgl.input.Keyboard;
-import tritium.ncm.api.CloudMusicApi;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.container.Panel;
@@ -30,7 +28,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 /**
  * @author IzumiiKonata
@@ -189,7 +186,7 @@ public class NavigateBar extends NCMPanel {
                 NCMScreen.getInstance().setCurrentPanel(new HomePanel());
             });
 
-            item.setShouldSetMouseCursor(true);
+            item.setShouldOverrideMouseCursor(true);
 
             this.playlistPanel.addChild(item);
         }
@@ -211,7 +208,7 @@ public class NavigateBar extends NCMPanel {
                 PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", Color.GRAY::getRGB, playList::getName, () -> {
                     NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
                 });
-                item.setShouldSetMouseCursor(true);
+                item.setShouldOverrideMouseCursor(true);
 
                 this.playlistPanel.addChild(item);
             }
@@ -230,7 +227,7 @@ public class NavigateBar extends NCMPanel {
                 PlaylistItem item = new PlaylistItem("D", Color.GRAY::getRGB, playList::getName, () -> {
                     NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
                 });
-                item.setShouldSetMouseCursor(true);
+                item.setShouldOverrideMouseCursor(true);
 
                 this.playlistPanel.addChild(item);
             });

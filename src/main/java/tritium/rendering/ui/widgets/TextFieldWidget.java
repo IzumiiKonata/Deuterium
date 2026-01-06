@@ -6,8 +6,6 @@ import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.utils.cursor.CursorUtils;
 
-import java.awt.*;
-
 /**
  * @author IzumiiKonata
  * Date: 2025/11/8 13:28
@@ -20,7 +18,7 @@ public class TextFieldWidget extends AbstractWidget<TextFieldWidget> {
     public TextFieldWidget(CFontRenderer fontRenderer) {
         this.textField = new TextField(0, 0, 0, 0, 0);
         this.textField.setFontRenderer(fontRenderer);
-        this.setShouldSetMouseCursor(true);
+        this.setShouldOverrideMouseCursor(true);
     }
 
     @Override

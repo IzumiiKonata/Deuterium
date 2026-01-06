@@ -46,7 +46,7 @@ public class ControlsBar extends NCMPanel {
         playingCover
                 .fadeIn()
                 .setLinearFilter(true)
-                .setShouldSetMouseCursor(true)
+                .setShouldOverrideMouseCursor(true)
                 .setBeforeRenderCallback(() -> {
                     playingCover
                             .setMargin(5)
@@ -155,7 +155,7 @@ public class ControlsBar extends NCMPanel {
                 .setColor(Color.GRAY)
                 .setRadius(1)
                 .setBounds(135, 3)
-                .setShouldSetMouseCursor(true)
+                .setShouldOverrideMouseCursor(true)
                 .setBeforeRenderCallback(() -> {
                     progressBarBg
                             .center()

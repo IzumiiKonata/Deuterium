@@ -1,6 +1,5 @@
 package tritium.rendering.ui.widgets;
 
-import tritium.management.FontManager;
 import tritium.rendering.font.CFontRenderer;
 
 import java.awt.*;
@@ -24,7 +23,7 @@ public class RoundedButtonWidget extends RoundedRectWidget {
             lw.center();
         });
 
-        this.setShouldSetMouseCursor(true);
+        this.setShouldOverrideMouseCursor(true);
     }
 
     public RoundedButtonWidget(String label, CFontRenderer fr) {
