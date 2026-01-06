@@ -90,31 +90,33 @@ public class ConfigManager extends AbstractManager {
         WidgetsManager.getWidgets().removeIf(w -> w instanceof StaticTextureWidget || w instanceof GifTextureWidget);
 
         try {
-            @Cleanup
-            Reader fileReader = new BufferedReader(new InputStreamReader(Files.newInputStream(configFile.toPath()), StandardCharsets.UTF_8));
-            JsonObject config = JsonUtils.toJsonObject(fileReader);
+            if (configFile.exists()) {
+                @Cleanup
+                Reader fileReader = new BufferedReader(new InputStreamReader(Files.newInputStream(configFile.toPath()), StandardCharsets.UTF_8));
+                JsonObject config = JsonUtils.toJsonObject(fileReader);
 
-            JsonObject modules = config.get("Modules").getAsJsonObject();
+                JsonObject modules = config.get("Modules").getAsJsonObject();
 
-            modules.entrySet().forEach(m -> {
-                client.getModuleManager().getModuleByName(m.getKey()).ifPresentOrElse(mod -> {
-                    mod.loadConfig(m.getValue().getAsJsonObject());
-                }, () -> {
-                    this.logger.error("Module {} is missing!", m.getKey());
-                });
-            });
-
-            JsonObject widgets = config.get("Widgets").getAsJsonObject();
-
-            widgets.entrySet().forEach(w -> {
-
-                client.getWidgetsManager().getWidgetByName(w.getKey()).ifPresentOrElse(wid -> {
-                    wid.loadConfig(w.getValue().getAsJsonObject());
-                }, () -> {
-                    this.logger.error("Widget {} is missing!", w.getKey());
+                modules.entrySet().forEach(m -> {
+                    client.getModuleManager().getModuleByName(m.getKey()).ifPresentOrElse(mod -> {
+                        mod.loadConfig(m.getValue().getAsJsonObject());
+                    }, () -> {
+                        this.logger.error("Module {} is missing!", m.getKey());
+                    });
                 });
 
-            });
+                JsonObject widgets = config.get("Widgets").getAsJsonObject();
+
+                widgets.entrySet().forEach(w -> {
+
+                    client.getWidgetsManager().getWidgetByName(w.getKey()).ifPresentOrElse(wid -> {
+                        wid.loadConfig(w.getValue().getAsJsonObject());
+                    }, () -> {
+                        this.logger.error("Widget {} is missing!", w.getKey());
+                    });
+
+                });
+            }
 
 
             if (commandValuesFile.exists())
