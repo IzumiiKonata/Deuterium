@@ -1073,7 +1073,11 @@ public class Minecraft implements IThreadListener {
         }
 
         GlStateManager.pushMatrix();
-//        GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+
+        if (this.theWorld == null) {
+            GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+        }
+
         this.framebufferMc.bindFramebuffer(true);
         GlStateManager.enableTexture2D();
 
