@@ -416,7 +416,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                 char c = charArray[j];
 
                                 FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha * .5f));
-                                x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                                x += FontManager.pf65bold.getCharWidth(c, j + 1 < charArray.length ? charArray[j + 1] : '\0');
                             }
                         } else {
                             FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasizes[0], hexColor(1, 1, 1, alpha * .5f));
@@ -446,7 +446,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                     word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
 
                                 FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha * lyric.alpha));
-                                x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                                x += FontManager.pf65bold.getCharWidth(c, j + 1 < charArray.length ? charArray[j + 1] : '\0');
                             }
                         }
 
@@ -497,7 +497,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                     }
 
                                     FontManager.pf65bold.drawString(String.valueOf(c), x, 2 - word.emphasizes[j], hexColor(1, 1, 1, alpha * lyric.alpha));
-                                    x += FontManager.pf65bold.getStringWidthD(String.valueOf(c));
+                                    x += FontManager.pf65bold.getCharWidth(c, j + 1 < charArray.length ? charArray[j + 1] : '\0');
                                 }
                             }
 

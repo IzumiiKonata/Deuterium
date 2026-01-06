@@ -187,7 +187,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         double yOffset = 0;
         boolean inSel = false;
 
-        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+        // TODO: replace with GL_TRIANGLE_STRIP for a better performance
+        GL11.glBegin(GL11.GL_QUADS);
 
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
@@ -216,8 +217,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             if (c == '\n') {
                 yOffset += this.getHeight() * 2 + 4;
                 xOffset = 0;
-                GL11.glEnd();
-                GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+//                GL11.glEnd();
+//                GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
                 continue;
             }
 
@@ -237,17 +238,17 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 GL11.glTexCoord2f(glyph.u0, glyph.v1);
                 GL11.glVertex2f(x0, y1);
 
-                GL11.glTexCoord2f(glyph.u1, glyph.v0);
-                GL11.glVertex2f(x1, y0);
-
                 GL11.glTexCoord2f(glyph.u1, glyph.v1);
                 GL11.glVertex2f(x1, y1);
+
+                GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                GL11.glVertex2f(x1, y0);
 
                 xOffset += glyph.width;
                 
                 // 添加字间距
                 if (fontKerning != null && nextChar != '\0' && nextChar != '§' && nextChar != '\n') {
-                    xOffset += fontKerning.getKerning(c, nextChar, sizePx) * 4;
+                    xOffset += fontKerning.getKerning(c, nextChar, sizePx) * 2;
                 }
             } else {
                 allLoaded = false;
@@ -351,7 +352,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             int callList = GL11.glGenLists(1);
 
             GL11.glNewList(callList, GL11.GL_COMPILE);
-            GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+            GL11.glBegin(GL11.GL_QUADS);
 
             for (int i = 0; i < string.length(); i++) {
                 char c = string.charAt(i);
@@ -360,8 +361,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                 if (c == '\n') {
                     yOffset += CFontRenderer.this.getHeight() * 2 + 4;
                     xOffset = 0;
-                    GL11.glEnd();
-                    GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+//                    GL11.glEnd();
+//                    GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
                     continue;
                 }
 
@@ -381,17 +382,17 @@ public class CFontRenderer implements Closeable, IFontRenderer {
                     GL11.glTexCoord2f(glyph.u0, glyph.v1);
                     GL11.glVertex2f(x0, y1);
 
-                    GL11.glTexCoord2f(glyph.u1, glyph.v0);
-                    GL11.glVertex2f(x1, y0);
-
                     GL11.glTexCoord2f(glyph.u1, glyph.v1);
                     GL11.glVertex2f(x1, y1);
+
+                    GL11.glTexCoord2f(glyph.u1, glyph.v0);
+                    GL11.glVertex2f(x1, y0);
 
                     xOffset += glyph.width;
                     
                     // 添加字间距
                     if (fontKerning != null && nextChar != '\0' && nextChar != '§' && nextChar != '\n') {
-                        xOffset += fontKerning.getKerning(c, nextChar, sizePx) * 4;
+                        xOffset += fontKerning.getKerning(c, nextChar, sizePx) * 2;
                     }
                 }
             }
@@ -599,7 +600,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return getCharWidth(ch, '\0');
     }
 
-    float getCharWidth(char ch, char nextChar) {
+    public float getCharWidth(char ch, char nextChar) {
         Glyph glyph = allGlyphs[ch];
 
         if (glyph == null)
@@ -609,7 +610,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         
         // 添加字间距
         if (fontKerning != null && nextChar != '\0') {
-            width += fontKerning.getKerning(ch, nextChar, sizePx) * 2;
+            width += fontKerning.getKerning(ch, nextChar, sizePx);
         }
         
         return width;
