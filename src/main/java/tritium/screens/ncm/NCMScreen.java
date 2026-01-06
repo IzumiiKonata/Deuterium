@@ -69,6 +69,11 @@ public class NCMScreen extends BaseScreen {
                 this.setCurrentPanel(new HomePanel());
         }
 
+        if (CloudMusic.profile != null && CloudMusic.playLists != null && this.playlistsPanel.getPlaylistPanel().getChildren().stream().noneMatch(c -> c instanceof NavigateBar.PlaylistItem item && !item.getIcon().equals("A"))) {
+            this.layout();
+            this.setCurrentPanel(new HomePanel());
+        }
+
         if (this.musicLyricsPanel != null)
             this.musicLyricsPanel.onInit();
 
