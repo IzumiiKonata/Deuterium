@@ -148,6 +148,8 @@ public class CloudMusic {
         ConsoleScreen.log("[NCM] Loaded {} playlists", playLists.size());
 
         likeList = likeList();
+
+        NCMScreen.getInstance().markDirty();
     }
 
     @SneakyThrows

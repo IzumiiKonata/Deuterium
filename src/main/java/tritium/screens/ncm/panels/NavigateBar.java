@@ -39,8 +39,6 @@ import java.util.stream.Collectors;
 public class NavigateBar extends NCMPanel {
 
     TextFieldWidget searchField = new TextFieldWidget(FontManager.pf14bold);
-
-    @Getter
     ScrollPanel playlistPanel = new ScrollPanel();
 
     public NavigateBar() {
@@ -313,7 +311,6 @@ public class NavigateBar extends NCMPanel {
 
     public static class PlaylistItem extends Panel {
 
-        @Getter
         String icon;
         Supplier<Integer> iconColorSupplier;
         Supplier<String> label;

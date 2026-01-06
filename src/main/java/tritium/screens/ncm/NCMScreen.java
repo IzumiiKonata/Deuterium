@@ -52,6 +52,8 @@ public class NCMScreen extends BaseScreen {
 
     public MusicLyricsPanel musicLyricsPanel = null;
 
+    private boolean dirty = true;
+
     public NCMScreen() {
 
     }
@@ -61,23 +63,27 @@ public class NCMScreen extends BaseScreen {
         alpha = 0f;
         closing = false;
 
-        if (this.playlistsPanel == null) {
+        this.checkDirty();
+
+        if (this.musicLyricsPanel != null)
+            this.musicLyricsPanel.onInit();
+
+        Keyboard.enableRepeatEvents(true);
+    }
+
+    public void markDirty() {
+        this.dirty = true;
+    }
+
+    public void checkDirty() {
+        if (this.dirty) {
+            this.dirty = false;
             this.layout();
 
             // only when logged in
             if (CloudMusic.profile != null)
                 this.setCurrentPanel(new HomePanel());
         }
-
-        if (CloudMusic.profile != null && CloudMusic.playLists != null && this.playlistsPanel.getPlaylistPanel().getChildren().stream().noneMatch(c -> c instanceof NavigateBar.PlaylistItem item && !item.getIcon().equals("A"))) {
-            this.layout();
-            this.setCurrentPanel(new HomePanel());
-        }
-
-        if (this.musicLyricsPanel != null)
-            this.musicLyricsPanel.onInit();
-
-        Keyboard.enableRepeatEvents(true);
     }
 
     @Override
@@ -131,6 +137,8 @@ public class NCMScreen extends BaseScreen {
 //        Shaders.GAUSSIAN_BLUR_SHADER.run(Collections.singletonList(() -> {
 //            Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), hexColor(1, 1, 1, alpha));
 //        }));
+
+        this.checkDirty();
 
         int dWheel = Mouse.getDWheel();
 
