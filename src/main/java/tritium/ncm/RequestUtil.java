@@ -1,7 +1,5 @@
 package tritium.ncm;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import lombok.Builder;
 import lombok.Data;
@@ -132,7 +130,10 @@ public class RequestUtil {
         private String crypto;
         private String ua;
         private String proxy;
-        private Boolean eR;
+        /**
+         * 如果为 null 的话则使用 APP_CONF 的默认值
+         */
+        private Boolean encryptedResponse;
     }
 
     @Data
@@ -387,7 +388,7 @@ public class RequestUtil {
                         }
                         eapiData.put("header", header);
 
-                        Boolean eR = options.getER() != null ? options.getER() : APP_CONF.isEncryptResponse();
+                        boolean eR = options.getEncryptedResponse() != null ? options.getEncryptedResponse() : APP_CONF.isEncryptResponse();
                         eapiData.put("e_r", eR);
 
                         CryptoUtil.EapiResult eapiResult = CryptoUtil.eapi(uri, eapiData);
@@ -475,7 +476,7 @@ public class RequestUtil {
                     .build();
 
             if (!responseBody.isEmpty()) {
-                if (Boolean.TRUE.equals(options.getER()) && "eapi".equals(crypto)) {
+                if (Boolean.TRUE.equals(options.getEncryptedResponse()) && "eapi".equals(crypto)) {
                     try {
                         answer.setBody(CryptoUtil.eapiResDecrypt(responseBody));
                     } catch (Exception e) {

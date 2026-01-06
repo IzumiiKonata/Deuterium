@@ -20,19 +20,17 @@ public class OptionsUtil {
     }
 
     public RequestUtil.RequestOptions createOptions() {
-
         return createOptions("");
     }
 
     public RequestUtil.RequestOptions createOptions(String crypto) {
-
         return RequestUtil.RequestOptions.builder()
                 .crypto(crypto)
                 .cookie(COOKIE)
                 .ua("")
                 .proxy("")
 //                .realIP("123.168.116.9")
-                .eR(null)
+                .encryptedResponse(null)
                 .build();
     }
 
