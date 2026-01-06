@@ -60,13 +60,13 @@ public class Interface extends Module {
             }
         }
 
-        FontManager.arial14.drawString("Av Aw Ay Az Fa Fe Fi Fo Fu Kv Kw Ky", 100, 100, -1);
-        FontManager.arial14.drawString("Pa Pe Po Ta Te Ti To Tr Ts Tu Ty", 100, 120, -1);
-        FontManager.arial14.drawString("Va Ve Vo Vr Vu Vy Wa We Wr Wv Wy", 100, 140, -1);
-        FontManager.arial14.drawString("AC AT AVA AWA AYA AV AW AY AZ", 100, 160, -1);
-        FontManager.arial14.drawString("CT CYC FA FE FO KV KW KY LO LV LY", 100, 180, -1);
-        FontManager.arial14.drawString("NG OD PA PA PE PO TA TA TE TI TO TR TS TU TY", 100, 200, -1);
-        FontManager.arial14.drawString("UA VA VA VE VO VR VU VY WA WO WA WE WR WV WY YS", 100, 220, -1);
+//        FontManager.arial14.drawString("Av Aw Ay Az Fa Fe Fi Fo Fu Kv Kw Ky", 100, 100, -1);
+//        FontManager.arial14.drawString("Pa Pe Po Ta Te Ti To Tr Ts Tu Ty", 100, 120, -1);
+//        FontManager.arial14.drawString("Va Ve Vo Vr Vu Vy Wa We Wr Wv Wy", 100, 140, -1);
+//        FontManager.arial14.drawString("AC AT AVA AWA AYA AV AW AY AZ", 100, 160, -1);
+//        FontManager.arial14.drawString("CT CYC FA FE FO KV KW KY LO LV LY", 100, 180, -1);
+//        FontManager.arial14.drawString("NG OD PA PA PE PO TA TA TE TI TO TR TS TU TY", 100, 200, -1);
+//        FontManager.arial14.drawString("UA VA VA VE VO VR VU VY WA WO WA WE WR WV WY YS", 100, 220, -1);
 
 //        mc.fontRendererObj.drawString(EnumChatFormatting.BOLD + "你的妈妈死掉了ABCDEFGH", 100, 100, 0xff0090ff);
 
