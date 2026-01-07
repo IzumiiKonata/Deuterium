@@ -154,9 +154,10 @@ public class Display {
         drawable = new DrawableGL();
         GL.createCapabilities(false);
 
-        ConsoleScreen.log("[GL] OpenGL Version: {}", GL11.glGetString(GL11.GL_VERSION));
         ConsoleScreen.log("[GL] Renderer: {}", GL11.glGetString(GL11.GL_RENDERER));
+        ConsoleScreen.log("[GL] OpenGL version supported by renderer: {}", GL11.glGetString(GL11.GL_VERSION));
         ConsoleScreen.log("[GL] Vendor: {}", GL11.glGetString(GL11.GL_VENDOR));
+        ConsoleScreen.log("[GL] Selecting OpenGL {}.{}", glfwGetWindowAttrib(Window.handle, GLFW_CONTEXT_VERSION_MAJOR), glfwGetWindowAttrib(Window.handle, GLFW_CONTEXT_VERSION_MINOR));
 
         GL11.glClearColor(0, 0, 0, 1);
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
