@@ -357,7 +357,10 @@ public class PlaylistPanel extends NCMPanel {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
                     MultiThreadingUtil.runAsync(() -> {
                         if (textureManager.getTexture(avatarLoc) != null) {
-                            textureManager.deleteTexture(avatarLoc);
+                            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
+                                textureManager.deleteTexture(avatarLoc);
+                                return null;
+                            });
                         }
                         Textures.loadTexture(avatarLoc, img);
                         img.close();
