@@ -75,10 +75,22 @@ public class CommandValues {
                 ConsoleScreen.log(set(f, arg));
             }, f.getType(), getArgumentDescForValue(f));
 
+            // print the value if no arg specified
+            CommandManager.CommandRegisteredCallback cbLog = CommandManager.registerCommand(serializedName.value(), () -> {
+                try {
+                    ConsoleScreen.log("{} = {}", serializedName.value(), f.get(values));
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                    ConsoleScreen.log("{}Failed!", EnumChatFormatting.RED);
+                }
+            });
+
             CommandDesc desc = f.getAnnotation(CommandDesc.class);
 
-            if (desc != null)
+            if (desc != null) {
                 cb.setDescription(desc.value());
+                cbLog.setDescription(desc.value());
+            }
         }
 
     }
