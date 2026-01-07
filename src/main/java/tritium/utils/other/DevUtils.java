@@ -1,6 +1,13 @@
 package tritium.utils.other;
 
+import net.minecraft.util.EnumChatFormatting;
+import org.lwjgl.input.Keyboard;
 import tritium.Tritium;
+import tritium.command.CommandValues;
+import tritium.management.CommandManager;
+import tritium.management.ModuleManager;
+import tritium.screens.ConsoleScreen;
+import tritium.utils.other.info.Version;
 
 import java.util.Base64;
 
@@ -45,6 +52,16 @@ public class DevUtils {
         } catch (Exception ignored) {
             return true;
         }
+    }
+
+    public static void registerDevCommand() {
+        CommandManager.registerCommand("setup_dev_settings", () -> {
+            CommandValues.Values values = CommandValues.getValues();
+            values.cl_skip_world_rendering = true;
+            values.cl_show_crosshair = values.cl_show_hotbar = false;
+            ModuleManager.openNCMScreen.setKeyBind(Keyboard.KEY_L);
+            ConsoleScreen.log("{}ok", EnumChatFormatting.GREEN);
+        });
     }
 
 }

@@ -180,6 +180,8 @@ public class Tritium {
                     String currentCommit = VersionUtils.getCurrentCommitShort();
                     version = new Version(currentCommit, branch);
                     logger.setOverrideLevel(LogLevel.DEBUG);
+
+                    DevUtils.registerDevCommand();
                 }
             );
     }
