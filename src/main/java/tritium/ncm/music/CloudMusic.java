@@ -18,6 +18,7 @@ import org.kc7bfi.jflac.PCMProcessor;
 import org.kc7bfi.jflac.metadata.StreamInfo;
 import org.kc7bfi.jflac.util.ByteData;
 import org.kc7bfi.jflac.util.WavWriter;
+import tritium.Tritium;
 import tritium.management.CommandManager;
 import tritium.ncm.OptionsUtil;
 import tritium.ncm.api.CloudMusicApi;
@@ -386,7 +387,7 @@ public class CloudMusic {
         }
 
         private File getCachedOrTempFile(String playUrl, String type, Music song) {
-            File musicCacheDir = new File("MusicCache");
+            File musicCacheDir = new File(ConfigManager.configDir, "MusicCache");
 
             if (!musicCacheDir.exists()) {
                 musicCacheDir.mkdir();
