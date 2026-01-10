@@ -86,6 +86,9 @@ public class MusicToast implements SharedRenderingConstants {
             double offsetX = offset + 1;
             double offsetY = 1;
 
+            if (!forward && offset + toastWidth < 0)
+                return;
+
             if (forward && offset >= -.5) {
 
                 if (waitStart == -1L) {

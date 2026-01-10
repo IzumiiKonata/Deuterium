@@ -1,6 +1,7 @@
 package tritium.rendering.shader;
 
 import lombok.Getter;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GLAllocation;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
@@ -46,7 +47,9 @@ public class ShaderProgram implements SharedConstants {
     }
 
     static double lastWidth = -1, lastHeight = -1;
+    static double lastWidthSr = -1, lastHeightSr = -1;
     static int callList = -1;
+    static int callListSr = -1;
 
     public static void drawQuadFlipped() {
 
@@ -66,6 +69,28 @@ public class ShaderProgram implements SharedConstants {
         }
 
         GL11.glCallList(callList);
+
+//        drawQuadFlipped(0.0, 0.0, RenderSystem.getWidth(), RenderSystem.getHeight());
+    }
+
+    public static void drawQuadFlippedScaledResolution() {
+
+        if (lastWidthSr != ScaledResolution.get().getScaledWidth() || lastHeightSr != ScaledResolution.get().getScaledHeight()) {
+            lastWidthSr = ScaledResolution.get().getScaledWidth();
+            lastHeightSr = ScaledResolution.get().getScaledHeight();
+
+            if (callListSr != -1)
+                GLAllocation.deleteDisplayLists(callListSr);
+
+            callListSr = GLAllocation.generateDisplayLists(1);
+
+            GL11.glNewList(callListSr, GL11.GL_COMPILE);
+            drawQuadFlipped(0.0, 0.0, ScaledResolution.get().getScaledWidth(), ScaledResolution.get().getScaledHeight());
+            GL11.glEndList();
+
+        }
+
+        GL11.glCallList(callListSr);
 
 //        drawQuadFlipped(0.0, 0.0, RenderSystem.getWidth(), RenderSystem.getHeight());
     }

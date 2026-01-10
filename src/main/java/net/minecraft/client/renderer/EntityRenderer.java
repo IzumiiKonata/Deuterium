@@ -1239,7 +1239,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 long k = System.nanoTime() - nanoTime;
                 long l = Math.max((long) (1000000000 / j / 4) - k, 0L);
                 if (CommandValues.getValues().cl_skip_world_rendering) {
-                    GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
+//                    GlStateManager.clear(GL11.GL_COLOR_BUFFER_BIT | GL11.GL_DEPTH_BUFFER_BIT);
                 } else {
                     this.renderWorld(partialTicks, System.nanoTime() + l);
                 }

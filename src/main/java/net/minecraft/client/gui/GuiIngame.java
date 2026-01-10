@@ -186,7 +186,6 @@ public class GuiIngame extends Gui {
             }
         }
 
-        // 这里是方块人原版的 GuiIngame的内容
         if (!ClientSettings.GUIINGAME_CACHE.getValue() || dirty) {
             int i = scaledresolution.getScaledWidth();
             int j = scaledresolution.getScaledHeight();
@@ -361,7 +360,7 @@ public class GuiIngame extends Gui {
             GlStateManager.enableTexture2D();
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-            ShaderProgram.drawQuadFlipped(0, 0, scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight());
+            ShaderProgram.drawQuadFlippedScaledResolution();
         }
 
         GlStateManager.pushMatrix();
