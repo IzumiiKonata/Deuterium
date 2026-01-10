@@ -1846,7 +1846,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 Shaders.renderCompositeFinal();
             }
 
-//            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 
             if (flag) {
                 ShadersRender.renderFPOverlay(this, partialTicks, pass);
