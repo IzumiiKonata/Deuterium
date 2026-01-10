@@ -153,25 +153,11 @@ public class MusicSpectrumWidget extends Widget {
                 GlStateManager.disableTexture2D();
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-                GlStateManager.pushMatrix();
-
-                GL11.glDepthMask(false);
-                GL11.glDepthFunc(GL11.GL_ALWAYS);
-
                 GL11.glBegin(GL11.GL_TRIANGLES);
                 int step = compatMode ? 8 : 3;
                 spectrumWidth.set((compatMode ? this.getWidth() : RenderSystem.getWidth()) / ((double) renderSpectrum.length / step));
                 this.drawRect(spectrumWidth.get(), renderSpectrum.length, step);
                 GL11.glEnd();
-
-                GL11.glDepthFunc(GL11.GL_LEQUAL);
-                GL11.glDepthMask(true);
-
-                GlStateManager.popMatrix();
-
-                GlStateManager.enableTexture2D();
-
-                GL11.glColor4f(1, 1, 1, 1);
             }
 
             if (waveform) {
@@ -220,7 +206,7 @@ public class MusicSpectrumWidget extends Widget {
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
                 GlStateManager.color(1, 1, 1, 1);
-                GL11.glDisable(GL11.GL_TEXTURE_2D);
+                GlStateManager.disableTexture2D();
                 GL11.glEnable(GL11.GL_LINE_SMOOTH);
                 GL11.glLineWidth(compatMode ? .75f : 1.0f);
 
@@ -253,7 +239,6 @@ public class MusicSpectrumWidget extends Widget {
                 }
 
                 GL11.glEnd();
-                GL11.glEnable(GL11.GL_TEXTURE_2D);
             }
 
             if (rect) {
@@ -370,13 +355,13 @@ public class MusicSpectrumWidget extends Widget {
 
             GlStateManager.color(r, g, b, a);
 
-            GL11.glVertex3d(left, bottom, 0.0D);
-            GL11.glVertex3d(left, top, 0.0D);
-            GL11.glVertex3d(right, bottom, 0.0D);
+            GL11.glVertex2d(right, bottom);
+            GL11.glVertex2d(left, top);
+            GL11.glVertex2d(left, bottom);
 
-            GL11.glVertex3d(right, bottom, 0.0D);
-            GL11.glVertex3d(left, top, 0.0D);
-            GL11.glVertex3d(right, top, 0.0D);
+            GL11.glVertex2d(right, top);
+            GL11.glVertex2d(left, top);
+            GL11.glVertex2d(right, bottom);
 
             if (this.indicator.getValue()) {
 
@@ -400,13 +385,13 @@ public class MusicSpectrumWidget extends Widget {
                     bottom = j1;
                 }
 
-                GL11.glVertex3d(left, bottom, 0.0D);
-                GL11.glVertex3d(left, top, 0.0D);
-                GL11.glVertex3d(right, bottom, 0.0D);
+                GL11.glVertex2d(right, bottom);
+                GL11.glVertex2d(left, top);
+                GL11.glVertex2d(left, bottom);
 
-                GL11.glVertex3d(right, bottom, 0.0D);
-                GL11.glVertex3d(left, top, 0.0D);
-                GL11.glVertex3d(right, top, 0.0D);
+                GL11.glVertex2d(right, top);
+                GL11.glVertex2d(left, top);
+                GL11.glVertex2d(right, bottom);
             }
 
         }
