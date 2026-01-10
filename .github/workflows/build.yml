@@ -97,7 +97,7 @@ jobs:
           mkdir release/Tritium/PCL
           cp Release/icon.png release/Tritium/PCL/Logo.png
           cat > release/Tritium/PCL/Setup.ini << EOF
-          State:1
+          State:4
           Info:Tritium Client
           Logo:PCL\Logo.png
           ReleaseTime:2015-12-03 17:24
@@ -106,11 +106,9 @@ jobs:
           VersionLiteLoader:False
           VersionForge:
           VersionNeoForge:
-          VersionApiCode:-1
-          VersionOriginal:1.8.9
-          VersionOriginalMain:8
-          VersionOriginalSub:9
-          VersionArgumentIndieV2:True
+          VersionVanillaName:1.8.9
+          VersionVanilla:8.0.9
+          VersionArgumentIndieV2:False
           LogoCustom:True
           DisplayType:3
           CustomInfo:Tritium Client
