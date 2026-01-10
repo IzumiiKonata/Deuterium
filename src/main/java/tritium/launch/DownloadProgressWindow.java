@@ -44,7 +44,8 @@ public class DownloadProgressWindow extends JFrame {
         if (progress > 100) progress = 100;
         
         int finalProgress = progress;
-        SwingUtilities.invokeLater(() -> progressBar.setValue(finalProgress));
+        if (finalProgress != progressBar.getValue())
+            SwingUtilities.invokeLater(() -> progressBar.setValue(finalProgress));
     }
     
     /**
