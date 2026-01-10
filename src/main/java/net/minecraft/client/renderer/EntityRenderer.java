@@ -1254,7 +1254,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                     if (fixedScale) {
                         GlStateManager.color(1f, 1f, 1f, 1f);
-                        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//                        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.loadIdentity();
                         GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5, 0.0D, 1000.0D, 3000.0D);
@@ -1322,7 +1322,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 GlStateManager.loadIdentity();
 
                 if (this.mc.currentScreen instanceof BaseScreen && fixedScale) {
-                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                     GlStateManager.matrixMode(GL11.GL_PROJECTION);
                     GlStateManager.loadIdentity();
                     GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5,
@@ -1340,13 +1340,13 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             }
 
             if (this.mc.currentScreen != null) {
-                GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//                GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 
                 try {
 
                     if (this.mc.currentScreen instanceof BaseScreen && fixedScale) {
                         GlStateManager.pushMatrix();
-                        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//                        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                         GlStateManager.matrixMode(GL11.GL_PROJECTION);
                         GlStateManager.pushMatrix();
                         GlStateManager.loadIdentity();
@@ -1414,7 +1414,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
                 if (fixedScale) {
                     GlStateManager.pushMatrix();
-                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
                     GlStateManager.matrixMode(GL11.GL_PROJECTION);
                     GlStateManager.loadIdentity();
                     GlStateManager.ortho(0.0D, RenderSystem.getFixedWidth() * .5, RenderSystem.getFixedHeight() * .5,
@@ -1846,7 +1846,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                 Shaders.renderCompositeFinal();
             }
 
-            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//            GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
 
             if (flag) {
                 ShadersRender.renderFPOverlay(this, partialTicks, pass);
@@ -2121,7 +2121,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
      */
     public void setupOverlayRendering() {
         ScaledResolution scaledresolution = ScaledResolution.get();
-        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+//        GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.loadIdentity();
         GlStateManager.ortho(0.0D, scaledresolution.getScaledWidth_double(), scaledresolution.getScaledHeight_double(), 0.0D, 1000.0D, 3000.0D);
