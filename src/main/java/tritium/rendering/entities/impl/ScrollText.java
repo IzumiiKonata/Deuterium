@@ -50,10 +50,13 @@ public class ScrollText {
         anim.reset();
         anim.setStartValue(0);
         anim.setValue(0);
+        leftGradientAlpha = 1f;
+        isScrolling = false;
     }
 
     static Framebuffer fb = null, fbStencil = null;
-    float leftGradientAlpha = 0f;
+    float leftGradientAlpha = 1f;
+    public boolean isScrolling = false;
 
     public void render(CFontRenderer fr, String text, double x, double y, double width, int color) {
 
@@ -67,15 +70,26 @@ public class ScrollText {
 
         if (w > width) {
 
+            isScrolling = true;
+
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
+            GlStateManager.pushMatrix();
+            GlStateManager.loadIdentity();
+            GlStateManager.ortho(0.0D, Minecraft.getMinecraft().displayWidth * .5, Minecraft.getMinecraft().displayHeight * .5, 0.0D, 1000.0D, 3000.0D);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+            GlStateManager.pushMatrix();
+            GlStateManager.loadIdentity();
+            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+
             fb = RenderSystem.createFrameBuffer(fb);
             fb.bindFramebuffer(true);
             fb.setFramebufferColor(1, 1, 1, 0);
             fb.framebufferClearNoBinding();
 
             double gradWidth = 6;
+            double exp = 2;
 
             StencilClipManager.beginClip(() -> {
-                double exp = 2;
                 Rect.draw(x, y - exp, width, fr.getHeight() + exp * 2, -1, Rect.RectType.EXPAND);
             });
 
@@ -119,14 +133,22 @@ public class ScrollText {
             fbStencil.setFramebufferColor(1, 1, 1, 0);
             fbStencil.framebufferClearNoBinding();
 
-            RenderSystem.drawGradientRectLeftToRight(x, y, x + gradWidth, y + fr.getHeight(), RGBA.color(1f, 1f, 1f, this.leftGradientAlpha), 0xFFFFFFFF);
-            Rect.draw(x + gradWidth, y, width - gradWidth * 2, fr.getHeight(), -1);
-            RenderSystem.drawGradientRectLeftToRight(x + width - gradWidth, y, x + width, y + fr.getHeight(), 0xFFFFFFFF, 0x00FFFFFF);
+            RenderSystem.drawGradientRectLeftToRight(x, y - exp, x + gradWidth, y + fr.getHeight() + exp * 2, RGBA.color(1f, 1f, 1f, this.leftGradientAlpha), 0xFFFFFFFF);
+            Rect.draw(x + gradWidth, y - exp, width - gradWidth * 2, fr.getHeight() + exp * 2, -1);
+            RenderSystem.drawGradientRectLeftToRight(x + width - gradWidth, y - exp, x + width, y + fr.getHeight() + exp * 2, 0xFFFFFFFF, 0x00FFFFFF);
 
             Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
-            Shaders.STENCIL.draw(fb.framebufferTexture, fbStencil.framebufferTexture, 0, 0, RenderSystem.getWidth(), RenderSystem.getHeight());
+            GlStateManager.popMatrix();
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
+            GlStateManager.popMatrix();
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+            Shaders.STENCIL.draw(fb.framebufferTexture, fbStencil.framebufferTexture, 0, 0, fb.framebufferWidth * .5, fb.framebufferHeight * .5);
         } else {
+
+            isScrolling = false;
+
             scrollOffset = 0;
             fr.drawString(text, x, y, color);
         }
