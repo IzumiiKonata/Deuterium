@@ -1,12 +1,20 @@
 package tritium.rendering.entities.impl;
 
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.shader.Framebuffer;
+import org.lwjgl.opengl.GL11;
+import tritium.management.FontManager;
+import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.font.CFontRenderer;
+import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.shader.Shaders;
 import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
 
@@ -44,6 +52,9 @@ public class ScrollText {
         anim.setValue(0);
     }
 
+    static Framebuffer fb = null, fbStencil = null;
+    float leftGradientAlpha = 0f;
+
     public void render(CFontRenderer fr, String text, double x, double y, double width, int color) {
 
         if (!cachedText.equals(text)) {
@@ -55,6 +66,13 @@ public class ScrollText {
         double w = fr.getStringWidthD(text);
 
         if (w > width) {
+
+            fb = RenderSystem.createFrameBuffer(fb);
+            fb.bindFramebuffer(true);
+            fb.setFramebufferColor(1, 1, 1, 0);
+            fb.framebufferClearNoBinding();
+
+            double gradWidth = 6;
 
             StencilClipManager.beginClip(() -> {
                 double exp = 2;
@@ -73,21 +91,41 @@ public class ScrollText {
 
                 dest = -(w + fr.getStringWidth(s));
 
-                if (t.isDelayed(waitTime)) {
+                boolean delayed = t.isDelayed(waitTime);
+                if (delayed) {
                     scrollOffset = Interpolations.interpLinear((float) scrollOffset, (float) dest, 2f);
+                    this.leftGradientAlpha = Interpolations.interpLinear(this.leftGradientAlpha, 0f, 0.5f);
                 }
 
                 fr.drawString(s + text, x + w + scrollOffset, y, color);
 
-                if (Math.abs(dest - scrollOffset) == 0) {
+                double delta = scrollOffset - dest;
+
+                if (delta == 0) {
                     scrollOffset = 0;
                     t.reset();
+                }
+
+                if (delta <= gradWidth + 1) {
+                    this.leftGradientAlpha = 1f;
                 }
 
             }
 
             StencilClipManager.endClip();
 
+            fbStencil = RenderSystem.createFrameBuffer(fbStencil);
+            fbStencil.bindFramebuffer(true);
+            fbStencil.setFramebufferColor(1, 1, 1, 0);
+            fbStencil.framebufferClearNoBinding();
+
+            RenderSystem.drawGradientRectLeftToRight(x, y, x + gradWidth, y + fr.getHeight(), RGBA.color(1f, 1f, 1f, this.leftGradientAlpha), 0xFFFFFFFF);
+            Rect.draw(x + gradWidth, y, width - gradWidth * 2, fr.getHeight(), -1);
+            RenderSystem.drawGradientRectLeftToRight(x + width - gradWidth, y, x + width, y + fr.getHeight(), 0xFFFFFFFF, 0x00FFFFFF);
+
+            Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
+
+            Shaders.STENCIL.draw(fb.framebufferTexture, fbStencil.framebufferTexture, 0, 0, RenderSystem.getWidth(), RenderSystem.getHeight());
         } else {
             scrollOffset = 0;
             fr.drawString(text, x, y, color);

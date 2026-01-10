@@ -18,7 +18,7 @@ public class FramebufferCaching {
     private static final List<Framebuffer> LIST = new ArrayList<>();
 
     public static void setOverridingFramebuffer(Framebuffer buffer) {
-        LIST.add(0, buffer);
+        LIST.addFirst(buffer);
     }
 
     public static Framebuffer getOverridingFramebuffer() {
@@ -26,11 +26,11 @@ public class FramebufferCaching {
         if (LIST.isEmpty())
             return null;
 
-        return LIST.get(0);
+        return LIST.getFirst();
     }
 
     public static void removeCurrentlyBinding() {
-        LIST.remove(0);
+        LIST.removeFirst();
     }
 
 }
