@@ -9,6 +9,7 @@ import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
+import tritium.rendering.animation.Interpolations;
 import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.widgets.LabelWidget;
@@ -36,22 +37,59 @@ public class MusicWidget extends RoundedRectWidget {
         this.music = music;
         this.playList = playList;
 
+        RoundedRectWidget rrHoverIndicator = new RoundedRectWidget();
+        this.addChild(rrHoverIndicator);
+        rrHoverIndicator
+                .setAlpha(0f)
+                .setClickable(false);
+        rrHoverIndicator.setBeforeRenderCallback(() -> {
+            rrHoverIndicator
+                    .setMargin(0)
+                    .setRadius(this.getRadius())
+                    .setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER));
+        });
+
+        RoundedRectWidget rrPlayingIndicator = new RoundedRectWidget();
+        this.addChild(rrPlayingIndicator);
+        rrPlayingIndicator
+                .setAlpha(0f)
+                .setClickable(false);
+        rrPlayingIndicator.setBeforeRenderCallback(() -> {
+            rrPlayingIndicator
+                    .setMargin(0)
+                    .setRadius(this.getRadius())
+                    .setColor(0xFFD60017);
+        });
+
         this.setBeforeRenderCallback(() -> {
 
-            // 只在这个屌 music 可以被看到的时候才加载封面
+            // 只在这个 music 被渲染的时候才加载封面
             if (!coverLoaded) {
                 coverLoaded = true;
                 this.loadCover();
             }
 
             this.setBounds(this.getParentWidth(), 30);
+            this.setColor(NCMScreen.getColor(index % 2 == 0 ? NCMScreen.ColorType.ELEMENT_BACKGROUND : NCMScreen.ColorType.GENERIC_BACKGROUND));
 
-            if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying.getId() == music.getId())
-                this.setColor(0xFFD60017);
-            else if (this.isHovering())
-                this.setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER));
-            else
-                this.setColor(NCMScreen.getColor(index % 2 == 0 ? NCMScreen.ColorType.ELEMENT_BACKGROUND : NCMScreen.ColorType.GENERIC_BACKGROUND));
+            if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying.getId() == music.getId()) {
+//                this.setColor(0xFFD60017);
+                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getAlpha(), .9f, .6f));
+                rrPlayingIndicator.setHidden(false);
+            } else if (this.isHovering()) {
+//                this.setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER));
+                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getAlpha(), 1, .4f));
+                rrHoverIndicator.setHidden(false);
+            } else {
+                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getAlpha(), 0, .6f));
+                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getAlpha(), 0, .4f));
+
+                if (rrPlayingIndicator.getWidgetAlpha() <= .05f)
+                    rrPlayingIndicator.setHidden(true);
+
+                if (rrHoverIndicator.getWidgetAlpha() <= .05f)
+                    rrHoverIndicator.setHidden(true);
+            }
 
             this.setRadius(2);
         });
