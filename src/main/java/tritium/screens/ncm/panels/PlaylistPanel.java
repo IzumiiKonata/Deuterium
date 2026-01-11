@@ -154,9 +154,9 @@ public class PlaylistPanel extends NCMPanel {
             searchBar.addChild(lblSearchIcon);
             lblSearchIcon
                     .setClickable(false)
+                    .setColor(hexColor(100, 100, 100))
                     .setBeforeRenderCallback(() -> {
                         lblSearchIcon
-                                .setColor(hexColor(100, 100, 100))
                                 .centerVertically()
                                 .setPosition(lblSearchIcon.getRelativeY(), lblSearchIcon.getRelativeY());
                     });
