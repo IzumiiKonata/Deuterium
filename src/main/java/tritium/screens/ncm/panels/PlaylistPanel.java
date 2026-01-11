@@ -260,6 +260,7 @@ public class PlaylistPanel extends NCMPanel {
 
                             if (
                                     widget.music.getName().toLowerCase().contains(text.toLowerCase()) ||
+                                    widget.music.getTranslatedNames().toLowerCase().contains(text.toLowerCase()) ||
                                     widget.music.getArtists().stream().anyMatch(artist -> artist != null && artist.getName() != null && artist.getName().toLowerCase().contains(text.toLowerCase())) ||
                                     (widget.music.getAlbum() != null && widget.music.getAlbum().getName() != null && widget.music.getAlbum().getName().toLowerCase().contains(text.toLowerCase()))
                             ) {
