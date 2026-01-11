@@ -195,7 +195,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     }
 
     private static double getLyricLineSpacing() {
-        return 24;
+        return 12;
     }
 
     private static double lyricFraction() {
