@@ -221,6 +221,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
             if (c == '（') c = '(';
             if (c == '）') c = ')';
+            if (c == '・') c = '·';
 
             Glyph glyph = locateGlyph(c);
             if (glyph != null && glyph.uploaded) {
@@ -375,6 +376,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
 
                 if (c == '（') c = '(';
                 if (c == '）') c = ')';
+                if (c == '・') c = '·';
 
                 Glyph glyph = locateGlyph(c);
                 if (glyph != null && glyph.uploaded) {
