@@ -28,6 +28,7 @@ import tritium.event.events.packet.ReceivePacketEvent;
 import tritium.event.events.packet.SendPacketEvent;
 import tritium.management.EventManager;
 import tritium.screens.ConsoleScreen;
+import tritium.utils.other.DevUtils;
 import tritium.utils.timing.Counter;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -127,7 +128,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) throws Exception {
         if (this.channel.isOpen()) {
             //CLIENT
-            ReceivePacketEvent receivePacketEvent = EventManager.call(ReceivePacketEvent.of(p_channelRead0_2_));
+            ReceivePacketEvent receivePacketEvent = EventManager.call(new ReceivePacketEvent(p_channelRead0_2_));
             if (receivePacketEvent.isCancelled()) {
                 return;
             }
@@ -148,11 +149,12 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
         Validate.notNull(handler, "packetListener");
         logger.debug("Set listener of {} to {}", this, handler);
         this.packetListener = handler;
+//        DevUtils.printCurrentInvokeStack();
     }
 
     public void sendPacket(Packet packetIn) {
 
-        SendPacketEvent sendPacketEvent = EventManager.call(SendPacketEvent.of(packetIn));
+        SendPacketEvent sendPacketEvent = EventManager.call(new SendPacketEvent(packetIn));
         if (this.isChannelOpen()) {
             this.flushOutboundQueue();
             //CLIENT

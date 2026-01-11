@@ -8,14 +8,8 @@ import net.minecraft.network.Packet;
  */
 public class ReceivePacketEvent extends PacketEvent {
 
-    private static final ReceivePacketEvent INSTANCE = new ReceivePacketEvent(null);
-
-    private ReceivePacketEvent(Packet<?> packet) {
+    public ReceivePacketEvent(Packet<?> packet) {
         super(packet);
     }
 
-    public static ReceivePacketEvent of(Packet<?> packet) {
-        INSTANCE.setPacket(packet);
-        return INSTANCE;
-    }
 }
