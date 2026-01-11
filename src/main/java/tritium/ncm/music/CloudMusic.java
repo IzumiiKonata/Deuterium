@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
 import net.minecraft.util.Tuple;
@@ -498,41 +499,47 @@ public class CloudMusic {
         Location musicCover = music.getCoverLocation();
         Location musicCoverSmall = music.getSmallCoverLocation();
         Location musicCoverBlur = music.getBlurredCoverLocation();
-        ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(musicCover);
+        TextureManager tm = Minecraft.getMinecraft().getTextureManager();
 
-        if (texture != null && !forceReload)
-            return;
+        if (tm.getTexture(musicCover) == null || !forceReload) {
+            MultiThreadingUtil.runAsync(new Runnable() {
+                @Override
+                @SneakyThrows
+                public void run() {
 
-        MultiThreadingUtil.runAsync(new Runnable() {
-            @Override
-            @SneakyThrows
-            public void run() {
+                    @Cleanup
+                    InputStream is = HttpUtils.downloadStream(music.getCoverUrl(320), 5);
 
-                @Cleanup
-                InputStream is = HttpUtils.downloadStream(music.getCoverUrl(320), 5);
-                InputStream isSmall = HttpUtils.downloadStream(music.getCoverUrl(128), 5);
+                    byte[] byteArray = IOUtils.toByteArray(is);
+                    is.close();
 
-                byte[] byteArray = IOUtils.toByteArray(is);
-                is.close();
+                    BufferedImage read = NativeBackedImage.make(new ByteArrayInputStream(byteArray));
 
-                BufferedImage read = NativeBackedImage.make(new ByteArrayInputStream(byteArray));
+                    if (read != null) {
+                        BufferedImage input = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                        input.setRGB(0, 0, read.getWidth(), read.getHeight(), read.getRGB(0, 0, read.getWidth(), read.getHeight(), null, 0, read.getWidth()), 0, read.getWidth());
 
-                if (read != null) {
-                    BufferedImage input = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                    input.setRGB(0, 0, read.getWidth(), read.getHeight(), read.getRGB(0, 0, read.getWidth(), read.getHeight(), null, 0, read.getWidth()), 0, read.getWidth());
+                        MultiThreadingUtil.runAsync(() -> {
+                            BufferedImage blurred = gaussianBlur(input, 31);
+                            Textures.loadTextureAsyncly(musicCoverBlur, blurred);
+                        });
 
-                    MultiThreadingUtil.runAsync(() -> {
-                        BufferedImage blurred = gaussianBlur(input, 31);
-                        Textures.loadTextureAsyncly(musicCoverBlur, blurred);
-                    });
-
-                    Textures.loadTextureAsyncly(musicCover, read);
+                        Textures.loadTextureAsyncly(musicCover, read);
+                    }
                 }
+            });
+        }
+
+        if (tm.getTexture(musicCoverSmall) == null || !forceReload) {
+            MultiThreadingUtil.runAsync(() -> {
+                InputStream isSmall = HttpUtils.downloadStream(music.getCoverUrl(128), 5);
 
                 BufferedImage readSmall = NativeBackedImage.make(isSmall);
                 Textures.loadTextureAsyncly(musicCoverSmall, readSmall);
-            }
-        });
+            });
+        }
+
+
     }
 
     public static void loadMusicCover(Music music, boolean forceReload, int size, Location location) {

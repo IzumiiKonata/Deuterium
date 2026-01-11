@@ -506,7 +506,7 @@ public class CoverflowOverlay extends BaseScreen {
 
             CFontRenderer fr = FontManager.pf50bold;
 
-            fr.drawCenteredString(al.getName(), RenderSystem.getWidth() * 0.5, RenderSystem.getHeight() * 0.5 + (coverSize - paneHeight * 0.25) / paneHeight * RenderSystem.getHeight(), -1);
+            fr.drawCenteredStringWithShadow(al.getName(), RenderSystem.getWidth() * 0.5, RenderSystem.getHeight() * 0.5 + (coverSize - paneHeight * 0.225) / paneHeight * RenderSystem.getHeight(), -1);
 //            fr.drawCenteredString(al.getA, RenderSystem.getWidth() * 0.5, RenderSystem.getHeight() * 0.5 + (coverSize - paneHeight * 0.25) / paneHeight * RenderSystem.getHeight() + fr.getHeight(), -1);
 
             this.setupProjectionTransformation();
@@ -576,6 +576,7 @@ public class CoverflowOverlay extends BaseScreen {
 
         screen.reloadOnClosed = true;
         screen.albumList.clear();
+        screen.renderList.clear();
         screen.loadAlbumData(Collections.singletonList(playList));
 
         screen.clickResistTimer.reset();
