@@ -58,7 +58,7 @@ public class MusicRect extends RectWidget {
             if (CloudMusic.profile == null)
                 return null;
 
-            Location coverLoc = MusicInfoWidget.getMusicCover(music);
+            Location coverLoc = music.getCoverLocation();
 
             TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
             if (textureManager.getTexture(coverLoc) == null) {

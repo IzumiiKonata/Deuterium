@@ -16,6 +16,7 @@ import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.*;
+import tritium.screens.ncm.CoverflowOverlay;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
 import tritium.utils.network.HttpUtils;
@@ -48,7 +49,7 @@ public class PlaylistPanel extends NCMPanel {
         double musicsContainerOffsetY;
 
         if (!playList.isSearchMode()) {
-            RoundedImageWidget cover = new RoundedImageWidget(this.getCoverLocation(), 0, 0, 0, 0);
+            RoundedImageWidget cover = new RoundedImageWidget(this.playList.getCoverLocation(), 0, 0, 0, 0);
 
             cover.setPosition(24, 24);
             cover.setBounds(128, 128);
@@ -109,6 +110,26 @@ public class PlaylistPanel extends NCMPanel {
                 return true;
             });
 
+            RoundedButtonWidget btnCoverflow = new RoundedButtonWidget("Coverflow", FontManager.pf16);
+            this.addChild(btnCoverflow);
+
+            btnCoverflow.setBeforeRenderCallback(() -> {
+                btnCoverflow.setBounds(57, 17);
+                btnCoverflow.setPosition(cover.getRelativeX() + cover.getWidth() + 12 + btnPlay.getWidth() + 8 + btnPlayRandomOrder.getWidth() + 8, cover.getRelativeY() + cover.getHeight() - btnCoverflow.getHeight());
+                btnCoverflow.setRadius(3);
+                btnCoverflow.setColor(0xFFd60017);
+                btnCoverflow.setTextColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
+            });
+
+            btnCoverflow.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
+
+                if (mouseButton == 0) {
+                    Minecraft.getMinecraft().displayGuiScreen(CoverflowOverlay.byPlaylist(playList));
+                }
+
+                return true;
+            });
+
             RoundedRectWidget searchBar = new RoundedRectWidget();
             this.addChild(searchBar);
 
@@ -133,9 +154,9 @@ public class PlaylistPanel extends NCMPanel {
                                 .setAlpha(1f)
                                 .setColor(0xFF5E5E5E)
                                 .setWidth(tfOpenAnimation)
-                                .setHeight(btnPlayRandomOrder.getHeight())
+                                .setHeight(btnCoverflow.getHeight())
                                 .setRadius(7)
-                                .setPosition(btnPlayRandomOrder.getRelativeX() + btnPlayRandomOrder.getWidth() + 8, btnPlayRandomOrder.getRelativeY());
+                                .setPosition(btnCoverflow.getRelativeX() + btnCoverflow.getWidth() + 8, btnCoverflow.getRelativeY());
                     });
 
             RoundedRectWidget searchBarBg = new RoundedRectWidget();
@@ -185,7 +206,7 @@ public class PlaylistPanel extends NCMPanel {
                 tfSearch.setDisabledTextColor(RenderSystem.reAlpha(this.getColor(NCMScreen.ColorType.PRIMARY_TEXT), .4f));
             });
 
-            RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.getUserAvatarLocation(), 0, 0, 0, 0);
+            RoundedImageWidget creatorAvatar = new RoundedImageWidget(this.playList.getCreator().getAvatarLocation(), 0, 0, 0, 0);
             this.addChild(creatorAvatar);
             creatorAvatar.fadeIn();
             creatorAvatar.setLinearFilter(true);
@@ -323,7 +344,7 @@ public class PlaylistPanel extends NCMPanel {
     private void loadCover() {
 
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        Location coverLoc = this.getCoverLocation();
+        Location coverLoc = this.playList.getCoverLocation();
         if (textureManager.getTexture(coverLoc) != null)
             return;
 
@@ -349,7 +370,7 @@ public class PlaylistPanel extends NCMPanel {
 
     private void loadAvatar() {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        Location avatarLoc = this.getUserAvatarLocation();
+        Location avatarLoc = this.playList.getCreator().getAvatarLocation();
         if (textureManager.getTexture(avatarLoc) != null)
             return;
         MultiThreadingUtil.runAsync(() -> {
@@ -373,11 +394,4 @@ public class PlaylistPanel extends NCMPanel {
         });
     }
 
-    private Location getCoverLocation() {
-        return Location.of("tritium/textures/playlist/" + this.playList.getId() + "/cover.png");
-    }
-
-    private Location getUserAvatarLocation() {
-        return Location.of("tritium/textures/users/" + this.playList.getCreator().getId() + "/avatar.png");
-    }
 }

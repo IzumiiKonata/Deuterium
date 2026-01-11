@@ -19,4 +19,6 @@ public class Shaders {
     public static Deconverge DECONVERGE = new Deconverge();
 
     public static StencilShader STENCIL = new StencilShader();
+
+    public static VFFadeoutShader VF_FADEOUT = new VFFadeoutShader();
 }

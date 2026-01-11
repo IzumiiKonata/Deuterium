@@ -7,12 +7,14 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.Getter;
+import net.minecraft.util.Location;
 import tritium.ncm.RequestUtil;
 import tritium.ncm.api.CloudMusicApi;
 import tritium.utils.json.JsonUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -52,6 +54,10 @@ public class PlayList {
     public transient List<Music> musics;
     private transient boolean searchMode = false;
     public transient boolean musicsQueried = false, musicsLoaded = false;
+
+    public final Location getCoverLocation() {
+        return Location.of("tritium/textures/playlist/" + this.id + "/cover.png");
+    }
 
     public List<Music> getMusics() {
 
@@ -125,4 +131,15 @@ public class PlayList {
         CloudMusicApi.playlistTracks("del", this.id, String.valueOf(musicId));
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        PlayList playList = (PlayList) o;
+        return id == playList.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

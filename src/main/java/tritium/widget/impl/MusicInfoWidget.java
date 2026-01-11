@@ -85,7 +85,7 @@ public class MusicInfoWidget extends Widget {
 
         if (playingMusic != null) {
 
-            Location cover = getMusicCoverSmall(playingMusic);
+            Location cover = playingMusic.getSmallCoverLocation();
 
             ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(cover);
 
@@ -108,7 +108,7 @@ public class MusicInfoWidget extends Widget {
                 double posX = this.getX();
                 double posY = this.getY();
 
-                Location musicCoverBlured = MusicInfoWidget.getMusicCoverBlurred(CloudMusic.currentlyPlaying);
+                Location musicCoverBlured = CloudMusic.currentlyPlaying.getBlurredCoverLocation();
 
                 TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
                 ITextureObject texBg = textureManager.getTexture(musicCoverBlured);
@@ -116,8 +116,8 @@ public class MusicInfoWidget extends Widget {
                 if (texBg != null || prevBlurredBg != null) {
 
                     if (playingMusic != prevMusic) {
-                        prevBlurredBg = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCoverBlurred(prevMusic));
-                        prevBg = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCover(prevMusic));
+                        prevBlurredBg = prevMusic == null ? null : textureManager.getTexture(prevMusic.getBlurredCoverLocation());
+                        prevBg = prevMusic == null ? null : textureManager.getTexture(prevMusic.getCoverLocation());
                         prevMusic = playingMusic;
                         musicBgAlpha = 0.0f;
                     }
@@ -258,18 +258,6 @@ public class MusicInfoWidget extends Widget {
 
         this.setWidth((float) width);
         this.setHeight((float) (height + downloadProgHeight));
-    }
-
-    public static Location getMusicCover(Music music) {
-        return Location.of("tritium/textures/MusicCover" + music.getId() + ".png");
-    }
-
-    public static Location getMusicCoverBlurred(Music music) {
-        return Location.of("tritium/textures/MusicCoverBlurred" + music.getId() + ".png");
-    }
-
-    public static Location getMusicCoverSmall(Music music) {
-        return Location.of("tritium/textures/music/" + music.getId() + "/cover.png");
     }
 
 }

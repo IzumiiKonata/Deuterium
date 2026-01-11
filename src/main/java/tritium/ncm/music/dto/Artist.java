@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author IzumiiKonata
@@ -21,4 +22,15 @@ public class Artist {
     @SerializedName("alias")
     private final List<String> aliasName;
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Artist artist = (Artist) o;
+        return id == artist.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

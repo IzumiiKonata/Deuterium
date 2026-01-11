@@ -105,7 +105,7 @@ public class MusicWidget extends RoundedRectWidget {
             return true;
         });
 
-        RoundedImageWidget cover = new RoundedImageWidget(this.getCover(), 0, 0, 0, 0);
+        RoundedImageWidget cover = new RoundedImageWidget(this.music.getCoverLocation(), 0, 0, 0, 0);
         this.addChild(cover);
         cover.fadeIn();
         cover.setLinearFilter(true);
@@ -223,7 +223,7 @@ public class MusicWidget extends RoundedRectWidget {
     private void loadCover() {
 
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        Location coverLoc = this.getCover();
+        Location coverLoc = this.music.getCoverLocation();
         if (textureManager.getTexture(coverLoc) != null)
             return;
 
@@ -245,10 +245,6 @@ public class MusicWidget extends RoundedRectWidget {
             }
         });
 
-    }
-
-    private Location getCover() {
-        return Location.of("tritium/textures/music/" + music.getId() + "/cover.png");
     }
 
 }

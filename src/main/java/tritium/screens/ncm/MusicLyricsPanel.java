@@ -680,7 +680,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, 3, alpha);
         }
 
-        Location musicCover = MusicInfoWidget.getMusicCover(CloudMusic.currentlyPlaying);
+        Location musicCover = CloudMusic.currentlyPlaying.getCoverLocation();
         ITextureObject tex = textureManager.getTexture(musicCover);
 
         if (tex != null) {
@@ -859,15 +859,15 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     private void renderBackground(double posX, double posY, double width, double height, float alpha) {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        Location musicCoverBlured = CloudMusic.currentlyPlaying == null ? null : MusicInfoWidget.getMusicCoverBlurred(CloudMusic.currentlyPlaying);
+        Location musicCoverBlured = CloudMusic.currentlyPlaying == null ? null : CloudMusic.currentlyPlaying.getBlurredCoverLocation();
         ITextureObject texBg = CloudMusic.currentlyPlaying == null ? null : textureManager.getTexture(musicCoverBlured);
 
         if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying != prevMusic) {
 
             if (prevMusic != null) musicBgAlpha = 0.0f;
 
-            prevBg = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCoverBlurred(prevMusic));
-            prevCover = prevMusic == null ? null : textureManager.getTexture(MusicInfoWidget.getMusicCover(prevMusic));
+            prevBg = prevMusic == null ? null : textureManager.getTexture(prevMusic.getBlurredCoverLocation());
+            prevCover = prevMusic == null ? null : textureManager.getTexture(prevMusic.getCoverLocation());
             prevMusic = CloudMusic.currentlyPlaying;
             coverAlpha = 0.0f;
         }

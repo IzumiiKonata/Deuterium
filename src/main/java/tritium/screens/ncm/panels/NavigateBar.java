@@ -293,12 +293,11 @@ public class NavigateBar extends NCMPanel {
     }
 
     private Location getUserAvatarLocation() {
-
         if (CloudMusic.profile == null) {
             return null;
         }
 
-        return Location.of("tritium/textures/users/" + CloudMusic.profile.getId() + "/avatar.png");
+        return CloudMusic.profile.getAvatarLocation();
     }
 
     @Override

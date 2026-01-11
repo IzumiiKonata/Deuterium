@@ -3,6 +3,7 @@ package tritium.ncm.music.dto;
 import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
+import net.minecraft.util.Location;
 import net.minecraft.util.Tuple;
 import tritium.ncm.api.CloudMusicApi;
 import tritium.ncm.music.CloudMusic;
@@ -53,6 +54,18 @@ public class Music {
     private final List<String> translatedName;
 
     private transient String artistsName, translatedNames;
+
+    public final Location getCoverLocation() {
+        return Location.of("tritium/textures/music/" + this.id + "/cover.png");
+    }
+
+    public final Location getBlurredCoverLocation() {
+        return Location.of("tritium/textures/music/" + this.id + "/cover_blurred.png");
+    }
+
+    public final Location getSmallCoverLocation() {
+        return Location.of("tritium/textures/music/" + this.id + "/cover_small.png");
+    }
 
     public String getArtistsName() {
         if (this.artistsName == null) {
@@ -162,4 +175,15 @@ public class Music {
         return (this.featureFlag & HIRES) != 0;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        Music music = (Music) o;
+        return id == music.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

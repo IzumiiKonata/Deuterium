@@ -495,9 +495,9 @@ public class CloudMusic {
 
     public static void loadMusicCover(Music music, boolean forceReload) {
 
-        Location musicCover = MusicInfoWidget.getMusicCover(music);
-        Location musicCoverSmall = MusicInfoWidget.getMusicCoverSmall(music);
-        Location musicCoverBlur = MusicInfoWidget.getMusicCoverBlurred(music);
+        Location musicCover = music.getCoverLocation();
+        Location musicCoverSmall = music.getSmallCoverLocation();
+        Location musicCoverBlur = music.getBlurredCoverLocation();
         ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(musicCover);
 
         if (texture != null && !forceReload)

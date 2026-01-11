@@ -5,11 +5,13 @@ import com.google.gson.JsonObject;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.Getter;
+import net.minecraft.util.Location;
 import tritium.ncm.api.CloudMusicApi;
 import tritium.utils.json.JsonUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * 用户对象
@@ -27,6 +29,10 @@ public class User {
     private final int vip;
     @SerializedName("avatarUrl")
     private final String avatarUrl;
+
+    public final Location getAvatarLocation() {
+        return Location.of("tritium/textures/user/" + this.id + "/avatar.png");
+    }
 
     /**
      * 用户歌单
@@ -49,4 +55,15 @@ public class User {
         return playLists;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }
