@@ -53,12 +53,15 @@ public class MusicWidget extends RoundedRectWidget {
         this.addChild(rrPlayingIndicator);
         rrPlayingIndicator
                 .setAlpha(0f)
+                .setColor(0xFFD60017)
                 .setClickable(false);
+        if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying.getId() == music.getId()) {
+            rrPlayingIndicator.setAlpha(1f);
+        }
         rrPlayingIndicator.setBeforeRenderCallback(() -> {
             rrPlayingIndicator
                     .setMargin(0)
-                    .setRadius(this.getRadius())
-                    .setColor(0xFFD60017);
+                    .setRadius(this.getRadius());
         });
 
         this.setBeforeRenderCallback(() -> {
@@ -74,15 +77,15 @@ public class MusicWidget extends RoundedRectWidget {
 
             if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying.getId() == music.getId()) {
 //                this.setColor(0xFFD60017);
-                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getAlpha(), .9f, .6f));
+                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getWidgetAlpha(), .9f, .4f));
                 rrPlayingIndicator.setHidden(false);
             } else if (this.isHovering()) {
 //                this.setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER));
-                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getAlpha(), 1, .4f));
+                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getWidgetAlpha(), 1, .3f));
                 rrHoverIndicator.setHidden(false);
             } else {
-                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getAlpha(), 0, .6f));
-                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getAlpha(), 0, .4f));
+                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getWidgetAlpha(), 0, .4f));
+                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getWidgetAlpha(), 0, .3f));
 
                 if (rrPlayingIndicator.getWidgetAlpha() <= .05f)
                     rrPlayingIndicator.setHidden(true);
