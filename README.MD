@@ -13,8 +13,9 @@ ___
 - **快速**：本客户端使用了一个经过深度优化的 mcp919 base, 移除了
   - Twitch 直播
   - Snooper
+  - Profiler
   - 成就系统
-  - Optifine 反射
+  - OptiFine 反射
   - ...更多香草狗屎
 - **低内存占用**
 - **插件支持**：实现了 **部分** Opai 扩展 API
@@ -26,18 +27,28 @@ ___
 - 更多狗屎我忘了。
 
 # Opai 扩展 API 支持
-| 模块                                                                | 状态                     |
-|-------------------------------------------------------------------|------------------------|
-| `addFriend` / `removeFriend` / `isFriend`                         | `Won't be implemented` |
-| `addTarget` / `removeTarget` / `isTarget`                         | `Won't be implemented` |
-| `OpenAPI.loadConfig(String)`                                      | `Won't be implemented` |
-| `IRC`                                                             | `Won't be implemented` |
-| `HypixelAPI`                                                      | `Won't be implemented` |
-| `GameStateManager`                                                | `Won't be implemented` |
-| `ShaderUtil`                                                      | `Low priority`         |
-| `Notification`                                                    | `Low priority`         |
-| `EventHandler.onStrafe(EventStrafe)`                              | `Not planned`          |
-| `ItemUtil.fromData(String name, int count, int meta, String nbt)` | `Not implemented`      |
+| 模块                                                                                        | 状态    |
+|-------------------------------------------------------------------------------------------|-------|
+| `addFriend` / `removeFriend` / `isFriend`                                                 | `未实现` |
+| `addTarget` / `removeTarget` / `isTarget`                                                 | `未实现` |
+| `OpenAPI.loadConfig(String)`                                                              | `未实现` |
+| `IRC`                                                                                     | `未实现` |
+| `HypixelAPI`                                                                              | `未实现` |
+| `GameStateManager`                                                                        | `未实现` |
+| `ShaderUtil`                                                                              | `未实现` |
+| `Notification`                                                                            | `未实现` |
+| `EventHandler.onStrafe(EventStrafe)`                                                      | `未实现` |
+| `ItemUtil.fromData(String name, int count, int meta, String nbt)`                         | `未实现` |
+| `RotationManager.applyRotation(RotationData rotationData, int speed, boolean correction)` | `未实现` |
+| `Entity API`                                                                              | `✅`   |
+| `World API`                                                                               | `✅`   |
+| `Options API`                                                                             | `✅`   |
+| `ValueManager`                                                                            | `✅`   |
+| `ModuleManager`                                                                           | `✅`   |
+| `RenderUtil`                                                                              | `✅`   |
+| `FontUtil`                                                                                | `✅`   |
+| `GLStateManager`                                                                          | `✅`   |
+| `PacketUtil`                                                                              | `✅`   |
 
 ## Screenshots
 <div align="center">
