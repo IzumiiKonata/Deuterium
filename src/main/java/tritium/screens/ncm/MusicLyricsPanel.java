@@ -191,7 +191,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     }
 
     private static double getLyricWidthFactor() {
-        return .45;
+        return .48;
     }
 
     private static double getLyricLineSpacing() {
@@ -345,7 +345,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         scrollOffset = Interpolations.interpBezier(scrollOffset, scrollTarget, 0.25f);
 
-        double lyricRenderOffsetX = RenderSystem.getWidth() * .5;
+        double lyricRenderOffsetX = RenderSystem.getWidth() * .48;
         for (int k = 0; k < lyrics.size(); k++) {
             LyricLine lyric = lyrics.get(k);
 
