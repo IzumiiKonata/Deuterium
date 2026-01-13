@@ -1,7 +1,6 @@
 package tritium.rendering;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import java.util.Stack;
 
@@ -25,9 +24,10 @@ public class StencilClipManager {
         Stencil.checkSetupFBO(FramebufferCaching.getOverridingFramebuffer() != null ?
                 FramebufferCaching.getOverridingFramebuffer() :
                 Minecraft.getMinecraft().getFramebuffer());
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
         GL11.glClearStencil(0);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
+        GL11.glEnable(GL11.GL_STENCIL_TEST);
     }
 
     static boolean depthMask = false;
@@ -41,8 +41,8 @@ public class StencilClipManager {
         depthMask = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
         stencilStack.push(new StencilState(currentStencilValue, colorMask, depthMask));
 
-        GlStateManager.colorMask(false, false, false, false);
-        GlStateManager.depthMask(false);
+        GL11.glColorMask(false, false, false, false);
+        GL11.glDepthMask(false);
 
         if (currentStencilValue == 0) {
             GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
@@ -56,9 +56,8 @@ public class StencilClipManager {
     public static void updateClip() {
         currentStencilValue++;
 
-        StencilState currentState = stencilStack.peek();
-        GlStateManager.colorMask(true, true, true, true);
-        GlStateManager.depthMask(currentState.depthMask);
+        GL11.glColorMask(true, true, true, true);
+        GL11.glDepthMask(depthMask);
 
         GL11.glStencilFunc(GL11.GL_EQUAL, currentStencilValue, 0xFF);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
@@ -81,8 +80,8 @@ public class StencilClipManager {
         StencilState state = stencilStack.pop();
         currentStencilValue = state.stencilValue;
 
-        GlStateManager.colorMask(state.colorMask, state.colorMask, state.colorMask, state.colorMask);
-        GlStateManager.depthMask(state.depthMask);
+        GL11.glColorMask(state.colorMask, state.colorMask, state.colorMask, state.colorMask);
+        GL11.glDepthMask(state.depthMask);
 
         if (currentStencilValue > 0) {
             GL11.glStencilFunc(GL11.GL_EQUAL, currentStencilValue, 0xFF);
