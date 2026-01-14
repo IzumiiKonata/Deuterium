@@ -1340,7 +1340,9 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             }
 
             if (this.mc.currentScreen != null) {
-//                GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+                if (this.mc.theWorld == null || CommandValues.getValues().cl_skip_world_rendering) {
+                    GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+                }
 
                 try {
 
