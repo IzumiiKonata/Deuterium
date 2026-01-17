@@ -131,14 +131,21 @@ public final class FontKerning {
 
         hb_buffer_guess_segment_properties(hbBuffer);
 
+        hb_buffer_set_language(hbBuffer, hb_language_from_string("en"));
+
         hb_shape(hbFont, hbBuffer, null);
 
+        // this struct cannot be freed because it's a pointer to the buffer
         hb_glyph_position_t.Buffer pos = hb_buffer_get_glyph_positions(hbBuffer);
+
+        if (pos == null)
+            return .0f;
 
         float advance = 0.0f;
         for (int i = 0; i < pos.remaining(); i++) {
             advance += pos.get(i).x_advance();
         }
+
         return advance / 64.0f;
     }
 
