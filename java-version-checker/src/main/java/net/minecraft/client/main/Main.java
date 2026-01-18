@@ -68,10 +68,10 @@ public class Main {
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 18));
         titleLabel.setForeground(Color.RED);
         
-        JLabel messageLabel2 = new JLabel("Tritium需要Java 21或更高版本才能正常运行", SwingConstants.CENTER);
+        JLabel messageLabel2 = new JLabel("Tritium 需要 Java 21 或更高版本才能正常运行", SwingConstants.CENTER);
         messageLabel2.setFont(new Font("SansSerif", Font.PLAIN, 14));
         
-        JLabel messageLabel3 = new JLabel("请升级到Java 21后重新启动", SwingConstants.CENTER);
+        JLabel messageLabel3 = new JLabel("请升级到 Java 21 后重新启动", SwingConstants.CENTER);
         messageLabel3.setFont(new Font("SansSerif", Font.PLAIN, 14));
         
         messagePanel.add(titleLabel);
