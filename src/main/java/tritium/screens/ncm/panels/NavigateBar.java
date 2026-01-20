@@ -3,6 +3,7 @@ package tritium.screens.ncm.panels;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
@@ -56,11 +57,8 @@ public class NavigateBar extends NCMPanel {
         });
 
         this.setOnKeyTypedCallback((character, keyCode) -> {
-            if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)
-                    && keyCode == Keyboard.KEY_F
-                    && !(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-                    && !(Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU))) {
 
+            if (GuiScreen.isKeyComboCtrl(keyCode, Keyboard.KEY_F)) {
                 this.searchField.setFocused(true);
                 this.searchField.getTextField().selectAll();
                 return true;

@@ -2,6 +2,7 @@ package tritium.screens.ncm;
 
 import lombok.Getter;
 import lombok.SneakyThrows;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
@@ -558,11 +559,7 @@ public class CoverflowOverlay extends BaseScreen {
             return;
         }
 
-        if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL)
-                && keyCode == Keyboard.KEY_F
-                && !(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT))
-                && !(Keyboard.isKeyDown(Keyboard.KEY_LMENU) || Keyboard.isKeyDown(Keyboard.KEY_RMENU))) {
-
+        if (GuiScreen.isKeyComboCtrl(keyCode, Keyboard.KEY_F)) {
             this.textBox.setFocused(true);
             this.textBox.setCursorPositionEnd();
             this.textBox.setSelectionPos(0);

@@ -45,6 +45,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.lwjgl.input.Keyboard.*;
+
 public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     private static final Logger LOGGER = LogManager.getLogger("GuiScreen");
     private static final Set<String> PROTOCOLS = Sets.newHashSet("http", "https");
@@ -631,37 +633,41 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
      * Returns true if either windows ctrl key is down or if either mac meta key is down
      */
     public static boolean isCtrlKeyDown() {
-        return Minecraft.isRunningOnMac ? Keyboard.isKeyDown(219) || Keyboard.isKeyDown(220) : Keyboard.isKeyDown(29) || Keyboard.isKeyDown(157);
+        return Minecraft.isRunningOnMac ? Keyboard.isKeyDown(KEY_LMETA) || Keyboard.isKeyDown(KEY_RMETA) : Keyboard.isKeyDown(KEY_LCONTROL) || Keyboard.isKeyDown(KEY_RCONTROL);
     }
 
     /**
      * Returns true if either shift key is down
      */
     public static boolean isShiftKeyDown() {
-        return Keyboard.isKeyDown(42) || Keyboard.isKeyDown(54);
+        return Keyboard.isKeyDown(KEY_LSHIFT) || Keyboard.isKeyDown(KEY_RSHIFT);
     }
 
     /**
      * Returns true if either alt key is down
      */
     public static boolean isAltKeyDown() {
-        return Keyboard.isKeyDown(56) || Keyboard.isKeyDown(184);
+        return Keyboard.isKeyDown(KEY_LMENU) || Keyboard.isKeyDown(KEY_RMENU);
     }
 
     public static boolean isKeyComboCtrlX(int keyID) {
-        return keyID == 45 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+        return keyID == KEY_X && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
     public static boolean isKeyComboCtrlV(int keyID) {
-        return keyID == 47 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+        return keyID == KEY_V && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
     public static boolean isKeyComboCtrlC(int keyID) {
-        return keyID == 46 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+        return keyID == KEY_C && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
     public static boolean isKeyComboCtrlA(int keyID) {
-        return keyID == 30 && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+        return keyID == KEY_A && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
+    }
+
+    public static boolean isKeyComboCtrl(int pressedKey, int comboKey) {
+        return pressedKey == comboKey && isCtrlKeyDown() && !isShiftKeyDown() && !isAltKeyDown();
     }
 
     /**

@@ -1,6 +1,7 @@
 package tritium.screens.ncm.panels;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
@@ -191,6 +192,17 @@ public class PlaylistPanel extends NCMPanel {
                         this.tfSearch.setFocused(false);
 
 
+                    return true;
+                }
+
+                return false;
+            });
+
+            this.setOnKeyTypedCallback((character, keyCode) -> {
+
+                if (GuiScreen.isKeyComboCtrl(keyCode, Keyboard.KEY_G)) {
+                    this.tfSearch.setFocused(true);
+                    this.tfSearch.getTextField().selectAll();
                     return true;
                 }
 
