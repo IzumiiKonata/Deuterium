@@ -641,7 +641,7 @@
     "mode.Accum.name": "累加",
     "mode.Framebuffer.name": "帧缓冲",
 
-    "setting.debug info.name": "显示组件边界",
+    "setting.debug info.name": "显示 UI 控件边界",
 
     "setting.center the inventory.name": "背包居中",
 
