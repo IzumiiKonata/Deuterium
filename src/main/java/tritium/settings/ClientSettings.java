@@ -10,6 +10,8 @@ import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import tritium.Tritium;
 import tritium.management.ConfigManager;
+import tritium.ncm.music.CloudMusic;
+import tritium.ncm.music.Quality;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.screens.ClickGui;
 import tritium.utils.i18n.Localizable;
@@ -41,6 +43,13 @@ public class ClientSettings {
                 // 重新排序一下
                 ClickGui.getInstance().getModuleListWindow().refreshModules();
             }
+        }
+    };
+
+    public ModeSetting<Quality> quality = new ModeSetting<>("Quality", Quality.STANDARD) {
+        @Override
+        public void onModeChanged(Quality before, Quality now) {
+            CloudMusic.quality = now;
         }
     };
 
