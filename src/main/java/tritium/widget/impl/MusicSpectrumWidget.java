@@ -153,11 +153,16 @@ public class MusicSpectrumWidget extends Widget {
                 GlStateManager.disableTexture2D();
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
+                int zLayerFixer = 100;
+                GlStateManager.translate(0, 0, -zLayerFixer);
+
                 GL11.glBegin(GL11.GL_TRIANGLES);
                 int step = compatMode ? 8 : 3;
                 spectrumWidth.set((compatMode ? this.getWidth() : RenderSystem.getWidth()) / ((double) renderSpectrum.length / step));
                 this.drawRect(spectrumWidth.get(), renderSpectrum.length, step);
                 GL11.glEnd();
+
+                GlStateManager.translate(0, 0, zLayerFixer);
             }
 
             if (waveform) {

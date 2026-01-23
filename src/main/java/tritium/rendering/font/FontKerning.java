@@ -104,7 +104,7 @@ public final class FontKerning {
 
     private final HashMap<Long, Float> kerningCache = new HashMap<>();
 
-    public float getKerning(char left, char right, float fontSizePx) {
+    public synchronized float getKerning(char left, char right, float fontSizePx) {
 
         long key = Objects.hash(left, right, fontSizePx);
         if (kerningCache.containsKey(key)) {
