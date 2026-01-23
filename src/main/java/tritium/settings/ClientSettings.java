@@ -46,7 +46,7 @@ public class ClientSettings {
         }
     };
 
-    public ModeSetting<Quality> quality = new ModeSetting<>("Quality", Quality.STANDARD) {
+    public static final ModeSetting<Quality> MUSIC_QUALITY = new ModeSetting<>("Quality", Quality.STANDARD) {
         @Override
         public void onModeChanged(Quality before, Quality now) {
             CloudMusic.quality = now;
