@@ -21,6 +21,8 @@ ___
 - **插件支持**：实现了 **部分** Opai 扩展 API
 - 更多内容自己看，我忘了。
 
+## [插件编写](https://github.com/IzumiiKonata/tritium-extension-template)
+
 # 更多注意事项
 - 本客户端中的某些功能仅为 `Windows` 平台编写，如果你想跨平台运行的话请自行更改代码。
 - 为了修复高鼠标回报率导致的卡顿，我编译了一份 `glfw` 的最新最热版本，放在 `src/main/resources/windows/x64/org/lwjgl/glfw/glfw.dll` 中。
