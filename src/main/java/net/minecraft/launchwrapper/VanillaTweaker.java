@@ -22,6 +22,9 @@ public class VanillaTweaker implements ITweaker {
     @Override
     public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
         this.args = new ArrayList<>(args);
+        System.out.println(Arrays.toString(this.args.toArray()));
+        this.args.add("--assetsDir");
+        this.args.add(assetsDir.getAbsolutePath());
         this.args.add("--version");
         this.args.add(profile);
     }
