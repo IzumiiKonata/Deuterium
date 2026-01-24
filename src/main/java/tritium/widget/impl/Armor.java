@@ -28,6 +28,7 @@ public class Armor extends Widget {
                 continue;
             }
             if (mc.theWorld != null) {
+                GlStateManager.enableTexture2D();
                 this.renderItem(armor, x, y);
             }
             int damage = armor.getMaxDamage() - armor.getItemDamage();
