@@ -35,4 +35,5 @@ org.lwjgl:lwjgl-stb:natives-windows:3.3.6
 org.ow2.asm:asm:9.8
 org.ow2.asm:asm-tree:9.8
 org.ow2.asm:asm-util:9.8
+org.ow2.asm:asm-analysis:9.8
 org.ow2.asm:asm-commons:9.8
