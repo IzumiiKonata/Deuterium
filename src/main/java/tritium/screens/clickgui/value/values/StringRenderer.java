@@ -12,6 +12,8 @@ import tritium.screens.ClickGui;
 import tritium.settings.LabelSetting;
 import tritium.settings.StringSetting;
 
+import java.util.Objects;
+
 /**
  * @author IzumiiKonata
  * Date: 2025/10/25 16:20
@@ -50,7 +52,11 @@ public class StringRenderer extends AbstractWidget<StringRenderer> {
         tfw.setBeforeRenderCallback(() -> {
             tfw.setMargin(2);
             tfw.setColor(RenderSystem.reAlpha(ClickGui.getColor(20), this.getAlpha()));
+            if (!Objects.equals(setting.getValue(), tfw.getText()))
+                tfw.setText(setting.getValue());
         });
+
+        tfw.setTextChangedCallback(setting::setValue);
 
         tfw.setOnKeyTypedCallback((character, keyCode) -> {
 

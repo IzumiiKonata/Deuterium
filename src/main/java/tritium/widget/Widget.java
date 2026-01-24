@@ -182,10 +182,10 @@ public abstract class Widget extends Module {
                     }
                     break;
                 case "PosX":
-                    this.x = value.getAsDouble();
+                    this.setX(value.getAsDouble());
                     break;
                 case "PosY":
-                    this.y = value.getAsDouble();
+                    this.setY(value.getAsDouble());
                     break;
                 case "Width":
                     this.setWidth(value.getAsDouble());
@@ -220,8 +220,8 @@ public abstract class Widget extends Module {
     public JsonObject saveConfig() {
         JsonObject directory = new JsonObject();
         directory.addProperty("Enabled", this.isEnabled());
-        directory.addProperty("PosX", x);
-        directory.addProperty("PosY", y);
+        directory.addProperty("PosX", this.getX());
+        directory.addProperty("PosY", this.getY());
         directory.addProperty("Width", this.getWidth());
         directory.addProperty("Height", this.getHeight());
         directory.addProperty("HDirection", this.horizontalDirection.name());

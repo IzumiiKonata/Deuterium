@@ -1,8 +1,11 @@
 package tritium.utils.logging;
 
+import lombok.SneakyThrows;
 import net.minecraft.util.EnumChatFormatting;
 
-import java.io.PrintStream;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -14,24 +17,35 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class ConsoleOutputRedirector {
 
-    public static final PrintStream OUT = System.out;
-    public static final PrintStream ERR = System.err;
-
     public static final List<String> SYSTEM_OUT = new CopyOnWriteArrayList<>();
 
+    static PrintStream OUT, ERR;
     public static void init() {
 
-        System.setOut(new LoggingPrintStream(OUT));
-        System.setErr(new LoggingPrintStream(ERR));
+        FileOutputStream fdOut = new FileOutputStream(FileDescriptor.out);
+        FileOutputStream fdErr = new FileOutputStream(FileDescriptor.err);
+
+        System.setOut(new LoggingPrintStream(OUT = newPrintStream(fdOut, System.getProperty("stdout.encoding")), true));
+        System.setErr(new LoggingPrintStream(ERR = newPrintStream(fdErr, System.getProperty("stdout.encoding")), false));
 
     }
 
-    private static class LoggingPrintStream extends PrintStream {
-        private final PrintStream stream;
+    private static PrintStream newPrintStream(OutputStream out, String enc) {
+        if (enc != null) {
+            return new PrintStream(new BufferedOutputStream(out, 128), true,
+                    Charset.forName(enc, StandardCharsets.UTF_8));
+        }
+        return new PrintStream(new BufferedOutputStream(out, 128), true);
+    }
 
-        public LoggingPrintStream(PrintStream outStream) {
+    private static class LoggingPrintStream extends PrintStream {
+        private final OutputStream stream;
+        private final boolean stdOut;
+
+        public LoggingPrintStream(PrintStream outStream, boolean stdOut) {
             super(outStream);
             this.stream = outStream;
+            this.stdOut = stdOut;
         }
 
         public void println(String p_println_1_) {
@@ -42,9 +56,10 @@ public class ConsoleOutputRedirector {
             this.logString(String.valueOf(p_println_1_));
         }
 
+        @SneakyThrows
         protected void logString(String string) {
 
-            if (stream == OUT) {
+            if (stdOut) {
                 String noColor = string;
                 while (noColor.contains("\033")) {
                     noColor = noColor.substring(0, noColor.indexOf("\033")) + noColor.substring(noColor.indexOf("m", noColor.indexOf("\033")) + 1);
