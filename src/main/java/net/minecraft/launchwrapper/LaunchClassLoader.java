@@ -79,9 +79,10 @@ public class LaunchClassLoader extends URLClassLoader {
         }
     }
 
+    @SuppressWarnings("unused")
     public void registerTransformer(String transformerClassName) {
         try {
-            IClassTransformer transformer = (IClassTransformer) loadClass(transformerClassName).newInstance();
+            IClassTransformer transformer = (IClassTransformer) loadClass(transformerClassName).getConstructor().newInstance();
             transformers.add(transformer);
             if (transformer instanceof IClassNameTransformer && renameTransformer == null) {
                 renameTransformer = (IClassNameTransformer) transformer;
@@ -89,6 +90,15 @@ public class LaunchClassLoader extends URLClassLoader {
         } catch (Exception e) {
             LogWrapper.log(Level.ERROR, e, "A critical problem occurred registering the ASM transformer class %s", transformerClassName);
         }
+    }
+
+    @Override
+    public InputStream getResourceAsStream(String name) {
+        ResourceStreamProvider resourceStreamProvider = Launch.resourceStreamProviders.get(name);
+        if (resourceStreamProvider != null)
+            return resourceStreamProvider.makeNew();
+
+        return super.getResourceAsStream(name);
     }
 
     @Override

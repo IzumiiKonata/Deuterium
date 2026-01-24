@@ -660,7 +660,9 @@ public class Minecraft implements IThreadListener {
 
         InputEvents.addKeyboardListener(new McKeybindHandler());
 
-        Tritium.getLogger().info("启动使用时间: {}s", (System.currentTimeMillis() - Launcher.startupTime) / 1000.0d);
+        double startupTime = (System.currentTimeMillis() - Long.parseLong(System.getProperty("tritium.startupTime"))) / 1000.0d;
+        Tritium.getLogger().info("启动使用时间: {}s", startupTime);
+        ConsoleScreen.log("[Tritium] Client launched. Time used: %.2fs", startupTime);
 
         loaded = true;
     }

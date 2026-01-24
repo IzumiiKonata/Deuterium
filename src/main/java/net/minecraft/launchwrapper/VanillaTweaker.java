@@ -5,6 +5,7 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigSource;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -67,7 +68,21 @@ public class VanillaTweaker implements ITweaker {
                     ZipEntry entry = entries.nextElement();
 
                     if (entry.getName().startsWith("mixins.") && entry.getName().endsWith(".json")) {
-                        Mixins.addConfiguration(entry.getName(), MIXIN_CONFIG_SOURCE);
+                        String cfgIdentifier = this.makeNewDistinctMixinConfiguration(entry.getName(), extension.getAbsolutePath());
+
+                        byte[] bytes;
+
+                        try {
+                            bytes = zipFile.getInputStream(entry).readAllBytes();
+                        } catch (IOException e) {
+                            System.err.println("Cannot read mixin config " + entry.getName() + " from extension " + extension.getAbsolutePath());
+                            e.printStackTrace();
+                            break;
+                        }
+
+                        Launch.resourceStreamProviders.put(cfgIdentifier, () -> new ByteArrayInputStream(bytes));
+
+                        Mixins.addConfiguration(cfgIdentifier, MIXIN_CONFIG_SOURCE);
                     }
                 }
 
@@ -83,9 +98,13 @@ public class VanillaTweaker implements ITweaker {
         env.setSide(MixinEnvironment.Side.CLIENT);
         env.setOption(MixinEnvironment.Option.DISABLE_REFMAP, true);
 
-        env.setOption(MixinEnvironment.Option.DEBUG_VERBOSE, true);
+        env.setOption(MixinEnvironment.Option.DEBUG_VERBOSE, false);
 
         MixinBootstrap.getPlatform().inject();
+    }
+
+    private String makeNewDistinctMixinConfiguration(String configName, String pluginName) {
+        return pluginName + "_" + configName;
     }
 
     @Override

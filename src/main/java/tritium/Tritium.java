@@ -143,7 +143,6 @@ public class Tritium {
         clientLoaded = true;
 
         ConsoleScreen.log("[Tritium] Tritium {}", ver.toString());
-        ConsoleScreen.log("[Tritium] Client launched. Time used: %.2fs", (System.currentTimeMillis() - Launcher.startupTime) / 1000.0f);
         UpdateChecker.check();
     }
 

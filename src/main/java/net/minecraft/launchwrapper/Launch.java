@@ -29,6 +29,8 @@ public class Launch {
     public static File assetsDir;
     public static Map<String,Object> blackboard;
 
+    public static final Map<String, ResourceStreamProvider> resourceStreamProviders = new HashMap<>();
+
     public static void main(String[] args) {
         new Launch(args).launch(args);
     }

@@ -10,9 +10,10 @@ import tritium.utils.logging.ConsoleOutputRedirector;
  */
 public class Launcher {
 
-    public static final long startupTime = System.currentTimeMillis();
-
     public static void main(String[] args) {
+
+        System.setProperty("tritium.startupTime", String.valueOf(System.currentTimeMillis()));
+
         Configuration.MEMORY_ALLOCATOR.set("jemalloc");
         ConsoleOutputRedirector.init();
 
