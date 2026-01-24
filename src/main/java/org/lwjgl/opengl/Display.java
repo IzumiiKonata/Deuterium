@@ -35,8 +35,8 @@ public class Display {
     private static boolean displayResizable = false;
     private static boolean startFullscreen = false;
 
-    private static org.lwjglx.opengl.DisplayMode mode = new org.lwjglx.opengl.DisplayMode(1600, 900);
-    private static org.lwjglx.opengl.DisplayMode desktopDisplayMode = new org.lwjglx.opengl.DisplayMode(854, 480);
+    private static DisplayMode mode = new DisplayMode(1600, 900);
+    private static DisplayMode desktopDisplayMode;
 
     private static final int latestEventKey = 0;
 
@@ -68,7 +68,7 @@ public class Display {
         int monitorBitPerPixel = vidmode.redBits() + vidmode.greenBits() + vidmode.blueBits();
         int monitorRefreshRate = vidmode.refreshRate();
 
-        desktopDisplayMode = new org.lwjglx.opengl.DisplayMode(monitorWidth, monitorHeight, monitorBitPerPixel, monitorRefreshRate);
+        desktopDisplayMode = new DisplayMode(monitorWidth, monitorHeight, monitorBitPerPixel, monitorRefreshRate);
     }
 
     /**
@@ -113,7 +113,7 @@ public class Display {
         int monitorBitPerPixel = vidmode.redBits() + vidmode.greenBits() + vidmode.blueBits();
         int monitorRefreshRate = vidmode.refreshRate();
 
-        desktopDisplayMode = new org.lwjglx.opengl.DisplayMode(monitorWidth, monitorHeight, monitorBitPerPixel, monitorRefreshRate);
+        desktopDisplayMode = new DisplayMode(monitorWidth, monitorHeight, monitorBitPerPixel, monitorRefreshRate);
 
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
@@ -469,19 +469,19 @@ public class Display {
 
     public static boolean recreated = false;
 
-    public static void setDisplayMode(org.lwjglx.opengl.DisplayMode dm) {
+    public static void setDisplayMode(DisplayMode dm) {
         mode = dm;
     }
 
-    public static org.lwjglx.opengl.DisplayMode getDisplayMode() {
+    public static DisplayMode getDisplayMode() {
         return mode;
     }
 
-    public static org.lwjglx.opengl.DisplayMode[] getAvailableDisplayModes() {
+    public static DisplayMode[] getAvailableDisplayModes() {
 //        IntBuffer count = BufferUtils.createIntBuffer(1);
         GLFWVidMode.Buffer modes = GLFW.glfwGetVideoModes(glfwGetPrimaryMonitor());
 
-        List<org.lwjglx.opengl.DisplayMode> result = new ArrayList<>();
+        List<DisplayMode> result = new ArrayList<>();
 
         for (int i = 0; i < modes.capacity(); i++) {
             modes.position(i);
@@ -491,13 +491,13 @@ public class Display {
             int b = modes.redBits() + modes.greenBits() + modes.blueBits();
             int r = modes.refreshRate();
 
-            result.add(new org.lwjglx.opengl.DisplayMode(w, h, b, r));
+            result.add(new DisplayMode(w, h, b, r));
         }
 
-        return result.toArray(new org.lwjglx.opengl.DisplayMode[0]);
+        return result.toArray(new DisplayMode[0]);
     }
 
-    public static org.lwjglx.opengl.DisplayMode getDesktopDisplayMode() {
+    public static DisplayMode getDesktopDisplayMode() {
         return desktopDisplayMode;
     }
 

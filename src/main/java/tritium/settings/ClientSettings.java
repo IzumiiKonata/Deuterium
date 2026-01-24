@@ -215,7 +215,7 @@ public class ClientSettings {
         Localizer.loadLang();
 
         List<String> modes = new ArrayList<>();
-        for (org.lwjglx.opengl.DisplayMode dMode : Display.getAvailableDisplayModes()) {
+        for (DisplayMode dMode : Display.getAvailableDisplayModes()) {
             if (dMode.getFrequency() == Display.getDesktopDisplayMode().getFrequency())
                 modes.add(dMode.getWidth() + "x" + dMode.getHeight());
         }

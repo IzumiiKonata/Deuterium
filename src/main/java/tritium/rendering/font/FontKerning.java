@@ -31,6 +31,7 @@ public final class FontKerning {
             long tempLibrary;
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 PointerBuffer libraryPtr = stack.mallocPointer(1);
+                // FIXME
                 checkFT(FT_Init_FreeType(libraryPtr));
                 tempLibrary = libraryPtr.get();
             }

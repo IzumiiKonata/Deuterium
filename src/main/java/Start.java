@@ -8,7 +8,7 @@ public class Start {
 
     @SneakyThrows
     public static void main(String[] args) {
-        String[] launchArgs = concat(new String[]{ "--version", Tritium.NAME, "--accessToken", "0", "--assetsDir", "assets", "--assetIndex", "1.8", "--userProperties", "{}", "--width", "854", "--height", "480" }, args);
+        String[] launchArgs = concat(new String[]{ "--version", "Tritium", "--accessToken", "0", "--assetsDir", "assets", "--assetIndex", "1.8", "--userProperties", "{}", "--width", "854", "--height", "480" }, args);
         Launcher.main(launchArgs);
     }
 
