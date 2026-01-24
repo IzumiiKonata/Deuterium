@@ -6,8 +6,11 @@ import joptsimple.OptionSpec;
 
 import java.io.File;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -27,14 +30,21 @@ public class Launch {
     public static Map<String,Object> blackboard;
 
     public static void main(String[] args) {
-        new Launch().launch(args);
+        new Launch(args).launch(args);
     }
 
     public static LaunchClassLoader classLoader;
 
     @SneakyThrows
-    public Launch() {
+    public Launch(String[] args) {
 //        final URLClassLoader ucl = (URLClassLoader) getClass().getClassLoader();
+
+        final OptionParser parser = new OptionParser();
+        parser.allowsUnrecognizedOptions();
+
+        final OptionSpec<File> gameDirOption = parser.accepts("gameDir", "Alternative game directory").withRequiredArg().ofType(File.class).defaultsTo(new File("."));
+        final OptionSet options = parser.parse(args);
+        minecraftHome = options.valueOf(gameDirOption);
 
         String property = System.getProperty("java.class.path");
         String[] split = property.split(File.pathSeparator);
@@ -42,6 +52,16 @@ public class Launch {
         List<URL> ucl = new ArrayList<>();
         for (String s : split) {
             ucl.add(new File(s).toURI().toURL());
+        }
+
+        File extensionsDir = Paths.get(minecraftHome.getAbsolutePath(), "Tritium", "extensions").toFile();
+        if (extensionsDir.exists() && extensionsDir.isDirectory() && extensionsDir.listFiles() != null) {
+            for (File extension : extensionsDir.listFiles()) {
+                if (!(extension.isFile() && extension.getName().toLowerCase().endsWith(".jar")))
+                    continue;
+
+                ucl.add(extension.toURI().toURL());
+            }
         }
 
         classLoader = new LaunchClassLoader(ucl.toArray(new URL[0]));
@@ -54,13 +74,12 @@ public class Launch {
         parser.allowsUnrecognizedOptions();
 
         final OptionSpec<String> profileOption = parser.accepts("version", "The version we launched with").withRequiredArg();
-        final OptionSpec<File> gameDirOption = parser.accepts("gameDir", "Alternative game directory").withRequiredArg().ofType(File.class);
         final OptionSpec<File> assetsDirOption = parser.accepts("assetsDir", "Assets directory").withRequiredArg().ofType(File.class);
         final OptionSpec<String> tweakClassOption = parser.accepts("tweakClass", "Tweak class(es) to load").withRequiredArg().defaultsTo(DEFAULT_TWEAK);
         final OptionSpec<String> nonOption = parser.nonOptions();
 
         final OptionSet options = parser.parse(args);
-        minecraftHome = options.valueOf(gameDirOption);
+
         assetsDir = options.valueOf(assetsDirOption);
         final String profileName = options.valueOf(profileOption);
         final List<String> tweakClassNames = new ArrayList<String>(options.valuesOf(tweakClassOption));

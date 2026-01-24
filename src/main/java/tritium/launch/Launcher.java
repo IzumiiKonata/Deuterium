@@ -2,7 +2,6 @@ package tritium.launch;
 
 import net.minecraft.launchwrapper.Launch;
 import org.lwjgl.system.Configuration;
-import tritium.mixin.Mixin;
 import tritium.utils.logging.ConsoleOutputRedirector;
 
 /**
@@ -23,13 +22,10 @@ public class Launcher {
         Configuration.DEBUG.set(false);
         Configuration.DEBUG_FUNCTIONS.set(false);
 
-        Launch launch = new Launch();
-
-        Mixin.setup();
+        Launch launch = new Launch(args);
 
         System.setProperty("java.net.preferIPv4Stack", "true");
         launch.launch(args);
-//        MinecraftBootstrap.launchMinecraft(args);
     }
 
 }

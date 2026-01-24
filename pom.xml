@@ -225,12 +225,6 @@
             <classifier>${lwjgl.natives}</classifier>
             <scope>runtime</scope>
         </dependency>
-<!--        <dependency>-->
-<!--            <groupId>org.lwjgl</groupId>-->
-<!--            <artifactId>lwjgl-glfw</artifactId>-->
-<!--            <classifier>${lwjgl.natives}</classifier>-->
-<!--            <scope>runtime</scope>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>org.lwjgl</groupId>
             <artifactId>lwjgl-openal</artifactId>
@@ -305,6 +299,7 @@
                                 <includes>
                                     <include>tritium:java-version-checker</include>
                                     <include>com.github.opai-client:opensource-components</include>
+                                    <include>org.spongepowered:mixin</include>
                                 </includes>
                             </artifactSet>
 
