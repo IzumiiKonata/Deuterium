@@ -178,9 +178,6 @@ public class FontManager extends AbstractManager {
     
     private static FontKerning readFontKerning(String path) {
 
-        if (true)
-            return null;
-
         return fontKernings.computeIfAbsent(path, p -> {
             try {
                 // 获取字体文件的绝对路径

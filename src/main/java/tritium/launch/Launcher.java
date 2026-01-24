@@ -1,8 +1,6 @@
 package tritium.launch;
 
 import net.minecraft.launchwrapper.Launch;
-import org.lwjgl.system.Configuration;
-import tritium.utils.logging.ConsoleOutputRedirector;
 
 /**
  * @author IzumiiKonata
@@ -11,17 +9,7 @@ import tritium.utils.logging.ConsoleOutputRedirector;
 public class Launcher {
 
     public static void main(String[] args) {
-
         System.setProperty("tritium.startupTime", String.valueOf(System.currentTimeMillis()));
-
-        Configuration.MEMORY_ALLOCATOR.set("jemalloc");
-        ConsoleOutputRedirector.init();
-
-        Configuration.DISABLE_CHECKS.set(true);
-        Configuration.DISABLE_FUNCTION_CHECKS.set(true);
-        Configuration.DISABLE_HASH_CHECKS.set(true);
-        Configuration.DEBUG.set(false);
-        Configuration.DEBUG_FUNCTIONS.set(false);
 
         Launch launch = new Launch(args);
 

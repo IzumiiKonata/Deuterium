@@ -10,8 +10,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.main.GameConfiguration;
 import net.minecraft.util.Session;
 import org.lwjgl.glfw.GLFW;
+import org.lwjgl.system.Configuration;
 import org.lwjglx.Sys;
 import tritium.Tritium;
+import tritium.utils.logging.ConsoleOutputRedirector;
 
 import java.io.File;
 import java.net.Authenticator;
@@ -28,6 +30,16 @@ import java.util.List;
 public class MinecraftBootstrap {
 
     public static void main(String[] args) {
+
+        Configuration.MEMORY_ALLOCATOR.set("jemalloc");
+        ConsoleOutputRedirector.init();
+
+        Configuration.DISABLE_CHECKS.set(true);
+        Configuration.DISABLE_FUNCTION_CHECKS.set(true);
+        Configuration.DISABLE_HASH_CHECKS.set(true);
+        Configuration.DEBUG.set(false);
+        Configuration.DEBUG_FUNCTIONS.set(false);
+
         OptionParser optionparser = new OptionParser();
         optionparser.allowsUnrecognizedOptions();
         optionparser.accepts("demo");
