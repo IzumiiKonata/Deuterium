@@ -157,7 +157,7 @@ public class DependencyDownloader {
         String[] lines = depsContent.split("\n");
 
         for (String line : lines) {
-            if (line.startsWith("#")) {
+            if (line.startsWith("#") || line.isBlank()) {
                 continue;
             }
 
