@@ -70,6 +70,13 @@ public class VanillaTweaker implements ITweaker {
                         Mixins.addConfiguration(entry.getName(), MIXIN_CONFIG_SOURCE);
                     }
                 }
+
+                try {
+                    zipFile.close();
+                } catch (IOException e) {
+                    System.err.println("Resource leak on extension: " + extension.getAbsolutePath());
+                    e.printStackTrace();
+                }
             }
         }
 
