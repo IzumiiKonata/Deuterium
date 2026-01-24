@@ -101,6 +101,7 @@ public abstract class Render<T extends Entity> implements IEntityRenderer {
         if (resourcelocation == null) {
             return false;
         } else {
+            GlStateManager.enableTexture2D();
             this.bindTexture(resourcelocation);
             return true;
         }

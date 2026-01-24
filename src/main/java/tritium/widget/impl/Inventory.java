@@ -40,11 +40,15 @@ public class Inventory extends Widget {
 
         int count = 0;
 
+
         for (ItemStack stack : InvUtils.getInventoryContent()) {
 
             Rect.draw(offsetX, offsetY, stackWidth, stackHeight, hexColor(0, 0, 0, 20), Rect.RectType.EXPAND);
 
             if (stack != null) {
+
+                GlStateManager.enableTexture2D();
+
                 if (stack.getItem() instanceof ItemBlock)
                     this.renderItem(stack, offsetX + 4, offsetY + 4, 0.25);
                 else
