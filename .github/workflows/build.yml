@@ -30,6 +30,7 @@ jobs:
       - name: Get version from pom.xml
         id: get_version
         run: |
+          cd tritium
           VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
           echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
           COMMIT_SHORT=$(git rev-parse --short HEAD)
