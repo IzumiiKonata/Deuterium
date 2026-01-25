@@ -42,7 +42,7 @@ jobs:
 
       - name: Generate version info file
         run: |
-          cat > src/main/resources/version.json << EOF
+          cat > tritium/src/main/resources/version.json << EOF
           {
             "version": "${{ steps.get_version.outputs.VERSION }}",
             "commit": "${{ github.sha }}",
