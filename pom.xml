@@ -286,55 +286,6 @@
                 </configuration>
             </plugin>
 
-            <!-- 下载依赖的源码 -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.6.1</version>
-                <executions>
-                    <execution>
-                        <id>unpack-sources</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>unpack-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>sources</classifier>
-                            <includeGroupIds>com.github.opai-client,org.spongepowered</includeGroupIds>
-                            <includeArtifactIds>opensource-components,mixin</includeArtifactIds>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <failOnMissingClassifierArtifact>false</failOnMissingClassifierArtifact>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- 将源代码复制到 target/classes -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>3.3.1</version>
-                <executions>
-                    <execution>
-                        <id>copy-sources</id>
-                        <phase>process-classes</phase>
-                        <goals>
-                            <goal>copy-resources</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
-                            <resources>
-                                <resource>
-                                    <directory>src/main/java</directory>
-                                    <includes>
-                                        <include>**/*.java</include>
-                                    </includes>
-                                </resource>
-                            </resources>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
