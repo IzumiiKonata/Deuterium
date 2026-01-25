@@ -180,15 +180,7 @@ public class FontManager extends AbstractManager {
 
         return fontKernings.computeIfAbsent(path, p -> {
             try {
-                // 获取字体文件的绝对路径
-                String fontPath = FontManager.class.getResource(p).getPath();
-                // 如果路径包含空格或其他特殊字符，需要处理
-                if (fontPath.startsWith("/")) {
-                    fontPath = fontPath.substring(1);
-                }
-                fontPath = fontPath.replace("/", "\\");
-                File fontFile = new File(fontPath);
-                return new FontKerning(fontFile);
+                return new FontKerning(path);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

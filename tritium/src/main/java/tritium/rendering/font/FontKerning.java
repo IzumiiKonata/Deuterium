@@ -6,6 +6,7 @@ import org.lwjgl.util.freetype.FT_Face;
 import org.lwjgl.util.harfbuzz.hb_glyph_position_t;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Objects;
@@ -26,8 +27,18 @@ public final class FontKerning {
     private final FT_Face ftFace;
     private final ByteBuffer fontData;
 
-    public FontKerning(File fontFile) {
+    public FontKerning(String resPath) {
         try {
+
+            InputStream resourceAsStream = FontKerning.class.getResourceAsStream(resPath);
+
+            if (resourceAsStream == null) {
+                throw new RuntimeException("Failed to find resource: " + resPath);
+            }
+
+            byte[] fileBytes = resourceAsStream.readAllBytes();
+            resourceAsStream.close();
+
             long tempLibrary;
             try (MemoryStack stack = MemoryStack.stackPush()) {
                 PointerBuffer libraryPtr = stack.mallocPointer(1);
@@ -37,7 +48,6 @@ public final class FontKerning {
             }
             ftLibrary = tempLibrary;
 
-            byte[] fileBytes = java.nio.file.Files.readAllBytes(fontFile.toPath());
             fontData = memAlloc(fileBytes.length);
             fontData.put(fileBytes);
             fontData.flip();
