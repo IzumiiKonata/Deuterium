@@ -56,47 +56,41 @@ jobs:
           }
           EOF
 
-      - name: Build version checker and install
-        run: |
-          cd java-version-checker
-          mvn clean install
-          cd ..
-
       - name: Build with Maven
         run: mvn clean package -DskipTests -T 1C
 
-      - name: Prepare release directory
+      - name: Prepare publish directory
         run: |
-          mkdir -p release/Tritium
+          mkdir -p publish/Tritium
 
       - name: Copy artifacts
         run: |
-          cp target/Tritium.jar release/Tritium/Tritium.jar
+          cp tritium/target/Tritium.jar publish/Tritium/Tritium.jar
 
       - name: Calculate SHA1
         id: calculate_sha1
         run: |
-          SHA1=$(sha1sum release/Tritium/Tritium.jar | awk '{print $1}')
+          SHA1=$(sha1sum publish/Tritium/Tritium.jar | awk '{print $1}')
           echo "SHA1=$SHA1" >> $GITHUB_OUTPUT
-          SIZE=$(stat -c%s release/Tritium/Tritium.jar)
+          SIZE=$(stat -c%s publish/Tritium/Tritium.jar)
           echo "SIZE=$SIZE" >> $GITHUB_OUTPUT
 
       - name: Update Tritium.json with build info
         run: |
-          cp Release/Tritium.json release/Tritium/Tritium.json
+          cp Release/Tritium.json publish/Tritium/Tritium.json
           
           jq --arg sha1 "${{ steps.calculate_sha1.outputs.SHA1 }}" \
              --arg size "${{ steps.calculate_sha1.outputs.SIZE }}" \
              '.downloads.client.sha1 = $sha1 | .downloads.client.size = ($size | tonumber)' \
-             release/Tritium/Tritium.json > release/Tritium/Tritium.json.tmp
-          mv release/Tritium/Tritium.json.tmp release/Tritium/Tritium.json
+             publish/Tritium/Tritium.json > publish/Tritium/Tritium.json.tmp
+          mv publish/Tritium/Tritium.json.tmp publish/Tritium/Tritium.json
 
       - name: Add launcher specified files
         run: |
-          cp Release/icon.png release/Tritium/icon.png
-          mkdir release/Tritium/PCL
-          cp Release/icon.png release/Tritium/PCL/Logo.png
-          cat > release/Tritium/PCL/Setup.ini << EOF
+          cp Release/icon.png publish/Tritium/icon.png
+          mkdir publish/Tritium/PCL
+          cp Release/icon.png publish/Tritium/PCL/Logo.png
+          cat > publish/Tritium/PCL/Setup.ini << EOF
           State:4
           Info:Tritium Client
           Logo:PCL\Logo.png
@@ -116,7 +110,7 @@ jobs:
 
       - name: Create release package
         run: |
-          cd release
+          cd publish
           zip -r Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}.zip Tritium/
 
       - name: Generate release notes
@@ -167,7 +161,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            release/Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}.zip
+            publish/Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}.zip
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -175,5 +169,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Tritium-${{ steps.get_version.outputs.RELEASE_NAME }}
-          path: release/
+          path: publish/
           retention-days: 30
