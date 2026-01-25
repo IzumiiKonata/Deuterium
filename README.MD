@@ -9,7 +9,7 @@
 ### Tritium-X 是一个开源的 Minecraft 1.8.9 客户端。
 ___
 
-## 亮点
+## 亮点  
 - **快速**：本客户端使用了一个经过深度优化的 mcp919 base, 移除了
   - Twitch 直播
   - Snooper
