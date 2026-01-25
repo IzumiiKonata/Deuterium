@@ -65,7 +65,7 @@ public class PlaylistPanel extends NCMPanel {
             });
 
 //        LabelWidget lblPlaylistName = new LabelWidget(playList.name, FontManager.pf);
-            RoundedButtonWidget btnPlay = new RoundedButtonWidget("播放歌单", FontManager.pf16);
+            RoundedButtonWidget btnPlay = new RoundedButtonWidget("播放歌单", FontManager.pf16bold);
             this.addChild(btnPlay);
 
             btnPlay.setBeforeRenderCallback(() -> {
@@ -87,7 +87,7 @@ public class PlaylistPanel extends NCMPanel {
                 return true;
             });
 
-            RoundedButtonWidget btnPlayRandomOrder = new RoundedButtonWidget("乱序播放歌单", FontManager.pf16);
+            RoundedButtonWidget btnPlayRandomOrder = new RoundedButtonWidget("乱序播放歌单", FontManager.pf16bold);
             this.addChild(btnPlayRandomOrder);
 
             btnPlayRandomOrder.setBeforeRenderCallback(() -> {
@@ -111,7 +111,7 @@ public class PlaylistPanel extends NCMPanel {
                 return true;
             });
 
-            RoundedButtonWidget btnCoverflow = new RoundedButtonWidget("Coverflow", FontManager.pf16);
+            RoundedButtonWidget btnCoverflow = new RoundedButtonWidget("Coverflow", FontManager.pf16bold);
             this.addChild(btnCoverflow);
 
             btnCoverflow.setBeforeRenderCallback(() -> {
