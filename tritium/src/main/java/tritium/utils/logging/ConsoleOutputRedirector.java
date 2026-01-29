@@ -1,111 +1,121 @@
 package tritium.utils.logging;
 
-import lombok.SneakyThrows;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.io.*;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
-/**
- * @author IzumiiKonata
- * @since 2024/8/31 12:15
- */
-public class ConsoleOutputRedirector {
+public final class ConsoleOutputRedirector {
 
-    public static final List<String> SYSTEM_OUT = new CopyOnWriteArrayList<>();
+    public static final Queue<String> SYSTEM_OUT = new ConcurrentLinkedQueue<>();
 
-    static PrintStream OUT, ERR;
+    private static final PrintStream REAL_OUT = System.out;
+    private static final PrintStream REAL_ERR = System.err;
+
     public static void init() {
+        System.setOut(new PrintStream(
+                new LineInterceptingStream(REAL_OUT, true),
+                true,
+                StandardCharsets.UTF_8
+        ));
 
-        FileOutputStream fdOut = new FileOutputStream(FileDescriptor.out);
-        FileOutputStream fdErr = new FileOutputStream(FileDescriptor.err);
-
-        System.setOut(new LoggingPrintStream(OUT = newPrintStream(fdOut, System.getProperty("stdout.encoding")), true));
-        System.setErr(new LoggingPrintStream(ERR = newPrintStream(fdErr, System.getProperty("stdout.encoding")), false));
-
+        System.setErr(new PrintStream(
+                new LineInterceptingStream(REAL_ERR, false),
+                true,
+                StandardCharsets.UTF_8
+        ));
     }
 
-    private static PrintStream newPrintStream(OutputStream out, String enc) {
-        if (enc != null) {
-            return new PrintStream(new BufferedOutputStream(out, 128), true,
-                    Charset.forName(enc, StandardCharsets.UTF_8));
+    private static final class LineInterceptingStream extends OutputStream {
+
+        private final PrintStream target;
+        private final boolean stdout;
+        private final ByteArrayOutputStream buffer = new ByteArrayOutputStream(256);
+
+        LineInterceptingStream(PrintStream target, boolean stdout) {
+            this.target = target;
+            this.stdout = stdout;
         }
-        return new PrintStream(new BufferedOutputStream(out, 128), true);
+
+        @Override
+        public synchronized void write(int b) {
+            buffer.write(b);
+
+            if (b == '\n') {
+                flushLine();
+            }
+        }
+
+        @Override
+        public synchronized void flush() {
+            if (buffer.size() > 0) {
+                flushLine();
+            }
+            target.flush();
+        }
+
+        @Override
+        public void close() {
+            flush();
+        }
+
+        private void flushLine() {
+            String line = buffer.toString(StandardCharsets.UTF_8);
+            buffer.reset();
+
+            target.print(line);
+
+            String processed = stdout
+                    ? convertAnsiToMc(stripTrailingNewline(line))
+                    : EnumChatFormatting.RED + stripTrailingNewline(line);
+
+            SYSTEM_OUT.add(processed);
+        }
     }
 
-    private static class LoggingPrintStream extends PrintStream {
-        private final OutputStream stream;
-        private final boolean stdOut;
+    private static String stripTrailingNewline(String s) {
+        if (s.endsWith("\r\n")) return s.substring(0, s.length() - 2);
+        if (s.endsWith("\n")) return s.substring(0, s.length() - 1);
+        return s;
+    }
 
-        public LoggingPrintStream(PrintStream outStream, boolean stdOut) {
-            super(outStream);
-            this.stream = outStream;
-            this.stdOut = stdOut;
-        }
+    private static String convertAnsiToMc(String input) {
+        StringBuilder out = new StringBuilder(input.length());
+        int i = 0;
 
-        public void println(String p_println_1_) {
-            this.logString(p_println_1_);
-        }
+        while (i < input.length()) {
+            char c = input.charAt(i);
 
-        public void println(Object p_println_1_) {
-            this.logString(String.valueOf(p_println_1_));
-        }
-
-        @SneakyThrows
-        protected void logString(String string) {
-
-            if (stdOut) {
-                String noColor = string;
-                while (noColor.contains("\033")) {
-                    noColor = noColor.substring(0, noColor.indexOf("\033")) + noColor.substring(noColor.indexOf("m", noColor.indexOf("\033")) + 1);
+            if (c == '\033' && i + 1 < input.length() && input.charAt(i + 1) == '[') {
+                int end = input.indexOf('m', i);
+                if (end == -1) {
+                    i++;
+                    continue;
                 }
 
-                OUT.println(string);
-
-                String colorCodes = string;
-
-                while (colorCodes.contains("\033")) {
-                    String c = colorCodes.substring(colorCodes.indexOf("\033") + 1, colorCodes.indexOf("m", colorCodes.indexOf("\033")) + 1);
-//                    OUT.println("Color: " + c);
-
-                    colorCodes = colorCodes.replace("\033" + c, this.consoleColorToFormatting(c));
-                }
-
-                SYSTEM_OUT.add(colorCodes);
-
-            } else {
-                ERR.println(string);
-
-                for (String s : string.replaceAll("\t", "    ").split("\n")) {
-                    SYSTEM_OUT.add(EnumChatFormatting.RED + s);
-                }
-
+                String code = input.substring(i + 2, end);
+                out.append(mapAnsi(code));
+                i = end + 1;
+                continue;
             }
 
+            out.append(c);
+            i++;
         }
 
-        private String consoleColorToFormatting(String input) {
-
-            if (input.equals("[0;92m")) {
-                return EnumChatFormatting.GREEN.toString();
-            } else if (input.equals("[0m")) {
-                return EnumChatFormatting.GRAY.toString();
-            } else if (input.equals("[0;97m") || input.equals("[0;37m")) {
-                return EnumChatFormatting.WHITE.toString();
-            } else if (input.equals("[0;93m")) {
-                return EnumChatFormatting.YELLOW.toString();
-            } else if (input.equals("[0;91m")) {
-                return EnumChatFormatting.RED.toString();
-            } else {
-                return "(IDK)";
-            }
-
-        }
+        return out.toString();
     }
 
+    private static String mapAnsi(String code) {
+        return switch (code) {
+            case "0", "0;0" -> EnumChatFormatting.GRAY.toString();
+            case "0;91", "31" -> EnumChatFormatting.RED.toString();
+            case "0;92", "32" -> EnumChatFormatting.GREEN.toString();
+            case "0;93", "33" -> EnumChatFormatting.YELLOW.toString();
+            case "0;97", "37" -> EnumChatFormatting.WHITE.toString();
+            default -> "";
+        };
+    }
 }

@@ -16,8 +16,6 @@ public class LogManager {
 
     private static final Logger unknown = new Logger("Unknown");
 
-    private static final PrintStream SYSOUT = System.out;
-
     public static Logger getLogger() {
         return new Logger(getClassName(2));
     }
@@ -38,34 +36,28 @@ public class LogManager {
     @SneakyThrows
     public static void print(Logger loggerIn, LogLevel levelIn, String message, String name) {
 
-        if (!(levelIn.getLevel() >= (loggerIn.getOverrideLevel() != null ? loggerIn.getOverrideLevel() : LogManager.getDefaultLogLevel()).getLevel()))
+        if (!(levelIn.getLevel() >= (loggerIn.getOverrideLevel() != null ? loggerIn.getOverrideLevel() : LogManager.getDefaultLogLevel()).getLevel())) {
             return;
+        }
 
         String msg = ConsoleColors.GREEN_BRIGHT + "[" + getLocalTime() + "]" + ConsoleColors.RESET
                 + " [" + ConsoleColors.WHITE_BRIGHT + name + ConsoleColors.RESET + "/"
                 + getSymbolColor(levelIn) + levelIn + ConsoleColors.RESET + "] "
                 + getSymbolColor(levelIn) + message + ConsoleColors.RESET;
 
-        SYSOUT.println(msg);
+        System.out.println(msg);
 
     }
 
     private static String getSymbolColor(LogLevel symbol) {
 
-        switch (symbol) {
-            case DEBUG:
-                return ConsoleColors.WHITE;
-            case INFO:
-                return ConsoleColors.RESET;
-            case WARN:
-                return ConsoleColors.YELLOW_BRIGHT;
-            case ERROR:
-                return ConsoleColors.RED_BRIGHT;
-            case CRITICAL:
-                return ConsoleColors.RED_BACKGROUND_BRIGHT;
-            default:
-                throw new IllegalArgumentException();
-        }
+        return switch (symbol) {
+            case DEBUG -> ConsoleColors.WHITE;
+            case INFO -> ConsoleColors.RESET;
+            case WARN -> ConsoleColors.YELLOW_BRIGHT;
+            case ERROR -> ConsoleColors.RED_BRIGHT;
+            case CRITICAL -> ConsoleColors.RED_BACKGROUND_BRIGHT;
+        };
 
     }
 
@@ -120,7 +112,7 @@ public class LogManager {
 
             return template;
         } catch (Exception e) {
-            SYSOUT.println(template);
+            System.out.println(template);
             e.printStackTrace();
         }
 

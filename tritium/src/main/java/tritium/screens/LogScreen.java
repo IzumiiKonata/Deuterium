@@ -9,7 +9,7 @@ import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.logging.ConsoleOutputRedirector;
 
-import java.util.List;
+import java.util.Queue;
 
 /**
  * @author IzumiiKonata
@@ -28,7 +28,7 @@ public class LogScreen extends BaseScreen {
 
         CFontRenderer fr = FontManager.pf18;
 
-        List<String> list = ConsoleOutputRedirector.SYSTEM_OUT;
+        Queue<String> list = ConsoleOutputRedirector.SYSTEM_OUT;
 
         double spacing = 8;
         double subSpacing = 4;
@@ -84,28 +84,32 @@ public class LogScreen extends BaseScreen {
 
         CFontRenderer fr = FontManager.pf18;
 
-        List<String> list = ConsoleOutputRedirector.SYSTEM_OUT;
+        Queue<String> queue = ConsoleOutputRedirector.SYSTEM_OUT;
 
-        scroll = Math.max(0, Math.min(list.size() - 1, scroll));
+        int size = queue.size();
+        scroll = Math.max(0, Math.min(size - 1, scroll));
 
         int max = (int) (height / (4 + fr.getHeight()));
 
-        for (int i = scroll; i < list.size(); i++) {
+        int index = 0;
+        int drawn = 0;
 
-            if (i < scroll) {
+        for (String s : queue) {
+
+            if (index < scroll) {
+                index++;
                 continue;
             }
 
-            if (i > scroll + max) {
+            if (drawn >= max) {
                 break;
             }
 
-            String s = list.get(i);
-
             fr.drawString(s, posX, posY, -1);
-
             posY += 4 + fr.getHeight();
 
+            index++;
+            drawn++;
         }
 
     }

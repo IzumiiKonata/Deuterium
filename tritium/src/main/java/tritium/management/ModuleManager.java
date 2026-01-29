@@ -61,7 +61,7 @@ public class ModuleManager extends AbstractManager {
 
     // OTHER
     public static final NameSpoof nameSpoof = new NameSpoof();
-    public static final ViewLogs viewLogs = new ViewLogs();
+//    public static final ViewLogs viewLogs = new ViewLogs();
     public static final OpenConsole openConsole = new OpenConsole();
 
     static final Test testModule = new Test();
