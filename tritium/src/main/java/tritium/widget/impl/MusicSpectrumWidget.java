@@ -156,11 +156,21 @@ public class MusicSpectrumWidget extends Widget {
                 int zLayerFixer = 100;
                 GlStateManager.translate(0, 0, -zLayerFixer);
 
-                GL11.glBegin(GL11.GL_TRIANGLES);
+                boolean gradientRect = this.rectColor.chroma.getValue();
+
+                if (gradientRect) {
+                    GlStateManager.shadeModel(GL11.GL_SMOOTH);
+                }
+
+                GL11.glBegin(gradientRect ? GL11.GL_QUADS : GL11.GL_TRIANGLES);
                 int step = compatMode ? 8 : 3;
                 spectrumWidth.set((compatMode ? this.getWidth() : RenderSystem.getWidth()) / ((double) renderSpectrum.length / step));
-                this.drawRect(spectrumWidth.get(), renderSpectrum.length, step);
+                this.drawRect(spectrumWidth.get(), renderSpectrum.length, step, gradientRect);
                 GL11.glEnd();
+
+                if (gradientRect) {
+                    GlStateManager.shadeModel(GL11.GL_FLAT);
+                }
 
                 GlStateManager.translate(0, 0, zLayerFixer);
             }
@@ -296,7 +306,7 @@ public class MusicSpectrumWidget extends Widget {
     }
 
 
-    private void drawRect(double spectrumWidth, int j, int step) {
+    private void drawRect(double spectrumWidth, int j, int step, boolean gradientRect) {
 
         boolean compatMode = this.compatMode.getValue();
 
@@ -339,34 +349,51 @@ public class MusicSpectrumWidget extends Widget {
             double right = posX + spectrumWidth;
             double bottom = y + height;
 
-            if (left < right) {
+            if (left > right) {
                 double i1 = left;
                 left = right;
                 right = i1;
             }
 
-            if (top < bottom) {
+            if (top > bottom) {
                 double j1 = top;
                 top = bottom;
                 bottom = j1;
             }
 
             int rgb = this.rectColor.getRGB(i);
+            int nextRgb = this.rectColor.getRGB(i + step);
 
             float a = (rgb >> 24 & 255) * RenderSystem.DIVIDE_BY_255;
             float r = (rgb >> 16 & 255) * RenderSystem.DIVIDE_BY_255;
             float g = (rgb >> 8 & 255) * RenderSystem.DIVIDE_BY_255;
             float b = (rgb & 255) * RenderSystem.DIVIDE_BY_255;
+            float nextA = (nextRgb >> 24 & 255) * RenderSystem.DIVIDE_BY_255;
+            float nextR = (nextRgb >> 16 & 255) * RenderSystem.DIVIDE_BY_255;
+            float nextG = (nextRgb >> 8 & 255) * RenderSystem.DIVIDE_BY_255;
+            float nextB = (nextRgb & 255) * RenderSystem.DIVIDE_BY_255;
 
-            GlStateManager.color(r, g, b, a);
+            if (gradientRect) {
+                GlStateManager.color(r, g, b, a);
 
-            GL11.glVertex2d(right, bottom);
-            GL11.glVertex2d(left, top);
-            GL11.glVertex2d(left, bottom);
+                GL11.glVertex2d(left, top);
+                GL11.glVertex2d(left, bottom);
 
-            GL11.glVertex2d(right, top);
-            GL11.glVertex2d(left, top);
-            GL11.glVertex2d(right, bottom);
+                GlStateManager.color(nextR, nextG, nextB, nextA);
+
+                GL11.glVertex2d(right, bottom);
+                GL11.glVertex2d(right, top);
+            } else {
+                GlStateManager.color(r, g, b, a);
+
+                GL11.glVertex2d(right, bottom);
+                GL11.glVertex2d(left, top);
+                GL11.glVertex2d(left, bottom);
+
+                GL11.glVertex2d(right, top);
+                GL11.glVertex2d(left, top);
+                GL11.glVertex2d(right, bottom);
+            }
 
             if (this.indicator.getValue()) {
 
@@ -378,28 +405,41 @@ public class MusicSpectrumWidget extends Widget {
                 right = posX + spectrumWidth;
                 bottom = y + renderSpectrumIndicator[i] - 1 + height;
 
-                if (left < right) {
+                if (left > right) {
                     double i1 = left;
                     left = right;
                     right = i1;
                 }
 
-                if (top < bottom) {
+                if (top > bottom) {
                     double j1 = top;
                     top = bottom;
                     bottom = j1;
                 }
 
-                GL11.glVertex2d(right, bottom);
-                GL11.glVertex2d(left, top);
-                GL11.glVertex2d(left, bottom);
+                if (gradientRect) {
+                    GlStateManager.color(r, g, b, a);
 
-                GL11.glVertex2d(right, top);
-                GL11.glVertex2d(left, top);
-                GL11.glVertex2d(right, bottom);
+                    GL11.glVertex2d(left, top);
+                    GL11.glVertex2d(left, bottom);
+
+                    GlStateManager.color(nextR, nextG, nextB, nextA);
+
+                    GL11.glVertex2d(right, bottom);
+                    GL11.glVertex2d(right, top);
+                } else {
+                    GL11.glVertex2d(right, bottom);
+                    GL11.glVertex2d(left, top);
+                    GL11.glVertex2d(left, bottom);
+
+                    GL11.glVertex2d(right, top);
+                    GL11.glVertex2d(left, top);
+                    GL11.glVertex2d(right, bottom);
+                }
             }
 
         }
+
     }
 
 }
