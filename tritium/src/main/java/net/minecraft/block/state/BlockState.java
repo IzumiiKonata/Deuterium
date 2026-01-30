@@ -130,13 +130,21 @@ public class BlockState {
                 throw new IllegalStateException();
             } else {
                 Table<IProperty, Comparable, IBlockState> table = HashBasedTable.create();
-
+                
+                Map<IProperty, Comparable> tempMap = new HashMap<>(this.properties.size() + 1);
+                tempMap.putAll(this.properties);
+                
                 for (IProperty<? extends Comparable> iproperty : this.properties.keySet()) {
+                    Comparable currentValue = this.properties.get(iproperty);
+                    
                     for (Comparable comparable : iproperty.getAllowedValues()) {
-                        if (comparable != this.properties.get(iproperty)) {
-                            table.put(iproperty, comparable, map.get(this.getPropertiesWithValue(iproperty, comparable)));
+                        if (comparable != currentValue) {
+                            tempMap.put(iproperty, comparable);
+                            table.put(iproperty, comparable, map.get(tempMap));
                         }
                     }
+                    
+                    tempMap.put(iproperty, currentValue);
                 }
 
                 this.propertyValueTable = table;
