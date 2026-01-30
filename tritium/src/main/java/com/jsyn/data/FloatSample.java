@@ -130,6 +130,10 @@ public class FloatSample extends AudioSample implements Function {
 
     @Override
     public double readDouble(int index) {
+
+        if (buffer == null)
+            return .0;
+
         return buffer[index];
     }
 
