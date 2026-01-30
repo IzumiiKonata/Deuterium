@@ -167,10 +167,7 @@ public class MinecraftBootstrap {
         Proxy proxy = Proxy.NO_PROXY;
 
         if (proxyHost != null) {
-            try {
-                proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost, optionset.valueOf(proxyPortSpec)));
-            } catch (Exception ignored) {
-            }
+            try { proxy = new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(proxyHost, optionset.valueOf(proxyPortSpec))); } catch (Exception ignored) { }
         }
 
         final String proxyUsername = optionset.valueOf(proxyUserSpec);
