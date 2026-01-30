@@ -227,9 +227,11 @@ public class CoverflowOverlay extends BaseScreen {
 
         this.setupProjectionTransformation();
 
-        GlStateManager.disableDepth();
-//        GlStateManager.disableCull();
         GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+        GlStateManager.depthMask(false);
+//        GlStateManager.disableDepth();
+//        GlStateManager.clearDepth(1.0D);
+//        GlStateManager.disableCull();
 
         double coverSize = 96;
         double spacing = 24;
@@ -287,7 +289,8 @@ public class CoverflowOverlay extends BaseScreen {
 //        offsetX = -coverSize * 0.5;
 //        Album al = list.get(index);
 //        this.renderCoverImage(al, offsetX, coverSize, rotDegTarget, index, false, mouseX, mouseY, dWheel);
-        GlStateManager.enableDepth();
+//        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
 
         this.stopProjectionTransformation();
 
@@ -335,12 +338,10 @@ public class CoverflowOverlay extends BaseScreen {
         mouseY = mouseY / RenderSystem.getHeight() * paneHeight - paneHeight * 0.5;
 
         // 喜欢我的魔法数字吗
-        // 我操 怎么是黄金分割比
         double fontScale = (1 / aspectRatio) * 0.618;
 
         GlStateManager.pushMatrix();
 
-        // rotate
         GlStateManager.translate(offsetX + coverSize * 0.5, coverSize * 0.5, 0);
 
         if (index != i) {
@@ -352,10 +353,9 @@ public class CoverflowOverlay extends BaseScreen {
             renderingData.scale = Interpolations.interpBezier(renderingData.scale, 1.0, 0.2f);
         }
 
+        // rotate
         GlStateManager.rotate(renderingData.rotateDeg, 0, 1, 0);
         GlStateManager.translate(-(offsetX + coverSize * 0.5), -coverSize * 0.5, 0);
-
-        double zFightingFixer = .001;
 
         // scale
         GlStateManager.translate(offsetX + coverSize * 0.5, 0, 0);
@@ -364,14 +364,10 @@ public class CoverflowOverlay extends BaseScreen {
 
         Rect.draw(offsetX, -coverSize * 0.5f, coverSize, coverSize, RGBA.color(128, 128, 128, 128));
 
-        GlStateManager.translate(0, 0, zFightingFixer);
-
         if (texture != null) {
             GlStateManager.bindTexture(texture.getGlTextureId());
             texture.linearFilter();
             Image.draw(offsetX, -coverSize * 0.5, coverSize, coverSize, Image.Type.Normal);
-
-            GlStateManager.translate(0, 0, -zFightingFixer);
 
             // reflection
             Shaders.VF_FADEOUT.draw(offsetX, coverSize * 0.5, coverSize, coverSize, 0.5, 0.85f);
@@ -380,19 +376,15 @@ public class CoverflowOverlay extends BaseScreen {
                 // flip it
                 GlStateManager.translate(offsetX + coverSize * 0.5, coverSize * 0.5, 0);
                 GlStateManager.rotate(-180, 0, 1, 0);
-                GlStateManager.translate(-(offsetX + coverSize * 0.5), -coverSize * 0.5, zFightingFixer);
+                GlStateManager.translate(-(offsetX + coverSize * 0.5), -coverSize * 0.5, 0);
 
                 double x = offsetX;
                 double y = -coverSize * 0.5f;
                 double width = coverSize;
                 double height = coverSize;
 
-//                GlStateManager.translate(0, 0, -.5);
                 Image.drawLinearFlippedX(al.getCoverLocation(), x, y, width, height, Image.Type.Normal);
-                GlStateManager.translate(0, 0, zFightingFixer);
                 Rect.draw(x, y, width, height, RGBA.color(0, 0, 0, 200));
-                GlStateManager.translate(0, 0, zFightingFixer);
-
 
                 double imgSpacing = 1;
                 double imgSize = 16;
@@ -438,14 +430,11 @@ public class CoverflowOverlay extends BaseScreen {
 
                 fr = FontManager.pf25;
 
-                GlStateManager.translate(0, 0, zFightingFixer);
-
                 for (int j = 0; j < musics.size(); j++) {
                     Music music = musics.get(j);
 
                     if ((j + 1) % 2 == 0) {
                         Rect.draw(contentPaneX, yOffset, contentPaneWidth, entryHeight, RGBA.color(0, 0, 0, 60));
-                        GlStateManager.translate(0, 0, zFightingFixer);
                     }
 
                     fr.drawString((j + 1) + ".", contentPaneX + 2, yOffset + entryHeight * 0.5 - fr.getHeight() * 0.5 * fontScale, fontScale, -1);
