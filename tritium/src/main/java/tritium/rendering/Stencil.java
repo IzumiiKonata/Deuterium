@@ -79,10 +79,10 @@ public class Stencil {
     }
 
     public static void checkSetupFBO(Framebuffer fbo) {
-        if (fbo != null && fbo.depthBuffer > -1) {
-            Stencil.setupFBO(fbo);
-            fbo.depthBuffer = -1;
-        }
+//        if (fbo != null && fbo.depthBuffer > -1) {
+//            Stencil.setupFBO(fbo);
+//            fbo.depthBuffer = -1;
+//        }
     }
 
 

@@ -464,6 +464,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             GlStateManager.loadIdentity();
                             GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
+                            GL11.glDisable(GL11.GL_STENCIL_TEST);
+
                             double gradientWidth = 16;
 
                             // stencil texture

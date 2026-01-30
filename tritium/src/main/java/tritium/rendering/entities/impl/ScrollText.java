@@ -72,14 +72,16 @@ public class ScrollText {
 
             isScrolling = true;
 
-//            GlStateManager.matrixMode(GL11.GL_PROJECTION);
-//            GlStateManager.pushMatrix();
-//            GlStateManager.loadIdentity();
-//            GlStateManager.ortho(0.0D, Minecraft.getMinecraft().displayWidth * .5, Minecraft.getMinecraft().displayHeight * .5, 0.0D, 1000.0D, 3000.0D);
-//            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-//            GlStateManager.pushMatrix();
-//            GlStateManager.loadIdentity();
-//            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
+            GlStateManager.pushMatrix();
+            GlStateManager.loadIdentity();
+            GlStateManager.ortho(0.0D, Minecraft.getMinecraft().displayWidth * .5, Minecraft.getMinecraft().displayHeight * .5, 0.0D, 1000.0D, 3000.0D);
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+            GlStateManager.pushMatrix();
+            GlStateManager.loadIdentity();
+            GlStateManager.translate(0.0F, 0.0F, -2000.0F);
+
+            GL11.glDisable(GL11.GL_STENCIL_TEST);
 
             fb = RenderSystem.createFrameBuffer(fb);
             fb.bindFramebuffer(true);
@@ -139,10 +141,10 @@ public class ScrollText {
 
             Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
-//            GlStateManager.popMatrix();
-//            GlStateManager.matrixMode(GL11.GL_PROJECTION);
-//            GlStateManager.popMatrix();
-//            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+            GlStateManager.popMatrix();
+            GlStateManager.matrixMode(GL11.GL_PROJECTION);
+            GlStateManager.popMatrix();
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
 
             Shaders.STENCIL.draw(fb.framebufferTexture, fbStencil.framebufferTexture, 0, 0, fb.framebufferWidth * .5, fb.framebufferHeight * .5);
         } else {

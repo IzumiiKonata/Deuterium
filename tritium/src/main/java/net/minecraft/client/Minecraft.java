@@ -411,33 +411,38 @@ public class Minecraft implements IThreadListener {
             return;
         }
 
-        try {
-            while (this.running) {
-                if (!this.hasCrashed || this.crashReporter == null) {
-                    try {
-                        this.runGameLoop();
-                    } catch (OutOfMemoryError var10) {
-                        this.freeMemory();
-                        this.displayGuiScreen(new GuiMemoryErrorScreen());
-                        System.gc();
+        while(true) {
+            try {
+                while (this.running) {
+                    if (!this.hasCrashed || this.crashReporter == null) {
+                        try {
+                            this.runGameLoop();
+                        } catch (OutOfMemoryError var10) {
+                            this.freeMemory();
+                            this.displayGuiScreen(new GuiMemoryErrorScreen());
+                            System.gc();
+                        }
+                    } else {
+                        this.displayCrashReport(this.crashReporter);
                     }
-                } else {
-                    this.displayCrashReport(this.crashReporter);
                 }
+            } catch (MinecraftError ignored) {
+                break;
+            } catch (ReportedException reportedexception) {
+                this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
+                this.freeMemory();
+                logger.fatal("Reported exception thrown!", reportedexception);
+                this.displayCrashReport(reportedexception.getCrashReport());
+                break;
+            } catch (Throwable throwable1) {
+                CrashReport crashreport1 = this.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
+                this.freeMemory();
+                logger.fatal("Unreported exception thrown!", throwable1);
+                this.displayCrashReport(crashreport1);
+                break;
+            } finally {
+                this.shutdownMinecraftApplet();
             }
-        } catch (MinecraftError ignored) {
-        } catch (ReportedException reportedexception) {
-            this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());
-            this.freeMemory();
-            logger.fatal("Reported exception thrown!", reportedexception);
-            this.displayCrashReport(reportedexception.getCrashReport());
-        } catch (Throwable throwable1) {
-            CrashReport crashreport1 = this.addGraphicsAndWorldToCrashReport(new CrashReport("Unexpected error", throwable1));
-            this.freeMemory();
-            logger.fatal("Unreported exception thrown!", throwable1);
-            this.displayCrashReport(crashreport1);
-        } finally {
-            this.shutdownMinecraftApplet();
         }
     }
 
@@ -618,13 +623,6 @@ public class Minecraft implements IThreadListener {
         Tritium.getInstance().run();
         LoadingRenderer.notifyGameLoaded();
         //END CLIENT
-
-        // 必须在主线程中处理窗口事件 不然在加载时拖动窗口或放大缩小会阻塞渲染
-//        while (!loadFinished.get())
-//            GLFW.glfwPollEvents();
-
-//        System.out.println("OK LOAD CLIENT");
-
 
         this.scaledResolution = ScaledResolution.createNew(this);
 
