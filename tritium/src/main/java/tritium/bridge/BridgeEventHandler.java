@@ -223,8 +223,7 @@ public class BridgeEventHandler {
     @Handler
     public void onChat(ReceivePacketEvent event) {
 
-        if (event.getPacket() instanceof S02PacketChat) {
-            S02PacketChat packet = (S02PacketChat) event.getPacket();
+        if (event.getPacket() instanceof S02PacketChat packet) {
 
             if (packet.isChat()) {
                 EventChatReceived evt = new EventChatReceived(packet.getChatComponent().getUnformattedText());

@@ -243,9 +243,8 @@ public class TextureUtils {
     public static void registerResourceListener() {
         IResourceManager iresourcemanager = Config.getResourceManager();
 
-        if (iresourcemanager instanceof IReloadableResourceManager) {
-            IReloadableResourceManager ireloadableresourcemanager = (IReloadableResourceManager) iresourcemanager;
-            IResourceManagerReloadListener iresourcemanagerreloadlistener = var1 -> TextureUtils.resourcesReloaded(var1);
+        if (iresourcemanager instanceof IReloadableResourceManager ireloadableresourcemanager) {
+            IResourceManagerReloadListener iresourcemanagerreloadlistener = TextureUtils::resourcesReloaded;
             ireloadableresourcemanager.registerReloadListener(iresourcemanagerreloadlistener);
         }
 
@@ -404,7 +403,7 @@ public class TextureUtils {
 
         while (true) {
             if (iterator.hasNext()) {
-                ImageReader imagereader = (ImageReader) iterator.next();
+                ImageReader imagereader = iterator.next();
                 Dimension dimension;
 
                 try {
@@ -433,7 +432,7 @@ public class TextureUtils {
             int[] aint1 = aint[i];
 
             if (aint1 == null) {
-                Config.dbg(i + ": " + aint1);
+                Config.dbg(i + ": null");
             } else {
                 Config.dbg(i + ": " + aint1.length);
             }

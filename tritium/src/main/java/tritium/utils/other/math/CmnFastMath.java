@@ -694,7 +694,7 @@ abstract class CmnFastMath {
         }
         private static void init() {
             if (USE_TWO_POW_TAB) {
-                for (int i=MIN_DOUBLE_EXPONENT;i<=MAX_DOUBLE_EXPONENT;i++) {
+                for (int i = MIN_DOUBLE_EXPONENT; true; i++) {
                     twoPowTab[i-MIN_DOUBLE_EXPONENT] = NumbersUtils.twoPow(i);
                 }
             }
@@ -823,10 +823,9 @@ abstract class CmnFastMath {
         antiOptim += MyTAtan.atanTab.length;
         antiOptim += MyTExp.expHiTab.length;
         antiOptim += MyTLog.logXTab.length;
-        antiOptim += MyTTwoPow.twoPowTab.length;
         antiOptim += MyTSqrt.sqrtXSqrtHiTab.length;
         antiOptim += MyTCbrt.cbrtXCbrtHiTab.length;
-        if (StrictMath.cos((double)antiOptim) == 0.0) {
+        if (StrictMath.cos(antiOptim) == 0.0) {
             // Can't happen, cos is never +-0.0.
             throw new AssertionError();
         }
@@ -1243,7 +1242,7 @@ abstract class CmnFastMath {
      * @throws ArithmeticException if the mathematical result of a*b is not in [Long.MIN_VALUE,Long.MAX_VALUE] range.
      */
     public static long multiplyExact(long a, int b) {
-        return NumbersUtils.timesExact(a, (long) b);
+        return NumbersUtils.timesExact(a, b);
     }
 
     /**
@@ -1271,7 +1270,7 @@ abstract class CmnFastMath {
      * @return The long value of [Long.MIN_VALUE,Long.MAX_VALUE] range which is the closest to mathematical result of a*b.
      */
     public static long multiplyBounded(long a, int b) {
-        return NumbersUtils.timesBounded(a, (long) b);
+        return NumbersUtils.timesBounded(a, b);
     }
 
     /**
@@ -1760,11 +1759,11 @@ abstract class CmnFastMath {
         final long exp = ((lx>>52)&0x7FF) - (1023+23);
         double z = Double.longBitsToDouble(lx - (exp<<52));
 
-        double x0 = (double)(int)z;
+        double x0 = (int)z;
         z = (z-x0)*TWO_POW_24;
-        double x1 = (double)(int)z;
+        double x1 = (int)z;
         z = (z-x1)*TWO_POW_24;
-        double x2 = (double)(int)z;
+        double x2 = (int)z;
 
         final int e0 = (int)exp;
         // in [1,3]
@@ -1789,11 +1788,11 @@ abstract class CmnFastMath {
         if (jx == 0) {
             f6 = 0.0;
             f5 = 0.0;
-            f4 = (j >= -4) ? TWO_OVER_PI_TAB[j+4] : 0.0;
-            f3 = (j >= -3) ? TWO_OVER_PI_TAB[j+3] : 0.0;
-            f2 = (j >= -2) ? TWO_OVER_PI_TAB[j+2] : 0.0;
-            f1 = (j >= -1) ? TWO_OVER_PI_TAB[j+1] : 0.0;
-            f0 = (j >= 0) ? TWO_OVER_PI_TAB[j] : 0.0;
+            f4 = TWO_OVER_PI_TAB[j+4];
+            f3 = TWO_OVER_PI_TAB[j+3];
+            f2 = TWO_OVER_PI_TAB[j+2];
+            f1 = TWO_OVER_PI_TAB[j+1];
+            f0 = TWO_OVER_PI_TAB[j];
 
             q0 = x0*f0;
             q1 = x0*f1;
@@ -1802,11 +1801,11 @@ abstract class CmnFastMath {
             q4 = x0*f4;
         } else if (jx == 1) {
             f6 = 0.0;
-            f5 = (j >= -5) ? TWO_OVER_PI_TAB[j+5] : 0.0;
-            f4 = (j >= -4) ? TWO_OVER_PI_TAB[j+4] : 0.0;
-            f3 = (j >= -3) ? TWO_OVER_PI_TAB[j+3] : 0.0;
-            f2 = (j >= -2) ? TWO_OVER_PI_TAB[j+2] : 0.0;
-            f1 = (j >= -1) ? TWO_OVER_PI_TAB[j+1] : 0.0;
+            f5 = TWO_OVER_PI_TAB[j+5];
+            f4 = TWO_OVER_PI_TAB[j+4];
+            f3 = TWO_OVER_PI_TAB[j+3];
+            f2 = TWO_OVER_PI_TAB[j+2];
+            f1 = TWO_OVER_PI_TAB[j+1];
             f0 = (j >= 0) ? TWO_OVER_PI_TAB[j] : 0.0;
 
             q0 = x0*f1 + x1*f0;
@@ -1815,11 +1814,11 @@ abstract class CmnFastMath {
             q3 = x0*f4 + x1*f3;
             q4 = x0*f5 + x1*f4;
         } else { // jx == 2
-            f6 = (j >= -6) ? TWO_OVER_PI_TAB[j+6] : 0.0;
-            f5 = (j >= -5) ? TWO_OVER_PI_TAB[j+5] : 0.0;
-            f4 = (j >= -4) ? TWO_OVER_PI_TAB[j+4] : 0.0;
-            f3 = (j >= -3) ? TWO_OVER_PI_TAB[j+3] : 0.0;
-            f2 = (j >= -2) ? TWO_OVER_PI_TAB[j+2] : 0.0;
+            f6 = TWO_OVER_PI_TAB[j+6];
+            f5 = TWO_OVER_PI_TAB[j+5];
+            f4 = TWO_OVER_PI_TAB[j+4];
+            f3 = TWO_OVER_PI_TAB[j+3];
+            f2 = TWO_OVER_PI_TAB[j+2];
             f1 = (j >= -1) ? TWO_OVER_PI_TAB[j+1] : 0.0;
             f0 = (j >= 0) ? TWO_OVER_PI_TAB[j] : 0.0;
 
@@ -1839,16 +1838,16 @@ abstract class CmnFastMath {
          */
 
         z = q4;
-        fw = (double)(int)(TWO_POW_N24*z);
+        fw = (int)(TWO_POW_N24*z);
         iq0 = (int)(z-TWO_POW_24*fw);
         z = q3+fw;
-        fw = (double)(int)(TWO_POW_N24*z);
+        fw = (int)(TWO_POW_N24*z);
         iq1 = (int)(z-TWO_POW_24*fw);
         z = q2+fw;
-        fw = (double)(int)(TWO_POW_N24*z);
+        fw = (int)(TWO_POW_N24*z);
         iq2 = (int)(z-TWO_POW_24*fw);
         z = q1+fw;
-        fw = (double)(int)(TWO_POW_N24*z);
+        fw = (int)(TWO_POW_N24*z);
         iq3 = (int)(z-TWO_POW_24*fw);
         z = q0+fw;
         iq4 = 0;
@@ -1856,7 +1855,7 @@ abstract class CmnFastMath {
 
         z = (z*twoPowQZero) % 8.0;
         n = (int)z;
-        z -= (double)n;
+        z -= n;
 
         ih = 0;
         if (qZero > 0) {
@@ -1934,26 +1933,25 @@ abstract class CmnFastMath {
              */
 
             z = q5;
-            fw = (double)(int)(TWO_POW_N24*z);
+            fw = (int)(TWO_POW_N24*z);
             iq0 = (int)(z-TWO_POW_24*fw);
             z = q4+fw;
-            fw = (double)(int)(TWO_POW_N24*z);
+            fw = (int)(TWO_POW_N24*z);
             iq1 = (int)(z-TWO_POW_24*fw);
             z = q3+fw;
-            fw = (double)(int)(TWO_POW_N24*z);
+            fw = (int)(TWO_POW_N24*z);
             iq2 = (int)(z-TWO_POW_24*fw);
             z = q2+fw;
-            fw = (double)(int)(TWO_POW_N24*z);
+            fw = (int)(TWO_POW_N24*z);
             iq3 = (int)(z-TWO_POW_24*fw);
             z = q1+fw;
-            fw = (double)(int)(TWO_POW_N24*z);
+            fw = (int)(TWO_POW_N24*z);
             iq4 = (int)(z-TWO_POW_24*fw);
             z = q0+fw;
-            iq5 = 0;
 
             z = (z*twoPowQZero) % 8.0;
             n = (int)z;
-            z -= (double)n;
+            z -= n;
 
             ih = 0;
             if (qZero > 0) {
@@ -2039,7 +2037,7 @@ abstract class CmnFastMath {
         if (z != 0.0) {
             z /= twoPowQZero;
             if (z >= TWO_POW_24) { 
-                fw = (double)(int)(TWO_POW_N24*z);
+                fw = (int)(TWO_POW_N24*z);
                 if (jz == jk) {
                     iq4 = (int)(z-TWO_POW_24*fw);
                     jz++; // jz to 5

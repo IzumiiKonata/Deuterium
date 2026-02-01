@@ -99,7 +99,7 @@ public class FontUtils {
         if (!Config.isCustomFonts()) {
             return fontLoc;
         } else if (fontLoc == null) {
-            return fontLoc;
+            return null;
         } else if (!Config.isMinecraftThread()) {
             return fontLoc;
         } else {

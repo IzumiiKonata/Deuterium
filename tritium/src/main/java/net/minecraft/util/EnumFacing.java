@@ -124,7 +124,6 @@ public enum EnumFacing implements IStringSerializable {
 
                 yield this;
             }
-            default -> throw new IllegalStateException("Unable to get CW facing for axis " + axis);
         };
     }
 
@@ -430,7 +429,6 @@ public enum EnumFacing implements IStringSerializable {
                 case HORIZONTAL ->
                         new EnumFacing[]{EnumFacing.NORTH, EnumFacing.EAST, EnumFacing.SOUTH, EnumFacing.WEST};
                 case VERTICAL -> new EnumFacing[]{EnumFacing.UP, EnumFacing.DOWN};
-                default -> throw new Error("Someone's been tampering with the universe!");
             };
         }
 

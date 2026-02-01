@@ -114,7 +114,7 @@ public class SoundManager {
                                 }
                             }
                         });
-                        SoundManager.this.sndSystem = SoundManager.this.new SoundSystemStarterThread();
+                        SoundManager.this.sndSystem = new SoundSystemStarterThread();
                         SoundManager.this.loaded = true;
                         SoundManager.this.sndSystem.setMasterVolume(SoundManager.this.options.getSoundLevel(SoundCategory.MASTER));
                         SoundManager.logger.info("声音引擎已启动.");
@@ -263,9 +263,7 @@ public class SoundManager {
         if (this.tick >= 20) {
             this.tick = 0;
 
-            MultiThreadingUtil.runAsync(() -> {
-                systemDeviceChanged(() -> reconnect("System device changed"));
-            });
+            MultiThreadingUtil.runAsync(() -> systemDeviceChanged(() -> reconnect("System device changed")));
 
         }
         ++this.tick;
@@ -538,7 +536,7 @@ public class SoundManager {
         } catch (Throwable ignored) {}
     }
 
-    class SoundSystemStarterThread extends SoundSystem {
+    static class SoundSystemStarterThread extends SoundSystem {
         private SoundSystemStarterThread() {
         }
 

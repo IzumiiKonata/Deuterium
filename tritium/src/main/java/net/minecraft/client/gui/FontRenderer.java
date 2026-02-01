@@ -225,7 +225,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
                     int i2 = j1 * k + l1;
                     boolean flag = true;
 
-                    for (int j2 = 0; j2 < l && flag; ++j2) {
+                    for (int j2 = 0; j2 < l; ++j2) {
                         int k2 = (k1 * l + j2) * i;
                         int l2 = aint[i2 + k2];
                         int i3 = l2 >> 24 & 255;
@@ -723,7 +723,6 @@ public class FontRenderer implements IResourceManagerReloadListener {
         this.posY = originalPosY;
 
         this.renderStringAtPos(text, shadow);
-        return;
     }
 
     /**
@@ -1269,7 +1268,7 @@ public class FontRenderer implements IResourceManagerReloadListener {
      * Digests a string for nonprinting formatting characters then returns a string containing only that formatting.
      */
     public static String getFormatFromString(String text) {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         int i = -1;
         int j = text.length();
 
@@ -1278,14 +1277,14 @@ public class FontRenderer implements IResourceManagerReloadListener {
                 char c0 = text.charAt(i + 1);
 
                 if (isFormatColor(c0)) {
-                    s = "§" + c0;
+                    s = new StringBuilder("§" + c0);
                 } else if (isFormatSpecial(c0)) {
-                    s = s + "§" + c0;
+                    s.append("§").append(c0);
                 }
             }
         }
 
-        return s;
+        return s.toString();
     }
 
     /**

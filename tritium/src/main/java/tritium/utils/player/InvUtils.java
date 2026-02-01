@@ -104,16 +104,15 @@ public class InvUtils {
     }
 
     public static float getArmorScore(ItemStack itemStack) {
-        if (itemStack == null || !(itemStack.getItem() instanceof ItemArmor))
+        if (itemStack == null || !(itemStack.getItem() instanceof ItemArmor itemArmor))
             return -1;
 
-        ItemArmor itemArmor = (ItemArmor) itemStack.getItem();
         float score = 0;
 
         //basic reduce amount
         score += itemArmor.damageReduceAmount;
 
-        if (EnchantmentHelper.getEnchantments(itemStack).size() <= 0)
+        if (EnchantmentHelper.getEnchantments(itemStack).size() == 0)
             score -= 0.1;
 
         int protection = EnchantmentHelper.getEnchantmentLevel(Enchantment.protection.effectId, itemStack);
@@ -243,28 +242,33 @@ public class InvUtils {
 
     public static float getToolEffect(ItemStack stack) {
         Item item = stack.getItem();
-        if (!(item instanceof ItemTool))
+        if (!(item instanceof ItemTool tool))
             return 0;
         String name = item.getUnlocalizedName();
-        ItemTool tool = (ItemTool) item;
         float value = 1;
-        if (item instanceof ItemPickaxe) {
-            value = tool.getStrVsBlock(stack, Blocks.stone);
-            if (name.toLowerCase().contains("gold")) {
-                value -= 5;
+        switch (item) {
+            case ItemPickaxe itemPickaxe -> {
+                value = tool.getStrVsBlock(stack, Blocks.stone);
+                if (name.toLowerCase().contains("gold")) {
+                    value -= 5;
+                }
             }
-        } else if (item instanceof ItemSpade) {
-            value = tool.getStrVsBlock(stack, Blocks.dirt);
-            if (name.toLowerCase().contains("gold")) {
-                value -= 5;
+            case ItemSpade itemSpade -> {
+                value = tool.getStrVsBlock(stack, Blocks.dirt);
+                if (name.toLowerCase().contains("gold")) {
+                    value -= 5;
+                }
             }
-        } else if (item instanceof ItemAxe) {
-            value = tool.getStrVsBlock(stack, Blocks.log);
-            if (name.toLowerCase().contains("gold")) {
-                value -= 5;
+            case ItemAxe itemAxe -> {
+                value = tool.getStrVsBlock(stack, Blocks.log);
+                if (name.toLowerCase().contains("gold")) {
+                    value -= 5;
+                }
             }
-        } else
-            return 1f;
+            default -> {
+                return 1f;
+            }
+        }
         value += EnchantmentHelper.getEnchantmentLevel(Enchantment.efficiency.effectId, stack) * 0.0075D;
         value += EnchantmentHelper.getEnchantmentLevel(Enchantment.unbreaking.effectId, stack) / 100d;
         return value;
@@ -286,12 +290,10 @@ public class InvUtils {
     public static float getDamage(ItemStack stack) {
         float damage = 0;
         Item item = stack.getItem();
-        if (item instanceof ItemTool) {
-            ItemTool tool = (ItemTool) item;
+        if (item instanceof ItemTool tool) {
             damage += tool.damageVsEntity;
         }
-        if (item instanceof ItemSword) {
-            ItemSword sword = (ItemSword) item;
+        if (item instanceof ItemSword sword) {
             damage += sword.getDamageVsEntity();
         }
         damage += EnchantmentHelper.getEnchantmentLevel(Enchantment.sharpness.effectId, stack) * 1.25f
@@ -307,8 +309,7 @@ public class InvUtils {
         for (int i = 36; i < 45; i++) {
             final ItemStack itemStack = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
 
-            if (itemStack != null && itemStack.getItem() instanceof ItemBlock && itemStack.stackSize > 0) {
-                final ItemBlock itemBlock = (ItemBlock) itemStack.getItem();
+            if (itemStack != null && itemStack.getItem() instanceof ItemBlock itemBlock && itemStack.stackSize > 0) {
                 final Block block = itemBlock.getBlock();
 
                 if (block.isFullCube() && !blacklist.contains(block))
@@ -319,8 +320,7 @@ public class InvUtils {
         for (int i = 36; i < 45; i++) {
             final ItemStack itemStack = mc.thePlayer.inventoryContainer.getSlot(i).getStack();
 
-            if (itemStack != null && itemStack.getItem() instanceof ItemBlock && itemStack.stackSize > 0) {
-                final ItemBlock itemBlock = (ItemBlock) itemStack.getItem();
+            if (itemStack != null && itemStack.getItem() instanceof ItemBlock itemBlock && itemStack.stackSize > 0) {
                 final Block block = itemBlock.getBlock();
 
                 if (!blacklist.contains(block))

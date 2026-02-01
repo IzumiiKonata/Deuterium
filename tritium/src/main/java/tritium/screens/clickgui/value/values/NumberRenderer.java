@@ -26,9 +26,7 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
         this.setBounds(142, height);
 
         LabelWidget label = new LabelWidget(() -> setting.getName().get(), FontManager.pf14);
-        label.setBeforeRenderCallback(() -> {
-            label.setColor(ClickGui.getColor(20));
-        });
+        label.setBeforeRenderCallback(() -> label.setColor(ClickGui.getColor(20)));
         label.setPosition(0, (FontManager.pf14.getHeight() + 4) * .5 - FontManager.pf14.getHeight() * .5);
         this.addChild(label);
 
@@ -85,9 +83,7 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
                 .setBounds(this.getWidth(), 2)
                 .setColor(ClickGui.getColor(25))
                 .setPosition(0, FontManager.pf14.getHeight() + 8)
-                .setBeforeRenderCallback(() -> {
-                    background.setColor(ClickGui.getColor(25));
-                });
+                .setBeforeRenderCallback(() -> background.setColor(ClickGui.getColor(25)));
 
         this.addChild(background);
 

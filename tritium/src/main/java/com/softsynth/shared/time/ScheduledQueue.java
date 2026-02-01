@@ -36,11 +36,7 @@ public class ScheduledQueue<T> {
     }
 
     public synchronized void add(TimeStamp time, T obj) {
-        List<T> timeList = timeNodes.get(time);
-        if (timeList == null) {
-            timeList = new LinkedList<>();
-            timeNodes.put(time, timeList);
-        }
+        List<T> timeList = timeNodes.computeIfAbsent(time, k -> new LinkedList<>());
         timeList.add(obj);
     }
 
@@ -64,7 +60,7 @@ public class ScheduledQueue<T> {
             if (lowestTime.compareTo(time) <= 0) {
                 List<T> timeList = timeNodes.get(lowestTime);
                 if (timeList != null) {
-                    next = timeList.remove(0);
+                    next = timeList.removeFirst();
                     if (timeList.isEmpty()) {
                         timeNodes.remove(lowestTime);
                     }

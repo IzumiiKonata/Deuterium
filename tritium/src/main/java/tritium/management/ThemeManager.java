@@ -88,7 +88,6 @@ public class ThemeManager extends AbstractManager {
             case Surface -> theme.surface;
             case OnSurface -> theme.onSurface;
             case Text -> theme.text;
-            default -> throw new IllegalArgumentException("NOT FOUND!");
         };
     }
 

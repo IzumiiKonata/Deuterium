@@ -62,7 +62,7 @@ public final class Display {
         ArrayList<DisplayMode> matches = new ArrayList<>(modes.length);
 
         for (int i = 0; i < modes.length; i++) {
-            assert modes[i] != null : "" + i + " " + modes.length;
+            assert modes[i] != null : i + " " + modes.length;
             if (minWidth != -1 && modes[i].getWidth() < minWidth) continue;
             if (maxWidth != -1 && modes[i].getWidth() > maxWidth) continue;
             if (minHeight != -1 && modes[i].getHeight() < minHeight) continue;
@@ -149,7 +149,7 @@ public final class Display {
                         accessors[i] = new FieldAccessor(
                                 param[i].substring(0, idx),
                                 0,
-                                Integer.parseInt(param[i].substring(idx + 1, param[i].length())),
+                                Integer.parseInt(param[i].substring(idx + 1)),
                                 true);
                     } else if (param[i].charAt(0) == '-') {
                         accessors[i] = new FieldAccessor(param[i].substring(1), -1, 0, false);
@@ -176,10 +176,10 @@ public final class Display {
                             int absf2 = Math.abs(f2 - accessor.preferred);
                             if (absf1 < absf2) return -1;
                             else if (absf1 > absf2) return 1;
-                            else continue;
                         }
                     } else if (f1 < f2) return accessor.order;
-                    else if (f1 == f2) continue;
+                    else if (f1 == f2) {
+                    }
                     else return -accessor.order;
                 }
 

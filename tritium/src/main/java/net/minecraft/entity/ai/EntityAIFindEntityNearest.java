@@ -47,12 +47,12 @@ public class EntityAIFindEntityNearest extends EntityAIBase {
     public boolean shouldExecute() {
         double d0 = this.getFollowRange();
         List<EntityLivingBase> list = this.mob.worldObj.getEntitiesWithinAABB(this.field_179439_f, this.mob.getEntityBoundingBox().expand(d0, 4.0D, d0), this.field_179443_c);
-        Collections.sort(list, this.field_179440_d);
+        list.sort(this.field_179440_d);
 
         if (list.isEmpty()) {
             return false;
         } else {
-            this.target = list.get(0);
+            this.target = list.getFirst();
             return true;
         }
     }

@@ -175,7 +175,7 @@ public class MusicLyricsWidget extends Widget {
     }
 
     private static void findCurrentLyric(float progress) {
-        currentDisplaying = allLyrics.get(0);
+        currentDisplaying = allLyrics.getFirst();
 
         for (LyricLine line : allLyrics) {
             if (line.getTimestamp() > progress) {
@@ -241,9 +241,7 @@ public class MusicLyricsWidget extends Widget {
 
         GlStateManager.pushMatrix();
 
-        StencilClipManager.beginClip(() -> {
-            Rect.draw(this.getX() - 2, this.getY(), this.getWidth() + 4, this.getHeight(), -1);
-        });
+        StencilClipManager.beginClip(() -> Rect.draw(this.getX() - 2, this.getY(), this.getWidth() + 4, this.getHeight(), -1));
 
         renderAllLyrics(shouldNotDisplayOtherLyrics, songProgress);
 
@@ -273,7 +271,7 @@ public class MusicLyricsWidget extends Widget {
     private void handleSingleLineMode(boolean shouldNotDisplayOtherLyrics) {
         if (shouldNotDisplayOtherLyrics && currentDisplaying == null) {
             if (!allLyrics.isEmpty()) {
-                currentDisplaying = allLyrics.get(0);
+                currentDisplaying = allLyrics.getFirst();
             }
         }
     }
@@ -546,9 +544,7 @@ public class MusicLyricsWidget extends Widget {
         AlignMode alignMode = this.alignMode.getValue();
         double x = calculateAlignmentX(line.getLyric(), alignMode);
 
-        StencilClipManager.beginClip(() -> {
-            Rect.draw(x, renderInfo.yPosition, line.scrollWidth + 1, getFontRenderer().getHeight() + 4, -1);
-        });
+        StencilClipManager.beginClip(() -> Rect.draw(x, renderInfo.yPosition, line.scrollWidth + 1, getFontRenderer().getHeight() + 4, -1));
 
         renderAlignedText(line.getLyric(), renderInfo.yPosition, -1, alignMode);
 

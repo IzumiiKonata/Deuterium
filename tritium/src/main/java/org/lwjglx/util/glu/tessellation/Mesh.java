@@ -258,7 +258,6 @@ class Mesh {
         GLUhalfEdge e;
 
         e = MakeEdge(mesh.eHead);
-        if (e == null) return null;
 
         MakeVertex(newVertex1, e, mesh.vHead);
         MakeVertex(newVertex2, e.Sym, mesh.vHead);

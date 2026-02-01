@@ -83,8 +83,7 @@ class SequentialDataCrossfade extends SequentialDataCommon {
 
         // There is a danger that we might nest SequentialDataCrossfades deeply
         // as source. If past crossfade region then pull out the target.
-        if (source instanceof SequentialDataCrossfade) {
-            SequentialDataCrossfade crossfade = (SequentialDataCrossfade) source;
+        if (source instanceof SequentialDataCrossfade crossfade) {
             // If we are starting past the crossfade region then just use the
             // target.
             if (sourceStartFrame >= crossfade.crossFadeFrames) {
@@ -93,8 +92,7 @@ class SequentialDataCrossfade extends SequentialDataCommon {
             }
         }
 
-        if (target instanceof SequentialDataCrossfade) {
-            SequentialDataCrossfade crossfade = (SequentialDataCrossfade) target;
+        if (target instanceof SequentialDataCrossfade crossfade) {
             target = crossfade.target;
             targetStartFrame += crossfade.targetStartIndex / target.getChannelsPerFrame();
         }

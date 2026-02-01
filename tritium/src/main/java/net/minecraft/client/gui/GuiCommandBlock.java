@@ -136,7 +136,8 @@ public class GuiCommandBlock extends GuiScreen {
         this.commandTextField.drawTextBox();
         int i = 75;
         int j = 0;
-        this.drawString(this.fontRendererObj, I18n.format("advMode.nearestPlayer"), this.width / 2 - 150, i + j++ * this.fontRendererObj.FONT_HEIGHT, 10526880);
+        j++;
+        this.drawString(this.fontRendererObj, I18n.format("advMode.nearestPlayer"), this.width / 2 - 150, i + 0, 10526880);
         this.drawString(this.fontRendererObj, I18n.format("advMode.randomPlayer"), this.width / 2 - 150, i + j++ * this.fontRendererObj.FONT_HEIGHT, 10526880);
         this.drawString(this.fontRendererObj, I18n.format("advMode.allPlayers"), this.width / 2 - 150, i + j++ * this.fontRendererObj.FONT_HEIGHT, 10526880);
         this.drawString(this.fontRendererObj, I18n.format("advMode.allEntities"), this.width / 2 - 150, i + j++ * this.fontRendererObj.FONT_HEIGHT, 10526880);

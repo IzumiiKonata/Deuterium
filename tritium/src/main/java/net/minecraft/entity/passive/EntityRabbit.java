@@ -31,7 +31,7 @@ public class EntityRabbit extends EntityAnimal {
     public EntityRabbit(World worldIn) {
         super(worldIn);
         this.setSize(0.6F, 0.7F);
-        this.jumpHelper = new EntityRabbit.RabbitJumpHelper(this);
+        this.jumpHelper = new RabbitJumpHelper(this);
         this.moveHelper = new EntityRabbit.RabbitMoveHelper(this);
         ((PathNavigateGround) this.getNavigator()).setAvoidsWater(true);
         this.navigator.setHeightRequirement(2.5F);
@@ -545,7 +545,7 @@ public class EntityRabbit extends EntityAnimal {
         }
     }
 
-    public class RabbitJumpHelper extends EntityJumpHelper {
+    public static class RabbitJumpHelper extends EntityJumpHelper {
         private final EntityRabbit theEntity;
         private boolean field_180068_d = false;
 

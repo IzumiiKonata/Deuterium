@@ -312,9 +312,7 @@ public class AltScreen extends BaseScreen {
 
         this.altsPanel.setSpacing(8);
 
-        altsPanel.setBeforeRenderCallback(() -> {
-            this.altsPanel.setMargin(8);
-        });
+        altsPanel.setBeforeRenderCallback(() -> this.altsPanel.setMargin(8));
 
         this.refreshAltsPanel();
     }

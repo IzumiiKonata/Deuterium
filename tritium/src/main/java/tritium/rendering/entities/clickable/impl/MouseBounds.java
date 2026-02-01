@@ -24,7 +24,6 @@ public class MouseBounds {
         return switch (type) {
             case Expand -> isWhthinBounds(x + x1, y + y1);
             case Position -> isWhthinBounds(x1, y1);
-            default -> false;
         };
     }
 

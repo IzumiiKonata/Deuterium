@@ -42,10 +42,6 @@ public enum ModelVariableType {
             case SCALE_X -> mr.scaleX;
             case SCALE_Y -> mr.scaleY;
             case SCALE_Z -> mr.scaleZ;
-            default -> {
-                Config.warn("GetFloat not supported for: " + this);
-                yield 0.0F;
-            }
         };
     }
 

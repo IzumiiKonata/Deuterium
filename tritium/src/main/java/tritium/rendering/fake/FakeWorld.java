@@ -30,8 +30,8 @@ import java.util.List;
 
 public class FakeWorld extends WorldClient {
     public FakeWorld(final WorldSettings worldSettings, final FakeNetHandlerPlayClient netHandler) {
-        super((NetHandlerPlayClient) netHandler, worldSettings, 0, EnumDifficulty.HARD);
-        this.provider.registerWorld((World) this);
+        super(netHandler, worldSettings, 0, EnumDifficulty.HARD);
+        this.provider.registerWorld(this);
     }
 
 
@@ -404,7 +404,7 @@ public class FakeWorld extends WorldClient {
     }
 
     protected IChunkProvider createChunkProvider() {
-        return (IChunkProvider) new FakeChunkProvider();
+        return new FakeChunkProvider();
     }
 
     public Chunk getChunkFromChunkCoords(final int par1, final int par2) {

@@ -290,7 +290,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
                     }
                     AltScreen.getInstance().player.getDataWatcher().updateObject(10, ModelParts);
                 }
-                this.capes.get(0).state = true;
+                this.capes.getFirst().state = true;
             }
         }
     }

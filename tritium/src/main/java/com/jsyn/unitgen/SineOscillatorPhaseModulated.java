@@ -51,18 +51,7 @@ public class SineOscillatorPhaseModulated extends SineOscillator {
             currentPhase = incrementWrapPhase(currentPhase, phaseIncrement);
             double modulatedPhase = currentPhase + modulations[i];
             double value;
-            if (false) {
-                // TODO Compare benchmarks.
-                while (modulatedPhase >= 1.0) {
-                    modulatedPhase -= 2.0;
-                }
-                while (modulatedPhase < -1.0) {
-                    modulatedPhase += 2.0;
-                }
-                value = fastSin(modulatedPhase);
-            } else {
-                value = Math.sin(modulatedPhase * Math.PI);
-            }
+            value = Math.sin(modulatedPhase * Math.PI);
             outputs[i] = value * amplitudes[i];
             // System.out.format("Sine: freq = %10.4f , amp = %8.5f, out = %8.5f, phase =  %8.5f, frame =  %8d\n",
             // frequencies[i], amplitudes[i],outputs[i],currentPhase,frame++ );

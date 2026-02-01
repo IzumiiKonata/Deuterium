@@ -86,21 +86,18 @@ public class Alt {
 
         if (!skinLoaded) {
             skinLoaded = true;
-            RenderSystem.playerSkinTextureCache.getSkinTextureNoCache(this.username, (l, b) -> {
+            RenderSystem.playerSkinTextureCache.getSkinTextureNoCache(this.username, (l, b) -> MultiThreadingUtil.runAsync(() -> {
 
-                MultiThreadingUtil.runAsync(() -> {
+                BufferedImage head = crop(b, 8, 8, 8, 8, 8, 8);
+                BufferedImage layer = crop(b, 40, 8, 8, 8, 8, 8);
+                BufferedImage combined = combine(head, layer);
 
-                    BufferedImage head = crop(b, 8, 8, 8, 8, 8, 8);
-                    BufferedImage layer = crop(b, 40, 8, 8, 8, 8, 8);
-                    BufferedImage combined = combine(head, layer);
+                String uuid1 = isMicrosoft() ? userUUID : EntityPlayer.getOfflineUUID(username).toString().replaceAll("-", "");
 
-                    String uuid1 = isMicrosoft() ? userUUID : EntityPlayer.getOfflineUUID(username).toString().replaceAll("-", "");
+                Location loc = Location.of("tritium/textures/skin/" + uuid1);
 
-                    Location loc = Location.of("tritium/textures/skin/" + uuid1);
-
-                    Textures.loadTextureAsyncly(loc, combined, () -> skinLocation = loc);
-                });
-            });
+                Textures.loadTextureAsyncly(loc, combined, () -> skinLocation = loc);
+            }));
         }
 
         if (skinLocation == null) {

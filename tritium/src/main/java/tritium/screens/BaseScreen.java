@@ -138,7 +138,7 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        this.drawScreen((double) mouseX, (double) mouseY, partialTicks);
+        this.drawScreen(mouseX, (double) mouseY, partialTicks);
     }
 
     public final void drawScreen(double mouseX, double mouseY, float partialTicks) {

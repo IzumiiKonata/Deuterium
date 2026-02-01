@@ -210,10 +210,9 @@ public class ConnectedTextures {
     public static BakedQuad[] getConnectedTextureSingle(final IBlockAccess blockAccess, final IBlockState blockState, final BlockPos blockPos, final EnumFacing facing, final BakedQuad quad, final boolean checkBlocks, final int pass,
                                                         final RenderEnv renderEnv) {
         final Block block = blockState.getBlock();
-        if (!(blockState instanceof BlockStateBase)) {
+        if (!(blockState instanceof BlockStateBase blockstatebase)) {
         }
         else {
-            final BlockStateBase blockstatebase = (BlockStateBase) blockState;
             final TextureAtlasSprite textureatlassprite = quad.getSprite();
             if (tileProperties != null) {
                 final int i = textureatlassprite.getIndexInMap();
@@ -258,7 +257,6 @@ public class ConnectedTextures {
             case WEST -> 4;
             case NORTH -> 2;
             case SOUTH -> 3;
-            default -> -1;
         };
     }
 
@@ -487,22 +485,22 @@ public class ConnectedTextures {
                     if (aboolean[0] && aboolean[1] && aboolean[2]) {
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[5], quad, cp.tintIndex), cp.tintBlockState);
                         dirEdges = null;
-                        return (BakedQuad[]) dirEdges;
+                        return (BakedQuad[]) null;
                     }
                     if (aboolean[0] && aboolean[2] && aboolean[3]) {
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[6], quad, cp.tintIndex), cp.tintBlockState);
                         dirEdges = null;
-                        return (BakedQuad[]) dirEdges;
+                        return (BakedQuad[]) null;
                     }
                     if (aboolean[1] && aboolean[2] && aboolean[3]) {
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[12], quad, cp.tintIndex), cp.tintBlockState);
                         dirEdges = null;
-                        return (BakedQuad[]) dirEdges;
+                        return (BakedQuad[]) null;
                     }
                     if (aboolean[0] && aboolean[1] && aboolean[3]) {
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[13], quad, cp.tintIndex), cp.tintBlockState);
                         dirEdges = null;
-                        return (BakedQuad[]) dirEdges;
+                        return (BakedQuad[]) null;
                     }
                     final BlockDir[] ablockdir1 = getEdgeDirections(side, vertAxis);
                     final boolean[] aboolean1 = renderEnv.getBorderFlags2();
@@ -513,28 +511,28 @@ public class ConnectedTextures {
                         if (aboolean1[3])
                             listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[16], quad, cp.tintIndex), cp.tintBlockState);
                         final Object object4 = null;
-                        return (BakedQuad[]) object4;
+                        return (BakedQuad[]) null;
                     }
                     if (aboolean[0] && aboolean[2]) {
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[4], quad, cp.tintIndex), cp.tintBlockState);
                         if (aboolean1[2])
                             listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[14], quad, cp.tintIndex), cp.tintBlockState);
                         final Object object3 = null;
-                        return (BakedQuad[]) object3;
+                        return (BakedQuad[]) null;
                     }
                     if (aboolean[1] && aboolean[3]) {
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[10], quad, cp.tintIndex), cp.tintBlockState);
                         if (aboolean1[1])
                             listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[2], quad, cp.tintIndex), cp.tintBlockState);
                         final Object object2 = null;
-                        return (BakedQuad[]) object2;
+                        return (BakedQuad[]) null;
                     }
                     if (aboolean[0] && aboolean[3]) {
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[11], quad, cp.tintIndex), cp.tintBlockState);
                         if (aboolean1[0])
                             listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[0], quad, cp.tintIndex), cp.tintBlockState);
                         final Object object1 = null;
-                        return (BakedQuad[]) object1;
+                        return (BakedQuad[]) null;
                     }
                     final boolean[] aboolean2 = renderEnv.getBorderFlags3();
                     for (int k = 0; k < 4; ++k)
@@ -556,14 +554,14 @@ public class ConnectedTextures {
                     if (aboolean1[3] && (aboolean2[0] || aboolean2[3]) && !aboolean[0] && !aboolean[3])
                         listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[16], quad, cp.tintIndex), cp.tintBlockState);
                     final Object object5 = null;
-                    return (BakedQuad[]) object5;
+                    return (BakedQuad[]) null;
                 }
                 listquadsoverlay.addQuad(getQuadFull(cp.tileIcons[8], quad, cp.tintIndex), cp.tintBlockState);
                 dirEdges = null;
             } finally {
                 if (listquadsoverlay.size() > 0) renderEnv.setOverlaysRendered(true);
             }
-            return (BakedQuad[]) dirEdges;
+            return (BakedQuad[]) null;
         }
     }
 
@@ -580,7 +578,7 @@ public class ConnectedTextures {
             } finally {
                 if (listquadsoverlay.size() > 0) renderEnv.setOverlaysRendered(true);
             }
-            return (BakedQuad[]) object;
+            return (BakedQuad[]) null;
         }
     }
 
@@ -597,7 +595,7 @@ public class ConnectedTextures {
             } finally {
                 if (listquadsoverlay.size() > 0) renderEnv.setOverlaysRendered(true);
             }
-            return (BakedQuad[]) object;
+            return (BakedQuad[]) null;
         }
     }
 
@@ -614,7 +612,7 @@ public class ConnectedTextures {
             } finally {
                 if (listquadsoverlay.size() > 0) renderEnv.setOverlaysRendered(true);
             }
-            return (BakedQuad[]) object;
+            return (BakedQuad[]) null;
         }
     }
 
@@ -632,7 +630,7 @@ public class ConnectedTextures {
             } finally {
                 if (listquadsoverlay.size() > 0) renderEnv.setOverlaysRendered(true);
             }
-            return (BakedQuad[]) object;
+            return (BakedQuad[]) null;
         }
     }
 
@@ -881,28 +879,28 @@ public class ConnectedTextures {
             else if (i == 27 && aboolean[3] && aboolean[1]) i = 19;
             else if (i == 38 && aboolean[3] && aboolean[2]) i = 18;
             else if (i == 14 && !aboolean[0] && aboolean[1]) i = 31;
-            else if (i == 25 && aboolean[0] && !aboolean[2]) i = 30;
+            else if (i == 25 && aboolean[0]) i = 30;
             else if (i == 27 && !aboolean[3] && aboolean[1]) i = 41;
-            else if (i == 38 && aboolean[3] && !aboolean[2]) i = 40;
-            else if (i == 14 && aboolean[0] && !aboolean[1]) i = 29;
-            else if (i == 25 && !aboolean[0] && aboolean[2]) i = 28;
-            else if (i == 27 && aboolean[3] && !aboolean[1]) i = 43;
-            else if (i == 38 && !aboolean[3] && aboolean[2]) i = 42;
+            else if (i == 38 && aboolean[3]) i = 40;
+            else if (i == 14 && aboolean[0]) i = 29;
+            else if (i == 25 && aboolean[2]) i = 28;
+            else if (i == 27 && aboolean[3]) i = 43;
+            else if (i == 38 && aboolean[2]) i = 42;
             else if (i == 26 && aboolean[0] && aboolean[1] && aboolean[2] && aboolean[3]) i = 46;
             else if (i == 26 && !aboolean[0] && aboolean[1] && aboolean[2] && aboolean[3]) i = 9;
             else if (i == 26 && aboolean[0] && !aboolean[1] && aboolean[2] && aboolean[3]) i = 21;
             else if (i == 26 && aboolean[0] && aboolean[1] && !aboolean[2] && aboolean[3]) i = 8;
-            else if (i == 26 && aboolean[0] && aboolean[1] && aboolean[2] && !aboolean[3]) i = 20;
-            else if (i == 26 && aboolean[0] && aboolean[1] && !aboolean[2] && !aboolean[3]) i = 11;
+            else if (i == 26 && aboolean[0] && aboolean[1] && aboolean[2]) i = 20;
+            else if (i == 26 && aboolean[0] && aboolean[1]) i = 11;
             else if (i == 26 && !aboolean[0] && !aboolean[1] && aboolean[2] && aboolean[3]) i = 22;
             else if (i == 26 && !aboolean[0] && aboolean[1] && !aboolean[2] && aboolean[3]) i = 23;
-            else if (i == 26 && aboolean[0] && !aboolean[1] && aboolean[2] && !aboolean[3]) i = 10;
-            else if (i == 26 && aboolean[0] && !aboolean[1] && !aboolean[2] && aboolean[3]) i = 34;
-            else if (i == 26 && !aboolean[0] && aboolean[1] && aboolean[2] && !aboolean[3]) i = 35;
-            else if (i == 26 && aboolean[0] && !aboolean[1] && !aboolean[2] && !aboolean[3]) i = 32;
-            else if (i == 26 && !aboolean[0] && aboolean[1] && !aboolean[2] && !aboolean[3]) i = 33;
-            else if (i == 26 && !aboolean[0] && !aboolean[1] && aboolean[2] && !aboolean[3]) i = 44;
-            else if (i == 26 && !aboolean[0] && !aboolean[1] && !aboolean[2] && aboolean[3]) i = 45;
+            else if (i == 26 && aboolean[0] && aboolean[2]) i = 10;
+            else if (i == 26 && aboolean[0] && aboolean[3]) i = 34;
+            else if (i == 26 && !aboolean[0] && aboolean[1] && aboolean[2]) i = 35;
+            else if (i == 26 && aboolean[0]) i = 32;
+            else if (i == 26 && aboolean[1]) i = 33;
+            else if (i == 26 && aboolean[2]) i = 44;
+            else if (i == 26 && aboolean[3]) i = 45;
             return i;
         }
     }
@@ -943,8 +941,7 @@ public class ConnectedTextures {
         final IBlockState iblockstate = iblockaccess.getBlockState(blockPos);
         if (iblockstate == AIR_DEFAULT_STATE) return false;
         else {
-            if (cp.matchBlocks != null && iblockstate instanceof BlockStateBase) {
-                final BlockStateBase blockstatebase = (BlockStateBase) iblockstate;
+            if (cp.matchBlocks != null && iblockstate instanceof BlockStateBase blockstatebase) {
                 if (!cp.matchesBlock(blockstatebase.getBlockId(), blockstatebase.getMetadata())) return false;
             }
             if (cp.matchTileIcons != null) {
@@ -973,9 +970,8 @@ public class ConnectedTextures {
             }
         } else if (cp.connect == 3)
             return neighbourState != null && (neighbourState != AIR_DEFAULT_STATE && neighbourState.getBlock().getMaterial() == blockState.getBlock().getMaterial());
-        else if (!(neighbourState instanceof BlockStateBase)) return false;
+        else if (!(neighbourState instanceof BlockStateBase blockstatebase)) return false;
         else {
-            final BlockStateBase blockstatebase = (BlockStateBase) neighbourState;
             final Block block = blockstatebase.getBlock();
             final int i = blockstatebase.getMetadata();
             return block == blockState.getBlock() && i == metadata;
@@ -994,15 +990,15 @@ public class ConnectedTextures {
                 if (Config.isBetterGrass())
                     list = BetterGrass.getFaceQuads(iblockaccess, neighbourState, blockPos, enumfacing, list);
                 if (!list.isEmpty()) {
-                    final BakedQuad bakedquad1 = (BakedQuad) list.get(0);
+                    final BakedQuad bakedquad1 = list.getFirst();
                     return bakedquad1.getSprite();
                 } else {
                     final List<BakedQuad> list1 = ibakedmodel.getGeneralQuads();
                     if (list1 == null) {
                     }
                     else {
-                        for (final Object element : list1) {
-                            final BakedQuad bakedquad = (BakedQuad) element;
+                        for (final BakedQuad element : list1) {
+                            final BakedQuad bakedquad = element;
                             if (bakedquad.getFace() == enumfacing) return bakedquad.getSprite();
                         }
                     }
@@ -1102,7 +1098,7 @@ public class ConnectedTextures {
                         flag = isNeighbour(cp, blockAccess, blockState, blockPos.north(), side, icon, metadata);
                         yield isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
                     }
-                    default -> flag1;
+                    default -> false;
                 };
         }
         int i = 3;
@@ -1110,7 +1106,6 @@ public class ConnectedTextures {
             if (flag1) i = 1;
             else i = 2;
         } else if (flag1) i = 0;
-        else i = 3;
         return cp.tileIcons[i];
     }
 
@@ -1160,7 +1155,6 @@ public class ConnectedTextures {
             if (flag1) i = 1;
             else i = 2;
         } else if (flag1) i = 0;
-        else i = 3;
         return cp.tileIcons[i];
     }
 
@@ -1227,8 +1221,8 @@ public class ConnectedTextures {
             spriteQuadMaps = new Map[textureMap.getCountRegisteredSprites() + 1];
             spriteQuadFullMaps = new Map[textureMap.getCountRegisteredSprites() + 1];
             spriteQuadCompactMaps = new Map[textureMap.getCountRegisteredSprites() + 1][];
-            if (blockProperties.length <= 0) blockProperties = null;
-            if (tileProperties.length <= 0) tileProperties = null;
+            if (blockProperties.length == 0) blockProperties = null;
+            if (tileProperties.length == 0) tileProperties = null;
         }
     }
 
@@ -1314,7 +1308,7 @@ public class ConnectedTextures {
     private static void addToTileList(final ConnectedProperties cp, final List tileList) {
         if (cp.matchTileIcons != null) for (final TextureAtlasSprite textureatlassprite : cp.matchTileIcons) {
             if (!(textureatlassprite instanceof TextureAtlasSprite))
-                Config.warn("TextureAtlasSprite is not TextureAtlasSprite: " + textureatlassprite + ", name: " + textureatlassprite.getIconName());
+                Config.warn("TextureAtlasSprite is not TextureAtlasSprite: " + null + ", name: " + textureatlassprite.getIconName());
             else {
                 final int j = textureatlassprite.getIndexInMap();
                 if (j < 0) Config.warn("Invalid tile ID: " + j + ", icon: " + textureatlassprite.getIconName());

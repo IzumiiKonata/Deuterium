@@ -22,6 +22,7 @@ import com.softsynth.shared.time.ScheduledCommand;
 import com.softsynth.shared.time.TimeStamp;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Part of a multi-part port, for example, the left side of a stereo port.
@@ -52,9 +53,7 @@ public class PortBlockPart implements ConnectableOutput, ConnectableInput {
     }
 
     protected void setValue(double value) {
-        for (int i = 0; i < values.length; i++) {
-            values[i] = value;
-        }
+        Arrays.fill(values, value);
     }
 
     protected boolean isConnected() {
@@ -134,7 +133,7 @@ public class PortBlockPart implements ConnectableOutput, ConnectableInput {
     }
 
     protected void disconnectAll() {
-        unitBlockPort.queueCommand(() -> disconnectAllNow());
+        unitBlockPort.queueCommand(this::disconnectAllNow);
     }
 
     @Override

@@ -34,8 +34,7 @@ public enum RenderEntityParameterFloat implements IExpressionFloat {
     public float eval() {
         Render render = this.renderManager.renderRender;
         if (render != null) {
-            if (render instanceof RendererLivingEntity) {
-                RendererLivingEntity rendererlivingentity = (RendererLivingEntity) render;
+            if (render instanceof RendererLivingEntity rendererlivingentity) {
                 switch (this) {
                     case LIMB_SWING:
                         return rendererlivingentity.renderLimbSwing;

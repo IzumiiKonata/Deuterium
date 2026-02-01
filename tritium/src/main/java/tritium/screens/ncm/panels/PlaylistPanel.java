@@ -56,9 +56,7 @@ public class PlaylistPanel extends NCMPanel {
             this.addChild(cover);
             this.loadCover();
 
-            cover.setBeforeRenderCallback(() -> {
-                cover.setRadius(4);
-            });
+            cover.setBeforeRenderCallback(() -> cover.setRadius(4));
 
 //        LabelWidget lblPlaylistName = new LabelWidget(playList.name, FontManager.pf);
             RoundedButtonWidget btnPlay = new RoundedButtonWidget("播放歌单", FontManager.pf16bold);
@@ -75,9 +73,7 @@ public class PlaylistPanel extends NCMPanel {
             btnPlay.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
 
                 if (mouseButton == 0) {
-                    playList.loadMusicsWithCallback(musics -> {
-                        CloudMusic.play(musics, 0);
-                    });
+                    playList.loadMusicsWithCallback(musics -> CloudMusic.play(musics, 0));
                 }
 
                 return true;
@@ -173,11 +169,9 @@ public class PlaylistPanel extends NCMPanel {
             lblSearchIcon
                     .setClickable(false)
                     .setColor(hexColor(100, 100, 100))
-                    .setBeforeRenderCallback(() -> {
-                        lblSearchIcon
-                                .centerVertically()
-                                .setPosition(lblSearchIcon.getRelativeY(), lblSearchIcon.getRelativeY());
-                    });
+                    .setBeforeRenderCallback(() -> lblSearchIcon
+                            .centerVertically()
+                            .setPosition(lblSearchIcon.getRelativeY(), lblSearchIcon.getRelativeY()));
 
             this.tfSearch = new TextFieldWidget(FontManager.pf14bold);
             searchBar.addChild(tfSearch);
@@ -235,7 +229,7 @@ public class PlaylistPanel extends NCMPanel {
                 lblCreator.setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
             });
 
-            LabelWidget lblPlaylistInfo = new LabelWidget(() -> this.getPlayListInfo(), FontManager.pf12);
+            LabelWidget lblPlaylistInfo = new LabelWidget(this::getPlayListInfo, FontManager.pf12);
             this.addChild(lblPlaylistInfo);
 
             lblPlaylistInfo.setBeforeRenderCallback(() -> {
@@ -271,13 +265,9 @@ public class PlaylistPanel extends NCMPanel {
         rwMusicsContainer.addChild(musicsPanel);
         musicsPanel.setSpacing(0);
 
-        musicsPanel.setBeforeRenderCallback(() -> {
-            musicsPanel.setMargin(0);
-        });
+        musicsPanel.setBeforeRenderCallback(() -> musicsPanel.setMargin(0));
 
-        playList.loadMusicsWithCallback(musics -> {
-            musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music)).setShouldOverrideMouseCursor(true)).collect(Collectors.toList()));
-        });
+        playList.loadMusicsWithCallback(musics -> musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music)).setShouldOverrideMouseCursor(true)).collect(Collectors.toList())));
 
         if (this.tfSearch != null) {
             this.tfSearch.setTextChangedCallback(text -> {

@@ -271,7 +271,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
 
             if (!list.isEmpty()) {
                 if (list.size() == 1) {
-                    this.playerNetServerHandler.sendPacket(new S21PacketChunkData(list.get(0), true, 65535));
+                    this.playerNetServerHandler.sendPacket(new S21PacketChunkData(list.getFirst(), true, 65535));
                 } else {
                     this.playerNetServerHandler.sendPacket(new S26PacketMapChunkBulk(list));
                 }
@@ -401,8 +401,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
                         return false;
                     }
 
-                    if (entity instanceof EntityArrow) {
-                        EntityArrow entityarrow = (EntityArrow) entity;
+                    if (entity instanceof EntityArrow entityarrow) {
 
                         if (entityarrow.shootingEntity instanceof EntityPlayer && !this.canAttackPlayer((EntityPlayer) entityarrow.shootingEntity)) {
                             return false;
@@ -442,7 +441,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
                     this.playerNetServerHandler.setPlayerLocation(blockpos.getX(), blockpos.getY(), blockpos.getZ(), 0.0F, 0.0F);
                 }
 
-                dimensionId = 1;
             }
 
             this.mcServer.getConfigurationManager().transferPlayerToDimension(this, dimensionId);
@@ -568,8 +566,7 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
             this.closeScreen();
         }
 
-        if (chestInventory instanceof ILockableContainer) {
-            ILockableContainer ilockablecontainer = (ILockableContainer) chestInventory;
+        if (chestInventory instanceof ILockableContainer ilockablecontainer) {
 
             if (ilockablecontainer.isLocked() && !this.canOpen(ilockablecontainer.getLockCode()) && !this.isSpectator()) {
                 this.playerNetServerHandler.sendPacket(new S02PacketChat(new ChatComponentTranslation("container.isLocked", chestInventory.getDisplayName()), (byte) 2));

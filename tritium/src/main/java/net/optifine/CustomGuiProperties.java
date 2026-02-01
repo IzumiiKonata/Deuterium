@@ -191,7 +191,6 @@ public class CustomGuiProperties {
                 case INVENTORY -> INVENTORY_GUI_TEXTURE;
                 case SHULKER_BOX -> SHULKER_BOX_GUI_TEXTURE;
                 case VILLAGER -> VILLAGER_GUI_TEXTURE;
-                default -> null;
             };
         }
     }
@@ -280,10 +279,9 @@ public class CustomGuiProperties {
 
     private boolean matchesBeacon(final BlockPos pos, final IBlockAccess blockAccess) {
         final TileEntity tileentity = blockAccess.getTileEntity(pos);
-        if (!(tileentity instanceof TileEntityBeacon)) {
+        if (!(tileentity instanceof TileEntityBeacon tileentitybeacon)) {
             return false;
         } else {
-            final TileEntityBeacon tileentitybeacon = (TileEntityBeacon) tileentity;
             if (this.levels != null) {
                 final NBTTagCompound nbttagcompound = new NBTTagCompound();
                 tileentitybeacon.writeToNBT(nbttagcompound);
@@ -296,11 +294,9 @@ public class CustomGuiProperties {
 
     private boolean matchesChest(final BlockPos pos, final IBlockAccess blockAccess) {
         final TileEntity tileentity = blockAccess.getTileEntity(pos);
-        if (tileentity instanceof TileEntityChest) {
-            final TileEntityChest tileentitychest = (TileEntityChest) tileentity;
+        if (tileentity instanceof TileEntityChest tileentitychest) {
             return this.matchesChest(tileentitychest, pos, blockAccess);
-        } else if (tileentity instanceof TileEntityEnderChest) {
-            final TileEntityEnderChest tileentityenderchest = (TileEntityEnderChest) tileentity;
+        } else if (tileentity instanceof TileEntityEnderChest tileentityenderchest) {
             return this.matchesEnderChest(tileentityenderchest, pos, blockAccess);
         } else {
             return false;
@@ -325,10 +321,9 @@ public class CustomGuiProperties {
 
     private boolean matchesDispenser(final BlockPos pos, final IBlockAccess blockAccess) {
         final TileEntity tileentity = blockAccess.getTileEntity(pos);
-        if (!(tileentity instanceof TileEntityDispenser)) {
+        if (!(tileentity instanceof TileEntityDispenser tileentitydispenser)) {
             return false;
         } else {
-            final TileEntityDispenser tileentitydispenser = (TileEntityDispenser) tileentity;
             if (this.variants != null) {
                 final EnumVariant customguiproperties$enumvariant = this.getDispenserVariant(tileentitydispenser);
                 return Config.equalsOne(customguiproperties$enumvariant, this.variants);
@@ -360,10 +355,9 @@ public class CustomGuiProperties {
     }
 
     private boolean matchesVillager(final Entity entity, final IBlockAccess blockAccess) {
-        if (!(entity instanceof EntityVillager)) {
+        if (!(entity instanceof EntityVillager entityvillager)) {
             return false;
         } else {
-            final EntityVillager entityvillager = (EntityVillager) entity;
             if (this.professions != null) {
                 final int i = entityvillager.getProfession();
                 final int j = entityvillager.careerId;
@@ -384,10 +378,9 @@ public class CustomGuiProperties {
     }
 
     private boolean matchesHorse(final Entity entity, final IBlockAccess blockAccess) {
-        if (!(entity instanceof EntityHorse)) {
+        if (!(entity instanceof EntityHorse entityhorse)) {
             return false;
         } else {
-            final EntityHorse entityhorse = (EntityHorse) entity;
             if (this.variants != null) {
                 final EnumVariant customguiproperties$enumvariant = this.getHorseVariant(entityhorse);
                 return Config.equalsOne(customguiproperties$enumvariant, this.variants);

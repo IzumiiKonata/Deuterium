@@ -40,7 +40,7 @@ public class PulseOscillatorBL extends SawtoothOscillatorBL {
             double positivePhaseIncrement, double flevel, int i) {
         double[] widths = width.getValues();
         double width = widths[i];
-        width = (width > 0.999) ? 0.999 : ((width < -0.999) ? -0.999 : width);
+        width = (width > 0.999) ? 0.999 : (Math.max(width, -0.999));
 
         double val1 = multiTable.calculateSawtooth(currentPhase, positivePhaseIncrement, flevel);
 

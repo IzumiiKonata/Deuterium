@@ -16,6 +16,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ITickable;
 
+import java.util.Arrays;
+
 public class TileEntityChest extends TileEntityLockable implements ITickable, IInventory {
     private ItemStack[] chestContents = new ItemStack[27];
 
@@ -170,7 +172,7 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
             NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
             int j = nbttagcompound.getByte("Slot") & 255;
 
-            if (j >= 0 && j < this.chestContents.length) {
+            if (j < this.chestContents.length) {
                 this.chestContents[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
             }
         }
@@ -269,8 +271,7 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
         if (this.isChestAt(blockpos)) {
             TileEntity tileentity = this.worldObj.getTileEntity(blockpos);
 
-            if (tileentity instanceof TileEntityChest) {
-                TileEntityChest tileentitychest = (TileEntityChest) tileentity;
+            if (tileentity instanceof TileEntityChest tileentitychest) {
                 tileentitychest.func_174910_a(this, side.getOpposite());
                 return tileentitychest;
             }
@@ -446,8 +447,6 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
     }
 
     public void clear() {
-        for (int i = 0; i < this.chestContents.length; ++i) {
-            this.chestContents[i] = null;
-        }
+        Arrays.fill(this.chestContents, null);
     }
 }

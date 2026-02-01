@@ -25,9 +25,7 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
         label
                 .setClickable(false)
                 .setPosition(0, height * .5 - FontManager.pf14.getHeight() * .5)
-                .setBeforeRenderCallback(() -> {
-                    label.setColor(ClickGui.getColor(20));
-                });
+                .setBeforeRenderCallback(() -> label.setColor(ClickGui.getColor(20)));
         this.addChild(label);
 
         RoundedRectWidget rect = new RoundedRectWidget() {
@@ -44,9 +42,7 @@ public class BooleanRenderer extends AbstractWidget<BooleanRenderer> {
         rect
             .setShouldOverrideMouseCursor(true)
             .setBounds(this.getWidth() - height, 0, height, height)
-            .setBeforeRenderCallback(() -> {
-                rect.setColor(rect.isHovering() ? ClickGui.getColor(22) : ClickGui.getColor(21));
-            })
+            .setBeforeRenderCallback(() -> rect.setColor(rect.isHovering() ? ClickGui.getColor(22) : ClickGui.getColor(21)))
             .setRadius(2)
             .setOnClickCallback((relativeX, relativeY, mouseButton) -> {
                 if (mouseButton == 0) {

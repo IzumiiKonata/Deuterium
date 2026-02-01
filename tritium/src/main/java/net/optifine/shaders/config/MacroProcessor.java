@@ -82,7 +82,7 @@ public class MacroProcessor {
                 Iterator<ShaderMacro> iterator = list1.iterator();
 
                 while (iterator.hasNext()) {
-                    ShaderMacro shadermacro = (ShaderMacro) iterator.next();
+                    ShaderMacro shadermacro = iterator.next();
 
                     if (s.contains(shadermacro.getName())) {
                         stringbuilder.append(shadermacro.getSourceLine());

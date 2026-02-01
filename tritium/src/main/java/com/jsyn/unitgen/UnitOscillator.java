@@ -57,8 +57,7 @@ public abstract class UnitOscillator extends UnitGenerator implements UnitVoice 
                     "Null Synth! You probably forgot to add this unit to the Synthesizer!");
         }
         // Clip to range.
-        phaseIncrement = (phaseIncrement > 1.0) ? 1.0 : ((phaseIncrement < -1.0) ? -1.0
-                : phaseIncrement);
+        phaseIncrement = (phaseIncrement > 1.0) ? 1.0 : (Math.max(phaseIncrement, -1.0));
         return phaseIncrement;
     }
 

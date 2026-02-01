@@ -162,10 +162,6 @@ class PriorityQHeap extends PriorityQ {
                 pqNodes[i] = new PQnode();
             }
             nodes = pqNodes;
-            if (nodes == null) {
-                nodes = saveNodes; /* restore ptr to free upon return */
-                return Integer.MAX_VALUE;
-            }
 
             // pq->handles = (PQhandleElem *)memRealloc( pq->handles,(size_t)((pq->max + 1) * sizeof(
             // pq->handles[0] )));
@@ -175,10 +171,6 @@ class PriorityQHeap extends PriorityQ {
                 pqHandles[i] = new PQhandleElem();
             }
             handles = pqHandles;
-            if (handles == null) {
-                handles = saveHandles; /* restore ptr to free upon return */
-                return Integer.MAX_VALUE;
-            }
         }
 
         if (freeList == 0) {
@@ -195,7 +187,6 @@ class PriorityQHeap extends PriorityQ {
         if (initialized) {
             FloatUp(curr);
         }
-        assert (free != Integer.MAX_VALUE);
         return free;
     }
 

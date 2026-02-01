@@ -21,10 +21,7 @@ import net.optifine.config.GlVersion;
 import net.optifine.gui.GuiMessage;
 
 import net.optifine.shaders.Shaders;
-import net.optifine.util.DisplayModeComparator;
-import net.optifine.util.PropertiesOrdered;
-import net.optifine.util.TextureUtils;
-import net.optifine.util.TimedEvent;
+import net.optifine.util.*;
 import org.apache.commons.io.IOUtils;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -227,9 +224,6 @@ public class Config {
                 glVersion = getGlVersionLwjgl();
             }
 
-            if (glVersion == null) {
-                glVersion = new GlVersion(1, 0);
-            }
         }
 
         return glVersion;
@@ -461,7 +455,7 @@ public class Config {
     }
 
     public static boolean isCloudsOff() {
-        return gameSettings.ofClouds != 0 ? gameSettings.ofClouds == 3 : (isShaders() && !Shaders.shaderPackClouds.isDefault() ? Shaders.shaderPackClouds.isOff() : (texturePackClouds != 0 && texturePackClouds == 3));
+        return gameSettings.ofClouds != 0 ? gameSettings.ofClouds == 3 : (isShaders() && !Shaders.shaderPackClouds.isDefault() ? Shaders.shaderPackClouds.isOff() : (texturePackClouds == 3));
     }
 
     public static void updateTexturePackClouds() {
@@ -525,19 +519,19 @@ public class Config {
     }
 
     public static int limit(int p_limit_0_, int p_limit_1_, int p_limit_2_) {
-        return p_limit_0_ < p_limit_1_ ? p_limit_1_ : (p_limit_0_ > p_limit_2_ ? p_limit_2_ : p_limit_0_);
+        return p_limit_0_ < p_limit_1_ ? p_limit_1_ : (Math.min(p_limit_0_, p_limit_2_));
     }
 
     public static float limit(float p_limit_0_, float p_limit_1_, float p_limit_2_) {
-        return p_limit_0_ < p_limit_1_ ? p_limit_1_ : (p_limit_0_ > p_limit_2_ ? p_limit_2_ : p_limit_0_);
+        return p_limit_0_ < p_limit_1_ ? p_limit_1_ : (Math.min(p_limit_0_, p_limit_2_));
     }
 
     public static double limit(double p_limit_0_, double p_limit_2_, double p_limit_4_) {
-        return p_limit_0_ < p_limit_2_ ? p_limit_2_ : (p_limit_0_ > p_limit_4_ ? p_limit_4_ : p_limit_0_);
+        return p_limit_0_ < p_limit_2_ ? p_limit_2_ : (Math.min(p_limit_0_, p_limit_4_));
     }
 
     public static float limitTo1(float p_limitTo1_0_) {
-        return p_limitTo1_0_ < 0.0F ? 0.0F : (p_limitTo1_0_ > 1.0F ? 1.0F : p_limitTo1_0_);
+        return p_limitTo1_0_ < 0.0F ? 0.0F : (Math.min(p_limitTo1_0_, 1.0F));
     }
 
     public static boolean isAnimatedWater() {
@@ -774,7 +768,7 @@ public class Config {
         } else {
             IResourcePack[] airesourcepack = getResourcePacks();
 
-            if (airesourcepack.length <= 0) {
+            if (airesourcepack.length == 0) {
                 return getDefaultResourcePack().getPackName();
             } else {
                 String[] astring = new String[airesourcepack.length];
@@ -1096,7 +1090,7 @@ public class Config {
             }
         }
 
-        if (p_getDisplayMode_0_.length <= 0) {
+        if (p_getDisplayMode_0_.length == 0) {
             return null;
         } else {
             Arrays.sort(p_getDisplayMode_0_, new DisplayModeComparator());
@@ -1400,13 +1394,7 @@ public class Config {
     }
 
     public static boolean equalsOne(int p_equalsOne_0_, int[] p_equalsOne_1_) {
-        for (int j : p_equalsOne_1_) {
-            if (j == p_equalsOne_0_) {
-                return true;
-            }
-        }
-
-        return false;
+        return ArrayUtils.equalsOne(p_equalsOne_0_, p_equalsOne_1_);
     }
 
     public static boolean isSameOne(Object p_isSameOne_0_, Object[] p_isSameOne_1_) {
@@ -1575,10 +1563,7 @@ public class Config {
     }
 
     public static Object[] addObjectToArray(Object[] p_addObjectToArray_0_, Object p_addObjectToArray_1_, int p_addObjectToArray_2_) {
-        List list = new ArrayList(Arrays.asList(p_addObjectToArray_0_));
-        list.add(p_addObjectToArray_2_, p_addObjectToArray_1_);
-        Object[] aobject = (Object[]) Array.newInstance(p_addObjectToArray_0_.getClass().getComponentType(), list.size());
-        return list.toArray(aobject);
+        return ArrayUtils.addObjectToArray(p_addObjectToArray_0_, p_addObjectToArray_1_, p_addObjectToArray_2_);
     }
 
     public static Object[] addObjectsToArray(Object[] p_addObjectsToArray_0_, Object[] p_addObjectsToArray_1_) {

@@ -320,7 +320,6 @@ public class GlStateManager {
             case T -> texGenState.t;
             case R -> texGenState.r;
             case Q -> texGenState.q;
-            default -> texGenState.s;
         };
     }
 

@@ -46,7 +46,6 @@ public class JavaSoundAudioDevice implements AudioDeviceManager {
         }
         deviceRecords = new ArrayList<>();
         sniffAvailableMixers();
-        if (false) dumpAvailableMixers();
     }
 
     private void dumpAvailableMixers() {

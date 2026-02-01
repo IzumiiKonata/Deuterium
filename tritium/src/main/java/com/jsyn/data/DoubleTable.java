@@ -75,9 +75,7 @@ public class DoubleTable implements Function {
     }
 
     public void write(int startFrame, double[] data, int startIndex, int numFrames) {
-        for (int i = 0; i < numFrames; i++) {
-            table[startFrame + i] = data[startIndex + i];
-        }
+        if (numFrames >= 0) System.arraycopy(data, startIndex + 0, table, startFrame + 0, numFrames);
     }
 
     /**

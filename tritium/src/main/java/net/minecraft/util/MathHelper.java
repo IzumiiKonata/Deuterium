@@ -1,5 +1,6 @@
 package net.minecraft.util;
 
+import net.optifine.shaders.ShadersTex;
 import net.optifine.util.MathUtils;
 import tritium.utils.math.Mth;
 
@@ -63,8 +64,7 @@ public class MathHelper {
      * Returns the greatest integer less than or equal to the float argument
      */
     public static int floor_float(float value) {
-        int i = (int) value;
-        return value < (float) i ? i - 1 : i;
+        return Mth.floor(value);
     }
 
     /**
@@ -118,7 +118,7 @@ public class MathHelper {
      * third parameters.
      */
     public static int clamp_int(int num, int min, int max) {
-        return num < min ? min : (num > max ? max : num);
+        return num < min ? min : (Math.min(num, max));
     }
 
     /**
@@ -126,11 +126,11 @@ public class MathHelper {
      * third parameters
      */
     public static float clamp_float(float num, float min, float max) {
-        return num < min ? min : (num > max ? max : num);
+        return num < min ? min : (Math.min(num, max));
     }
 
     public static double clamp_double(double num, double min, double max) {
-        return num < min ? min : (num > max ? max : num);
+        return num < min ? min : (Math.min(num, max));
     }
 
     public static double denormalizeClamp(double lowerBnd, double upperBnd, double slide) {
@@ -149,7 +149,7 @@ public class MathHelper {
             p_76132_2_ = -p_76132_2_;
         }
 
-        return p_76132_0_ > p_76132_2_ ? p_76132_0_ : p_76132_2_;
+        return Math.max(p_76132_0_, p_76132_2_);
     }
 
     /**
@@ -260,13 +260,7 @@ public class MathHelper {
      * Returns the input value rounded up to the next highest power of two.
      */
     public static int roundUpToPowerOfTwo(int value) {
-        int i = value - 1;
-        i = i | i >> 1;
-        i = i | i >> 2;
-        i = i | i >> 4;
-        i = i | i >> 8;
-        i = i | i >> 16;
-        return i + 1;
+        return ShadersTex.roundUpPOT(value);
     }
 
     /**

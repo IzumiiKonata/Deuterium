@@ -227,15 +227,13 @@ public class GuiEnchantment extends GuiContainer {
             if (this.isPointInRegion(60, 14 + 19 * j, 108, 17, mouseX, mouseY) && k > 0 && l >= 0) {
                 List<String> list = Lists.newArrayList();
 
-                if (l >= 0 && Enchantment.getEnchantmentById(l & 255) != null) {
+                if (Enchantment.getEnchantmentById(l & 255) != null) {
                     String s = Enchantment.getEnchantmentById(l & 255).getTranslatedName((l & 65280) >> 8);
                     list.add(EnumChatFormatting.WHITE.toString() + EnumChatFormatting.ITALIC + I18n.format("container.enchant.clue", s));
                 }
 
                 if (!flag) {
-                    if (l >= 0) {
-                        list.add("");
-                    }
+                    list.add("");
 
                     if (this.mc.thePlayer.experienceLevel < k) {
                         list.add(EnumChatFormatting.RED + "Level Requirement: " + this.container.enchantLevels[j]);

@@ -67,7 +67,7 @@ public class BlockModelUtils {
         boolean flag = false;
         boolean flag1 = true;
         FaceBakery facebakery = new FaceBakery();
-        return facebakery.makeBakedQuad(vector3f, vector3f1, blockpartface, sprite, facing, modelrotation, blockpartrotation, flag, flag1);
+        return facebakery.makeBakedQuad(vector3f, vector3f1, blockpartface, sprite, facing, modelrotation, null, flag, flag1);
     }
 
     public static IBakedModel makeModel(String modelName, String spriteOldName, String spriteNewName) {
@@ -136,7 +136,7 @@ public class BlockModelUtils {
     public static AxisAlignedBB getOffsetBoundingBox(AxisAlignedBB aabb, Block.EnumOffsetType offsetType, BlockPos pos) {
         int i = pos.getX();
         int j = pos.getZ();
-        long k = (long) (i * 3129871L) ^ (long) j * 116129781L;
+        long k = (i * 3129871L) ^ (long) j * 116129781L;
         k = k * k * 42317861L + k * 11L;
         double d0 = ((double) ((float) (k >> 16 & 15L) / 15.0F) - 0.5D) * 0.5D;
         double d1 = ((double) ((float) (k >> 24 & 15L) / 15.0F) - 0.5D) * 0.5D;

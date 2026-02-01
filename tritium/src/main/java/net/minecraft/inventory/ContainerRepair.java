@@ -350,7 +350,7 @@ public class ContainerRepair extends Container {
 
                 slot.onSlotChange(itemstack1, itemstack);
             } else if (index != 0 && index != 1) {
-                if (index >= 3 && index < 39 && !this.mergeItemStack(itemstack1, 0, 2, false)) {
+                if (index < 39 && !this.mergeItemStack(itemstack1, 0, 2, false)) {
                     return null;
                 }
             } else if (!this.mergeItemStack(itemstack1, 3, 39, false)) {

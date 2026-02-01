@@ -42,7 +42,7 @@ public class StringTranslate {
             if (!s.isEmpty() && s.charAt(0) != 35) {
                 String[] astring = Iterables.toArray(equalSignSplitter.split(s), String.class);
 
-                if (astring != null && astring.length == 2) {
+                if (astring.length == 2) {
                     String s1 = astring[0];
                     String s2 = numericVariablePattern.matcher(astring[1]).replaceAll("%$1s");
                     this.languageList.put(s1, s2);

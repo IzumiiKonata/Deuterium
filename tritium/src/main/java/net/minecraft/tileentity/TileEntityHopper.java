@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class TileEntityHopper extends TileEntityLockable implements IHopper, ITickable {
@@ -272,8 +273,7 @@ public class TileEntityHopper extends TileEntityLockable implements IHopper, ITi
      * Returns false if the inventory has any room to place items in
      */
     private boolean isInventoryFull(IInventory inventoryIn, EnumFacing side) {
-        if (inventoryIn instanceof ISidedInventory) {
-            ISidedInventory isidedinventory = (ISidedInventory) inventoryIn;
+        if (inventoryIn instanceof ISidedInventory isidedinventory) {
             int[] aint = isidedinventory.getSlotsForFace(side);
 
             for (int i : aint) {
@@ -302,8 +302,7 @@ public class TileEntityHopper extends TileEntityLockable implements IHopper, ITi
      * Returns false if the specified IInventory contains any items
      */
     private static boolean isInventoryEmpty(IInventory inventoryIn, EnumFacing side) {
-        if (inventoryIn instanceof ISidedInventory) {
-            ISidedInventory isidedinventory = (ISidedInventory) inventoryIn;
+        if (inventoryIn instanceof ISidedInventory isidedinventory) {
             int[] aint = isidedinventory.getSlotsForFace(side);
 
             for (int j : aint) {
@@ -334,8 +333,7 @@ public class TileEntityHopper extends TileEntityLockable implements IHopper, ITi
                 return false;
             }
 
-            if (iinventory instanceof ISidedInventory) {
-                ISidedInventory isidedinventory = (ISidedInventory) iinventory;
+            if (iinventory instanceof ISidedInventory isidedinventory) {
                 int[] aint = isidedinventory.getSlotsForFace(enumfacing);
 
                 for (int j : aint) {
@@ -413,8 +411,7 @@ public class TileEntityHopper extends TileEntityLockable implements IHopper, ITi
      * Attempts to place the passed stack in the inventory, using as many slots as required. Returns leftover items
      */
     public static ItemStack putStackInInventoryAllSlots(IInventory inventoryIn, ItemStack stack, EnumFacing side) {
-        if (inventoryIn instanceof ISidedInventory && side != null) {
-            ISidedInventory isidedinventory = (ISidedInventory) inventoryIn;
+        if (inventoryIn instanceof ISidedInventory isidedinventory && side != null) {
             int[] aint = isidedinventory.getSlotsForFace(side);
 
             for (int k = 0; k < aint.length && stack != null && stack.stackSize > 0; ++k) {
@@ -471,8 +468,7 @@ public class TileEntityHopper extends TileEntityLockable implements IHopper, ITi
             }
 
             if (flag) {
-                if (inventoryIn instanceof TileEntityHopper) {
-                    TileEntityHopper tileentityhopper = (TileEntityHopper) inventoryIn;
+                if (inventoryIn instanceof TileEntityHopper tileentityhopper) {
 
                     if (tileentityhopper.mayTransfer()) {
                         tileentityhopper.setTransferCooldown(8);
@@ -598,8 +594,6 @@ public class TileEntityHopper extends TileEntityLockable implements IHopper, ITi
     }
 
     public void clear() {
-        for (int i = 0; i < this.inventory.length; ++i) {
-            this.inventory[i] = null;
-        }
+        Arrays.fill(this.inventory, null);
     }
 }

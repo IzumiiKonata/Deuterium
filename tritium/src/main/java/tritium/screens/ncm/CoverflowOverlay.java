@@ -72,13 +72,13 @@ public class CoverflowOverlay extends BaseScreen {
 
     Timer clickResistTimer = new Timer();
 
-    private class AlbumRenderingData {
+    private static class AlbumRenderingData {
         public boolean flipped, coverLoaded;
         public float rotateDeg = 0f;
         public double scale = .75, scrollTarget = 0, scrollOffset = 0;
     }
 
-    private class MusicRenderingData {
+    private static class MusicRenderingData {
         public float hoverAlpha = 0f;
     }
 

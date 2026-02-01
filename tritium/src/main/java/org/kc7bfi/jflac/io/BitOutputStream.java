@@ -404,9 +404,9 @@ public class BitOutputStream {
         // fold signed to unsigned
         if (val < 0) {
             // equivalent to (unsigned)(((--val) < < 1) - 1); but without the overflow problem at MININT
-            uval = (int) (((-(++val)) << 1) + 1);
+            uval = ((-(++val)) << 1) + 1;
         } else {
-            uval = (int) (val << 1);
+            uval = val << 1;
         }
         msbs = uval >> parameter;
         return 1 + parameter + msbs;
@@ -458,9 +458,9 @@ public class BitOutputStream {
         // fold signed to unsigned
         if (val < 0) {
             // equivalent to (unsigned)(((--val) < < 1) - 1); but without the overflow problem at MININT
-            uval = (int) (((-(++val)) << 1) + 1);
+            uval = ((-(++val)) << 1) + 1;
         } else {
-            uval = (int) (val << 1);
+            uval = val << 1;
         }
         msbs = uval >> parameter;
         interestingBits = 1 + parameter;
@@ -525,13 +525,6 @@ public class BitOutputStream {
             writeRawUInt(0x80 | (int) (val & 0x3F), 8);
         } else if (val < 0x4000000) {
             writeRawUInt(0xF8 | (int) (val >> 24), 8);
-            writeRawUInt(0x80 | (int) ((val >> 18) & 0x3F), 8);
-            writeRawUInt(0x80 | (int) ((val >> 12) & 0x3F), 8);
-            writeRawUInt(0x80 | (int) ((val >> 6) & 0x3F), 8);
-            writeRawUInt(0x80 | (int) (val & 0x3F), 8);
-        } else if (val < 0x80000000) {
-            writeRawUInt(0xFC | (int) (val >> 30), 8);
-            writeRawUInt(0x80 | (int) ((val >> 24) & 0x3F), 8);
             writeRawUInt(0x80 | (int) ((val >> 18) & 0x3F), 8);
             writeRawUInt(0x80 | (int) ((val >> 12) & 0x3F), 8);
             writeRawUInt(0x80 | (int) ((val >> 6) & 0x3F), 8);

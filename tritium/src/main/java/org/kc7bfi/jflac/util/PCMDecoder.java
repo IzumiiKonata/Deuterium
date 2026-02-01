@@ -74,51 +74,26 @@ public class PCMDecoder {
             samplesProcessed += wideSamples;
             frameCounter++;
             if (bps == 8) {
-                if (isUnsignedSamples) {
-                    for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
-                        for (channel = 0; channel < channels; channel++) {
-                            //System.out.print("("+(int)((byte)(channelData[channel].getOutput()[wideSample] + 0x80))+")");
-                            buf.append((byte) (channelData[channel].getOutput()[wideSample] + 0x80));
-                        }
-                } else {
-                    for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
-                        for (channel = 0; channel < channels; channel++)
-                            buf.append((byte) (channelData[channel].getOutput()[wideSample]));
-                }
+                for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
+                    for (channel = 0; channel < channels; channel++) {
+                        //System.out.print("("+(int)((byte)(channelData[channel].getOutput()[wideSample] + 0x80))+")");
+                        buf.append((byte) (channelData[channel].getOutput()[wideSample] + 0x80));
+                    }
             } else if (bps == 16) {
-                if (isUnsignedSamples) {
-                    for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
-                        for (channel = 0; channel < channels; channel++) {
-                            short val = (short) (channelData[channel].getOutput()[wideSample] + 0x8000);
-                            buf.append((byte) (val & 0xff));
-                            buf.append((byte) ((val >> 8) & 0xff));
-                        }
-                } else {
-                    for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
-                        for (channel = 0; channel < channels; channel++) {
-                            short val = (short) (channelData[channel].getOutput()[wideSample]);
-                            buf.append((byte) (val & 0xff));
-                            buf.append((byte) ((val >> 8) & 0xff));
-                        }
-                }
+                for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
+                    for (channel = 0; channel < channels; channel++) {
+                        short val = (short) (channelData[channel].getOutput()[wideSample]);
+                        buf.append((byte) (val & 0xff));
+                        buf.append((byte) ((val >> 8) & 0xff));
+                    }
             } else if (bps == 24) {
-                if (isUnsignedSamples) {
-                    for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
-                        for (channel = 0; channel < channels; channel++) {
-                            int val = (channelData[channel].getOutput()[wideSample] + 0x800000);
-                            buf.append((byte) (val & 0xff));
-                            buf.append((byte) ((val >> 8) & 0xff));
-                            buf.append((byte) ((val >> 16) & 0xff));
-                        }
-                } else {
-                    for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
-                        for (channel = 0; channel < channels; channel++) {
-                            int val = (channelData[channel].getOutput()[wideSample]);
-                            buf.append((byte) (val & 0xff));
-                            buf.append((byte) ((val >> 8) & 0xff));
-                            buf.append((byte) ((val >> 16) & 0xff));
-                        }
-                }
+                for (sample = wideSample = 0; wideSample < wideSamples; wideSample++)
+                    for (channel = 0; channel < channels; channel++) {
+                        int val = (channelData[channel].getOutput()[wideSample]);
+                        buf.append((byte) (val & 0xff));
+                        buf.append((byte) ((val >> 8) & 0xff));
+                        buf.append((byte) ((val >> 16) & 0xff));
+                    }
             }
         }
 

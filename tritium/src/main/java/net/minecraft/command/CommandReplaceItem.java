@@ -115,10 +115,9 @@ public class CommandReplaceItem extends CommandBase {
                 World world = sender.getEntityWorld();
                 TileEntity tileentity = world.getTileEntity(blockpos);
 
-                if (tileentity == null || !(tileentity instanceof IInventory)) {
+                if (!(tileentity instanceof IInventory iinventory)) {
                     throw new CommandException("commands.replaceitem.noContainer", blockpos.getX(), blockpos.getY(), blockpos.getZ());
                 }
-                IInventory iinventory = (IInventory) tileentity;
 
                 if (j >= 0 && j < iinventory.getSizeInventory()) {
                     iinventory.setInventorySlotContents(j, itemstack);

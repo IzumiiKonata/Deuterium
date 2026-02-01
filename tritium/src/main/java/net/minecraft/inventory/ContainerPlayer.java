@@ -108,11 +108,11 @@ public class ContainerPlayer extends Container {
                 }
 
                 slot.onSlotChange(itemstack1, itemstack);
-            } else if (index >= 1 && index < 5) {
+            } else if (index < 5) {
                 if (!this.mergeItemStack(itemstack1, 9, 45, false)) {
                     return null;
                 }
-            } else if (index >= 5 && index < 9) {
+            } else if (index < 9) {
                 if (!this.mergeItemStack(itemstack1, 9, 45, false)) {
                     return null;
                 }
@@ -122,11 +122,11 @@ public class ContainerPlayer extends Container {
                 if (!this.mergeItemStack(itemstack1, i, i + 1, false)) {
                     return null;
                 }
-            } else if (index >= 9 && index < 36) {
+            } else if (index < 36) {
                 if (!this.mergeItemStack(itemstack1, 36, 45, false)) {
                     return null;
                 }
-            } else if (index >= 36 && index < 45) {
+            } else if (index < 45) {
                 if (!this.mergeItemStack(itemstack1, 9, 36, false)) {
                     return null;
                 }

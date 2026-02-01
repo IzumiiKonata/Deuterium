@@ -46,9 +46,7 @@ public class ValueWindow extends Window {
             .setPosition(4, 2)
             .setShouldOverrideMouseCursor(true)
             .setColor(ClickGui.getColor(17))
-            .setBeforeRenderCallback(() -> {
-                back.setColor(back.isHovering() ? ClickGui.getColor(18) : ClickGui.getColor(17));
-            })
+            .setBeforeRenderCallback(() -> back.setColor(back.isHovering() ? ClickGui.getColor(18) : ClickGui.getColor(17)))
             .setOnClickCallback((mouseX, mouseY, mouseButton) -> {
                 if (mouseButton == 0) {
                     ModuleListWindow moduleListWindow = ClickGui.getInstance().getModuleListWindow();
@@ -93,9 +91,7 @@ public class ValueWindow extends Window {
         CategoriesWindow categoriesWindow = ClickGui.getInstance().getCategoriesWindow();
         ModuleListWindow moduleListWindow = ClickGui.getInstance().getModuleListWindow();
 
-        StencilClipManager.beginClip(() -> {
-            Rect.draw(categoriesWindow.getTopRect().getX() + categoriesWindow.getTopRect().getWidth() + moduleListWindow.getBaseRect().getWidth(), this.baseRect.getY(), this.stencilWidth, this.baseRect.getHeight(), -1);
-        });
+        StencilClipManager.beginClip(() -> Rect.draw(categoriesWindow.getTopRect().getX() + categoriesWindow.getTopRect().getWidth() + moduleListWindow.getBaseRect().getWidth(), this.baseRect.getY(), this.stencilWidth, this.baseRect.getHeight(), -1));
 
         this.baseRect.renderWidget(mouseX, mouseY, this.getDWheel());
 

@@ -79,11 +79,11 @@ public class FixedPredictor {
         // Estimate the expected number of bits per residual signal sample.
         // 'total_error*' is linearly related to the variance of the residual
         // signal, so we use it directly to compute E(|x|)
-        residualBitsPerSample[0] = (double) ((totalError0 > 0) ? Math.log(M_LN2 * (double) totalError0 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[1] = (double) ((totalError1 > 0) ? Math.log(M_LN2 * (double) totalError1 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[2] = (double) ((totalError2 > 0) ? Math.log(M_LN2 * (double) totalError2 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[3] = (double) ((totalError3 > 0) ? Math.log(M_LN2 * (double) totalError3 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[4] = (double) ((totalError4 > 0) ? Math.log(M_LN2 * (double) totalError4 / (double) dataLen) / M_LN2 : 0.0);
+        residualBitsPerSample[0] = (totalError0 > 0) ? Math.log(M_LN2 * (double) totalError0 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[1] = (totalError1 > 0) ? Math.log(M_LN2 * (double) totalError1 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[2] = (totalError2 > 0) ? Math.log(M_LN2 * (double) totalError2 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[3] = (totalError3 > 0) ? Math.log(M_LN2 * (double) totalError3 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[4] = (totalError4 > 0) ? Math.log(M_LN2 * (double) totalError4 / (double) dataLen) / M_LN2 : 0.0;
 
         return order;
     }
@@ -144,11 +144,11 @@ public class FixedPredictor {
         // 'total_error*' is linearly related to the variance of the residual
         // signal, so we use it directly to compute E(|x|)
         // with VC++ you have to spoon feed it the casting
-        residualBitsPerSample[0] = (double) ((totalError0 > 0) ? Math.log(M_LN2 * (double) (long) totalError0 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[1] = (double) ((totalError1 > 0) ? Math.log(M_LN2 * (double) (long) totalError1 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[2] = (double) ((totalError2 > 0) ? Math.log(M_LN2 * (double) (long) totalError2 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[3] = (double) ((totalError3 > 0) ? Math.log(M_LN2 * (double) (long) totalError3 / (double) dataLen) / M_LN2 : 0.0);
-        residualBitsPerSample[4] = (double) ((totalError4 > 0) ? Math.log(M_LN2 * (double) (long) totalError4 / (double) dataLen) / M_LN2 : 0.0);
+        residualBitsPerSample[0] = (totalError0 > 0) ? Math.log(M_LN2 * (double) totalError0 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[1] = (totalError1 > 0) ? Math.log(M_LN2 * (double) totalError1 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[2] = (totalError2 > 0) ? Math.log(M_LN2 * (double) totalError2 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[3] = (totalError3 > 0) ? Math.log(M_LN2 * (double) totalError3 / (double) dataLen) / M_LN2 : 0.0;
+        residualBitsPerSample[4] = (totalError4 > 0) ? Math.log(M_LN2 * (double) totalError4 / (double) dataLen) / M_LN2 : 0.0;
 
         return order;
     }
@@ -164,27 +164,27 @@ public class FixedPredictor {
 
         switch (order) {
             case 0:
-                if ((int) dataLen >= 0) System.arraycopy(data, 0, residual, 0, (int) dataLen);
+                if (dataLen >= 0) System.arraycopy(data, 0, residual, 0, dataLen);
                 break;
             case 1:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     residual[i] = data[i] - data[i - 1];
                 }
                 break;
             case 2:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     /* == data[i] - 2*data[i-1] + data[i-2] */
                     residual[i] = data[i] - (data[i - 1] << 1) + data[i - 2];
                 }
                 break;
             case 3:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     /* == data[i] - 3*data[i-1] + 3*data[i-2] - data[i-3] */
                     residual[i] = data[i] - (((data[i - 1] - data[i - 2]) << 1) + (data[i - 1] - data[i - 2])) - data[i - 3];
                 }
                 break;
             case 4:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     /* == data[i] - 4*data[i-1] + 6*data[i-2] - 4*data[i-3] + data[i-4] */
                     residual[i] = data[i] - ((data[i - 1] + data[i - 3]) << 2) + ((data[i - 2] << 2) + (data[i - 2] << 1)) + data[i - 4];
                 }
@@ -205,27 +205,27 @@ public class FixedPredictor {
 
         switch (order) {
             case 0:
-                if ((int) dataLen >= 0) System.arraycopy(residual, 0, data, 0 + startAt, (int) dataLen);
+                if (dataLen >= 0) System.arraycopy(residual, 0, data, 0 + startAt, dataLen);
                 break;
             case 1:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     data[i + startAt] = residual[i] + data[i + startAt - 1];
                 }
                 break;
             case 2:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     /* == residual[i] + 2*data[i-1] - data[i-2] */
                     data[i + startAt] = residual[i] + (data[i + startAt - 1] << 1) - data[i + startAt - 2];
                 }
                 break;
             case 3:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     /* residual[i] + 3*data[i-1] - 3*data[i-2]) + data[i-3] */
                     data[i + startAt] = residual[i] + (((data[i + startAt - 1] - data[i + startAt - 2]) << 1) + (data[i + startAt - 1] - data[i + startAt - 2])) + data[i + startAt - 3];
                 }
                 break;
             case 4:
-                for (int i = 0; i < (int) dataLen; i++) {
+                for (int i = 0; i < dataLen; i++) {
                     /* == residual[i] + 4*data[i-1] - 6*data[i-2] + 4*data[i-3] - data[i-4] */
                     data[i + startAt] = residual[i] + ((data[i + startAt - 1] + data[i + startAt - 3]) << 2) - ((data[i + startAt - 2] << 2) + (data[i + startAt - 2] << 1)) - data[i + startAt - 4];
                 }

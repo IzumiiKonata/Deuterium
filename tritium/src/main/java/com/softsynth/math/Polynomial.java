@@ -191,31 +191,31 @@ public class Polynomial {
 
     @Override
     public String toString() {
-        String s = "";
+        StringBuilder s = new StringBuilder();
         if (size() == 0)
-            s = "empty polynomial";
+            s = new StringBuilder("empty polynomial");
         boolean somethingPrinted = false;
         for (int i = size() - 1; i >= 0; i--) {
             if (get(i) != 0.0) {
                 if (somethingPrinted)
-                    s += " + ";
+                    s.append(" + ");
                 String coeff = "";
                 // if (get(i) == (int)(get(i)))
                 // coeff = (int)(get(i)) + "";
                 if ((get(i) != 1.0) || (i == 0))
                     coeff += get(i);
                 if (i == 0)
-                    s += coeff;
+                    s.append(coeff);
                 else {
                     String power = "";
                     if (i != 1)
                         power = "^" + i;
-                    s += coeff + "x" + power;
+                    s.append(coeff).append("x").append(power);
                 }
                 somethingPrinted = true;
             }
         }
-        return s;
+        return s.toString();
     }
 
 }

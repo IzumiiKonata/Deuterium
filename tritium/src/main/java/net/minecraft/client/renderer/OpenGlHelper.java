@@ -187,7 +187,7 @@ public class OpenGlHelper {
                 GL_FB_INCOMPLETE_ATTACHMENT = 36054;
                 GL_FB_INCOMPLETE_DRAW_BUFFER = 36059;
                 GL_FB_INCOMPLETE_READ_BUFFER = 36060;
-            } else if (contextcapabilities.GL_EXT_framebuffer_object) {
+            } else {
                 logText = logText + "支持 EXT_framebuffer_object.\n";
                 framebufferType = 2;
                 GL_FRAMEBUFFER = GL30.GL_FRAMEBUFFER;
@@ -226,7 +226,7 @@ public class OpenGlHelper {
             GL_VERTEX_SHADER = 35633;
             GL_FRAGMENT_SHADER = 35632;
         } else {
-            logText = logText + "OpenGL 2.1 是" + (contextcapabilities.OpenGL21 ? "" : "不被") + "支持的, ";
+            logText = logText + "OpenGL 2.1 是" + "不被" + "支持的, ";
             logText = logText + "ARB_shader_objects 是" + (contextcapabilities.GL_ARB_shader_objects ? "" : "不被") + "支持的, ";
             logText = logText + "ARB_vertex_shader 是" + (contextcapabilities.GL_ARB_vertex_shader ? "" : "不被") + "支持的, 并且 ";
             logText = logText + "ARB_fragment_shader 是" + (contextcapabilities.GL_ARB_fragment_shader ? "" : "不被") + "支持的.\n";

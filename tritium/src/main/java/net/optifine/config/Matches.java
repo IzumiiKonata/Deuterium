@@ -3,6 +3,7 @@ package net.optifine.config;
 import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.optifine.util.ArrayUtils;
 
 public class Matches {
     public static boolean block(BlockStateBase blockStateBase, MatchBlock[] matchBlocks) {
@@ -51,13 +52,7 @@ public class Matches {
         if (metadatas == null) {
             return true;
         } else {
-            for (int j : metadatas) {
-                if (j == metadata) {
-                    return true;
-                }
-            }
-
-            return false;
+            return ArrayUtils.equalsOne(metadata, metadatas);
         }
     }
 

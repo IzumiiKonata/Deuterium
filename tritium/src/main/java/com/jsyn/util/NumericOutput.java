@@ -70,14 +70,12 @@ public class NumericOutput {
             int pl = width;
             if (ifNeg)
                 pl -= 1;
-            for (int i = buf.length(); i < pl; i++)
-                buf.append('0');
+            buf.append("0".repeat(Math.max(0, pl - buf.length())));
         }
         if (ifNeg)
             buf.append('-');
         // leading spaces
-        for (int i = buf.length(); i < width; i++)
-            buf.append(' ');
+        buf.append(" ".repeat(Math.max(0, width - buf.length())));
         // reverse buffer to put characters in correct order
         buf.reverse();
 
@@ -116,11 +114,11 @@ public class NumericOutput {
         int ival = (int) Math.floor(value);
         // get portion after decimal point as an integer
         int fval = (int) ((value - Math.floor(value)) * Math.pow(10.0, places));
-        String result = "";
+        StringBuilder result = new StringBuilder();
 
-        result += integerToString(ival, 0, false, 10);
-        result += ".";
-        result += integerToString(fval, places, true, 10);
+        result.append(integerToString(ival, 0, false, 10));
+        result.append(".");
+        result.append(integerToString(fval, places, true, 10));
 
         if (leadingZeros) {
             // prepend leading zeros and {-}
@@ -128,17 +126,17 @@ public class NumericOutput {
             if (ifNeg)
                 zw -= 1;
             while (result.length() < zw)
-                result = "0" + result;
+                result.insert(0, "0");
             if (ifNeg)
-                result = "-" + result;
+                result.insert(0, "-");
         } else {
             // prepend {-} and leading spaces
             if (ifNeg)
-                result = "-" + result;
+                result.insert(0, "-");
             while (result.length() < width)
-                result = " " + result;
+                result.insert(0, " ");
         }
-        return result;
+        return result.toString();
     }
 
     static void testInteger(int n) {

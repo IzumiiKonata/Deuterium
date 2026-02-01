@@ -29,9 +29,7 @@ public class ControlsBar extends NCMPanel {
 
         bg.setColor(0xFF1D1D1D)
           .setAlpha(.95f)
-          .setBeforeRenderCallback(() -> {
-              bg.setMargin(0);
-          });
+          .setBeforeRenderCallback(() -> bg.setMargin(0));
 
         RoundedImageWidget playingCover = new RoundedImageWidget(() -> {
             if (CloudMusic.currentlyPlaying == null)
@@ -46,12 +44,10 @@ public class ControlsBar extends NCMPanel {
                 .fadeIn()
                 .setLinearFilter(true)
                 .setShouldOverrideMouseCursor(true)
-                .setBeforeRenderCallback(() -> {
-                    playingCover
-                            .setMargin(5)
-                            .setBounds(playingCover.getHeight(), playingCover.getHeight())
-                            .setRadius(2);
-                })
+                .setBeforeRenderCallback(() -> playingCover
+                        .setMargin(5)
+                        .setBounds(playingCover.getHeight(), playingCover.getHeight())
+                        .setRadius(2))
                 .setOnClickCallback((relativeX, relativeY, mouseButton) -> {
                     if (CloudMusic.currentlyPlaying != null) {
                         NCMScreen.getInstance().musicLyricsPanel = new MusicLyricsPanel(CloudMusic.currentlyPlaying);
@@ -98,12 +94,10 @@ public class ControlsBar extends NCMPanel {
 
                     return true;
                 })
-                .setBeforeRenderCallback(() -> {
-                    prev
-                            .center()
-                            .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
-                            .setPosition(prev.getRelativeX() - 20 - prev.getWidth() * .5, prev.getRelativeY() + buttonsYOffset);
-                });
+                .setBeforeRenderCallback(() -> prev
+                        .center()
+                        .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
+                        .setPosition(prev.getRelativeX() - 20 - prev.getWidth() * .5, prev.getRelativeY() + buttonsYOffset));
 
         IconWidget next = new IconWidget("E", FontManager.icon30, 0, 0, 20, 20);
         this.addChild(next);
@@ -115,12 +109,10 @@ public class ControlsBar extends NCMPanel {
 
                     return true;
                 })
-                .setBeforeRenderCallback(() -> {
-                    next
-                            .center()
-                            .setPosition(next.getRelativeX() + next.getWidth() * .5 + 20, next.getRelativeY() + buttonsYOffset)
-                            .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-                });
+                .setBeforeRenderCallback(() -> next
+                        .center()
+                        .setPosition(next.getRelativeX() + next.getWidth() * .5 + 20, next.getRelativeY() + buttonsYOffset)
+                        .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT)));
 
         RoundedRectWidget progressBarBg = new RoundedRectWidget() {
 
@@ -155,11 +147,9 @@ public class ControlsBar extends NCMPanel {
                 .setRadius(1)
                 .setBounds(135, 3)
                 .setShouldOverrideMouseCursor(true)
-                .setBeforeRenderCallback(() -> {
-                    progressBarBg
-                            .center()
-                            .setPosition(progressBarBg.getRelativeX(), progressBarBg.getRelativeY() + 8);
-                });
+                .setBeforeRenderCallback(() -> progressBarBg
+                        .center()
+                        .setPosition(progressBarBg.getRelativeX(), progressBarBg.getRelativeY() + 8));
 
         RoundedRectWidget progressBar = new RoundedRectWidget();
 
@@ -193,14 +183,12 @@ public class ControlsBar extends NCMPanel {
 
         lblCurTime
                 .setClickable(false)
-                .setBeforeRenderCallback(() -> {
-                    lblCurTime
-                            .setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT))
-                            .setPosition(
-                                    progressBarBg.getRelativeX() - lblCurTime.getWidth() - 4,
-                                    progressBarBg.getRelativeY() + progressBarBg.getHeight() * .5 - lblCurTime.getHeight() * .5
-                            );
-                });
+                .setBeforeRenderCallback(() -> lblCurTime
+                        .setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT))
+                        .setPosition(
+                                progressBarBg.getRelativeX() - lblCurTime.getWidth() - 4,
+                                progressBarBg.getRelativeY() + progressBarBg.getHeight() * .5 - lblCurTime.getHeight() * .5
+                        ));
 
         LabelWidget lblRemainingTime = new LabelWidget(
                 () -> {
@@ -214,27 +202,23 @@ public class ControlsBar extends NCMPanel {
 
         lblRemainingTime
                 .setClickable(false)
-                .setBeforeRenderCallback(() -> {
-                    lblRemainingTime
-                            .setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT))
-                            .setPosition(progressBarBg.getRelativeX() + progressBarBg.getWidth() + 4, lblCurTime.getRelativeY());
-                });
+                .setBeforeRenderCallback(() -> lblRemainingTime
+                        .setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT))
+                        .setPosition(progressBarBg.getRelativeX() + progressBarBg.getWidth() + 4, lblCurTime.getRelativeY()));
 
         LabelWidget lblMusicName = new LabelWidget(() -> CloudMusic.currentlyPlaying == null ? "未在播放" : CloudMusic.currentlyPlaying.getName(), FontManager.pf14bold);
         this.addChild(lblMusicName);
 
         lblMusicName
                 .setClickable(false)
-                .setBeforeRenderCallback(() -> {
-                    lblMusicName
-                            .centerVertically()
-                            .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
-                            .setMaxWidth(lblCurTime.getRelativeX() - lblMusicName.getRelativeX() - 4)
-                            .setPosition(
-                                    playingCover.getRelativeX() + playingCover.getWidth() + 4,
-                                    lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2
-                            );
-                });
+                .setBeforeRenderCallback(() -> lblMusicName
+                        .centerVertically()
+                        .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
+                        .setMaxWidth(lblCurTime.getRelativeX() - lblMusicName.getRelativeX() - 4)
+                        .setPosition(
+                                playingCover.getRelativeX() + playingCover.getWidth() + 4,
+                                lblMusicName.getRelativeY() - lblMusicName.getHeight() * .5 - 2
+                        ));
 
         LabelWidget lblMusicArtist = new LabelWidget(
                 () -> {
@@ -248,16 +232,14 @@ public class ControlsBar extends NCMPanel {
 
         lblMusicArtist
                 .setClickable(false)
-                .setBeforeRenderCallback(() -> {
-                    lblMusicArtist
-                            .centerVertically()
-                            .setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT))
-                            .setMaxWidth(lblCurTime.getRelativeX() - lblMusicArtist.getRelativeX() - 4)
-                            .setPosition(
-                                    playingCover.getRelativeX() + playingCover.getWidth() + 4,
-                                    lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2
-                            );
-                });
+                .setBeforeRenderCallback(() -> lblMusicArtist
+                        .centerVertically()
+                        .setColor(NCMScreen.getColor(NCMScreen.ColorType.SECONDARY_TEXT))
+                        .setMaxWidth(lblCurTime.getRelativeX() - lblMusicArtist.getRelativeX() - 4)
+                        .setPosition(
+                                playingCover.getRelativeX() + playingCover.getWidth() + 4,
+                                lblMusicArtist.getRelativeY() + lblMusicArtist.getHeight() * .5 + 2
+                        ));
     }
 
     private String formatDuration(float totalMillis) {

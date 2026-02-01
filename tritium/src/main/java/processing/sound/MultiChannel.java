@@ -37,13 +37,6 @@ public abstract class MultiChannel {
 		return Engine.getEngine().selectOutputDevice(candidates);
 	}
 
-	public static int autoSelectDevice() {
-		// there might be duplicate listings with different drivers, try them all
-		int nChannels = IntStream.range(0, Sound.getAudioDeviceManager().getDeviceCount())
-			.map(i -> MultiChannel.availableChannels(i)).max().getAsInt();
-		return MultiChannel.autoSelectDevice(nChannels);
-	}
-
 	/**
 	 * Controls which output channel sounds will be played back to.
 	 *

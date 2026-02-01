@@ -122,18 +122,10 @@ public class ChunkProviderEnd implements IChunkProvider {
                         l = -1;
                     } else if (iblockstate2.getBlock() == Blocks.stone) {
                         if (l == -1) {
-                            if (k <= 0) {
-                                iblockstate = Blocks.air.getDefaultState();
-                                iblockstate1 = Blocks.end_stone.getDefaultState();
-                            }
 
                             l = k;
 
-                            if (i1 >= 0) {
-                                p_180519_1_.setBlockState(i, i1, j, iblockstate);
-                            } else {
-                                p_180519_1_.setBlockState(i, i1, j, iblockstate1);
-                            }
+                            p_180519_1_.setBlockState(i, i1, j, iblockstate);
                         } else if (l > 0) {
                             --l;
                             p_180519_1_.setBlockState(i, i1, j, iblockstate1);

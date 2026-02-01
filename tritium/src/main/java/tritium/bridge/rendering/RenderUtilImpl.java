@@ -55,9 +55,7 @@ public class RenderUtilImpl implements RenderUtil, SharedRenderingConstants {
 
         this.roundedRect(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight(), 5.6, 1, 0, 0, 0, 80 * RenderSystem.DIVIDE_BY_255);
 
-        StencilClipManager.beginClip(() -> {
-            Rect.draw(widget.getX() - 1, widget.getY() - 1, widget.getWidth() + 2, 18, -1);
-        });
+        StencilClipManager.beginClip(() -> Rect.draw(widget.getX() - 1, widget.getY() - 1, widget.getWidth() + 2, 18, -1));
 
         this.roundedRect(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight(), 5.6, 1, 0, 0, 0, 80 * RenderSystem.DIVIDE_BY_255);
         FontManager.pf18bold.drawString(widget.getName(), widget.getX() + 4, widget.getY() + 4.5, -1);

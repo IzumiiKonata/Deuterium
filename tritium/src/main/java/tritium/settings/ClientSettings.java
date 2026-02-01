@@ -222,7 +222,7 @@ public class ClientSettings {
 
         Collections.reverse(modes);
 
-        FULL_SCREEN_RESOLUTION = new StringModeSetting("Fullscreen Resolution", modes.get(0), modes);
+        FULL_SCREEN_RESOLUTION = new StringModeSetting("Fullscreen Resolution", modes.getFirst(), modes);
 
         DisplayMode ddm = Display.getDesktopDisplayMode();
         FULL_SCREEN_RESOLUTION.setMode(ddm.getWidth() + "x" + ddm.getHeight());

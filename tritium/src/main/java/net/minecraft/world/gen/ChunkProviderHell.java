@@ -186,7 +186,6 @@ public class ChunkProviderHell implements IChunkProvider {
 
                                         if (flag1) {
                                             iblockstate = Blocks.gravel.getDefaultState();
-                                            iblockstate1 = Blocks.netherrack.getDefaultState();
                                         }
 
                                         if (flag) {
@@ -306,12 +305,6 @@ public class ChunkProviderHell implements IChunkProvider {
                     if (k > p_73164_6_ - 4) {
                         double d9 = (float) (k - (p_73164_6_ - 4)) / 3.0F;
                         d4 = d4 * (1.0D - d9) + -10.0D * d9;
-                    }
-
-                    if ((double) k < d3) {
-                        double d10 = (d3 - (double) k) / 4.0D;
-                        d10 = MathHelper.clamp_double(d10, 0.0D, 1.0D);
-                        d4 = d4 * (1.0D - d10) + -10.0D * d10;
                     }
 
                     p_73164_1_[i] = d4;

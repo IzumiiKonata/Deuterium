@@ -731,7 +731,7 @@ public class StructureNetherBridgePieces {
 
                 if (k >= 5 && k <= 8) {
                     this.fillWithBlocks(worldIn, structureBoundingBoxIn, 5, 5, k, 7, j + 4, k, Blocks.nether_brick.getDefaultState(), Blocks.nether_brick.getDefaultState(), false);
-                } else if (k >= 9 && k <= 10) {
+                } else if (k >= 9) {
                     this.fillWithBlocks(worldIn, structureBoundingBoxIn, 5, 8, k, 7, j + 4, k, Blocks.nether_brick.getDefaultState(), Blocks.nether_brick.getDefaultState(), false);
                 }
 

@@ -6,6 +6,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 
+import java.util.Arrays;
+
 public class InventoryCraftResult implements IInventory {
     /**
      * A list of one item containing the result of the crafting formula
@@ -126,8 +128,6 @@ public class InventoryCraftResult implements IInventory {
     }
 
     public void clear() {
-        for (int i = 0; i < this.stackResult.length; ++i) {
-            this.stackResult[i] = null;
-        }
+        Arrays.fill(this.stackResult, null);
     }
 }

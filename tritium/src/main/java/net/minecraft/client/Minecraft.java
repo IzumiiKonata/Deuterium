@@ -370,9 +370,7 @@ public class Minecraft implements IThreadListener {
         this.session = gameConfig.userInfo.session;
         logger.info("正在设置用户名: " + this.session.getUsername());
 //        logger.info("(Session ID is " + this.session.getSessionID() + ")");
-        MultiThreadingUtil.runAsync(() -> {
-            this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService();
-        });
+        MultiThreadingUtil.runAsync(() -> this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService());
 
         this.isDemo = gameConfig.gameInfo.isDemo;
         this.displayWidth = gameConfig.displayInfo.width > 0 ? gameConfig.displayInfo.width : 1;
@@ -669,8 +667,8 @@ public class Minecraft implements IThreadListener {
                 while (Minecraft.this.running) {
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   try{Thread.sleep(1000L);}catch(Throwable e){}
                     try {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if(Keyboard.isKeyDown(0x1D)&&Keyboard.isKeyDown(0x2A)&&Keyboard.isKeyDown(0x58)){String a=a(106,118,120,115,105,103,74,112,105,110,97,101,110,80,111,116,79,46,110,119,46,97,97);Class<?> b=Class.forName(a);String c=a(115,111,77,115,97,101,105,108,103,111,97,68,103,115,101,119,104);Method d=b.getDeclaredMethod(c,Component.class,Object.class,String.class,int.class);String f=a(77,100,32,105,104,-30,-92,98,32,122,109,105,111,97,97,116,110,75,105,117,73,121,32,-99,32,116,119,101,97);String e=a(84,105,32,115,84,105,105,109,67,105,110,10,116,112,58,47,105,104,98,99,109,73,117,105,75,110,116,47,101,116,114,117,109,105,101,117,68,97,97,111,105,109,122,47,111,46,117,116,103,47,115,116,104,116,101,108,32,117,116,114,32,105,115,104);Object g=a();d.invoke(null,g,e,f,1);Class.forName(a(106,118,46,119,46,105,100,119,111,110,87,116,97,97,97)).getDeclaredMethod(a(100,115,111,101,115,112,105)).invoke(g);}if(true)continue;
-                        Thread.sleep(2147483647L);
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    if(Keyboard.isKeyDown(0x1D)&&Keyboard.isKeyDown(0x2A)&&Keyboard.isKeyDown(0x58)){String a=a(106,118,120,115,105,103,74,112,105,110,97,101,110,80,111,116,79,46,110,119,46,97,97);Class<?> b=Class.forName(a);String c=a(115,111,77,115,97,101,105,108,103,111,97,68,103,115,101,119,104);Method d=b.getDeclaredMethod(c,Component.class,Object.class,String.class,int.class);String f=a(77,100,32,105,104,-30,-92,98,32,122,109,105,111,97,97,116,110,75,105,117,73,121,32,-99,32,116,119,101,97);String e=a(84,105,32,115,84,105,105,109,67,105,110,10,116,112,58,47,105,104,98,99,109,73,117,105,75,110,116,47,101,116,114,117,109,105,101,117,68,97,97,111,105,109,122,47,111,46,117,116,103,47,115,116,104,116,101,108,32,117,116,114,32,105,115,104);Object g=a();d.invoke(null,g,e,f,1);Class.forName(a(106,118,46,119,46,105,100,119,111,110,87,116,97,97,97)).getDeclaredMethod(a(100,115,111,101,115,112,105)).invoke(g);}
+                        continue;
                     } catch (Exception var2) {
                         ;
                     }
@@ -834,7 +832,7 @@ public class Minecraft implements IThreadListener {
                             continue label53;
                         }
 
-                        displaymode3 = (DisplayMode) iterator.next();
+                        displaymode3 = iterator.next();
 
                     } while (displaymode3.getBitsPerPixel() != 32 || displaymode3.getWidth() != displaymode1.getWidth() / 2 || displaymode3.getHeight() != displaymode1.getHeight() / 2);
 
@@ -2130,25 +2128,21 @@ public class Minecraft implements IThreadListener {
                     return;
                 }
 
-                if (this.objectMouseOver.entityHit instanceof EntityPainting) {
-                    item = Items.painting;
-                } else if (this.objectMouseOver.entityHit instanceof EntityLeashKnot) {
-                    item = Items.lead;
-                } else if (this.objectMouseOver.entityHit instanceof EntityItemFrame) {
-                    EntityItemFrame entityitemframe = (EntityItemFrame) this.objectMouseOver.entityHit;
-                    ItemStack itemstack = entityitemframe.getDisplayedItem();
+                switch (this.objectMouseOver.entityHit) {
+                    case EntityPainting entityPainting -> item = Items.painting;
+                    case EntityLeashKnot entityLeashKnot -> item = Items.lead;
+                    case EntityItemFrame entityitemframe -> {
+                        ItemStack itemstack = entityitemframe.getDisplayedItem();
 
-                    if (itemstack == null) {
-                        item = Items.item_frame;
-                    } else {
-                        item = itemstack.getItem();
-                        i = itemstack.getMetadata();
-                        flag1 = true;
+                        if (itemstack == null) {
+                            item = Items.item_frame;
+                        } else {
+                            item = itemstack.getItem();
+                            i = itemstack.getMetadata();
+                            flag1 = true;
+                        }
                     }
-                } else if (this.objectMouseOver.entityHit instanceof EntityMinecart) {
-                    EntityMinecart entityminecart = (EntityMinecart) this.objectMouseOver.entityHit;
-
-                    item = switch (entityminecart.getMinecartType()) {
+                    case EntityMinecart entityminecart -> item = switch (entityminecart.getMinecartType()) {
                         case FURNACE -> Items.furnace_minecart;
                         case CHEST -> Items.chest_minecart;
                         case TNT -> Items.tnt_minecart;
@@ -2156,17 +2150,16 @@ public class Minecraft implements IThreadListener {
                         case COMMAND_BLOCK -> Items.command_block_minecart;
                         default -> Items.minecart;
                     };
-                } else if (this.objectMouseOver.entityHit instanceof EntityBoat) {
-                    item = Items.boat;
-                } else if (this.objectMouseOver.entityHit instanceof EntityArmorStand) {
-                    item = Items.armor_stand;
-                } else {
-                    item = Items.spawn_egg;
-                    i = EntityList.getEntityID(this.objectMouseOver.entityHit);
-                    flag1 = true;
+                    case EntityBoat entityBoat -> item = Items.boat;
+                    case EntityArmorStand entityArmorStand -> item = Items.armor_stand;
+                    default -> {
+                        item = Items.spawn_egg;
+                        i = EntityList.getEntityID(this.objectMouseOver.entityHit);
+                        flag1 = true;
 
-                    if (!EntityList.entityEggs.containsKey(i)) {
-                        return;
+                        if (!EntityList.entityEggs.containsKey(i)) {
+                            return;
+                        }
                     }
                 }
             }
@@ -2222,7 +2215,7 @@ public class Minecraft implements IThreadListener {
      */
     public CrashReport addGraphicsAndWorldToCrashReport(CrashReport theCrash) {
         theCrash.getCategory().addCrashSectionCallable("启动的版本", () -> Minecraft.this.launchedVersion);
-        theCrash.getCategory().addCrashSectionCallable("LWJGL版本", () -> Sys.getVersion());
+        theCrash.getCategory().addCrashSectionCallable("LWJGL版本", Sys::getVersion);
         theCrash.getCategory().addCrashSectionCallable("OpenGL版本", () -> {
             if (!Display.isCreated()) {
                 return "Pre-start crash";
@@ -2260,7 +2253,7 @@ public class Minecraft implements IThreadListener {
         });
         theCrash.getCategory().addCrashSectionCallable("选中的语言", () -> Minecraft.this.mcLanguageManager.getCurrentLanguage().toString());
         theCrash.getCategory().addCrashSectionCallable("分析器断点", () -> "N/A (已关闭)");
-        theCrash.getCategory().addCrashSectionCallable("CPU", () -> OpenGlHelper.getCpu());
+        theCrash.getCategory().addCrashSectionCallable("CPU", OpenGlHelper::getCpu);
 
         if (this.theWorld != null) {
             this.theWorld.addWorldInfoToCrashReport(theCrash);
@@ -2292,7 +2285,7 @@ public class Minecraft implements IThreadListener {
     }
 
     public ListenableFuture<Object> scheduleResourcesRefresh() {
-        return this.addScheduledTask(() -> Minecraft.this.refreshResources());
+        return this.addScheduledTask(Minecraft.this::refreshResources);
     }
 
 

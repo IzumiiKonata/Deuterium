@@ -7,6 +7,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import java.util.List;
@@ -23,8 +24,7 @@ public class RecipesArmorDyes implements IRecipe {
             ItemStack itemstack1 = inv.getStackInSlot(i);
 
             if (itemstack1 != null) {
-                if (itemstack1.getItem() instanceof ItemArmor) {
-                    ItemArmor itemarmor = (ItemArmor) itemstack1.getItem();
+                if (itemstack1.getItem() instanceof ItemArmor itemarmor) {
 
                     if (itemarmor.getArmorMaterial() != ItemArmor.ArmorMaterial.LEATHER || itemstack != null) {
                         return false;
@@ -108,8 +108,7 @@ public class RecipesArmorDyes implements IRecipe {
             i1 = (int) ((float) i1 * f3 / f4);
             j1 = (int) ((float) j1 * f3 / f4);
             k1 = (int) ((float) k1 * f3 / f4);
-            int lvt_12_3_ = (i1 << 8) + j1;
-            lvt_12_3_ = (lvt_12_3_ << 8) + k1;
+            int lvt_12_3_ = MathHelper.func_180181_b(i1, j1, k1);
             itemarmor.setColor(itemstack, lvt_12_3_);
             return itemstack;
         }

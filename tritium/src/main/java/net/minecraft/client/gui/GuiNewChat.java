@@ -215,21 +215,21 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
                 this.scroll(1);
             }
 
-            this.drawnChatLines.add(0, new ChatLine(updateCounter, ichatcomponent, chatLineId));
+            this.drawnChatLines.addFirst(new ChatLine(updateCounter, ichatcomponent, chatLineId));
         }
 
         if (!ModuleManager.chat.isEnabled() || !ModuleManager.chat.noChatClear.getValue()) {
             while (this.drawnChatLines.size() > 100) {
-                this.drawnChatLines.remove(this.drawnChatLines.size() - 1);
+                this.drawnChatLines.removeLast();
             }
         }
 
         if (!displayOnly) {
-            this.chatLines.add(0, new ChatLine(updateCounter, chatComponent, chatLineId));
+            this.chatLines.addFirst(new ChatLine(updateCounter, chatComponent, chatLineId));
 
             if (!ModuleManager.chat.isEnabled() || !ModuleManager.chat.noChatClear.getValue()) {
                 while (this.chatLines.size() > 100) {
-                    this.chatLines.remove(this.chatLines.size() - 1);
+                    this.chatLines.removeLast();
                 }
             }
         }
@@ -255,7 +255,7 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
      * @param message The message to add in the sendMessage List
      */
     public void addToSentMessages(String message) {
-        if (this.sentMessages.isEmpty() || !this.sentMessages.get(this.sentMessages.size() - 1).equals(message)) {
+        if (this.sentMessages.isEmpty() || !this.sentMessages.getLast().equals(message)) {
             this.sentMessages.add(message);
         }
     }

@@ -78,7 +78,6 @@ public class FaceBakery {
 
                 yield 0.6F;
             }
-            default -> 1.0F;
         };
     }
 

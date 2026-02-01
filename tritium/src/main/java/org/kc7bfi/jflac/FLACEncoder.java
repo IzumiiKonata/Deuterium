@@ -27,13 +27,13 @@ import java.io.File;
 
 public class FLACEncoder {
 
-    private class verify_input_fifo {
+    private static class verify_input_fifo {
         int[][] data = new int[Constants.MAX_CHANNELS][Constants.MAX_BLOCK_SIZE];
         int size; /* of each data[] in samples */
         int tail;
     }
 
-    private class verify_output {
+    private static class verify_output {
         byte[] data;
         int capacity;
         int bytes;
@@ -209,7 +209,7 @@ public class FLACEncoder {
         verify_input_fifo input_fifo;
         verify_output output;
 
-        private class error_stats {
+        private static class error_stats {
             long absolute_sample;
             int frame_number;
             int channel;

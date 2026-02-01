@@ -459,7 +459,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             Entity pointedEntity = null;
             Vec3 vec33 = null;
             float f = 1.0F;
-            List<Entity> list = this.mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, p_apply_1_ -> p_apply_1_.canBeCollidedWith()));
+            List<Entity> list = this.mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * d0, vec31.yCoord * d0, vec31.zCoord * d0).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, Entity::canBeCollidedWith));
             double d2 = d1;
 
             for (Entity entity1 : list) {
@@ -515,8 +515,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     private void updateFovModifierHand() {
         float f = 1.0F;
 
-        if (this.mc.getRenderViewEntity() instanceof AbstractClientPlayer) {
-            AbstractClientPlayer abstractclientplayer = (AbstractClientPlayer) this.mc.getRenderViewEntity();
+        if (this.mc.getRenderViewEntity() instanceof AbstractClientPlayer abstractclientplayer) {
             f = abstractclientplayer.getFovModifier();
         }
 
@@ -567,9 +566,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     this.mc.renderGlobal.displayListEntitiesDirty = true;
                 }
 
-                if (Config.zoomMode) {
-                    f /= 4.0F;
-                }
+                f /= 4.0F;
             } else if (Config.zoomMode) {
                 Config.zoomMode = false;
                 this.mc.gameSettings.smoothCamera = Config.zoomSmoothCamera;
@@ -594,12 +591,11 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     }
 
     private void hurtCameraEffect(float partialTicks) {
-        if (this.mc.getRenderViewEntity() instanceof EntityLivingBase) {
+        if (this.mc.getRenderViewEntity() instanceof EntityLivingBase entitylivingbase) {
 
             if (ModuleManager.noHurtCam.isEnabled())
                 return;
 
-            EntityLivingBase entitylivingbase = (EntityLivingBase) this.mc.getRenderViewEntity();
             float f = (float) entitylivingbase.hurtTime - partialTicks;
 
             if (entitylivingbase.getHealth() <= 0.0F) {
@@ -624,8 +620,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
      * Setups all the GL settings for view bobbing. Args: partialTickTime
      */
     private void setupViewBobbing(float partialTicks) {
-        if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
+        if (this.mc.getRenderViewEntity() instanceof EntityPlayer entityplayer) {
             float f = entityplayer.distanceWalkedModified - entityplayer.prevDistanceWalkedModified;
             float f1 = -(entityplayer.distanceWalkedModified + f * partialTicks);
             float f2 = entityplayer.prevCameraYaw + (entityplayer.cameraYaw - entityplayer.prevCameraYaw) * partialTicks;
@@ -641,8 +636,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
     private long lastEyeHeightUpdate;
 
     private float getEntityEyeHeight(Entity entity) {
-        if(ModuleManager.oldAnimation.isEnabled() && ModuleManager.oldAnimation.sneak.getValue() && entity instanceof EntityPlayer) {
-            EntityPlayer player = (EntityPlayer) entity;
+        if(ModuleManager.oldAnimation.isEnabled() && ModuleManager.oldAnimation.sneak.getValue() && entity instanceof EntityPlayer player) {
             float height = player.getEyeHeight();
             if(player.isSneaking()) {
                 height += 0.08F;
@@ -765,8 +759,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         if (!this.mc.gameSettings.debugCamEnable) {
             GlStateManager.rotate(/*entity.prevRotationPitch*/Perspective.getCameraPrevPitch() + (/*entity.rotationPitch*/Perspective.getCameraPitch() - Perspective.getCameraPrevPitch()) * partialTicks, 1.0F, 0.0F, 0.0F);
 
-            if (entity instanceof EntityAnimal) {
-                EntityAnimal entityanimal = (EntityAnimal) entity;
+            if (entity instanceof EntityAnimal entityanimal) {
                 GlStateManager.rotate(entityanimal.prevRotationYawHead + (entityanimal.rotationYawHead - entityanimal.prevRotationYawHead) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
             } else {
                 GlStateManager.rotate(/*entity.prevRotationYaw*/Perspective.getCameraPrevYaw() + (/*entity.rotationYaw*/Perspective.getCameraYaw() - /*entity.prevRotationYaw*/Perspective.getCameraPrevYaw()) * partialTicks + 180.0F, 0.0F, 1.0F, 0.0F);
@@ -811,10 +804,6 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         }
 
         double cameraZoom = 1.0D;
-        if (cameraZoom != 1.0D) {
-            GlStateManager.translate((float) this.cameraYaw, (float) (-this.cameraPitch), 0.0F);
-            GlStateManager.scale(cameraZoom, cameraZoom, 1.0D);
-        }
 
         Project.gluPerspective(this.getFOVModifier(partialTicks, true), (float) this.mc.displayWidth / (float) this.mc.displayHeight, 0.05F, this.clipDistance);
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
@@ -853,26 +842,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         if (this.debugView) {
             int debugViewDirection = 0;
-            switch (debugViewDirection) {
-                case 0:
-                    GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
-                    break;
+            GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
 
-                case 1:
-                    GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
-                    break;
-
-                case 2:
-                    GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
-                    break;
-
-                case 3:
-                    GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
-                    break;
-
-                case 4:
-                    GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
-            }
         }
     }
 
@@ -1822,7 +1793,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
         //END CLIENT
 
         boolean renderHand = true;
-        if (renderHand && !Shaders.isShadowPass) {
+        if (!Shaders.isShadowPass) {
             if (flag) {
                 ShadersRender.renderHand1(this, partialTicks, pass);
                 Shaders.renderCompositeFinal();
@@ -2014,11 +1985,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                             pMaximum = precipitationHeight;
                         }
 
-                        int capHeight = precipitationHeight;
-
-                        if (precipitationHeight < renderYFloored) {
-                            capHeight = renderYFloored;
-                        }
+                        int capHeight = Math.max(precipitationHeight, renderYFloored);
 
                         if (pMinimum != pMaximum) {
                             this.random.setSeed((long) particleX * particleX * 3121 + particleX * 45238971L ^ (long) particleZ * particleZ * 418711 + particleZ * 13761L);
@@ -2056,7 +2023,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                             if ((!bEnabled && !bTemp) || (bEnabled && bSnow)){
                                 // snow
                                 if (j1 != 1) {
-                                    if (j1 >= 0) {
+                                    if (j1 == 0) {
                                         tessellator.draw();
                                     }
 
@@ -2529,8 +2496,8 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             String s = null;
             Calendar calendar = Calendar.getInstance();
             calendar.setTime(new Date());
-            int i = calendar.get(5);
-            int j = calendar.get(2) + 1;
+            int i = calendar.get(Calendar.DATE);
+            int j = calendar.get(Calendar.MONTH) + 1;
 
             if (i == 8 && j == 4) {
                 s = "Happy birthday, OptiFine!";

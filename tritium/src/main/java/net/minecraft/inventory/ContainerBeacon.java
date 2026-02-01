@@ -14,7 +14,7 @@ public class ContainerBeacon extends Container {
 
     public ContainerBeacon(IInventory playerInventory, IInventory tileBeaconIn) {
         this.tileBeacon = tileBeaconIn;
-        this.addSlotToContainer(this.beaconSlot = new ContainerBeacon.BeaconSlot(tileBeaconIn, 0, 136, 110));
+        this.addSlotToContainer(this.beaconSlot = new BeaconSlot(tileBeaconIn, 0, 136, 110));
         int i = 36;
         int j = 137;
 
@@ -48,7 +48,7 @@ public class ContainerBeacon extends Container {
     public void onContainerClosed(EntityPlayer playerIn) {
         super.onContainerClosed(playerIn);
 
-        if (playerIn != null && !playerIn.worldObj.isRemote) {
+        if (!playerIn.worldObj.isRemote) {
             ItemStack itemstack = this.beaconSlot.decrStackSize(this.beaconSlot.getSlotStackLimit());
 
             if (itemstack != null) {
@@ -82,11 +82,11 @@ public class ContainerBeacon extends Container {
                 if (!this.mergeItemStack(itemstack1, 0, 1, false)) {
                     return null;
                 }
-            } else if (index >= 1 && index < 28) {
+            } else if (index < 28) {
                 if (!this.mergeItemStack(itemstack1, 28, 37, false)) {
                     return null;
                 }
-            } else if (index >= 28 && index < 37) {
+            } else if (index < 37) {
                 if (!this.mergeItemStack(itemstack1, 1, 28, false)) {
                     return null;
                 }
@@ -110,7 +110,7 @@ public class ContainerBeacon extends Container {
         return itemstack;
     }
 
-    class BeaconSlot extends Slot {
+    static class BeaconSlot extends Slot {
         public BeaconSlot(IInventory p_i1801_2_, int p_i1801_3_, int p_i1801_4_, int p_i1801_5_) {
             super(p_i1801_2_, p_i1801_3_, p_i1801_4_, p_i1801_5_);
         }

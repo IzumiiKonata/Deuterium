@@ -68,11 +68,11 @@ public class UnitGatePort extends UnitInputPort {
     }
 
     public void trigger() {
-        queueCommand(() -> triggerInternal());
+        queueCommand(this::triggerInternal);
     }
 
     public void trigger(TimeStamp timeStamp) {
-        scheduleCommand(timeStamp, () -> triggerInternal());
+        scheduleCommand(timeStamp, this::triggerInternal);
     }
 
     /**

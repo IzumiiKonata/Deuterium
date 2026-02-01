@@ -20,10 +20,9 @@ public class ModelAdapterHeadHumanoid extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (!(model instanceof ModelHumanoidHead)) {
+        if (!(model instanceof ModelHumanoidHead modelhumanoidhead)) {
             return null;
         } else {
-            ModelHumanoidHead modelhumanoidhead = (ModelHumanoidHead) model;
             if (modelPart.equals("head")) return modelhumanoidhead.skeletonHead;
 
             if (modelPart.equals("head2")) return modelhumanoidhead.head;

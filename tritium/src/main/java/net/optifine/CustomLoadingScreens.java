@@ -57,7 +57,7 @@ public class CustomLoadingScreens {
         final Set<Integer> set = map.keySet();
         final Integer[] ainteger = set.toArray(new Integer[0]);
         Arrays.sort(ainteger);
-        if (ainteger.length <= 0) {
+        if (ainteger.length == 0) {
             return new ImmutablePair<>(null, 0);
         } else {
             final String s5 = "optifine/gui/loading/loading.properties";

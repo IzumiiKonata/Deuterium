@@ -103,7 +103,7 @@ public class CloudMusic {
         if (strings.isEmpty())
             return "";
 
-        return strings.get(0);
+        return strings.getFirst();
 
     }
 
@@ -862,17 +862,15 @@ public class CloudMusic {
             player.setVolume(Math.max(0, Math.min(1, volume)));
         }, Float.class, "volume").setDescription("Set audio player's volume");
 
-        CommandManager.registerCommand("play", (Long id) -> {
-            MultiThreadingUtil.runAsync(() -> {
-                JsonArray songs = CloudMusicApi.songDetail(id).toJsonObject().getAsJsonArray("songs");
-                if (songs.isEmpty()) {
-                    ConsoleScreen.log(EnumChatFormatting.RED + "No such song: {}", id);
-                    return;
-                }
+        CommandManager.registerCommand("play", (Long id) -> MultiThreadingUtil.runAsync(() -> {
+            JsonArray songs = CloudMusicApi.songDetail(id).toJsonObject().getAsJsonArray("songs");
+            if (songs.isEmpty()) {
+                ConsoleScreen.log(EnumChatFormatting.RED + "No such song: {}", id);
+                return;
+            }
 
-                play(Collections.singletonList(JsonUtils.parse(songs.get(0), Music.class)), 0);
-            });
-        }, Long.class, "music id").setDescription("Play the song with the given id");
+            play(Collections.singletonList(JsonUtils.parse(songs.get(0), Music.class)), 0);
+        }), Long.class, "music id").setDescription("Play the song with the given id");
     }
 
 }

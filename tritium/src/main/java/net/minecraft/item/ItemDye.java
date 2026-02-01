@@ -87,8 +87,7 @@ public class ItemDye extends Item {
     public static boolean applyBonemeal(ItemStack stack, World worldIn, BlockPos target) {
         IBlockState iblockstate = worldIn.getBlockState(target);
 
-        if (iblockstate.getBlock() instanceof IGrowable) {
-            IGrowable igrowable = (IGrowable) iblockstate.getBlock();
+        if (iblockstate.getBlock() instanceof IGrowable igrowable) {
 
             if (igrowable.canGrow(worldIn, target, iblockstate, worldIn.isRemote)) {
                 if (!worldIn.isRemote) {
@@ -129,8 +128,7 @@ public class ItemDye extends Item {
      * Returns true if the item can be used on the given entity, e.g. shears on sheep.
      */
     public boolean itemInteractionForEntity(ItemStack stack, EntityPlayer playerIn, EntityLivingBase target) {
-        if (target instanceof EntitySheep) {
-            EntitySheep entitysheep = (EntitySheep) target;
+        if (target instanceof EntitySheep entitysheep) {
             EnumDyeColor enumdyecolor = EnumDyeColor.byDyeDamage(stack.getMetadata());
 
             if (!entitysheep.getSheared() && entitysheep.getFleeceColor() != enumdyecolor) {

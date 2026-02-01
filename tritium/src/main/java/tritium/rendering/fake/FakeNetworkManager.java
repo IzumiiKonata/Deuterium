@@ -15,7 +15,7 @@ public class FakeNetworkManager extends NetworkManager {
     }
 
     public Channel channel() {
-        return (Channel) new Channel() {
+        return new Channel() {
 
 
             public EventLoop eventLoop() {
@@ -175,7 +175,7 @@ public class FakeNetworkManager extends NetworkManager {
             }
 
             public <T> Attribute<T> attr(final AttributeKey<T> key) {
-                return (Attribute<T>) new Attribute<T>() {
+                return new Attribute<T>() {
                     public T setIfAbsent(final T value) {
                         return null;
                     }

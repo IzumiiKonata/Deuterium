@@ -204,7 +204,7 @@ public final class Color implements ReadableColor, Serializable, WritableColor {
      * Equals
      */
     public boolean equals(Object o) {
-        return (o != null) && (o instanceof ReadableColor)
+        return (o instanceof ReadableColor)
                 && (((ReadableColor) o).getRed() == this.getRed())
                 && (((ReadableColor) o).getGreen() == this.getGreen())
                 && (((ReadableColor) o).getBlue() == this.getBlue())
@@ -408,9 +408,9 @@ public final class Color implements ReadableColor, Serializable, WritableColor {
         int g = getGreen();
         int b = getBlue();
         if (dest == null) dest = new float[3];
-        int l = r <= g ? g : r;
+        int l = Math.max(r, g);
         if (b > l) l = b;
-        int i1 = r >= g ? g : r;
+        int i1 = Math.min(r, g);
         if (b < i1) i1 = b;
         float brightness = l / 255F;
         float saturation;

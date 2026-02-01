@@ -387,11 +387,8 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
      */
     private void relightBlock(int x, int y, int z) {
         int i = this.heightMap[z << 4 | x] & 255;
-        int j = i;
 
-        if (y > i) {
-            j = y;
-        }
+        int j = Math.max(y, i);
 
         while (j > 0 && this.getBlockLightOpacity(x, j - 1, z) == 0) {
             --j;
@@ -401,7 +398,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             this.heightMap[z << 4 | x] = j;
 
             if (!this.worldObj.provider.getHasNoSky()) {
-                LightingHooks.relightSkylightColumn(this.worldObj, (Chunk) this, x, z, i, j);
+                LightingHooks.relightSkylightColumn(this.worldObj, this, x, z, i, j);
             }
 
             int l1 = this.heightMap[z << 4 | x];
@@ -527,7 +524,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
                 }
 
                 extendedblockstorage = this.storageArrays[j >> 4] = /*new ExtendedBlockStorage(j >> 4 << 4, !this.worldObj.provider.getHasNoSky())*/this.initSection(j >> 4 << 4, !this.worldObj.provider.getHasNoSky());
-                flag = /*j >= i1*/false;
+                /*j >= i1*/
             }
 
             extendedblockstorage.set(i, j & 15, k, state);
@@ -543,24 +540,20 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             if (extendedblockstorage.getBlockByExtId(i, j & 15, k) != block) {
                 return null;
             } else {
-                if (flag) {
-                    this.generateSkylightMap();
-                } else {
-                    int j1 = block.getLightOpacity();
-                    int k1 = block1.getLightOpacity();
+                int j1 = block.getLightOpacity();
+                int k1 = block1.getLightOpacity();
 
-                    if (j1 > 0) {
-                        if (j >= i1) {
-                            this.relightBlock(i, j/* + 1*/, k);
-                        }
-                    } else if (j == i1 - 1) {
-                        this.relightBlock(i, j, k);
+                if (j1 > 0) {
+                    if (j >= i1) {
+                        this.relightBlock(i, j/* + 1*/, k);
                     }
+                } else if (j == i1 - 1) {
+                    this.relightBlock(i, j, k);
+                }
 
 //                    if (j1 != k1 && (j1 < k1 || this.getLightFor(EnumSkyBlock.SKY, pos) > 0 || this.getLightFor(EnumSkyBlock.BLOCK, pos) > 0)) {
 //                        this.propagateSkylightOcclusion(i, k);
 //                    }
-                }
 
                 if (block1 instanceof ITileEntityProvider) {
                     TileEntity tileentity = this.getTileEntity(pos, Chunk.EnumCreateEntityType.CHECK);
@@ -619,7 +612,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         if (extendedblockstorage == null) {
             extendedblockstorage = this.storageArrays[j >> 4] = new ExtendedBlockStorage(j >> 4 << 4, !this.worldObj.provider.getHasNoSky());
 //            this.generateSkylightMap();
-            LightingHooks.initSkylightForSection(this.worldObj, (Chunk) this, this.storageArrays[pos.getY() >> 4]);
+            LightingHooks.initSkylightForSection(this.worldObj, this, this.storageArrays[pos.getY() >> 4]);
 
         }
 
@@ -814,7 +807,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             this.worldObj.loadEntities(entityList);
         }
 
-        LightingHooks.scheduleRelightChecksForChunkBoundaries(this.worldObj, (Chunk) this);
+        LightingHooks.scheduleRelightChecksForChunkBoundaries(this.worldObj, this);
 
     }
 
@@ -1277,13 +1270,11 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 //        }
         this.isTerrainPopulated = true;
 
-        LightingHooks.checkChunkLighting((Chunk) this, this.worldObj);
+        LightingHooks.checkChunkLighting(this, this.worldObj);
     }
 
     private void func_177441_y() {
-        for (int i = 0; i < this.updateSkylightColumns.length; ++i) {
-            this.updateSkylightColumns[i] = true;
-        }
+        Arrays.fill(this.updateSkylightColumns, true);
 
         this.recheckGaps(false);
     }
@@ -1606,7 +1597,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 
         ExtendedBlockStorage storage = new ExtendedBlockStorage(y, storeSkylight);
 
-        LightingHooks.initSkylightForSection(this.worldObj, (Chunk) this, storage);
+        LightingHooks.initSkylightForSection(this.worldObj, this, storage);
 
         return storage;
     }

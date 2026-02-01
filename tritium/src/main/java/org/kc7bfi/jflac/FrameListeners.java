@@ -19,7 +19,7 @@ import java.util.Iterator;
  * @author kc7bfi
  */
 class FrameListeners implements FrameListener {
-    private HashSet frameListeners = new HashSet();
+    private final HashSet frameListeners = new HashSet();
 
     /**
      * Add a frame listener.

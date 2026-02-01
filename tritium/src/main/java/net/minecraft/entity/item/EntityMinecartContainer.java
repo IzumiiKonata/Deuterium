@@ -11,6 +11,8 @@ import net.minecraft.world.ILockableContainer;
 import net.minecraft.world.LockCode;
 import net.minecraft.world.World;
 
+import java.util.Arrays;
+
 public abstract class EntityMinecartContainer extends EntityMinecart implements ILockableContainer {
     private ItemStack[] minecartContainerItems = new ItemStack[36];
 
@@ -181,7 +183,7 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
             NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
             int j = nbttagcompound.getByte("Slot") & 255;
 
-            if (j >= 0 && j < this.minecartContainerItems.length) {
+            if (j < this.minecartContainerItems.length) {
                 this.minecartContainerItems[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
             }
         }
@@ -229,8 +231,6 @@ public abstract class EntityMinecartContainer extends EntityMinecart implements 
     }
 
     public void clear() {
-        for (int i = 0; i < this.minecartContainerItems.length; ++i) {
-            this.minecartContainerItems[i] = null;
-        }
+        Arrays.fill(this.minecartContainerItems, null);
     }
 }

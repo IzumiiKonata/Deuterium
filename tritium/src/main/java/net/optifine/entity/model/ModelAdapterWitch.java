@@ -19,24 +19,28 @@ public class ModelAdapterWitch extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (!(model instanceof ModelWitch)) {
+        if (!(model instanceof ModelWitch modelwitch)) {
             return null;
         } else {
-            ModelWitch modelwitch = (ModelWitch) model;
-            if (modelPart.equals("mole"))
-                return modelwitch.witchMole;
-            if (modelPart.equals("hat"))
-                return modelwitch.witchHat;
-            if (modelPart.equals("head")) {
-                return modelwitch.villagerHead;
-            } else {
-                if (modelPart.equals("body")) return modelwitch.villagerBody;
-                if (modelPart.equals("arms")) {
-                    return modelwitch.villagerArms;
-                } else {
-                    if (modelPart.equals("left_leg")) return modelwitch.leftVillagerLeg;
-                    if (modelPart.equals("right_leg")) return modelwitch.rightVillagerLeg;
-                    return modelPart.equals("nose") ? modelwitch.villagerNose : null;
+            switch (modelPart) {
+                case "mole" -> {
+                    return modelwitch.witchMole;
+                }
+                case "hat" -> {
+                    return modelwitch.witchHat;
+                }
+                case "head" -> {
+                    return modelwitch.villagerHead;
+                }
+                default -> {
+                    if (modelPart.equals("body")) return modelwitch.villagerBody;
+                    if (modelPart.equals("arms")) {
+                        return modelwitch.villagerArms;
+                    } else {
+                        if (modelPart.equals("left_leg")) return modelwitch.leftVillagerLeg;
+                        if (modelPart.equals("right_leg")) return modelwitch.rightVillagerLeg;
+                        return modelPart.equals("nose") ? modelwitch.villagerNose : null;
+                    }
                 }
             }
         }

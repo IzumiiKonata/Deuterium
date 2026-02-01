@@ -60,13 +60,9 @@ public class AnimatedTexture {
         this.frameWidth = img.getWidth();
         this.imgHeight = img.getHeight();
 
-        CompletableFuture<Void> textureUploadingTask = MultiThreadingUtil.runAsync(() -> {
-            this.locImg = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("AnimatedTexture", new DynamicTexture(img));
-        });
+        CompletableFuture<Void> textureUploadingTask = MultiThreadingUtil.runAsync(() -> this.locImg = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("AnimatedTexture", new DynamicTexture(img)));
 
-        CompletableFuture<Void> serializeTask = MultiThreadingUtil.runAsync(() -> {
-            this.serializeMetadata(img, isMetadata);
-        });
+        CompletableFuture<Void> serializeTask = MultiThreadingUtil.runAsync(() -> this.serializeMetadata(img, isMetadata));
 
         CompletableFuture
                 .allOf(textureUploadingTask, serializeTask)

@@ -181,7 +181,7 @@ public class ItemPotion extends Item {
             List<PotionEffect> list = Items.potionitem.getEffects(stack);
 
             if (list != null && !list.isEmpty()) {
-                String s2 = list.get(0).getEffectName();
+                String s2 = list.getFirst().getEffectName();
                 s2 = s2 + ".postfix";
                 return s + StatCollector.translateToLocal(s2).trim();
             } else {
@@ -286,7 +286,7 @@ public class ItemPotion extends Item {
                         if (l != 0) {
                             if (l == 1) {
                                 i1 = lvt_6_1_ | 32;
-                            } else if (l == 2) {
+                            } else {
                                 i1 = lvt_6_1_ | 64;
                             }
                         }

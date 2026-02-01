@@ -158,7 +158,7 @@ public class WorldGenBigTree extends WorldGenAbstractTree {
         int i = MathHelper.abs_int(posIn.getX());
         int j = MathHelper.abs_int(posIn.getY());
         int k = MathHelper.abs_int(posIn.getZ());
-        return k > i && k > j ? k : (j > i ? j : i);
+        return k > i && k > j ? k : (Math.max(j, i));
     }
 
     private BlockLog.EnumAxis func_175938_b(BlockPos p_175938_1_, BlockPos p_175938_2_) {
@@ -170,7 +170,7 @@ public class WorldGenBigTree extends WorldGenAbstractTree {
         if (k > 0) {
             if (i == k) {
                 blocklog$enumaxis = BlockLog.EnumAxis.X;
-            } else if (j == k) {
+            } else {
                 blocklog$enumaxis = BlockLog.EnumAxis.Z;
             }
         }

@@ -315,7 +315,7 @@ public class WorldRenderer {
             System.arraycopy(this.quadSprites, 0, atextureatlassprite, 0, j);
         }
 
-        return new WorldRenderer.State(aint, new VertexFormat(this.vertexFormat), atextureatlassprite);
+        return new State(aint, new VertexFormat(this.vertexFormat), atextureatlassprite);
     }
 
     public int getBufferSize() {
@@ -1017,7 +1017,7 @@ public class WorldRenderer {
         return this.noColor;
     }
 
-    public class State {
+    public static class State {
         private final int[] stateRawBuffer;
         private final VertexFormat stateVertexFormat;
         private TextureAtlasSprite[] stateQuadSprites;

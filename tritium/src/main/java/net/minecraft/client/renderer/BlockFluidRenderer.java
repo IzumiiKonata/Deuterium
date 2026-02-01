@@ -251,7 +251,7 @@ public class BlockFluidRenderer {
             }
         }
 
-        return flag2;
+        return false;
     }
 
     private float getFluidHeight(IBlockAccess blockAccess, BlockPos blockPosIn, Material blockMaterial) {

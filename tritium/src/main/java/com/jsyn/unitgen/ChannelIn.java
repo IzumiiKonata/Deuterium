@@ -51,9 +51,7 @@ public class ChannelIn extends UnitGenerator {
     public void generate(int start, int limit) {
         double[] outputs = output.getValues(0);
         double[] buffer = synthesisEngine.getInputBuffer(channelIndex);
-        for (int i = start; i < limit; i++) {
-            outputs[i] = buffer[i];
-        }
+        if (limit - start >= 0) System.arraycopy(buffer, start, outputs, start, limit - start);
     }
 
 }

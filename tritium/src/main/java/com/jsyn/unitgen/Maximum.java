@@ -36,7 +36,7 @@ public class Maximum extends UnitBinaryOperator {
         double[] outputs = output.getValues();
 
         for (int i = start; i < limit; i++) {
-            outputs[i] = (aValues[i] > bValues[i]) ? aValues[i] : bValues[i];
+            outputs[i] = Math.max(aValues[i], bValues[i]);
         }
     }
 }

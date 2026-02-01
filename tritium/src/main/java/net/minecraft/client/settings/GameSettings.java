@@ -795,12 +795,10 @@ public class GameSettings {
                             }
 
                             if (astring[0].equals("renderClouds")) {
-                                if (astring[1].equals("true")) {
-                                    this.clouds = 2;
-                                } else if (astring[1].equals("false")) {
-                                    this.clouds = 0;
-                                } else if (astring[1].equals("fast")) {
-                                    this.clouds = 1;
+                                switch (astring[1]) {
+                                    case "true" -> this.clouds = 2;
+                                    case "false" -> this.clouds = 0;
+                                    case "fast" -> this.clouds = 1;
                                 }
                             }
 
@@ -1079,7 +1077,7 @@ public class GameSettings {
     }
 
     public float getSoundLevel(SoundCategory sndCategory) {
-        return this.mapSoundLevels.containsKey(sndCategory) ? this.mapSoundLevels.get(sndCategory) : 1.0F;
+        return this.mapSoundLevels.getOrDefault(sndCategory, 1.0F);
     }
 
     public void setSoundLevel(SoundCategory sndCategory, float soundLevel) {
@@ -1639,10 +1637,6 @@ public class GameSettings {
 
     private String getKeyBindingOF(GameSettings.Options p_getKeyBindingOF_1_) {
         String s = I18n.format(p_getKeyBindingOF_1_.getEnumString()) + ": ";
-
-        if (s == null) {
-            s = p_getKeyBindingOF_1_.getEnumString();
-        }
 
         if (p_getKeyBindingOF_1_ == GameSettings.Options.RENDER_DISTANCE) {
             int i1 = (int) this.getOptionFloatValue(p_getKeyBindingOF_1_);

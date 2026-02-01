@@ -121,8 +121,7 @@ public class BlockSkull extends BlockContainer {
             if (!state.getValue(NODROP)) {
                 TileEntity tileentity = worldIn.getTileEntity(pos);
 
-                if (tileentity instanceof TileEntitySkull) {
-                    TileEntitySkull tileentityskull = (TileEntitySkull) tileentity;
+                if (tileentity instanceof TileEntitySkull tileentityskull) {
                     ItemStack itemstack = new ItemStack(Items.skull, 1, this.getDamageValue(worldIn, pos));
 
                     if (tileentityskull.getSkullType() == 3 && tileentityskull.getPlayerProfile() != null) {

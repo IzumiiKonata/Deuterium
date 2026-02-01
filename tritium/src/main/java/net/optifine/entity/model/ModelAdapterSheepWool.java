@@ -29,11 +29,10 @@ public class ModelAdapterSheepWool extends ModelAdapterQuadruped {
         RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
         Render<? extends Entity> render = rendermanager.getEntityRenderMap().get(EntitySheep.class);
 
-        if (!(render instanceof RenderSheep)) {
+        if (!(render instanceof RenderSheep rendersheep)) {
             Config.warn("Not a RenderSheep: " + render);
             return null;
         } else {
-            RenderSheep rendersheep = (RenderSheep) render;
             if (render.getEntityClass() == null) {
                 render = new RenderSheep(rendermanager, new ModelSheep2(), 0.7F);
             }
@@ -42,7 +41,7 @@ public class ModelAdapterSheepWool extends ModelAdapterQuadruped {
             Iterator<LayerRenderer<EntitySheep>> iterator = list.iterator();
 
             while (iterator.hasNext()) {
-                LayerRenderer layerrenderer = (LayerRenderer) iterator.next();
+                LayerRenderer layerrenderer = iterator.next();
 
                 if (layerrenderer instanceof LayerSheepWool) {
                     iterator.remove();

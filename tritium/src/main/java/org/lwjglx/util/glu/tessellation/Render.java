@@ -178,11 +178,9 @@ class Render {
     }
 
     private static void FreeTrail(GLUface t) {
-        if (true) {
-            while (t != null) {
-                t.marked = false;
-                t = t.trail;
-            }
+        while (t != null) {
+            t.marked = false;
+            t = t.trail;
         }
 
         /* else absorb trailing semicolon */

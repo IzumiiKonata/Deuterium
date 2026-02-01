@@ -65,15 +65,12 @@ public class InputMixingBlockPart extends PortBlockPart {
             // Choose value to initialize the mixer array.
             if (unitInputPort.isValueAdded()) {
                 inputs = super.getValues();  // prime mixer with the set() values
-                jCon = 0;
             } else {
                 otherPart = getConnection(jCon);
                 inputs = otherPart.getValues(); // prime mixer with first connected
                 jCon = 1;
             }
-            for (int i = 0; i < mixer.length; i++) {
-                mixer[i] = inputs[i];
-            }
+            System.arraycopy(inputs, 0, mixer, 0, mixer.length);
             // Now mix in the remaining inputs.
             for (; jCon < numConnections; jCon++) {
                 otherPart = getConnection(jCon);

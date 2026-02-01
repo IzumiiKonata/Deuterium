@@ -450,8 +450,7 @@ public final class Rectangle implements ReadableRectangle, WritableRectangle, Se
      * @return <code>true</code> if the objects are equal; <code>false</code> otherwise.
      */
     public boolean equals(Object obj) {
-        if (obj instanceof Rectangle) {
-            Rectangle r = (Rectangle) obj;
+        if (obj instanceof Rectangle r) {
             return ((x == r.x) && (y == r.y) && (width == r.width) && (height == r.height));
         }
         return super.equals(obj);

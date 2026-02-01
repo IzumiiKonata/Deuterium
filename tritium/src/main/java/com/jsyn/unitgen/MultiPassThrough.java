@@ -62,9 +62,7 @@ public class MultiPassThrough extends UnitGenerator  implements UnitSink, UnitSo
             double[] inputs = input.getValues(partIndex);
             double[] outputs = output.getValues(partIndex);
 
-            for (int i = start; i < limit; i++) {
-                outputs[i] = inputs[i];
-            }
+            if (limit - start >= 0) System.arraycopy(inputs, start, outputs, start, limit - start);
         }
     }
 }

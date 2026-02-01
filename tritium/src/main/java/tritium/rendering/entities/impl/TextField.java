@@ -528,10 +528,8 @@ public class TextField extends GuiTextField {
     }
 
     private void setupClipping() {
-        StencilClipManager.beginClip(() -> {
-            RenderSystem.drawRect(xPosition - 1, yPosition - 4,
-                    xPosition + width + 1, yPosition + height + 4, -1);
-        });
+        StencilClipManager.beginClip(() -> RenderSystem.drawRect(xPosition - 1, yPosition - 4,
+                xPosition + width + 1, yPosition + height + 4, -1));
     }
 
     private void cleanupClipping() {

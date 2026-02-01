@@ -85,9 +85,7 @@ public class PlaylistsWindow extends Window {
 
         AbstractWidget<?> base = this.genBaseContainer();
 
-        base.setBeforeRenderCallback(() -> {
-            base.setColor(ClickGui.getColor(11));
-        });
+        base.setBeforeRenderCallback(() -> base.setColor(ClickGui.getColor(11)));
 
         base.setMargin(4);
         base.setHeight(24);
@@ -115,9 +113,7 @@ public class PlaylistsWindow extends Window {
                 return avatarLoc;
             }, 0, 0, 16, 16);
 
-            avatar.setBeforeRenderCallback(() -> {
-                avatar.setPosition(4, 4);
-            });
+            avatar.setBeforeRenderCallback(() -> avatar.setPosition(4, 4));
 
             base.addChild(avatar);
 
@@ -178,9 +174,7 @@ public class PlaylistsWindow extends Window {
 
         AbstractWidget<?> base = this.genBaseContainer();
 
-        base.setBeforeRenderCallback(() -> {
-            base.setColor(ClickGui.getColor(11));
-        });
+        base.setBeforeRenderCallback(() -> base.setColor(ClickGui.getColor(11)));
 
         base.setMargin(4);
 
@@ -319,9 +313,7 @@ public class PlaylistsWindow extends Window {
             return true;
         });
 
-        prev.setBeforeRenderCallback(() -> {
-            prev.setColor(ClickGui.getColor(9));
-        });
+        prev.setBeforeRenderCallback(() -> prev.setColor(ClickGui.getColor(9)));
 
         IconWidget next = new IconWidget("E", FontManager.icon30, 0, 0, 20, 20);
         base.addChild(next);
@@ -334,9 +326,7 @@ public class PlaylistsWindow extends Window {
             return true;
         });
 
-        next.setBeforeRenderCallback(() -> {
-            next.setColor(ClickGui.getColor(9));
-        });
+        next.setBeforeRenderCallback(() -> next.setColor(ClickGui.getColor(9)));
 
         IconWidget playMode = new IconWidget(CloudMusic.playMode.getIcon(), FontManager.icon30,0, 0, 20, 20);
         base.addChild(playMode);
@@ -370,9 +360,7 @@ public class PlaylistsWindow extends Window {
             return true;
         });
 
-        playMode.setBeforeRenderCallback(() -> {
-            playMode.setColor(ClickGui.getColor(9));
-        });
+        playMode.setBeforeRenderCallback(() -> playMode.setColor(ClickGui.getColor(9)));
 
         RectWidget volumeBarBg = new RectWidget() {
 
@@ -420,9 +408,7 @@ public class PlaylistsWindow extends Window {
         volumeBar.setColor(0xff0090ff);
         volumeBar.setWidth(0);
 
-        volumeBar.setBeforeRenderCallback(() -> {
-            volumeBar.setWidth(WidgetsManager.musicInfo.volume.getValue() * volumeBarBg.getWidth());
-        });
+        volumeBar.setBeforeRenderCallback(() -> volumeBar.setWidth(WidgetsManager.musicInfo.volume.getValue() * volumeBarBg.getWidth()));
 
         volumeBar.setClickable(false);
     }

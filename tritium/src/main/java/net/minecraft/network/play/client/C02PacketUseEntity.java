@@ -91,7 +91,6 @@ public class C02PacketUseEntity implements Packet<INetHandlerPlayServer>, CPacke
                 case INTERACT -> EnumUseEntityAction.INTERACT;
                 case ATTACK -> EnumUseEntityAction.ATTACK;
                 case INTERACT_AT -> EnumUseEntityAction.INTERACT_AT;
-                default -> throw new IllegalArgumentException("Unknown use entity action: " + this);
             };
         }
     }

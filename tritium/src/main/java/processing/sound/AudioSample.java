@@ -535,7 +535,7 @@ public class AudioSample extends SoundObject {
 
 	public void playFor(float duration) {
 		AudioSample source = this.getUnusedPlayer();
-		source.playInternal(this.startFrame, Math.min((int) Math.round(duration * this.sampleRate()), this.frames() - this.startFrame));
+		source.playInternal(this.startFrame, Math.min(Math.round(duration * this.sampleRate()), this.frames() - this.startFrame));
 		// FIXME at the end of playback the startFrame is still the initially cued one,
 		// even though position() reports that the file is at the end of the playback bit.
 		// should we add an event listener that cues the file to the end of the playback

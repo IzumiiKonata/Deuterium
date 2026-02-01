@@ -22,7 +22,6 @@ public enum UniformType {
             case VEC2 -> new ShaderUniform2f(name);
             case VEC3 -> new ShaderUniform3f(name);
             case VEC4 -> new ShaderUniform4f(name);
-            default -> throw new RuntimeException("Unknown uniform type: " + this);
         };
     }
 
@@ -109,7 +108,6 @@ public enum UniformType {
             case INT -> expressionType == ExpressionType.FLOAT;
             case FLOAT -> expressionType == ExpressionType.FLOAT;
             case VEC2, VEC3, VEC4 -> expressionType == ExpressionType.FLOAT_ARRAY;
-            default -> throw new RuntimeException("Unknown uniform type: " + this);
         };
     }
 

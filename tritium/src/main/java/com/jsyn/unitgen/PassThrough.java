@@ -30,9 +30,7 @@ public class PassThrough extends UnitFilter {
         double[] inputs = input.getValues();
         double[] outputs = output.getValues();
 
-        for (int i = start; i < limit; i++) {
-            outputs[i] = inputs[i];
-        }
+        if (limit - start >= 0) System.arraycopy(inputs, start, outputs, start, limit - start);
 
     }
 }

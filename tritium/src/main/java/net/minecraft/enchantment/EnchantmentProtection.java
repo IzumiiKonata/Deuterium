@@ -86,8 +86,7 @@ public class EnchantmentProtection extends Enchantment {
      * Determines if the enchantment passed can be applyied together with this enchantment.
      */
     public boolean canApplyTogether(Enchantment ench) {
-        if (ench instanceof EnchantmentProtection) {
-            EnchantmentProtection enchantmentprotection = (EnchantmentProtection) ench;
+        if (ench instanceof EnchantmentProtection enchantmentprotection) {
             return enchantmentprotection.protectionType != this.protectionType && (this.protectionType == 2 || enchantmentprotection.protectionType == 2);
         } else {
             return super.canApplyTogether(ench);

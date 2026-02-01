@@ -46,9 +46,7 @@ public class VersionCheckThread extends Thread {
                     Config.setNewRelease(s1);
                 }
             } finally {
-                if (httpurlconnection != null) {
-                    httpurlconnection.disconnect();
-                }
+                httpurlconnection.disconnect();
             }
         } catch (final Exception exception) {
             Config.dbg(exception.getClass().getName() + ": " + exception.getMessage());

@@ -430,7 +430,7 @@ public abstract class CommandBase implements ICommand {
             if (i > 0) {
                 if (i == components.size() - 1) {
                     ichatcomponent.appendText(" and ");
-                } else if (i > 0) {
+                } else {
                     ichatcomponent.appendText(", ");
                 }
             }

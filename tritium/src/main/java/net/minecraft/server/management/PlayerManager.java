@@ -68,7 +68,7 @@ public class PlayerManager {
         Iterator<Entry<EntityPlayerMP, Set<ChunkCoordIntPair>>> iterator = set.iterator();
 
         while (iterator.hasNext()) {
-            Entry<EntityPlayerMP, Set<ChunkCoordIntPair>> entry = (Entry) iterator.next();
+            Entry<EntityPlayerMP, Set<ChunkCoordIntPair>> entry = iterator.next();
             Set<ChunkCoordIntPair> set1 = entry.getValue();
 
             if (!set1.isEmpty()) {

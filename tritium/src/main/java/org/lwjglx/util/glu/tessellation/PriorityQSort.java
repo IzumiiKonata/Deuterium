@@ -80,11 +80,9 @@ class PriorityQSort extends PriorityQ {
     }
 
     private static void Swap(int[] array, int a, int b) {
-        if (true) {
-            int tmp = array[a];
-            array[a] = array[b];
-            array[b] = tmp;
-        }
+        int tmp = array[a];
+        array[a] = array[b];
+        array[b] = tmp;
     }
 
     private static class Stack {
@@ -197,10 +195,6 @@ class PriorityQSort extends PriorityQ {
             Object[] pqKeys = new Object[max];
             System.arraycopy(keys, 0, pqKeys, 0, keys.length);
             keys = pqKeys;
-            if (keys == null) {
-                keys = saveKey; /* restore ptr to free upon return */
-                return Integer.MAX_VALUE;
-            }
         }
         assert curr != Integer.MAX_VALUE;
         keys[curr] = keyNew;

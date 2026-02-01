@@ -142,7 +142,7 @@ public class GuiChat extends GuiScreen {
      */
     protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
-            IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent((int) Mouse.getX(), (int) Mouse.getY());
+            IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
 
             if (this.handleComponentClick(ichatcomponent)) {
                 return;
@@ -247,7 +247,7 @@ public class GuiChat extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         drawRect(2, this.height - 14, this.width - 2, this.height - 2, Integer.MIN_VALUE);
         this.inputField.drawTextBox();
-        IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent((int) Mouse.getX(), (int) Mouse.getY());
+        IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
 
         if (ichatcomponent != null && ichatcomponent.getChatStyle().getChatHoverEvent() != null) {
             this.handleComponentHover(ichatcomponent, mouseX, mouseY);

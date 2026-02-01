@@ -190,8 +190,7 @@ public class BlockPistonExtension extends Block {
     }
 
     public static EnumFacing getFacing(int meta) {
-        int i = meta & 7;
-        return i > 5 ? null : EnumFacing.getFront(i);
+        return BlockPistonBase.getFacing(meta);
     }
 
     public Item getItem(World worldIn, BlockPos pos) {

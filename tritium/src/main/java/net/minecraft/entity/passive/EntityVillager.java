@@ -820,7 +820,7 @@ public class EntityVillager extends EntityAgeable implements IMerchant, INpc {
 
             ItemStack itemstack = new ItemStack(Items.emerald, i, 0);
             ItemStack itemstack1 = new ItemStack(this.enchantedItemStack.getItem(), 1, this.enchantedItemStack.getMetadata());
-            itemstack1 = EnchantmentHelper.addRandomEnchantment(random, itemstack1, 5 + random.nextInt(15));
+            EnchantmentHelper.addRandomEnchantment(random, itemstack1, 5 + random.nextInt(15));
             recipeList.add(new MerchantRecipe(itemstack, itemstack1));
         }
     }

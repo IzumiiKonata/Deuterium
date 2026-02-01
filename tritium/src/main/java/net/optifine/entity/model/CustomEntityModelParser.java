@@ -68,9 +68,7 @@ public class CustomEntityModelParser {
             processId(jsonobject, map);
             CustomModelRenderer custommodelrenderer = parseCustomModelRenderer(jsonobject, aint, s1);
 
-            if (custommodelrenderer != null) {
-                list.add(custommodelrenderer);
-            }
+            list.add(custommodelrenderer);
         }
 
         CustomModelRenderer[] acustommodelrenderer = (CustomModelRenderer[]) list.toArray(new CustomModelRenderer[0]);

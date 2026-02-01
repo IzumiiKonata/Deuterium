@@ -115,7 +115,7 @@ public class CrashReport {
      */
     public void getSectionsInStringBuilder(StringBuilder builder) {
         if ((this.stacktrace == null || this.stacktrace.length == 0) && !this.crashReportSections.isEmpty()) {
-            this.stacktrace = ArrayUtils.subarray(this.crashReportSections.get(0).getStackTrace(), 0, 1);
+            this.stacktrace = ArrayUtils.subarray(this.crashReportSections.getFirst().getStackTrace(), 0, 1);
         }
 
         if (this.stacktrace != null && this.stacktrace.length > 0) {
@@ -146,12 +146,13 @@ public class CrashReport {
         Throwable throwable = this.cause;
 
         if (throwable.getMessage() == null) {
-            if (throwable instanceof NullPointerException) {
-                throwable = new NullPointerException(this.description);
-            } else if (throwable instanceof StackOverflowError) {
-                throwable = new StackOverflowError(this.description);
-            } else if (throwable instanceof OutOfMemoryError) {
-                throwable = new OutOfMemoryError(this.description);
+            switch (throwable) {
+                case NullPointerException nullPointerException ->
+                        throwable = new NullPointerException(this.description);
+                case StackOverflowError stackOverflowError -> throwable = new StackOverflowError(this.description);
+                case OutOfMemoryError outOfMemoryError -> throwable = new OutOfMemoryError(this.description);
+                default -> {
+                }
             }
 
             throwable.setStackTrace(this.cause.getStackTrace());
@@ -195,9 +196,7 @@ public class CrashReport {
         stringbuilder.append(this.getCauseStackTraceOrString());
         stringbuilder.append("\n\n以下是对该异常的详细解析, 包括调用栈和所有已知细节:\n");
 
-        for (int i = 0; i < 87; ++i) {
-            stringbuilder.append("-");
-        }
+        stringbuilder.append("-".repeat(87));
 
         stringbuilder.append("\n\n");
         this.getSectionsInStringBuilder(stringbuilder);
@@ -274,7 +273,7 @@ public class CrashReport {
             this.firstCategoryInCrashReport = crashreportcategory.firstTwoElementsOfStackTraceMatch(stacktraceelement, stacktraceelement1);
 
             if (i > 0 && !this.crashReportSections.isEmpty()) {
-                CrashReportCategory crashreportcategory1 = this.crashReportSections.get(this.crashReportSections.size() - 1);
+                CrashReportCategory crashreportcategory1 = this.crashReportSections.getLast();
                 crashreportcategory1.trimStackTraceEntriesFromBottom(i);
             } else if (astacktraceelement.length >= i && 0 <= j && j < astacktraceelement.length) {
                 this.stacktrace = new StackTraceElement[j];

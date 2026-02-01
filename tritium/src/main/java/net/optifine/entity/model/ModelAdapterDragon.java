@@ -19,32 +19,45 @@ public class ModelAdapterDragon extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (model instanceof ModelDragon) {
-            ModelDragon modeldragon = (ModelDragon) model;
-            if (modelPart.equals("head"))
-                return modeldragon.head;
-            if (modelPart.equals("spine"))
-                return modeldragon.spine;
-            if (modelPart.equals("jaw"))
-                return modeldragon.jaw;
-            if (modelPart.equals("body"))
-                return modeldragon.body;
-            if (modelPart.equals("rear_leg"))
-                return modeldragon.rearLeg;
-            if (modelPart.equals("front_leg"))
-                return modeldragon.frontLeg;
-            if (modelPart.equals("rear_leg_tip"))
-                return modeldragon.rearLegTip;
-            if (modelPart.equals("front_leg_tip"))
-                return modeldragon.frontLegTip;
-            if (modelPart.equals("rear_foot"))
-                return modeldragon.rearFoot;
-            if (modelPart.equals("front_foot"))
-                return modeldragon.frontFoot;
-            if (modelPart.equals("wing"))
-                return modeldragon.wing;
-            if (modelPart.equals("wing_tip"))
-                return modeldragon.wingTip;
+        if (model instanceof ModelDragon modeldragon) {
+            switch (modelPart) {
+                case "head" -> {
+                    return modeldragon.head;
+                }
+                case "spine" -> {
+                    return modeldragon.spine;
+                }
+                case "jaw" -> {
+                    return modeldragon.jaw;
+                }
+                case "body" -> {
+                    return modeldragon.body;
+                }
+                case "rear_leg" -> {
+                    return modeldragon.rearLeg;
+                }
+                case "front_leg" -> {
+                    return modeldragon.frontLeg;
+                }
+                case "rear_leg_tip" -> {
+                    return modeldragon.rearLegTip;
+                }
+                case "front_leg_tip" -> {
+                    return modeldragon.frontLegTip;
+                }
+                case "rear_foot" -> {
+                    return modeldragon.rearFoot;
+                }
+                case "front_foot" -> {
+                    return modeldragon.frontFoot;
+                }
+                case "wing" -> {
+                    return modeldragon.wing;
+                }
+                case "wing_tip" -> {
+                    return modeldragon.wingTip;
+                }
+            }
         }
         return null;
     }

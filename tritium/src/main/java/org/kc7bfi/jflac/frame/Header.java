@@ -185,7 +185,7 @@ public class Header {
             default:
         }
 
-        int asgnType = (int) ((rawHeader.getData(3) >> 4) & 0x0f);
+        int asgnType = (rawHeader.getData(3) >> 4) & 0x0f;
         //System.out.println("AsgnType="+asgnType+" "+(rawHeader.space[3] >> 4));
         if ((asgnType & 8) != 0) {
             channels = 2;
@@ -203,11 +203,11 @@ public class Header {
                     throw new BadHeaderException("Bad Channel Assignment (" + asgnType + ")");
             }
         } else {
-            channels = (int) asgnType + 1;
+            channels = asgnType + 1;
             channelAssignment = Constants.CHANNEL_ASSIGNMENT_INDEPENDENT;
         }
 
-        int bpsType = (int) (rawHeader.getData(3) & 0x0e) >> 1;
+        int bpsType = (rawHeader.getData(3) & 0x0e) >> 1;
         switch (bpsType) {
             case 0:
                 if (streamInfo != null)

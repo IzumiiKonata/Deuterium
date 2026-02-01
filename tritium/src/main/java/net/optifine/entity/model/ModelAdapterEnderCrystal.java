@@ -26,14 +26,18 @@ public class ModelAdapterEnderCrystal extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (model instanceof ModelEnderCrystal) {
-            ModelEnderCrystal modelendercrystal = (ModelEnderCrystal) model;
-            if (modelPart.equals("cube"))
-                return modelendercrystal.cube;
-            if (modelPart.equals("glass"))
-                return modelendercrystal.glass;
-            if (modelPart.equals("base"))
-                return modelendercrystal.base;
+        if (model instanceof ModelEnderCrystal modelendercrystal) {
+            switch (modelPart) {
+                case "cube" -> {
+                    return modelendercrystal.cube;
+                }
+                case "glass" -> {
+                    return modelendercrystal.glass;
+                }
+                case "base" -> {
+                    return modelendercrystal.base;
+                }
+            }
         }
         return null;
     }
@@ -46,11 +50,10 @@ public class ModelAdapterEnderCrystal extends ModelAdapter {
         RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
         Render<? extends Entity> render = rendermanager.getEntityRenderMap().get(EntityEnderCrystal.class);
 
-        if (!(render instanceof RenderEnderCrystal)) {
+        if (!(render instanceof RenderEnderCrystal renderendercrystal)) {
             Config.warn("Not an instance of RenderEnderCrystal: " + render);
             return null;
         } else {
-            RenderEnderCrystal renderendercrystal = (RenderEnderCrystal) render;
 
             renderendercrystal.modelEnderCrystal = modelBase;
             renderendercrystal.shadowSize = shadowSize;

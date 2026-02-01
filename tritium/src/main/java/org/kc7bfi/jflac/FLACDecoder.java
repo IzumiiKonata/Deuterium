@@ -409,9 +409,8 @@ public class FLACDecoder {
      */
     public SeekPoint seek(long target_sample) throws IOException {
         // Check if it can found using seek table first
-        if (!(inputStream instanceof RandomFileInputStream))
+        if (!(inputStream instanceof RandomFileInputStream rf))
             return null;
-        RandomFileInputStream rf = (RandomFileInputStream) inputStream;
         long stream_length = ((RandomFileInputStream) inputStream).getLength();
         int first_frame_offset = metadataLength;
         long total_samples = streamInfo.getTotalSamples();

@@ -48,7 +48,7 @@ public class PseudoRandom {
     }
 
     public void setSeed(int seed) {
-        this.seed = (long) seed;
+        this.seed = seed;
     }
 
     public int getSeed() {

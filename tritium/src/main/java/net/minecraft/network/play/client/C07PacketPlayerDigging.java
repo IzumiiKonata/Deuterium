@@ -84,7 +84,6 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CP
                 case DROP_ALL_ITEMS -> EnumDiggingAction.DROP_ALL_ITEMS;
                 case DROP_ITEM -> EnumDiggingAction.DROP_ITEM;
                 case RELEASE_USE_ITEM -> EnumDiggingAction.RELEASE_USE_ITEM;
-                default -> throw new IllegalArgumentException("Unknown action " + this);
             };
         }
 
@@ -96,7 +95,6 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CP
                 case DROP_ALL_ITEMS -> DROP_ALL_ITEMS;
                 case DROP_ITEM -> DROP_ITEM;
                 case RELEASE_USE_ITEM -> RELEASE_USE_ITEM;
-                default -> throw new IllegalArgumentException("Unknown action " + action);
             };
         }
     }

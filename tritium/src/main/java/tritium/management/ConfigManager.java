@@ -95,25 +95,11 @@ public class ConfigManager extends AbstractManager {
 
                 JsonObject modules = config.get("Modules").getAsJsonObject();
 
-                modules.entrySet().forEach(m -> {
-                    client.getModuleManager().getModuleByName(m.getKey()).ifPresentOrElse(mod -> {
-                        mod.loadConfig(m.getValue().getAsJsonObject());
-                    }, () -> {
-                        this.logger.error("Module {} is missing!", m.getKey());
-                    });
-                });
+                modules.entrySet().forEach(m -> client.getModuleManager().getModuleByName(m.getKey()).ifPresentOrElse(mod -> mod.loadConfig(m.getValue().getAsJsonObject()), () -> this.logger.error("Module {} is missing!", m.getKey())));
 
                 JsonObject widgets = config.get("Widgets").getAsJsonObject();
 
-                widgets.entrySet().forEach(w -> {
-
-                    client.getWidgetsManager().getWidgetByName(w.getKey()).ifPresentOrElse(wid -> {
-                        wid.loadConfig(w.getValue().getAsJsonObject());
-                    }, () -> {
-                        this.logger.error("Widget {} is missing!", w.getKey());
-                    });
-
-                });
+                widgets.entrySet().forEach(w -> client.getWidgetsManager().getWidgetByName(w.getKey()).ifPresentOrElse(wid -> wid.loadConfig(w.getValue().getAsJsonObject()), () -> this.logger.error("Widget {} is missing!", w.getKey())));
             }
 
 
@@ -153,21 +139,15 @@ public class ConfigManager extends AbstractManager {
             JsonObject jsonObject = new JsonObject();
 
             JsonObject modules = new JsonObject();
-            ModuleManager.getModules().forEach(module -> {
-                modules.add(module.getInternalName(), module.saveConfig());
-            });
+            ModuleManager.getModules().forEach(module -> modules.add(module.getInternalName(), module.saveConfig()));
             jsonObject.add("Modules", modules);
 
             JsonObject widgets = new JsonObject();
-            WidgetsManager.getWidgets().forEach(widget -> {
-                widgets.add(widget.getInternalName(), widget.saveConfig());
-            });
+            WidgetsManager.getWidgets().forEach(widget -> widgets.add(widget.getInternalName(), widget.saveConfig()));
             jsonObject.add("Widgets", widgets);
 
             JsonObject settings = new JsonObject();
-            ClientSettings.getSettings().forEach(val -> {
-                settings.addProperty(val.getInternalName(), val.getValueForConfig());
-            });
+            ClientSettings.getSettings().forEach(val -> settings.addProperty(val.getInternalName(), val.getValueForConfig()));
             jsonObject.add("Settings", settings);
 
             configFile.createNewFile();

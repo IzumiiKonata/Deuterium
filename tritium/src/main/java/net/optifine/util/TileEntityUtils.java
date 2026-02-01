@@ -14,10 +14,9 @@ public class TileEntityUtils {
     }
 
     public static String getTileEntityName(TileEntity te) {
-        if (!(te instanceof IWorldNameable)) {
+        if (!(te instanceof IWorldNameable iworldnameable)) {
             return null;
         } else {
-            IWorldNameable iworldnameable = (IWorldNameable) te;
             updateTileEntityName(te);
             return !iworldnameable.hasCustomName() ? null : iworldnameable.getName();
         }
@@ -40,43 +39,44 @@ public class TileEntityUtils {
     }
 
     public static String getTileEntityRawName(TileEntity te) {
-        if (te instanceof TileEntityBeacon) {
-            return ((TileEntityBeacon) te).customName;
-        } else if (te instanceof TileEntityBrewingStand) {
-            return ((TileEntityBrewingStand) te).customName;
-        } else if (te instanceof TileEntityEnchantmentTable) {
-            return ((TileEntityEnchantmentTable) te).customName;
-        } else if (te instanceof TileEntityFurnace) {
-            return ((TileEntityFurnace) te).furnaceCustomName;
-        } else {
-            if (te instanceof IWorldNameable) {
-                IWorldNameable iworldnameable = (IWorldNameable) te;
-
-                if (iworldnameable.hasCustomName()) {
-                    return iworldnameable.getName();
-                }
+        switch (te) {
+            case TileEntityBeacon tileEntityBeacon -> {
+                return tileEntityBeacon.customName;
             }
+            case TileEntityBrewingStand tileEntityBrewingStand -> {
+                return tileEntityBrewingStand.customName;
+            }
+            case TileEntityEnchantmentTable tileEntityEnchantmentTable -> {
+                return tileEntityEnchantmentTable.customName;
+            }
+            case TileEntityFurnace tileEntityFurnace -> {
+                return tileEntityFurnace.furnaceCustomName;
+            }
+            case null, default -> {
+                if (te instanceof IWorldNameable) {
+                    IWorldNameable iworldnameable = (IWorldNameable) te;
 
-            return null;
+                    if (iworldnameable.hasCustomName()) {
+                        return iworldnameable.getName();
+                    }
+                }
+
+                return null;
+            }
         }
     }
 
     public static void setTileEntityRawName(TileEntity te, String name) {
-        if (te instanceof TileEntityBeacon) {
-            ((TileEntityBeacon) te).customName = name;
-        } else if (te instanceof TileEntityBrewingStand) {
-            ((TileEntityBrewingStand) te).customName = name;
-        } else if (te instanceof TileEntityEnchantmentTable) {
-            ((TileEntityEnchantmentTable) te).customName = name;
-        } else if (te instanceof TileEntityFurnace) {
-            ((TileEntityFurnace) te).furnaceCustomName = name;
-        } else if (te instanceof TileEntityChest) {
-            ((TileEntityChest) te).setCustomName(name);
-        } else if (te instanceof TileEntityDispenser) {
-            ((TileEntityDispenser) te).setCustomName(name);
-        } else if (te instanceof TileEntityHopper) {
-            ((TileEntityHopper) te).setCustomName(name);
-        } else {
+        switch (te) {
+            case TileEntityBeacon tileEntityBeacon -> tileEntityBeacon.customName = name;
+            case TileEntityBrewingStand tileEntityBrewingStand -> tileEntityBrewingStand.customName = name;
+            case TileEntityEnchantmentTable tileEntityEnchantmentTable -> tileEntityEnchantmentTable.customName = name;
+            case TileEntityFurnace tileEntityFurnace -> tileEntityFurnace.furnaceCustomName = name;
+            case TileEntityChest tileEntityChest -> tileEntityChest.setCustomName(name);
+            case TileEntityDispenser tileEntityDispenser -> tileEntityDispenser.setCustomName(name);
+            case TileEntityHopper tileEntityHopper -> tileEntityHopper.setCustomName(name);
+            case null, default -> {
+            }
         }
     }
 }

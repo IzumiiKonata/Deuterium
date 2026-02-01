@@ -52,8 +52,7 @@ public class BlockJukebox extends BlockContainer {
         if (!worldIn.isRemote) {
             TileEntity tileentity = worldIn.getTileEntity(pos);
 
-            if (tileentity instanceof TileEntityJukebox) {
-                TileEntityJukebox blockjukebox$tileentityjukebox = (TileEntityJukebox) tileentity;
+            if (tileentity instanceof TileEntityJukebox blockjukebox$tileentityjukebox) {
                 ItemStack itemstack = blockjukebox$tileentityjukebox.getRecord();
 
                 if (itemstack != null) {

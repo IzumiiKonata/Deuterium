@@ -87,9 +87,7 @@ public class CategoriesWindow extends Window {
             this.topRect.addChild(bannerPanel);
         }
 
-        this.bottomRect.setBeforeRenderCallback(() -> {
-            this.bottomRect.setPosition(this.topRect.getX(), this.topRect.getY() + this.topRect.getHeight());
-        });
+        this.bottomRect.setBeforeRenderCallback(() -> this.bottomRect.setPosition(this.topRect.getX(), this.topRect.getY() + this.topRect.getHeight()));
 
         this.bottomRect.setBounds(100, 260);
 
@@ -112,12 +110,8 @@ public class CategoriesWindow extends Window {
             );
 
             List<Runnable> onClick = Arrays.asList(
-                    () -> {
-                        ClickGui.getInstance().getModuleListWindow().refreshModules();
-                    },
-                    () -> {
-                        ClickGui.getInstance().getModuleListWindow().refreshModules();
-                    },
+                    () -> ClickGui.getInstance().getModuleListWindow().refreshModules(),
+                    () -> ClickGui.getInstance().getModuleListWindow().refreshModules(),
                     () -> {
 
                     }

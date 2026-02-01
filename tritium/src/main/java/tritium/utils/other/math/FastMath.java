@@ -121,28 +121,20 @@ public final class FastMath extends CmnFastMath {
         }
         angle = Math.abs(angle);
         if (angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO) {
-            if (false) {
-                // Can give very bad relative error near PI (mod 2*PI).
-                angle = remainderTwoPi(angle);
-                if (angle < 0.0) {
-                    angle = -angle;
-                }
+            final long remAndQuad = remainderPiO2(angle);
+            angle = decodeRemainder(remAndQuad);
+            final double cos;
+            final int q = decodeQuadrant(remAndQuad);
+            if (q == 0) {
+                cos = cos(angle);
+            } else if (q == 1) {
+                cos = -sin(angle);
+            } else if (q == 2) {
+                cos = -cos(angle);
             } else {
-                final long remAndQuad = remainderPiO2(angle);
-                angle = decodeRemainder(remAndQuad);
-                final double cos;
-                final int q = decodeQuadrant(remAndQuad);
-                if (q == 0) {
-                    cos = cos(angle);
-                } else if (q == 1) {
-                    cos = -sin(angle);
-                } else if (q == 2) {
-                    cos = -cos(angle);
-                } else {
-                    cos = sin(angle);
-                }
-                return cos;
+                cos = sin(angle);
             }
+            return cos;
         }
         // index: possibly outside tables range.
         int index = (int)(angle * SIN_COS_INDEXER + 0.5);
@@ -191,33 +183,24 @@ public final class FastMath extends CmnFastMath {
             negateResult = true;
         }
         if (angle > SIN_COS_MAX_VALUE_FOR_INT_MODULO) {
-            if (false) {
-                // Can give very bad relative error near PI (mod 2*PI).
-                angle = remainderTwoPi(angle);
-                if (angle < 0.0) {
-                    angle = -angle;
-                    negateResult = !negateResult;
-                }
+            final long remAndQuad = remainderPiO2(angle);
+            angle = decodeRemainder(remAndQuad);
+            final double sin;
+            final int q = decodeQuadrant(remAndQuad);
+            if (q == 0) {
+                sin = sin(angle);
+                cosine.value = cos(angle);
+            } else if (q == 1) {
+                sin = cos(angle);
+                cosine.value = -sin(angle);
+            } else if (q == 2) {
+                sin = -sin(angle);
+                cosine.value = -cos(angle);
             } else {
-                final long remAndQuad = remainderPiO2(angle);
-                angle = decodeRemainder(remAndQuad);
-                final double sin;
-                final int q = decodeQuadrant(remAndQuad);
-                if (q == 0) {
-                    sin = sin(angle);
-                    cosine.value = cos(angle);
-                } else if (q == 1) {
-                    sin = cos(angle);
-                    cosine.value = -sin(angle);
-                } else if (q == 2) {
-                    sin = -sin(angle);
-                    cosine.value = -cos(angle);
-                } else {
-                    sin = -cos(angle);
-                    cosine.value = sin(angle);
-                }
-                return (negateResult ? -sin : sin);
+                sin = -cos(angle);
+                cosine.value = sin(angle);
             }
+            return (negateResult ? -sin : sin);
         }
         int index = (int)(angle * SIN_COS_INDEXER + 0.5);
         double delta = (angle - index * SIN_COS_DELTA_HI) - index * SIN_COS_DELTA_LO;
@@ -1245,18 +1228,6 @@ public final class FastMath extends CmnFastMath {
         if (USE_JDK_MATH) {
             return Math.log1p(value);
         }
-        if (false) {
-            // This also works. Simpler but a bit slower.
-            if (value == Double.POSITIVE_INFINITY) {
-                return Double.POSITIVE_INFINITY;
-            }
-            double valuePlusOne = 1+value;
-            if (valuePlusOne == 1.0) {
-                return value;
-            } else {
-                return log(valuePlusOne)*(value/(valuePlusOne-1.0));
-            }
-        }
         if (value > -1.0) {
             if (value == Double.POSITIVE_INFINITY) {
                 return Double.POSITIVE_INFINITY;
@@ -1575,19 +1546,7 @@ public final class FastMath extends CmnFastMath {
         /*
          * http://en.wikipedia.org/wiki/Fast_inverse_square_root
          */
-        if (false) {
-            // With one Newton step (much slower than
-            // 1/Math.sqrt(double) if not optimized).
-            final double halfInitial = value * 0.5;
-            long bits = Double.doubleToRawLongBits(value);
-            // If n=0, 6910474759270000000L might be better (3.38e-2 max relative error).
-            bits = 0x5FE6EB50C7B537A9L - (bits>>1);
-            value = Double.longBitsToDouble(bits);
-            value = value * (1.5 - halfInitial * value * value); // Newton step, can repeat.
-            return value;
-        } else {
-            return Double.longBitsToDouble(0x5FE6EB50C7B537A9L - (Double.doubleToRawLongBits(value)>>1));
-        }
+        return Double.longBitsToDouble(0x5FE6EB50C7B537A9L - (Double.doubleToRawLongBits(value) >> 1));
     }
 
     /**
@@ -1852,9 +1811,9 @@ public final class FastMath extends CmnFastMath {
             double valueAbs = Math.abs(value);
             if (valueAbs <= (double)Integer.MAX_VALUE) {
                 if (value > 0.0) {
-                    return (double)(int)value;
+                    return (int)value;
                 } else if (value < 0.0) {
-                    double anteCommaDigits = (double)(int)value;
+                    double anteCommaDigits = (int)value;
                     if (value != anteCommaDigits) {
                         return anteCommaDigits - 1.0;
                     } else {
@@ -1958,13 +1917,6 @@ public final class FastMath extends CmnFastMath {
             return ((extendedMantissa >> shift) + 1) >> 1;
         } else {
             // +-Infinity, NaN, or a mathematical integer, or tiny.
-            if (false) { // not worth it
-                if (Math.abs(value) >= -(float)Integer.MIN_VALUE) {
-                    // +-Infinity or a mathematical integer (mostly) out of int range.
-                    return (value < 0.0) ? Integer.MIN_VALUE : Integer.MAX_VALUE;
-                }
-                // NaN or a mathematical integer (mostly) in int range.
-            }
             return (int)value;
         }
     }
@@ -2410,7 +2362,7 @@ public final class FastMath extends CmnFastMath {
             return value;
         }
         if (ANTI_SLOW_CASTS) {
-            return (double)(int)signFromBit(value);
+            return (int)signFromBit(value);
         } else {
             return (double)signFromBit(value);
         }
@@ -2612,11 +2564,8 @@ public final class FastMath extends CmnFastMath {
             }
             final int bits = Float.floatToRawIntBits(start);
             return Float.intBitsToFloat(bits + ((bits > 0) ? -1 : 1));
-        } else if (start == Float.NEGATIVE_INFINITY) {
-            return Float.NEGATIVE_INFINITY;
         } else {
-            // NaN
-            return start;
+            return Float.NEGATIVE_INFINITY;
         }
     }
 
@@ -2631,11 +2580,8 @@ public final class FastMath extends CmnFastMath {
             }
             final long bits = Double.doubleToRawLongBits(start);
             return Double.longBitsToDouble(bits + ((bits > 0) ? -1 : 1));
-        } else if (start == Double.NEGATIVE_INFINITY) {
-            return Double.NEGATIVE_INFINITY;
         } else {
-            // NaN
-            return start;
+            return Double.NEGATIVE_INFINITY;
         }
     }
 
@@ -2647,11 +2593,8 @@ public final class FastMath extends CmnFastMath {
             // +0.0f to get rid of eventual -0.0f
             final int bits = Float.floatToRawIntBits(start + 0.0f);
             return Float.intBitsToFloat(bits + (bits >= 0 ? 1 : -1));
-        } else if (start == Float.POSITIVE_INFINITY) {
-            return Float.POSITIVE_INFINITY;
         } else {
-            // NaN
-            return start;
+            return Float.POSITIVE_INFINITY;
         }
     }
 
@@ -2663,11 +2606,8 @@ public final class FastMath extends CmnFastMath {
             // +0.0 to get rid of eventual -0.0
             final long bits = Double.doubleToRawLongBits(start + 0.0);
             return Double.longBitsToDouble(bits + (bits >= 0 ? 1 : -1));
-        } else if (start == Double.POSITIVE_INFINITY) {
-            return Double.POSITIVE_INFINITY;
         } else {
-            // NaN
-            return start;
+            return Double.POSITIVE_INFINITY;
         }
     }
 
@@ -2802,7 +2742,7 @@ public final class FastMath extends CmnFastMath {
             negateResult = true;
         }
         if (angle <= (4*NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2)) {
-            double fn = (double)(int)(angle*TWOPI_INV+0.5);
+            double fn = (int)(angle*TWOPI_INV+0.5);
             angle = (angle - fn*TWOPI_HI) - fn*TWOPI_LO;
             // Ensuring range.
             // HI/LO can help a bit, even though we are always far from 0.
@@ -2834,7 +2774,7 @@ public final class FastMath extends CmnFastMath {
             negateResult = true;
         }
         if (angle <= (2*NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2)) {
-            double fn = (double)(int)(angle*PI_INV+0.5);
+            double fn = (int)(angle*PI_INV+0.5);
             angle = (angle - fn*PI_HI) - fn*PI_LO;
             // Ensuring range.
             // HI/LO can help a bit, even though we are always far from 0.
@@ -2868,7 +2808,7 @@ public final class FastMath extends CmnFastMath {
         }
         if (angle <= NORMALIZE_ANGLE_MAX_MEDIUM_DOUBLE_PIO2) {
             int n = (int)(angle*PIO2_INV+0.5);
-            double fn = (double)n;
+            double fn = n;
             angle = (angle - fn*PIO2_HI) - fn*PIO2_LO;
             // Ensuring range.
             // HI/LO can help a bit, even though we are always far from 0.
@@ -2918,7 +2858,7 @@ public final class FastMath extends CmnFastMath {
             // ok
         } else if (angle <= TWO_POW_52*(2*Math.PI)) {
             // Computing remainder of angle modulo TWO_POW_26*(2*PI).
-            double fn = (double)(int)(angle*(TWOPI_INV/TWO_POW_26)+0.5);
+            double fn = (int)(angle*(TWOPI_INV/TWO_POW_26)+0.5);
             angle = (angle - fn*(TWOPI_HI*TWO_POW_26)) - fn*(TWOPI_LO*TWO_POW_26);
             // Here, angle is in [-TWO_POW_26*PI,TWO_POW_26*PI], or so.
             if (angle < 0.0) {
@@ -2932,7 +2872,7 @@ public final class FastMath extends CmnFastMath {
         }
 
         // Computing remainder of angle modulo 2*PI.
-        double fn = (double)(int)(angle*TWOPI_INV+0.5);
+        double fn = (int)(angle*TWOPI_INV+0.5);
         angle = (angle - fn*TWOPI_HI) - fn*TWOPI_LO;
 
         // Ensuring range.
@@ -2969,7 +2909,7 @@ public final class FastMath extends CmnFastMath {
             // ok
         } else if (angle <= TWO_POW_52*Math.PI) {
             // Computing remainder of angle modulo TWO_POW_26*PI.
-            double fn = (double)(int)(angle*(PI_INV/TWO_POW_26)+0.5);
+            double fn = (int)(angle*(PI_INV/TWO_POW_26)+0.5);
             angle = (angle - fn*(PI_HI*TWO_POW_26)) - fn*(PI_LO*TWO_POW_26);
             // Here, angle is in [-TWO_POW_26*PI/2,TWO_POW_26*PI/2], or so.
             if (angle < 0.0) {
@@ -2983,7 +2923,7 @@ public final class FastMath extends CmnFastMath {
         }
 
         // Computing remainder of angle modulo PI.
-        double fn = (double)(int)(angle*PI_INV+0.5);
+        double fn = (int)(angle*PI_INV+0.5);
         angle = (angle - fn*PI_HI) - fn*PI_LO;
         
         // Ensuring range.

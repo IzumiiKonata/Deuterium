@@ -79,7 +79,7 @@ public class ParabolicEnvelope extends UnitGenerator {
             if (!running) {
                 if (triggerInputs[i] > 0) {
                     double freq = frequencies[i] * synthesisEngine.getInverseNyquist();
-                    freq = (freq > 1.0) ? 1.0 : ((freq < -1.0) ? -1.0 : freq);
+                    freq = (freq > 1.0) ? 1.0 : (Math.max(freq, -1.0));
                     double ampl = amplitudes[i];
                     double freq2 = freq * freq; /* Square frequency. */
                     slope = 4.0 * ampl * (freq - freq2);

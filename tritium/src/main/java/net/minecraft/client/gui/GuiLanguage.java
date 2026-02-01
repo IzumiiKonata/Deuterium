@@ -235,7 +235,7 @@ public class GuiLanguage extends GuiScreen {
                             if (!s.isEmpty() && s.charAt(0) != 35) {
                                 String[] astring = Iterables.toArray(splitter.split(s), String.class);
 
-                                if (astring != null && astring.length == 2 && astring[0].equals(left)) {
+                                if (astring.length == 2 && astring[0].equals(left)) {
                                     translate = astring[1];
                                 }
                             }

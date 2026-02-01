@@ -43,8 +43,7 @@ public class ComboDisplay extends SimpleTextWidget {
     @Handler
     public void onStatusUpdate(ReceivePacketEvent event) {
 
-        if (event.getPacket() instanceof S19PacketEntityStatus) {
-            S19PacketEntityStatus packet = (S19PacketEntityStatus) event.getPacket();
+        if (event.getPacket() instanceof S19PacketEntityStatus packet) {
             if (packet.getOpCode() == 2) {
                 if (packet.entityId == target) {
                     combos += 1;

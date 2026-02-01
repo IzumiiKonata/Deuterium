@@ -479,7 +479,7 @@ public class BitInputStream {
                             if ((uval & 1) != 0)
                                 vals[pos + valI++] = -((int) (uval >> 1)) - 1;
                             else
-                                vals[pos + valI++] = (int) (uval >> 1);
+                                vals[pos + valI++] = uval >> 1;
                             if (valI == nvals)
                                 break;
                             msbs = 0;
@@ -498,7 +498,7 @@ public class BitInputStream {
                         if ((uval & 1) != 0)
                             vals[pos + valI++] = -((int) (uval >> 1)) - 1;
                         else
-                            vals[pos + valI++] = (int) (uval >> 1);
+                            vals[pos + valI++] = uval >> 1;
                         if (valI == nvals) {
                             // back up one if we exited the for loop because we
                             // read all nvals but the end came in the middle of
@@ -562,7 +562,7 @@ public class BitInputStream {
                                 if ((uval & 1) != 0)
                                     vals[pos + valI++] = -((int) (uval >> 1)) - 1;
                                 else
-                                    vals[pos + valI++] = (int) (uval >> 1);
+                                    vals[pos + valI++] = uval >> 1;
                                 if (valI == nvals)
                                     break;
                                 msbs = 0;
@@ -581,7 +581,7 @@ public class BitInputStream {
                             if ((uval & 1) != 0)
                                 vals[pos + valI++] = -((int) (uval >> 1)) - 1;
                             else
-                                vals[pos + valI++] = (int) (uval >> 1);
+                                vals[pos + valI++] = uval >> 1;
                             if (valI == nvals) {
                                 // back up one if we exited the for loop because
                                 // we read all nvals but the end came in the
@@ -702,7 +702,6 @@ public class BitInputStream {
             v = x & 0x01;
             i = 5;
         } else if (((x & 0xFE) != 0) && ((x & 0x01) == 0)) { // 11111110
-            v = 0;
             i = 6;
         } else {
             return 0xffffffffffffffffL;

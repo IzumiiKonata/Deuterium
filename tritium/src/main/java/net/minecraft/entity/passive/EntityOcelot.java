@@ -227,10 +227,9 @@ public class EntityOcelot extends EntityTameable {
             return false;
         } else if (!this.isTamed()) {
             return false;
-        } else if (!(otherAnimal instanceof EntityOcelot)) {
+        } else if (!(otherAnimal instanceof EntityOcelot entityocelot)) {
             return false;
         } else {
-            EntityOcelot entityocelot = (EntityOcelot) otherAnimal;
             return entityocelot.isTamed() && this.isInLove() && entityocelot.isInLove();
         }
     }

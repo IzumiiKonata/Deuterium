@@ -84,7 +84,6 @@ public class TileEntityBeaconRenderer extends TileEntitySpecialRenderer<TileEnti
                     GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
                     GlStateManager.depthMask(false);
                     d2 = 0.2D;
-                    d3 = 0.2D;
                     d4 = 0.8D;
                     d5 = 0.2D;
                     d6 = 0.2D;

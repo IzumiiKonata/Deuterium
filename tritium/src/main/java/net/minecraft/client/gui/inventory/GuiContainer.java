@@ -395,7 +395,7 @@ public abstract class GuiContainer extends GuiScreen {
                             int i1 = 0;
 
                             if (flag2) {
-                                this.shiftClickedSlot = slot != null && slot.getHasStack() ? slot.getStack() : null;
+                                this.shiftClickedSlot = slot.getHasStack() ? slot.getStack() : null;
                                 i1 = 1;
                             } else if (l == -999) {
                                 i1 = 4;
@@ -484,7 +484,7 @@ public abstract class GuiContainer extends GuiScreen {
 
         if (this.doubleClick && slot != null && state == 0 && this.inventorySlots.canMergeSlot(null, slot)) {
             if (isShiftKeyDown()) {
-                if (slot != null && slot.inventory != null && this.shiftClickedSlot != null) {
+                if (slot.inventory != null && this.shiftClickedSlot != null) {
                     for (Slot slot2 : this.inventorySlots.inventorySlots) {
                         if (slot2 != null && slot2.canTakeStack(this.mc.thePlayer) && slot2.getHasStack() && slot2.inventory == slot.inventory && Container.canAddItemToSlot(slot2, this.shiftClickedSlot, true)) {
                             this.handleMouseClick(slot2, slot2.slotNumber, state, 1);

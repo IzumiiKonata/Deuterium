@@ -10,7 +10,7 @@ public abstract class Team {
      * Same as ==
      */
     public boolean isSameTeam(Team other) {
-        return other != null && this == other;
+        return this == other;
     }
 
     /**

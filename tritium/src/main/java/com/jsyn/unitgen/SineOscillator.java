@@ -46,13 +46,8 @@ public class SineOscillator extends UnitOscillator {
             /* Generate sawtooth phasor to provide phase for sine generation. */
             double phaseIncrement = convertFrequencyToPhaseIncrement(frequencies[i]);
             currentPhase = incrementWrapPhase(currentPhase, phaseIncrement);
-            if (true) {
-                double value = fastSin(currentPhase);
-                outputs[i] = value * amplitudes[i];
-            } else {
-                // Slower but more accurate implementation.
-                outputs[i] = Math.sin(currentPhase * Math.PI) * amplitudes[i];
-            }
+            double value = fastSin(currentPhase);
+            outputs[i] = value * amplitudes[i];
         }
 
         phase.setValue(currentPhase);

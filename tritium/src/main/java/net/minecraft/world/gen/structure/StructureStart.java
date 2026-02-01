@@ -35,15 +35,8 @@ public abstract class StructureStart {
      * Keeps iterating Structure Pieces and spawning them until the checks tell it to stop
      */
     public void generateStructure(World worldIn, Random rand, StructureBoundingBox structurebb) {
-        Iterator<StructureComponent> iterator = this.components.iterator();
 
-        while (iterator.hasNext()) {
-            StructureComponent structurecomponent = iterator.next();
-
-            if (structurecomponent.getBoundingBox().intersectsWith(structurebb) && !structurecomponent.addComponentParts(worldIn, rand, structurebb)) {
-                iterator.remove();
-            }
-        }
+        this.components.removeIf(structurecomponent -> structurecomponent.getBoundingBox().intersectsWith(structurebb) && !structurecomponent.addComponentParts(worldIn, rand, structurebb));
     }
 
     /**

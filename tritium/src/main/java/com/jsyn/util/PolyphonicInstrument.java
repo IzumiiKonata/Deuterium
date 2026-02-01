@@ -63,8 +63,7 @@ public class PolyphonicInstrument extends Circuit implements UnitSource, Instrum
     public void exportAllInputPorts() {
         // Iterate through the ports.
         for (UnitPort port : voices[0].getUnitGenerator().getPorts()) {
-            if (port instanceof UnitInputPort) {
-                UnitInputPort inputPort = (UnitInputPort) port;
+            if (port instanceof UnitInputPort inputPort) {
                 String voicePortName = inputPort.getName();
                 // FIXME Need better way to identify ports that are per note.
                 if (!voicePortName.equals("Frequency") && !voicePortName.equals("Amplitude")) {
@@ -113,8 +112,7 @@ public class PolyphonicInstrument extends Circuit implements UnitSource, Instrum
         }
         // Then copy values from first voice to instrument.
         for (UnitPort port : voices[0].getUnitGenerator().getPorts()) {
-            if (port instanceof UnitInputPort) {
-                UnitInputPort inputPort = (UnitInputPort) port;
+            if (port instanceof UnitInputPort inputPort) {
                 // FIXME Need better way to identify ports that are per note.
                 UnitInputPort fanPort = (UnitInputPort) getPortByName(inputPort.getName());
                 if ((fanPort != null) && (fanPort != amplitude)) {

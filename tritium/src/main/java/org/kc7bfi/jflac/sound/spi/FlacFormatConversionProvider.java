@@ -246,7 +246,7 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
             AudioFormat.Encoding targetEncoding, AudioInputStream sourceStream) {
         AudioFormat[] formats = getTargetFormats(targetEncoding,
                 sourceStream.getFormat(), false);
-        if (formats != null && formats.length > 0) {
+        if (formats.length > 0) {
             return getAudioInputStream(formats[0], sourceStream);
         } else {
             throw new IllegalArgumentException("conversion not supported");
@@ -268,7 +268,7 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
         AudioFormat sourceFormat = sourceStream.getFormat();
         AudioFormat[] formats = getTargetFormats(targetFormat.getEncoding(),
                 sourceFormat, false);
-        if (formats != null && formats.length > 0) {
+        if (formats.length > 0) {
             if (sourceFormat.equals(targetFormat)) {
                 return sourceStream;
             } else if (sourceFormat.getChannels() == targetFormat.getChannels()

@@ -34,8 +34,7 @@ public class NameSpoof extends Module {
     }
     
     public void replaceChatComponent(IChatComponent component) {
-        if (component instanceof ChatComponentText) {
-            ChatComponentText chatComponentText = (ChatComponentText) component;
+        if (component instanceof ChatComponentText chatComponentText) {
 
             replaceChatComponentText(chatComponentText);
 
@@ -47,8 +46,7 @@ public class NameSpoof extends Module {
             return;
         }
 
-        if (component instanceof ChatComponentTranslation) {
-            ChatComponentTranslation chatComponentTranslation = (ChatComponentTranslation) component;
+        if (component instanceof ChatComponentTranslation chatComponentTranslation) {
             for (IChatComponent child : chatComponentTranslation.getChildren()) {
                 if (child instanceof ChatComponentText) {
                     replaceChatComponentText((ChatComponentText) child);

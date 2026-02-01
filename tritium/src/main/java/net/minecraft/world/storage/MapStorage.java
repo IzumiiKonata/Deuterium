@@ -130,8 +130,7 @@ public class MapStorage {
                 for (String s : nbttagcompound.getKeySet()) {
                     NBTBase nbtbase = nbttagcompound.getTag(s);
 
-                    if (nbtbase instanceof NBTTagShort) {
-                        NBTTagShort nbttagshort = (NBTTagShort) nbtbase;
+                    if (nbtbase instanceof NBTTagShort nbttagshort) {
                         short short1 = nbttagshort.getShort();
                         this.idCounts.put(s, short1);
                     }

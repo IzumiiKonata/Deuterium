@@ -28,10 +28,7 @@ import com.softsynth.shared.time.ScheduledQueue;
 import com.softsynth.shared.time.TimeStamp;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Logger;
 
@@ -144,7 +141,7 @@ public class SynthesisEngine implements Synthesizer {
     public void terminate() {
     }
 
-    class InterleavingBuffer {
+    static class InterleavingBuffer {
         private final double[] interleavedBuffer;
         ChannelBlockBuffer[] blockBuffers;
 
@@ -194,9 +191,7 @@ public class SynthesisEngine implements Synthesizer {
         }
 
         void clear() {
-            for (int i = 0; i < values.length; i++) {
-                values[i] = 0.0f;
-            }
+            Arrays.fill(values, 0.0f);
         }
     }
 
@@ -223,12 +218,6 @@ public class SynthesisEngine implements Synthesizer {
         this.framePeriod = 1.0 / frameRate;
 
         setupAudioBuffers(numInputChannels, numOutputChannels);
-
-        if (false) {
-            logger.info("Pure Java JSyn from www.softsynth.com, rate = " + frameRate
-                    + ", " + (useRealTime ? "RT" : "NON-RealTime")
-                    + ", " + JSyn.VERSION_TEXT);
-        }
 
         inverseNyquist = 2.0 / frameRate;
 
@@ -415,7 +404,7 @@ public class SynthesisEngine implements Synthesizer {
 
         while (timeList != null) {
             while (!timeList.isEmpty()) {
-                ScheduledCommand command = timeList.remove(0);
+                ScheduledCommand command = timeList.removeFirst();
                 logger.fine("processing " + command + ", at time " + timeStamp.getTime());
                 command.run();
             }

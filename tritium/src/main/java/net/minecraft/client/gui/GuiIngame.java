@@ -388,14 +388,12 @@ public class GuiIngame extends Gui {
         WORLD_RENDERER.pos(x, y, 0.0D).tex(uMin, vMin).endVertex();
         Tessellator.getInstance().draw();
 
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
-        GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+        RenderSystem.nearestFilter();
     }
 
 
     protected void renderTooltip(ScaledResolution sr, float partialTicks) {
-        if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
+        if (this.mc.getRenderViewEntity() instanceof EntityPlayer entityplayer) {
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             RenderSystem.resetColor();
 
@@ -594,8 +592,7 @@ public class GuiIngame extends Gui {
     }
 
     private void renderPlayerStats(ScaledResolution scaledRes) {
-        if (this.mc.getRenderViewEntity() instanceof EntityPlayer) {
-            EntityPlayer entityplayer = (EntityPlayer) this.mc.getRenderViewEntity();
+        if (this.mc.getRenderViewEntity() instanceof EntityPlayer entityplayer) {
             int i = MathHelper.ceiling_float_int(entityplayer.getHealth());
             boolean flag = this.healthUpdateCounter > (long) this.updateCounter && (this.healthUpdateCounter - (long) this.updateCounter) / 3L % 2L == 1L;
 
@@ -739,22 +736,8 @@ public class GuiIngame extends Gui {
                         j7 = k1 + (this.rand.nextInt(3) - 1);
                     }
 
-                    if (flag1) {
-                        k8 = 1;
-                    }
-
                     int j9 = j1 - k6 * 8 - 9;
                     this.drawTexturedModalRect(j9, j7, 16 + k8 * 9, 27, 9, 9);
-
-                    if (flag1) {
-                        if (k6 * 2 + 1 < l) {
-                            this.drawTexturedModalRect(j9, j7, l7 + 54, 27, 9, 9);
-                        }
-
-                        if (k6 * 2 + 1 == l) {
-                            this.drawTexturedModalRect(j9, j7, l7 + 63, 27, 9, 9);
-                        }
-                    }
 
                     if (k6 * 2 + 1 < k) {
                         this.drawTexturedModalRect(j9, j7, l7 + 36, 27, 9, 9);
@@ -764,8 +747,7 @@ public class GuiIngame extends Gui {
                         this.drawTexturedModalRect(j9, j7, l7 + 45, 27, 9, 9);
                     }
                 }
-            } else if (entity instanceof EntityLivingBase) {
-                EntityLivingBase entitylivingbase = (EntityLivingBase) entity;
+            } else if (entity instanceof EntityLivingBase entitylivingbase) {
                 int i7 = (int) Math.ceil(entitylivingbase.getHealth());
                 float f3 = entitylivingbase.getMaxHealth();
                 int j8 = (int) (f3 + 0.5F) / 2;
@@ -784,12 +766,8 @@ public class GuiIngame extends Gui {
                         int j5 = 52;
                         int k5 = 0;
 
-                        if (flag1) {
-                            k5 = 1;
-                        }
-
                         int l5 = j1 - i5 * 8 - 9;
-                        this.drawTexturedModalRect(l5, i9, j5 + k5 * 9, 9, 9, 9);
+                        this.drawTexturedModalRect(l5, i9, j5 + 0, 9, 9, 9);
 
                         if (i5 * 2 + 1 + k9 < i7) {
                             this.drawTexturedModalRect(l5, i9, j5 + 36, 9, 9, 9);

@@ -55,13 +55,9 @@ public class ConsoleScreen extends BaseScreen {
             CommandManager.registerCommand("layout", this::layout).setDescription("Reload ConsoleScreen's layout");
         }
 
-        CommandManager.registerCommand("clear", new String[] { "cls" }, () -> {
-            logsPanel.getChildren().clear();
-        }).setDescription("Clear the console");
+        CommandManager.registerCommand("clear", new String[] { "cls" }, () -> logsPanel.getChildren().clear()).setDescription("Clear the console");
 
-        CommandManager.registerCommand("quit", () -> {
-            Minecraft.getMinecraft().shutdown();
-        }).setDescription("Quit the game");
+        CommandManager.registerCommand("quit", () -> Minecraft.getMinecraft().shutdown()).setDescription("Quit the game");
 
         CommandManager.registerCommand("disconnect", () -> {
             this.mc.theWorld.sendQuittingDisconnectingPacket();
@@ -207,9 +203,7 @@ public class ConsoleScreen extends BaseScreen {
             this.textField.setDisabledTextColor(0xFF808080);
             this.textField.drawUnderline(false);
 
-            this.textField.setBeforeRenderCallback(() -> {
-                this.textField.setMargin(2);
-            });
+            this.textField.setBeforeRenderCallback(() -> this.textField.setMargin(2));
 
             this.textField.setOnKeyTypedCallback((typedChar, keyCode) -> {
 
@@ -305,18 +299,14 @@ public class ConsoleScreen extends BaseScreen {
             logsBg.addChild(logsPanel);
             logsPanel.setSpacing(3);
 
-            logsPanel.setBeforeRenderCallback(() -> {
-                logsPanel.setMargin(3);
-            });
+            logsPanel.setBeforeRenderCallback(() -> logsPanel.setMargin(3));
         }
 
         // close button
         {
             Panel closeBg = new Panel();
             titleBar.addChild(closeBg);
-            closeBg.setBeforeRenderCallback(() -> {
-                closeBg.setBounds(this.base.getWidth() - titleBarHeight, 0, titleBarHeight, titleBarHeight);
-            });
+            closeBg.setBeforeRenderCallback(() -> closeBg.setBounds(this.base.getWidth() - titleBarHeight, 0, titleBarHeight, titleBarHeight));
 
             LabelWidget lblClose = new LabelWidget("x", FontManager.pf14bold);
             closeBg.addChild(lblClose);
@@ -342,9 +332,7 @@ public class ConsoleScreen extends BaseScreen {
 
             List<Command> suggestions = new CopyOnWriteArrayList<>();
 
-            rw.setBeforeRenderCallback(() -> {
-                rw.setBounds(0, base.getHeight() + 2, base.getWidth(), suggestions.size() * (FontManager.pf14.getFontHeight() + 4));
-            });
+            rw.setBeforeRenderCallback(() -> rw.setBounds(0, base.getHeight() + 2, base.getWidth(), suggestions.size() * (FontManager.pf14.getFontHeight() + 4)));
 
             Panel p = new Panel();
 

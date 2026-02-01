@@ -32,12 +32,12 @@ public class RenderArrow extends Render<EntityArrow> {
         int i = 0;
         float f = 0.0F;
         float f1 = 0.5F;
-        float f2 = (float) (i * 10) / 32.0F;
-        float f3 = (float) (5 + i * 10) / 32.0F;
+        float f2 = (float) (0) / 32.0F;
+        float f3 = (float) (5 + 0) / 32.0F;
         float f4 = 0.0F;
         float f5 = 0.15625F;
-        float f6 = (float) (5 + i * 10) / 32.0F;
-        float f7 = (float) (10 + i * 10) / 32.0F;
+        float f6 = (float) (5 + 0) / 32.0F;
+        float f7 = (float) (10 + 0) / 32.0F;
         float f8 = 0.05625F;
         GlStateManager.enableRescaleNormal();
         float f9 = (float) entity.arrowShake - partialTicks;

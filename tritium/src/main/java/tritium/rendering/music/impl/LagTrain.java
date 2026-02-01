@@ -801,7 +801,7 @@ public class LagTrain extends PVRenderer {
             double texDuration = this.getMillisPerBeat() / hand.length;
             int curIdx = (int) ((playBackTime / texDuration) % hand.length);
 
-            if (beatCount <= 592)
+            if (beatCount == 592)
                 Image.drawLinear(hand[curIdx], -36, RenderSystem.getHeight() - imgHeight, imgWidth, imgHeight, Image.Type.Normal);
 
             if (beatCount <= 593)

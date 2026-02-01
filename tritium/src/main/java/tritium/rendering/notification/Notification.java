@@ -110,7 +110,6 @@ public class Notification implements SharedRenderingConstants {
             case WARNING -> 0xffefbc12;
             case ERROR -> 0xfff04747;
             case SUCCESS -> 0xff23ad5c;
-            default -> throw new IllegalArgumentException();
         };
 
         FontManager.pf20bold.drawCenteredString(this.title, renderX + width * 0.5, renderY + 4, fontColor);

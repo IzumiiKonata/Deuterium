@@ -340,7 +340,6 @@ public abstract class BiomeGenBase {
             case CREATURE -> this.spawnableCreatureList;
             case WATER_CREATURE -> this.spawnableWaterCreatureList;
             case AMBIENT -> this.spawnableCaveCreatureList;
-            default -> Collections.emptyList();
         };
     }
 

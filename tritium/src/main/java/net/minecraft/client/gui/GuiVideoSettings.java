@@ -36,15 +36,13 @@ public class GuiVideoSettings extends GuiScreenOF {
         for (int i = 0; i < videoOptions.length; ++i) {
             GameSettings.Options gamesettings$options = videoOptions[i];
 
-            if (gamesettings$options != null) {
-                int j = this.width / 2 - 155 + i % 2 * 160;
-                int k = this.height / 6 + 21 * (i / 2) - 12;
+            int j = this.width / 2 - 155 + i % 2 * 160;
+            int k = this.height / 6 + 21 * (i / 2) - 12;
 
-                if (!gamesettings$options.getEnumFloat()) {
-                    this.buttonList.add(new GuiOptionSliderOF(gamesettings$options.returnEnumOrdinal(), j, k, gamesettings$options));
-                } else {
-                    this.buttonList.add(new GuiOptionButtonOF(gamesettings$options.returnEnumOrdinal(), j, k, gamesettings$options, this.guiGameSettings.getKeyBinding(gamesettings$options)));
-                }
+            if (!gamesettings$options.getEnumFloat()) {
+                this.buttonList.add(new GuiOptionSliderOF(gamesettings$options.returnEnumOrdinal(), j, k, gamesettings$options));
+            } else {
+                this.buttonList.add(new GuiOptionButtonOF(gamesettings$options.returnEnumOrdinal(), j, k, gamesettings$options, this.guiGameSettings.getKeyBinding(gamesettings$options)));
             }
         }
 
@@ -164,17 +162,7 @@ public class GuiVideoSettings extends GuiScreenOF {
         String s = Config.getVersion();
         String s1 = "HD_U";
 
-        if (s1.equals("HD")) {
-            s = "OptiFine HD M6_pre2";
-        }
-
-        if (s1.equals("HD_U")) {
-            s = "OptiFine HD M6_pre2 Ultra";
-        }
-
-        if (s1.equals("L")) {
-            s = "OptiFine M6_pre2 Light";
-        }
+        s = "OptiFine HD M6_pre2 Ultra";
 
         this.drawString(this.fontRendererObj, s, 2, this.height - 10, 8421504);
         String s2 = "Minecraft 1.8.9";

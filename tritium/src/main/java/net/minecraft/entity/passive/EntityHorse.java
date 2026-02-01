@@ -676,7 +676,7 @@ public class EntityHorse extends EntityAnimal implements IInvBasic {
                     }
                 }
 
-                if (!flag && !this.isUndead()) {
+                if (!this.isUndead()) {
                     float f = 0.0F;
                     int j = 0;
                     int k = 0;
@@ -737,7 +737,7 @@ public class EntityHorse extends EntityAnimal implements IInvBasic {
                 }
 
                 if (!this.isTame() && !flag) {
-                    if (itemstack != null && itemstack.interactWithEntity(player, this)) {
+                    if (itemstack.interactWithEntity(player, this)) {
                         return true;
                     }
 
@@ -1307,7 +1307,6 @@ public class EntityHorse extends EntityAnimal implements IInvBasic {
             } else {
                 int k = this.rand.nextInt(7);
                 int l = this.rand.nextInt(5);
-                i = 0;
                 j = k | l << 8;
             }
 

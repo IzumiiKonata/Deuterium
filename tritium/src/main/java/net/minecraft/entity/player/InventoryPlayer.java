@@ -17,6 +17,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
 import tritium.bridge.game.item.InventoryWrapper;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 
 public class InventoryPlayer implements IInventory {
@@ -275,11 +276,7 @@ public class InventoryPlayer implements IInventory {
                 }
             }
 
-            int k = i;
-
-            if (i > this.mainInventory[j].getMaxStackSize() - this.mainInventory[j].stackSize) {
-                k = this.mainInventory[j].getMaxStackSize() - this.mainInventory[j].stackSize;
-            }
+            int k = Math.min(i, this.mainInventory[j].getMaxStackSize() - this.mainInventory[j].stackSize);
 
             if (k > this.getInventoryStackLimit() - this.mainInventory[j].stackSize) {
                 k = this.getInventoryStackLimit() - this.mainInventory[j].stackSize;
@@ -372,7 +369,7 @@ public class InventoryPlayer implements IInventory {
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Item being added");
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
-                crashreportcategory.addCrashSectionCallable("Item name", () -> itemStackIn.getDisplayName());
+                crashreportcategory.addCrashSectionCallable("Item name", itemStackIn::getDisplayName);
                 throw new ReportedException(crashreport);
             }
         } else {
@@ -497,7 +494,7 @@ public class InventoryPlayer implements IInventory {
             ItemStack itemstack = ItemStack.loadItemStackFromNBT(nbttagcompound);
 
             if (itemstack != null) {
-                if (j >= 0 && j < this.mainInventory.length) {
+                if (j < this.mainInventory.length) {
                     this.mainInventory[j] = itemstack;
                 }
 
@@ -719,13 +716,9 @@ public class InventoryPlayer implements IInventory {
     }
 
     public void clear() {
-        for (int i = 0; i < this.mainInventory.length; ++i) {
-            this.mainInventory[i] = null;
-        }
+        Arrays.fill(this.mainInventory, null);
 
-        for (int j = 0; j < this.armorInventory.length; ++j) {
-            this.armorInventory[j] = null;
-        }
+        Arrays.fill(this.armorInventory, null);
     }
 
 }

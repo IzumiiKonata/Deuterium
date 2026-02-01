@@ -273,7 +273,7 @@ public class CustomColors {
         final Set<Integer> set = map.keySet();
         final Integer[] ainteger = set.toArray(new Integer[0]);
         Arrays.sort(ainteger);
-        if (ainteger.length <= 0) {
+        if (ainteger.length == 0) {
             return new ImmutablePair<>(null, 0);
         } else {
             final int j1 = ainteger[0];
@@ -385,7 +385,7 @@ public class CustomColors {
                 }
             }
         }
-        if (list.size() <= 0) {
+        if (list.size() == 0) {
             return null;
         } else {
             return (CustomColormap[]) list.toArray(new CustomColormap[0]);
@@ -423,7 +423,7 @@ public class CustomColors {
                 addToBlockList(customcolormap1, list);
             }
         }
-        if (list.size() <= 0) {
+        if (list.size() == 0) {
             return null;
         } else {
             return blockListToArray(list);
@@ -606,12 +606,7 @@ public class CustomColors {
             final int i = renderEnv.getMetadata();
             IColorizer customcolors$icolorizer;
             if (block != Blocks.grass && block != Blocks.tallgrass && block != Blocks.double_plant) {
-                if (block == Blocks.double_plant) {
-                    customcolors$icolorizer = COLORIZER_GRASS;
-                    if (i >= 8) {
-                        blockPos = blockPos.down();
-                    }
-                } else if (block == Blocks.leaves) {
+                if (block == Blocks.leaves) {
                     customcolors$icolorizer = switch (i & 3) {
                         case 0 -> COLORIZER_FOLIAGE;
                         case 1 -> COLORIZER_FOLIAGE_PINE;
@@ -643,10 +638,9 @@ public class CustomColors {
     }
 
     private static CustomColormap getBlockColormap(final IBlockState blockState) {
-        if ((blockColormaps == null) || !(blockState instanceof BlockStateBase)) {
+        if ((blockColormaps == null) || !(blockState instanceof BlockStateBase blockstatebase)) {
             return null;
         } else {
-            final BlockStateBase blockstatebase = (BlockStateBase) blockState;
             final int i = blockstatebase.getBlockId();
             if (i >= 0 && i < blockColormaps.length) {
                 final CustomColormap[] acustomcolormap = blockColormaps[i];
@@ -752,11 +746,11 @@ public class CustomColors {
         if (!(block instanceof BlockRedstoneWire)) {
             return def;
         } else {
-            final Object object = state.getValue(BlockRedstoneWire.POWER);
+            final Integer object = state.getValue(BlockRedstoneWire.POWER);
             if (!(object instanceof Integer)) {
                 return def;
             } else {
-                return (Integer) object;
+                return object;
             }
         }
     }
@@ -1219,7 +1213,7 @@ public class CustomColors {
         final MapColor[] amapcolor = MapColor.mapColorArray;
         final int[] aint = new int[amapcolor.length];
         Arrays.fill(aint, -1);
-        for (int i = 0; i < amapcolor.length && i < aint.length; ++i) {
+        for (int i = 0; i < amapcolor.length; ++i) {
             final MapColor mapcolor = amapcolor[i];
             if (mapcolor != null) {
                 aint[i] = mapcolor.colorValue;

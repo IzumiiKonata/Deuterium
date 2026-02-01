@@ -394,11 +394,9 @@ public class BiomeDecorator {
                 int l13 = this.randomGenerator.nextInt(16) + 8;
                 int i17 = this.randomGenerator.nextInt(248) + 8;
 
-                if (i17 > 0) {
-                    int k19 = this.randomGenerator.nextInt(i17);
-                    BlockPos blockpos6 = this.field_180294_c.add(i10, k19, l13);
-                    (new WorldGenLiquids(Blocks.flowing_water)).generate(this.currentWorld, this.randomGenerator, blockpos6);
-                }
+                int k19 = this.randomGenerator.nextInt(i17);
+                BlockPos blockpos6 = this.field_180294_c.add(i10, k19, l13);
+                (new WorldGenLiquids(Blocks.flowing_water)).generate(this.currentWorld, this.randomGenerator, blockpos6);
             }
 
             for (int l5 = 0; l5 < 20; ++l5) {

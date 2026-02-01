@@ -97,9 +97,7 @@ public class NCMScreen extends BaseScreen {
         RectWidget bg = new RectWidget();
         this.basePanel.addChild(bg);
 
-        this.basePanel.setBeforeRenderCallback(() -> {
-            this.basePanel.center();
-        });
+        this.basePanel.setBeforeRenderCallback(() -> this.basePanel.center());
 
         this.playlistsPanel = new NavigateBar();
         this.basePanel.addChild(this.playlistsPanel);
@@ -168,9 +166,7 @@ public class NCMScreen extends BaseScreen {
                 this.currentPanel.setAlpha(Math.min(this.basePanel.getAlpha(), curPanelAlphaAnimation));
                 this.currentPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
 
-                StencilClipManager.beginClip(() -> {
-                    Rect.draw(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight(), -1);
-                });
+                StencilClipManager.beginClip(() -> Rect.draw(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight(), -1));
 
                 GlStateManager.pushMatrix();
                 this.scaleAtPos(this.currentPanelBg.getX() + this.currentPanelBg.getWidth() * .5, this.currentPanelBg.getY() + this.currentPanelBg.getHeight() * .5, 1.1 - (curPanelAlphaAnimation * 0.1));
@@ -187,9 +183,7 @@ public class NCMScreen extends BaseScreen {
         }
 
         if (this.musicLyricsPanel != null) {
-            StencilClipManager.beginClip(() -> {
-                Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), -1);
-            });
+            StencilClipManager.beginClip(() -> Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), -1));
             Rect.draw(basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), getColor(ColorType.GENERIC_BACKGROUND) | ((int) (this.musicLyricsPanel.alpha * 255)) << 24);
             this.musicLyricsPanel.onRender(mouseX, mouseY, basePanel.getX(), basePanel.getY(), basePanel.getWidth(), basePanel.getHeight(), dWheel);
             StencilClipManager.endClip();
@@ -273,7 +267,7 @@ public class NCMScreen extends BaseScreen {
                 ++ currentActionPointer;
 
                 while (actions.size() > currentActionPointer + 1)
-                    actions.remove(actions.size() - 1);
+                    actions.removeLast();
 
                 if (currentActionPointer < actions.size()) {
                     actions.set(currentActionPointer, action);
@@ -341,7 +335,6 @@ public class NCMScreen extends BaseScreen {
                 // is last
                 if (currentActionPointer >= actions.size() - 1) {
                     currentActionPointer = actions.size() - 1;
-                    return;
                 } else {
                     currentActionPointer ++;
                     actions.get(currentActionPointer).run();

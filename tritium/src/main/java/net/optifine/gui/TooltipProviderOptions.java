@@ -28,10 +28,9 @@ public class TooltipProviderOptions implements TooltipProvider {
     }
 
     public String[] getTooltipLines(GuiButton btn, int width) {
-        if (!(btn instanceof IOptionControl)) {
+        if (!(btn instanceof IOptionControl ioptioncontrol)) {
             return null;
         } else {
-            IOptionControl ioptioncontrol = (IOptionControl) btn;
             GameSettings.Options gamesettings$options = ioptioncontrol.getOption();
             return getTooltipLines(gamesettings$options.getEnumString());
         }
@@ -51,7 +50,7 @@ public class TooltipProviderOptions implements TooltipProvider {
             list.add(s1);
         }
 
-        if (list.size() <= 0) {
+        if (list.size() == 0) {
             return null;
         } else {
             return list.toArray(new String[0]);

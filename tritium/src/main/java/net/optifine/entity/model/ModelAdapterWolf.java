@@ -19,35 +19,33 @@ public class ModelAdapterWolf extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (model instanceof ModelWolf) {
-            ModelWolf modelwolf = (ModelWolf) model;
-            if (modelPart.equals("head")) return modelwolf.wolfHeadMain;
-            if (modelPart.equals("body")) {
-                return modelwolf.wolfBody;
+        if (model instanceof ModelWolf modelwolf) {
+            switch (modelPart) {
+                case "head" -> {
+                    return modelwolf.wolfHeadMain;
+                }
+                case "body" -> {
+                    return modelwolf.wolfBody;
+                }
+                case "leg1" -> {
+                    return modelwolf.wolfLeg1;
+                }
+                case "leg2" -> {
+                    return modelwolf.wolfLeg2;
+                }
+                case "leg3" -> {
+                    return modelwolf.wolfLeg3;
+                }
+                case "leg4" -> {
+                    return modelwolf.wolfLeg4;
+                }
+                case "tail" -> {
+                    return modelwolf.wolfTail;
+                }
+                case "mane" -> {
+                    return modelwolf.wolfMane;
+                }
             }
-
-            if (modelPart.equals("leg1")) {
-                return modelwolf.wolfLeg1;
-            }
-
-            if (modelPart.equals("leg2")) {
-                return modelwolf.wolfLeg2;
-            }
-
-            if (modelPart.equals("leg3")) {
-                return modelwolf.wolfLeg3;
-            }
-
-            if (modelPart.equals("leg4")) {
-                return modelwolf.wolfLeg4;
-            }
-
-            if (modelPart.equals("tail")) {
-                return modelwolf.wolfTail;
-            }
-
-            if (modelPart.equals("mane"))
-                return modelwolf.wolfMane;
 
         }
         return null;

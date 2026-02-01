@@ -46,9 +46,7 @@ public class MusicsWindow extends Window {
         back.setColor(ClickGui.getColor(17));
         back.setPosition(4, 2);
 
-        back.setBeforeRenderCallback(() -> {
-            back.setColor(back.isHovering() ? ClickGui.getColor(18) : ClickGui.getColor(17));
-        });
+        back.setBeforeRenderCallback(() -> back.setColor(back.isHovering() ? ClickGui.getColor(18) : ClickGui.getColor(17)));
 
         back.setOnClickCallback((mouseX, mouseY, mouseButton) -> {
 
@@ -102,9 +100,7 @@ public class MusicsWindow extends Window {
         }
 
         CategoriesWindow categoriesWindow = ClickGui.getInstance().getCategoriesWindow();
-        StencilClipManager.beginClip(() -> {
-            Rect.draw(categoriesWindow.getTopRect().getX() + categoriesWindow.getTopRect().getWidth() + playlists.getBaseRect().getWidth(), this.baseRect.getY(), this.stencilWidth, this.baseRect.getHeight(), -1);
-        });
+        StencilClipManager.beginClip(() -> Rect.draw(categoriesWindow.getTopRect().getX() + categoriesWindow.getTopRect().getWidth() + playlists.getBaseRect().getWidth(), this.baseRect.getY(), this.stencilWidth, this.baseRect.getHeight(), -1));
 
         this.baseRect.renderWidget(mouseX, mouseY, this.getDWheel());
 

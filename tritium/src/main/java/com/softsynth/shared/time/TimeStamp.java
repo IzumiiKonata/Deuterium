@@ -35,12 +35,7 @@ public class TimeStamp implements Comparable<TimeStamp> {
      */
     @Override
     public int compareTo(TimeStamp t2) {
-        if (time < t2.time)
-            return -1;
-        else if (time == t2.time)
-            return 0;
-        else
-            return 1;
+        return Double.compare(time, t2.time);
     }
 
     /**

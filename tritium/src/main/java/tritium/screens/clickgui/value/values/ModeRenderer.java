@@ -31,9 +31,7 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
         LabelWidget label = new LabelWidget(() -> setting.getName().get(), pf14);
         label
             .setPosition(0, height * .5 - pf14.getHeight() * .5)
-            .setBeforeRenderCallback(() -> {
-                label.setColor(ClickGui.getColor(20));
-            });
+            .setBeforeRenderCallback(() -> label.setColor(ClickGui.getColor(20)));
         this.addChild(label);
 
         RectWidget button = new RectWidget() {
@@ -72,9 +70,7 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
                 super.onRender(mouseX, mouseY);
                 FontManager.pf14.drawCenteredString(setting.getTranslation(setting.getValue()), this.getX() + this.getWidth() * .5, this.getY() + this.getEntryHeight() * .5 - pf14.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(20), this.getAlpha()));
 
-                StencilClipManager.beginClip(() -> {
-                    super.onRender(mouseX, mouseY);
-                });
+                StencilClipManager.beginClip(() -> super.onRender(mouseX, mouseY));
 
                 boolean shouldRender = open || Math.abs(width - targetW) > .5 || Math.abs(height - targetH) > .5;
 

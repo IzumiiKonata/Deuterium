@@ -29,9 +29,7 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
                     .setBounds(132, 0, 10, this.getHeight())
                     .setColor(ClickGui.getColor(8))
                     .setShouldOverrideMouseCursor(true)
-                    .setBeforeRenderCallback(() -> {
-                        settingsRect.setColor(settingsRect.isHovering() ? ClickGui.getColor(12) : ClickGui.getColor(11));
-                    });
+                    .setBeforeRenderCallback(() -> settingsRect.setColor(settingsRect.isHovering() ? ClickGui.getColor(12) : ClickGui.getColor(11)));
 
             RectWidget dotCenter = new RectWidget();
             dotCenter

@@ -177,9 +177,7 @@ public class NavigateBar extends NCMPanel {
         this.playlistPanel.addChild(lbl);
 
         {
-            PlaylistItem item = new PlaylistItem("A", () -> 0xFFC30218, () -> "主页", () -> {
-                NCMScreen.getInstance().setCurrentPanel(new HomePanel());
-            });
+            PlaylistItem item = new PlaylistItem("A", () -> 0xFFC30218, () -> "主页", () -> NCMScreen.getInstance().setCurrentPanel(new HomePanel()));
 
             item.setShouldOverrideMouseCursor(true);
 
@@ -200,9 +198,7 @@ public class NavigateBar extends NCMPanel {
             List<PlayList> playLists = pl.stream().filter(playList -> !playList.isSubscribed()).toList();
             for (int i = 0; i < playLists.size(); i++) {
                 PlayList playList = playLists.get(i);
-                PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", Color.GRAY::getRGB, playList::getName, () -> {
-                    NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
-                });
+                PlaylistItem item = new PlaylistItem(i == 0 ? "C" : "D", Color.GRAY::getRGB, playList::getName, () -> NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList)));
                 item.setShouldOverrideMouseCursor(true);
 
                 this.playlistPanel.addChild(item);
@@ -219,9 +215,7 @@ public class NavigateBar extends NCMPanel {
 
         if (pl != null) {
             pl.stream().filter(PlayList::isSubscribed).forEach(playList -> {
-                PlaylistItem item = new PlaylistItem("D", Color.GRAY::getRGB, playList::getName, () -> {
-                    NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList));
-                });
+                PlaylistItem item = new PlaylistItem("D", Color.GRAY::getRGB, playList::getName, () -> NCMScreen.getInstance().setCurrentPanel(new PlaylistPanel(playList)));
                 item.setShouldOverrideMouseCursor(true);
 
                 this.playlistPanel.addChild(item);

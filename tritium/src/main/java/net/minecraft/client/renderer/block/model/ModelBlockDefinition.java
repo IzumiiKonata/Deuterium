@@ -38,7 +38,7 @@ public class ModelBlockDefinition {
         ModelBlockDefinition.Variants modelblockdefinition$variants = this.mapVariants.get(p_178330_1_);
 
         if (modelblockdefinition$variants == null) {
-            throw new ModelBlockDefinition.MissingVariantException();
+            throw new MissingVariantException();
         } else {
             return modelblockdefinition$variants;
         }
@@ -47,8 +47,7 @@ public class ModelBlockDefinition {
     public boolean equals(Object p_equals_1_) {
         if (this == p_equals_1_) {
             return true;
-        } else if (p_equals_1_ instanceof ModelBlockDefinition) {
-            ModelBlockDefinition modelblockdefinition = (ModelBlockDefinition) p_equals_1_;
+        } else if (p_equals_1_ instanceof ModelBlockDefinition modelblockdefinition) {
             return this.mapVariants.equals(modelblockdefinition.mapVariants);
         } else {
             return false;
@@ -94,7 +93,7 @@ public class ModelBlockDefinition {
         }
     }
 
-    public class MissingVariantException extends RuntimeException {
+    public static class MissingVariantException extends RuntimeException {
     }
 
     public static class Variant {
@@ -129,10 +128,9 @@ public class ModelBlockDefinition {
         public boolean equals(Object p_equals_1_) {
             if (this == p_equals_1_) {
                 return true;
-            } else if (!(p_equals_1_ instanceof Variant)) {
+            } else if (!(p_equals_1_ instanceof Variant modelblockdefinition$variant)) {
                 return false;
             } else {
-                Variant modelblockdefinition$variant = (Variant) p_equals_1_;
                 return this.modelLocation.equals(modelblockdefinition$variant.modelLocation) && this.modelRotation == modelblockdefinition$variant.modelRotation && this.uvLock == modelblockdefinition$variant.uvLock;
             }
         }
@@ -202,10 +200,9 @@ public class ModelBlockDefinition {
         public boolean equals(Object p_equals_1_) {
             if (this == p_equals_1_) {
                 return true;
-            } else if (!(p_equals_1_ instanceof Variants)) {
+            } else if (!(p_equals_1_ instanceof Variants modelblockdefinition$variants)) {
                 return false;
             } else {
-                Variants modelblockdefinition$variants = (Variants) p_equals_1_;
                 return this.name.equals(modelblockdefinition$variants.name) && this.listVariants.equals(modelblockdefinition$variants.listVariants);
             }
         }

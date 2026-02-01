@@ -228,11 +228,11 @@ public class PrimeFactors {
                     buffer.append('*');
                 int prime = primes[i];
                 if (pf == 1) {
-                    buffer.append("" + prime);
+                    buffer.append("").append(prime);
                 } else if (pf == 2) {
-                    buffer.append(prime + "*" + prime);
-                } else if (pf > 2) {
-                    buffer.append("(" + prime + "^" + pf + ")");
+                    buffer.append(prime).append("*").append(prime);
+                } else {
+                    buffer.append("(").append(prime).append("^").append(pf).append(")");
                 }
                 gotSome = true;
             }

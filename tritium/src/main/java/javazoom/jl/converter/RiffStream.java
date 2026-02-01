@@ -324,8 +324,7 @@ public class RiffStream {
      * Fill the header.
      */
     public static int fourCC(String chunkName) {
-        byte[] p = chunkName.getBytes();
-        return (((p[0] << 24) & 0xFF000000) | ((p[1] << 16) & 0x00FF0000) | ((p[2] << 8) & 0x0000FF00) | (p[3] & 0x000000FF));
+        return RiffFile.fourCC(chunkName);
     }
 
     public long currentFilePosition() {

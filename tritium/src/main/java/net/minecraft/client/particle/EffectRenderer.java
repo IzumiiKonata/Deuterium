@@ -141,7 +141,7 @@ public class EffectRenderer {
                 int j = effect.getAlpha() != 1.0F ? 0 : 1;
 
                 if (this.fxLayers[i][j].size() >= 4000) {
-                    this.fxLayers[i][j].remove(0);
+                    this.fxLayers[i][j].removeFirst();
                 }
 
                 this.fxLayers[i][j].add(effect);
@@ -221,7 +221,7 @@ public class EffectRenderer {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "粒子更新");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("被更新的粒子");
             final int i = particle.getFXLayer();
-            crashreportcategory.addCrashSectionCallable("粒子", () -> particle.toString());
+            crashreportcategory.addCrashSectionCallable("粒子", particle::toString);
             crashreportcategory.addCrashSectionCallable("粒子类型", () -> i == 0 ? "MISC_TEXTURE" : (i == 1 ? "TERRAIN_TEXTURE" : (i == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i)));
             throw new ReportedException(crashreport);
         }
@@ -282,8 +282,8 @@ public class EffectRenderer {
                             } catch (Throwable throwable) {
                                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "粒子渲染");
                                 CrashReportCategory crashreportcategory = crashreport.makeCategory("被渲染的粒子");
-                                crashreportcategory.addCrashSectionCallable("粒子", () -> entityfx.toString());
-                                crashreportcategory.addCrashSectionCallable("粒子类型", () -> i_f == 0 ? "MISC_TEXTURE" : (i_f == 1 ? "TERRAIN_TEXTURE" : (i_f == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i_f)));
+                                crashreportcategory.addCrashSectionCallable("粒子", entityfx::toString);
+                                crashreportcategory.addCrashSectionCallable("粒子类型", () -> i_f == 0 ? "MISC_TEXTURE" : i_f == 1 ? "TERRAIN_TEXTURE" : "Unknown - " + i_f);
                                 throw new ReportedException(crashreport);
                             }
                         }

@@ -56,33 +56,23 @@ public class MainMenu extends BaseScreen {
         // create buttons
         List<Tuple<Localizable, Runnable>> tuples = new ArrayList<>(Arrays.asList(
                 Tuple.of(
-                        Localizable.of("mainmenu.singleplayer"), () -> {
-                            SharedConstants.mc.displayGuiScreen(new GuiSelectWorld(MainMenu.this));
-                        }
+                        Localizable.of("mainmenu.singleplayer"), () -> SharedConstants.mc.displayGuiScreen(new GuiSelectWorld(MainMenu.this))
                 ),
                 Tuple.of(
-                        Localizable.of("mainmenu.multiplayer"), () -> {
-                            SharedConstants.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.this));
-                        }
+                        Localizable.of("mainmenu.multiplayer"), () -> SharedConstants.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.this))
                 ),
                 Tuple.of(
-                        Localizable.of("mainmenu.altmanager"), () -> {
-                            SharedConstants.mc.displayGuiScreen(AltScreen.getInstance());
-                        }
+                        Localizable.of("mainmenu.altmanager"), () -> SharedConstants.mc.displayGuiScreen(AltScreen.getInstance())
                 ),
                 Tuple.of(
-                        Localizable.of("mainmenu.settings"), () -> {
-                            SharedConstants.mc.displayGuiScreen(new GuiOptions(MainMenu.this, SharedConstants.mc.gameSettings));
-                        }
+                        Localizable.of("mainmenu.settings"), () -> SharedConstants.mc.displayGuiScreen(new GuiOptions(MainMenu.this, SharedConstants.mc.gameSettings))
                 )
         ));
 
         if (Tritium.getVersion().getReleaseType() == Version.ReleaseType.Dev) {
             tuples.add(
                 Tuple.of(
-                    Localizable.ofUntranslatable("打开音乐播放器"), () -> {
-                        SharedConstants.mc.displayGuiScreen(NCMScreen.getInstance());
-                    }
+                    Localizable.ofUntranslatable("打开音乐播放器"), () -> SharedConstants.mc.displayGuiScreen(NCMScreen.getInstance())
                 )
             );
         }

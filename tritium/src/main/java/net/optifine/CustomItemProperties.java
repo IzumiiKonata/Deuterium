@@ -248,7 +248,7 @@ public class CustomItemProperties {
     private static Map parseTextures(final Properties props, final String basePath) {
         final String s = "texture.";
         final Map map = getMatchingProperties(props, s);
-        if (map.size() <= 0) {
+        if (map.size() == 0) {
             return null;
         } else {
             final Set set = map.keySet();
@@ -293,14 +293,14 @@ public class CustomItemProperties {
                     return s;
                 }
             }
-            return modelStr;
+            return null;
         }
     }
 
     private static Map parseModels(final Properties props, final String basePath) {
         final String s = "model.";
         final Map map = getMatchingProperties(props, s);
-        if (map.size() <= 0) {
+        if (map.size() == 0) {
             return null;
         } else {
             final Set set = map.keySet();
@@ -434,7 +434,7 @@ public class CustomItemProperties {
     private NbtTagValue[] parseNbtTagValues(final Properties props) {
         final String s = "nbt.";
         final Map map = getMatchingProperties(props, s);
-        if (map.size() <= 0) {
+        if (map.size() == 0) {
             return null;
         } else {
             final List list = new ArrayList();
@@ -464,15 +464,20 @@ public class CustomItemProperties {
             return 0;
         } else {
             str = str.toLowerCase();
-            if (str.equals("any")) {
-                return 0;
-            } else if (str.equals("main")) {
-                return 1;
-            } else if (str.equals("off")) {
-                return 2;
-            } else {
-                Config.warn("Invalid hand: " + str);
-                return 0;
+            switch (str) {
+                case "any" -> {
+                    return 0;
+                }
+                case "main" -> {
+                    return 1;
+                }
+                case "off" -> {
+                    return 2;
+                }
+                default -> {
+                    Config.warn("Invalid hand: " + str);
+                    return 0;
+                }
             }
         }
     }
@@ -625,8 +630,7 @@ public class CustomItemProperties {
                 }
                 return new String[]{s5, s6};
             }
-            if (item instanceof ItemArmor) {
-                final ItemArmor itemarmor = (ItemArmor) item;
+            if (item instanceof ItemArmor itemarmor) {
                 if (itemarmor.getArmorMaterial() == ItemArmor.ArmorMaterial.LEATHER) {
                     final String s = "leather";
                     String s1 = "helmet";

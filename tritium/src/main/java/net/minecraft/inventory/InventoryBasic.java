@@ -7,6 +7,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class InventoryBasic implements IInventory {
@@ -229,8 +230,6 @@ public class InventoryBasic implements IInventory {
     }
 
     public void clear() {
-        for (int i = 0; i < this.inventoryContents.length; ++i) {
-            this.inventoryContents[i] = null;
-        }
+        Arrays.fill(this.inventoryContents, null);
     }
 }

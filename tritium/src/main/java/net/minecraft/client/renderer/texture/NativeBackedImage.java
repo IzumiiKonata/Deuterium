@@ -208,9 +208,6 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         byte[] buf = new byte[TRANSFER_SIZE];
         while (totalRead < len) {
             int bytesToRead = Math.min((len - totalRead), TRANSFER_SIZE);
-            if (buf.length < bytesToRead) {
-                buf = new byte[bytesToRead];
-            }
 
             if ((totalRead > 0) && !(in.available() > 0)) {
                 break; // block at most once

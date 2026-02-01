@@ -32,8 +32,7 @@ public class ItemCarrotOnAStick extends Item {
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-        if (playerIn.isRiding() && playerIn.ridingEntity instanceof EntityPig) {
-            EntityPig entitypig = (EntityPig) playerIn.ridingEntity;
+        if (playerIn.isRiding() && playerIn.ridingEntity instanceof EntityPig entitypig) {
 
             if (entitypig.getAIControlledByPlayer().isControlledByPlayer() && itemStackIn.getMaxDamage() - itemStackIn.getMetadata() >= 7) {
                 entitypig.getAIControlledByPlayer().boostSpeed();

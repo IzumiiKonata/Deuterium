@@ -25,7 +25,7 @@ public class BlockLilyPad extends BlockBush {
      * Add all collision boxes of this Block to the list that intersect with the given mask.
      */
     public void addCollisionBoxesToList(World worldIn, BlockPos pos, IBlockState state, AxisAlignedBB mask, List<AxisAlignedBB> list, Entity collidingEntity) {
-        if (collidingEntity == null || !(collidingEntity instanceof EntityBoat)) {
+        if (!(collidingEntity instanceof EntityBoat)) {
             super.addCollisionBoxesToList(worldIn, pos, state, mask, list, collidingEntity);
         }
     }

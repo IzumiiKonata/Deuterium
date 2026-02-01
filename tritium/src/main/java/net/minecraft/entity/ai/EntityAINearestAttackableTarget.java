@@ -77,12 +77,12 @@ public class EntityAINearestAttackableTarget<T extends EntityLivingBase> extends
         } else {
             double d0 = this.getTargetDistance();
             List<T> list = this.taskOwner.worldObj.getEntitiesWithinAABB(this.targetClass, this.taskOwner.getEntityBoundingBox().expand(d0, 4.0D, d0), Predicates.and(this.targetEntitySelector, EntitySelectors.NOT_SPECTATING));
-            Collections.sort(list, this.theNearestAttackableTargetSorter);
+            list.sort(this.theNearestAttackableTargetSorter);
 
             if (list.isEmpty()) {
                 return false;
             } else {
-                this.targetEntity = list.get(0);
+                this.targetEntity = list.getFirst();
                 return true;
             }
         }
@@ -106,7 +106,7 @@ public class EntityAINearestAttackableTarget<T extends EntityLivingBase> extends
         public int compare(Entity p_compare_1_, Entity p_compare_2_) {
             double d0 = this.theEntity.getDistanceSqToEntity(p_compare_1_);
             double d1 = this.theEntity.getDistanceSqToEntity(p_compare_2_);
-            return d0 < d1 ? -1 : (d0 > d1 ? 1 : 0);
+            return Double.compare(d0, d1);
         }
     }
 }

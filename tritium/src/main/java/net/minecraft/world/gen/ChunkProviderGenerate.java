@@ -446,7 +446,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
         boolean flag = false;
 
         if (this.settings.useMonuments && this.mapFeaturesEnabled && chunkIn.getInhabitedTime() < 3600L) {
-            flag |= this.oceanMonumentGenerator.generateStructure(this.worldObj, this.rand, new ChunkCoordIntPair(x, z));
+            flag = this.oceanMonumentGenerator.generateStructure(this.worldObj, this.rand, new ChunkCoordIntPair(x, z));
         }
 
         return flag;
@@ -505,7 +505,7 @@ public class ChunkProviderGenerate implements IChunkProvider {
     }
 
     public BlockPos getStrongholdGen(World worldIn, String structureName, BlockPos position) {
-        return "Stronghold".equals(structureName) && this.strongholdGenerator != null ? this.strongholdGenerator.getClosestStrongholdPos(worldIn, position) : null;
+        return "Stronghold".equals(structureName) ? this.strongholdGenerator.getClosestStrongholdPos(worldIn, position) : null;
     }
 
     public int getLoadedChunkCount() {

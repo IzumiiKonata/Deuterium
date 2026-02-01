@@ -94,10 +94,6 @@ logger.fine("factories order: " + Arrays.toString(getFactoriesPriority()));
             break;
         }
 
-        if (device == null && lastEx != null) {
-            throw new JavaLayerException("Cannot create AudioDevice", lastEx);
-        }
-
         return device;
     }
 

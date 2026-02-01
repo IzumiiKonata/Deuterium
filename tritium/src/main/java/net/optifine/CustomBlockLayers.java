@@ -19,10 +19,9 @@ public class CustomBlockLayers {
     public static boolean active = false;
 
     public static EnumWorldBlockLayer getRenderLayer(final IBlockState blockState) {
-        if ((renderLayers == null) || blockState.getBlock().isOpaqueCube() || !(blockState instanceof BlockStateBase)) {
+        if ((renderLayers == null) || blockState.getBlock().isOpaqueCube() || !(blockState instanceof BlockStateBase blockstatebase)) {
             return null;
         } else {
-            final BlockStateBase blockstatebase = (BlockStateBase) blockState;
             final int i = blockstatebase.getBlockId();
             return i > 0 && i < renderLayers.length ? renderLayers[i] : null;
         }

@@ -254,7 +254,6 @@ public class GLUtessellatorImpl implements GLUtessellator {
 
             }
             case GLU_TESS_BOUNDARY_ONLY: {
-                assert (boundaryOnly || !boundaryOnly);
                 value[value_offset] = boundaryOnly ? 1 : 0;
                 break;
             }
@@ -337,7 +336,6 @@ public class GLUtessellatorImpl implements GLUtessellator {
             // return;
             default: {
                 callErrorOrErrorData(GLU_INVALID_ENUM);
-                return;
             }
         }
     }
@@ -356,7 +354,7 @@ public class GLUtessellatorImpl implements GLUtessellator {
             /*
              * Create a new vertex and edge which immediately follow e in the ordering around the left face.
              */
-            if (Mesh.__gl_meshSplitEdge(e) == null) return false;
+            Mesh.__gl_meshSplitEdge(e);
             e = e.Lnext;
         }
 
@@ -397,7 +395,6 @@ public class GLUtessellatorImpl implements GLUtessellator {
         CachedVertex[] v = cache;
 
         mesh = Mesh.__gl_meshNewMesh();
-        if (mesh == null) return false;
 
         for (int i = 0; i < cacheCount; i++) {
             CachedVertex vertex = v[i];

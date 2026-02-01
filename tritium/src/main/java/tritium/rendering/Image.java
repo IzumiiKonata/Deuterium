@@ -416,16 +416,7 @@ public class Image {
     }
 
     public static void drawModalRectWithCustomSizedTexture(double x, double y, double u, double v, double width, double height, double textureWidth, double textureHeight) {
-        double f = 1.0F / textureWidth;
-        double f1 = 1.0F / textureHeight;
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos(x, y + height, 0.0D).tex(u * f, (v + height) * f1).endVertex();
-        worldrenderer.pos(x + width, y + height, 0.0D).tex((u + width) * f, (v + height) * f1).endVertex();
-        worldrenderer.pos(x + width, y, 0.0D).tex((u + width) * f, v * f1).endVertex();
-        worldrenderer.pos(x, y, 0.0D).tex(u * f, v * f1).endVertex();
-        tessellator.draw();
+        Gui.drawScaledCustomSizeModalRect(x, y, u, v, width, height, width, height, textureWidth, textureHeight);
     }
 
     public enum Type {

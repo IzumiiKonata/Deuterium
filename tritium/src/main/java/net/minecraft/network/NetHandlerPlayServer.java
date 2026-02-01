@@ -126,7 +126,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
         final ChatComponentText chatcomponenttext = new ChatComponentText(reason);
         this.netManager.sendPacket(new S40PacketDisconnect(chatcomponenttext), p_operationComplete_1_ -> NetHandlerPlayServer.this.netManager.closeChannel(chatcomponenttext));
         this.netManager.disableAutoRead();
-        Futures.getUnchecked(this.serverController.addScheduledTask(() -> NetHandlerPlayServer.this.netManager.checkDisconnected()));
+        Futures.getUnchecked(this.serverController.addScheduledTask(NetHandlerPlayServer.this.netManager::checkDisconnected));
     }
 
     /**
@@ -568,8 +568,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
     }
 
     public void sendPacket(final Packet packetIn) {
-        if (packetIn instanceof S02PacketChat) {
-            S02PacketChat s02packetchat = (S02PacketChat) packetIn;
+        if (packetIn instanceof S02PacketChat s02packetchat) {
             EntityPlayer.EnumChatVisibility entityplayer$enumchatvisibility = this.playerEntity.getChatVisibility();
 
             if (entityplayer$enumchatvisibility == EntityPlayer.EnumChatVisibility.HIDDEN) {
@@ -913,10 +912,9 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
         if (worldserver.isBlockLoaded(blockpos)) {
             TileEntity tileentity = worldserver.getTileEntity(blockpos);
 
-            if (!(tileentity instanceof TileEntitySign)) {
+            if (!(tileentity instanceof TileEntitySign tileentitysign)) {
                 return;
             }
-            TileEntitySign tileentitysign = (TileEntitySign) tileentity;
 
             if (!tileentitysign.getIsEditable() || tileentitysign.getPlayer() != this.playerEntity) {
                 this.serverController.logWarning("Player " + this.playerEntity.getName() + " just tried to change non-editable sign");
@@ -1102,12 +1100,11 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
                 this.playerEntity.addChatMessage(new ChatComponentTranslation("advMode.notAllowed"));
             }
         } else if ("MC|Beacon".equals(packetIn.getChannelName())) {
-            if (this.playerEntity.openContainer instanceof ContainerBeacon) {
+            if (this.playerEntity.openContainer instanceof ContainerBeacon containerbeacon) {
                 try {
                     PacketBuffer packetbuffer1 = packetIn.getBufferData();
                     int k = packetbuffer1.readInt();
                     int l = packetbuffer1.readInt();
-                    ContainerBeacon containerbeacon = (ContainerBeacon) this.playerEntity.openContainer;
                     Slot slot = containerbeacon.getSlot(0);
 
                     if (slot.getHasStack()) {
@@ -1121,8 +1118,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
                     logger.error("Couldn't set beacon", exception);
                 }
             }
-        } else if ("MC|ItemName".equals(packetIn.getChannelName()) && this.playerEntity.openContainer instanceof ContainerRepair) {
-            ContainerRepair containerrepair = (ContainerRepair) this.playerEntity.openContainer;
+        } else if ("MC|ItemName".equals(packetIn.getChannelName()) && this.playerEntity.openContainer instanceof ContainerRepair containerrepair) {
 
             if (packetIn.getBufferData() != null && packetIn.getBufferData().readableBytes() >= 1) {
                 String s = ChatAllowedCharacters.filterAllowedCharacters(packetIn.getBufferData().readStringFromBuffer(32767));

@@ -64,7 +64,6 @@ public abstract class BlockLog extends BlockRotatedPillar {
                 case X -> X;
                 case Y -> Y;
                 case Z -> Z;
-                default -> NONE;
             };
         }
 

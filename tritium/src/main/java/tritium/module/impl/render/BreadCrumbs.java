@@ -86,7 +86,7 @@ public class BreadCrumbs extends Module {
 
         if (autoRemove.getValue()) {
             while (this.positions.size() > removeIndex.getValue()) {
-                this.positions.remove(0);
+                this.positions.removeFirst();
             }
         }
 

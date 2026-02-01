@@ -270,7 +270,7 @@ public class HttpClient {
         HttpURLConnection set(HttpURLConnection connection);
     }
 
-    public class HttpResult {
+    public static class HttpResult {
         public final int code;
         public final boolean status;
         private final byte[] data;

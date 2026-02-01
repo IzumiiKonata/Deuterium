@@ -282,34 +282,7 @@ public class MoveWidgetsScreen extends BaseScreen {
 
     private void doCollisions(Widget widget, double mouseX, double mouseY) {
 
-        if (false) {
-            if (widget.getWidth() < 0 && widget.getX() + widget.getWidth() < 0)
-                widget.setX(-widget.getWidth());
-            else if (widget.getX() < 0) {
-                widget.setX(0);
-            }
-
-            if (widget.getWidth() < 0 && widget.getX() > RenderSystem.getWidth())
-                widget.setX(RenderSystem.getWidth());
-            else if (widget.getX() + widget.getWidth() > RenderSystem.getWidth()) {
-                widget.setX(RenderSystem.getWidth() - widget.getWidth());
-            }
-
-            double limit = 0;
-
-            if (widget.getHeight() < limit && widget.getY() + widget.getHeight() < limit)
-                widget.setY(-widget.getHeight());
-            else if (widget.getY() < limit)
-                widget.setY(limit);
-
-            if (widget.getHeight() < 0 && widget.getY() > RenderSystem.getHeight())
-                widget.setY(RenderSystem.getHeight());
-            else if (widget.getY() + widget.getHeight() > RenderSystem.getHeight()) {
-                widget.setY(RenderSystem.getHeight() - widget.getHeight());
-            }
-        }
-
-//        this.doAdsorption(widget);
+        //        this.doAdsorption(widget);
 
         if ((RenderSystem.isHovered(mouseX, mouseY, widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight()) || positioningWidget == widget) && Mouse.isButtonDown(0) && (positioningWidget == null || positioningWidget == widget) && draggingWidget == null) {
             positioningWidget = widget;

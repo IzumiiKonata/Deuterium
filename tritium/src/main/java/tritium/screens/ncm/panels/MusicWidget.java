@@ -37,12 +37,10 @@ public class MusicWidget extends RoundedRectWidget {
         rrHoverIndicator
                 .setAlpha(0f)
                 .setClickable(false);
-        rrHoverIndicator.setBeforeRenderCallback(() -> {
-            rrHoverIndicator
-                    .setMargin(0)
-                    .setRadius(this.getRadius())
-                    .setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER));
-        });
+        rrHoverIndicator.setBeforeRenderCallback(() -> rrHoverIndicator
+                .setMargin(0)
+                .setRadius(this.getRadius())
+                .setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER)));
 
         RoundedRectWidget rrPlayingIndicator = new RoundedRectWidget();
         this.addChild(rrPlayingIndicator);
@@ -53,11 +51,9 @@ public class MusicWidget extends RoundedRectWidget {
         if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying.getId() == music.getId()) {
             rrPlayingIndicator.setAlpha(1f);
         }
-        rrPlayingIndicator.setBeforeRenderCallback(() -> {
-            rrPlayingIndicator
-                    .setMargin(0)
-                    .setRadius(this.getRadius());
-        });
+        rrPlayingIndicator.setBeforeRenderCallback(() -> rrPlayingIndicator
+                .setMargin(0)
+                .setRadius(this.getRadius()));
 
         this.setBeforeRenderCallback(() -> {
 

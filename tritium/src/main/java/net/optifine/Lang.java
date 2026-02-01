@@ -59,10 +59,10 @@ public class Lang {
         final Iterator<String> iterator = IOUtils.readLines(is, Charsets.UTF_8).iterator();
         is.close();
         while (iterator.hasNext()) {
-            final String s = (String) iterator.next();
+            final String s = iterator.next();
             if (!s.isEmpty() && s.charAt(0) != 35) {
                 final String[] astring = Iterables.toArray(splitter.split(s), String.class);
-                if (astring != null && astring.length == 2) {
+                if (astring.length == 2) {
                     final String s1 = astring[0];
                     final String s2 = pattern.matcher(astring[1]).replaceAll("%$1s");
                     localeProperties.put(s1, s2);

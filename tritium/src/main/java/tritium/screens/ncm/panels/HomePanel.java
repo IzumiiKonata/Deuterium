@@ -81,21 +81,17 @@ public class HomePanel extends NCMPanel {
 
         int margin = 12;
 
-        lblWelcome.setBeforeRenderCallback(() -> {
-            lblWelcome
-                    .setPosition(margin, margin)
-                    .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT));
-        });
+        lblWelcome.setBeforeRenderCallback(() -> lblWelcome
+                .setPosition(margin, margin)
+                .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT)));
 
         LabelWidget lblRecommendations = new LabelWidget("推荐歌单", FontManager.pf14bold);
 
         this.addChild(lblRecommendations);
 
-        lblRecommendations.setBeforeRenderCallback(() -> {
-            lblRecommendations
-                    .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
-                    .setPosition(margin, lblWelcome.getRelativeY() + lblWelcome.getHeight() + 2 + margin * .5 - lblRecommendations.getHeight() * .5);
-        });
+        lblRecommendations.setBeforeRenderCallback(() -> lblRecommendations
+                .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
+                .setPosition(margin, lblWelcome.getRelativeY() + lblWelcome.getHeight() + 2 + margin * .5 - lblRecommendations.getHeight() * .5));
 
         scrollPanel = new ScrollPanel();
 
@@ -106,16 +102,14 @@ public class HomePanel extends NCMPanel {
 
         scrollPanel
                 .setAlignment(ScrollPanel.Alignment.VERTICAL_WITH_HORIZONTAL_FILL)
-                .setBeforeRenderCallback(() -> {
-                    scrollPanel
-                            .setMargin(margin)
-                            .setBounds(
-                                    scrollPanel.getRelativeX(),
-                                    scrollPanel.getRelativeY() + lblWelcome.getHeight() + margin,
-                                    scrollPanel.getWidth(),
-                                    scrollPanel.getHeight() - lblWelcome.getHeight() - margin
-                            );
-                });
+                .setBeforeRenderCallback(() -> scrollPanel
+                        .setMargin(margin)
+                        .setBounds(
+                                scrollPanel.getRelativeX(),
+                                scrollPanel.getRelativeY() + lblWelcome.getHeight() + margin,
+                                scrollPanel.getWidth(),
+                                scrollPanel.getHeight() - lblWelcome.getHeight() - margin
+                        ));
 
         playLists.forEach(pl -> scrollPanel.addChild(new PlaylistWidget(pl).setShouldOverrideMouseCursor(true)));
 
@@ -169,11 +163,9 @@ public class HomePanel extends NCMPanel {
 
             lblName
                     .setClickable(false)
-                    .setBeforeRenderCallback(() -> {
-                        lblName
-                                .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
-                                .setPosition(cover.getRelativeX(), cover.getRelativeY() + cover.getHeight() + 4);
-                    });
+                    .setBeforeRenderCallback(() -> lblName
+                            .setColor(NCMScreen.getColor(NCMScreen.ColorType.PRIMARY_TEXT))
+                            .setPosition(cover.getRelativeX(), cover.getRelativeY() + cover.getHeight() + 4));
 
             this.setOnClickCallback((relativeX, relativeY, mouseButton) -> {
 

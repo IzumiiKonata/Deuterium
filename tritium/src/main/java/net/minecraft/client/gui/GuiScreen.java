@@ -260,10 +260,10 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
                 ItemStack itemstack = null;
 
                 try {
-                    NBTBase nbtbase = JsonToNBT.getTagFromJson(hoverevent.getValue().getUnformattedText());
+                    NBTTagCompound nbtbase = JsonToNBT.getTagFromJson(hoverevent.getValue().getUnformattedText());
 
                     if (nbtbase instanceof NBTTagCompound) {
-                        itemstack = ItemStack.loadItemStackFromNBT((NBTTagCompound) nbtbase);
+                        itemstack = ItemStack.loadItemStackFromNBT(nbtbase);
                     }
                 } catch (NBTException var11) {
                 }
@@ -278,8 +278,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
                     try {
                         NBTBase nbtbase1 = JsonToNBT.getTagFromJson(hoverevent.getValue().getUnformattedText());
 
-                        if (nbtbase1 instanceof NBTTagCompound) {
-                            NBTTagCompound nbttagcompound = (NBTTagCompound) nbtbase1;
+                        if (nbtbase1 instanceof NBTTagCompound nbttagcompound) {
                             List<String> list1 = Lists.newArrayList();
                             list1.add(nbttagcompound.getString("name"));
 
@@ -494,8 +493,8 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     }
 
     private void handleClickMove() {
-        int i = (int) (Mouse.getX() * this.width / this.mc.displayWidth);
-        int j = (int) (this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1);
+        int i = Mouse.getX() * this.width / this.mc.displayWidth;
+        int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
 
         if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
             long l = Minecraft.getSystemTime() - this.lastMouseEvent;

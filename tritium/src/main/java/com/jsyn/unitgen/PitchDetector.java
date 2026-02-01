@@ -82,14 +82,9 @@ public class PitchDetector extends UnitGenerator {
                 double currentFrequency = getFrameRate() / (lastPeriod + 0);
                 double confidence = signalCorrelator.getConfidence();
                 if (confidence > 0.1) {
-                    if (true) {
-                        double coefficient = confidence * 0.2;
-                        // Take weighted average with previous frequency.
-                        lastFrequency = ((lastFrequency * (1.0 - coefficient)) + (currentFrequency * coefficient));
-                    } else {
-                        lastFrequency = ((lastFrequency * lastConfidence) + (currentFrequency * confidence))
-                                / (lastConfidence + confidence);
-                    }
+                    double coefficient = confidence * 0.2;
+                    // Take weighted average with previous frequency.
+                    lastFrequency = ((lastFrequency * (1.0 - coefficient)) + (currentFrequency * coefficient));
                 }
                 lastConfidence = confidence;
                 updateds[i] = 1.0;

@@ -57,8 +57,7 @@ public class RandomEntities {
     private static void updateEntityVillager(UUID uuid, EntityVillager ev) {
         Entity entity = IntegratedServerUtils.getEntity(uuid);
 
-        if (entity instanceof EntityVillager) {
-            EntityVillager entityvillager = (EntityVillager) entity;
+        if (entity instanceof EntityVillager entityvillager) {
             int i = entityvillager.getProfession();
             ev.setProfession(i);
             ev.careerId = entityvillager.careerId;
@@ -70,8 +69,8 @@ public class RandomEntities {
     public static void worldChanged(final World oldWorld, final World newWorld) {
         if (newWorld != null) {
             final List<Entity> list = newWorld.getLoadedEntityList();
-            for (Object o : list) {
-                final Entity entity = (Entity) o;
+            for (Entity o : list) {
+                final Entity entity = o;
                 entityLoaded(entity, newWorld);
             }
         }

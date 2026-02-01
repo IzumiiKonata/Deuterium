@@ -20,18 +20,26 @@ public class ModelAdapterBat extends ModelAdapter {
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
         if (model instanceof ModelBat) {
-            if (modelPart.equals("head"))
-                return ((ModelBat) model).batHead;
-            if (modelPart.equals("body"))
-                return ((ModelBat) model).batBody;
-            if (modelPart.equals("right_wing"))
-                return ((ModelBat) model).batRightWing;
-            if (modelPart.equals("left_wing"))
-                return ((ModelBat) model).batLeftWing;
-            if (modelPart.equals("outer_right_wing"))
-                return ((ModelBat) model).batOuterRightWing;
-            if (modelPart.equals("outer_left_wing"))
-                return ((ModelBat) model).batOuterLeftWing;
+            switch (modelPart) {
+                case "head" -> {
+                    return ((ModelBat) model).batHead;
+                }
+                case "body" -> {
+                    return ((ModelBat) model).batBody;
+                }
+                case "right_wing" -> {
+                    return ((ModelBat) model).batRightWing;
+                }
+                case "left_wing" -> {
+                    return ((ModelBat) model).batLeftWing;
+                }
+                case "outer_right_wing" -> {
+                    return ((ModelBat) model).batOuterRightWing;
+                }
+                case "outer_left_wing" -> {
+                    return ((ModelBat) model).batOuterLeftWing;
+                }
+            }
         }
         return null;
     }

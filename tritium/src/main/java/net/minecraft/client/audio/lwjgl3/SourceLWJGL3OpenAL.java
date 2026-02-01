@@ -72,7 +72,7 @@ public class SourceLWJGL3OpenAL extends Source {
         } else {
             synchronized (this.soundSequenceLock) {
                 if (this.soundSequenceQueue != null && !this.soundSequenceQueue.isEmpty()) {
-                    this.filenameURL = this.soundSequenceQueue.remove(0);
+                    this.filenameURL = this.soundSequenceQueue.removeFirst();
                     if (this.codec != null) {
                         this.codec.cleanup();
                     }

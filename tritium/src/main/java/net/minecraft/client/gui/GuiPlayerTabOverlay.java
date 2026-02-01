@@ -235,7 +235,6 @@ public class GuiPlayerTabOverlay extends Gui {
         if (networkPlayerInfoIn.getResponseTime() < 0) {
             j = 5;
         } else if (networkPlayerInfoIn.getResponseTime() < 150) {
-            j = 0;
         } else if (networkPlayerInfoIn.getResponseTime() < 300) {
             j = 1;
         } else if (networkPlayerInfoIn.getResponseTime() < 600) {
@@ -247,7 +246,7 @@ public class GuiPlayerTabOverlay extends Gui {
         }
 
         this.zLevel += 100.0F;
-        this.drawTexturedModalRect(p_175245_2_ + p_175245_1_ - 11, p_175245_3_, i * 10, 176 + j * 8, 10, 8);
+        this.drawTexturedModalRect(p_175245_2_ + p_175245_1_ - 11, p_175245_3_, 0, 176 + j * 8, 10, 8);
         this.zLevel -= 100.0F;
     }
 

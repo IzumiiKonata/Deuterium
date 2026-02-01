@@ -92,24 +92,13 @@ public class CueSheet extends Metadata {
             throw new Violation("cue sheet must have at least one track (the lead-out)");
         }
 
-        if (checkCdDaSubset && tracks[numTracks - 1].number != 170) {
+        if (checkCdDaSubset) {
             throw new Violation("CD-DA cue sheet must have a lead-out track number 170 (0xAA)");
         }
 
         for (int i = 0; i < numTracks; i++) {
             if (tracks[i].number == 0) {
                 throw new Violation("cue sheet may not have a track number 0");
-            }
-
-            if (checkCdDaSubset) {
-                if (!((tracks[i].number >= 1 && tracks[i].number <= 99)
-                        || tracks[i].number == 170)) {
-                    throw new Violation("CD-DA cue sheet track number must be 1-99 or 170");
-                }
-            }
-
-            if (checkCdDaSubset && tracks[i].offset % 588 != 0) {
-                throw new Violation("CD-DA cue sheet track offset must be evenly divisible by 588 samples");
             }
 
             if (i < numTracks - 1) {
@@ -123,9 +112,6 @@ public class CueSheet extends Metadata {
             }
 
             for (int j = 0; j < tracks[i].numIndices; j++) {
-                if (checkCdDaSubset && tracks[i].indices[j].offset % 588 != 0) {
-                    throw new Violation("CD-DA cue sheet track index offset must be evenly divisible by 588 samples");
-                }
 
                 if (j > 0) {
                     if (tracks[i].indices[j].number != tracks[i].indices[j - 1].number + 1) {

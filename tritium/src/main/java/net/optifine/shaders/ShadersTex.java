@@ -245,7 +245,7 @@ public class ShadersTex {
         }
 
         GlStateManager.bindTexture(multitexid.spec);
-        aint = genMipmapsSimple(aint.length - 1, width, aint);
+        genMipmapsSimple(aint.length - 1, width, aint);
         return aint;
     }
 

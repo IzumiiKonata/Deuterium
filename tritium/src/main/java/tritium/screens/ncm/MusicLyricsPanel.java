@@ -715,9 +715,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         float totalTimeMillis = player == null ? 0.01f : player.getTotalTimeMillis();
         float perc = player == null ? 0 : currentTimeMillis / totalTimeMillis;
 
-        StencilClipManager.beginClip(() -> {
-            Rect.draw(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth * perc, progressBarHeight, -1);
-        });
+        StencilClipManager.beginClip(() -> Rect.draw(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth * perc, progressBarHeight, -1));
 
         roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha));
         StencilClipManager.endClip();
@@ -755,9 +753,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidthD("I") - 2;
         roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha * .5f));
-        StencilClipManager.beginClip(() -> {
-            Rect.draw(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth * (player == null ? 0 : player.getVolume()), volumeBarHeight, -1);
-        });
+        StencilClipManager.beginClip(() -> Rect.draw(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth * (player == null ? 0 : player.getVolume()), volumeBarHeight, -1));
         roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha));
         StencilClipManager.endClip();
 

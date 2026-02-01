@@ -144,8 +144,7 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob {
     public void updateRidden() {
         super.updateRidden();
 
-        if (this.ridingEntity instanceof EntityCreature) {
-            EntityCreature entitycreature = (EntityCreature) this.ridingEntity;
+        if (this.ridingEntity instanceof EntityCreature entitycreature) {
             this.renderYawOffset = entitycreature.renderYawOffset;
         }
     }
@@ -235,7 +234,7 @@ public class EntitySkeleton extends EntityMob implements IRangedAttackMob {
         if (this.getEquipmentInSlot(4) == null) {
             Calendar calendar = this.worldObj.getCurrentDate();
 
-            if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F) {
+            if (calendar.get(Calendar.MONTH) + 1 == 10 && calendar.get(Calendar.DATE) == 31 && this.rand.nextFloat() < 0.25F) {
                 this.setCurrentItemOrArmor(4, new ItemStack(this.rand.nextFloat() < 0.1F ? Blocks.lit_pumpkin : Blocks.pumpkin));
                 this.equipmentDropChances[4] = 0.0F;
             }

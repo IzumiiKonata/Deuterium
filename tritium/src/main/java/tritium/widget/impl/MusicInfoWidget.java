@@ -223,9 +223,7 @@ public class MusicInfoWidget extends Widget {
             this.roundedRect(imgX + imgSize + imgSpacing, progressBarOffsetY, progressBarWidth, 5, 1, 1f, 1f, 1f, alpha * 0.3f);
 
             if (CloudMusic.player != null) {
-                StencilClipManager.beginClip(() -> {
-                    Rect.draw(imgX + imgSize + imgSpacing, progressBarOffsetY, (progressBarWidth) * ((double) CloudMusic.player.getCurrentTimeMillis() / CloudMusic.player.getTotalTimeMillis()), 6, -1);
-                });
+                StencilClipManager.beginClip(() -> Rect.draw(imgX + imgSize + imgSpacing, progressBarOffsetY, (progressBarWidth) * ((double) CloudMusic.player.getCurrentTimeMillis() / CloudMusic.player.getTotalTimeMillis()), 6, -1));
                 this.roundedRect(imgX + imgSize + imgSpacing, progressBarOffsetY, progressBarWidth, 5, 1, 233, 233, 233, (int) (alpha * 255));
                 StencilClipManager.endClip();
 

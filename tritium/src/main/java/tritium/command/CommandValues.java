@@ -71,9 +71,7 @@ public class CommandValues {
             f.setAccessible(true);
             SerializedName serializedName = f.getAnnotation(SerializedName.class);
 
-            CommandManager.CommandRegisteredCallback cb = CommandManager.registerCommand(serializedName.value(), arg -> {
-                ConsoleScreen.log(set(f, arg));
-            }, f.getType(), getArgumentDescForValue(f));
+            CommandManager.CommandRegisteredCallback cb = CommandManager.registerCommand(serializedName.value(), arg -> ConsoleScreen.log(set(f, arg)), f.getType(), getArgumentDescForValue(f));
 
             // print the value if no arg specified
             CommandManager.CommandRegisteredCallback cbLog = CommandManager.registerCommand(serializedName.value(), () -> {

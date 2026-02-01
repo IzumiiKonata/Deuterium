@@ -119,8 +119,7 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
             float f1 = this.interpolateRotation(entity.prevRotationYawHead, entity.rotationYawHead, partialTicks);
             float f2 = f1 - f;
 
-            if (this.mainModel.isRiding && entity.ridingEntity instanceof EntityLivingBase) {
-                EntityLivingBase entitylivingbase = (EntityLivingBase) entity.ridingEntity;
+            if (this.mainModel.isRiding && entity.ridingEntity instanceof EntityLivingBase entitylivingbase) {
                 f = this.interpolateRotation(entitylivingbase.prevRenderYawOffset, entitylivingbase.renderYawOffset, partialTicks);
                 f2 = f1 - f;
                 float f3 = MathHelper.wrapAngleTo180_float(f2);
@@ -639,7 +638,6 @@ public abstract class RendererLivingEntity<T extends EntityLivingBase> extends R
                     case NEVER -> false;
                     case HIDE_FOR_OTHER_TEAMS -> team1 == null || team.isSameTeam(team1);
                     case HIDE_FOR_OWN_TEAM -> team1 == null || !team.isSameTeam(team1);
-                    default -> true;
                 };
             }
         }

@@ -403,12 +403,11 @@ public class EntityZombie extends EntityMob {
     public void onKillEntity(EntityLivingBase entityLivingIn) {
         super.onKillEntity(entityLivingIn);
 
-        if ((this.worldObj.getDifficulty() == EnumDifficulty.NORMAL || this.worldObj.getDifficulty() == EnumDifficulty.HARD) && entityLivingIn instanceof EntityVillager) {
+        if ((this.worldObj.getDifficulty() == EnumDifficulty.NORMAL || this.worldObj.getDifficulty() == EnumDifficulty.HARD) && entityLivingIn instanceof EntityVillager entityliving) {
             if (this.worldObj.getDifficulty() != EnumDifficulty.HARD && this.rand.nextBoolean()) {
                 return;
             }
 
-            EntityLiving entityliving = (EntityLiving) entityLivingIn;
             EntityZombie entityzombie = new EntityZombie(this.worldObj);
             entityzombie.copyLocationAndAnglesFrom(entityLivingIn);
             this.worldObj.removeEntity(entityLivingIn);
@@ -455,11 +454,10 @@ public class EntityZombie extends EntityMob {
         this.setCanPickUpLoot(this.rand.nextFloat() < 0.55F * f);
 
         if (livingdata == null) {
-            livingdata = new EntityZombie.GroupData(this.worldObj.rand.nextFloat() < 0.05F, this.worldObj.rand.nextFloat() < 0.05F);
+            livingdata = new GroupData(this.worldObj.rand.nextFloat() < 0.05F, this.worldObj.rand.nextFloat() < 0.05F);
         }
 
-        if (livingdata instanceof GroupData) {
-            GroupData entityzombie$groupdata = (GroupData) livingdata;
+        if (livingdata instanceof GroupData entityzombie$groupdata) {
 
             if (entityzombie$groupdata.isVillager) {
                 this.setVillager(true);
@@ -472,7 +470,7 @@ public class EntityZombie extends EntityMob {
                     List<EntityChicken> list = this.worldObj.getEntitiesWithinAABB(EntityChicken.class, this.getEntityBoundingBox().expand(5.0D, 3.0D, 5.0D), EntitySelectors.IS_STANDALONE);
 
                     if (!list.isEmpty()) {
-                        EntityChicken entitychicken = list.get(0);
+                        EntityChicken entitychicken = list.getFirst();
                         entitychicken.setChickenJockey(true);
                         this.mountEntity(entitychicken);
                     }
@@ -494,7 +492,7 @@ public class EntityZombie extends EntityMob {
         if (this.getEquipmentInSlot(4) == null) {
             Calendar calendar = this.worldObj.getCurrentDate();
 
-            if (calendar.get(2) + 1 == 10 && calendar.get(5) == 31 && this.rand.nextFloat() < 0.25F) {
+            if (calendar.get(Calendar.MONTH) + 1 == 10 && calendar.get(Calendar.DATE) == 31 && this.rand.nextFloat() < 0.25F) {
                 this.setCurrentItemOrArmor(4, new ItemStack(this.rand.nextFloat() < 0.1F ? Blocks.lit_pumpkin : Blocks.pumpkin));
                 this.equipmentDropChances[4] = 0.0F;
             }
@@ -679,7 +677,7 @@ public class EntityZombie extends EntityMob {
         }
     }
 
-    class GroupData implements IEntityLivingData {
+    static class GroupData implements IEntityLivingData {
         public boolean isChild;
         public boolean isVillager;
 

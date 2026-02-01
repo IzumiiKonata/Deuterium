@@ -206,8 +206,8 @@ public class SoundEngine extends Library {
                         if (this.errorCheck(AL10.alGetError() != 0, "alGenBuffers error when loading " + filenameURL.getFilename())) {
                             return false;
                         } else {
-                            AL10.alBufferData(intBuffer.get(0), soundFormat, (ByteBuffer) BufferUtils.createByteBuffer(buffer.audioData.length).put(buffer.audioData).flip(), (int) audioFormat.getSampleRate());
-                            if (this.errorCheck(AL10.alGetError() != 0, "alBufferData error when loading " + filenameURL.getFilename()) && this.errorCheck(intBuffer == null, "Sound buffer was not created for " + filenameURL.getFilename())) {
+                            AL10.alBufferData(intBuffer.get(0), soundFormat, BufferUtils.createByteBuffer(buffer.audioData.length).put(buffer.audioData).flip(), (int) audioFormat.getSampleRate());
+                            if (this.errorCheck(AL10.alGetError() != 0, "alBufferData error when loading " + filenameURL.getFilename()) && this.errorCheck(false, "Sound buffer was not created for " + filenameURL.getFilename())) {
                                 return false;
                             } else {
                                 this.ALBufferMap.put(filenameURL.getFilename(), intBuffer);
@@ -275,8 +275,8 @@ public class SoundEngine extends Library {
             if (this.errorCheck(AL10.alGetError() != 0, "alGenBuffers error when saving " + identifier)) {
                 return false;
             } else {
-                AL10.alBufferData(intBuffer.get(0), soundFormat, (ByteBuffer) BufferUtils.createByteBuffer(buffer.audioData.length).put(buffer.audioData).flip(), (int) audioFormat.getSampleRate());
-                if (this.errorCheck(AL10.alGetError() != 0, "alBufferData error when saving " + identifier) && this.errorCheck(intBuffer == null, "Sound buffer was not created for " + identifier)) {
+                AL10.alBufferData(intBuffer.get(0), soundFormat, BufferUtils.createByteBuffer(buffer.audioData.length).put(buffer.audioData).flip(), (int) audioFormat.getSampleRate());
+                if (this.errorCheck(AL10.alGetError() != 0, "alBufferData error when saving " + identifier) && this.errorCheck(false, "Sound buffer was not created for " + identifier)) {
                     return false;
                 } else {
                     this.ALBufferMap.put(identifier, intBuffer);

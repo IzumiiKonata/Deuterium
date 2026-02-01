@@ -26,9 +26,9 @@ public class RiceCodes {
         int uval;
         if (val < 0) {
             // equivalent to (unsigned)(((--val) < < 1) - 1); but without the overflow problem at MININT
-            uval = (int) (((-(++val)) << 1) + 1);
+            uval = ((-(++val)) << 1) + 1;
         } else {
-            uval = (int) (val << 1);
+            uval = val << 1;
         }
         int msbs = uval >> parameter;
         return 1 + parameter + msbs;

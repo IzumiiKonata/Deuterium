@@ -574,12 +574,10 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             this.renderManager.cacheActiveRenderInfo(this.theWorld, this.mc.fontRendererObj, this.mc.getRenderViewEntity(), this.mc.pointedEntity, this.mc.gameSettings, partialTicks);
             ++renderEntitiesCounter;
 
-            if (i == 0) {
-                this.countEntitiesTotal = 0;
-                this.countEntitiesRendered = 0;
-                this.countEntitiesHidden = 0;
-                this.countTileEntitiesRendered = 0;
-            }
+            this.countEntitiesTotal = 0;
+            this.countEntitiesRendered = 0;
+            this.countEntitiesHidden = 0;
+            this.countTileEntitiesRendered = 0;
 
             Entity entity = this.mc.getRenderViewEntity();
             double d3 = entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * (double) partialTicks;
@@ -592,9 +590,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             this.mc.entityRenderer.enableLightmap();
             List<Entity> list = this.theWorld.getLoadedEntityList();
 
-            if (i == 0) {
-                this.countEntitiesTotal = list.size();
-            }
+            this.countEntitiesTotal = list.size();
 
             if (Config.isFogOff() && this.mc.entityRenderer.fogStandard) {
                 GlStateManager.disableFog();
@@ -671,7 +667,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                                 continue label926;
                             }
 
-                            entity2 = (Entity) iterator.next();
+                            entity2 = iterator.next();
                             flag4 = this.renderManager.shouldRender(entity2, camera, d0, d1, d2) || entity2.riddenByEntity == this.mc.thePlayer;
 
                             if (!flag4) {
@@ -735,7 +731,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                                 continue label1408;
                             }
 
-                            tileentity1 = (TileEntity) iterator1.next();
+                            tileentity1 = iterator1.next();
 
                             break;
                         }
@@ -767,8 +763,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 BlockPos blockpos = destroyblockprogress.getPosition();
                 TileEntity tileentity2 = this.theWorld.getTileEntity(blockpos);
 
-                if (tileentity2 instanceof TileEntityChest) {
-                    TileEntityChest tileentitychest = (TileEntityChest) tileentity2;
+                if (tileentity2 instanceof TileEntityChest tileentitychest) {
 
                     if (tileentitychest.adjacentChestXNeg != null) {
                         blockpos = blockpos.offset(EnumFacing.WEST);
@@ -944,7 +939,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
             if (renderchunk != null && renderchunk.getPosition().getY() <= j) {
                 boolean flag2 = false;
                 RenderGlobal.ContainerLocalRenderInformation renderglobal$containerlocalrenderinformation4 = new RenderGlobal.ContainerLocalRenderInformation(renderchunk, null, 0);
-                Set set1 = SET_ALL_FACINGS;
+                Set set1 = new HashSet(SET_ALL_FACINGS);
 
                 if (set1.size() == 1) {
                     Vector3f vector3f = this.getViewVector(viewEntity, partialTicks);
@@ -2749,15 +2744,11 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     }
 
     public void pauseChunkUpdates() {
-        if (this.renderDispatcher != null) {
-            this.renderDispatcher.pauseChunkUpdates();
-        }
+        this.renderDispatcher.pauseChunkUpdates();
     }
 
     public void resumeChunkUpdates() {
-        if (this.renderDispatcher != null) {
-            this.renderDispatcher.resumeChunkUpdates();
-        }
+        this.renderDispatcher.resumeChunkUpdates();
     }
 
     public void updateTileEntities(Collection<TileEntity> tileEntitiesToRemove, Collection<TileEntity> tileEntitiesToAdd) {

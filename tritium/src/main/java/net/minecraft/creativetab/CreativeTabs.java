@@ -219,7 +219,7 @@ public abstract class CreativeTabs {
             if (enchantment != null && enchantment.type != null) {
                 boolean flag = false;
 
-                for (int i = 0; i < enchantmentType.length && !flag; ++i) {
+                for (int i = 0; i < enchantmentType.length; ++i) {
                     if (enchantment.type == enchantmentType[i]) {
                         flag = true;
                         break;

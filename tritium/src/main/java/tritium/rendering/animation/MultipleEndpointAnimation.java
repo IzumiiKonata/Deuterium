@@ -42,10 +42,10 @@ public class MultipleEndpointAnimation {
                 anim.setDuration(durations.get(curEndpoint + 1));
             } else if (curEndpoint == -1) {
                 nextPoint = 0;
-                anim.setDuration(durations.get(0));
+                anim.setDuration(durations.getFirst());
             } else {
-                nextPoint = endPoints.get(endPoints.size() - 1);
-                anim.setDuration(durations.get(durations.size() - 1));
+                nextPoint = endPoints.getLast();
+                anim.setDuration(durations.getLast());
             }
 
             anim.run(nextPoint);
@@ -58,8 +58,8 @@ public class MultipleEndpointAnimation {
                 double nextPoint;
 
                 if (curEndpoint == 0) {
-                    nextPoint = endPoints.get(0);
-                    anim.setDuration(durations.get(0));
+                    nextPoint = endPoints.getFirst();
+                    anim.setDuration(durations.getFirst());
                 } else {
                     nextPoint = endPoints.get(curEndpoint - 1);
                     anim.setDuration(durations.get(curEndpoint - 1));

@@ -132,7 +132,7 @@ public class ChannelLPC extends Channel {
         sb.append("\n\t\tWarmup: ");
         for (int i = 0; i < order; i++) sb.append(warmup[i]).append(" ");
         sb.append("\n\t\tParameter: ");
-        for (int i = 0; i < (1 << ((EntropyPartitionedRice) entropyCodingMethod).order); i++)
+        for (int i = 0; i < (1 << entropyCodingMethod.order); i++)
             sb.append(((EntropyPartitionedRice) entropyCodingMethod).contents.parameters[i]).append(" ");
         //sb.append("\n\t\tResidual: ");
         //for (int i = 0; i < header.blockSize; i++) sb.append(residual[i] + " ");

@@ -792,7 +792,7 @@ public abstract class Entity implements ICommandSender {
                     d13 = 0.0D;
                 }
 
-                if (block1 != null && this.onGround) {
+                if (this.onGround) {
                     block1.onEntityCollidedWithBlock(this.worldObj, blockpos, this);
                 }
 
@@ -1068,7 +1068,7 @@ public abstract class Entity implements ICommandSender {
             float f = BlockLiquid.getLiquidHeightPercent(iblockstate.getBlock().getMetaFromState(iblockstate)) - 0.11111111F;
             float f1 = (float) (blockpos.getY() + 1) - f;
             boolean flag = d0 < (double) f1;
-            return (flag || !(this instanceof EntityPlayer)) && flag;
+            return flag;
         } else {
             return false;
         }
@@ -1760,11 +1760,9 @@ public abstract class Entity implements ICommandSender {
                 this.ridingEntity.riddenByEntity = null;
             }
 
-            if (entityIn != null) {
-                for (Entity entity = entityIn.ridingEntity; entity != null; entity = entity.ridingEntity) {
-                    if (entity == this) {
-                        return;
-                    }
+            for (Entity entity = entityIn.ridingEntity; entity != null; entity = entity.ridingEntity) {
+                if (entity == this) {
+                    return;
                 }
             }
 
@@ -2219,7 +2217,7 @@ public abstract class Entity implements ICommandSender {
     public void addEntityCrashInfo(CrashReportCategory category) {
         category.addCrashSectionCallable("Entity Type", () -> EntityList.getEntityString(Entity.this) + " (" + Entity.this.getClass().getCanonicalName() + ")");
         category.addCrashSection("Entity ID", this.entityId);
-        category.addCrashSectionCallable("Entity Name", () -> Entity.this.getName());
+        category.addCrashSectionCallable("Entity Name", Entity.this::getName);
         category.addCrashSection("Entity's Exact location", String.format("%.2f, %.2f, %.2f", this.posX, this.posY, this.posZ));
         category.addCrashSection("Entity's Block location", CrashReportCategory.getCoordinateInfo(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
         category.addCrashSection("Entity's Momentum", String.format("%.2f, %.2f, %.2f", this.motionX, this.motionY, this.motionZ));

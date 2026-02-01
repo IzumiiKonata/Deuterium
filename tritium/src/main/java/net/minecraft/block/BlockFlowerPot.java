@@ -271,8 +271,7 @@ public class BlockFlowerPot extends BlockContainer {
         BlockFlowerPot.EnumFlowerType blockflowerpot$enumflowertype = BlockFlowerPot.EnumFlowerType.EMPTY;
         TileEntity tileentity = worldIn.getTileEntity(pos);
 
-        if (tileentity instanceof TileEntityFlowerPot) {
-            TileEntityFlowerPot tileentityflowerpot = (TileEntityFlowerPot) tileentity;
+        if (tileentity instanceof TileEntityFlowerPot tileentityflowerpot) {
             Item item = tileentityflowerpot.getFlowerPotItem();
 
             if (item instanceof ItemBlock) {
@@ -287,7 +286,6 @@ public class BlockFlowerPot extends BlockContainer {
                         case JUNGLE -> EnumFlowerType.JUNGLE_SAPLING;
                         case ACACIA -> EnumFlowerType.ACACIA_SAPLING;
                         case DARK_OAK -> EnumFlowerType.DARK_OAK_SAPLING;
-                        default -> EnumFlowerType.EMPTY;
                     };
                 } else if (block == Blocks.tallgrass) {
                     blockflowerpot$enumflowertype = switch (i) {

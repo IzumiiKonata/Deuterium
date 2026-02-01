@@ -616,7 +616,7 @@ public class StructureOceanMonumentPieces {
                             continue label319;
                         }
 
-                        structureoceanmonumentpieces$monumentroomfithelper = (MonumentRoomFitHelper) iterator.next();
+                        structureoceanmonumentpieces$monumentroomfithelper = iterator.next();
 
                     } while (!structureoceanmonumentpieces$monumentroomfithelper.func_175969_a(structureoceanmonumentpieces$roomdefinition));
 

@@ -19,9 +19,7 @@ public class RoundedButtonWidget extends RoundedRectWidget {
         this.addChild(lw);
         lw.setClickable(false);
 
-        lw.setBeforeRenderCallback(() -> {
-            lw.center();
-        });
+        lw.setBeforeRenderCallback(() -> lw.center());
 
         this.setShouldOverrideMouseCursor(true);
     }

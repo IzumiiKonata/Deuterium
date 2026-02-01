@@ -43,7 +43,6 @@ public class BlockPart {
                     new float[]{this.positionFrom.x, 16.0F - this.positionTo.y, this.positionTo.x, 16.0F - this.positionFrom.y};
             case WEST, EAST ->
                     new float[]{this.positionFrom.z, 16.0F - this.positionTo.y, this.positionTo.z, 16.0F - this.positionFrom.y};
-            default -> throw new NullPointerException();
         };
     }
 

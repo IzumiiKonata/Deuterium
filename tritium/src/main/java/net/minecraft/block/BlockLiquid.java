@@ -137,7 +137,7 @@ public abstract class BlockLiquid extends Block {
                         vec3 = vec3.addVector((blockpos.getX() - pos.getX()) * k, (blockpos.getY() - pos.getY()) * k, (blockpos.getZ() - pos.getZ()) * k);
                     }
                 }
-            } else if (j >= 0) {
+            } else {
                 int l = j - i;
                 vec3 = vec3.addVector((blockpos.getX() - pos.getX()) * l, (blockpos.getY() - pos.getY()) * l, (blockpos.getZ() - pos.getZ()) * l);
             }
@@ -175,7 +175,7 @@ public abstract class BlockLiquid extends Block {
         int l = j & 255;
         int i1 = i >> 16 & 255;
         int j1 = j >> 16 & 255;
-        return (k > l ? k : l) | (i1 > j1 ? i1 : j1) << 16;
+        return (Math.max(k, l)) | (Math.max(i1, j1)) << 16;
     }
 
     public EnumWorldBlockLayer getBlockLayer() {

@@ -225,12 +225,12 @@ public abstract class MobSpawnerBaseLogic {
             NBTTagList nbttaglist = nbt.getTagList("SpawnPotentials", 10);
 
             for (int i = 0; i < nbttaglist.tagCount(); ++i) {
-                this.minecartToSpawn.add(new MobSpawnerBaseLogic.WeightedRandomMinecart(nbttaglist.getCompoundTagAt(i)));
+                this.minecartToSpawn.add(new WeightedRandomMinecart(nbttaglist.getCompoundTagAt(i)));
             }
         }
 
         if (nbt.hasKey("SpawnData", 10)) {
-            this.setRandomEntity(new MobSpawnerBaseLogic.WeightedRandomMinecart(nbt.getCompoundTag("SpawnData"), this.mobID));
+            this.setRandomEntity(new WeightedRandomMinecart(nbt.getCompoundTag("SpawnData"), this.mobID));
         } else {
             this.setRandomEntity(null);
         }
@@ -293,7 +293,7 @@ public abstract class MobSpawnerBaseLogic {
             Entity entity = EntityList.createEntityByName(this.getEntityNameToSpawn(), worldIn);
 
             if (entity != null) {
-                entity = this.spawnNewEntity(entity, false);
+                this.spawnNewEntity(entity, false);
                 this.cachedEntity = entity;
             }
         }
@@ -335,7 +335,7 @@ public abstract class MobSpawnerBaseLogic {
         return this.prevMobRotation;
     }
 
-    public class WeightedRandomMinecart extends WeightedRandom.Item {
+    public static class WeightedRandomMinecart extends WeightedRandom.Item {
         private final NBTTagCompound nbtData;
         private final String entityType;
 

@@ -81,11 +81,7 @@ abstract class AudioFileParser implements ChunkHandler {
     }
 
     public SampleMarker findOrCreateCuePoint(int uniqueID) {
-        SampleMarker cuePoint = cueMap.get(uniqueID);
-        if (cuePoint == null) {
-            cuePoint = new SampleMarker();
-            cueMap.put(uniqueID, cuePoint);
-        }
+        SampleMarker cuePoint = cueMap.computeIfAbsent(uniqueID, k -> new SampleMarker());
         return cuePoint;
     }
 

@@ -32,10 +32,7 @@ import org.checkerframework.checker.nullness.qual.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
-import java.util.BitSet;
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class RenderChunk {
@@ -107,9 +104,7 @@ public class RenderChunk {
         this.boundingBox = new AxisAlignedBB(pos, pos.add(16, 16, 16));
         this.initModelviewMatrix();
 
-        for (int j = 0; j < this.positionOffsets16.length; ++j) {
-            this.positionOffsets16[j] = null;
-        }
+        Arrays.fill(this.positionOffsets16, null);
 
         this.renderChunksOffset16Updated = false;
         this.renderChunkNeighboursUpated = false;
@@ -420,8 +415,7 @@ public class RenderChunk {
     }
 
     private boolean isWorldPlayerUpdate() {
-        if (this.world instanceof WorldClient) {
-            WorldClient worldclient = (WorldClient) this.world;
+        if (this.world instanceof WorldClient worldclient) {
             return worldclient.isPlayerUpdate();
         } else {
             return false;
@@ -446,26 +440,24 @@ public class RenderChunk {
         }
 
         boolean fixBlockLayer = true;
-        if (fixBlockLayer) {
-            if (this.isMipmaps) {
-                if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT) {
-                    Block block = p_fixBlockLayer_1_.getBlock();
+        if (this.isMipmaps) {
+            if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT) {
+                Block block = p_fixBlockLayer_1_.getBlock();
 
-                    if (block instanceof BlockRedstoneWire) {
-                        return p_fixBlockLayer_2_;
-                    }
-
-                    if (block instanceof BlockCactus) {
-                        return p_fixBlockLayer_2_;
-                    }
-
-                    return EnumWorldBlockLayer.CUTOUT_MIPPED;
+                if (block instanceof BlockRedstoneWire) {
+                    return p_fixBlockLayer_2_;
                 }
-            } else if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT_MIPPED) {
-                return EnumWorldBlockLayer.CUTOUT;
-            }
 
+                if (block instanceof BlockCactus) {
+                    return p_fixBlockLayer_2_;
+                }
+
+                return EnumWorldBlockLayer.CUTOUT_MIPPED;
+            }
+        } else if (p_fixBlockLayer_2_ == EnumWorldBlockLayer.CUTOUT_MIPPED) {
+            return EnumWorldBlockLayer.CUTOUT;
         }
+
         return p_fixBlockLayer_2_;
     }
 

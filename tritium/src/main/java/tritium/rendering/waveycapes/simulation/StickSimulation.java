@@ -37,7 +37,7 @@ public class StickSimulation {
                 p.prevPosition.copy(tmp);
             }
         }
-        final Point basePoint = this.points.get(0);
+        final Point basePoint = this.points.getFirst();
         for (final Point p2 : this.points) {
             if (p2 != basePoint && p2.position.x - basePoint.position.x > 0.0f) {
                 p2.position.x = basePoint.position.x - 0.1f;

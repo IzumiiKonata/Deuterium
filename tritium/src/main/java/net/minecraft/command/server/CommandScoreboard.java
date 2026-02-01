@@ -426,7 +426,7 @@ public class CommandScoreboard extends CommandBase {
             Collection<String> collection = scoreplayerteam.getMembershipCollection();
             p_147186_1_.setCommandStat(CommandResultStats.Type.QUERY_RESULT, collection.size());
 
-            if (collection.size() <= 0) {
+            if (collection.size() == 0) {
                 throw new CommandException("commands.scoreboard.teams.list.player.empty", scoreplayerteam.getRegisteredName());
             }
 
@@ -438,7 +438,7 @@ public class CommandScoreboard extends CommandBase {
             Collection<ScorePlayerTeam> collection1 = scoreboard.getTeams();
             p_147186_1_.setCommandStat(CommandResultStats.Type.QUERY_RESULT, collection1.size());
 
-            if (collection1.size() <= 0) {
+            if (collection1.size() == 0) {
                 throw new CommandException("commands.scoreboard.teams.list.empty");
             }
 
@@ -582,7 +582,7 @@ public class CommandScoreboard extends CommandBase {
         Scoreboard scoreboard = this.getScoreboard();
         Collection<ScoreObjective> collection = scoreboard.getScoreObjectives();
 
-        if (collection.size() <= 0) {
+        if (collection.size() == 0) {
             throw new CommandException("commands.scoreboard.objectives.list.empty");
         } else {
             ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("commands.scoreboard.objectives.list.count", collection.size());
@@ -626,7 +626,7 @@ public class CommandScoreboard extends CommandBase {
             Map<ScoreObjective, Score> map = scoreboard.getObjectivesForEntity(s);
             p_147195_1_.setCommandStat(CommandResultStats.Type.QUERY_RESULT, map.size());
 
-            if (map.size() <= 0) {
+            if (map.size() == 0) {
                 throw new CommandException("commands.scoreboard.players.list.player.empty", s);
             }
 
@@ -641,7 +641,7 @@ public class CommandScoreboard extends CommandBase {
             Collection<String> collection = scoreboard.getObjectiveNames();
             p_147195_1_.setCommandStat(CommandResultStats.Type.QUERY_RESULT, collection.size());
 
-            if (collection.size() <= 0) {
+            if (collection.size() == 0) {
                 throw new CommandException("commands.scoreboard.players.list.empty");
             }
 
@@ -773,34 +773,32 @@ public class CommandScoreboard extends CommandBase {
             } else {
                 Score score1 = scoreboard.getValueFromObjective(s2, scoreobjective1);
 
-                if (s1.equals("+=")) {
-                    score.setScorePoints(score.getScorePoints() + score1.getScorePoints());
-                } else if (s1.equals("-=")) {
-                    score.setScorePoints(score.getScorePoints() - score1.getScorePoints());
-                } else if (s1.equals("*=")) {
-                    score.setScorePoints(score.getScorePoints() * score1.getScorePoints());
-                } else if (s1.equals("/=")) {
-                    if (score1.getScorePoints() != 0) {
-                        score.setScorePoints(score.getScorePoints() / score1.getScorePoints());
+                switch (s1) {
+                    case "+=" -> score.setScorePoints(score.getScorePoints() + score1.getScorePoints());
+                    case "-=" -> score.setScorePoints(score.getScorePoints() - score1.getScorePoints());
+                    case "*=" -> score.setScorePoints(score.getScorePoints() * score1.getScorePoints());
+                    case "/=" -> {
+                        if (score1.getScorePoints() != 0) {
+                            score.setScorePoints(score.getScorePoints() / score1.getScorePoints());
+                        }
                     }
-                } else if (s1.equals("%=")) {
-                    if (score1.getScorePoints() != 0) {
-                        score.setScorePoints(score.getScorePoints() % score1.getScorePoints());
+                    case "%=" -> {
+                        if (score1.getScorePoints() != 0) {
+                            score.setScorePoints(score.getScorePoints() % score1.getScorePoints());
+                        }
                     }
-                } else if (s1.equals("=")) {
-                    score.setScorePoints(score1.getScorePoints());
-                } else if (s1.equals("<")) {
-                    score.setScorePoints(Math.min(score.getScorePoints(), score1.getScorePoints()));
-                } else if (s1.equals(">")) {
-                    score.setScorePoints(Math.max(score.getScorePoints(), score1.getScorePoints()));
-                } else {
-                    if (!s1.equals("><")) {
-                        throw new CommandException("commands.scoreboard.players.operation.invalidOperation", s1);
-                    }
+                    case "=" -> score.setScorePoints(score1.getScorePoints());
+                    case "<" -> score.setScorePoints(Math.min(score.getScorePoints(), score1.getScorePoints()));
+                    case ">" -> score.setScorePoints(Math.max(score.getScorePoints(), score1.getScorePoints()));
+                    default -> {
+                        if (!s1.equals("><")) {
+                            throw new CommandException("commands.scoreboard.players.operation.invalidOperation", s1);
+                        }
 
-                    int i = score.getScorePoints();
-                    score.setScorePoints(score1.getScorePoints());
-                    score1.setScorePoints(i);
+                        int i = score.getScorePoints();
+                        score.setScorePoints(score1.getScorePoints());
+                        score1.setScorePoints(i);
+                    }
                 }
 
                 notifyOperators(p_175778_1_, this, "commands.scoreboard.players.operation.success");
@@ -899,9 +897,7 @@ public class CommandScoreboard extends CommandBase {
                         return getListOfStringsMatchingLastWord(args, this.getScoreboard().getTeamNames());
                     }
 
-                    if (args.length >= 4) {
-                        return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
-                    }
+                    return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());
                 } else {
                     if (args[1].equalsIgnoreCase("leave")) {
                         return getListOfStringsMatchingLastWord(args, MinecraftServer.getServer().getAllUsernames());

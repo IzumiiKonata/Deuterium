@@ -265,8 +265,7 @@ public final class PixelFormat implements PixelFormatLWJGL {
      * @return the new PixelFormat
      */
     public PixelFormat withCoverageSamples(final int colorSamples, final int coverageSamples) {
-        if (coverageSamples < 0 || colorSamples < 0
-                || (coverageSamples == 0 && 0 < colorSamples)
+        if (colorSamples < 0
                 || coverageSamples < colorSamples)
             throw new IllegalArgumentException(
                     "Invalid number of coverage samples specified: " + coverageSamples + " - " + colorSamples);

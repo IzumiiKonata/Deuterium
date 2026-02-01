@@ -60,7 +60,6 @@ public class OptionsImpl implements Options {
             case USE_ITEM -> Minecraft.getMinecraft().gameSettings.keyBindUseItem;
             case ATTACK -> Minecraft.getMinecraft().gameSettings.keyBindAttack;
             case PLAYER_LIST -> Minecraft.getMinecraft().gameSettings.keyBindPlayerList;
-            default -> throw new IllegalArgumentException("Invalid key");
         };
     }
 

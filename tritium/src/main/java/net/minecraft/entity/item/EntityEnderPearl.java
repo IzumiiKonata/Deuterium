@@ -45,8 +45,7 @@ public class EntityEnderPearl extends EntityThrowable {
         }
 
         if (!this.worldObj.isRemote) {
-            if (entitylivingbase instanceof EntityPlayerMP) {
-                EntityPlayerMP entityplayermp = (EntityPlayerMP) entitylivingbase;
+            if (entitylivingbase instanceof EntityPlayerMP entityplayermp) {
 
                 if (entityplayermp.playerNetServerHandler.getNetworkManager().isChannelOpen() && entityplayermp.worldObj == this.worldObj && !entityplayermp.isPlayerSleeping()) {
                     if (this.rand.nextFloat() < 0.05F && this.worldObj.getGameRules().getBoolean("doMobSpawning")) {
@@ -79,7 +78,7 @@ public class EntityEnderPearl extends EntityThrowable {
     public void onUpdate() {
         EntityLivingBase entitylivingbase = this.getThrower();
 
-        if (entitylivingbase != null && entitylivingbase instanceof EntityPlayer && !entitylivingbase.isEntityAlive()) {
+        if (entitylivingbase instanceof EntityPlayer && !entitylivingbase.isEntityAlive()) {
             this.setDead();
         } else {
             super.onUpdate();

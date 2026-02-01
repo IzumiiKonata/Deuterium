@@ -163,22 +163,6 @@ public final class NumbersUtils {
      *         and +-Infinity).
      */
     public static boolean isEquidistant(float value) {
-        if (false) {
-            // Also works, but slower.
-            final int bits = Float.floatToRawIntBits(value);
-            final int exponent = ((bits>>23)&0xFF)-127;
-            final int nbrOfPostCommaBits = 23 - exponent;
-            if ((nbrOfPostCommaBits <= 0) || (nbrOfPostCommaBits >= 25)) {
-                // No mantissa bit after comma, or all mantissa bits
-                // (including implicit 1) are at least one bit away from it.
-                //System.out.println("can't be");
-                return false;
-            }
-            final int mantissa = 0x00800000|(bits&0x007FFFFF);
-            final int postCommaMask = ~((-1)<<nbrOfPostCommaBits);
-            // True if in post-comma bits the only 1-bit is the one for 0.5.
-            return ((mantissa & postCommaMask) == (1<<(nbrOfPostCommaBits-1)));
-        }
         final float valueAbs = Math.abs(value);
         if (!(valueAbs < (float)(1<<23))) {
             // NaN or too large to have a chance
@@ -197,21 +181,6 @@ public final class NumbersUtils {
      *         and +-Infinity).
      */
     public static boolean isEquidistant(double value) {
-        if (false) {
-            // Also works, but slower.
-            final long bits = Double.doubleToRawLongBits(value);
-            final int exponent = (((int)(bits>>52))&0x7FF)-1023;
-            final int nbrOfPostCommaBits = 52 - exponent;
-            if ((nbrOfPostCommaBits <= 0) || (nbrOfPostCommaBits >= 54)) {
-                // No mantissa bit after comma, or all mantissa bits
-                // (including implicit 1) are at least one bit away from it.
-                return false;
-            }
-            final long mantissa = 0x0010000000000000L|(bits&0x000FFFFFFFFFFFFFL);
-            final long postCommaMask = ~((-1L)<<nbrOfPostCommaBits);
-            // True if in post-comma bits the only 1-bit is the one for 0.5.
-            return ((mantissa & postCommaMask) == (1L<<(nbrOfPostCommaBits-1)));
-        }
         final double valueAbs = Math.abs(value);
         if (!(valueAbs < (double)(1L<<52))) {
             return false;
@@ -356,11 +325,7 @@ public final class NumbersUtils {
     public static int toRange(int min, int max, int a) {
         if (a <= min) {
             return min;
-        } else if (a >= max) {
-            return max;
-        } else {
-            return a;
-        }
+        } else return Math.min(a, max);
     }
 
     /**
@@ -372,11 +337,7 @@ public final class NumbersUtils {
     public static long toRange(long min, long max, long a) {
         if (a <= min) {
             return min;
-        } else if (a >= max) {
-            return max;
-        } else {
-            return a;
-        }
+        } else return Math.min(a, max);
     }
 
     /**
@@ -388,11 +349,7 @@ public final class NumbersUtils {
     public static float toRange(float min, float max, float a) {
         if (a <= min) {
             return min;
-        } else if (a >= max) {
-            return max;
-        } else {
-            return a;
-        }
+        } else return Math.min(a, max);
     }
 
     /**
@@ -404,11 +361,7 @@ public final class NumbersUtils {
     public static double toRange(double min, double max, double a) {
         if (a <= min) {
             return min;
-        } else if (a >= max) {
-            return max;
-        } else {
-            return a;
-        }
+        } else return Math.min(a, max);
     }
 
     /*
@@ -856,7 +809,7 @@ public final class NumbersUtils {
      * @return 1 if the specified value is > 0, 0 if it is 0, -1 otherwise.
      */
     public static int signum(int a) {
-        return (a < 0) ? -1 : ((a == 0) ? 0 : 1);
+        return Integer.compare(a, 0);
     }
 
     /**
@@ -933,10 +886,6 @@ public final class NumbersUtils {
         if (a <= 0) {
             return false;
         }
-        if (false) {
-            // also works
-            return (a & -a) == a;
-        }
         return (a & (a-1)) == 0;
     }
 
@@ -947,10 +896,6 @@ public final class NumbersUtils {
     public static boolean isPowerOfTwo(long a) {
         if (a <= 0) {
             return false;
-        }
-        if (false) {
-            // also works
-            return (a & -a) == a;
         }
         return (a & (a-1)) == 0;
     }
@@ -1205,14 +1150,6 @@ public final class NumbersUtils {
      * @return An int hash of the specified value.
      */
     public static int intHash(long a) {
-        if (false) {
-            // also works
-            int hash = ((int)(a>>32)) ^ ((int)a);
-            if (a < 0) {
-                hash = -hash-1;
-            }
-            return hash;
-        }
         int hash = ((int)(a>>32)) + ((int)a);
         if (a < 0) {
             hash++;
@@ -1974,16 +1911,16 @@ public final class NumbersUtils {
             final int mask = radix-1;
             final int divShift = DIV_SHIFT_BY_RADIX[radix];
             while (negValue <= -radix) {
-                chars[--charPos] = CHAR_BY_DIGIT[(int)((-negValue) & mask)];
+                chars[--charPos] = CHAR_BY_DIGIT[(-negValue) & mask];
                 negValue = -((-negValue) >> divShift);
             }
         } else {
             while (negValue <= -radix) {
-                chars[--charPos] = CHAR_BY_DIGIT[(int)(-(negValue % radix))];
+                chars[--charPos] = CHAR_BY_DIGIT[-(negValue % radix)];
                 negValue /= radix;
             }
         }
-        chars[--charPos] = CHAR_BY_DIGIT[(int)(-negValue)];
+        chars[--charPos] = CHAR_BY_DIGIT[-negValue];
 
         while (charPos > signSize) {
             chars[--charPos] = '0';
@@ -2317,7 +2254,7 @@ public final class NumbersUtils {
                  * 12.3456 ===> 1.23456E1
                  * 123.0   ===> 1.23E2
                  */
-                final int dotIndex = rawAbs.indexOf((int)'.');
+                final int dotIndex = rawAbs.indexOf('.');
                 final int powerOfTen = dotIndex-1;
                 final StringBuilder sb = new StringBuilder();
                 if (neg) {
@@ -2409,9 +2346,9 @@ public final class NumbersUtils {
              * 1.0E5      ===> 100000.0
              */
             // "." close to start, so using indexOf.
-            final int dotIndex = raw.indexOf((int)'.');
+            final int dotIndex = raw.indexOf('.');
             // "E" close to end, so using lastIndexOf.
-            final int eIndex = raw.lastIndexOf((int)'E');
+            final int eIndex = raw.lastIndexOf('E');
             final int powerOfTen = Integer.parseInt(raw.substring(eIndex+1));
             final int nbrOfSignificantLoDigits = (eIndex - dotIndex - 1);
             final int nbrOfZerosToAddBeforeDot = (powerOfTen - nbrOfSignificantLoDigits);
@@ -2424,9 +2361,7 @@ public final class NumbersUtils {
             if (nbrOfZerosToAddBeforeDot >= 0) {
                 // Can copy all digits that were between '.' and 'E'.
                 sb.append(raw,dotIndex+1,eIndex);
-                for (int i=0;i<nbrOfZerosToAddBeforeDot;i++) {
-                    sb.append('0');
-                }
+                sb.append("0".repeat(nbrOfZerosToAddBeforeDot));
                 sb.append(".0");
             } else {
                 start = dotIndex+1;
@@ -2446,9 +2381,9 @@ public final class NumbersUtils {
              * 1.0E-4   ===> 0.0001
              */
             // "." close to start, so using indexOf.
-            final int dotIndex = raw.indexOf((int)'.');
+            final int dotIndex = raw.indexOf('.');
             // "E" close to end, so using lastIndexOf.
-            final int eIndex = raw.lastIndexOf((int)'E');
+            final int eIndex = raw.lastIndexOf('E');
             // Negative.
             final int powerOfTen = Integer.parseInt(raw.substring(eIndex+1));
             final int nbrOfZerosToAddAfterDot = (-powerOfTen-1);
@@ -2459,9 +2394,7 @@ public final class NumbersUtils {
             } else {
                 sb.append("0.");
             }
-            for (int i=0;i<nbrOfZerosToAddAfterDot;i++) {
-                sb.append('0');
-            }
+            sb.append("0".repeat(Math.max(0, nbrOfZerosToAddAfterDot)));
             // First raw digit.
             sb.append(raw,dotIndex-1,dotIndex);
             if ((eIndex == dotIndex + 2) && (raw.charAt(dotIndex+1) == '0')) {

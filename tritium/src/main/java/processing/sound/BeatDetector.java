@@ -96,7 +96,7 @@ public class BeatDetector extends Analyzer {
     return detector.getBeatBuffer();
   }
 
-  public class BeatDetectorUGen extends UnitGenerator {
+  public static class BeatDetectorUGen extends UnitGenerator {
     private static final int CHUNK_SIZE = 1024;
     public UnitInputPort input;
     public UnitVariablePort current;
@@ -187,7 +187,6 @@ public class BeatDetector extends Analyzer {
       boolean beatDetected = false;
 
       if (detectTimeMillis - sensitivityTimer < sensitivity.get()) {
-        beatDetected = false;
       }
       // if we've made it this far then we're allowed to set a new
       // value, so set it true if it deserves to be, restart the timer
@@ -197,7 +196,6 @@ public class BeatDetector extends Analyzer {
       }
       // OMG it wasn't true!
       else {
-        beatDetected = false;
       }
       energyBuffer[energyBufferCursor] = instant;
       deltaBuffer[energyBufferCursor] = diff;

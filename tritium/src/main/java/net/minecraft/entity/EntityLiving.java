@@ -28,6 +28,7 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 public abstract class EntityLiving extends EntityLivingBase {
@@ -102,9 +103,7 @@ public abstract class EntityLiving extends EntityLivingBase {
         this.navigator = this.getNewNavigator(worldIn);
         this.senses = new EntitySenses(this);
 
-        for (int i = 0; i < this.equipmentDropChances.length; ++i) {
-            this.equipmentDropChances[i] = 0.085F;
-        }
+        Arrays.fill(this.equipmentDropChances, 0.085F);
     }
 
     protected void applyEntityAttributes() {
@@ -430,27 +429,23 @@ public abstract class EntityLiving extends EntityLivingBase {
 
             if (itemstack1 != null) {
                 if (i == 0) {
-                    if (itemstack.getItem() instanceof ItemSword && !(itemstack1.getItem() instanceof ItemSword)) {
-                        flag = true;
-                    } else if (itemstack.getItem() instanceof ItemSword && itemstack1.getItem() instanceof ItemSword) {
-                        ItemSword itemsword = (ItemSword) itemstack.getItem();
-                        ItemSword itemsword1 = (ItemSword) itemstack1.getItem();
+                    switch (itemstack.getItem()) {
+                        case ItemSword itemSword when !(itemstack1.getItem() instanceof ItemSword) -> flag = true;
+                        case ItemSword itemsword when itemstack1.getItem() instanceof ItemSword -> {
+                            ItemSword itemsword1 = (ItemSword) itemstack1.getItem();
 
-                        if (itemsword.getDamageVsEntity() != itemsword1.getDamageVsEntity()) {
-                            flag = itemsword.getDamageVsEntity() > itemsword1.getDamageVsEntity();
-                        } else {
-                            flag = itemstack.getMetadata() > itemstack1.getMetadata() || itemstack.hasTagCompound() && !itemstack1.hasTagCompound();
+                            if (itemsword.getDamageVsEntity() != itemsword1.getDamageVsEntity()) {
+                                flag = itemsword.getDamageVsEntity() > itemsword1.getDamageVsEntity();
+                            } else {
+                                flag = itemstack.getMetadata() > itemstack1.getMetadata() || itemstack.hasTagCompound() && !itemstack1.hasTagCompound();
+                            }
                         }
-                    } else if (itemstack.getItem() instanceof ItemBow && itemstack1.getItem() instanceof ItemBow) {
-                        flag = itemstack.hasTagCompound() && !itemstack1.hasTagCompound();
-                    } else {
-                        flag = false;
+                        case ItemBow itemBow when itemstack1.getItem() instanceof ItemBow ->
+                                flag = itemstack.hasTagCompound() && !itemstack1.hasTagCompound();
+                        case null, default -> flag = false;
                     }
                 } else if (itemstack.getItem() instanceof ItemArmor && !(itemstack1.getItem() instanceof ItemArmor)) {
-                    flag = true;
-                } else if (itemstack.getItem() instanceof ItemArmor && itemstack1.getItem() instanceof ItemArmor) {
-                    ItemArmor itemarmor = (ItemArmor) itemstack.getItem();
-                    ItemArmor itemarmor1 = (ItemArmor) itemstack1.getItem();
+                } else if (itemstack.getItem() instanceof ItemArmor itemarmor && itemstack1.getItem() instanceof ItemArmor itemarmor1) {
 
                     if (itemarmor.damageReduceAmount != itemarmor1.damageReduceAmount) {
                         flag = itemarmor.damageReduceAmount > itemarmor1.damageReduceAmount;
@@ -547,8 +542,7 @@ public abstract class EntityLiving extends EntityLivingBase {
         double d1 = entityIn.posZ - this.posZ;
         double d2;
 
-        if (entityIn instanceof EntityLivingBase) {
-            EntityLivingBase entitylivingbase = (EntityLivingBase) entityIn;
+        if (entityIn instanceof EntityLivingBase entitylivingbase) {
             d2 = entitylivingbase.posY + (double) entitylivingbase.getEyeHeight() - (this.posY + (double) this.getEyeHeight());
         } else {
             d2 = (entityIn.getEntityBoundingBox().minY + entityIn.getEntityBoundingBox().maxY) / 2.0D - (this.posY + (double) this.getEyeHeight());
@@ -1057,7 +1051,7 @@ public abstract class EntityLiving extends EntityLivingBase {
             } else if (world.playerEntities.size() != 1) {
                 return false;
             } else {
-                Entity entity = world.playerEntities.get(0);
+                Entity entity = world.playerEntities.getFirst();
                 double d0 = Math.max(Math.abs(this.posX - entity.posX) - 16.0D, 0.0D);
                 double d1 = Math.max(Math.abs(this.posZ - entity.posZ) - 16.0D, 0.0D);
                 double d2 = d0 * d0 + d1 * d1;

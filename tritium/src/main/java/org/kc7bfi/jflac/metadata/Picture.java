@@ -110,7 +110,7 @@ public class Picture extends Metadata {
             descString = new String(data, StandardCharsets.UTF_8);
 
         } else {
-            descString = new String("");
+            descString = "";
         }
 
         picPixelWidth = is.readRawUInt(32);

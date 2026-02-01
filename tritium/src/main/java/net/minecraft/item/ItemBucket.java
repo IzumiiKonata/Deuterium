@@ -58,9 +58,6 @@ public class ItemBucket extends Item {
                         return this.fillBucket(itemStackIn, playerIn, Items.lava_bucket);
                     }
                 } else {
-                    if (this.isFull == Blocks.air) {
-                        return new ItemStack(Items.bucket);
-                    }
 
                     BlockPos blockpos1 = blockpos.offset(movingobjectposition.sideHit);
 

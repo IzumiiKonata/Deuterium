@@ -27,12 +27,12 @@ public class StrUtils {
                     list.add("");
                 }
 
-                String s1 = (String) list.get(0);
+                String s1 = (String) list.getFirst();
 
                 if (!startsWithMaskSingle(str, s1, wildCharSingle)) {
                     return false;
                 } else {
-                    String s2 = (String) list.get(list.size() - 1);
+                    String s2 = (String) list.getLast();
 
                     if (!endsWithMaskSingle(str, s2, wildCharSingle)) {
                         return false;
@@ -162,12 +162,12 @@ public class StrUtils {
                     list.add("");
                 }
 
-                String s1 = (String) list.get(0);
+                String s1 = (String) list.getFirst();
 
                 if (!str.startsWith(s1)) {
                     return false;
                 } else {
-                    String s2 = (String) list.get(list.size() - 1);
+                    String s2 = (String) list.getLast();
 
                     if (!str.endsWith(s2)) {
                         return false;
@@ -245,7 +245,7 @@ public class StrUtils {
     }
 
     public static boolean isEmpty(String string) {
-        return string == null || string.trim().length() <= 0;
+        return string == null || string.trim().length() == 0;
     }
 
     public static String stringInc(String str) {
@@ -445,7 +445,7 @@ public class StrUtils {
 
     public static String[] remove(String[] strs, int start, int end) {
         if (strs == null) {
-            return strs;
+            return null;
         } else if (end > 0 && start < strs.length) {
             if (start >= end) {
                 return strs;

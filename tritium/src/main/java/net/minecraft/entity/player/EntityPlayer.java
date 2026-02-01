@@ -625,12 +625,8 @@ public abstract class EntityPlayer extends EntityLivingBase {
             this.inventory.dropAllItems();
         }
 
-        if (cause != null) {
-            this.motionX = -MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * (float) Math.PI / 180.0F) * 0.1F;
-            this.motionZ = -MathHelper.sin((this.attackedAtYaw + this.rotationYaw) * (float) Math.PI / 180.0F) * 0.1F;
-        } else {
-            this.motionX = this.motionZ = 0.0D;
-        }
+        this.motionX = -MathHelper.cos((this.attackedAtYaw + this.rotationYaw) * (float) Math.PI / 180.0F) * 0.1F;
+        this.motionZ = -MathHelper.sin((this.attackedAtYaw + this.rotationYaw) * (float) Math.PI / 180.0F) * 0.1F;
     }
 
     /**
@@ -1690,7 +1686,7 @@ public abstract class EntityPlayer extends EntityLivingBase {
             return 0;
         } else {
             int i = this.experienceLevel * 7;
-            return i > 100 ? 100 : i;
+            return Math.min(i, 100);
         }
     }
 
@@ -1801,7 +1797,7 @@ public abstract class EntityPlayer extends EntityLivingBase {
             return false;
         } else {
             Team team = this.getTeam();
-            return team == null || player == null || player.getTeam() != team || !team.getSeeFriendlyInvisiblesEnabled();
+            return team == null || player.getTeam() != team || !team.getSeeFriendlyInvisiblesEnabled();
         }
     }
 
@@ -2055,17 +2051,17 @@ public abstract class EntityPlayer extends EntityLivingBase {
         if (simulation.points.isEmpty()) {
             return;
         }
-        simulation.points.get(0).prevPosition.copy(simulation.points.get(0).position);
+        simulation.points.getFirst().prevPosition.copy(simulation.points.getFirst().position);
         final double d = this.chasingPosX - this.posX;
         final double m = this.chasingPosZ - this.posZ;
         final float n = this.prevRenderYawOffset + this.renderYawOffset - this.prevRenderYawOffset;
         final double o = MathHelper.sin(n * 0.017453292f);
         final double p = -MathHelper.cos(n * 0.017453292f);
         final float heightMul = ModuleManager.waveyCapes.heightMultiplier.getValue();
-        final double fallHack = MathHelper.clamp_double(simulation.points.get(0).position.y - this.posY * heightMul, 0.0, 1.0);
-        final StickSimulation.Vector2 position = simulation.points.get(0).position;
+        final double fallHack = MathHelper.clamp_double(simulation.points.getFirst().position.y - this.posY * heightMul, 0.0, 1.0);
+        final StickSimulation.Vector2 position = simulation.points.getFirst().position;
         position.x += (float) (d * o + m * p + fallHack);
-        simulation.points.get(0).position.y = (float) (this.posY * heightMul + (this.isSneaking() ? -4 : 0));
+        simulation.points.getFirst().position.y = (float) (this.posY * heightMul + (this.isSneaking() ? -4 : 0));
         simulation.simulate();
     }
     //END CLIENT

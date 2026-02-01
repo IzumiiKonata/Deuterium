@@ -19,7 +19,7 @@ public class EntityAITasks {
      * Add a now AITask. Args : priority, task
      */
     public void addTask(int priority, EntityAIBase task) {
-        this.taskEntries.add(new EntityAITasks.EntityAITaskEntry(priority, task));
+        this.taskEntries.add(new EntityAITaskEntry(priority, task));
     }
 
     /**
@@ -57,7 +57,7 @@ public class EntityAITasks {
                         break label38;
                     }
 
-                    entityaitasks$entityaitaskentry = (EntityAITasks.EntityAITaskEntry) iterator.next();
+                    entityaitasks$entityaitaskentry = iterator.next();
                     boolean flag = this.executingTaskEntries.contains(entityaitasks$entityaitaskentry);
 
                     if (!flag) {
@@ -128,7 +128,7 @@ public class EntityAITasks {
         return (taskEntry1.action.getMutexBits() & taskEntry2.action.getMutexBits()) == 0;
     }
 
-    class EntityAITaskEntry {
+    static class EntityAITaskEntry {
         public EntityAIBase action;
         public int priority;
 

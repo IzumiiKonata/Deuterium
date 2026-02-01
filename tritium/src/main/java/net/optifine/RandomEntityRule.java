@@ -85,14 +85,9 @@ public class RandomEntityRule {
                     return null;
                 }
             }
-            if (j < 0) {
-                Config.warn("Invalid minHeight, maxHeight: " + s + ", " + s1);
-                return null;
-            } else {
-                final RangeListInt rangelistint = new RangeListInt();
-                rangelistint.addRange(new RangeInt(i, j));
-                return rangelistint;
-            }
+            final RangeListInt rangelistint = new RangeListInt();
+            rangelistint.addRange(new RangeInt(i, j));
+            return rangelistint;
         }
     }
 
@@ -203,11 +198,9 @@ public class RandomEntityRule {
                     return false;
                 }
             }
-            if (this.professions != null && randomEntity instanceof RandomEntity) {
-                final RandomEntity randomentity = (RandomEntity) randomEntity;
+            if (this.professions != null && randomEntity instanceof RandomEntity randomentity) {
                 final Entity entity = randomentity.getEntity();
-                if (entity instanceof EntityVillager) {
-                    final EntityVillager entityvillager = (EntityVillager) entity;
+                if (entity instanceof EntityVillager entityvillager) {
                     final int j = entityvillager.getProfession();
                     final int k = entityvillager.careerId;
                     if (j < 0 || k < 0) {
@@ -225,11 +218,9 @@ public class RandomEntityRule {
                     }
                 }
             }
-            if (this.collarColors != null && randomEntity instanceof RandomEntity) {
-                final RandomEntity randomentity1 = (RandomEntity) randomEntity;
+            if (this.collarColors != null && randomEntity instanceof RandomEntity randomentity1) {
                 final Entity entity1 = randomentity1.getEntity();
-                if (entity1 instanceof EntityWolf) {
-                    final EntityWolf entitywolf = (EntityWolf) entity1;
+                if (entity1 instanceof EntityWolf entitywolf) {
                     if (!entitywolf.isTamed()) {
                         return false;
                     }
@@ -239,11 +230,9 @@ public class RandomEntityRule {
                     }
                 }
             }
-            if (this.baby != null && randomEntity instanceof RandomEntity) {
-                final RandomEntity randomentity2 = (RandomEntity) randomEntity;
+            if (this.baby != null && randomEntity instanceof RandomEntity randomentity2) {
                 final Entity entity2 = randomentity2.getEntity();
-                if (entity2 instanceof EntityLiving) {
-                    final EntityLiving entityliving = (EntityLiving) entity2;
+                if (entity2 instanceof EntityLiving entityliving) {
                     if (entityliving.isChild() != this.baby) {
                         return false;
                     }

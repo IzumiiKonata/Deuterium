@@ -34,20 +34,18 @@ public class RandomEntity implements IRandomEntity {
 
     @Override
     public int getHealth() {
-        if (!(this.entity instanceof EntityLiving)) {
+        if (!(this.entity instanceof EntityLiving entityliving)) {
             return 0;
         } else {
-            final EntityLiving entityliving = (EntityLiving) this.entity;
             return (int) entityliving.getHealth();
         }
     }
 
     @Override
     public int getMaxHealth() {
-        if (!(this.entity instanceof EntityLiving)) {
+        if (!(this.entity instanceof EntityLiving entityliving)) {
             return 0;
         } else {
-            final EntityLiving entityliving = (EntityLiving) this.entity;
             return (int) entityliving.getMaxHealth();
         }
     }

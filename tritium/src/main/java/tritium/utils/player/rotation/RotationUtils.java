@@ -67,8 +67,7 @@ public class RotationUtils {
         final double diffX = entity.posX - mc.thePlayer.posX;
         final double diffZ = entity.posZ - mc.thePlayer.posZ;
         double diffY;
-        if (entity instanceof EntityLivingBase) {
-            final EntityLivingBase elb = (EntityLivingBase) entity;
+        if (entity instanceof EntityLivingBase elb) {
             diffY = elb.posY + (elb.getEyeHeight()) - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
         } else {
             diffY = (entity.getEntityBoundingBox().minY + entity.getEntityBoundingBox().maxY) / 2.0 - (mc.thePlayer.posY + mc.thePlayer.getEyeHeight());
@@ -163,13 +162,9 @@ public class RotationUtils {
         double deltaZ = posZ - Minecraft.getMinecraft().thePlayer.posZ;
         double yawToEntity = 0.0;
         if (deltaZ < 0.0 && deltaX < 0.0) {
-            if (deltaX != 0.0) {
-                yawToEntity = 90.0 + Math.toDegrees(Math.atan(deltaZ / deltaX));
-            }
+            yawToEntity = 90.0 + Math.toDegrees(Math.atan(deltaZ / deltaX));
         } else if (deltaZ < 0.0 && deltaX > 0.0) {
-            if (deltaX != 0.0) {
-                yawToEntity = -90.0 + Math.toDegrees(Math.atan(deltaZ / deltaX));
-            }
+            yawToEntity = -90.0 + Math.toDegrees(Math.atan(deltaZ / deltaX));
         } else if (deltaZ != 0.0) {
             yawToEntity = Math.toDegrees(-Math.atan(deltaX / deltaZ));
         }

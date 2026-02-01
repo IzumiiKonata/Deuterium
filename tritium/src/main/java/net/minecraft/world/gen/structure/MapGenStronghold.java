@@ -40,12 +40,13 @@ public class MapGenStronghold extends MapGenStructure {
         this();
 
         for (Entry<String, String> entry : p_i2068_1_.entrySet()) {
-            if (entry.getKey().equals("distance")) {
-                this.field_82671_h = MathHelper.parseDoubleWithDefaultAndMax(entry.getValue(), this.field_82671_h, 1.0D);
-            } else if (entry.getKey().equals("count")) {
-                this.structureCoords = new ChunkCoordIntPair[MathHelper.parseIntWithDefaultAndMax(entry.getValue(), this.structureCoords.length, 1)];
-            } else if (entry.getKey().equals("spread")) {
-                this.field_82672_i = MathHelper.parseIntWithDefaultAndMax(entry.getValue(), this.field_82672_i, 1);
+            switch (entry.getKey()) {
+                case "distance" ->
+                        this.field_82671_h = MathHelper.parseDoubleWithDefaultAndMax(entry.getValue(), this.field_82671_h, 1.0D);
+                case "count" ->
+                        this.structureCoords = new ChunkCoordIntPair[MathHelper.parseIntWithDefaultAndMax(entry.getValue(), this.structureCoords.length, 1)];
+                case "spread" ->
+                        this.field_82672_i = MathHelper.parseIntWithDefaultAndMax(entry.getValue(), this.field_82672_i, 1);
             }
         }
     }
@@ -108,7 +109,7 @@ public class MapGenStronghold extends MapGenStructure {
     protected StructureStart getStructureStart(int chunkX, int chunkZ) {
         MapGenStronghold.Start mapgenstronghold$start;
 
-        for (mapgenstronghold$start = new MapGenStronghold.Start(this.worldObj, this.rand, chunkX, chunkZ); mapgenstronghold$start.getComponents().isEmpty() || ((StructureStrongholdPieces.Stairs2) mapgenstronghold$start.getComponents().get(0)).strongholdPortalRoom == null; mapgenstronghold$start = new MapGenStronghold.Start(this.worldObj, this.rand, chunkX, chunkZ)) {
+        for (mapgenstronghold$start = new MapGenStronghold.Start(this.worldObj, this.rand, chunkX, chunkZ); mapgenstronghold$start.getComponents().isEmpty() || ((StructureStrongholdPieces.Stairs2) mapgenstronghold$start.getComponents().getFirst()).strongholdPortalRoom == null; mapgenstronghold$start = new MapGenStronghold.Start(this.worldObj, this.rand, chunkX, chunkZ)) {
         }
 
         return mapgenstronghold$start;

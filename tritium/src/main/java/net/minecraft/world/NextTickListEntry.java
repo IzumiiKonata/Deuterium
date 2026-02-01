@@ -29,10 +29,9 @@ public class NextTickListEntry implements Comparable<NextTickListEntry> {
     }
 
     public boolean equals(Object p_equals_1_) {
-        if (!(p_equals_1_ instanceof NextTickListEntry)) {
+        if (!(p_equals_1_ instanceof NextTickListEntry nextticklistentry)) {
             return false;
         } else {
-            NextTickListEntry nextticklistentry = (NextTickListEntry) p_equals_1_;
             return this.position.equals(nextticklistentry.position) && Block.isEqualTo(this.block, nextticklistentry.block);
         }
     }
@@ -54,7 +53,7 @@ public class NextTickListEntry implements Comparable<NextTickListEntry> {
     }
 
     public int compareTo(NextTickListEntry p_compareTo_1_) {
-        return this.scheduledTime < p_compareTo_1_.scheduledTime ? -1 : (this.scheduledTime > p_compareTo_1_.scheduledTime ? 1 : (this.priority != p_compareTo_1_.priority ? this.priority - p_compareTo_1_.priority : (this.tickEntryID < p_compareTo_1_.tickEntryID ? -1 : (this.tickEntryID > p_compareTo_1_.tickEntryID ? 1 : 0))));
+        return this.scheduledTime < p_compareTo_1_.scheduledTime ? -1 : (this.scheduledTime > p_compareTo_1_.scheduledTime ? 1 : (this.priority != p_compareTo_1_.priority ? this.priority - p_compareTo_1_.priority : (Long.compare(this.tickEntryID, p_compareTo_1_.tickEntryID))));
     }
 
     public String toString() {

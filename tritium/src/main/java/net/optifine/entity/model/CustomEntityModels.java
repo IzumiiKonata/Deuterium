@@ -202,13 +202,13 @@ public class CustomEntityModels {
 
                 if (modelrenderer.childModels != null) {
                     ModelRenderer[] amodelrenderer = modelAdapter.getModelRenderers(model);
-                    Set<ModelRenderer> set = Collections.<ModelRenderer>newSetFromMap(new IdentityHashMap<>());
+                    Set<ModelRenderer> set = Collections.newSetFromMap(new IdentityHashMap<>());
                     set.addAll(Arrays.asList(amodelrenderer));
                     List<ModelRenderer> list = modelrenderer.childModels;
                     Iterator<ModelRenderer> iterator = list.iterator();
 
                     while (iterator.hasNext()) {
-                        ModelRenderer modelrenderer1 = (ModelRenderer) iterator.next();
+                        ModelRenderer modelrenderer1 = iterator.next();
 
                         if (!set.contains(modelrenderer1)) {
                             iterator.remove();

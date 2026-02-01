@@ -127,9 +127,7 @@ public class ItemPhysicRender {
             GlStateManager.disableRescaleNormal();
             GlStateManager.disableBlend();
             mc.getRenderManager().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
-            if (flag) {
-                mc.getRenderManager().renderEngine.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
-            }
+            mc.getRenderManager().renderEngine.getTexture(TextureMap.locationBlocksTexture).restoreLastBlurMipmap();
         }
     }
 

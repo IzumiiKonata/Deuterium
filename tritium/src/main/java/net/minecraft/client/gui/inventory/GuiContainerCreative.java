@@ -388,7 +388,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer {
             guicontainercreative$containercreative.inventorySlots = Lists.newArrayList();
 
             for (int j = 0; j < container.inventorySlots.size(); ++j) {
-                Slot slot = new GuiContainerCreative.CreativeSlot(container.inventorySlots.get(j), j);
+                Slot slot = new CreativeSlot(container.inventorySlots.get(j), j);
                 guicontainercreative$containercreative.inventorySlots.add(slot);
 
                 if (j >= 5 && j < 9) {
@@ -397,7 +397,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer {
                     int l1 = j1 % 2;
                     slot.xDisplayPosition = 9 + k1 * 54;
                     slot.yDisplayPosition = 6 + l1 * 27;
-                } else if (j >= 0 && j < 5) {
+                } else if (j < 5) {
                     slot.yDisplayPosition = -2000;
                     slot.xDisplayPosition = -2000;
                 } else if (j < container.inventorySlots.size()) {
@@ -759,7 +759,7 @@ public class GuiContainerCreative extends InventoryEffectRenderer {
         }
     }
 
-    class CreativeSlot extends Slot {
+    static class CreativeSlot extends Slot {
         private final Slot slot;
 
         public CreativeSlot(Slot p_i46313_2_, int p_i46313_3_) {

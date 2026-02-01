@@ -19,16 +19,21 @@ public class ModelAdapterSlime extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (model instanceof ModelSlime) {
-            ModelSlime modelslime = (ModelSlime) model;
-            if (modelPart.equals("body"))
-                return modelslime.slimeBodies;
-            if (modelPart.equals("left_eye"))
-                return modelslime.slimeLeftEye;
-            if (modelPart.equals("right_eye"))
-                return modelslime.slimeRightEye;
-            if (modelPart.equals("mouth"))
-                return modelslime.slimeMouth;
+        if (model instanceof ModelSlime modelslime) {
+            switch (modelPart) {
+                case "body" -> {
+                    return modelslime.slimeBodies;
+                }
+                case "left_eye" -> {
+                    return modelslime.slimeLeftEye;
+                }
+                case "right_eye" -> {
+                    return modelslime.slimeRightEye;
+                }
+                case "mouth" -> {
+                    return modelslime.slimeMouth;
+                }
+            }
         }
         return null;
     }

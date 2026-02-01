@@ -167,7 +167,6 @@ class Sweep {
          */
         if (reg.fixUpperEdge) {
             e = Mesh.__gl_meshConnect(RegionBelow(reg).eUp.Sym, reg.eUp.Lnext);
-            if (e == null) return null;
             if (!FixUpperEdge(reg, e)) return null;
             reg = RegionAbove(reg);
         }
@@ -196,7 +195,6 @@ class Sweep {
         regNew.eUp = eNewUp;
         /* __gl_dictListInsertBefore */
         regNew.nodeUp = Dict.dictInsertBefore(tess.dict, regAbove.nodeUp, regNew);
-        if (regNew.nodeUp == null) throw new RuntimeException();
         regNew.fixUpperEdge = false;
         regNew.sentinel = false;
         regNew.dirty = false;
@@ -275,7 +273,6 @@ class Sweep {
                  * If the edge below was a temporary edge introduced by ConnectRightVertex, now is the time to fix it.
                  */
                 e = Mesh.__gl_meshConnect(ePrev.Onext.Sym, e.Sym);
-                if (e == null) throw new RuntimeException();
                 if (!FixUpperEdge(reg, e)) throw new RuntimeException();
             }
 
@@ -468,7 +465,7 @@ class Sweep {
             /* eUp.Org appears to be below eLo */
             if (!Geom.VertEq(eUp.Org, eLo.Org)) {
                 /* Splice eUp.Org into eLo */
-                if (Mesh.__gl_meshSplitEdge(eLo.Sym) == null) throw new RuntimeException();
+                Mesh.__gl_meshSplitEdge(eLo.Sym);
                 if (!Mesh.__gl_meshSplice(eUp, eLo.Sym.Lnext)) throw new RuntimeException();
                 regUp.dirty = regLo.dirty = true;
 
@@ -482,7 +479,7 @@ class Sweep {
 
             /* eLo.Org appears to be above eUp, so splice eLo.Org into eUp */
             RegionAbove(regUp).dirty = regUp.dirty = true;
-            if (Mesh.__gl_meshSplitEdge(eUp.Sym) == null) throw new RuntimeException();
+            Mesh.__gl_meshSplitEdge(eUp.Sym);
             if (!Mesh.__gl_meshSplice(eLo.Sym.Lnext, eUp)) throw new RuntimeException();
         }
         return true;
@@ -515,7 +512,6 @@ class Sweep {
             /* eLo.Sym.Org is above eUp, so splice eLo.Sym.Org into eUp */
             RegionAbove(regUp).dirty = regUp.dirty = true;
             e = Mesh.__gl_meshSplitEdge(eUp);
-            if (e == null) throw new RuntimeException();
             if (!Mesh.__gl_meshSplice(eLo.Sym, e)) throw new RuntimeException();
             e.Lface.inside = regUp.inside;
         } else {
@@ -524,7 +520,6 @@ class Sweep {
             /* eUp.Sym.Org is below eLo, so splice eUp.Sym.Org into eLo */
             regUp.dirty = regLo.dirty = true;
             e = Mesh.__gl_meshSplitEdge(eLo);
-            if (e == null) throw new RuntimeException();
             if (!Mesh.__gl_meshSplice(eUp.Lnext, eLo.Sym)) throw new RuntimeException();
             e.Sym.Lface.inside = regUp.inside;
         }
@@ -613,7 +608,7 @@ class Sweep {
              */
             if (dstLo == tess.event) {
                 /* Splice dstLo into eUp, and process the new region(s) */
-                if (Mesh.__gl_meshSplitEdge(eUp.Sym) == null) throw new RuntimeException();
+                Mesh.__gl_meshSplitEdge(eUp.Sym);
                 if (!Mesh.__gl_meshSplice(eLo.Sym, eUp)) throw new RuntimeException();
                 regUp = TopLeftRegion(regUp);
                 if (regUp == null) throw new RuntimeException();
@@ -624,7 +619,7 @@ class Sweep {
             }
             if (dstUp == tess.event) {
                 /* Splice dstUp into eLo, and process the new region(s) */
-                if (Mesh.__gl_meshSplitEdge(eLo.Sym) == null) throw new RuntimeException();
+                Mesh.__gl_meshSplitEdge(eLo.Sym);
                 if (!Mesh.__gl_meshSplice(eUp.Lnext, eLo.Sym.Lnext)) throw new RuntimeException();
                 regLo = regUp;
                 regUp = TopRightRegion(regUp);
@@ -640,13 +635,13 @@ class Sweep {
              */
             if (Geom.EdgeSign(dstUp, tess.event, isect) >= 0) {
                 RegionAbove(regUp).dirty = regUp.dirty = true;
-                if (Mesh.__gl_meshSplitEdge(eUp.Sym) == null) throw new RuntimeException();
+                Mesh.__gl_meshSplitEdge(eUp.Sym);
                 eUp.Org.s = tess.event.s;
                 eUp.Org.t = tess.event.t;
             }
             if (Geom.EdgeSign(dstLo, tess.event, isect) <= 0) {
                 regUp.dirty = regLo.dirty = true;
-                if (Mesh.__gl_meshSplitEdge(eLo.Sym) == null) throw new RuntimeException();
+                Mesh.__gl_meshSplitEdge(eLo.Sym);
                 eLo.Org.s = tess.event.s;
                 eLo.Org.t = tess.event.t;
             }
@@ -661,17 +656,12 @@ class Sweep {
          * eUp.Lface) to be smaller than the faces in the unprocessed original contours (which will be
          * eLo.Sym.Lnext.Lface).
          */
-        if (Mesh.__gl_meshSplitEdge(eUp.Sym) == null) throw new RuntimeException();
-        if (Mesh.__gl_meshSplitEdge(eLo.Sym) == null) throw new RuntimeException();
+        Mesh.__gl_meshSplitEdge(eUp.Sym);
+        Mesh.__gl_meshSplitEdge(eLo.Sym);
         if (!Mesh.__gl_meshSplice(eLo.Sym.Lnext, eUp)) throw new RuntimeException();
         eUp.Org.s = isect.s;
         eUp.Org.t = isect.t;
         eUp.Org.pqHandle = tess.pq.pqInsert(eUp.Org); /* __gl_pqSortInsert */
-        if (eUp.Org.pqHandle == Long.MAX_VALUE) {
-            tess.pq.pqDeletePriorityQ(); /* __gl_pqSortDeletePriorityQ */
-            tess.pq = null;
-            throw new RuntimeException();
-        }
         GetIntersectData(tess, eUp.Org, orgUp, dstUp, orgLo, dstLo);
         RegionAbove(regUp).dirty = regUp.dirty = regLo.dirty = true;
         return false;
@@ -827,7 +817,6 @@ class Sweep {
             eNew = eUp;
         }
         eNew = Mesh.__gl_meshConnect(eBottomLeft.Onext.Sym, eNew);
-        if (eNew == null) throw new RuntimeException();
 
         /*
          * Prevent cleanup, otherwise eNew might disappear before we've even had a chance to mark it as a temporary
@@ -866,7 +855,7 @@ class Sweep {
 
         if (!Geom.VertEq(e.Sym.Org, vEvent)) {
             /* General case -- splice vEvent into edge e which passes through it */
-            if (Mesh.__gl_meshSplitEdge(e.Sym) == null) throw new RuntimeException();
+            Mesh.__gl_meshSplitEdge(e.Sym);
             if (regUp.fixUpperEdge) {
                 /* This edge was fixable -- delete unused portion of original edge */
                 if (!Mesh.__gl_meshDelete(e.Onext)) throw new RuntimeException();
@@ -945,10 +934,8 @@ class Sweep {
         if (regUp.inside || reg.fixUpperEdge) {
             if (reg == regUp) {
                 eNew = Mesh.__gl_meshConnect(vEvent.anEdge.Sym, eUp.Lnext);
-                if (eNew == null) throw new RuntimeException();
             } else {
                 GLUhalfEdge tempHalfEdge = Mesh.__gl_meshConnect(eLo.Sym.Onext.Sym, vEvent.anEdge);
-                if (tempHalfEdge == null) throw new RuntimeException();
 
                 eNew = tempHalfEdge.Sym;
             }
@@ -1048,7 +1035,6 @@ class Sweep {
         reg.sentinel = true;
         reg.dirty = false;
         reg.nodeUp = Dict.dictInsert(tess.dict, reg); /* __gl_dictListInsertBefore */
-        if (reg.nodeUp == null) throw new RuntimeException();
     }
 
     static void InitEdgeDict(
@@ -1059,7 +1045,6 @@ class Sweep {
         /* __gl_dictListNewDict */
         tess.dict = Dict
                 .dictNewDict(tess, (frame, key1, key2) -> EdgeLeq(tess, (ActiveRegion) key1, (ActiveRegion) key2));
-        if (tess.dict == null) throw new RuntimeException();
 
         AddSentinel(tess, -SENTINEL_COORD);
         AddSentinel(tess, SENTINEL_COORD);
@@ -1134,14 +1119,12 @@ class Sweep {
 
         /* __gl_pqSortNewPriorityQ */
         pq = tess.pq = PriorityQ.pqNewPriorityQ((key1, key2) -> Geom.VertLeq(((GLUvertex) key1), (GLUvertex) key2));
-        if (pq == null) return false;
 
         vHead = tess.mesh.vHead;
         for (v = vHead.next; v != vHead; v = v.next) {
             v.pqHandle = pq.pqInsert(v); /* __gl_pqSortInsert */
-            if (v.pqHandle == Long.MAX_VALUE) break;
         }
-        if (v != vHead || !pq.pqInit()) {
+        if (!pq.pqInit()) {
             /* __gl_pqSortInit */
             tess.pq.pqDeletePriorityQ(); /* __gl_pqSortDeletePriorityQ */
             tess.pq = null;

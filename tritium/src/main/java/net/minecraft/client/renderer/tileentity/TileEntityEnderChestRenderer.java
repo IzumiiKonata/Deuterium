@@ -41,7 +41,6 @@ public class TileEntityEnderChestRenderer extends TileEntitySpecialRenderer<Tile
         }
 
         if (i == 3) {
-            j = 0;
         }
 
         if (i == 4) {

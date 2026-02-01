@@ -20,9 +20,7 @@ public class LabelRenderer extends AbstractWidget<LabelRenderer> {
         this.setBounds(142, height);
 
         LabelWidget label = new LabelWidget(() -> setting.getName().get(), FontManager.pf14);
-        label.setBeforeRenderCallback(() -> {
-            label.setColor(ClickGui.getColor(20));
-        });
+        label.setBeforeRenderCallback(() -> label.setColor(ClickGui.getColor(20)));
         label.setPosition(0, height * .5 - FontManager.pf14.getHeight() * .5);
         this.addChild(label);
     }

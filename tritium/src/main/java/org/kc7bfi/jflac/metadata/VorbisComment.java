@@ -82,7 +82,7 @@ public class VorbisComment extends Metadata {
             int eqpos = comment.indexOf(0x3D); //Find the equals
             if (eqpos != -1)
                 if (comment.substring(0, eqpos).equalsIgnoreCase(key))
-                    sbuff.add(comment.substring(eqpos + 1, comment.length()));
+                    sbuff.add(comment.substring(eqpos + 1));
         }
         return (String[]) sbuff.toArray(new String[0]);
         //return null;

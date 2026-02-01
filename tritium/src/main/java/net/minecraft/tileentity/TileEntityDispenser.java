@@ -9,6 +9,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
+import java.util.Arrays;
 import java.util.Random;
 
 public class TileEntityDispenser extends TileEntityLockable implements IInventory {
@@ -136,7 +137,7 @@ public class TileEntityDispenser extends TileEntityLockable implements IInventor
             NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
             int j = nbttagcompound.getByte("Slot") & 255;
 
-            if (j >= 0 && j < this.stacks.length) {
+            if (j < this.stacks.length) {
                 this.stacks[j] = ItemStack.loadItemStackFromNBT(nbttagcompound);
             }
         }
@@ -213,8 +214,6 @@ public class TileEntityDispenser extends TileEntityLockable implements IInventor
     }
 
     public void clear() {
-        for (int i = 0; i < this.stacks.length; ++i) {
-            this.stacks[i] = null;
-        }
+        Arrays.fill(this.stacks, null);
     }
 }

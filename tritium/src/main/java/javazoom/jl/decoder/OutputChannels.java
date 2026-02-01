@@ -110,8 +110,7 @@ public class OutputChannels {
     public boolean equals(Object o) {
         boolean equals = false;
 
-        if (o instanceof OutputChannels) {
-            OutputChannels oc = (OutputChannels) o;
+        if (o instanceof OutputChannels oc) {
             equals = (oc.outputChannels == outputChannels);
         }
 

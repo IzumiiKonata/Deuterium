@@ -73,7 +73,7 @@ public class ShaderPackParser {
                         shaderoption1.setEnabled(false);
                     }
 
-                    if (shaderoption1.getDescription() == null || shaderoption1.getDescription().length() <= 0) {
+                    if (shaderoption1.getDescription() == null || shaderoption1.getDescription().length() == 0) {
                         shaderoption1.setDescription(shaderoption.getDescription());
                     }
 
@@ -115,9 +115,7 @@ public class ShaderPackParser {
     private static ShaderOption getShaderOption(String line, String path) {
         ShaderOption shaderoption = null;
 
-        if (shaderoption == null) {
-            shaderoption = ShaderOptionSwitch.parseOption(line, path);
-        }
+        shaderoption = ShaderOptionSwitch.parseOption(line, path);
 
         if (shaderoption == null) {
             shaderoption = ShaderOptionVariable.parseOption(line, path);
@@ -126,9 +124,7 @@ public class ShaderPackParser {
         if (shaderoption != null) {
             return shaderoption;
         } else {
-            if (shaderoption == null) {
-                shaderoption = ShaderOptionSwitchConst.parseOption(line, path);
-            }
+            shaderoption = ShaderOptionSwitchConst.parseOption(line, path);
 
             if (shaderoption == null) {
                 shaderoption = ShaderOptionVariableConst.parseOption(line, path);
@@ -197,7 +193,7 @@ public class ShaderPackParser {
             }
         }
 
-        if (list.size() <= 0) {
+        if (list.size() == 0) {
             return null;
         } else {
             return list.toArray(new ShaderProfile[0]);
@@ -279,10 +275,8 @@ public class ShaderPackParser {
                     String s4 = s3.substring(s.length());
                     ShaderProfile shaderprofile1 = parseProfile(s4, props, parsedProfiles, shaderOptions);
 
-                    if (shaderprofile != null) {
-                        shaderprofile.addOptionValues(shaderprofile1);
-                        shaderprofile.addDisabledPrograms(shaderprofile1.getDisabledPrograms());
-                    }
+                    shaderprofile.addOptionValues(shaderprofile1);
+                    shaderprofile.addDisabledPrograms(shaderprofile1.getDisabledPrograms());
                 } else {
                     String[] astring1 = Config.tokenize(s3, ":=");
 
@@ -580,7 +574,7 @@ public class ShaderPackParser {
             }
         }
 
-        if (list.size() <= 0) {
+        if (list.size() == 0) {
             return null;
         } else {
             CustomUniform[] acustomuniform = list.toArray(new CustomUniform[0]);
@@ -593,7 +587,7 @@ public class ShaderPackParser {
             UniformType uniformtype = UniformType.parse(type);
 
             if (uniformtype == null) {
-                SMCLog.warning("Unknown " + kind + " type: " + uniformtype);
+                SMCLog.warning("Unknown " + kind + " type: " + null);
                 return null;
             } else {
                 ShaderExpressionResolver shaderexpressionresolver = new ShaderExpressionResolver(mapExpressions);

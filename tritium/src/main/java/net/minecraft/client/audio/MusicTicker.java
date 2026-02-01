@@ -113,8 +113,6 @@ public class MusicTicker implements ITickable {
     }
 
     static {
-        CommandManager.registerCommand("musicticker_play_next", () -> {
-            Minecraft.getMinecraft().getMusicTicker().forcePlayNext();
-        });
+        CommandManager.registerCommand("musicticker_play_next", () -> Minecraft.getMinecraft().getMusicTicker().forcePlayNext());
     }
 }

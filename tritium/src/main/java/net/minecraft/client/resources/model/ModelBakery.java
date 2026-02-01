@@ -156,45 +156,51 @@ public class ModelBakery {
     private ModelBlock loadModel(Location p_177594_1_) throws IOException {
         String s = p_177594_1_.getResourcePath();
 
-        if ("builtin/generated".equals(s)) {
-            return MODEL_GENERATED;
-        } else if ("builtin/compass".equals(s)) {
-            return MODEL_COMPASS;
-        } else if ("builtin/clock".equals(s)) {
-            return MODEL_CLOCK;
-        } else if ("builtin/entity".equals(s)) {
-            return MODEL_ENTITY;
-        } else {
-            Reader reader;
+        switch (s) {
+            case "builtin/generated" -> {
+                return MODEL_GENERATED;
+            }
+            case "builtin/compass" -> {
+                return MODEL_COMPASS;
+            }
+            case "builtin/clock" -> {
+                return MODEL_CLOCK;
+            }
+            case "builtin/entity" -> {
+                return MODEL_ENTITY;
+            }
+            default -> {
+                Reader reader;
 
-            if (s.startsWith("builtin/")) {
-                String s1 = s.substring("builtin/".length());
-                String s2 = BUILT_IN_MODELS.get(s1);
+                if (s.startsWith("builtin/")) {
+                    String s1 = s.substring("builtin/".length());
+                    String s2 = BUILT_IN_MODELS.get(s1);
 
-                if (s2 == null) {
-                    throw new FileNotFoundException(p_177594_1_.toString());
+                    if (s2 == null) {
+                        throw new FileNotFoundException(p_177594_1_.toString());
+                    }
+
+                    reader = new StringReader(s2);
+                } else {
+                    p_177594_1_ = this.getModelLocation(p_177594_1_);
+                    IResource iresource = this.resourceManager.getResource(p_177594_1_);
+                    reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
                 }
 
-                reader = new StringReader(s2);
-            } else {
-                p_177594_1_ = this.getModelLocation(p_177594_1_);
-                IResource iresource = this.resourceManager.getResource(p_177594_1_);
-                reader = new InputStreamReader(iresource.getInputStream(), Charsets.UTF_8);
+                ModelBlock modelblock;
+
+                try {
+                    ModelBlock modelblock1 = ModelBlock.deserialize(reader);
+                    modelblock1.name = p_177594_1_.toString();
+                    modelblock = modelblock1;
+                    String s3 = TextureUtils.getBasePath(p_177594_1_.getResourcePath());
+                    fixModelLocations(modelblock1, s3);
+                } finally {
+                    reader.close();
+                }
+
+                return modelblock;
             }
-
-            ModelBlock modelblock;
-
-            try {
-                ModelBlock modelblock1 = ModelBlock.deserialize(reader);
-                modelblock1.name = p_177594_1_.toString();
-                modelblock = modelblock1;
-                String s3 = TextureUtils.getBasePath(p_177594_1_.getResourcePath());
-                fixModelLocations(modelblock1, s3);
-            } finally {
-                reader.close();
-            }
-
-            return modelblock;
         }
     }
 
@@ -358,7 +364,7 @@ public class ModelBakery {
     private Set<Location> getVariantsTextureLocations() {
         Set<Location> set = Sets.newHashSet();
         List<ModelResourceLocation> list = Lists.newArrayList(this.variants.keySet());
-        Collections.sort(list, (p_compare_1_, p_compare_2_) -> p_compare_1_.toString().compareTo(p_compare_2_.toString()));
+        list.sort(Comparator.comparing(ModelResourceLocation::toString));
 
         for (ModelResourceLocation modelresourcelocation : list) {
             ModelBlockDefinition.Variants modelblockdefinition$variants = this.variants.get(modelresourcelocation);
@@ -388,7 +394,7 @@ public class ModelBakery {
                 TextureAtlasSprite textureatlassprite1 = this.sprites.get(Location.of(modelBlockIn.resolveTextureName(blockpartface.texture)));
                 boolean flag = true;
 
-                if (blockpartface.cullFace != null && flag) {
+                if (blockpartface.cullFace != null) {
                     simplebakedmodel$builder.addFaceQuad(modelRotationIn.rotate(blockpartface.cullFace), this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
                 } else {
                     simplebakedmodel$builder.addGeneralQuad(this.makeBakedQuad(blockpart, blockpartface, textureatlassprite1, enumfacing, modelRotationIn, uvLocked));
@@ -454,7 +460,7 @@ public class ModelBakery {
         Location resourcelocation = p_177573_1_;
 
         while ((resourcelocation = this.getParentLocation(resourcelocation)) != null) {
-            list.add(0, resourcelocation);
+            list.addFirst(resourcelocation);
         }
 
         return list;

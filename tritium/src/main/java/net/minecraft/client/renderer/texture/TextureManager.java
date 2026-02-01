@@ -169,14 +169,13 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
         Iterator<Location> iterator = this.mapTextureObjects.keySet().iterator();
 
         while (iterator.hasNext()) {
-            Location resourcelocation = (Location) iterator.next();
+            Location resourcelocation = iterator.next();
             String s = resourcelocation.getResourcePath();
 
             if (s.startsWith("mcpatcher/") || s.startsWith("optifine/") || EmissiveTextures.isEmissive(resourcelocation)) {
                 ITextureObject itextureobject = this.mapTextureObjects.get(resourcelocation);
 
-                if (itextureobject instanceof AbstractTexture) {
-                    AbstractTexture abstracttexture = (AbstractTexture) itextureobject;
+                if (itextureobject instanceof AbstractTexture abstracttexture) {
                     abstracttexture.deleteGlTexture();
                 }
 

@@ -30,9 +30,7 @@ public class PlaylistRect extends RectWidget {
 
         this.setBounds(0, 24);
 
-        this.setBeforeRenderCallback(() -> {
-            this.setColor(isHovering() ? ClickGui.getColor(22) : colorSupplier.get());
-        });
+        this.setBeforeRenderCallback(() -> this.setColor(isHovering() ? ClickGui.getColor(22) : colorSupplier.get()));
 
         this.setOnClickCallback((rx, ry, i) -> {
 

@@ -104,7 +104,7 @@ public class CrashReportCategory {
     public int getPrunedStackTrace(int size) {
         StackTraceElement[] astacktraceelement = Thread.currentThread().getStackTrace();
 
-        if (astacktraceelement.length <= 0) {
+        if (astacktraceelement.length == 0) {
             return 0;
         } else {
             this.stackTrace = new StackTraceElement[astacktraceelement.length - 3 - size];
@@ -192,7 +192,7 @@ public class CrashReportCategory {
     }
 
     public static void addBlockInfo(CrashReportCategory category, final BlockPos pos, final IBlockState state) {
-        category.addCrashSectionCallable("Block", () -> state.toString());
+        category.addCrashSectionCallable("Block", state::toString);
         category.addCrashSectionCallable("Block location", () -> CrashReportCategory.getCoordinateInfo(pos));
     }
 
@@ -205,8 +205,7 @@ public class CrashReportCategory {
 
             if (value == null) {
                 this.value = "~~NULL~~";
-            } else if (value instanceof Throwable) {
-                Throwable throwable = (Throwable) value;
+            } else if (value instanceof Throwable throwable) {
                 this.value = "~~ERROR~~ " + throwable.getClass().getSimpleName() + ": " + throwable.getMessage();
             } else {
                 this.value = value.toString();

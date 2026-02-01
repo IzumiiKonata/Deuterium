@@ -68,7 +68,7 @@ public class CombatTracker {
             return new ChatComponentTranslation("death.attack.generic", this.fighter.getDisplayName());
         } else {
             CombatEntry combatentry = this.func_94544_f();
-            CombatEntry combatentry1 = this.combatEntries.get(this.combatEntries.size() - 1);
+            CombatEntry combatentry1 = this.combatEntries.getLast();
             IChatComponent ichatcomponent1 = combatentry1.getDamageSrcDisplayName();
             Entity entity = combatentry1.getDamageSrc().getEntity();
             IChatComponent ichatcomponent;
@@ -160,8 +160,6 @@ public class CombatTracker {
 
         if (f > 5.0F && combatentry != null) {
             return combatentry;
-        } else if (i > 5 && combatentry1 != null) {
-            return combatentry1;
         } else {
             return null;
         }

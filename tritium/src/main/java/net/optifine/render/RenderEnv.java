@@ -67,8 +67,7 @@ public class RenderEnv {
 
     public int getBlockId() {
         if (this.blockId < 0) {
-            if (this.blockState instanceof BlockStateBase) {
-                BlockStateBase blockstatebase = (BlockStateBase) this.blockState;
+            if (this.blockState instanceof BlockStateBase blockstatebase) {
                 this.blockId = blockstatebase.getBlockId();
             } else {
                 this.blockId = Block.getIdFromBlock(this.blockState.getBlock());
@@ -80,8 +79,7 @@ public class RenderEnv {
 
     public int getMetadata() {
         if (this.metadata < 0) {
-            if (this.blockState instanceof BlockStateBase) {
-                BlockStateBase blockstatebase = (BlockStateBase) this.blockState;
+            if (this.blockState instanceof BlockStateBase blockstatebase) {
                 this.metadata = blockstatebase.getMetadata();
             } else {
                 this.metadata = this.blockState.getBlock().getMetaFromState(this.blockState);
@@ -105,7 +103,7 @@ public class RenderEnv {
 
     public boolean isBreakingAnimation(List listQuads) {
         if (this.breakingAnimation == -1 && !listQuads.isEmpty()) {
-            if (listQuads.get(0) instanceof BreakingFour) {
+            if (listQuads.getFirst() instanceof BreakingFour) {
                 this.breakingAnimation = 1;
             } else {
                 this.breakingAnimation = 0;

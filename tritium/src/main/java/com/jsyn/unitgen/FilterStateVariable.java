@@ -100,8 +100,7 @@ public class FilterStateVariable extends TunableFilter {
         for (int i = start; i < limit; i++) {
             lowPassValue = (freqInternal * bandPassValue) + lowPassValue;
             // Clip between -1 and +1 to prevent blowup.
-            lowPassValue = (lowPassValue < -1.0) ? -1.0 : ((lowPassValue > 1.0) ? 1.0
-                    : lowPassValue);
+            lowPassValue = (lowPassValue < -1.0) ? -1.0 : (Math.min(lowPassValue, 1.0));
             lows[i] = lowPassValue;
 
             outputs[i] = lowPassValue * (amplitudes[i]);

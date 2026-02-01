@@ -221,11 +221,11 @@ public class SmoothCapeRenderer {
         final StickSimulation simulation = abstractClientPlayer.getSimulation();
         poseStack.pushPose();
         poseStack.translate(0.0, 0.0, 0.125);
-        float z = simulation.points.get(part).getLerpX(delta) - simulation.points.get(0).getLerpX(delta);
+        float z = simulation.points.get(part).getLerpX(delta) - simulation.points.getFirst().getLerpX(delta);
         if (z > 0.0f) {
             z = 0.0f;
         }
-        final float y = simulation.points.get(0).getLerpY(delta) - part - simulation.points.get(part).getLerpY(delta);
+        final float y = simulation.points.getFirst().getLerpY(delta) - part - simulation.points.get(part).getLerpY(delta);
         final float sidewaysRotationOffset = 0.0f;
         float partRotation = (float) (-Math.atan2(y, z));
         partRotation = Math.max(partRotation, 0.0f);

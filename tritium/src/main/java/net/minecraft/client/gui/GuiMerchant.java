@@ -194,9 +194,9 @@ public class GuiMerchant extends GuiContainer {
 
             if (this.isPointInRegion(36, 24, 16, 16, mouseX, mouseY) && itemstack != null) {
                 this.renderToolTip(itemstack, mouseX, mouseY);
-            } else if (itemstack1 != null && this.isPointInRegion(62, 24, 16, 16, mouseX, mouseY) && itemstack1 != null) {
+            } else if (itemstack1 != null && this.isPointInRegion(62, 24, 16, 16, mouseX, mouseY)) {
                 this.renderToolTip(itemstack1, mouseX, mouseY);
-            } else if (itemstack2 != null && this.isPointInRegion(120, 24, 16, 16, mouseX, mouseY) && itemstack2 != null) {
+            } else if (itemstack2 != null && this.isPointInRegion(120, 24, 16, 16, mouseX, mouseY)) {
                 this.renderToolTip(itemstack2, mouseX, mouseY);
             } else if (merchantrecipe.isRecipeDisabled() && (this.isPointInRegion(83, 21, 28, 21, mouseX, mouseY) || this.isPointInRegion(83, 51, 28, 21, mouseX, mouseY))) {
                 this.drawCreativeTabHoveringText(I18n.format("merchant.deprecated"), mouseX, mouseY);

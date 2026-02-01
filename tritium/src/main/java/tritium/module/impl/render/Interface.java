@@ -91,7 +91,6 @@ public class Interface extends Module {
 //            debug("CallLists: " + GlyphCache.CALL_LIST_COUNTER.get());
 
             x = 500;
-            y = 100;
 
 //                debug("AsyncGLContext:");
 //                debug("Tasks: " + AsyncGLContext.getTASK_QUEUE().size());

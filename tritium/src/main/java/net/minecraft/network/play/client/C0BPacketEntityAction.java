@@ -78,7 +78,6 @@ public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPa
                 case RIDING_JUMP -> RIDING_JUMP;
                 case OPEN_INVENTORY -> OPEN_INVENTORY;
                 case STOP_SLEEPING -> STOP_SLEEPING;
-                default -> throw new IllegalArgumentException();
             };
         }
 
@@ -91,7 +90,6 @@ public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPa
                 case RIDING_JUMP -> EnumEntityAction.RIDING_JUMP;
                 case OPEN_INVENTORY -> EnumEntityAction.OPEN_INVENTORY;
                 case STOP_SLEEPING -> EnumEntityAction.STOP_SLEEPING;
-                default -> throw new IllegalArgumentException();
             };
         }
     }

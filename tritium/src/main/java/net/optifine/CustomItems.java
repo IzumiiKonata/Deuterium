@@ -63,10 +63,10 @@ public class CustomItems {
                 update(iresourcepack);
             }
             update(Config.getDefaultResourcePack());
-            if (itemProperties.length <= 0) {
+            if (itemProperties.length == 0) {
                 itemProperties = null;
             }
-            if (enchantmentProperties.length <= 0) {
+            if (enchantmentProperties.length == 0) {
                 enchantmentProperties = null;
             }
         }
@@ -415,10 +415,9 @@ public class CustomItems {
             return customitemproperties.textureLocation;
         } else {
             final Item item = itemStack.getItem();
-            if (!(item instanceof ItemArmor)) {
+            if (!(item instanceof ItemArmor itemarmor)) {
                 return null;
             } else {
-                final ItemArmor itemarmor = (ItemArmor) item;
                 final String s = itemarmor.getArmorMaterial().getName();
                 final StringBuilder stringbuffer = new StringBuilder();
                 stringbuffer.append("texture.");
@@ -547,7 +546,7 @@ public class CustomItems {
             return false;
         } else {
             final int[][] aint = getEnchantmentIdLevels(itemStack);
-            if (aint.length <= 0) {
+            if (aint.length == 0) {
                 return false;
             } else {
                 Set set = null;
@@ -607,7 +606,7 @@ public class CustomItems {
             return false;
         } else {
             final int[][] aint = getEnchantmentIdLevels(itemStack);
-            if (aint.length <= 0) {
+            if (aint.length == 0) {
                 return false;
             } else {
                 Set set = null;

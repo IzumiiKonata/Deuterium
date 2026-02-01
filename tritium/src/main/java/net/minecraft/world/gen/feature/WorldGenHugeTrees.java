@@ -54,7 +54,6 @@ public abstract class WorldGenHugeTrees extends WorldGenAbstractTree {
                 if (i == 0) {
                     j = 1;
                 } else if (i >= 1 + p_175926_3_ - 2) {
-                    j = 2;
                 }
 
                 for (int k = -j; k <= j && flag; ++k) {

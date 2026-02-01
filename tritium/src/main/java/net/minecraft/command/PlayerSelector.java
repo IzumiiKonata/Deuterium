@@ -51,7 +51,7 @@ public class PlayerSelector {
 
     public static <T extends Entity> T matchOneEntity(ICommandSender sender, String token, Class<? extends T> targetClass) {
         List<T> list = matchEntities(sender, token, targetClass);
-        return (T) (list.size() == 1 ? (Entity) list.get(0) : null);
+        return (T) (list.size() == 1 ? (Entity) list.getFirst() : null);
     }
 
     public static IChatComponent matchEntitiesToChatComponent(ICommandSender sender, String token) {
@@ -163,10 +163,9 @@ public class PlayerSelector {
 
         if (i > -1 || j > -1) {
             list.add(p_apply_1_ -> {
-                if (!(p_apply_1_ instanceof EntityPlayerMP)) {
+                if (!(p_apply_1_ instanceof EntityPlayerMP entityplayermp)) {
                     return false;
                 } else {
-                    EntityPlayerMP entityplayermp = (EntityPlayerMP) p_apply_1_;
                     return (i <= -1 || entityplayermp.experienceLevel >= i) && (j <= -1 || entityplayermp.experienceLevel <= j);
                 }
             });
@@ -181,10 +180,9 @@ public class PlayerSelector {
 
         if (i != WorldSettings.GameType.NOT_SET.getID()) {
             list.add(p_apply_1_ -> {
-                if (!(p_apply_1_ instanceof EntityPlayerMP)) {
+                if (!(p_apply_1_ instanceof EntityPlayerMP entityplayermp)) {
                     return false;
                 } else {
-                    EntityPlayerMP entityplayermp = (EntityPlayerMP) p_apply_1_;
                     return entityplayermp.theItemInWorldManager.getGameType().getID() == i;
                 }
             });
@@ -205,10 +203,9 @@ public class PlayerSelector {
         if (s != null) {
             final String s_f = s;
             list.add(p_apply_1_ -> {
-                if (!(p_apply_1_ instanceof EntityLivingBase)) {
+                if (!(p_apply_1_ instanceof EntityLivingBase entitylivingbase)) {
                     return false;
                 } else {
-                    EntityLivingBase entitylivingbase = (EntityLivingBase) p_apply_1_;
                     Team team = entitylivingbase.getTeam();
                     String s1 = team == null ? "" : team.getRegisteredName();
                     return s1.equals(s_f) != flag;
@@ -223,7 +220,7 @@ public class PlayerSelector {
         List<Predicate<Entity>> list = Lists.newArrayList();
         final Map<String, Integer> map = func_96560_a(p_179657_0_);
 
-        if (map != null && !map.isEmpty()) {
+        if (!map.isEmpty()) {
             list.add(p_apply_1_ -> {
                 Scoreboard scoreboard = MinecraftServer.getServer().worldServerForDimension(0).getScoreboard();
 
@@ -388,7 +385,7 @@ public class PlayerSelector {
                 Collections.shuffle(p_179658_0_);
             }
         } else if (p_179658_5_ != null) {
-            Collections.sort(p_179658_0_, (Comparator<Entity>) (p_compare_1_, p_compare_2_) -> ComparisonChain.start().compare(p_compare_1_.getDistanceSq(p_179658_5_), p_compare_2_.getDistanceSq(p_179658_5_)).result());
+            p_179658_0_.sort((Comparator<Entity>) (p_compare_1_, p_compare_2_) -> ComparisonChain.start().compare(p_compare_1_.getDistanceSq(p_179658_5_), p_compare_2_.getDistanceSq(p_179658_5_)).result());
         }
 
         Entity entity = p_179658_2_.getCommandSenderEntity();

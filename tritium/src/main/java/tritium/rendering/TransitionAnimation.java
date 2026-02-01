@@ -45,37 +45,9 @@ public class TransitionAnimation {
 
     public static void task(Runnable runnable) {
 
-        if (true) {
-            runnable.run();
-            return;
-        }
+        runnable.run();
+        return;
 
-        if (running) {
-//            DevUtils.printCurrentInvokeStack();
-//            throw new IllegalStateException("Already Running!");
-            return;
-        }
-
-        running = true;
-
-        increasing = true;
-
-        if (runnable == null) {
-            System.err.println("Runnable == NULL!");
-            DevUtils.printCurrentInvokeStack();
-        }
-
-        task = new Task(DevUtils.getCurrentInvokeStack()) {
-            @Override
-            public void run() {
-                if (runnable != null)
-                    runnable.run();
-                else {
-                    System.err.println("Runnable == NULL!");
-                    System.out.println(this.getMsg());
-                }
-            }
-        };
     }
 
     @Getter

@@ -420,8 +420,7 @@ public class EntityGuardian extends EntityMob {
      * Called when the entity is attacked.
      */
     public boolean attackEntityFrom(DamageSource source, float amount) {
-        if (!this.func_175472_n() && !source.isMagicDamage() && source.getSourceOfDamage() instanceof EntityLivingBase) {
-            EntityLivingBase entitylivingbase = (EntityLivingBase) source.getSourceOfDamage();
+        if (!this.func_175472_n() && !source.isMagicDamage() && source.getSourceOfDamage() instanceof EntityLivingBase entitylivingbase) {
 
             if (!source.isExplosion()) {
                 entitylivingbase.attackEntityFrom(DamageSource.causeThornsDamage(this), 2.0F);

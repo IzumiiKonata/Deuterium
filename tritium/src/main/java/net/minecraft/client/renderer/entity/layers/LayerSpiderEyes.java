@@ -27,7 +27,7 @@ public class LayerSpiderEyes implements LayerRenderer<EntitySpider> {
 
         int i = 61680;
         int j = i % 65536;
-        int k = i / 65536;
+        int k = 0;
         OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, (float) j, (float) k);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 

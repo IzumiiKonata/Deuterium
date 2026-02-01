@@ -22,9 +22,6 @@ public class PropertyEnum<T extends Enum<T> & IStringSerializable> extends Prope
             String s = t.getName();
 
             Map<String, T> nameToValue = Maps.newHashMap();
-            if (nameToValue.containsKey(s)) {
-                throw new IllegalArgumentException("Multiple values have the same name '" + s + "'");
-            }
 
             nameToValue.put(s, t);
         }

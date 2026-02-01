@@ -89,9 +89,7 @@ public class ScrollText {
             double gradWidth = 6;
             double exp = 2;
 
-            StencilClipManager.beginClip(() -> {
-                Rect.draw(x, y - exp, width, fr.getHeight() + exp * 2, -1, Rect.RectType.EXPAND);
-            });
+            StencilClipManager.beginClip(() -> Rect.draw(x, y - exp, width, fr.getHeight() + exp * 2, -1, Rect.RectType.EXPAND));
 
             fr.drawString(text, x + scrollOffset, y, color);
 

@@ -39,10 +39,9 @@ public class EmissiveTextures {
     }
 
     public static ITextureObject getEmissiveTexture(final ITextureObject texture, final Map<Location, ITextureObject> mapTextures) {
-        if (!render || !(texture instanceof SimpleTexture)) {
+        if (!render || !(texture instanceof SimpleTexture simpletexture)) {
             return texture;
         } else {
-            final SimpleTexture simpletexture = (SimpleTexture) texture;
             Location resourcelocation = simpletexture.locationEmissive;
             if (!renderEmissive) {
                 if (resourcelocation != null) {

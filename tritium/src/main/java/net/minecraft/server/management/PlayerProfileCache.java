@@ -265,7 +265,6 @@ public class PlayerProfileCache {
                                 date = PlayerProfileCache.dateFormat.parse(primitive.getAsString()).getTime();
                             }
                         } catch (ParseException var14) {
-                            date = null;
                         }
                     }
 

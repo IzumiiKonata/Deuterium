@@ -31,11 +31,7 @@ public class Bind extends Command {
         } else {
             // else we're going to print the key of the specified module
             client.getModuleManager().getModuleByName(op).ifPresentOrElse(
-                    md -> {
-                        this.print(EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + ": " + EnumChatFormatting.RESET + Keyboard.getKeyName(md.getKeyBind()));
-                    }, () -> {
-                        this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + op + EnumChatFormatting.RED));
-                    }
+                    md -> this.print(EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + ": " + EnumChatFormatting.RESET + Keyboard.getKeyName(md.getKeyBind())), () -> this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + op + EnumChatFormatting.RED))
             );
 
         }
@@ -71,9 +67,7 @@ public class Bind extends Command {
                                 EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN,
                                 EnumChatFormatting.RESET + Keyboard.getKeyName(Keyboard.getKeyIndex(keyName.toUpperCase())
                                 )));
-                    }, () -> {
-                        this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED));
-                    }
+                    }, () -> this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED))
                 );
 
     }

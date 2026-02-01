@@ -65,8 +65,7 @@ public class LogManager {
         if (o == null)
             return "";
 
-        if (o instanceof Throwable) {
-            Throwable t = (Throwable) o;
+        if (o instanceof Throwable t) {
 
             StringWriter sw = new StringWriter();
 
@@ -102,8 +101,7 @@ public class LogManager {
             }
 
             for (Object arg : args) {
-                if (arg instanceof Throwable) {
-                    Throwable t = (Throwable) arg;
+                if (arg instanceof Throwable t) {
                     String string = LogManager.toString(t);
                     System.err.println(string);
                 }

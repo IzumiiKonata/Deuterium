@@ -15,10 +15,9 @@ import java.util.List;
 
 public class TooltipProviderShaderOptions extends TooltipProviderOptions {
     public String[] getTooltipLines(GuiButton btn, int width) {
-        if (!(btn instanceof GuiButtonShaderOption)) {
+        if (!(btn instanceof GuiButtonShaderOption guibuttonshaderoption)) {
             return null;
         } else {
-            GuiButtonShaderOption guibuttonshaderoption = (GuiButtonShaderOption) btn;
             ShaderOption shaderoption = guibuttonshaderoption.getShaderOption();
             return this.makeTooltipLines(shaderoption, width);
         }
@@ -68,7 +67,7 @@ public class TooltipProviderShaderOptions extends TooltipProviderOptions {
     }
 
     private String[] splitDescription(String desc) {
-        if (desc.length() <= 0) {
+        if (desc.length() == 0) {
             return new String[0];
         } else {
             desc = StrUtils.removePrefix(desc, "//");

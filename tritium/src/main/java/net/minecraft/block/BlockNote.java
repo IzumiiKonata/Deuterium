@@ -29,8 +29,7 @@ public class BlockNote extends BlockContainer {
         boolean flag = worldIn.isBlockPowered(pos);
         TileEntity tileentity = worldIn.getTileEntity(pos);
 
-        if (tileentity instanceof TileEntityNote) {
-            TileEntityNote tileentitynote = (TileEntityNote) tileentity;
+        if (tileentity instanceof TileEntityNote tileentitynote) {
 
             if (tileentitynote.previousRedstoneState != flag) {
                 if (flag) {
@@ -46,8 +45,7 @@ public class BlockNote extends BlockContainer {
         if (!worldIn.isRemote) {
             TileEntity tileentity = worldIn.getTileEntity(pos);
 
-            if (tileentity instanceof TileEntityNote) {
-                TileEntityNote tileentitynote = (TileEntityNote) tileentity;
+            if (tileentity instanceof TileEntityNote tileentitynote) {
                 tileentitynote.changePitch();
                 tileentitynote.triggerNote(worldIn, pos);
             }

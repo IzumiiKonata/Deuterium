@@ -1036,8 +1036,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
         if (!flag && !this.isChunkLoaded(i, j, true)) {
             return false;
         } else {
-            if (entityIn instanceof EntityPlayer) {
-                EntityPlayer entityplayer = (EntityPlayer) entityIn;
+            if (entityIn instanceof EntityPlayer entityplayer) {
                 this.playerEntities.add(entityplayer);
                 this.updateAllPlayersSleepingFlag();
             }
@@ -1578,11 +1577,11 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     public boolean addTileEntity(TileEntity tile) {
         boolean flag = this.loadedTileEntityList.add(tile);
 
-        if (flag && tile instanceof ITickable) {
+        if (tile instanceof ITickable) {
             this.tickableTileEntities.add(tile);
         }
 
-        return flag;
+        return true;
     }
 
     public void addTileEntities(Collection<TileEntity> tileEntityCollection) {

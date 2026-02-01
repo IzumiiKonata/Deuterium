@@ -581,7 +581,6 @@ final class LayerIIIDecoder implements FrameDecoder {
                 newSlen[2] = (scalefacComp & 0xF) >>> 2;
                 newSlen[3] = (scalefacComp & 3);
                 si.ch[ch].gr[gr].preflag = 0;
-                blockNumber = 0;
 
             } else if (scalefacComp < 500) {
 
@@ -825,7 +824,6 @@ final class LayerIIIDecoder implements FrameDecoder {
             else {
                 cb_width = sfBandIndex[sfreq].s[1];
                 next_cb_boundary = (cb_width << 2) - cb_width;
-                cb_begin = 0;
             }
         } else {
             next_cb_boundary = sfBandIndex[sfreq].l[1]; // LONG blocks: 0,1,3
@@ -913,9 +911,7 @@ final class LayerIIIDecoder implements FrameDecoder {
 
             // Do long/short dependent scaling operations
 
-            if ((gr_info.windowSwitchingFlag != 0) &&
-                    (((gr_info.blockType == 2) && (gr_info.mixedBlockFlag == 0)) ||
-                            ((gr_info.blockType == 2) && (gr_info.mixedBlockFlag != 0) && (j >= 36)))) {
+            if (gr_info.windowSwitchingFlag != 0 && (gr_info.blockType == 2 && gr_info.mixedBlockFlag == 0 || gr_info.blockType == 2 && j >= 36)) {
 
                 t_index = (index - cb_begin) / cb_width;
                 int idx = scalefac[ch].s[t_index][cb]
@@ -1131,7 +1127,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                                 i++;
                             } // for (; sb > 0 ...
                         }
-                        if (max_sfb <= 3) {
+                        if (max_sfb == 3) {
                             i = 2;
                             ss = 17;
                             sb = -1;

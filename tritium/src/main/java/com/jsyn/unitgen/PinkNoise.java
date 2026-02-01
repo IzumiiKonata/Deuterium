@@ -20,6 +20,8 @@ import com.jsyn.ports.UnitInputPort;
 import com.jsyn.ports.UnitOutputPort;
 import com.jsyn.util.PseudoRandom;
 
+import java.util.Arrays;
+
 /**
  * Random output with 3dB per octave rolloff providing a soft natural noise sound. Generated using
  * Gardner method. Optimization suggested by James McCartney uses a tree to select which random
@@ -72,9 +74,7 @@ public class PinkNoise extends UnitGenerator implements UnitSource {
         scalar = 1.0 / pmax;
 
         // initialize rows
-        for (int i = 0; i < NUM_ROWS; i++) {
-            rows[i] = 0;
-        }
+        Arrays.fill(rows, 0);
 
         runningSum = 0;
     }

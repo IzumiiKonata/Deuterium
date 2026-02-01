@@ -19,7 +19,7 @@ import java.util.Iterator;
  * @author kc7bfi
  */
 class PCMProcessors implements PCMProcessor {
-    private HashSet pcmProcessors = new HashSet();
+    private final HashSet pcmProcessors = new HashSet();
 
     /**
      * Add a PCM processor.

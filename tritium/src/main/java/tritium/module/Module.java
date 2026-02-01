@@ -159,7 +159,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
             names.add(subModule.getInternalName());
         }
 
-        StringModeSetting subModes = new StringModeSetting("Mode", names.get(0), names) {
+        StringModeSetting subModes = new StringModeSetting("Mode", names.getFirst(), names) {
             @Override
             public void onModeChanged(String before, String now) {
 
@@ -197,7 +197,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
             }
         }
 
-        this.settings.add(0, subModes);
+        this.settings.addFirst(subModes);
     }
 
     public SubModule<?> getSubModuleByName(String name) {
@@ -225,7 +225,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
     }
 
     public StringModeSetting getSubModes() {
-        return (StringModeSetting) this.settings.get(0);
+        return (StringModeSetting) this.settings.getFirst();
     }
 
     public void loadConfig(JsonObject directory) {
@@ -252,9 +252,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
         JsonObject directory = new JsonObject();
         directory.addProperty("Key", this.getKeyBind());
         directory.addProperty("Enabled", this.isEnabled());
-        this.getSettings().forEach(val -> {
-            directory.addProperty(val.getInternalName(), val.getValueForConfig());
-        });
+        this.getSettings().forEach(val -> directory.addProperty(val.getInternalName(), val.getValueForConfig()));
 
         return directory;
     }

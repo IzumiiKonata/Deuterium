@@ -41,32 +41,36 @@ public class CustomGuis {
                 } else {
                     final BlockPos blockpos = playerControllerOF.getLastClickBlockPos();
                     if (blockpos != null) {
-                        if (guiscreen instanceof GuiRepair) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.ANVIL, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiBeacon) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.BEACON, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiBrewingStand) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.BREWING_STAND, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiChest) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.CHEST, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiCrafting) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.CRAFTING, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiDispenser) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.DISPENSER, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiEnchantment) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.ENCHANTMENT, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiFurnace) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.FURNACE, blockpos, iblockaccess, loc, guiscreen);
-                        }
-                        if (guiscreen instanceof GuiHopper) {
-                            return getTexturePos(CustomGuiProperties.EnumContainer.HOPPER, blockpos, iblockaccess, loc, guiscreen);
+                        switch (guiscreen) {
+                            case GuiRepair guiRepair -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.ANVIL, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiBeacon guiBeacon -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.BEACON, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiBrewingStand guiBrewingStand -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.BREWING_STAND, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiChest guiChest -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.CHEST, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiCrafting guiCrafting -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.CRAFTING, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiDispenser guiDispenser -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.DISPENSER, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiEnchantment guiEnchantment -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.ENCHANTMENT, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiFurnace guiFurnace -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.FURNACE, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            case GuiHopper guiHopper -> {
+                                return getTexturePos(CustomGuiProperties.EnumContainer.HOPPER, blockpos, iblockaccess, loc, guiscreen);
+                            }
+                            default -> {
+                            }
                         }
                     }
                     final Entity entity = playerControllerOF.getLastClickEntity();
@@ -193,7 +197,7 @@ public class CustomGuis {
 
     private static boolean isChristmas() {
         final Calendar calendar = Calendar.getInstance();
-        return calendar.get(2) + 1 == 12 && calendar.get(5) >= 24 && calendar.get(5) <= 26;
+        return calendar.get(Calendar.MONTH) + 1 == 12 && calendar.get(Calendar.DATE) >= 24 && calendar.get(Calendar.DATE) <= 26;
     }
 
     private static void warn(final String str) {

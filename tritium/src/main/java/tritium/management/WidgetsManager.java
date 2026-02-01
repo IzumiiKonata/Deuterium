@@ -167,21 +167,8 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
     @Handler
     public void onResize(DisplayResizedEvent event) {
 
-        if (true)
-            return;
+        return;
 
-
-        for (Widget widget : widgets) {
-
-            if (widget.horizontalDirection == HorizontalDirection.None) {
-                widget.setX((widget.getX() / event.getBeforeWidth()) * event.getNowWidth());
-            }
-
-            if (widget.verticalDirection == VerticalDirection.None) {
-                widget.setY((widget.getY() / event.getBeforeHeight()) * event.getNowHeight());
-            }
-
-        }
 
     }
 

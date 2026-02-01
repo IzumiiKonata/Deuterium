@@ -66,7 +66,7 @@ public class BlockDynamicLiquid extends BlockLiquid {
                 }
             }
 
-            if (this.blockMaterial == Material.lava && i < 8 && i1 < 8 && i1 > i && rand.nextInt(4) != 0) {
+            if (this.blockMaterial == Material.lava && i1 < 8 && i1 > i && rand.nextInt(4) != 0) {
                 k *= 4;
             }
 

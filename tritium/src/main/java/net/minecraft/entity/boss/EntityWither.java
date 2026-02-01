@@ -418,7 +418,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
 
                 Entity entity1 = source.getEntity();
 
-                if (entity1 != null && !(entity1 instanceof EntityPlayer) && entity1 instanceof EntityLivingBase && ((EntityLivingBase) entity1).getCreatureAttribute() == this.getCreatureAttribute()) {
+                if (!(entity1 instanceof EntityPlayer) && entity1 instanceof EntityLivingBase && ((EntityLivingBase) entity1).getCreatureAttribute() == this.getCreatureAttribute()) {
                     return false;
                 } else {
                     if (this.blockBreakCounter <= 0) {

@@ -74,7 +74,6 @@ public class MapColor {
         }
 
         if (p_151643_1_ == 1) {
-            i = 220;
         }
 
         if (p_151643_1_ == 0) {

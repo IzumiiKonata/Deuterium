@@ -36,7 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
     private static final Logger logger = LogManager.getLogger("AnvilChunkLoader");
     private final Map<ChunkCoordIntPair, NBTTagCompound> chunksToRemove = new ConcurrentHashMap<>();
-    private final Set<ChunkCoordIntPair> pendingAnvilChunksCoordinates = Collections.<ChunkCoordIntPair>newSetFromMap(new ConcurrentHashMap<>());
+    private final Set<ChunkCoordIntPair> pendingAnvilChunksCoordinates = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * Save directory for chunks using the Anvil format
@@ -153,7 +153,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
                 this.pendingAnvilChunksCoordinates.remove(chunkcoordintpair);
             }
 
-            return lvt_3_1_;
+            return true;
         }
     }
 
@@ -185,9 +185,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
             this.field_183014_e = true;
 
             while (true) {
-                if (this.writeNextIO()) {
-                    continue;
-                }
+                this.writeNextIO();
             }
         } finally {
             this.field_183014_e = false;
@@ -305,7 +303,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
 
         LightingHooks.writeNeighborLightChecksToNBT(chunkIn, p_75820_3_);
 
-        p_75820_3_.setBoolean("LightPopulated", ((IChunkLightingData) chunkIn).isLightInitialized());
+        p_75820_3_.setBoolean("LightPopulated", chunkIn.isLightInitialized());
     }
 
     /**
@@ -419,7 +417,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
 
         LightingHooks.readNeighborLightChecksFromNBT(chunk, p_75823_2_);
 
-        ((IChunkLightingData) chunk).setLightInitialized(p_75823_2_.getBoolean("LightPopulated"));
+        chunk.setLightInitialized(p_75823_2_.getBoolean("LightPopulated"));
 
         return chunk;
     }

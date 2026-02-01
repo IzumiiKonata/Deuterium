@@ -38,7 +38,7 @@ public final class SpawnerAnimals {
             EntityPlayer entityplayer = null;
 
             if (worldServerIn.playerEntities.size() == 1) {
-                entityplayer = worldServerIn.playerEntities.get(0);
+                entityplayer = worldServerIn.playerEntities.getFirst();
 
                 if (!this.eligibleChunksForSpawning.isEmpty() && entityplayer != null && entityplayer.chunkCoordX == this.lastPlayerChunkX && entityplayer.chunkCoordZ == this.lastPlayerChunkZ) {
                     flag = false;
@@ -114,7 +114,8 @@ public final class SpawnerAnimals {
 
                                     for (int l3 = 0; l3 < 4; ++l3) {
                                         l2 += worldServerIn.rand.nextInt(k3) - worldServerIn.rand.nextInt(k3);
-                                        i3 += worldServerIn.rand.nextInt(1) - worldServerIn.rand.nextInt(1);
+                                        worldServerIn.rand.nextInt(1);
+                                        worldServerIn.rand.nextInt(1);
                                         j3 += worldServerIn.rand.nextInt(k3) - worldServerIn.rand.nextInt(k3);
                                         BlockPos blockpos1 = new BlockPos(l2, i3, j3);
                                         float f = (float) l2 + 0.5F;
