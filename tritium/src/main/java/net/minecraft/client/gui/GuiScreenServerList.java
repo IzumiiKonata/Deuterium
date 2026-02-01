@@ -36,7 +36,7 @@ public class GuiScreenServerList extends GuiScreen {
         this.field_146302_g.setMaxStringLength(128);
         this.field_146302_g.setFocused(true);
         this.field_146302_g.setText(this.mc.gameSettings.lastServer);
-        this.buttonList.get(0).enabled = this.field_146302_g.getText().length() > 0 && this.field_146302_g.getText().split(":").length > 0;
+        this.buttonList.get(0).enabled = !this.field_146302_g.getText().isEmpty() && this.field_146302_g.getText().split(":").length > 0;
     }
 
     /**
@@ -51,7 +51,7 @@ public class GuiScreenServerList extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             if (button.id == 1) {
                 this.field_146303_a.confirmClicked(false, 0);
@@ -68,7 +68,7 @@ public class GuiScreenServerList extends GuiScreen {
      */
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         if (this.field_146302_g.textboxKeyTyped(typedChar, keyCode)) {
-            this.buttonList.get(0).enabled = this.field_146302_g.getText().length() > 0 && this.field_146302_g.getText().split(":").length > 0;
+            this.buttonList.get(0).enabled = !this.field_146302_g.getText().isEmpty() && this.field_146302_g.getText().split(":").length > 0;
         } else if (keyCode == 28 || keyCode == 156) {
             this.actionPerformed(this.buttonList.get(0));
         }

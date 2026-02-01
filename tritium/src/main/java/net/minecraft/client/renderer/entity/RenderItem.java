@@ -431,22 +431,22 @@ public class RenderItem implements IResourceManagerReloadListener {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "渲染物品");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("被渲染的物品");
                 crashreportcategory.addCrashSectionCallable("物品类型", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return String.valueOf(stack.getItem());
                     }
                 });
                 crashreportcategory.addCrashSectionCallable("物品元数据", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return String.valueOf(stack.getMetadata());
                     }
                 });
                 crashreportcategory.addCrashSectionCallable("物品NBT", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return String.valueOf(stack.getTagCompound());
                     }
                 });
                 crashreportcategory.addCrashSectionCallable("物品效果", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return String.valueOf(stack.hasEffect());
                     }
                 });

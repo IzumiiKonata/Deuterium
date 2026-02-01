@@ -86,8 +86,7 @@ public abstract class PathNavigate {
             BlockPos blockpos = new BlockPos(this.theEntity);
             int i = (int) (f + 8.0F);
             ChunkCache chunkcache = new ChunkCache(this.worldObj, blockpos.add(-i, -i, -i), blockpos.add(i, i, i), 0);
-            PathEntity pathentity = this.pathFinder.createEntityPathTo(chunkcache, this.theEntity, pos, f);
-            return pathentity;
+            return this.pathFinder.createEntityPathTo(chunkcache, this.theEntity, pos, f);
         }
     }
 
@@ -117,8 +116,7 @@ public abstract class PathNavigate {
             BlockPos blockpos = (new BlockPos(this.theEntity)).up();
             int i = (int) (f + 16.0F);
             ChunkCache chunkcache = new ChunkCache(this.worldObj, blockpos.add(-i, -i, -i), blockpos.add(i, i, i), 0);
-            PathEntity pathentity = this.pathFinder.createEntityPathTo(chunkcache, this.theEntity, entityIn, f);
-            return pathentity;
+            return this.pathFinder.createEntityPathTo(chunkcache, this.theEntity, entityIn, f);
         }
     }
 

@@ -115,10 +115,7 @@ public class ChannelLPC extends Channel {
         // decode the subframe
         System.arraycopy(warmup, 0, channelData.getOutput(), 0, order);
         if (bps + qlpCoeffPrecision + BitMath.ilog2(order) <= 32) {
-            if (bps <= 16 && qlpCoeffPrecision <= 16)
-                LPCPredictor.restoreSignal(channelData.getResidual(), header.blockSize - order, qlpCoeff, order, quantizationLevel, channelData.getOutput(), order);
-            else
-                LPCPredictor.restoreSignal(channelData.getResidual(), header.blockSize - order, qlpCoeff, order, quantizationLevel, channelData.getOutput(), order);
+            LPCPredictor.restoreSignal(channelData.getResidual(), header.blockSize - order, qlpCoeff, order, quantizationLevel, channelData.getOutput(), order);
         } else {
             LPCPredictor.restoreSignalWide(channelData.getResidual(), header.blockSize - order, qlpCoeff, order, quantizationLevel, channelData.getOutput(), order);
         }

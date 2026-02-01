@@ -19,9 +19,7 @@ public class ModelAdapterDragon extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (!(model instanceof ModelDragon)) {
-            return null;
-        } else {
+        if (model instanceof ModelDragon) {
             ModelDragon modeldragon = (ModelDragon) model;
             if (modelPart.equals("head"))
                 return modeldragon.head;
@@ -47,8 +45,8 @@ public class ModelAdapterDragon extends ModelAdapter {
                 return modeldragon.wing;
             if (modelPart.equals("wing_tip"))
                 return modeldragon.wingTip;
-            return null;
         }
+        return null;
     }
 
     public String[] getModelRendererNames() {

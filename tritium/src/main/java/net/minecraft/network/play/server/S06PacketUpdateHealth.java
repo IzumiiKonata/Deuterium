@@ -24,7 +24,7 @@ public class S06PacketUpdateHealth implements Packet<INetHandlerPlayClient>, SPa
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.health = buf.readFloat();
         this.foodLevel = buf.readVarIntFromBuffer();
         this.saturationLevel = buf.readFloat();
@@ -33,7 +33,7 @@ public class S06PacketUpdateHealth implements Packet<INetHandlerPlayClient>, SPa
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeFloat(this.health);
         buf.writeVarIntToBuffer(this.foodLevel);
         buf.writeFloat(this.saturationLevel);

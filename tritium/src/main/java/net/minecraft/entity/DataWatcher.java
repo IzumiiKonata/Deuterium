@@ -223,7 +223,7 @@ public class DataWatcher {
      * Writes a watchable object (entity attribute of type {byte, short, int, float, string, ItemStack,
      * ChunkCoordinates}) to the specified PacketBuffer
      */
-    private static void writeWatchableObjectToPacketBuffer(PacketBuffer buffer, DataWatcher.WatchableObject object) throws IOException {
+    private static void writeWatchableObjectToPacketBuffer(PacketBuffer buffer, DataWatcher.WatchableObject object) {
         int i = (object.getObjectType() << 5 | object.getDataValueId() & 31) & 255;
         buffer.writeByte(i);
 

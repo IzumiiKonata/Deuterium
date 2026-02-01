@@ -325,16 +325,12 @@ public class Module implements SharedConstants, SharedRenderingConstants {
         }
 
         public static Category fromEnumCategory(EnumModuleCategory category) {
-            switch (category) {
-                case MOVEMENT:
-                    return MOVEMENT;
-                case PLAYER:
-                    return OTHER;
-                case VISUAL:
-                    return RENDER;
-                default:
-                    return getByName(category.name());
-            }
+            return switch (category) {
+                case MOVEMENT -> MOVEMENT;
+                case PLAYER -> OTHER;
+                case VISUAL -> RENDER;
+                default -> getByName(category.name());
+            };
         }
 
     }

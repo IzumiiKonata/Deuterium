@@ -27,15 +27,9 @@ public enum RenderEntityParameterBool implements IExpressionBool {
         return this.name;
     }
 
-    public ExpressionType getExpressionType() {
-        return ExpressionType.BOOL;
-    }
-
     public boolean eval() {
         Render render = this.renderManager.renderRender;
-        if (render == null) {
-            return false;
-        } else {
+        if (render != null) {
             if (render instanceof RendererLivingEntity) {
                 RendererLivingEntity rendererlivingentity = (RendererLivingEntity) render;
                 EntityLivingBase entitylivingbase = rendererlivingentity.renderEntity;
@@ -73,20 +67,18 @@ public enum RenderEntityParameterBool implements IExpressionBool {
                         break;
                 }
             }
-            return false;
         }
+        return false;
     }
 
     public static RenderEntityParameterBool parse(String str) {
-        if (str == null) {
-            return null;
-        } else {
+        if (str != null) {
             for (RenderEntityParameterBool renderentityparameterbool : VALUES) {
                 if (renderentityparameterbool.getName().equals(str)) {
                     return renderentityparameterbool;
                 }
             }
-            return null;
         }
+        return null;
     }
 }

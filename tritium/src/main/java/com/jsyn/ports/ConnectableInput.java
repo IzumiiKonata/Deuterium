@@ -22,9 +22,9 @@ package com.jsyn.ports;
  * @author Phil Burk (C) 2011 Mobileer Inc
  */
 public interface ConnectableInput {
-    public void connect(ConnectableOutput other);
+    void connect(ConnectableOutput other);
 
-    public void disconnect(ConnectableOutput other);
+    void disconnect(ConnectableOutput other);
 
     /**
      * This is used internally by PortBlockPart to make a connection between specific parts of a
@@ -32,7 +32,7 @@ public interface ConnectableInput {
      * 
      * @return
      */
-    public PortBlockPart getPortBlockPart();
+    PortBlockPart getPortBlockPart();
 
-    public void pullData(long frameCount, int start, int limit);
+    void pullData(long frameCount, int start, int limit);
 }

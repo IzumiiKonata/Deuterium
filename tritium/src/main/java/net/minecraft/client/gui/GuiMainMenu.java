@@ -151,7 +151,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
      * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
      * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
     }
 
     /**
@@ -231,7 +231,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.id == 0) {
             this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
         }
@@ -524,7 +524,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         String s2 = "Copyright Mojang AB. Do not distribute!";
         this.drawString(this.fontRendererObj, s2, this.width - this.fontRendererObj.getStringWidth(s2) - 2, this.height - 10, -1);
 
-        if (this.openGLWarning1 != null && this.openGLWarning1.length() > 0) {
+        if (this.openGLWarning1 != null && !this.openGLWarning1.isEmpty()) {
             drawRect(this.field_92022_t - 2, this.field_92021_u - 2, this.field_92020_v + 2, this.field_92019_w - 1, 1428160512);
             this.drawString(this.fontRendererObj, this.openGLWarning1, this.field_92022_t, this.field_92021_u, -1);
             this.drawString(this.fontRendererObj, this.openGLWarning2, (this.width - this.field_92024_r) / 2, this.buttonList.get(0).yPosition - 12, -1);
@@ -540,7 +540,7 @@ public class GuiMainMenu extends GuiScreen implements GuiYesNoCallback {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         synchronized (this.threadLock) {
-            if (this.openGLWarning1.length() > 0 && mouseX >= this.field_92022_t && mouseX <= this.field_92020_v && mouseY >= this.field_92021_u && mouseY <= this.field_92019_w) {
+            if (!this.openGLWarning1.isEmpty() && mouseX >= this.field_92022_t && mouseX <= this.field_92020_v && mouseY >= this.field_92021_u && mouseY <= this.field_92019_w) {
                 GuiConfirmOpenLink guiconfirmopenlink = new GuiConfirmOpenLink(this, this.openGLWarningLink, 13, true);
                 guiconfirmopenlink.disableSecurityWarning();
                 this.mc.displayGuiScreen(guiconfirmopenlink);

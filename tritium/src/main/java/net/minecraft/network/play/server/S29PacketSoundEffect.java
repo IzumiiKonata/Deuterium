@@ -35,7 +35,7 @@ public class S29PacketSoundEffect implements Packet<INetHandlerPlayClient>, SPac
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.soundName = buf.readStringFromBuffer(256);
         this.posX = buf.readInt();
         this.posY = buf.readInt();
@@ -47,7 +47,7 @@ public class S29PacketSoundEffect implements Packet<INetHandlerPlayClient>, SPac
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeString(this.soundName);
         buf.writeInt(this.posX);
         buf.writeInt(this.posY);

@@ -27,8 +27,6 @@ public class Rotate extends SubModule<BlockAnimations> {
         this.getModule().doBlockTransformations();
     }
 
-    ;
-
     public final NumberSetting<Double> speed = new NumberSetting<>("Rotate Speed", 10.0, 1.0, 50.0, 1.0);
 
 

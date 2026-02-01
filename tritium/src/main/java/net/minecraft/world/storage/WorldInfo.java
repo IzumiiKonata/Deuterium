@@ -623,14 +623,11 @@ public class WorldInfo {
             String s = "未知?";
 
             try {
-                switch (WorldInfo.this.saveVersion) {
-                    case 19132:
-                        s = "McRegion";
-                        break;
-
-                    case 19133:
-                        s = "Anvil";
-                }
+                s = switch (WorldInfo.this.saveVersion) {
+                    case 19132 -> "McRegion";
+                    case 19133 -> "Anvil";
+                    default -> s;
+                };
             } catch (Throwable var3) {
             }
 

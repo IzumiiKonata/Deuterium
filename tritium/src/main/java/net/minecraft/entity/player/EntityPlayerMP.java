@@ -1,7 +1,6 @@
 package net.minecraft.entity.player;
 
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.mojang.authlib.GameProfile;
 import io.netty.buffer.Unpooled;
 import net.minecraft.block.Block;
@@ -41,7 +40,6 @@ import net.minecraft.tileentity.TileEntitySign;
 import net.minecraft.util.*;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.*;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -885,14 +883,6 @@ public class EntityPlayerMP extends EntityPlayer implements ICrafting {
 
     public void loadResourcePack(String url, String hash) {
         this.playerNetServerHandler.sendPacket(new S48PacketResourcePackSend(url, hash));
-    }
-
-    /**
-     * Get the position in the world. <b>{@code null} is not allowed!</b> If you are not an entity in the world, return
-     * the coordinates 0, 0, 0
-     */
-    public BlockPos getPosition() {
-        return new BlockPos(this.posX, this.posY + 0.5D, this.posZ);
     }
 
     public void markPlayerActive() {

@@ -44,7 +44,7 @@ public interface UnitVoice extends UnitSource {
      * Typically a UnitVoice will be a subclass of UnitGenerator, which just returns "this".
      */
     @Override
-    public UnitGenerator getUnitGenerator();
+    UnitGenerator getUnitGenerator();
 
     /**
      * Looks up a port using its name and sets the value.

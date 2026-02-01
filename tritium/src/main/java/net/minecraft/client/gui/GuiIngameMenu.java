@@ -39,13 +39,10 @@ public class GuiIngameMenu extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         switch (button.id) {
-            case 0:
-                this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
-                break;
-
-            case 1:
+            case 0 -> this.mc.displayGuiScreen(new GuiOptions(this, this.mc.gameSettings));
+            case 1 -> {
                 boolean flag = this.mc.isIntegratedServerRunning();
                 button.enabled = false;
                 this.mc.theWorld.sendQuittingDisconnectingPacket();
@@ -56,23 +53,17 @@ public class GuiIngameMenu extends GuiScreen {
                 } else {
                     this.mc.displayGuiScreen(new GuiMultiplayer(MainMenu.getInstance()));
                 }
-
-            case 2:
-            case 3:
-            default:
-                break;
-
-            case 4:
+            }
+            case 4 -> {
                 this.mc.displayGuiScreen(null);
                 this.mc.setIngameFocus();
-                break;
-
-            case 6:
+            }
+            case 6 -> {
 //                this.mc.displayGuiScreen(new GuiStats(this, this.mc.thePlayer.getStatFileWriter()));
-                break;
-
-            case 7:
-                this.mc.displayGuiScreen(new GuiShareToLan(this));
+            }
+            case 7 -> this.mc.displayGuiScreen(new GuiShareToLan(this));
+            default -> {
+            }
         }
     }
 

@@ -1,6 +1,5 @@
 package tritium.ncm;
 
-import com.google.gson.Gson;
 import lombok.Data;
 import tritium.ncm.math.DigestUtils;
 import tritium.ncm.math.Hex;
@@ -117,9 +116,8 @@ public class CryptoUtil {
     public static String rsaEncrypt(String str, String publicKeyStr) {
         try {
             // 移除PEM格式的头尾标识
-            String cleanKey = publicKeyStr;
-            
-            byte[] keyBytes = Base64.getDecoder().decode(cleanKey);
+
+            byte[] keyBytes = Base64.getDecoder().decode(publicKeyStr);
             X509EncodedKeySpec keySpec = new X509EncodedKeySpec(keyBytes);
             KeyFactory keyFactory = KeyFactory.getInstance("RSA");
             PublicKey publicKey = keyFactory.generatePublic(keySpec);

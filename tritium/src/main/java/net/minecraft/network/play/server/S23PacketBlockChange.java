@@ -27,7 +27,7 @@ public class S23PacketBlockChange implements Packet<INetHandlerPlayClient>, SPac
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.blockPosition = buf.readBlockPos();
         this.blockState = Block.BLOCK_STATE_IDS.getByValue(buf.readVarIntFromBuffer());
     }
@@ -35,7 +35,7 @@ public class S23PacketBlockChange implements Packet<INetHandlerPlayClient>, SPac
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeBlockPos(this.blockPosition);
         buf.writeVarIntToBuffer(Block.BLOCK_STATE_IDS.get(this.blockState));
     }

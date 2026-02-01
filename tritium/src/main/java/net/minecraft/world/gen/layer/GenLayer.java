@@ -55,7 +55,7 @@ public abstract class GenLayer {
         int i = 4;
         int j = i;
 
-        if (p_180781_2_ == WorldType.CUSTOMIZED && p_180781_3_.length() > 0) {
+        if (p_180781_2_ == WorldType.CUSTOMIZED && !p_180781_3_.isEmpty()) {
             chunkprovidersettings = ChunkProviderSettings.Factory.jsonToFactory(p_180781_3_).func_177864_b();
             i = chunkprovidersettings.biomeSize;
             j = chunkprovidersettings.riverSize;
@@ -178,12 +178,12 @@ public abstract class GenLayer {
                 crashreportcategory.addCrashSection("Biome A ID", biomeIDA);
                 crashreportcategory.addCrashSection("Biome B ID", biomeIDB);
                 crashreportcategory.addCrashSectionCallable("Biome A", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return String.valueOf(biomegenbase);
                     }
                 });
                 crashreportcategory.addCrashSectionCallable("Biome B", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return String.valueOf(biomegenbase1);
                     }
                 });

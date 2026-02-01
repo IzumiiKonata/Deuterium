@@ -52,28 +52,15 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable {
     }
 
     public static EntityMinecart getMinecart(World worldIn, double x, double y, double z, EntityMinecart.EnumMinecartType type) {
-        switch (type) {
-            case CHEST:
-                return new EntityMinecartChest(worldIn, x, y, z);
-
-            case FURNACE:
-                return new EntityMinecartFurnace(worldIn, x, y, z);
-
-            case TNT:
-                return new EntityMinecartTNT(worldIn, x, y, z);
-
-            case SPAWNER:
-                return new EntityMinecartMobSpawner(worldIn, x, y, z);
-
-            case HOPPER:
-                return new EntityMinecartHopper(worldIn, x, y, z);
-
-            case COMMAND_BLOCK:
-                return new EntityMinecartCommandBlock(worldIn, x, y, z);
-
-            default:
-                return new EntityMinecartEmpty(worldIn, x, y, z);
-        }
+        return switch (type) {
+            case CHEST -> new EntityMinecartChest(worldIn, x, y, z);
+            case FURNACE -> new EntityMinecartFurnace(worldIn, x, y, z);
+            case TNT -> new EntityMinecartTNT(worldIn, x, y, z);
+            case SPAWNER -> new EntityMinecartMobSpawner(worldIn, x, y, z);
+            case HOPPER -> new EntityMinecartHopper(worldIn, x, y, z);
+            case COMMAND_BLOCK -> new EntityMinecartCommandBlock(worldIn, x, y, z);
+            default -> new EntityMinecartEmpty(worldIn, x, y, z);
+        };
     }
 
     /**
@@ -99,13 +86,6 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable {
      */
     public AxisAlignedBB getCollisionBox(Entity entityIn) {
         return entityIn.canBePushed() ? entityIn.getEntityBoundingBox() : null;
-    }
-
-    /**
-     * Returns the collision bounding box for this entity
-     */
-    public AxisAlignedBB getCollisionBoundingBox() {
-        return null;
     }
 
     /**
@@ -563,18 +543,6 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable {
         }
     }
 
-    /**
-     * Sets the x,y,z of the entity from the given parameters. Also seems to set up a bounding box.
-     */
-    public void setPosition(double x, double y, double z) {
-        this.posX = x;
-        this.posY = y;
-        this.posZ = z;
-        float f = this.width / 2.0F;
-        float f1 = this.height;
-        this.setEntityBoundingBox(new AxisAlignedBB(x - (double) f, y, z - (double) f, x + (double) f, y + (double) f1, z + (double) f));
-    }
-
     public Vec3 func_70495_a(double p_70495_1_, double p_70495_3_, double p_70495_5_, double p_70495_7_) {
         int i = MathHelper.floor_double(p_70495_1_);
         int j = MathHelper.floor_double(p_70495_3_);
@@ -698,7 +666,7 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable {
             this.setDisplayTileOffset(tagCompund.getInteger("DisplayOffset"));
         }
 
-        if (tagCompund.hasKey("CustomName", 8) && tagCompund.getString("CustomName").length() > 0) {
+        if (tagCompund.hasKey("CustomName", 8) && !tagCompund.getString("CustomName").isEmpty()) {
             this.entityName = tagCompund.getString("CustomName");
         }
     }
@@ -716,7 +684,7 @@ public abstract class EntityMinecart extends Entity implements IWorldNameable {
             tagCompound.setInteger("DisplayOffset", this.getDisplayTileOffset());
         }
 
-        if (this.entityName != null && this.entityName.length() > 0) {
+        if (this.entityName != null && !this.entityName.isEmpty()) {
             tagCompound.setString("CustomName", this.entityName);
         }
     }

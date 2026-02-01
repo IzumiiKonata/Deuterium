@@ -58,7 +58,7 @@ public class PortBlockPart implements ConnectableOutput, ConnectableInput {
     }
 
     protected boolean isConnected() {
-        return (connections.size() > 0);
+        return (!connections.isEmpty());
     }
 
     private void addConnection(PortBlockPart otherPart) {

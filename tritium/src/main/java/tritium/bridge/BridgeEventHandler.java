@@ -11,7 +11,6 @@ import today.opai.api.interfaces.EventHandler;
 import today.opai.api.interfaces.modules.PresetModule;
 import today.opai.api.interfaces.render.WindowResolution;
 import tritium.event.eventapi.Handler;
-import tritium.event.eventapi.State;
 import tritium.event.events.game.ChatEvent;
 import tritium.event.events.game.GameLoopEvent;
 import tritium.event.events.game.KeyPressedEvent;
@@ -23,9 +22,7 @@ import tritium.event.events.rendering.Render3DEvent;
 import tritium.event.events.rendering.RenderNameTagEvent;
 import tritium.event.events.world.TickEvent;
 import tritium.event.events.world.WorldChangedEvent;
-import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.EventManager;
-import tritium.rendering.rendersystem.RenderSystem;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

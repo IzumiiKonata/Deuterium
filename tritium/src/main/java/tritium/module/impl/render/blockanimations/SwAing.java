@@ -28,8 +28,6 @@ public class SwAing extends SubModule<BlockAnimations> {
         this.getModule().doBlockTransformations();
     }
 
-    ;
-
     private void avatar(final float equipProgress, final float swingProgress) {
         GlStateManager.translate(0.6f, -0.48f, -0.79999995f);
         GlStateManager.translate(0.0f, 0.0f, 0.0f);

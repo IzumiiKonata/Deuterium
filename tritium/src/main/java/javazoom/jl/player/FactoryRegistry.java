@@ -90,12 +90,8 @@ public class FactoryRegistry {
         JavaLayerException lastEx = null;
 logger.fine("factories order: " + Arrays.toString(getFactoriesPriority()));
         for (AudioDeviceFactory factory : getFactoriesPriority()) {
-            try {
-                device = factory.createAudioDevice();
-                break;
-            } catch (JavaLayerException ex) {
-                lastEx = ex;
-            }
+            device = factory.createAudioDevice();
+            break;
         }
 
         if (device == null && lastEx != null) {

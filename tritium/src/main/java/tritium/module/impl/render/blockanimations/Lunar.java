@@ -26,8 +26,6 @@ public class Lunar extends SubModule<BlockAnimations> {
         GlStateManager.translate(-0.5F, 0.2F, 0.0F);
     }
 
-    ;
-
     /**
      * Performs transformations prior to the rendering of a held item in first person.
      */

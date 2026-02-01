@@ -5,7 +5,6 @@ import net.optifine.util.EntityUtils;
 
 public class EntityClassLocator implements IObjectLocator {
     public Object getObject(Location loc) {
-        Class oclass = EntityUtils.getEntityClassByName(loc.getResourcePath());
-        return oclass;
+        return EntityUtils.getEntityClassByName(loc.getResourcePath());
     }
 }

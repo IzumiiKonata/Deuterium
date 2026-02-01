@@ -1,12 +1,10 @@
 package net.minecraft.client.renderer;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryUtil;
 import org.lwjglx.util.glu.GLU;
 import tritium.utils.other.MemoryTracker;
 
 import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 

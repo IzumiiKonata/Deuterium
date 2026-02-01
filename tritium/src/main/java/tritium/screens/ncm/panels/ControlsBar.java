@@ -8,7 +8,6 @@ import tritium.rendering.ui.widgets.*;
 import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
-import tritium.widget.impl.MusicInfoWidget;
 import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;

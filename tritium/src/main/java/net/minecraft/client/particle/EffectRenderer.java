@@ -222,12 +222,12 @@ public class EffectRenderer {
             CrashReportCategory crashreportcategory = crashreport.makeCategory("被更新的粒子");
             final int i = particle.getFXLayer();
             crashreportcategory.addCrashSectionCallable("粒子", new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return particle.toString();
                 }
             });
             crashreportcategory.addCrashSectionCallable("粒子类型", new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return i == 0 ? "MISC_TEXTURE" : (i == 1 ? "TERRAIN_TEXTURE" : (i == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i));
                 }
             });
@@ -267,15 +267,10 @@ public class EffectRenderer {
                             GlStateManager.depthMask(true);
                     }
 
-                    switch (i) {
-                        case 0:
-                        default:
-                            this.renderer.bindTexture(particleTextures);
-                            break;
-
-                        case 1:
-                            this.renderer.bindTexture(TextureMap.locationBlocksTexture);
+                    if (i == 1) {
+                        this.renderer.bindTexture(TextureMap.locationBlocksTexture);
                     }
+                    this.renderer.bindTexture(particleTextures);
 
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     Tessellator tessellator = Tessellator.getInstance();
@@ -296,12 +291,12 @@ public class EffectRenderer {
                                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "粒子渲染");
                                 CrashReportCategory crashreportcategory = crashreport.makeCategory("被渲染的粒子");
                                 crashreportcategory.addCrashSectionCallable("粒子", new Callable<String>() {
-                                    public String call() throws Exception {
+                                    public String call() {
                                         return entityfx.toString();
                                     }
                                 });
                                 crashreportcategory.addCrashSectionCallable("粒子类型", new Callable<String>() {
-                                    public String call() throws Exception {
+                                    public String call() {
                                         return i_f == 0 ? "MISC_TEXTURE" : (i_f == 1 ? "TERRAIN_TEXTURE" : (i_f == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i_f));
                                     }
                                 });

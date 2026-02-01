@@ -8,7 +8,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import net.minecraft.src.Config;
-import net.minecraft.util.Location;
 import net.optifine.config.ConnectedParser;
 
 
@@ -53,7 +52,7 @@ public class ItemAliases {
 
             loadModItemAliases(list);
 
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 itemAliases = toArray(list);
             }
         }

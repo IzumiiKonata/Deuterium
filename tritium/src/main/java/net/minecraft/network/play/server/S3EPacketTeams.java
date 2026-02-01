@@ -10,7 +10,6 @@ import today.opai.api.interfaces.game.network.server.SPacket3ETeams;
 
 import java.io.IOException;
 import java.util.Collection;
-import java.util.Collections;
 
 public class S3EPacketTeams implements Packet<INetHandlerPlayClient>, SPacket3ETeams {
     private String name = "";
@@ -69,7 +68,7 @@ public class S3EPacketTeams implements Packet<INetHandlerPlayClient>, SPacket3ET
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.name = buf.readStringFromBuffer(16);
         this.action = buf.readByte();
 
@@ -94,7 +93,7 @@ public class S3EPacketTeams implements Packet<INetHandlerPlayClient>, SPacket3ET
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeString(this.name);
         buf.writeByte(this.action);
 

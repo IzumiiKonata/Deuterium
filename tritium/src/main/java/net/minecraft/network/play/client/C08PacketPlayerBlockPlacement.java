@@ -51,7 +51,7 @@ public class C08PacketPlayerBlockPlacement implements Packet<INetHandlerPlayServ
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeBlockPos(this.position);
         buf.writeByte(this.placedBlockDirection);
         buf.writeItemStackToBuffer(this.stack);

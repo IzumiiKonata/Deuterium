@@ -31,7 +31,7 @@ public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.windowId = buf.readByte();
         this.uid = buf.readShort();
         this.accepted = buf.readByte() != 0;
@@ -45,7 +45,7 @@ public class C0FPacketConfirmTransaction implements Packet<INetHandlerPlayServer
 //        buf.writeShort(this.uid);
 //        buf.writeByte(this.accepted ? 1 : 0);
 //    }
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeByte(this.windowId);
         buf.writeShort(this.uid);
         buf.writeByte(this.accepted ? 1 : 0);

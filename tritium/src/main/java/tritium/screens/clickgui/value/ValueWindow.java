@@ -139,11 +139,6 @@ public class ValueWindow extends Window {
     }
 
     @Override
-    public void mouseReleased(double mouseX, double mouseY, int mouseButton) {
-
-    }
-
-    @Override
     public boolean keyTyped(char typedChar, int keyCode) {
         return this.baseRect.onKeyTypedReceived(typedChar, keyCode);
     }

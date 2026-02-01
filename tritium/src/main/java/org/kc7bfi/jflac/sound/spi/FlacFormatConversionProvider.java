@@ -72,17 +72,17 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
      *         length of at least 1.
      */
     public AudioFormat.Encoding[] getSourceEncodings() {
+        AudioFormat.Encoding[] encodings;
         if (HAS_ENCODING) {
-            AudioFormat.Encoding[] encodings = {
+            encodings = new AudioFormat.Encoding[]{
                     FlacEncoding.FLAC, AudioFormat.Encoding.PCM_SIGNED
             };
-            return encodings;
         } else {
-            AudioFormat.Encoding[] encodings = {
+            encodings = new AudioFormat.Encoding[]{
                     FlacEncoding.FLAC
             };
-            return encodings;
         }
+        return encodings;
     }
 
     /**
@@ -93,17 +93,17 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
      *         length of at least 1.
      */
     public AudioFormat.Encoding[] getTargetEncodings() {
+        AudioFormat.Encoding[] encodings;
         if (HAS_ENCODING) {
-            AudioFormat.Encoding[] encodings = {
+            encodings = new AudioFormat.Encoding[]{
                     FlacEncoding.FLAC, AudioFormat.Encoding.PCM_SIGNED
             };
-            return encodings;
         } else {
-            AudioFormat.Encoding[] encodings = {
+            encodings = new AudioFormat.Encoding[]{
                     FlacEncoding.PCM_SIGNED
             };
-            return encodings;
         }
+        return encodings;
     }
 
     private boolean isBitSizeOK(AudioFormat format, boolean notSpecifiedOK) {
@@ -139,26 +139,23 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
             if (DEBUG) {
                 System.out.println("FLAC converter: can encode to PCM: " + sourceFormat);
             }
-            AudioFormat.Encoding[] encodings = {
+            return new AudioFormat.Encoding[]{
                     FlacEncoding.FLAC
             };
-            return encodings;
         } else if (bitSizeOK && channelsOK
                 && sourceFormat.getEncoding().equals(FlacEncoding.FLAC)) {
             // decoder
             if (DEBUG) {
                 System.out.println("FLAC converter: can decode to FLAC: " + sourceFormat);
             }
-            AudioFormat.Encoding[] encodings = {
+            return new AudioFormat.Encoding[]{
                     AudioFormat.Encoding.PCM_SIGNED
             };
-            return encodings;
         } else {
             if (DEBUG) {
                 System.out.println("FLAC converter: cannot de/encode: " + sourceFormat);
             }
-            AudioFormat.Encoding[] encodings = {};
-            return encodings;
+            return new AudioFormat.Encoding[]{};
         }
     }
 
@@ -200,7 +197,8 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
             if (DEBUG) {
                 System.out.println("FLAC converter: can encode: " + sourceFormat + " to " + targetEncoding);
             }
-            AudioFormat[] formats = { //
+            // little endian
+            return new AudioFormat[]{ //
                     new AudioFormat(FlacEncoding.FLAC,
                             sourceFormat.getSampleRate(), //
                             -1, // sample size in bits
@@ -208,8 +206,7 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
                             -1, // frame size
                             -1, // frame rate
                             false)
-            }; // little endian
-            return formats;
+            };
 
         } else if (bitSizeOK && channelsOK
                 && sourceFormat.getEncoding().equals(FlacEncoding.FLAC)
@@ -218,21 +215,20 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
             if (DEBUG) {
                 System.out.println("FLAC converter: can decode: " + sourceFormat + " to " + targetEncoding);
             }
-            AudioFormat[] formats = {
+            // little endian (for PCM wav)
+            return new AudioFormat[]{
                     new AudioFormat(sourceFormat.getSampleRate(), //
                             sourceFormat.getSampleSizeInBits(), // sample size in
                             // bits
                             sourceFormat.getChannels(), //
                             true, // signed
                             false)
-            }; // little endian (for PCM wav)
-            return formats;
+            };
         } else {
             if (DEBUG) {
                 System.out.println("FLAC converter: cannot de/encode: " + sourceFormat + " to " + targetEncoding);
             }
-            AudioFormat[] formats = {};
-            return formats;
+            return new AudioFormat[]{};
         }
     }
 
@@ -297,8 +293,8 @@ public class FlacFormatConversionProvider extends FormatConversionProvider {
                         "FLAC encoder not yet implemented");
             } else {
                 throw new IllegalArgumentException("unable to convert "
-                        + sourceFormat.toString() + " to "
-                        + targetFormat.toString());
+                        + sourceFormat + " to "
+                        + targetFormat);
             }
         } else {
             throw new IllegalArgumentException("conversion not supported");

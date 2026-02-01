@@ -6,7 +6,6 @@ import today.opai.api.interfaces.game.item.ItemEnchantment;
 import today.opai.api.interfaces.game.item.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 /**

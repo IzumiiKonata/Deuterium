@@ -1,6 +1,5 @@
 package net.optifine;
 
-import lombok.Cleanup;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockStateBase;
 import net.minecraft.block.state.IBlockState;
@@ -17,8 +16,6 @@ import net.optifine.config.MatchBlock;
 import net.optifine.config.Matches;
 import net.optifine.util.TextureUtils;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
 import java.util.Properties;
@@ -137,8 +134,7 @@ public class CustomColormap implements CustomColors.IColorizer {
                 }
             }
             final ConnectedParser connectedparser = new ConnectedParser("Colormap");
-            final MatchBlock[] amatchblock = connectedparser.parseMatchBlock(this.name);
-            return amatchblock;
+            return connectedparser.parseMatchBlock(this.name);
         }
     }
 
@@ -154,7 +150,7 @@ public class CustomColormap implements CustomColors.IColorizer {
             if (inputstream == null) {
                 return;
             }
-            try (final NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);) {
+            try (final NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream)) {
                 if (bufferedimage == null) {
                     return;
                 }
@@ -376,16 +372,14 @@ public class CustomColormap implements CustomColors.IColorizer {
     }
 
     private MatchBlock getMatchBlock(final int blockId) {
-        if (this.matchBlocks == null) {
-            return null;
-        } else {
+        if (this.matchBlocks != null) {
             for (final MatchBlock matchblock : this.matchBlocks) {
                 if (matchblock.getBlockId() == blockId) {
                     return matchblock;
                 }
             }
-            return null;
         }
+        return null;
     }
 
     public int[] getMatchBlockIds() {

@@ -17,8 +17,6 @@ import net.optifine.CustomColors;
 import net.optifine.shaders.Shaders;
 import org.lwjgl.opengl.GL11;
 
-import java.util.List;
-
 public class TileEntitySignRenderer extends TileEntitySpecialRenderer<TileEntitySign> {
     private static final Location SIGN_TEXTURE = Location.of("textures/entity/sign.png");
 

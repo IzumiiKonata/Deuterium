@@ -28,8 +28,6 @@ package javazoom.jl.converter;
 import lombok.Getter;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
 
 
 /**
@@ -193,7 +191,7 @@ public class RiffStream {
         return DDC_SUCCESS;
     }
 
-    public final void writeShort(int v) throws IOException {
+    public final void writeShort(int v) {
         stream.write((v >>> 8) & 0xFF);
         stream.write((v >>> 0) & 0xFF);
         //written += 2;
@@ -207,17 +205,13 @@ public class RiffStream {
         if (fmode != RFM_WRITE) {
             return DDC_INVALID_CALL;
         }
-        try {
-            writeShort(theData);
-            fmode = RFM_WRITE;
-        } catch (IOException ioe) {
-            return DDC_FILE_ERROR;
-        }
+        writeShort(theData);
+        fmode = RFM_WRITE;
         riffHeader.ckSize += numBytes;
         return DDC_SUCCESS;
     }
 
-    public final void writeInt(int v) throws IOException {
+    public final void writeInt(int v) {
         stream.write((v >>> 24) & 0xFF);
         stream.write((v >>> 16) & 0xFF);
         stream.write((v >>>  8) & 0xFF);
@@ -237,12 +231,8 @@ public class RiffStream {
         if (fmode != RFM_WRITE) {
             return DDC_INVALID_CALL;
         }
-        try {
-            writeInt(theData);
-            fmode = RFM_WRITE;
-        } catch (IOException ioe) {
-            return DDC_FILE_ERROR;
-        }
+        writeInt(theData);
+        fmode = RFM_WRITE;
         riffHeader.ckSize += numBytes;
         return DDC_SUCCESS;
     }
@@ -269,22 +259,18 @@ public class RiffStream {
         int retcode = DDC_SUCCESS;
 
         stream.seek(0);
-        try {
-            byte[] br = new byte[8];
-            br[0] = (byte) ((riffHeader.ckID >>> 24) & 0x000000FF);
-            br[1] = (byte) ((riffHeader.ckID >>> 16) & 0x000000FF);
-            br[2] = (byte) ((riffHeader.ckID >>> 8) & 0x000000FF);
-            br[3] = (byte) (riffHeader.ckID & 0x000000FF);
+        byte[] br = new byte[8];
+        br[0] = (byte) ((riffHeader.ckID >>> 24) & 0x000000FF);
+        br[1] = (byte) ((riffHeader.ckID >>> 16) & 0x000000FF);
+        br[2] = (byte) ((riffHeader.ckID >>> 8) & 0x000000FF);
+        br[3] = (byte) (riffHeader.ckID & 0x000000FF);
 
-            br[7] = (byte) ((riffHeader.ckSize >>> 24) & 0x000000FF);
-            br[6] = (byte) ((riffHeader.ckSize >>> 16) & 0x000000FF);
-            br[5] = (byte) ((riffHeader.ckSize >>> 8) & 0x000000FF);
-            br[4] = (byte) (riffHeader.ckSize & 0x000000FF);
-            stream.write(br, 0, 8);
-            stream.close();
-        } catch (IOException ioe) {
-            retcode = DDC_FILE_ERROR;
-        }
+        br[7] = (byte) ((riffHeader.ckSize >>> 24) & 0x000000FF);
+        br[6] = (byte) ((riffHeader.ckSize >>> 16) & 0x000000FF);
+        br[5] = (byte) ((riffHeader.ckSize >>> 8) & 0x000000FF);
+        br[4] = (byte) (riffHeader.ckSize & 0x000000FF);
+        stream.write(br, 0, 8);
+        stream.close();
         fmode = RFM_UNKNOWN;
         return retcode;
     }
@@ -322,24 +308,16 @@ public class RiffStream {
      * Error Messages.
      */
     private String toDDCRETString(int retcode) {
-        switch (retcode) {
-            case DDC_SUCCESS:
-                return "DDC_SUCCESS";
-            case DDC_FAILURE:
-                return "DDC_FAILURE";
-            case DDC_OUT_OF_MEMORY:
-                return "DDC_OUT_OF_MEMORY";
-            case DDC_FILE_ERROR:
-                return "DDC_FILE_ERROR";
-            case DDC_INVALID_CALL:
-                return "DDC_INVALID_CALL";
-            case DDC_USER_ABORT:
-                return "DDC_USER_ABORT";
-            case DDC_INVALID_FILE:
-                return "DDC_INVALID_FILE";
-            default:
-                return "Unknown Error";
-        }
+        return switch (retcode) {
+            case DDC_SUCCESS -> "DDC_SUCCESS";
+            case DDC_FAILURE -> "DDC_FAILURE";
+            case DDC_OUT_OF_MEMORY -> "DDC_OUT_OF_MEMORY";
+            case DDC_FILE_ERROR -> "DDC_FILE_ERROR";
+            case DDC_INVALID_CALL -> "DDC_INVALID_CALL";
+            case DDC_USER_ABORT -> "DDC_USER_ABORT";
+            case DDC_INVALID_FILE -> "DDC_INVALID_FILE";
+            default -> "Unknown Error";
+        };
     }
 
     /**
@@ -347,8 +325,7 @@ public class RiffStream {
      */
     public static int fourCC(String chunkName) {
         byte[] p = chunkName.getBytes();
-        int ret = (((p[0] << 24) & 0xFF000000) | ((p[1] << 16) & 0x00FF0000) | ((p[2] << 8) & 0x0000FF00) | (p[3] & 0x000000FF));
-        return ret;
+        return (((p[0] << 24) & 0xFF000000) | ((p[1] << 16) & 0x00FF0000) | ((p[2] << 8) & 0x0000FF00) | (p[3] & 0x000000FF));
     }
 
     public long currentFilePosition() {

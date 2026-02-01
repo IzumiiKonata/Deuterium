@@ -27,7 +27,7 @@ public class S3BPacketScoreboardObjective implements Packet<INetHandlerPlayClien
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.objectiveName = buf.readStringFromBuffer(16);
         this.field_149342_c = buf.readByte();
 
@@ -40,7 +40,7 @@ public class S3BPacketScoreboardObjective implements Packet<INetHandlerPlayClien
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeString(this.objectiveName);
         buf.writeByte(this.field_149342_c);
 

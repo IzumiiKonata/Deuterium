@@ -2,7 +2,6 @@ package tritium.bridge.management;
 
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.Entity;
 import today.opai.api.dataset.RotationData;
 import today.opai.api.interfaces.managers.RotationManager;
 

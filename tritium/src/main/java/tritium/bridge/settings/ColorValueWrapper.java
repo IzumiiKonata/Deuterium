@@ -3,10 +3,8 @@ package tritium.bridge.settings;
 import today.opai.api.interfaces.modules.values.ColorValue;
 import tritium.rendering.HSBColor;
 import tritium.settings.ColorSetting;
-import tritium.settings.Setting;
 
 import java.awt.*;
-import java.util.function.Consumer;
 
 /**
  * @author IzumiiKonata

@@ -22,8 +22,7 @@ public class StringUtils {
             try {
                 return string.getBytes(charsetName);
             } catch (UnsupportedEncodingException var3) {
-                UnsupportedEncodingException e = var3;
-                throw newIllegalStateException(charsetName, e);
+                throw newIllegalStateException(charsetName, var3);
             }
         }
     }
@@ -63,8 +62,7 @@ public class StringUtils {
             try {
                 return new String(bytes, charsetName);
             } catch (UnsupportedEncodingException var3) {
-                UnsupportedEncodingException e = var3;
-                throw newIllegalStateException(charsetName, e);
+                throw newIllegalStateException(charsetName, var3);
             }
         }
     }

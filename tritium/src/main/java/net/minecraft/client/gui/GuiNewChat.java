@@ -340,10 +340,8 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
                         }
                     }
 
-                    return null;
-                } else {
-                    return null;
                 }
+                return null;
             } else {
                 return null;
             }

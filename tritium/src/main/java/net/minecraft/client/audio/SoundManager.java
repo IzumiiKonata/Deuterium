@@ -496,7 +496,7 @@ public class SoundManager {
         URLStreamHandler urlstreamhandler = new URLStreamHandler() {
             protected URLConnection openConnection(final URL p_openConnection_1_) {
                 return new URLConnection(p_openConnection_1_) {
-                    public void connect() throws IOException {
+                    public void connect() {
                     }
 
                     public InputStream getInputStream() throws IOException {

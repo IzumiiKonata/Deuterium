@@ -32,7 +32,6 @@ import tritium.bridge.rendering.font.FontUtilImpl;
 import tritium.bridge.rendering.RenderUtilImpl;
 import tritium.bridge.rendering.ShaderUtilImpl;
 import tritium.bridge.rendering.screen.ExtensionScreenWrapper;
-import tritium.event.events.game.ChatEvent;
 
 /**
  * @author IzumiiKonata

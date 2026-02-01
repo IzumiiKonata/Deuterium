@@ -1,7 +1,6 @@
 package tritium.rendering.ui.widgets;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.util.LazyLoadBase;
 import tritium.management.FontManager;
 import tritium.rendering.entities.impl.ScrollText;
@@ -28,7 +27,7 @@ public class LabelWidget extends AbstractWidget<LabelWidget> {
 
     public enum WidthLimitType {
         SCROLL,
-        TRIM_TO_WIDTH;
+        TRIM_TO_WIDTH
     }
 
     LazyLoadBase<ScrollText> scrollText = LazyLoadBase.of(ScrollText::new);

@@ -16,7 +16,6 @@ import tritium.rendering.Rect;
 
 import tritium.settings.BooleanSetting;
 import tritium.widget.Widget;
-import tritium.interfaces.SharedRenderingConstants;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -128,7 +127,7 @@ public class PotionDisplay extends Widget {
                         }
                     }
 
-                    this.roundedOutline(x - offset, finalY - offset, width + offset * 2, height + offset * 2, true ? 3 : 11, 1.5, 1, new Color(1, 1, 1, effect.hightlightAlpha));
+                    this.roundedOutline(x - offset, finalY - offset, width + offset * 2, height + offset * 2, 3, 1.5, 1, new Color(1, 1, 1, effect.hightlightAlpha));
                 }
             }
 

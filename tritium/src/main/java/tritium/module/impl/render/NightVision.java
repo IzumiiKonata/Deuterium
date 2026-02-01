@@ -41,8 +41,6 @@ public class NightVision extends Module {
         }
     }
 
-    ;
-
     public NightVision() {
         super("Night Vision", Category.RENDER);
     }

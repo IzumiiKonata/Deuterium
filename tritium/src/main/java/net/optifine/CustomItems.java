@@ -93,7 +93,7 @@ public class CustomItems {
     private static void update(final IResourcePack rp) {
         String[] astring = ResUtils.collectFiles(rp, "mcpatcher/cit/", ".properties", null);
         final Map map = makeAutoImageProperties(rp);
-        if (map.size() > 0) {
+        if (!map.isEmpty()) {
             final Set set = map.keySet();
             final String[] astring1 = (String[]) set.toArray(new String[0]);
             astring = (String[]) Config.addObjectsToArray(astring, astring1);
@@ -146,14 +146,13 @@ public class CustomItems {
     }
 
     private static Comparator getPropertiesComparator() {
-        final Comparator comparator = (o1, o2) -> {
+        return (o1, o2) -> {
             final CustomItemProperties customitemproperties = (CustomItemProperties) o1;
             final CustomItemProperties customitemproperties1 = (CustomItemProperties) o2;
             return customitemproperties.layer != customitemproperties1.layer ? customitemproperties.layer - customitemproperties1.layer
                     : customitemproperties.weight != customitemproperties1.weight ? customitemproperties1.weight - customitemproperties.weight
                     : !customitemproperties.basePath.equals(customitemproperties1.basePath) ? customitemproperties.basePath.compareTo(customitemproperties1.basePath) : customitemproperties.name.compareTo(customitemproperties1.name);
         };
-        return comparator;
     }
 
     public static void updateIcons(final TextureMap textureMap) {
@@ -438,9 +437,7 @@ public class CustomItems {
     }
 
     private static CustomItemProperties getCustomItemProperties(final ItemStack itemStack, final int type) {
-        if ((itemProperties == null) || (itemStack == null)) {
-            return null;
-        } else {
+        if ((itemProperties != null) && (itemStack != null)) {
             final Item item = itemStack.getItem();
             final int i = Item.getIdFromItem(item);
             if (i >= 0 && i < itemProperties.length) {
@@ -453,8 +450,8 @@ public class CustomItems {
                     }
                 }
             }
-            return null;
         }
+        return null;
     }
 
     private static boolean matchesProperties(final CustomItemProperties cip, final ItemStack itemStack, final int[][] enchantmentIdLevels) {

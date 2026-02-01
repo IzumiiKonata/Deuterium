@@ -19,7 +19,6 @@ public class StepEvent extends EventState {
     public StepEvent(boolean state, double stepHeight) {
         this.pre = state;
         this.stepHeight = stepHeight;
-        this.realHeight = this.realHeight;
     }
 
     public void setStepHeight(double stepHeight) {

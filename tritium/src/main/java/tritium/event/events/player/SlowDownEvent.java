@@ -1,6 +1,5 @@
 package tritium.event.events.player;
 
-import lombok.Getter;
 import tritium.event.eventapi.EventCancellable;
 
 public class SlowDownEvent extends EventCancellable {

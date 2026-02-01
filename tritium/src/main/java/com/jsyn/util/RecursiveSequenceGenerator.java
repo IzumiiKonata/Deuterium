@@ -41,8 +41,8 @@ public class RecursiveSequenceGenerator {
     private double desiredDensity = 0.5;
 
     private int offset;
-    private int values[];
-    private boolean enables[];
+    private int[] values;
+    private boolean[] enables;
     private int cursor;
     private int countdown = -1;
     private double actualDensity;

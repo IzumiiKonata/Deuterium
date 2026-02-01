@@ -159,24 +159,13 @@ public class GuiOverlayDebug extends Gui {
         } else {
             Entity entity = this.mc.getRenderViewEntity();
             EnumFacing enumfacing = entity.getHorizontalFacing();
-            String s = "Invalid";
-
-            switch (enumfacing) {
-                case NORTH:
-                    s = "Towards negative Z";
-                    break;
-
-                case SOUTH:
-                    s = "Towards positive Z";
-                    break;
-
-                case WEST:
-                    s = "Towards negative X";
-                    break;
-
-                case EAST:
-                    s = "Towards positive X";
-            }
+            String s = switch (enumfacing) {
+                case NORTH -> "Towards negative Z";
+                case SOUTH -> "Towards positive Z";
+                case WEST -> "Towards negative X";
+                case EAST -> "Towards positive X";
+                default -> "Invalid";
+            };
 
             List<String> list = Lists.newArrayList("Minecraft 1.8.9 (" + this.mc.getVersion() + "/" + ClientBrandRetriever.getClientModName() + ")", this.mc.debug, this.mc.renderGlobal.getDebugInfoRenders(), this.mc.renderGlobal.getDebugInfoEntities(), "P: " + this.mc.effectRenderer.getStatistics() + ". T: " + this.mc.theWorld.getDebugLoadedEntities() + s1, this.mc.theWorld.getProviderName(), "", String.format("XYZ: %.3f / %.5f / %.3f", this.mc.getRenderViewEntity().posX, this.mc.getRenderViewEntity().getEntityBoundingBox().minY, this.mc.getRenderViewEntity().posZ), String.format("Block: %d %d %d", blockpos.getX(), blockpos.getY(), blockpos.getZ()), String.format("Chunk: %d %d %d in %d %d %d", blockpos.getX() & 15, blockpos.getY() & 15, blockpos.getZ() & 15, blockpos.getX() >> 4, blockpos.getY() >> 4, blockpos.getZ() >> 4), String.format("Facing: %s (%s) (%.1f / %.1f)", enumfacing, s, MathHelper.wrapAngleTo180_float(entity.rotationYaw), MathHelper.wrapAngleTo180_float(entity.rotationPitch)));
 

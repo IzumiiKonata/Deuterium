@@ -1,7 +1,6 @@
 package org.lwjgl.opengl;
 
 import org.lwjgl.glfw.*;
-import org.lwjgl.system.Configuration;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.Platform;
 import org.lwjglx.Sys;

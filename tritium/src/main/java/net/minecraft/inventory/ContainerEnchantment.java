@@ -40,9 +40,6 @@ public class ContainerEnchantment extends Container {
 
     public ContainerEnchantment(InventoryPlayer playerInv, World worldIn, BlockPos pos) {
         this.tableInventory = new InventoryBasic("Enchant", true, 2) {
-            public int getInventoryStackLimit() {
-                return 64;
-            }
 
             public void markDirty() {
                 super.markDirty();
@@ -56,9 +53,6 @@ public class ContainerEnchantment extends Container {
         this.position = pos;
         this.xpSeed = playerInv.player.getXPSeed();
         this.addSlotToContainer(new Slot(this.tableInventory, 0, 15, 47) {
-            public boolean isItemValid(ItemStack stack) {
-                return true;
-            }
 
             public int getSlotStackLimit() {
                 return 1;

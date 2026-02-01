@@ -39,27 +39,27 @@ public final class ContextGL implements Context {
         this.shared = shared;
     }
 
-    public void releaseCurrent() throws LWJGLException {
+    public void releaseCurrent() {
         GLFW.glfwMakeContextCurrent(0);
         GL.setCapabilities(null);
     }
 
-    public synchronized void releaseDrawable() throws LWJGLException {
+    public synchronized void releaseDrawable() {
     }
 
     public synchronized void update() {
     }
 
-    public static void swapBuffers() throws LWJGLException {
+    public static void swapBuffers() {
         GLFW.glfwSwapBuffers(Display.getWindow());
     }
 
-    public synchronized void makeCurrent() throws LWJGLException {
+    public synchronized void makeCurrent() {
         GLFW.glfwMakeContextCurrent(glfwWindow);
         GL.createCapabilities();
     }
 
-    public synchronized boolean isCurrent() throws LWJGLException {
+    public synchronized boolean isCurrent() {
         return GLFW.glfwGetCurrentContext() == glfwWindow;
     }
 
@@ -71,13 +71,13 @@ public final class ContextGL implements Context {
         destroy();
     }
 
-    public synchronized void destroy() throws LWJGLException {
+    public synchronized void destroy() {
         if (shared && glfwWindow > 0) {
             GLFW.glfwDestroyWindow(glfwWindow);
             glfwWindow = -1;
         }
     }
 
-    public synchronized void setCLSharingProperties(final PointerBuffer properties) throws LWJGLException {
+    public synchronized void setCLSharingProperties(final PointerBuffer properties) {
     }
 }

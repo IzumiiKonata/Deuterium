@@ -44,14 +44,10 @@ public class BreadCrumbs extends Module {
         }
     }
 
-    ;
-
     @Handler
     public void onWorldChanged(WorldChangedEvent event) {
         this.positions.clear();
     }
-
-    ;
 
     @Handler
     public void onRender3D(Render3DEvent event) {
@@ -123,8 +119,6 @@ public class BreadCrumbs extends Module {
 //        GL11.glDisable(GL11.GL_BLEND);
 //        GlStateManager.color(1, 1, 1, 1);
     }
-
-    ;
 
     public BreadCrumbs() {
         super("Bread Crumbs", Category.RENDER);

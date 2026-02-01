@@ -29,14 +29,14 @@ public class S41PacketServerDifficulty implements Packet<INetHandlerPlayClient> 
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.difficulty = EnumDifficulty.getDifficultyEnum(buf.readUnsignedByte());
     }
 
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeByte(this.difficulty.getDifficultyId());
     }
 

@@ -5,7 +5,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
 import tritium.rendering.AnimatedTexture;
-import tritium.rendering.ResPackPreview;
 
 import java.io.Closeable;
 import java.io.File;

@@ -2,8 +2,6 @@ package tritium.settings;
 
 import tritium.bridge.settings.LabelValueWrapper;
 
-import java.util.function.Supplier;
-
 /**
  * @author IzumiiKonata
  * Date: 2025/10/25 16:16

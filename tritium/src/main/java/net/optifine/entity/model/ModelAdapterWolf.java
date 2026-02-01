@@ -19,9 +19,7 @@ public class ModelAdapterWolf extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (!(model instanceof ModelWolf)) {
-            return null;
-        } else {
+        if (model instanceof ModelWolf) {
             ModelWolf modelwolf = (ModelWolf) model;
             if (modelPart.equals("head")) return modelwolf.wolfHeadMain;
             if (modelPart.equals("body")) {
@@ -50,9 +48,9 @@ public class ModelAdapterWolf extends ModelAdapter {
 
             if (modelPart.equals("mane"))
                 return modelwolf.wolfMane;
-            return null;
 
         }
+        return null;
     }
 
     public String[] getModelRendererNames() {

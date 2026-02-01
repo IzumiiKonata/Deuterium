@@ -28,7 +28,7 @@ public class C15PacketClientSettings implements Packet<INetHandlerPlayServer> {
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.lang = buf.readStringFromBuffer(7);
         this.view = buf.readByte();
         this.chatVisibility = EntityPlayer.EnumChatVisibility.getEnumChatVisibility(buf.readByte());
@@ -39,7 +39,7 @@ public class C15PacketClientSettings implements Packet<INetHandlerPlayServer> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeString(this.lang);
         buf.writeByte(this.view);
         buf.writeByte(this.chatVisibility.getChatVisibility());

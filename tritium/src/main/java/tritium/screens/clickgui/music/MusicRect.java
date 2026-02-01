@@ -12,7 +12,6 @@ import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
-import tritium.widget.impl.MusicInfoWidget;
 
 import java.awt.*;
 import java.util.List;

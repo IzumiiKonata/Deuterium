@@ -9,7 +9,6 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.interfaces.SharedConstants;
 import tritium.utils.network.HttpUtils;
-import tritium.utils.other.DevUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.image.BufferedImage;

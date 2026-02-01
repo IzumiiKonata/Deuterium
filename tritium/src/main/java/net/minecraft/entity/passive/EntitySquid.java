@@ -64,13 +64,6 @@ public class EntitySquid extends EntityWaterMob {
     }
 
     /**
-     * Returns the sound this mob makes while it's alive.
-     */
-    protected String getLivingSound() {
-        return null;
-    }
-
-    /**
      * Returns the sound this mob makes when it is hurt.
      */
     protected String getHurtSound() {
@@ -89,10 +82,6 @@ public class EntitySquid extends EntityWaterMob {
      */
     protected float getSoundVolume() {
         return 0.4F;
-    }
-
-    protected Item getDropItem() {
-        return null;
     }
 
     /**

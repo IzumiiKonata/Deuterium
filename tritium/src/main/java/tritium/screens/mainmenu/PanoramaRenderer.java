@@ -48,14 +48,14 @@ public class PanoramaRenderer implements SharedConstants {
          * Texture allocated for the current viewport of the main menu's panorama background.
          */
         DynamicTexture viewportTexture = new DynamicTexture(256, 256);
-        this.backgroundTexture = this.mc.getTextureManager().getDynamicTextureLocation("background", viewportTexture);
+        this.backgroundTexture = SharedConstants.mc.getTextureManager().getDynamicTextureLocation("background", viewportTexture);
     }
 
     /**
      * Renders the skybox in the main menu
      */
     public void renderSkybox(double width, double height, float p_73971_3_) {
-        this.mc.getFramebuffer().unbindFramebuffer();
+        SharedConstants.mc.getFramebuffer().unbindFramebuffer();
         GlStateManager.viewport(0, 0, 256, 256);
         this.drawPanorama(p_73971_3_);
         this.rotateAndBlurSkybox(width, height, p_73971_3_);
@@ -71,7 +71,7 @@ public class PanoramaRenderer implements SharedConstants {
 //            this.rotateAndBlurSkybox(width, height, p_73971_3_);
         }
 
-        this.mc.getFramebuffer().bindFramebuffer(true);
+        SharedConstants.mc.getFramebuffer().bindFramebuffer(true);
 //        GlStateManager.viewport(0, 0, (int) width, (int) height);
         float f2 = width > height ? 120.0F / (float) width : 120.0F / (float) height;
         float f = (float) height * f2 / 256.0F;
@@ -92,7 +92,7 @@ public class PanoramaRenderer implements SharedConstants {
      * Rotate and blurs the skybox view in the main menu
      */
     private void rotateAndBlurSkybox(double width, double height, float p_73968_1_) {
-        this.mc.getTextureManager().bindTexture(this.backgroundTexture);
+        SharedConstants.mc.getTextureManager().bindTexture(this.backgroundTexture);
         RenderSystem.linearFilter();
         GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, 256, 256);
         GlStateManager.enableBlend();
@@ -194,7 +194,7 @@ public class PanoramaRenderer implements SharedConstants {
                     aresourcelocation = custompanoramaproperties.getPanoramaLocations();
                 }
 
-                this.mc.getTextureManager().bindTexture(aresourcelocation[l]);
+                SharedConstants.mc.getTextureManager().bindTexture(aresourcelocation[l]);
                 worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
                 int i1 = 255 / (j + 1);
                 float f3 = 0.0F;

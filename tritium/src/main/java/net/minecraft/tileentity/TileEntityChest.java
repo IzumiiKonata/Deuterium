@@ -150,7 +150,7 @@ public class TileEntityChest extends TileEntityLockable implements ITickable, II
      * Returns true if this thing is named
      */
     public boolean hasCustomName() {
-        return this.customName != null && this.customName.length() > 0;
+        return this.customName != null && !this.customName.isEmpty();
     }
 
     public void setCustomName(String name) {

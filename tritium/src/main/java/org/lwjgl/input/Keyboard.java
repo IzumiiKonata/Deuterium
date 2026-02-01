@@ -6,11 +6,8 @@ import org.lwjglx.LWJGLException;
 import org.lwjglx.Sys;
 import org.lwjglx.input.KeyCodes;
 import org.lwjgl.opengl.Display;
-import tritium.Tritium;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Queue;
@@ -376,7 +373,7 @@ public class Keyboard {
         }
     }
 
-    public static void create() throws LWJGLException {
+    public static void create() {
     }
 
     public static boolean isKeyDown(int key) {

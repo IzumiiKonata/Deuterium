@@ -257,33 +257,14 @@ public abstract class BlockButton extends Block {
      * Convert the given metadata into a BlockState for this Block
      */
     public IBlockState getStateFromMeta(int meta) {
-        EnumFacing enumfacing;
-
-        switch (meta & 7) {
-            case 0:
-                enumfacing = EnumFacing.DOWN;
-                break;
-
-            case 1:
-                enumfacing = EnumFacing.EAST;
-                break;
-
-            case 2:
-                enumfacing = EnumFacing.WEST;
-                break;
-
-            case 3:
-                enumfacing = EnumFacing.SOUTH;
-                break;
-
-            case 4:
-                enumfacing = EnumFacing.NORTH;
-                break;
-
-            case 5:
-            default:
-                enumfacing = EnumFacing.UP;
-        }
+        EnumFacing enumfacing = switch (meta & 7) {
+            case 0 -> EnumFacing.DOWN;
+            case 1 -> EnumFacing.EAST;
+            case 2 -> EnumFacing.WEST;
+            case 3 -> EnumFacing.SOUTH;
+            case 4 -> EnumFacing.NORTH;
+            default -> EnumFacing.UP;
+        };
 
         return this.getDefaultState().withProperty(FACING, enumfacing).withProperty(POWERED, (meta & 8) > 0);
     }
@@ -292,33 +273,14 @@ public abstract class BlockButton extends Block {
      * Convert the BlockState into the correct metadata value
      */
     public int getMetaFromState(IBlockState state) {
-        int i;
-
-        switch (state.getValue(FACING)) {
-            case EAST:
-                i = 1;
-                break;
-
-            case WEST:
-                i = 2;
-                break;
-
-            case SOUTH:
-                i = 3;
-                break;
-
-            case NORTH:
-                i = 4;
-                break;
-
-            case UP:
-            default:
-                i = 5;
-                break;
-
-            case DOWN:
-                i = 0;
-        }
+        int i = switch (state.getValue(FACING)) {
+            case EAST -> 1;
+            case WEST -> 2;
+            case SOUTH -> 3;
+            case NORTH -> 4;
+            case DOWN -> 0;
+            default -> 5;
+        };
 
         if (state.getValue(POWERED)) {
             i |= 8;

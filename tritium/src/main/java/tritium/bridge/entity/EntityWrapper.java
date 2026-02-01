@@ -8,7 +8,6 @@ import today.opai.api.dataset.Vec3Data;
 import today.opai.api.enums.EnumDirection;
 import today.opai.api.interfaces.dataset.Vector3d;
 import today.opai.api.interfaces.game.entity.Entity;
-import tritium.bridge.management.RotationManagerImpl;
 import tritium.bridge.misc.math.Vector3dImpl;
 
 import java.util.Objects;

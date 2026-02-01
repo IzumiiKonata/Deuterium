@@ -127,7 +127,7 @@ public class LinkedList<T> {
     }
 
     public Iterator<Node<T>> iterator() {
-        Iterator<Node<T>> iterator = new Iterator<Node<T>>() {
+        return new Iterator<Node<T>>() {
             Node<T> node = LinkedList.this.getFirst();
 
             public boolean hasNext() {
@@ -148,7 +148,6 @@ public class LinkedList<T> {
                 throw new UnsupportedOperationException("remove");
             }
         };
-        return iterator;
     }
 
     public Node<T> getFirst() {
@@ -172,7 +171,7 @@ public class LinkedList<T> {
 
         for (Iterator<Node<T>> it = iterator(); it.hasNext(); ) {
             Node<T> node = it.next();
-            if (stringbuffer.length() > 0) {
+            if (!stringbuffer.isEmpty()) {
                 stringbuffer.append(", ");
             }
 

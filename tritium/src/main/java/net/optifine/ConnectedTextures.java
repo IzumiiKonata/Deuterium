@@ -76,8 +76,7 @@ public class ConnectedTextures {
                 return renderEnv.getArrayQuadsCtm(quad);
             } else {
                 final EnumFacing enumfacing = quad.getFace();
-                final BakedQuad[] abakedquad = getConnectedTextureMultiPass(blockAccess, blockState, blockPos, enumfacing, quad, renderEnv);
-                return abakedquad;
+                return getConnectedTextureMultiPass(blockAccess, blockState, blockPos, enumfacing, quad, renderEnv);
             }
         }
     }
@@ -124,8 +123,7 @@ public class ConnectedTextures {
         else if (sprite == SPRITE_DEFAULT) return renderEnv.getArrayQuadsCtm(quadIn);
         else {
             final BakedQuad bakedquad = getQuad(sprite, quadIn);
-            final BakedQuad[] abakedquad = renderEnv.getArrayQuadsCtm(bakedquad);
-            return abakedquad;
+            return renderEnv.getArrayQuadsCtm(bakedquad);
         }
     }
 
@@ -175,8 +173,7 @@ public class ConnectedTextures {
         final int[] aint = quad.getVertexData().clone();
         final TextureAtlasSprite textureatlassprite = quad.getSprite();
         for (int i = 0; i < 4; ++i) fixVertex(aint, i, textureatlassprite, sprite);
-        final BakedQuad bakedquad = new BakedQuad(aint, quad.getTintIndex(), quad.getFace(), sprite);
-        return bakedquad;
+        return new BakedQuad(aint, quad.getTintIndex(), quad.getFace(), sprite);
     }
 
     private static void fixVertex(final int[] data, final int vertex, final TextureAtlasSprite spriteFrom, final TextureAtlasSprite spriteTo) {
@@ -197,8 +194,7 @@ public class ConnectedTextures {
         else {
             final List<BakedQuad> list = renderEnv.getListQuadsCtmMultipass(abakedquad);
             for (int i = 0; i < list.size(); ++i) {
-                final BakedQuad bakedquad = list.get(i);
-                BakedQuad bakedquad1 = bakedquad;
+                BakedQuad bakedquad1 = list.get(i);
                 for (int j = 0; j < 3; ++j) {
                     final BakedQuad[] abakedquad1 = getConnectedTextureSingle(blockAccess, blockState, blockPos, side, bakedquad1, false, j + 1, renderEnv);
                     if (abakedquad1.length != 1 || abakedquad1[0] == bakedquad1) break;
@@ -214,7 +210,8 @@ public class ConnectedTextures {
     public static BakedQuad[] getConnectedTextureSingle(final IBlockAccess blockAccess, final IBlockState blockState, final BlockPos blockPos, final EnumFacing facing, final BakedQuad quad, final boolean checkBlocks, final int pass,
                                                         final RenderEnv renderEnv) {
         final Block block = blockState.getBlock();
-        if (!(blockState instanceof BlockStateBase)) return renderEnv.getArrayQuadsCtm(quad);
+        if (!(blockState instanceof BlockStateBase)) {
+        }
         else {
             final BlockStateBase blockstatebase = (BlockStateBase) blockState;
             final TextureAtlasSprite textureatlassprite = quad.getSprite();
@@ -248,47 +245,33 @@ public class ConnectedTextures {
                     }
                 }
             }
-            return renderEnv.getArrayQuadsCtm(quad);
         }
+        return renderEnv.getArrayQuadsCtm(quad);
     }
 
     public static int getSide(final EnumFacing facing) {
         if (facing == null) return -1;
-        else switch (facing) {
-            case DOWN:
-                return 0;
-            case UP:
-                return 1;
-            case EAST:
-                return 5;
-            case WEST:
-                return 4;
-            case NORTH:
-                return 2;
-            case SOUTH:
-                return 3;
-            default:
-                return -1;
-        }
+        else return switch (facing) {
+            case DOWN -> 0;
+            case UP -> 1;
+            case EAST -> 5;
+            case WEST -> 4;
+            case NORTH -> 2;
+            case SOUTH -> 3;
+            default -> -1;
+        };
     }
 
     private static EnumFacing getFacing(final int side) {
-        switch (side) {
-            case 0:
-                return EnumFacing.DOWN;
-            case 1:
-                return EnumFacing.UP;
-            case 2:
-                return EnumFacing.NORTH;
-            case 3:
-                return EnumFacing.SOUTH;
-            case 4:
-                return EnumFacing.WEST;
-            case 5:
-                return EnumFacing.EAST;
-            default:
-                return EnumFacing.UP;
-        }
+        return switch (side) {
+            case 0 -> EnumFacing.DOWN;
+            case 1 -> EnumFacing.UP;
+            case 2 -> EnumFacing.NORTH;
+            case 3 -> EnumFacing.SOUTH;
+            case 4 -> EnumFacing.WEST;
+            case 5 -> EnumFacing.EAST;
+            default -> EnumFacing.UP;
+        };
     }
 
     private static BakedQuad[] getConnectedTexture(final ConnectedProperties cp, final IBlockAccess blockAccess, final BlockStateBase blockState, final BlockPos blockPos, final int side, final BakedQuad quad, final int pass,
@@ -324,103 +307,79 @@ public class ConnectedTextures {
                     if (!cp.nbtName.matchesValue(s)) return null;
                 }
                 final TextureAtlasSprite textureatlassprite = quad.getSprite();
-                switch (cp.method) {
-                    case 1:
-                        return getQuads(getConnectedTextureCtm(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j, renderEnv), quad, renderEnv);
-                    case 2:
-                        return getQuads(getConnectedTextureHorizontal(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
-                    case 3:
-                        return getQuads(getConnectedTextureTop(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
-                    case 4:
-                        return getQuads(getConnectedTextureRandom(cp, blockAccess, blockState, blockPos, side), quad, renderEnv);
-                    case 5:
-                        return getQuads(getConnectedTextureRepeat(cp, blockPos, side), quad, renderEnv);
-                    case 6:
-                        return getQuads(getConnectedTextureVertical(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
-                    case 7:
-                        return getQuads(getConnectedTextureFixed(cp), quad, renderEnv);
-                    case 8:
-                        return getQuads(getConnectedTextureHorizontalVertical(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
-                    case 9:
-                        return getQuads(getConnectedTextureVerticalHorizontal(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
-                    case 10:
+                return switch (cp.method) {
+                    case 1 ->
+                            getQuads(getConnectedTextureCtm(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j, renderEnv), quad, renderEnv);
+                    case 2 ->
+                            getQuads(getConnectedTextureHorizontal(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
+                    case 3 ->
+                            getQuads(getConnectedTextureTop(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
+                    case 4 ->
+                            getQuads(getConnectedTextureRandom(cp, blockAccess, blockState, blockPos, side), quad, renderEnv);
+                    case 5 -> getQuads(getConnectedTextureRepeat(cp, blockPos, side), quad, renderEnv);
+                    case 6 ->
+                            getQuads(getConnectedTextureVertical(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
+                    case 7 -> getQuads(getConnectedTextureFixed(cp), quad, renderEnv);
+                    case 8 ->
+                            getQuads(getConnectedTextureHorizontalVertical(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
+                    case 9 ->
+                            getQuads(getConnectedTextureVerticalHorizontal(cp, blockAccess, blockState, blockPos, i, side, textureatlassprite, j), quad, renderEnv);
+                    case 10 -> {
                         if (pass == 0)
-                            return getConnectedTextureCtmCompact(cp, blockAccess, blockState, blockPos, i, side, quad, j, renderEnv);
-                    default:
-                        return null;
-                    case 11:
-                        return getConnectedTextureOverlay(cp, blockAccess, blockState, blockPos, i, side, quad, j, renderEnv);
-                    case 12:
-                        return getConnectedTextureOverlayFixed(cp, quad, renderEnv);
-                    case 13:
-                        return getConnectedTextureOverlayRandom(cp, blockAccess, blockState, blockPos, side, quad, renderEnv);
-                    case 14:
-                        return getConnectedTextureOverlayRepeat(cp, blockPos, side, quad, renderEnv);
-                    case 15:
-                        return getConnectedTextureOverlayCtm(cp, blockAccess, blockState, blockPos, i, side, quad, j, renderEnv);
-                }
+                            yield getConnectedTextureCtmCompact(cp, blockAccess, blockState, blockPos, i, side, quad, j, renderEnv);
+                        else
+                            yield null;
+                    }
+                    case 11 ->
+                            getConnectedTextureOverlay(cp, blockAccess, blockState, blockPos, i, side, quad, j, renderEnv);
+                    case 12 -> getConnectedTextureOverlayFixed(cp, quad, renderEnv);
+                    case 13 ->
+                            getConnectedTextureOverlayRandom(cp, blockAccess, blockState, blockPos, side, quad, renderEnv);
+                    case 14 -> getConnectedTextureOverlayRepeat(cp, blockPos, side, quad, renderEnv);
+                    case 15 ->
+                            getConnectedTextureOverlayCtm(cp, blockAccess, blockState, blockPos, i, side, quad, j, renderEnv);
+                    default -> null;
+                };
             }
         }
     }
 
     private static int fixSideByAxis(final int side, final int vertAxis) {
-        switch (vertAxis) {
-            case 0:
-                return side;
-            case 1:
-                switch (side) {
-                    case 0:
-                        return 2;
-                    case 1:
-                        return 3;
-                    case 2:
-                        return 1;
-                    case 3:
-                        return 0;
-                    default:
-                        return side;
-                }
-            case 2:
-                switch (side) {
-                    case 0:
-                        return 4;
-                    case 1:
-                        return 5;
-                    case 2:
-                    case 3:
-                    default:
-                        return side;
-                    case 4:
-                        return 1;
-                    case 5:
-                        return 0;
-                }
-            default:
-                return side;
-        }
+        return switch (vertAxis) {
+            case 0 -> side;
+            case 1 -> switch (side) {
+                case 0 -> 2;
+                case 1 -> 3;
+                case 2 -> 1;
+                case 3 -> 0;
+                default -> side;
+            };
+            case 2 -> switch (side) {
+                case 0 -> 4;
+                case 1 -> 5;
+                case 4 -> 1;
+                case 5 -> 0;
+                default -> side;
+            };
+            default -> side;
+        };
     }
 
     private static int getWoodAxis(final int side, final int metadata) {
         final int i = (metadata & 12) >> 2;
-        switch (i) {
-            case 1:
-                return 2;
-            case 2:
-                return 1;
-            default:
-                return 0;
-        }
+        return switch (i) {
+            case 1 -> 2;
+            case 2 -> 1;
+            default -> 0;
+        };
     }
 
     private static int getQuartzAxis(final int side, final int metadata) {
-        switch (metadata) {
-            case 3:
-                return 2;
-            case 4:
-                return 1;
-            default:
-                return 0;
-        }
+        return switch (metadata) {
+            case 3 -> 2;
+            case 4 -> 1;
+            default -> 0;
+        };
     }
 
     private static TextureAtlasSprite getConnectedTextureRandom(final ConnectedProperties cp, final IBlockAccess blockAccess, final BlockStateBase blockState, BlockPos blockPos, final int side) {
@@ -463,32 +422,33 @@ public class ConnectedTextures {
             final int j = blockPos.getY();
             final int k = blockPos.getZ();
             int l = 0;
-            int i1 = 0;
-            switch (side) {
-                case 0:
+            int i1 = switch (side) {
+                case 0 -> {
                     l = i;
-                    i1 = -k - 1;
-                    break;
-                case 1:
+                    yield -k - 1;
+                }
+                case 1 -> {
                     l = i;
-                    i1 = k;
-                    break;
-                case 2:
+                    yield k;
+                }
+                case 2 -> {
                     l = -i - 1;
-                    i1 = -j;
-                    break;
-                case 3:
+                    yield -j;
+                }
+                case 3 -> {
                     l = i;
-                    i1 = -j;
-                    break;
-                case 4:
+                    yield -j;
+                }
+                case 4 -> {
                     l = k;
-                    i1 = -j;
-                    break;
-                case 5:
+                    yield -j;
+                }
+                case 5 -> {
                     l = -k - 1;
-                    i1 = -j;
-            }
+                    yield -j;
+                }
+                default -> 0;
+            };
             l = l % cp.width;
             i1 = i1 % cp.height;
             if (l < 0) l += cp.width;
@@ -677,45 +637,39 @@ public class ConnectedTextures {
     }
 
     private static BlockDir[] getSideDirections(final int side, final int vertAxis) {
-        switch (side) {
-            case 0:
-                return SIDES_Y_NEG_DOWN;
-            case 1:
-                return SIDES_Y_POS_UP;
-            case 2:
-                if (vertAxis == 1) return SIDES_Z_NEG_NORTH_Z_AXIS;
-                return SIDES_Z_NEG_NORTH;
-            case 3:
-                return SIDES_Z_POS_SOUTH;
-            case 4:
-                return SIDES_X_NEG_WEST;
-            case 5:
-                if (vertAxis == 2) return SIDES_X_POS_EAST_X_AXIS;
-                return SIDES_X_POS_EAST;
-            default:
-                throw new IllegalArgumentException("Unknown side: " + side);
-        }
+        return switch (side) {
+            case 0 -> SIDES_Y_NEG_DOWN;
+            case 1 -> SIDES_Y_POS_UP;
+            case 2 -> {
+                if (vertAxis == 1) yield SIDES_Z_NEG_NORTH_Z_AXIS;
+                yield SIDES_Z_NEG_NORTH;
+            }
+            case 3 -> SIDES_Z_POS_SOUTH;
+            case 4 -> SIDES_X_NEG_WEST;
+            case 5 -> {
+                if (vertAxis == 2) yield SIDES_X_POS_EAST_X_AXIS;
+                yield SIDES_X_POS_EAST;
+            }
+            default -> throw new IllegalArgumentException("Unknown side: " + side);
+        };
     }
 
     private static BlockDir[] getEdgeDirections(final int side, final int vertAxis) {
-        switch (side) {
-            case 0:
-                return EDGES_Y_NEG_DOWN;
-            case 1:
-                return EDGES_Y_POS_UP;
-            case 2:
-                if (vertAxis == 1) return EDGES_Z_NEG_NORTH_Z_AXIS;
-                return EDGES_Z_NEG_NORTH;
-            case 3:
-                return EDGES_Z_POS_SOUTH;
-            case 4:
-                return EDGES_X_NEG_WEST;
-            case 5:
-                if (vertAxis == 2) return EDGES_X_POS_EAST_X_AXIS;
-                return EDGES_X_POS_EAST;
-            default:
-                throw new IllegalArgumentException("Unknown side: " + side);
-        }
+        return switch (side) {
+            case 0 -> EDGES_Y_NEG_DOWN;
+            case 1 -> EDGES_Y_POS_UP;
+            case 2 -> {
+                if (vertAxis == 1) yield EDGES_Z_NEG_NORTH_Z_AXIS;
+                yield EDGES_Z_NEG_NORTH;
+            }
+            case 3 -> EDGES_Z_POS_SOUTH;
+            case 4 -> EDGES_X_NEG_WEST;
+            case 5 -> {
+                if (vertAxis == 2) yield EDGES_X_POS_EAST_X_AXIS;
+                yield EDGES_X_POS_EAST;
+            }
+            default -> throw new IllegalArgumentException("Unknown side: " + side);
+        };
     }
 
     protected static Map[][] getSpriteQuadCompactMaps() {
@@ -1039,19 +993,20 @@ public class ConnectedTextures {
             else {
                 if (Config.isBetterGrass())
                     list = BetterGrass.getFaceQuads(iblockaccess, neighbourState, blockPos, enumfacing, list);
-                if (list.size() > 0) {
+                if (!list.isEmpty()) {
                     final BakedQuad bakedquad1 = (BakedQuad) list.get(0);
                     return bakedquad1.getSprite();
                 } else {
                     final List list1 = ibakedmodel.getGeneralQuads();
-                    if (list1 == null) return null;
+                    if (list1 == null) {
+                    }
                     else {
                         for (final Object element : list1) {
                             final BakedQuad bakedquad = (BakedQuad) element;
                             if (bakedquad.getFace() == enumfacing) return bakedquad.getSprite();
                         }
-                        return null;
                     }
+                    return null;
                 }
             }
         }
@@ -1122,31 +1077,33 @@ public class ConnectedTextures {
                         break label0;
                 }
             case 2:
-                switch (side) {
-                    case 0:
+                flag1 = switch (side) {
+                    case 0 -> {
                         flag = isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
-                        flag1 = isNeighbour(cp, blockAccess, blockState, blockPos.north(), side, icon, metadata);
-                        break;
-                    case 1:
+                        yield isNeighbour(cp, blockAccess, blockState, blockPos.north(), side, icon, metadata);
+                    }
+                    case 1 -> {
                         flag = isNeighbour(cp, blockAccess, blockState, blockPos.north(), side, icon, metadata);
-                        flag1 = isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
-                        break;
-                    case 2:
+                        yield isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
+                    }
+                    case 2 -> {
                         flag = isNeighbour(cp, blockAccess, blockState, blockPos.down(), side, icon, metadata);
-                        flag1 = isNeighbour(cp, blockAccess, blockState, blockPos.up(), side, icon, metadata);
-                        break;
-                    case 3:
+                        yield isNeighbour(cp, blockAccess, blockState, blockPos.up(), side, icon, metadata);
+                    }
+                    case 3 -> {
                         flag = isNeighbour(cp, blockAccess, blockState, blockPos.up(), side, icon, metadata);
-                        flag1 = isNeighbour(cp, blockAccess, blockState, blockPos.down(), side, icon, metadata);
-                        break;
-                    case 4:
+                        yield isNeighbour(cp, blockAccess, blockState, blockPos.down(), side, icon, metadata);
+                    }
+                    case 4 -> {
                         flag = isNeighbour(cp, blockAccess, blockState, blockPos.north(), side, icon, metadata);
-                        flag1 = isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
-                        break;
-                    case 5:
+                        yield isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
+                    }
+                    case 5 -> {
                         flag = isNeighbour(cp, blockAccess, blockState, blockPos.north(), side, icon, metadata);
-                        flag1 = isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
-                }
+                        yield isNeighbour(cp, blockAccess, blockState, blockPos.south(), side, icon, metadata);
+                    }
+                    default -> flag1;
+                };
         }
         int i = 3;
         if (flag) {
@@ -1403,7 +1360,6 @@ public class ConnectedTextures {
                 list.add(s + i + "_glass_" + s1 + "/glass_pane_" + s1 + ".properties");
             }
         }
-        final String[] astring1 = ((String[]) list.toArray(new String[0]));
-        return astring1;
+        return ((String[]) list.toArray(new String[0]));
     }
 }

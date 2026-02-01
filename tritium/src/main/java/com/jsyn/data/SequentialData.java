@@ -49,7 +49,7 @@ public interface SequentialData {
     /***
      * @return Beginning of sustain loop or -1 if no loop.
      */
-    public int getSustainBegin();
+    int getSustainBegin();
 
     /**
      * SustainEnd value is the frame index of the frame just past the end of the loop. The number of
@@ -57,17 +57,17 @@ public interface SequentialData {
      *
      * @return End of sustain loop or -1 if no loop.
      */
-    public int getSustainEnd();
+    int getSustainEnd();
 
     /***
      * @return Beginning of release loop or -1 if no loop.
      */
-    public int getReleaseBegin();
+    int getReleaseBegin();
 
     /***
      * @return End of release loop or -1 if no loop.
      */
-    public int getReleaseEnd();
+    int getReleaseEnd();
 
     /**
      * Get rate to play the data. In an envelope this correspond to the inverse of the frame

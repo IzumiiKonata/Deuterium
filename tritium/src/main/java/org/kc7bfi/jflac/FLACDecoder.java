@@ -164,7 +164,7 @@ public class FLACDecoder {
     private boolean callPCMProcessors(Frame frame) {
         ByteData bd = decodeFrame(frame, null);
         pcmProcessors.processPCM(bd);
-        return pcmProcessors.isCanceled() == false;
+        return !pcmProcessors.isCanceled();
     }
 
     /**
@@ -409,7 +409,7 @@ public class FLACDecoder {
      */
     public SeekPoint seek(long target_sample) throws IOException {
         // Check if it can found using seek table first
-        if (inputStream instanceof RandomFileInputStream == false)
+        if (!(inputStream instanceof RandomFileInputStream))
             return null;
         RandomFileInputStream rf = (RandomFileInputStream) inputStream;
         long stream_length = ((RandomFileInputStream) inputStream).getLength();
@@ -439,7 +439,6 @@ public class FLACDecoder {
         if (min_framesize == 0)
             min_framesize = max_framesize / 2;
         /* Set an upper and lower bound on where in the stream we will search. */
-        int lower_bound = first_frame_offset;
 
         long upper_bound;
         /* Calc the upper_bound, beyond which we never want to seek. */
@@ -487,8 +486,8 @@ public class FLACDecoder {
                 pos = upper_bound - 1;
                 needs_seek = true;
             }
-            if (pos < lower_bound) {
-                pos = lower_bound;
+            if (pos < first_frame_offset) {
+                pos = first_frame_offset;
                 needs_seek = true;
             }
 
@@ -635,7 +634,7 @@ public class FLACDecoder {
     }
 
     private void restoreState(long savedPos, BitInputStream savedState, Frame savedFrame) {
-        if (inputStream instanceof RandomFileInputStream == false)
+        if (!(inputStream instanceof RandomFileInputStream))
             return;
         try {
             ((RandomFileInputStream) inputStream).seek(savedPos);

@@ -35,8 +35,7 @@ public class CustomPanorama {
             if (properties == null) {
                 properties = new PropertiesOrdered();
             }
-            final CustomPanoramaProperties custompanoramaproperties = new CustomPanoramaProperties(s, properties);
-            customPanoramaProperties = custompanoramaproperties;
+            customPanoramaProperties = new CustomPanoramaProperties(s, properties);
         }
     }
 
@@ -51,8 +50,7 @@ public class CustomPanorama {
                 list.add(s);
             }
         }
-        final String[] astring = list.toArray(new String[0]);
-        return astring;
+        return list.toArray(new String[0]);
     }
 
     private static Properties[] getPanoramaProperties(final String[] folders) {

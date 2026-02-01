@@ -53,17 +53,6 @@ public class EntityMinecartHopper extends EntityMinecartContainer implements IHo
     }
 
     /**
-     * First layer of player interaction
-     */
-    public boolean interactFirst(EntityPlayer playerIn) {
-        if (!this.worldObj.isRemote) {
-            playerIn.displayGUIChest(this);
-        }
-
-        return true;
-    }
-
-    /**
      * Called every tick the minecart is on an activator rail. Args: x, y, z, is the rail receiving power
      */
     public void onActivatorRailPass(int x, int y, int z, boolean receivingPower) {
@@ -148,7 +137,7 @@ public class EntityMinecartHopper extends EntityMinecartContainer implements IHo
         } else {
             List<EntityItem> list = this.worldObj.getEntitiesWithinAABB(EntityItem.class, this.getEntityBoundingBox().expand(0.25D, 0.0D, 0.25D), EntitySelectors.selectAnything);
 
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 TileEntityHopper.putDropInInventoryAllSlots(this, list.get(0));
             }
 

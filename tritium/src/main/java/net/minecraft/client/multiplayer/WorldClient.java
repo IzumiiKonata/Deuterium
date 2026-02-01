@@ -348,12 +348,12 @@ public class WorldClient extends World {
             }
         });
         crashreportcategory.addCrashSectionCallable("服务器标识", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return WorldClient.this.mc.thePlayer.getClientBrand();
             }
         });
         crashreportcategory.addCrashSectionCallable("服务器类型", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return WorldClient.this.mc.getIntegratedServer() == null ? "非本地多人服务器" : "本地单人服务器";
             }
         });

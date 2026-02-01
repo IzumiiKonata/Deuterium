@@ -33,15 +33,11 @@ public class FLACEncoder {
         int tail;
     }
 
-    ;
-
     private class verify_output {
         byte[] data;
         int capacity;
         int bytes;
     }
-
-    ;
 
     private static final int ENCODER_IN_MAGIC = 0;
     private static final int ENCODER_IN_METADATA = 1;
@@ -256,7 +252,7 @@ public class FLACEncoder {
      *
      ***********************************************************************/
 
-    private static final String StreamEncoderStateString[] = new String[]{
+    private static final String[] StreamEncoderStateString = new String[]{
             "STREAM_ENCODER_OK",
             "STREAM_ENCODER_VERIFY_DECODER_ERROR",
             "STREAM_ENCODER_VERIFY_MISMATCH_IN_AUDIO_DATA",
@@ -281,7 +277,7 @@ public class FLACEncoder {
             "STREAM_ENCODER_UNINITIALIZED"
     };
 
-    private static final String StreamEncoderWriteStatusString[] = new String[]{
+    private static final String[] StreamEncoderWriteStatusString = new String[]{
             "STREAM_ENCODER_WRITE_STATUS_OK",
             "STREAM_ENCODER_WRITE_STATUS_FATAL_ERROR"
     };

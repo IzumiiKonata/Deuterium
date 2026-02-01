@@ -12,6 +12,8 @@ import tritium.rendering.font.CFontRenderer;
 import tritium.settings.ClientSettings;
 import tritium.utils.i18n.Localizable;
 
+import java.util.Objects;
+
 /**
  * @author IzumiiKonata
  * Date: 2025/9/30 10:44
@@ -67,15 +69,13 @@ public class FlatMainMenuButton extends ClickableEntity {
 
         switch (theme) {
             case Dark:
-                switch (type) {
-                    case TEXT:
-                        return RGBA.color(255, 255, 255);
+                if (Objects.requireNonNull(type) == ColorType.TEXT) {
+                    return RGBA.color(255, 255, 255);
                 }
                 break;
             case Light:
-                switch (type) {
-                    case TEXT:
-                        return RGBA.color(0, 0, 0);
+                if (Objects.requireNonNull(type) == ColorType.TEXT) {
+                    return RGBA.color(0, 0, 0);
                 }
         }
 

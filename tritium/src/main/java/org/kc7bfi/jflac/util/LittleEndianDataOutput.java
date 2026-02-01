@@ -109,7 +109,7 @@ public class LittleEndianDataOutput implements DataOutput {
     /**
      * @see DataOutput#writeBoolean(boolean)
      */
-    public void writeBoolean(boolean arg0) throws IOException {
+    public void writeBoolean(boolean arg0) {
         writeBoolean(arg0);
     }
 

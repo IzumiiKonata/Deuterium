@@ -49,10 +49,8 @@ public abstract class AudioDeviceFactory {
      * Creates a new <code>AudioDevice</code>.
      *
      * @return a new instance of a specific class of <code>AudioDevice</code>.
-     * @throws JavaLayerException if an instance of AudioDevice could not
-     *                            be created.
      */
-    public abstract AudioDevice createAudioDevice() throws JavaLayerException;
+    public abstract AudioDevice createAudioDevice();
 
     /**
      * @return 0 ~ 100

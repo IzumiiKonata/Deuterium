@@ -29,9 +29,8 @@ public class LyricParser {
     }
 
     private static String replace(String input) {
-        String s = input.replace(' ', ' ').replaceAll(" {2,}", " ");
-//        System.out.println(s);
-        return s;
+        //        System.out.println(s);
+        return input.replace(' ', ' ').replaceAll(" {2,}", " ");
     }
 
     private static void processTranslationLyricsYRC(JsonObject input, List<LyricLine> lyricLines) {

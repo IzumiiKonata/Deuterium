@@ -3,7 +3,6 @@ package tritium.ncm.music;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.system.MemoryUtil;
 import processing.sound.*;
 import tritium.management.WidgetsManager;
 import tritium.screens.ncm.NCMScreen;

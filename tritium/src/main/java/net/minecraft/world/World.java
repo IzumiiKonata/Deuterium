@@ -188,7 +188,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting biome");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Coordinates of biome request");
                 crashreportcategory.addCrashSectionCallable("Location", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return CrashReportCategory.getCoordinateInfo(pos);
                     }
                 });
@@ -500,7 +500,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception while updating neighbours");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being updated");
                 crashreportcategory.addCrashSectionCallable("Source block type", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         try {
                             return String.format("ID #%d (%s // %s)", Block.getIdFromBlock(blockIn), blockIn.getUnlocalizedName(), blockIn.getClass().getCanonicalName());
                         } catch (Throwable var2) {
@@ -2719,16 +2719,14 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                 } else {
                     i = Math.max(i, this.getStrongPower(pos.south(), EnumFacing.SOUTH));
 
-                    if (i >= 15) {
-                        return i;
-                    } else {
+                    if (i < 15) {
                         i = Math.max(i, this.getStrongPower(pos.west(), EnumFacing.WEST));
 
                         if (i < 15) {
                             i = Math.max(i, this.getStrongPower(pos.east(), EnumFacing.EAST));
                         }
-                        return i;
                     }
+                    return i;
                 }
             }
         }
@@ -3259,7 +3257,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     }
 
     public boolean isSingleplayer() {
-        return this.mc.isIntegratedServerRunning();
+        return SharedConstants.mc.isIntegratedServerRunning();
     }
 
 }

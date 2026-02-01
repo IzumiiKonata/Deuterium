@@ -17,5 +17,5 @@
 package com.jsyn.data;
 
 public interface SpectralWindow {
-    public double get(int index);
+    double get(int index);
 }

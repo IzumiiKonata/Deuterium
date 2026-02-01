@@ -24,7 +24,7 @@ public class CommandPublishLocalServer extends CommandBase {
     /**
      * Callback when the command is invoked
      */
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public void processCommand(ICommandSender sender, String[] args) {
         String s = MinecraftServer.getServer().shareToLAN(WorldSettings.GameType.SURVIVAL, false);
 
         if (s != null) {

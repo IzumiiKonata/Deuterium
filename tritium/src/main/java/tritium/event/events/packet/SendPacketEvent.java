@@ -1,8 +1,6 @@
 package tritium.event.events.packet;
 
 import net.minecraft.network.Packet;
-import net.minecraft.network.play.client.C03PacketPlayer;
-import tritium.utils.player.rotation.RotationUtils;
 
 /**
  * @author IzumiiKonata

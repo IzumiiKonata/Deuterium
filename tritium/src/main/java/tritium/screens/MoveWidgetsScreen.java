@@ -168,12 +168,9 @@ public class MoveWidgetsScreen extends BaseScreen {
 
                 if (widget.isLockResizeRatio()) {
                     w = h * widget.getRatio();
-                    widget.setWidth(w);
-                    widget.setHeight(h);
-                } else {
-                    widget.setWidth(w);
-                    widget.setHeight(h);
                 }
+                widget.setWidth(w);
+                widget.setHeight(h);
 
                 widget.onResized(lastWidth, lastHeight);
             }

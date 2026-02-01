@@ -13,7 +13,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Iterator;
 import java.util.Map;
 
 public class ContainerRepair extends Container {
@@ -138,13 +137,6 @@ public class ContainerRepair extends Container {
      * called when the Anvil Input Slot changes, calculates the new result and puts it in the output slot
      */
     public void updateRepairOutput() {
-        int i = 0;
-        int j = 1;
-        int k = 1;
-        int l = 1;
-        int i1 = 2;
-        int j1 = 1;
-        int k1 = 1;
         ItemStack itemstack = this.inputSlots.getStackInSlot(0);
         this.maximumCost = 1;
         int l1 = 0;
@@ -209,14 +201,12 @@ public class ContainerRepair extends Container {
                     }
 
                     Map<Integer, Integer> map1 = EnchantmentHelper.getEnchantments(itemstack2);
-                    Iterator iterator1 = map1.keySet().iterator();
 
-                    while (iterator1.hasNext()) {
-                        int i5 = (Integer) iterator1.next();
+                    for (int i5 : map1.keySet()) {
                         Enchantment enchantment = Enchantment.getEnchantmentById(i5);
 
                         if (enchantment != null) {
-                            int k5 = map.containsKey(i5) ? map.get(i5) : 0;
+                            int k5 = map.getOrDefault(i5, 0);
                             int l3 = map1.get(i5);
                             int i6;
 
@@ -234,11 +224,7 @@ public class ContainerRepair extends Container {
                                 flag1 = true;
                             }
 
-                            Iterator iterator = map.keySet().iterator();
-
-                            while (iterator.hasNext()) {
-                                int i4 = (Integer) iterator.next();
-
+                            for (int i4 : map.keySet()) {
                                 if (i4 != i5 && !enchantment.canApplyTogether(Enchantment.getEnchantmentById(i4))) {
                                     flag1 = false;
                                     ++l1;
@@ -254,28 +240,10 @@ public class ContainerRepair extends Container {
                                 int l5 = 0;
 
                                 switch (enchantment.getWeight()) {
-                                    case 1:
-                                        l5 = 8;
-                                        break;
-
-                                    case 2:
-                                        l5 = 4;
-
-                                    case 3:
-                                    case 4:
-                                    case 6:
-                                    case 7:
-                                    case 8:
-                                    case 9:
-                                    default:
-                                        break;
-
-                                    case 5:
-                                        l5 = 2;
-                                        break;
-
-                                    case 10:
-                                        l5 = 1;
+                                    case 1 -> l5 = 8;
+                                    case 2 -> l5 = 4;
+                                    case 5 -> l5 = 2;
+                                    case 10 -> l5 = 1;
                                 }
 
                                 if (flag) {

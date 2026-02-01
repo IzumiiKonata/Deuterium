@@ -19,12 +19,12 @@ package com.jsyn.devices;
 import com.jsyn.io.AudioOutputStream;
 
 public interface AudioDeviceOutputStream extends AudioOutputStream {
-    public void start();
+    void start();
 
-    public void stop();
+    void stop();
 
     /**
      * @return Estimated latency in seconds.
      */
-    public double getLatency();
+    double getLatency();
 }

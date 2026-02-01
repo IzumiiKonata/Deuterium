@@ -15,13 +15,6 @@ public abstract class EntityWaterMob extends EntityLiving implements IAnimals {
     }
 
     /**
-     * Checks if the entity's current position is a valid location to spawn this entity.
-     */
-    public boolean getCanSpawnHere() {
-        return true;
-    }
-
-    /**
      * Checks that the entity is not colliding with any blocks / liquids
      */
     public boolean isNotColliding() {
@@ -33,13 +26,6 @@ public abstract class EntityWaterMob extends EntityLiving implements IAnimals {
      */
     public int getTalkInterval() {
         return 120;
-    }
-
-    /**
-     * Determines if an entity can be despawned, used on idle far away entities
-     */
-    protected boolean canDespawn() {
-        return true;
     }
 
     /**

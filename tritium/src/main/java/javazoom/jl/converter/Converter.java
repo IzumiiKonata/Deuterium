@@ -241,9 +241,8 @@ public class Converter {
         // ensure name is abstract path name
         File file = new File(fileName);
         InputStream fileIn = Files.newInputStream(file.toPath());
-        BufferedInputStream bufIn = new BufferedInputStream(fileIn);
 
-        return bufIn;
+        return new BufferedInputStream(fileIn);
     }
 
     /**
@@ -367,9 +366,7 @@ public class Converter {
         @Override
         public void converterUpdate(int updateID, int param1, int param2) {
             if (isDetail(VERBOSE_DETAIL)) {
-                switch (updateID) {
-                case UPDATE_CONVERT_COMPLETE:
-                    // catch divide by zero errors.
+                if (updateID == UPDATE_CONVERT_COMPLETE) {// catch divide by zero errors.
                     if (param2 == 0)
                         param2 = 1;
 

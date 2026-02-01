@@ -58,7 +58,7 @@ public class UnitDataQueuePort extends UnitPort {
         public void run() {
             synchronized (blocks) {
                 // Remove last block if it can be skipped.
-                if (blocks.size() > 0) {
+                if (!blocks.isEmpty()) {
                     QueueDataEvent lastBlock = blocks.getLast();
                     if (lastBlock.isSkipIfOthers()) {
                         blocks.removeLast();
@@ -131,7 +131,7 @@ public class UnitDataQueuePort extends UnitPort {
     }
 
     public QueueDataCommand getEndBlock() {
-        if (blocks.size() > 0) {
+        if (!blocks.isEmpty()) {
             return blocks.getLast();
         } else if (currentBlock != null) {
             return currentBlock;
@@ -165,7 +165,7 @@ public class UnitDataQueuePort extends UnitPort {
     }
 
     public boolean hasMore() {
-        return (currentBlock != null) || (blocks.size() > 0);
+        return (currentBlock != null) || (!blocks.isEmpty());
     }
 
     private void checkBlock() {

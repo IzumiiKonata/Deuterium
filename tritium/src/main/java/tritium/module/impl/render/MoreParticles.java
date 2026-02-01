@@ -28,8 +28,6 @@ public class MoreParticles extends Module {
         }
     }
 
-    ;
-
     public MoreParticles() {
         super("More Particles", Category.RENDER);
     }

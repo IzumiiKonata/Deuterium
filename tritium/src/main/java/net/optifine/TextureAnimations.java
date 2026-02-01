@@ -3,7 +3,6 @@ package net.optifine;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.awt.image.ImageObserver;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -70,8 +69,7 @@ public class TextureAnimations {
                 list.addAll(Arrays.asList(atextureanimation));
             }
         }
-        final TextureAnimation[] atextureanimation1 = (TextureAnimation[]) list.toArray(new TextureAnimation[0]);
-        return atextureanimation1;
+        return (TextureAnimation[]) list.toArray(new TextureAnimation[0]);
     }
 
     private static TextureAnimation[] getTextureAnimations(final IResourcePack rp) {
@@ -103,8 +101,7 @@ public class TextureAnimations {
                     ioexception.printStackTrace();
                 }
             }
-            final TextureAnimation[] atextureanimation = (TextureAnimation[]) list.toArray(new TextureAnimation[0]);
-            return atextureanimation;
+            return (TextureAnimation[]) list.toArray(new TextureAnimation[0]);
         }
     }
 
@@ -144,8 +141,7 @@ public class TextureAnimations {
                                 final NativeBackedImage bufferedimage = readTextureImage(inputstream);
                                 if (i + k <= bufferedimage.getWidth() && j + l <= bufferedimage.getHeight()) {
                                     bufferedimage.close();
-                                    final TextureAnimation textureanimation = new TextureAnimation(s, abyte, s1, resourcelocation, i, j, k, l, props);
-                                    return textureanimation;
+                                    return new TextureAnimation(s, abyte, s1, resourcelocation, i, j, k, l, props);
                                 } else {
                                     Config.warn("TextureAnimation: Animation coordinates are outside the target texture: " + s1);
                                     return null;

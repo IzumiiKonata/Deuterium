@@ -25,7 +25,7 @@ public class C01PacketEncryptionResponse implements Packet<INetHandlerLoginServe
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.secretKeyEncrypted = buf.readByteArray();
         this.verifyTokenEncrypted = buf.readByteArray();
     }
@@ -33,7 +33,7 @@ public class C01PacketEncryptionResponse implements Packet<INetHandlerLoginServe
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeByteArray(this.secretKeyEncrypted);
         buf.writeByteArray(this.verifyTokenEncrypted);
     }

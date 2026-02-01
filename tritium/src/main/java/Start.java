@@ -1,5 +1,4 @@
 import lombok.SneakyThrows;
-import tritium.Tritium;
 import tritium.launch.Launcher;
 
 import java.util.Arrays;

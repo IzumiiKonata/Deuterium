@@ -21,8 +21,7 @@ public class RandomTileEntity implements IRandomEntity {
 
     @Override
     public String getName() {
-        final String s = TileEntityUtils.getTileEntityName(this.tileEntity);
-        return s;
+        return TileEntityUtils.getTileEntityName(this.tileEntity);
     }
 
     @Override

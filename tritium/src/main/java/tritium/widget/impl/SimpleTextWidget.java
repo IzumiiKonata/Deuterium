@@ -5,7 +5,6 @@ import tritium.interfaces.IFontRenderer;
 import tritium.management.FontManager;
 import tritium.settings.ClientSettings;
 import tritium.widget.Widget;
-import tritium.interfaces.SharedRenderingConstants;
 
 /**
  * @author IzumiiKonata

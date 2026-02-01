@@ -206,26 +206,17 @@ class Sweep {
     }
 
     static boolean IsWindingInside(GLUtessellatorImpl tess, int n) {
-        switch (tess.windingRule) {
-            case GLU_TESS_WINDING_ODD: {
-                return (n & 1) != 0;
-            }
-            case GLU_TESS_WINDING_NONZERO: {
-                return (n != 0);
-            }
-            case GLU_TESS_WINDING_POSITIVE: {
-                return (n > 0);
-            }
-            case GLU_TESS_WINDING_NEGATIVE: {
-                return (n < 0);
-            }
-            case GLU_TESS_WINDING_ABS_GEQ_TWO: {
-                return (n >= 2) || (n <= -2);
-            }
-        }
-        /* LINTED */
-        // assert (false);
-        throw new InternalError();
+        return switch (tess.windingRule) {
+            case GLU_TESS_WINDING_ODD -> (n & 1) != 0;
+            case GLU_TESS_WINDING_NONZERO -> (n != 0);
+            case GLU_TESS_WINDING_POSITIVE -> (n > 0);
+            case GLU_TESS_WINDING_NEGATIVE -> (n < 0);
+            case GLU_TESS_WINDING_ABS_GEQ_TWO -> (n >= 2) || (n <= -2);
+            default ->
+                /* LINTED */
+                // assert (false);
+                    throw new InternalError();
+        };
         /* NOTREACHED */
     }
 

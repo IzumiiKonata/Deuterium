@@ -21,14 +21,11 @@ public class MouseBounds {
     }
 
     public boolean isWhthinBounds() {
-        switch (type) {
-            case Expand:
-                return isWhthinBounds(x + x1, y + y1);
-            case Position:
-                return isWhthinBounds(x1, y1);
-            default:
-                return false;
-        }
+        return switch (type) {
+            case Expand -> isWhthinBounds(x + x1, y + y1);
+            case Position -> isWhthinBounds(x1, y1);
+            default -> false;
+        };
     }
 
     private boolean isWhthinBounds(double x1, double y1) {

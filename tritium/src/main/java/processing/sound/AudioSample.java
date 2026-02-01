@@ -750,8 +750,8 @@ public class AudioSample extends SoundObject {
 	protected boolean checkStartFrame(int startFrame, boolean verbose) {
 		if (startFrame < 0 || startFrame >= this.frames()) {
 			if (verbose) {
-				Engine.printError(Integer.toString(startFrame) + " is not a valid start frame number (has to be in [0,"
-						+ Integer.toString(this.frames() - 1) + "]");
+				Engine.printError(startFrame + " is not a valid start frame number (has to be in [0,"
+						+ (this.frames() - 1) + "]");
 			}
 			return false;
 		} else {

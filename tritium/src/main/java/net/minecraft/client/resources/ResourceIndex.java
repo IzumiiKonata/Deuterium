@@ -6,7 +6,6 @@ import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import net.minecraft.util.JsonUtils;
 import org.apache.commons.io.IOUtils;
 import tritium.utils.logging.LogManager;

@@ -67,10 +67,8 @@ public class Cursor {
      * @param numImages number of cursor images specified. Must be 1 if animations are not supported.
      * @param images    A buffer containing the images. The origin is at the lower left corner, like OpenGL.
      * @param delays    An int buffer of animation frame delays, if numImages is greater than 1, else null
-     * @throws LWJGLException if the cursor could not be created for any reason
      */
-    public Cursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays)
-            throws LWJGLException {
+    public Cursor(int width, int height, int xHotspot, int yHotspot, int numImages, IntBuffer images, IntBuffer delays) {
         // TODO
         cursors = null;
     }
@@ -113,7 +111,7 @@ public class Cursor {
      * Creates the actual cursor, using a platform specific class
      */
     private static CursorElement[] createCursors(int width, int height, int xHotspot, int yHotspot, int numImages,
-                                                 IntBuffer images, IntBuffer delays) throws LWJGLException {
+                                                 IntBuffer images, IntBuffer delays) {
         // TODO
         return null;
     }

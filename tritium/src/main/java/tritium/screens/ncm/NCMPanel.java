@@ -1,6 +1,5 @@
 package tritium.screens.ncm;
 
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.container.Panel;
 
 /**

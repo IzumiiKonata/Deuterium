@@ -95,9 +95,7 @@ public class ItemMonsterPlacer extends Item {
      * Called whenever this item is equipped and the right mouse button is pressed. Args: itemStack, world, entityPlayer
      */
     public ItemStack onItemRightClick(ItemStack itemStackIn, World worldIn, EntityPlayer playerIn) {
-        if (worldIn.isRemote) {
-            return itemStackIn;
-        } else {
+        if (!worldIn.isRemote) {
             MovingObjectPosition movingobjectposition = this.getMovingObjectPositionFromPlayer(worldIn, playerIn, true);
 
             if (movingobjectposition != null) {
@@ -129,8 +127,8 @@ public class ItemMonsterPlacer extends Item {
                 }
 
             }
-            return itemStackIn;
         }
+        return itemStackIn;
     }
 
     /**

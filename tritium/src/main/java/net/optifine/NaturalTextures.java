@@ -113,8 +113,7 @@ public class NaturalTextures {
         } else {
             final int i = icon.getIndexInMap();
             if (i >= 0 && i < propertiesByIndex.length) {
-                final NaturalProperties naturalproperties = propertiesByIndex[i];
-                return naturalproperties;
+                return propertiesByIndex[i];
             } else {
                 return null;
             }

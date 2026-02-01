@@ -28,7 +28,7 @@ public interface Transform {
      * the normalized frequencies, i.e. 1.0 is equal to the sample rate of the input
      * @throws UnsupportedOperationException should the implementation not support this operation
      */
-    public float[][] transform(float[] real) throws UnsupportedOperationException;
+    float[][] transform(float[] real) throws UnsupportedOperationException;
 
     /**
      * Performs a complex transform.
@@ -39,7 +39,7 @@ public interface Transform {
      * the normalized frequencies, i.e. 1.0 is equal to the sample rate of the input
      * @throws UnsupportedOperationException should the implementation not support this operation
      */
-    public float[][] transform(float[] real, float[] imaginary) throws UnsupportedOperationException;
+    float[][] transform(float[] real, float[] imaginary) throws UnsupportedOperationException;
 
 
     /**
@@ -50,6 +50,6 @@ public interface Transform {
      * @return array with the real and the imaginary part of the transform
      * @throws UnsupportedOperationException should the implementation not support this operation
      */
-    public float[][] inverseTransform(float[] real, float[] imaginary) throws UnsupportedOperationException;
+    float[][] inverseTransform(float[] real, float[] imaginary) throws UnsupportedOperationException;
 
 }

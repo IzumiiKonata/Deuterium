@@ -112,7 +112,6 @@ public class PlayerUtils {
         Vec3 end = eyePos.addVector(playerLook.xCoord * distance, playerLook.yCoord * distance, playerLook.zCoord * distance);
         List<Entity> result = new ArrayList<>();
         List<Entity> entities = mc.theWorld.getEntitiesWithinAABBExcludingEntity(var2, var2.getEntityBoundingBox().addCoord(playerLook.xCoord * distance, playerLook.yCoord * distance, playerLook.zCoord * distance).expand(1.0, 1.0, 1.0));
-        double reach = distance;
         for (Entity ent : entities) {
             if (ent.canBeCollidedWith()) {
                 float var12 = ent.getCollisionBorderSize();
@@ -120,10 +119,10 @@ public class PlayerUtils {
                 aabb = aabb.expand(expand, expand, expand);
                 MovingObjectPosition var14 = aabb.calculateIntercept(eyePos, end);
                 if (aabb.isVecInside(eyePos)) {
-                    if (0.0 < reach || reach == 0.0) {
+                    if (0.0 < distance || distance == 0.0) {
                         result.add(ent);
                     }
-                } else if (var14 != null && (eyePos.distanceTo(var14.hitVec) < reach || reach == 0.0)) {
+                } else if (var14 != null && (eyePos.distanceTo(var14.hitVec) < distance || distance == 0.0)) {
                     result.add(ent);
                 }
             }
@@ -382,37 +381,17 @@ public class PlayerUtils {
     }
 
     private static int getRealNote(int noteIn) {
-        switch (noteIn) {
-            case 1: {
-                return 0;
-            }
+        return switch (noteIn) {
+            case 1 -> 0;
+            case 2 -> 2;
+            case 3 -> 4;
+            case 4 -> 5;
+            case 5 -> 7;
+            case 6 -> 9;
+            case 7 -> 11;
+            default -> 0;
+        };
 
-            case 2: {
-                return 2;
-            }
-
-            case 3: {
-                return 4;
-            }
-
-            case 4: {
-                return 5;
-            }
-
-            case 5: {
-                return 7;
-            }
-
-            case 6: {
-                return 9;
-            }
-
-            case 7: {
-                return 11;
-            }
-        }
-
-        return 0;
     }
 
     public static void playNotes(String notes) {

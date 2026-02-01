@@ -2,7 +2,6 @@ package net.minecraft.client.gui;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import ingameime.IngameIMEJNI;
 import ingameime.PreEditRect;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -136,7 +135,7 @@ public class GuiTextField extends Gui {
         int k = this.maxStringLength - this.text.length() - (i - j);
         int l = 0;
 
-        if (this.text.length() > 0) {
+        if (!this.text.isEmpty()) {
             s = s + this.text.substring(0, i);
         }
 
@@ -148,7 +147,7 @@ public class GuiTextField extends Gui {
             l = s1.length();
         }
 
-        if (this.text.length() > 0 && j < this.text.length()) {
+        if (!this.text.isEmpty() && j < this.text.length()) {
             s = s + this.text.substring(j);
         }
 
@@ -167,7 +166,7 @@ public class GuiTextField extends Gui {
      * the cursor.
      */
     public void deleteWords(int p_146177_1_) {
-        if (this.text.length() != 0) {
+        if (!this.text.isEmpty()) {
             if (this.selectionEnd != this.cursorPosition) {
                 this.writeText("");
             } else {
@@ -180,7 +179,7 @@ public class GuiTextField extends Gui {
      * delete the selected text, otherwsie deletes characters from either side of the cursor. params: delete num
      */
     public void deleteFromCursor(int p_146175_1_) {
-        if (this.text.length() != 0) {
+        if (!this.text.isEmpty()) {
             if (this.selectionEnd != this.cursorPosition) {
                 this.writeText("");
             } else {

@@ -29,7 +29,6 @@ import tritium.rendering.rendersystem.RenderSystem;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
-import java.util.List;
 
 public class FontRenderer implements IResourceManagerReloadListener {
     private static final Location[] unicodePageLocations = new Location[256];
@@ -243,7 +242,6 @@ public class FontRenderer implements IResourceManagerReloadListener {
                 }
 
                 if (i1 == 65) {
-                    i1 = i1;
                 }
 
                 if (i1 == 32) {
@@ -1214,23 +1212,9 @@ public class FontRenderer implements IResourceManagerReloadListener {
             char c0 = str.charAt(j);
 
             switch (c0) {
-                case '\n':
-                    --j;
-                    break;
-
-                case ' ':
-                    k = j;
-
-                default:
-                    f += (float) this.getCharWidth(c0);
-
-                    if (flag) {
-                        ++f;
-                    }
-
-                    break;
-
-                case '§':
+                case '\n' -> --j;
+                case ' ' -> k = j;
+                case '§' -> {
                     if (j < i - 1) {
                         ++j;
                         char c1 = str.charAt(j);
@@ -1243,6 +1227,14 @@ public class FontRenderer implements IResourceManagerReloadListener {
                             flag = true;
                         }
                     }
+                }
+                default -> {
+                    f += (float) this.getCharWidth(c0);
+
+                    if (flag) {
+                        ++f;
+                    }
+                }
             }
 
             if (c0 == 10) {

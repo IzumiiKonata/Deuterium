@@ -3,14 +3,12 @@ package net.minecraft.client.shader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.TextureUtil;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.EXTFramebufferObject;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import tritium.rendering.FramebufferCaching;
 import tritium.rendering.StencilClipManager;
-import tritium.rendering.shader.Shaders;
 
 import java.nio.ByteBuffer;
 import java.util.Stack;

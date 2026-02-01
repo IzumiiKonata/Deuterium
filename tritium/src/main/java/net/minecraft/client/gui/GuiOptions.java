@@ -150,7 +150,7 @@ public class GuiOptions extends GuiScreen implements GuiYesNoCallback {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             if (button.id < 100 && button instanceof GuiOptionButton) {
                 GameSettings.Options gamesettings$options = ((GuiOptionButton) button).returnEnumOptions();

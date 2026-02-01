@@ -103,7 +103,7 @@ public class FourierMath {
      * @param ai
      * @param magnitudes
      */
-    public static void calculateMagnitudes(double ar[], double ai[], double[] magnitudes) {
+    public static void calculateMagnitudes(double[] ar, double[] ai, double[] magnitudes) {
         for (int i = 0; i < magnitudes.length; ++i) {
             magnitudes[i] = Math.sqrt((ar[i] * ar[i]) + (ai[i] * ai[i]));
         }
@@ -116,13 +116,13 @@ public class FourierMath {
      * @param ai
      * @param magnitudes
      */
-    public static void calculateMagnitudes(float ar[], float ai[], float[] magnitudes) {
+    public static void calculateMagnitudes(float[] ar, float[] ai, float[] magnitudes) {
         for (int i = 0; i < magnitudes.length; ++i) {
             magnitudes[i] = (float) Math.sqrt((ar[i] * ar[i]) + (ai[i] * ai[i]));
         }
     }
 
-    public static void transform(int sign, int n, double ar[], double ai[]) {
+    public static void transform(int sign, int n, double[] ar, double[] ai) {
         double scale = (sign > 0) ? (2.0 / n) : (0.5);
 
         int numBits = FourierMath.numBits(n);
@@ -169,7 +169,7 @@ public class FourierMath {
         }
     }
 
-    public static void transform(int sign, int n, float ar[], float ai[]) {
+    public static void transform(int sign, int n, float[] ar, float[] ai) {
         float scale = (sign > 0) ? (2.0f / n) : (0.5f);
 
         int numBits = FourierMath.numBits(n);
@@ -237,7 +237,7 @@ public class FourierMath {
      * @param ar
      * @param ai
      */
-    public static void fft(int n, double ar[], double ai[]) {
+    public static void fft(int n, double[] ar, double[] ai) {
         transform(1, n, ar, ai); // TODO -1 or 1
     }
 
@@ -248,7 +248,7 @@ public class FourierMath {
      * @param ar
      * @param ai
      */
-    public static void ifft(int n, double ar[], double ai[]) {
+    public static void ifft(int n, double[] ar, double[] ai) {
         transform(-1, n, ar, ai); // TODO -1 or 1
     }
 }

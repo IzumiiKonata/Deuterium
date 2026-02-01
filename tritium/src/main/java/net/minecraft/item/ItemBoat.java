@@ -37,9 +37,7 @@ public class ItemBoat extends Item {
         Vec3 vec31 = vec3.addVector((double) f7 * d3, (double) f6 * d3, (double) f8 * d3);
         MovingObjectPosition movingobjectposition = worldIn.rayTraceBlocks(vec3, vec31, true);
 
-        if (movingobjectposition == null) {
-            return itemStackIn;
-        } else {
+        if (movingobjectposition != null) {
             Vec3 vec32 = playerIn.getLook(f);
             boolean flag = false;
             float f9 = 1.0F;
@@ -82,7 +80,7 @@ public class ItemBoat extends Item {
                 }
 
             }
-            return itemStackIn;
         }
+        return itemStackIn;
     }
 }

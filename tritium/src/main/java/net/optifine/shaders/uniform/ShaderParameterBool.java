@@ -40,62 +40,35 @@ public enum ShaderParameterBool implements IExpressionBool {
         if (entity instanceof EntityLivingBase) {
             EntityLivingBase entitylivingbase = (EntityLivingBase) entity;
 
-            switch (this) {
-                case IS_ALIVE:
-                    return entitylivingbase.isEntityAlive();
-
-                case IS_BURNING:
-                    return entitylivingbase.isBurning();
-
-                case IS_CHILD:
-                    return entitylivingbase.isChild();
-
-                case IS_HURT:
-                    return entitylivingbase.hurtTime > 0;
-
-                case IS_IN_LAVA:
-                    return entitylivingbase.isInLava();
-
-                case IS_IN_WATER:
-                    return entitylivingbase.isInWater();
-
-                case IS_INVISIBLE:
-                    return entitylivingbase.isInvisible();
-
-                case IS_ON_GROUND:
-                    return entitylivingbase.onGround;
-
-                case IS_RIDDEN:
-                    return entitylivingbase.riddenByEntity != null;
-
-                case IS_RIDING:
-                    return entitylivingbase.isRiding();
-
-                case IS_SNEAKING:
-                    return entitylivingbase.isSneaking();
-
-                case IS_SPRINTING:
-                    return entitylivingbase.isSprinting();
-
-                case IS_WET:
-                    return entitylivingbase.isWet();
-            }
+            return switch (this) {
+                case IS_ALIVE -> entitylivingbase.isEntityAlive();
+                case IS_BURNING -> entitylivingbase.isBurning();
+                case IS_CHILD -> entitylivingbase.isChild();
+                case IS_HURT -> entitylivingbase.hurtTime > 0;
+                case IS_IN_LAVA -> entitylivingbase.isInLava();
+                case IS_IN_WATER -> entitylivingbase.isInWater();
+                case IS_INVISIBLE -> entitylivingbase.isInvisible();
+                case IS_ON_GROUND -> entitylivingbase.onGround;
+                case IS_RIDDEN -> entitylivingbase.riddenByEntity != null;
+                case IS_RIDING -> entitylivingbase.isRiding();
+                case IS_SNEAKING -> entitylivingbase.isSneaking();
+                case IS_SPRINTING -> entitylivingbase.isSprinting();
+                case IS_WET -> entitylivingbase.isWet();
+            };
         }
 
         return false;
     }
 
     public static ShaderParameterBool parse(String str) {
-        if (str == null) {
-            return null;
-        } else {
+        if (str != null) {
             for (ShaderParameterBool shaderparameterbool : VALUES) {
                 if (shaderparameterbool.getName().equals(str)) {
                     return shaderparameterbool;
                 }
             }
 
-            return null;
         }
+        return null;
     }
 }

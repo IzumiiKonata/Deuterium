@@ -8,7 +8,6 @@ import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Location;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import javax.imageio.ImageIO;

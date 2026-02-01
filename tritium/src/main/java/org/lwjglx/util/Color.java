@@ -403,7 +403,7 @@ public final class Color implements ReadableColor, Serializable, WritableColor {
      * @param dest Destination floats, or null
      * @return dest, or a new float array
      */
-    public float[] toHSB(float dest[]) {
+    public float[] toHSB(float[] dest) {
         int r = getRed();
         int g = getGreen();
         int b = getBlue();

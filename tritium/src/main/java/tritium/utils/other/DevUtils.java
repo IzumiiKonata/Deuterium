@@ -7,7 +7,6 @@ import tritium.command.CommandValues;
 import tritium.management.CommandManager;
 import tritium.management.ModuleManager;
 import tritium.screens.ConsoleScreen;
-import tritium.utils.other.info.Version;
 
 import java.util.Base64;
 

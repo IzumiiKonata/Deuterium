@@ -35,11 +35,11 @@ import java.nio.IntBuffer;
 
 interface DisplayImplementation extends InputImplementation {
 
-    void createWindow(DrawableLWJGL drawable, org.lwjglx.opengl.DisplayMode mode, Canvas parent, int x, int y) throws LWJGLException;
+    void createWindow(DrawableLWJGL drawable, org.lwjglx.opengl.DisplayMode mode, Canvas parent, int x, int y);
 
     void destroyWindow();
 
-    void switchDisplayMode(org.lwjglx.opengl.DisplayMode mode) throws LWJGLException;
+    void switchDisplayMode(org.lwjglx.opengl.DisplayMode mode);
 
     /**
      * Reset the display mode to whatever it was when LWJGL was initialized. Fails silently.
@@ -56,7 +56,7 @@ interface DisplayImplementation extends InputImplementation {
     /**
      * Method to set the gamma ramp.
      */
-    void setGammaRamp(FloatBuffer gammaRamp) throws LWJGLException;
+    void setGammaRamp(FloatBuffer gammaRamp);
 
     /**
      * Get the driver adapter string. This is a unique string describing the actual card's hardware, eg. "Geforce2",
@@ -77,7 +77,7 @@ interface DisplayImplementation extends InputImplementation {
     /**
      * Initialize and return the current display mode.
      */
-    org.lwjglx.opengl.DisplayMode init() throws LWJGLException;
+    org.lwjglx.opengl.DisplayMode init();
 
     /**
      * Implementation of setTitle(). This will read the window's title member and stash it in the native title of the
@@ -96,9 +96,8 @@ interface DisplayImplementation extends InputImplementation {
     /**
      * Create the native PeerInfo.
      *
-     * @throws LWJGLException
      */
-    PeerInfo createPeerInfo(PixelFormat pixel_format, ContextAttribs attribs) throws LWJGLException;
+    PeerInfo createPeerInfo(PixelFormat pixel_format, ContextAttribs attribs);
 
     // void destroyPeerInfo();
 
@@ -113,7 +112,7 @@ interface DisplayImplementation extends InputImplementation {
     /**
      * Method for getting displaymodes
      */
-    DisplayMode[] getAvailableDisplayModes() throws LWJGLException;
+    DisplayMode[] getAvailableDisplayModes();
 
     /* Pbuffer */
     int getPbufferCapabilities();
@@ -127,7 +126,7 @@ interface DisplayImplementation extends InputImplementation {
      * Method to create a Pbuffer
      */
     PeerInfo createPbuffer(int width, int height, PixelFormat pixel_format, ContextAttribs attribs,
-                           IntBuffer pixelFormatCaps, IntBuffer pBufferAttribs) throws LWJGLException;
+                           IntBuffer pixelFormatCaps, IntBuffer pBufferAttribs);
 
     void setPbufferAttrib(PeerInfo handle, int attrib, int value);
 

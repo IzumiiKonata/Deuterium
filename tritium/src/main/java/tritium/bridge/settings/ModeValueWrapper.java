@@ -2,7 +2,6 @@ package tritium.bridge.settings;
 
 import today.opai.api.interfaces.modules.values.ModeValue;
 import tritium.settings.ModeSetting;
-import tritium.settings.Setting;
 
 import java.util.Arrays;
 

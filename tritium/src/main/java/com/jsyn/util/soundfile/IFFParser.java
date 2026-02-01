@@ -177,7 +177,7 @@ public class IFFParser extends FilterInputStream {
 
     /** Convert a 4 character IFF ID to a String */
     public static String IDToString(int ID) {
-        byte bar[] = new byte[4];
+        byte[] bar = new byte[4];
         bar[0] = (byte) (ID >> 24);
         bar[1] = (byte) (ID >> 16);
         bar[2] = (byte) (ID >> 8);
@@ -262,21 +262,15 @@ public class IFFParser extends FilterInputStream {
      */
     public boolean isForm(int ckid) {
         if (isRIFF()) {
-            switch (ckid) {
-                case LIST_ID:
-                case RIFF_ID:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (ckid) {
+                case LIST_ID, RIFF_ID -> true;
+                default -> false;
+            };
         } else {
-            switch (ckid) {
-                case LIST_ID:
-                case FORM_ID:
-                    return true;
-                default:
-                    return false;
-            }
+            return switch (ckid) {
+                case LIST_ID, FORM_ID -> true;
+                default -> false;
+            };
         }
     }
 

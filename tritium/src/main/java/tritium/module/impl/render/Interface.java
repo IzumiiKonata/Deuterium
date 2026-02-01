@@ -1,21 +1,13 @@
 package tritium.module.impl.render;
 
-import net.minecraft.util.EnumChatFormatting;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.management.FontManager;
 import tritium.module.Module;
 import tritium.ncm.music.CloudMusic;
-import tritium.rendering.MusicToast;
-import tritium.rendering.RGBA;
-import tritium.rendering.Rect;
-import tritium.rendering.async.AsyncGLContext;
-import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.music.PVRenderer;
 import tritium.rendering.music.impl.*;
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
@@ -36,11 +28,6 @@ public class Interface extends Module {
 //    public BooleanSetting waterMark = new BooleanSetting("Water Mark", false);
 //    public StringSetting waterMarkValue = new StringSetting("Title", Tritium.NAME + "", () -> waterMark.getValue());
 //    public NumberSetting<Double> pvScale = new NumberSetting<>("<..?> Scale", 1.5, 0.8, 3.0, 0.05);
-
-    @Override
-    public void onEnable() {
-
-    }
 
     final List<PVRenderer> pvRenderers = Arrays.asList(
             new LagTrain(),

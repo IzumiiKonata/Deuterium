@@ -3,8 +3,6 @@ package net.minecraft.server.management;
 import com.mojang.authlib.GameProfile;
 import lombok.Getter;
 
-import java.util.Date;
-
 /**
  * @author IzumiiKonata
  * Date: 2025/1/17 13:35

@@ -54,12 +54,10 @@ public class StickSimulation {
             }
             final double abs = Math.abs(angle);
             if (abs < 180.0f - this.maxBend) {
-                final Vector2 replacement = this.getReplacement(this.points.get(i).position, this.points.get(i - 1).position, angle, 180.0f - this.maxBend + 1.0f);
-                this.points.get(i + 1).position = replacement;
+                this.points.get(i + 1).position = this.getReplacement(this.points.get(i).position, this.points.get(i - 1).position, angle, 180.0f - this.maxBend + 1.0f);
             }
             if (abs > 180.0f + this.maxBend) {
-                final Vector2 replacement = this.getReplacement(this.points.get(i).position, this.points.get(i - 1).position, angle, 180.0f + this.maxBend - 1.0f);
-                this.points.get(i + 1).position = replacement;
+                this.points.get(i + 1).position = this.getReplacement(this.points.get(i).position, this.points.get(i - 1).position, angle, 180.0f + this.maxBend - 1.0f);
             }
         }
         for (int i = 0; i < this.numIterations; ++i) {

@@ -1,7 +1,6 @@
 package net.optifine;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -445,8 +444,7 @@ public class CustomItemProperties {
                 final NbtTagValue nbttagvalue = new NbtTagValue(s3, s2);
                 list.add(nbttagvalue);
             }
-            final NbtTagValue[] anbttagvalue = (NbtTagValue[]) list.toArray(new NbtTagValue[0]);
-            return anbttagvalue;
+            return (NbtTagValue[]) list.toArray(new NbtTagValue[0]);
         }
     }
 
@@ -480,7 +478,7 @@ public class CustomItemProperties {
     }
 
     public boolean isValid(final String path) {
-        if (this.name != null && this.name.length() > 0) {
+        if (this.name != null && !this.name.isEmpty()) {
             if (this.basePath == null) {
                 Config.warn("No base path found: " + path);
                 return false;
@@ -571,8 +569,7 @@ public class CustomItemProperties {
         String s = resLoc.getResourcePath();
         s = StrUtils.removePrefix(s, "textures/");
         s = StrUtils.removeSuffix(s, ".png");
-        final Location resourcelocation = Location.of(resLoc.getResourceDomain(), s);
-        return resourcelocation;
+        return Location.of(resLoc.getResourceDomain(), s);
     }
 
     public void updateModelTexture(final TextureMap textureMap, final ItemModelGenerator itemModelGenerator) {
@@ -609,8 +606,7 @@ public class CustomItemProperties {
         }
         final ModelBlock modelblock = makeModelBlock(astring);
         final ModelBlock modelblock1 = itemModelGenerator.makeItemModel(textureMap, modelblock);
-        final IBakedModel ibakedmodel = bakeModel(textureMap, modelblock1, useTint);
-        return ibakedmodel;
+        return bakeModel(textureMap, modelblock1, useTint);
     }
 
     private String[] getModelTextures() {
@@ -677,8 +673,7 @@ public class CustomItemProperties {
         }
         stringbuffer.append("}}");
         final String s1 = stringbuffer.toString();
-        final ModelBlock modelblock = ModelBlock.deserialize(s1);
-        return modelblock;
+        return ModelBlock.deserialize(s1);
     }
 
     private static IBakedModel bakeModel(final TextureMap textureMap, final ModelBlock modelBlockIn, final boolean useTint) {

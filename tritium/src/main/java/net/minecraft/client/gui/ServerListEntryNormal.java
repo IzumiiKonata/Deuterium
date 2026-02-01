@@ -18,7 +18,6 @@ import org.apache.commons.lang3.Validate;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.image.BufferedImage;
 import java.net.UnknownHostException;
 import java.util.List;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -206,7 +205,6 @@ public class ServerListEntryNormal implements GuiListExtended.IGuiListEntry {
                 label101:
                 {
                     try {
-                        ;
                         Validate.validState(bufferedimage.getWidth() == 64, "Must be 64 pixels wide");
                         Validate.validState(bufferedimage.getHeight() == 64, "Must be 64 pixels high");
                         break label101;

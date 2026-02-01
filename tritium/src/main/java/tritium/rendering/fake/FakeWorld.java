@@ -81,10 +81,6 @@ public class FakeWorld extends WorldClient {
     public void markBlockRangeForRenderUpdate(final int p_147458_1_, final int p_147458_2_, final int p_147458_3_, final int p_147458_4_, final int p_147458_5_, final int p_147458_6_) {
     }
 
-    public boolean isBlockTickPending(final BlockPos pos, final Block blockType) {
-        return false;
-    }
-
     public int getLightFromNeighbors(final BlockPos pos) {
         return 14;
     }
@@ -170,9 +166,6 @@ public class FakeWorld extends WorldClient {
         return 6;
     }
 
-    public void scheduleBlockUpdate(final BlockPos pos, final Block blockIn, final int delay, final int priority) {
-    }
-
     public void updateEntities() {
     }
 
@@ -240,9 +233,6 @@ public class FakeWorld extends WorldClient {
     public void tick() {
     }
 
-    protected void updateWeather() {
-    }
-
     public void updateWeatherBody() {
     }
 
@@ -267,10 +257,6 @@ public class FakeWorld extends WorldClient {
     }
 
     public boolean canSnowAtBody(final BlockPos pos, final boolean checkLight) {
-        return false;
-    }
-
-    public boolean tickUpdates(final boolean par1) {
         return false;
     }
 
@@ -311,7 +297,7 @@ public class FakeWorld extends WorldClient {
         return 0;
     }
 
-    public void checkSessionLock() throws MinecraftException {
+    public void checkSessionLock() {
     }
 
     public long getSeed() {
@@ -345,17 +331,11 @@ public class FakeWorld extends WorldClient {
         return false;
     }
 
-    public void setEntityState(final Entity par1Entity, final byte par2) {
-    }
-
     public float getThunderStrength(final float delta) {
         return 0.0f;
     }
 
     public void addBlockEvent(final BlockPos pos, final Block blockIn, final int eventID, final int eventParam) {
-    }
-
-    public void updateAllPlayersSleepingFlag() {
     }
 
     public boolean isRainingAt(final BlockPos strikePosition) {
@@ -398,10 +378,6 @@ public class FakeWorld extends WorldClient {
     public void playEvent(final int type, final BlockPos pos, final int data) {
     }
 
-    public int getHeight() {
-        return 256;
-    }
-
     public int getActualHeight() {
         return 256;
     }
@@ -437,22 +413,10 @@ public class FakeWorld extends WorldClient {
 
     protected static class FakeWorldProvider extends WorldProvider {
 
-        public boolean isSurfaceWorld() {
-            return true;
-        }
-
-        public boolean canRespawnHere() {
-            return true;
-        }
-
         public int getAverageGroundLevel() {
             return 63;
         }
 
-
-        public boolean doesXZShowFog(final int par1, final int par2) {
-            return false;
-        }
 
         public void setDimension(final int dim) {
         }

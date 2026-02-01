@@ -12,6 +12,7 @@ import org.lwjgl.input.Mouse;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render2DEvent;
 import tritium.interfaces.IFontRenderer;
+import tritium.interfaces.SharedConstants;
 import tritium.management.FontManager;
 import tritium.management.ModuleManager;
 import tritium.module.Module;
@@ -42,7 +43,7 @@ public class Chat extends Module {
     }
 
     public void drawChat(int updateCounter) {
-        if (this.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN && clientChat.getValue()) {
+        if (SharedConstants.mc.gameSettings.chatVisibility != EntityPlayer.EnumChatVisibility.HIDDEN && clientChat.getValue()) {
             if (this.onlyVisibleWhileTyping.getValue() && !(mc.currentScreen instanceof GuiChat)) {
                 return;
             }
@@ -54,7 +55,7 @@ public class Chat extends Module {
             boolean chatOpen = false;
             int j = 0;
             int chatSize = mc.ingameGUI.getChatGUI().drawnChatLines.size();
-            float chatOpacity = this.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
+            float chatOpacity = SharedConstants.mc.gameSettings.chatOpacity * 0.9F + 0.1F;
             IFontRenderer fontRenderer = FontManager.pf28;
 
             if (chatSize > 0) {
@@ -78,7 +79,7 @@ public class Chat extends Module {
 
                             chatLineLength = (int) Math.min(chatLineLength, fontRenderer.getStringWidth(chatline.getChatComponent().getFormattedText()) / 1.5f - 3);
 
-                            chatLineLength = Math.max(MathHelper.ceiling_float_int((float) ((float) GuiNewChat.calculateChatboxWidth(this.mc.gameSettings.chatWidth) * RenderSystem.getScaleFactor() / chatScale)), chatLineLength);
+                            chatLineLength = Math.max(MathHelper.ceiling_float_int((float) ((float) GuiNewChat.calculateChatboxWidth(SharedConstants.mc.gameSettings.chatWidth) * RenderSystem.getScaleFactor() / chatScale)), chatLineLength);
 
                         }
 
@@ -169,8 +170,8 @@ public class Chat extends Module {
         final ScaledResolution scaledresolution = ScaledResolution.get();
         int scaledWidth = scaledresolution.getScaledWidth();
         int scaledHeight = scaledresolution.getScaledHeight();
-        double k1 = Mouse.getX() * scaledWidth / this.mc.displayWidth;
-        double l1 = Mouse.getY() * scaledHeight / this.mc.displayHeight - 40;
+        double k1 = Mouse.getX() * scaledWidth / SharedConstants.mc.displayWidth;
+        double l1 = Mouse.getY() * scaledHeight / SharedConstants.mc.displayHeight - 40;
 
         double mouseX = ClientSettings.FIXED_SCALE.getValue() ? k1 * RenderSystem.getScaleFactor() : k1;
         double mouseY = ClientSettings.FIXED_SCALE.getValue() ? l1 * RenderSystem.getScaleFactor() : l1;

@@ -8,7 +8,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.InsecureTextureException;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture.Type;
-import com.mojang.authlib.minecraft.MinecraftSessionService;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IImageBuffer;
 import net.minecraft.client.renderer.ImageBufferDownload;
@@ -38,7 +37,7 @@ public class SkinManager {
         this.textureManager = textureManagerInstance;
         this.skinCacheDir = skinCacheDirectory;
         this.skinCacheLoader = CacheBuilder.newBuilder().expireAfterAccess(15L, TimeUnit.SECONDS).build(new CacheLoader<GameProfile, Map<Type, MinecraftProfileTexture>>() {
-            public Map<Type, MinecraftProfileTexture> load(GameProfile p_load_1_) throws Exception {
+            public Map<Type, MinecraftProfileTexture> load(GameProfile p_load_1_) {
                 return Minecraft.getMinecraft().getSessionService().getTextures(p_load_1_, false);
             }
         });

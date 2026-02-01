@@ -8,15 +8,10 @@ import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.management.FontManager;
 import tritium.ncm.music.CloudMusic;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.settings.ClientSettings;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -51,11 +51,11 @@ public class DrawableGL implements DrawableLWJGL {
         context = new ContextGL(Display.getWindow(), false);
     }
 
-    public void setPixelFormat(final PixelFormatLWJGL pf) throws LWJGLException {
+    public void setPixelFormat(final PixelFormatLWJGL pf) {
         throw new UnsupportedOperationException();
     }
 
-    public void setPixelFormat(final PixelFormatLWJGL pf, final ContextAttribs attribs) throws LWJGLException {
+    public void setPixelFormat(final PixelFormatLWJGL pf, final ContextAttribs attribs) {
         this.pixel_format = (PixelFormat) pf;
         // this.peer_info = Display.getImplementation().createPeerInfo(pixel_format, attribs);
     }

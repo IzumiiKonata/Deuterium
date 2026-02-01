@@ -120,7 +120,7 @@ public class MacroState {
             while (matcher2.find()) {
                 String s = matcher2.group();
 
-                if (s.length() > 0) {
+                if (!s.isEmpty()) {
                     char c0 = s.charAt(0);
 
                     if ((Character.isLetter(c0) || c0 == 95) && this.mapMacroValues.containsKey(s)) {
@@ -156,13 +156,11 @@ public class MacroState {
 
                 if (iexpression.getExpressionType() == ExpressionType.BOOL) {
                     IExpressionBool iexpressionbool = (IExpressionBool) iexpression;
-                    boolean flag1 = iexpressionbool.eval();
-                    return flag1;
+                    return iexpressionbool.eval();
                 } else if (iexpression.getExpressionType() == ExpressionType.FLOAT) {
                     IExpressionFloat iexpressionfloat = (IExpressionFloat) iexpression;
                     float f = iexpressionfloat.eval();
-                    boolean flag2 = f != 0.0F;
-                    return flag2;
+                    return f != 0.0F;
                 } else {
                     throw new ParseException("Not a boolean or float expression: " + iexpression.getExpressionType());
                 }

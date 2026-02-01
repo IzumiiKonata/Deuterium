@@ -8,8 +8,6 @@ import tritium.management.Localizer;
 import tritium.management.ModuleManager;
 import tritium.module.Module;
 
-import java.util.Optional;
-
 
 /**
  * @author IzumiiKonata

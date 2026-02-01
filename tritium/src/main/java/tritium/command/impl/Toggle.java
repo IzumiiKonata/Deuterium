@@ -3,14 +3,11 @@ package tritium.command.impl;
 import lombok.SneakyThrows;
 import net.minecraft.util.EnumChatFormatting;
 import tritium.command.Command;
-import tritium.command.CommandHandler;
 import tritium.command.CommandValues;
-import tritium.module.Module;
 import tritium.utils.other.Result;
 
 import java.lang.reflect.Field;
 import java.util.Objects;
-import java.util.Optional;
 
 /**
  * @author IzumiiKonata

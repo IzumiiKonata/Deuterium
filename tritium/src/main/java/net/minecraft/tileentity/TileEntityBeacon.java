@@ -311,7 +311,7 @@ public class TileEntityBeacon extends TileEntityLockable implements ITickable, I
      * Returns true if this thing is named
      */
     public boolean hasCustomName() {
-        return this.customName != null && this.customName.length() > 0;
+        return this.customName != null && !this.customName.isEmpty();
     }
 
     public void setName(String name) {
@@ -354,19 +354,12 @@ public class TileEntityBeacon extends TileEntityLockable implements ITickable, I
     }
 
     public int getField(int id) {
-        switch (id) {
-            case 0:
-                return this.levels;
-
-            case 1:
-                return this.primaryEffect;
-
-            case 2:
-                return this.secondaryEffect;
-
-            default:
-                return 0;
-        }
+        return switch (id) {
+            case 0 -> this.levels;
+            case 1 -> this.primaryEffect;
+            case 2 -> this.secondaryEffect;
+            default -> 0;
+        };
     }
 
     public void setField(int id, int value) {

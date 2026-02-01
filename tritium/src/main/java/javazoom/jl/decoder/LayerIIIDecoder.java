@@ -667,8 +667,6 @@ final class LayerIIIDecoder implements FrameDecoder {
                         m++;
                     }
                 }
-                for (window = 0; window < 3; window++)
-                    scalefac[ch].s[window][12] = 0;
 
             } else { // SHORT
 
@@ -679,9 +677,9 @@ final class LayerIIIDecoder implements FrameDecoder {
                     }
                 }
 
-                for (window = 0; window < 3; window++)
-                    scalefac[ch].s[window][12] = 0;
             }
+            for (window = 0; window < 3; window++)
+                scalefac[ch].s[window][12] = 0;
         } else { // LONG types 0,1,3
 
             for (sfb = 0; sfb < 21; sfb++) {
@@ -818,7 +816,6 @@ final class LayerIIIDecoder implements FrameDecoder {
         int cb_width = 0;
         int index = 0, t_index, j;
         float g_gain;
-        float[][] xr_1d = xr;
 
         // choose correct scalefactor band per block type, initalize boundary
 
@@ -842,19 +839,19 @@ final class LayerIIIDecoder implements FrameDecoder {
             // Modif E.B 02/22/99
             int reste = j % SSLIMIT;
             int quotien = (j - reste) / SSLIMIT;
-            if (is1d[j] == 0) xr_1d[quotien][reste] = 0.0f;
+            if (is1d[j] == 0) xr[quotien][reste] = 0.0f;
             else {
                 int abv = is1d[j];
                 // Pow Array fix (11/17/04)
                 if (abv < t_43.length) {
-                    if (is1d[j] > 0) xr_1d[quotien][reste] = g_gain * t_43[abv];
+                    if (is1d[j] > 0) xr[quotien][reste] = g_gain * t_43[abv];
                     else {
-                        if (-abv < t_43.length) xr_1d[quotien][reste] = -g_gain * t_43[-abv];
-                        else xr_1d[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
+                        if (-abv < t_43.length) xr[quotien][reste] = -g_gain * t_43[-abv];
+                        else xr[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
                     }
                 } else {
-                    if (is1d[j] > 0) xr_1d[quotien][reste] = g_gain * (float) Math.pow(abv, d43);
-                    else xr_1d[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
+                    if (is1d[j] > 0) xr[quotien][reste] = g_gain * (float) Math.pow(abv, d43);
+                    else xr[quotien][reste] = -g_gain * (float) Math.pow(-abv, d43);
                 }
             }
         }
@@ -925,7 +922,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                         << gr_info.scalefacScale;
                 idx += (gr_info.subblockGain[t_index] << 2);
 
-                xr_1d[quotien][reste] *= two_to_negative_half_pow[idx];
+                xr[quotien][reste] *= two_to_negative_half_pow[idx];
 
             } else {   // LONG block types 0,1,3 & 1st 2 subbands of switched blocks
                 int idx = scalefac[ch].l[cb];
@@ -934,7 +931,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                     idx += preTab[cb];
 
                 idx = idx << gr_info.scalefacScale;
-                xr_1d[quotien][reste] *= two_to_negative_half_pow[idx];
+                xr[quotien][reste] *= two_to_negative_half_pow[idx];
             }
             index++;
         }
@@ -945,7 +942,7 @@ final class LayerIIIDecoder implements FrameDecoder {
             int quotien = (j - reste) / SSLIMIT;
             if (reste < 0) reste = 0;
             if (quotien < 0) quotien = 0;
-            xr_1d[quotien][reste] = 0.0f;
+            xr[quotien][reste] = 0.0f;
         }
     }
 
@@ -958,7 +955,6 @@ final class LayerIIIDecoder implements FrameDecoder {
         int index;
         int sfb, sfb_start, sfb_lines;
         int src_line, des_line;
-        float[][] xr_1d = xr;
 
         if ((gr_info.windowSwitchingFlag != 0) && (gr_info.blockType == 2)) {
 
@@ -971,7 +967,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                     // Modif E.B 02/22/99
                     int reste = index % SSLIMIT;
                     int quotien = (index - reste) / SSLIMIT;
-                    out1d[index] = xr_1d[quotien][reste];
+                    out1d[index] = xr[quotien][reste];
                 }
                 for (sfb = 3; sfb < 13; sfb++) {
                     sfb_start = sfBandIndex[sfreq].s[sfb];
@@ -988,21 +984,21 @@ final class LayerIIIDecoder implements FrameDecoder {
                         int reste = src_line % SSLIMIT;
                         int quotien = (src_line - reste) / SSLIMIT;
 
-                        out1d[des_line] = xr_1d[quotien][reste];
+                        out1d[des_line] = xr[quotien][reste];
                         src_line += sfb_lines;
                         des_line++;
 
                         reste = src_line % SSLIMIT;
                         quotien = (src_line - reste) / SSLIMIT;
 
-                        out1d[des_line] = xr_1d[quotien][reste];
+                        out1d[des_line] = xr[quotien][reste];
                         src_line += sfb_lines;
                         des_line++;
 
                         reste = src_line % SSLIMIT;
                         quotien = (src_line - reste) / SSLIMIT;
 
-                        out1d[des_line] = xr_1d[quotien][reste];
+                        out1d[des_line] = xr[quotien][reste];
                     }
                 }
 
@@ -1011,7 +1007,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                     int j = reorderTable[sfreq][index];
                     int reste = j % SSLIMIT;
                     int quotien = (j - reste) / SSLIMIT;
-                    out1d[index] = xr_1d[quotien][reste];
+                    out1d[index] = xr[quotien][reste];
                 }
             }
         } else { // long blocks
@@ -1019,7 +1015,7 @@ final class LayerIIIDecoder implements FrameDecoder {
                 // Modif E.B 02/22/99
                 int reste = index % SSLIMIT;
                 int quotien = (index - reste) / SSLIMIT;
-                out1d[index] = xr_1d[quotien][reste];
+                out1d[index] = xr[quotien][reste];
             }
         }
     }
@@ -1313,7 +1309,7 @@ final class LayerIIIDecoder implements FrameDecoder {
         // with 8 butterflies between each pair
 
         if ((gr_info.windowSwitchingFlag != 0) && (gr_info.blockType == 2) &&
-                !(gr_info.mixedBlockFlag != 0))
+                gr_info.mixedBlockFlag == 0)
             return;
 
         if ((gr_info.windowSwitchingFlag != 0) && (gr_info.mixedBlockFlag != 0) &&

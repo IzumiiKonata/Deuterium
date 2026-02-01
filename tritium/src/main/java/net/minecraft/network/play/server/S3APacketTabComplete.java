@@ -20,7 +20,7 @@ public class S3APacketTabComplete implements Packet<INetHandlerPlayClient>, SPac
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.matches = new String[buf.readVarIntFromBuffer()];
 
         for (int i = 0; i < this.matches.length; ++i) {
@@ -31,7 +31,7 @@ public class S3APacketTabComplete implements Packet<INetHandlerPlayClient>, SPac
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeVarIntToBuffer(this.matches.length);
 
         for (String s : this.matches) {

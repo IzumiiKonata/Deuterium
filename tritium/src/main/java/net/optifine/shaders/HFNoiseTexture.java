@@ -3,7 +3,6 @@ package net.optifine.shaders;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryUtil;
 import tritium.utils.other.MemoryTracker;
 
 import java.nio.ByteBuffer;

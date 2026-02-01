@@ -92,7 +92,7 @@ public class GuiScreenCustomizePresets extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         switch (button.id) {
             case 0:
                 this.field_175314_r.func_175324_a(this.field_175317_i.getText());

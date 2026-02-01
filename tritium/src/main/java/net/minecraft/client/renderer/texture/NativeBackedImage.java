@@ -1,23 +1,18 @@
 package net.minecraft.client.renderer.texture;
 
-import lombok.SneakyThrows;
 import org.apache.commons.io.IOUtils;
 import org.lwjgl.stb.STBImage;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import tritium.utils.other.MemoryTracker;
 
-import java.awt.*;
 import java.awt.image.*;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
-import java.util.Arrays;
 
 public class NativeBackedImage extends BufferedImage implements AutoCloseable {
 

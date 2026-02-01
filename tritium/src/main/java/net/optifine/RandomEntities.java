@@ -117,10 +117,8 @@ public class RandomEntities {
                     return HORSE_TEXTURES[i];
                 }
             }
-            return path;
-        } else {
-            return path;
         }
+        return path;
     }
 
     private static IRandomEntity getRandomEntityRendered() {
@@ -233,8 +231,7 @@ public class RandomEntities {
                 final String s1 = s.substring(0, i);
                 final String s2 = s.substring(i);
                 final String s3 = s1 + index + s2;
-                final Location resourcelocation = Location.of(loc.getResourceDomain(), s3);
-                return resourcelocation;
+                return Location.of(loc.getResourceDomain(), s3);
             }
         }
     }
@@ -242,8 +239,7 @@ public class RandomEntities {
     private static String getParentTexturePath(final String path) {
         for (final String s : DEPENDANT_SUFFIXES) {
             if (path.endsWith(s)) {
-                final String s1 = StrUtils.removeSuffix(path, s);
-                return s1;
+                return StrUtils.removeSuffix(path, s);
             }
         }
         return null;

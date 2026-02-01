@@ -32,8 +32,7 @@ public class MacroProcessor {
         }
 
         byte[] abyte = s.getBytes(StandardCharsets.US_ASCII);
-        ByteArrayInputStream bytearrayinputstream = new ByteArrayInputStream(abyte);
-        return bytearrayinputstream;
+        return new ByteArrayInputStream(abyte);
     }
 
     public static String process(String strIn) throws IOException {
@@ -72,7 +71,7 @@ public class MacroProcessor {
             }
 
             if (MacroState.isMacroLine(s)) {
-                if (stringbuilder.length() == 0) {
+                if (stringbuilder.isEmpty()) {
                     stringbuilder.append(ShaderMacros.getFixedMacroLines());
                 }
 

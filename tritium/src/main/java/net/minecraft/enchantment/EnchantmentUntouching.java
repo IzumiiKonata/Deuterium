@@ -25,13 +25,6 @@ public class EnchantmentUntouching extends Enchantment {
     }
 
     /**
-     * Returns the maximum level that the enchantment can have.
-     */
-    public int getMaxLevel() {
-        return 1;
-    }
-
-    /**
      * Determines if the enchantment passed can be applyied together with this enchantment.
      */
     public boolean canApplyTogether(Enchantment ench) {

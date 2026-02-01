@@ -1,7 +1,6 @@
 package tritium.rendering.ui.container;
 
 import tritium.rendering.Rect;
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 
 /**

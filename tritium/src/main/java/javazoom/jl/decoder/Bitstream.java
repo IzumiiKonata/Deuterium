@@ -217,8 +217,7 @@ public final class Bitstream implements BitstreamErrors {
         if (rawid3v2 == null)
             return null;
         else {
-            ByteArrayInputStream bain = new ByteArrayInputStream(rawid3v2);
-            return bain;
+            return new ByteArrayInputStream(rawid3v2);
         }
     }
 
@@ -333,20 +332,11 @@ public final class Bitstream implements BitstreamErrors {
         } catch (IOException ex) {
         }
 
-        boolean sync;
-        switch (read) {
-            case 0:
-                sync = true;
-                break;
-            case 4:
-                sync = isSyncMark(headerString, syncmode, syncWord);
-                break;
-            default:
-                sync = false;
-                break;
-        }
-
-        return sync;
+        return switch (read) {
+            case 0 -> true;
+            case 4 -> isSyncMark(headerString, syncmode, syncWord);
+            default -> false;
+        };
     }
 
     // REVIEW: this class should provide inner classes to
@@ -439,7 +429,7 @@ public final class Bitstream implements BitstreamErrors {
     /**
      * Parses the data previously read with read_frame_data().
      */
-    void parseFrame() throws BitstreamException {
+    void parseFrame() {
         // Convert Bytes read to int
         int b = 0;
         byte[] byteread = frameBytes;

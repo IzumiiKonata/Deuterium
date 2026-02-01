@@ -2,7 +2,6 @@ package tritium.module.impl.other;
 
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import net.minecraft.client.gui.ChatLine;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.IChatComponent;

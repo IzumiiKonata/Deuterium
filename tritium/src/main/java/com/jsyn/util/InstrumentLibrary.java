@@ -23,7 +23,7 @@ package com.jsyn.util;
  */
 
 public interface InstrumentLibrary {
-    public String getName();
+    String getName();
 
-    public VoiceDescription[] getVoiceDescriptions();
+    VoiceDescription[] getVoiceDescriptions();
 }

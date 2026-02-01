@@ -17,7 +17,7 @@
 package com.jsyn.io;
 
 public interface AudioInputStream {
-    public double read();
+    double read();
 
     /**
      * Try to fill the entire buffer.
@@ -25,7 +25,7 @@ public interface AudioInputStream {
      * @param buffer
      * @return number of samples read
      */
-    public int read(double[] buffer);
+    int read(double[] buffer);
 
     /**
      * Read from the stream. Block until some data is available.
@@ -35,12 +35,12 @@ public interface AudioInputStream {
      * @param count number of samples to read, for example count=8 for 4 stereo frames
      * @return number of samples read
      */
-    public int read(double[] buffer, int start, int count);
+    int read(double[] buffer, int start, int count);
 
-    public void close();
+    void close();
 
     /**
      * @return number of samples currently available to read without blocking
      */
-    public int available();
+    int available();
 }

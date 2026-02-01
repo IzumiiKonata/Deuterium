@@ -24,7 +24,7 @@ public class S1BPacketEntityAttach implements Packet<INetHandlerPlayClient> {
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.entityId = buf.readInt();
         this.vehicleEntityId = buf.readInt();
         this.leash = buf.readUnsignedByte();
@@ -33,7 +33,7 @@ public class S1BPacketEntityAttach implements Packet<INetHandlerPlayClient> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeInt(this.entityId);
         buf.writeInt(this.vehicleEntityId);
         buf.writeByte(this.leash);

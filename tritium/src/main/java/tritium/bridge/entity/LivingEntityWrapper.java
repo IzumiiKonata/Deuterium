@@ -5,7 +5,6 @@ import today.opai.api.interfaces.game.entity.LivingEntity;
 import today.opai.api.interfaces.game.item.ItemStack;
 import today.opai.api.interfaces.game.item.PotionEffect;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

@@ -1,13 +1,11 @@
 package net.optifine;
 
-import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.optifine.util.TextureUtils;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryUtil;
 import tritium.utils.other.MemoryTracker;
 
 import java.nio.ByteBuffer;
@@ -96,8 +94,7 @@ public class TextureAnimation {
             if (index < 0 || index >= this.frames.length) {
                 index = 0;
             }
-            final TextureAnimationFrame textureanimationframe = this.frames[index];
-            return textureanimationframe;
+            return this.frames[index];
         }
     }
 

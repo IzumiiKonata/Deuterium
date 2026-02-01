@@ -35,7 +35,7 @@ public interface ChunkHandler {
      * @param numBytes number of bytes contained in the FORM, not counting the FORM type.
      * @param type a 4 byte identifier such as AIFF_ID that identifies the FORM type.
      */
-    public void handleForm(IFFParser parser, int ID, int numBytes, int type) throws IOException;
+    void handleForm(IFFParser parser, int ID, int numBytes, int type) throws IOException;
 
     /**
      * The parser will call this when it encounters a chunk that is not a FORM or LIST. This handler
@@ -45,5 +45,5 @@ public interface ChunkHandler {
      * @param ID a 4 byte identifier such as SSND_ID that identifies the IFF chunk type.
      * @param numBytes number of bytes contained in the chunk, not counting the ID and size field.
      */
-    public void handleChunk(IFFParser parser, int ID, int numBytes) throws IOException;
+    void handleChunk(IFFParser parser, int ID, int numBytes) throws IOException;
 }

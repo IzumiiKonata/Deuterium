@@ -8,7 +8,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.src.Config;
 import net.minecraft.util.EnumWorldBlockLayer;
 import net.optifine.util.LinkedList;
-import org.lwjgl.system.MemoryUtil;
 import tritium.utils.other.MemoryTracker;
 
 import java.nio.ByteBuffer;

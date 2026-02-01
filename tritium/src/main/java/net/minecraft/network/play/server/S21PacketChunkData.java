@@ -30,7 +30,7 @@ public class S21PacketChunkData implements Packet<INetHandlerPlayClient> {
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.chunkX = buf.readInt();
         this.chunkZ = buf.readInt();
         this.field_149279_g = buf.readBoolean();
@@ -42,7 +42,7 @@ public class S21PacketChunkData implements Packet<INetHandlerPlayClient> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeInt(this.chunkX);
         buf.writeInt(this.chunkZ);
         buf.writeBoolean(this.field_149279_g);

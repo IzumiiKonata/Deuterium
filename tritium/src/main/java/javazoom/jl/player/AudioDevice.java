@@ -54,7 +54,7 @@ public interface AudioDevice {
      *                <p>
      *                If the audio device is already open, this method returns silently.
      */
-    void open(Decoder decoder) throws JavaLayerException;
+    void open(Decoder decoder);
 
     /**
      * Retrieves the open state of this audio device.
@@ -75,7 +75,7 @@ public interface AudioDevice {
      *                This method may return prior to the samples actually being played
      *                by the audio device.
      */
-    void write(short[] samples, int offs, int len) throws JavaLayerException;
+    void write(short[] samples, int offs, int len);
 
     /**
      * Closes this audio device. Any currently playing audio is stopped

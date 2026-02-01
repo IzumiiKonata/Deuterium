@@ -97,10 +97,6 @@ public class EntitySilverfish extends EntityMob {
         this.playSound("mob.silverfish.step", 0.15F, 1.0F);
     }
 
-    protected Item getDropItem() {
-        return null;
-    }
-
     /**
      * Called to update the entity's position/logic.
      */

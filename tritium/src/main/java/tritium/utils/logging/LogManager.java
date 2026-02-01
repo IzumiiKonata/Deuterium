@@ -3,7 +3,6 @@ package tritium.utils.logging;
 import lombok.Getter;
 import lombok.SneakyThrows;
 
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;

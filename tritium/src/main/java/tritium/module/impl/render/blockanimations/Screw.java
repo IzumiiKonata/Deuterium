@@ -25,8 +25,6 @@ public class Screw extends SubModule<BlockAnimations> {
         this.getModule().doBlockTransformations();
     }
 
-    ;
-
     /**
      * Translate and rotate the render for holding a block
      */

@@ -2,7 +2,6 @@ package tritium.bridge.settings;
 
 import today.opai.api.interfaces.modules.values.ModeValue;
 import tritium.settings.StringModeSetting;
-import tritium.settings.StringSetting;
 
 /**
  * @author IzumiiKonata

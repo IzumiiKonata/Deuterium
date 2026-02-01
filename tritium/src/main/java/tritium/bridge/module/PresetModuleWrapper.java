@@ -6,7 +6,6 @@ import tritium.module.Module;
 import tritium.settings.Setting;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**

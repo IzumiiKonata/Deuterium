@@ -18,8 +18,6 @@ import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
-import tritium.management.ModuleManager;
-import tritium.module.impl.render.BlockAnimations;
 import tritium.module.impl.render.Perspective;
 import tritium.rendering.waveycapes.layers.CustomCapeRenderLayer;
 import tritium.settings.ClientSettings;

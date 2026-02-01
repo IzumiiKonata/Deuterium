@@ -30,8 +30,6 @@ public class Swank extends SubModule<BlockAnimations> {
         this.getModule().doBlockTransformations();
     }
 
-    ;
-
     /**
      * Performs transformations prior to the rendering of a held item in first person.
      */

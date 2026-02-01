@@ -7,7 +7,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
-import tritium.Tritium;
 import tritium.management.ModuleManager;
 
 public class RenderWings

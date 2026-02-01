@@ -29,7 +29,7 @@ public class S03PacketTimeUpdate implements Packet<INetHandlerPlayClient> {
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.totalWorldTime = buf.readLong();
         this.worldTime = buf.readLong();
     }
@@ -37,7 +37,7 @@ public class S03PacketTimeUpdate implements Packet<INetHandlerPlayClient> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeLong(this.totalWorldTime);
         buf.writeLong(this.worldTime);
     }

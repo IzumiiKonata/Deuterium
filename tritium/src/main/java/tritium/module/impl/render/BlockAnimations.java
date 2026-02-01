@@ -5,15 +5,9 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
-import tritium.event.events.game.KeyPressedEvent;
-import tritium.module.impl.render.blockanimations.*;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.world.TickEvent;
 import tritium.module.Module;
-import tritium.settings.BindSetting;
-import tritium.settings.BooleanSetting;
-import tritium.settings.ModeSetting;
-import tritium.settings.NumberSetting;
 import tritium.module.impl.render.blockanimations.*;
 
 /**
@@ -71,8 +65,6 @@ public class BlockAnimations extends Module {
             }
         }
     }
-
-    ;
 
     public void swingItem(EntityPlayerSP entityplayersp) {
         int swingAnimationEnd = entityplayersp.isPotionActive(Potion.digSpeed)

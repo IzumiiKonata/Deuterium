@@ -51,7 +51,7 @@ public class GuiRenameWorld extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             if (button.id == 1) {
                 this.mc.displayGuiScreen(this.parentScreen);
@@ -69,7 +69,7 @@ public class GuiRenameWorld extends GuiScreen {
      */
     protected void keyTyped(char typedChar, int keyCode) throws IOException {
         this.field_146583_f.textboxKeyTyped(typedChar, keyCode);
-        this.buttonList.get(0).enabled = this.field_146583_f.getText().trim().length() > 0;
+        this.buttonList.get(0).enabled = !this.field_146583_f.getText().trim().isEmpty();
 
         if (keyCode == 28 || keyCode == 156) {
             this.actionPerformed(this.buttonList.get(0));

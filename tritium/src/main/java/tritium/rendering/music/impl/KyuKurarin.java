@@ -2,8 +2,6 @@ package tritium.rendering.music.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
-import today.opai.api.interfaces.render.GLStateManager;
-import today.opai.api.interfaces.render.RenderUtil;
 import tritium.rendering.Image;
 import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;

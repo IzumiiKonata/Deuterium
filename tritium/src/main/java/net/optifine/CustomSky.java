@@ -3,7 +3,6 @@ package net.optifine;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.src.Config;
@@ -11,7 +10,6 @@ import net.minecraft.util.Location;
 import net.minecraft.world.World;
 import net.optifine.render.Blender;
 import net.optifine.util.PropertiesOrdered;
-import net.optifine.util.TextureUtils;
 
 import javax.imageio.ImageIO;
 import java.io.FileNotFoundException;
@@ -88,7 +86,7 @@ public class CustomSky {
                 }
             }
 
-            if (list.size() > 0) {
+            if (!list.isEmpty()) {
                 CustomSkyLayer[] acustomskylayer2 = (CustomSkyLayer[]) list.toArray(new CustomSkyLayer[list.size()]);
                 acustomskylayer[j] = acustomskylayer2;
                 i = j;

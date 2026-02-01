@@ -39,8 +39,7 @@ public class CloudMusicApi {
         data.put("ytv", 0);
         data.put("yrv", 0);
 
-        RequestUtil.RequestAnswer request = RequestUtil.createRequest("/api/song/lyric/v1", data, OptionsUtil.createOptions());
-        return request;
+        return RequestUtil.createRequest("/api/song/lyric/v1", data, OptionsUtil.createOptions());
     }
 
     public RequestUtil.RequestAnswer loginStatus() {

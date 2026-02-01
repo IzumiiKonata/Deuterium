@@ -25,7 +25,6 @@ import net.minecraft.world.World;
 import tritium.bridge.game.item.ItemStackWrapper;
 
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Random;
@@ -559,7 +558,7 @@ public final class ItemStack {
         if (advanced) {
             String s1 = "";
 
-            if (s.length() > 0) {
+            if (!s.isEmpty()) {
                 s = s + " (";
                 s1 = ")";
             }

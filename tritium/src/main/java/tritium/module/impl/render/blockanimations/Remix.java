@@ -30,7 +30,5 @@ public class Remix extends SubModule<BlockAnimations> {
         GlStateManager.rotate(-remix * 43.0f, 58.0f, 23.0f, 45.0f);
     }
 
-    ;
-
 
 }

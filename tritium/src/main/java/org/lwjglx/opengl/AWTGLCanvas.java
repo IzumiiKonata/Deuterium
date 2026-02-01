@@ -30,11 +30,11 @@ public class AWTGLCanvas extends Canvas implements Drawable, ComponentListener, 
 
     private static final long serialVersionUID = 1L;
 
-    public void setPixelFormat(final PixelFormatLWJGL pf) throws LWJGLException {
+    public void setPixelFormat(final PixelFormatLWJGL pf) {
         throw new UnsupportedOperationException();
     }
 
-    public void setPixelFormat(final PixelFormatLWJGL pf, final ContextAttribs attribs) throws LWJGLException {
+    public void setPixelFormat(final PixelFormatLWJGL pf, final ContextAttribs attribs) {
         throw new UnsupportedOperationException();
     }
 
@@ -46,7 +46,7 @@ public class AWTGLCanvas extends Canvas implements Drawable, ComponentListener, 
         return null;
     }
 
-    public ContextGL createSharedContext() throws LWJGLException {
+    public ContextGL createSharedContext() {
         return null;
     }
 
@@ -56,20 +56,19 @@ public class AWTGLCanvas extends Canvas implements Drawable, ComponentListener, 
     public void initContext(final float r, final float g, final float b) {
     }
 
-    public AWTGLCanvas() throws LWJGLException {
+    public AWTGLCanvas() {
     }
 
-    public AWTGLCanvas(PixelFormat pixel_format) throws LWJGLException {
+    public AWTGLCanvas(PixelFormat pixel_format) {
     }
 
-    public AWTGLCanvas(GraphicsDevice device, PixelFormat pixel_format) throws LWJGLException {
+    public AWTGLCanvas(GraphicsDevice device, PixelFormat pixel_format) {
     }
 
-    public AWTGLCanvas(GraphicsDevice device, PixelFormat pixel_format, Drawable drawable) throws LWJGLException {
+    public AWTGLCanvas(GraphicsDevice device, PixelFormat pixel_format, Drawable drawable) {
     }
 
-    public AWTGLCanvas(GraphicsDevice device, PixelFormat pixel_format, Drawable drawable, ContextAttribs attribs)
-            throws LWJGLException {
+    public AWTGLCanvas(GraphicsDevice device, PixelFormat pixel_format, Drawable drawable, ContextAttribs attribs) {
     }
 
     public void addNotify() {
@@ -84,23 +83,23 @@ public class AWTGLCanvas extends Canvas implements Drawable, ComponentListener, 
     public void setVSyncEnabled(boolean enabled) {
     }
 
-    public void swapBuffers() throws LWJGLException {
+    public void swapBuffers() {
     }
 
-    public boolean isCurrent() throws LWJGLException {
+    public boolean isCurrent() {
         return false;
     }
 
-    public void makeCurrent() throws LWJGLException {
+    public void makeCurrent() {
     }
 
-    public void releaseContext() throws LWJGLException {
+    public void releaseContext() {
     }
 
     public final void destroy() {
     }
 
-    public final void setCLSharingProperties(final PointerBuffer properties) throws LWJGLException {
+    public final void setCLSharingProperties(final PointerBuffer properties) {
     }
 
     protected void initGL() {

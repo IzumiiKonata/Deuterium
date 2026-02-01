@@ -79,7 +79,7 @@ public class SmartLeaves {
         modelLeavesDoubleJungle = getModelDoubleFace(modelLeavesCullJungle);
         modelLeavesDoubleOak = getModelDoubleFace(modelLeavesCullOak);
         modelLeavesDoubleSpruce = getModelDoubleFace(modelLeavesCullSpruce);
-        if (list.size() > 0) {
+        if (!list.isEmpty()) {
             Config.dbg("启用面剔除: " + Config.arrayToString(list.toArray()));
         }
     }
@@ -105,14 +105,14 @@ public class SmartLeaves {
                     final IBakedModel ibakedmodel = modelmanager.getModel(modelresourcelocation);
                     if (ibakedmodel != null && ibakedmodel != modelmanager.getMissingModel()) {
                         final List<BakedQuad> list = ibakedmodel.getGeneralQuads();
-                        if (list.size() == 0) {
+                        if (list.isEmpty()) {
                             return ibakedmodel;
                         } else if (list.size() != 6) {
                             return null;
                         } else {
                             for (final BakedQuad bakedquad : list) {
                                 final List list1 = ibakedmodel.getFaceQuads(bakedquad.getFace());
-                                if (list1.size() > 0) {
+                                if (!list1.isEmpty()) {
                                     return null;
                                 }
                                 list1.add(bakedquad);
@@ -132,7 +132,7 @@ public class SmartLeaves {
     private static IBakedModel getModelDoubleFace(final IBakedModel model) {
         if (model == null) {
             return null;
-        } else if (model.getGeneralQuads().size() > 0) {
+        } else if (!model.getGeneralQuads().isEmpty()) {
             Config.warn("SmartLeaves: Model is not cube, general quads: " + model.getGeneralQuads().size() + ", model: " + model);
             return model;
         } else {

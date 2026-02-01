@@ -18,7 +18,7 @@ public class AL {
 //        Sys.initialize(); // init using dummy sys method
     }
 
-    public static void create() throws LWJGLException {
+    public static void create() {
         create(null, 44100, 60, false);
     }
 

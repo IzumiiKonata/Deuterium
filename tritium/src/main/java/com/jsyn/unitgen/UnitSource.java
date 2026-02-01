@@ -24,7 +24,7 @@ import com.jsyn.ports.UnitOutputPort;
  * @author Phil Burk, (C) 2009 Mobileer Inc
  */
 public interface UnitSource {
-    public UnitOutputPort getOutput();
+    UnitOutputPort getOutput();
 
-    public UnitGenerator getUnitGenerator();
+    UnitGenerator getUnitGenerator();
 }

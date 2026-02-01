@@ -32,7 +32,7 @@ public class S49PacketUpdateEntityNBT implements Packet<INetHandlerPlayClient> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeVarIntToBuffer(this.entityId);
         buf.writeNBTTagCompoundToBuffer(this.tagCompound);
     }

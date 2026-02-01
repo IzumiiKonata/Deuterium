@@ -278,7 +278,7 @@ public class HttpUtils {
             }
 
             @Override
-            public int available() throws IOException {
+            public int available() {
                 return contentLength;
             }
 
@@ -328,7 +328,7 @@ public class HttpUtils {
             }
 
             @Override
-            public int available() throws IOException {
+            public int available() {
                 return fileLength;
             }
 
@@ -393,9 +393,9 @@ public class HttpUtils {
                 } else {
                     sb.append("&");
                 }
-                sb.append(URLEncoder.encode(key, "UTF-8"));
+                sb.append(URLEncoder.encode(key, StandardCharsets.UTF_8));
                 sb.append("=");
-                sb.append(URLEncoder.encode(params.get(key), "UTF-8"));
+                sb.append(URLEncoder.encode(params.get(key), StandardCharsets.UTF_8));
             }
         }
         return sb.toString();
@@ -438,9 +438,7 @@ public class HttpUtils {
 
         bin.close();
 
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-
-        return bais;
+        return new ByteArrayInputStream(baos.toByteArray());
     }
 
     @SneakyThrows

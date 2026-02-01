@@ -25,8 +25,6 @@ public class Winter extends SubModule<BlockAnimations> {
         this.getModule().doBlockTransformations();
     }
 
-    ;
-
     private void x3IsBlack(final float p_178096_1_, final float p_178096_2_) {
         GlStateManager.translate(0.56f, -0.52f, -0.71999997f);
         GlStateManager.translate(0.0f, p_178096_1_ * -0.6f, 0.0f);

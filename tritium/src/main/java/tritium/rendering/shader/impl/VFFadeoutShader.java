@@ -2,7 +2,6 @@ package tritium.rendering.shader.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
-import today.opai.api.interfaces.render.GLStateManager;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.uniform.Uniform1f;
 import tritium.rendering.shader.uniform.Uniform1i;

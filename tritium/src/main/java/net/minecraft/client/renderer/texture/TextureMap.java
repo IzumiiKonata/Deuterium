@@ -98,7 +98,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
         this.missingImage.setIndexInMap(this.counterIndexInMap.nextValue());
     }
 
-    public void loadTexture(IResourceManager resourceManager) throws IOException {
+    public void loadTexture(IResourceManager resourceManager) {
         if (this.iconCreator != null) {
             this.loadSprites(resourceManager, this.iconCreator);
         }
@@ -136,8 +136,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
         this.mapUploadedSprites.clear();
         this.listAnimatedSprites.clear();
         int i = Integer.MAX_VALUE;
-        int j = this.getMinSpriteSize();
-        this.iconGridSize = j;
+        this.iconGridSize = this.getMinSpriteSize();
         int k = 1 << this.mipmapLevels;
         int l = 0;
         int i1 = 0;
@@ -276,17 +275,17 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                     CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "应用 mipmap");
                     CrashReportCategory crashreportcategory = crashreport.makeCategory("Sprite being mipmapped");
                     crashreportcategory.addCrashSectionCallable("Sprite name", new Callable<String>() {
-                        public String call() throws Exception {
+                        public String call() {
                             return textureatlassprite1.getIconName();
                         }
                     });
                     crashreportcategory.addCrashSectionCallable("Sprite size", new Callable<String>() {
-                        public String call() throws Exception {
+                        public String call() {
                             return textureatlassprite1.getIconWidth() + " x " + textureatlassprite1.getIconHeight();
                         }
                     });
                     crashreportcategory.addCrashSectionCallable("Sprite frames", new Callable<String>() {
-                        public String call() throws Exception {
+                        public String call() {
                             return textureatlassprite1.getFrameCount() + " frames";
                         }
                     });

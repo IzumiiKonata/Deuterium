@@ -32,7 +32,6 @@ import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.IOException;
 import java.io.InputStream;
@@ -378,27 +377,24 @@ public class CoverflowOverlay extends BaseScreen {
                 GlStateManager.rotate(-180, 0, 1, 0);
                 GlStateManager.translate(-(offsetX + coverSize * 0.5), -coverSize * 0.5, 0);
 
-                double x = offsetX;
                 double y = -coverSize * 0.5f;
-                double width = coverSize;
-                double height = coverSize;
 
-                Image.drawLinearFlippedX(al.getCoverLocation(), x, y, width, height, Image.Type.Normal);
-                Rect.draw(x, y, width, height, RGBA.color(0, 0, 0, 200));
+                Image.drawLinearFlippedX(al.getCoverLocation(), offsetX, y, coverSize, coverSize, Image.Type.Normal);
+                Rect.draw(offsetX, y, coverSize, coverSize, RGBA.color(0, 0, 0, 200));
 
                 double imgSpacing = 1;
                 double imgSize = 16;
-                Image.draw(x + width - imgSize - imgSpacing, y + imgSpacing, imgSize, imgSize, Image.Type.Normal);
+                Image.draw(offsetX + coverSize - imgSize - imgSpacing, y + imgSpacing, imgSize, imgSize, Image.Type.Normal);
 
                 CFontRenderer fr = FontManager.pf28bold;
-                fr.drawString(fr.trim(al.getName(), (width - imgSpacing * 2 - 2 - imgSize) / fontScale), x + 2, y + 2, fontScale, -1);
+                fr.drawString(fr.trim(al.getName(), (coverSize - imgSpacing * 2 - 2 - imgSize) / fontScale), offsetX + 2, y + 2, fontScale, -1);
 
                 double contentSpacing = 2;
 
-                double contentPaneX = x + contentSpacing;
+                double contentPaneX = offsetX + contentSpacing;
                 double contentPaneY = y + imgSpacing * 2 + imgSize + contentSpacing;
-                double contentPaneWidth = width - contentSpacing * 2;
-                double contentPaneHeight = height - (imgSpacing * 2 + imgSize + contentSpacing * 2);
+                double contentPaneWidth = coverSize - contentSpacing * 2;
+                double contentPaneHeight = coverSize - (imgSpacing * 2 + imgSize + contentSpacing * 2);
 
                 StencilClipManager.beginClip(() -> Rect.draw(contentPaneX, contentPaneY, contentPaneWidth, contentPaneHeight, -1));
                 Rect.draw(contentPaneX, contentPaneY, contentPaneWidth, contentPaneHeight, RGBA.color(255, 255, 255, 20));

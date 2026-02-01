@@ -2,16 +2,13 @@ package net.optifine.shaders;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import lombok.Cleanup;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.data.*;
 import org.apache.commons.io.IOUtils;
-import tritium.rendering.async.AsyncGLContext;
 
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -31,7 +28,7 @@ public class SimpleShaderTexture extends AbstractTexture {
             throw new FileNotFoundException("Shader texture not found: " + this.texturePath);
         } else {
             try {
-                try (NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);) {
+                try (NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream)) {
                     TextureMetadataSection texturemetadatasection = loadTextureMetadataSection(this.texturePath, new TextureMetadataSection(false, false, new ArrayList()));
                     TextureUtil.uploadTextureImageAllocate(this.getGlTextureId(), bufferedimage, texturemetadatasection.getTextureBlur(), texturemetadatasection.getTextureClamp());
                 } catch (Exception e) {
@@ -49,13 +46,12 @@ public class SimpleShaderTexture extends AbstractTexture {
         InputStream inputstream = Shaders.getShaderPackResourceStream(s);
 
         if (inputstream != null) {
-            IMetadataSerializer imetadataserializer = METADATA_SERIALIZER;
             BufferedReader bufferedreader = new BufferedReader(new InputStreamReader(inputstream));
             TextureMetadataSection texturemetadatasection1;
 
             try {
                 JsonObject jsonobject = (new JsonParser()).parse(bufferedreader).getAsJsonObject();
-                TextureMetadataSection texturemetadatasection = imetadataserializer.parseMetadataSection(s1, jsonobject);
+                TextureMetadataSection texturemetadatasection = METADATA_SERIALIZER.parseMetadataSection(s1, jsonobject);
 
                 if (texturemetadatasection == null) {
                     return def;

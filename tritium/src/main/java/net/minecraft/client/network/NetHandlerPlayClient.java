@@ -60,7 +60,6 @@ import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.storage.MapData;
-import tritium.event.eventapi.State;
 import tritium.event.events.player.RespawnEvent;
 import tritium.management.EventManager;
 import tritium.screens.ConsoleScreen;
@@ -71,7 +70,6 @@ import org.apache.logging.log4j.Logger;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.Map.Entry;
 
 public class NetHandlerPlayClient implements INetHandlerPlayClient {
     private static final Logger logger = LogManager.getLogger("NetHandlerPlayClient");
@@ -1166,8 +1164,8 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
     }
 
     public void handlePlayerListHeaderFooter(S47PacketPlayerListHeaderFooter packetIn) {
-        this.gameController.ingameGUI.getTabList().setHeader(packetIn.getHeader().getFormattedText().length() == 0 ? null : packetIn.getHeader());
-        this.gameController.ingameGUI.getTabList().setFooter(packetIn.getFooter().getFormattedText().length() == 0 ? null : packetIn.getFooter());
+        this.gameController.ingameGUI.getTabList().setHeader(packetIn.getHeader().getFormattedText().isEmpty() ? null : packetIn.getHeader());
+        this.gameController.ingameGUI.getTabList().setFooter(packetIn.getFooter().getFormattedText().isEmpty() ? null : packetIn.getFooter());
     }
 
     public void handleRemoveEntityEffect(S1EPacketRemoveEntityEffect packetIn) {
@@ -1428,7 +1426,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         Scoreboard scoreboard = this.clientWorldController.getScoreboard();
 
-        if (packetIn.func_149370_d().length() == 0) {
+        if (packetIn.func_149370_d().isEmpty()) {
             scoreboard.setObjectiveInDisplaySlot(packetIn.func_149371_c(), null);
         } else {
             ScoreObjective scoreobjective = scoreboard.getObjective(packetIn.func_149370_d());

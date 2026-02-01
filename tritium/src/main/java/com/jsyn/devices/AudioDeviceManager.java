@@ -26,12 +26,12 @@ public interface AudioDeviceManager {
     /**
      * Pass this value to the start method to request the default device ID.
      */
-    public final static int USE_DEFAULT_DEVICE = -1;
+    int USE_DEFAULT_DEVICE = -1;
 
     /**
      * @return The number of devices available.
      */
-    public int getDeviceCount();
+    int getDeviceCount();
 
     /**
      * Get the name of an audio device.
@@ -39,12 +39,12 @@ public interface AudioDeviceManager {
      * @param deviceID An index between 0 to deviceCount-1.
      * @return A name that can be shown to the user.
      */
-    public String getDeviceName(int deviceID);
+    String getDeviceName(int deviceID);
 
     /**
      * @return A name of the device manager that can be shown to the user.
      */
-    public String getName();
+    String getName();
 
     /**
      * The user can generally select a default device using a control panel that is part of the
@@ -52,7 +52,7 @@ public interface AudioDeviceManager {
      * 
      * @return The ID for the input device that the user has selected as the default.
      */
-    public int getDefaultInputDeviceID();
+    int getDefaultInputDeviceID();
 
     /**
      * The user can generally select a default device using a control panel that is part of the
@@ -60,19 +60,19 @@ public interface AudioDeviceManager {
      * 
      * @return The ID for the output device that the user has selected as the default.
      */
-    public int getDefaultOutputDeviceID();
+    int getDefaultOutputDeviceID();
 
     /**
      * @param deviceID
      * @return The maximum number of channels that the device will support.
      */
-    public int getMaxInputChannels(int deviceID);
+    int getMaxInputChannels(int deviceID);
 
     /**
      * @param deviceID An index between 0 to numDevices-1.
      * @return The maximum number of channels that the device will support.
      */
-    public int getMaxOutputChannels(int deviceID);
+    int getMaxOutputChannels(int deviceID);
 
     /**
      * This the lowest latency that the device can support reliably. It should be used for
@@ -81,7 +81,7 @@ public interface AudioDeviceManager {
      * @param deviceID An index between 0 to numDevices-1.
      * @return Latency in seconds.
      */
-    public double getDefaultLowInputLatency(int deviceID);
+    double getDefaultLowInputLatency(int deviceID);
 
     /**
      * This the highest latency that the device can support. High latency is recommended for
@@ -90,20 +90,20 @@ public interface AudioDeviceManager {
      * @param deviceID An index between 0 to numDevices-1.
      * @return Latency in seconds.
      */
-    public double getDefaultHighInputLatency(int deviceID);
+    double getDefaultHighInputLatency(int deviceID);
 
-    public double getDefaultLowOutputLatency(int deviceID);
+    double getDefaultLowOutputLatency(int deviceID);
 
-    public double getDefaultHighOutputLatency(int deviceID);
+    double getDefaultHighOutputLatency(int deviceID);
 
     /**
      * Set latency in seconds for the audio device. If set to zero then the DefaultLowLatency value
      * for the device will be used. This is just a suggestion that will be used when the
      * AudioDeviceInputStream is started.
      **/
-    public int setSuggestedInputLatency(double latency);
+    int setSuggestedInputLatency(double latency);
 
-    public int setSuggestedOutputLatency(double latency);
+    int setSuggestedOutputLatency(double latency);
 
     /**
      * Create a stream that can be used internally by JSyn for outputting audio data. Applications

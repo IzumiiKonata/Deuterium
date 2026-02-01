@@ -23,7 +23,7 @@ public class CommandStop extends CommandBase {
     /**
      * Callback when the command is invoked
      */
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public void processCommand(ICommandSender sender, String[] args) {
         if (MinecraftServer.getServer().worldServers != null) {
             notifyOperators(sender, this, "commands.stop.start");
         }

@@ -413,24 +413,16 @@ public class RiffFile {
      * Error Messages.
      */
     private String toDDCRETString(int retcode) {
-        switch (retcode) {
-            case DDC_SUCCESS:
-                return "DDC_SUCCESS";
-            case DDC_FAILURE:
-                return "DDC_FAILURE";
-            case DDC_OUT_OF_MEMORY:
-                return "DDC_OUT_OF_MEMORY";
-            case DDC_FILE_ERROR:
-                return "DDC_FILE_ERROR";
-            case DDC_INVALID_CALL:
-                return "DDC_INVALID_CALL";
-            case DDC_USER_ABORT:
-                return "DDC_USER_ABORT";
-            case DDC_INVALID_FILE:
-                return "DDC_INVALID_FILE";
-            default:
-                return "Unknown Error";
-        }
+        return switch (retcode) {
+            case DDC_SUCCESS -> "DDC_SUCCESS";
+            case DDC_FAILURE -> "DDC_FAILURE";
+            case DDC_OUT_OF_MEMORY -> "DDC_OUT_OF_MEMORY";
+            case DDC_FILE_ERROR -> "DDC_FILE_ERROR";
+            case DDC_INVALID_CALL -> "DDC_INVALID_CALL";
+            case DDC_USER_ABORT -> "DDC_USER_ABORT";
+            case DDC_INVALID_FILE -> "DDC_INVALID_FILE";
+            default -> "Unknown Error";
+        };
     }
 
     /**
@@ -438,7 +430,6 @@ public class RiffFile {
      */
     public static int fourCC(String chunkName) {
         byte[] p = chunkName.getBytes();
-        int ret = (((p[0] << 24) & 0xFF000000) | ((p[1] << 16) & 0x00FF0000) | ((p[2] << 8) & 0x0000FF00) | (p[3] & 0x000000FF));
-        return ret;
+        return (((p[0] << 24) & 0xFF000000) | ((p[1] << 16) & 0x00FF0000) | ((p[2] << 8) & 0x0000FF00) | (p[3] & 0x000000FF));
     }
 }

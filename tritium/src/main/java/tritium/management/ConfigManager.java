@@ -8,10 +8,8 @@ import tritium.Tritium;
 import tritium.command.CommandValues;
 import tritium.utils.alt.Alt;
 import tritium.utils.alt.AltManager;
-import tritium.module.Module;
 import tritium.settings.ClientSettings;
 import tritium.utils.json.JsonUtils;
-import tritium.widget.Widget;
 import tritium.widget.impl.GifTextureWidget;
 import tritium.widget.impl.StaticTextureWidget;
 

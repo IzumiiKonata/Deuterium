@@ -14,10 +14,6 @@ public class ExpressionShaderOptionSwitch implements IExpressionBool {
         return ShaderOptionSwitch.isTrue(this.shaderOption.getValue());
     }
 
-    public ExpressionType getExpressionType() {
-        return ExpressionType.BOOL;
-    }
-
     public String toString() {
         return "" + this.shaderOption;
     }

@@ -25,19 +25,19 @@ import com.softsynth.shared.time.TimeStamp;
  * @author Phil Burk, (C) 2009 Mobileer Inc
  */
 public interface UnitSink {
-    public UnitInputPort getInput();
+    UnitInputPort getInput();
 
     /**
      * Begin execution of this unit by the Synthesizer. The input will pull data from any output
      * port that is connected from it.
      */
-    public void start();
+    void start();
 
-    public void start(TimeStamp timeStamp);
+    void start(TimeStamp timeStamp);
 
-    public void stop();
+    void stop();
 
-    public void stop(TimeStamp timeStamp);
+    void stop(TimeStamp timeStamp);
 
-    public UnitGenerator getUnitGenerator();
+    UnitGenerator getUnitGenerator();
 }

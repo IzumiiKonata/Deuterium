@@ -56,7 +56,7 @@ public abstract class EntityTameable extends EntityAnimal implements IEntityOwna
             s = PreYggdrasilConverter.getStringUUIDFromName(s1);
         }
 
-        if (s.length() > 0) {
+        if (!s.isEmpty()) {
             this.setOwnerId(s);
             this.setTamed(true);
         }

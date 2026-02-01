@@ -35,7 +35,7 @@ public class S32PacketConfirmTransaction implements Packet<INetHandlerPlayClient
 //        this.actionNumber = buf.readShort();
 //        this.field_148893_c = buf.readBoolean();
 //    }
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.windowId = buf.readUnsignedByte();
         this.actionNumber = buf.readShort();
         this.accepted = buf.readBoolean();
@@ -44,7 +44,7 @@ public class S32PacketConfirmTransaction implements Packet<INetHandlerPlayClient
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeByte(this.windowId);
         buf.writeShort(this.actionNumber);
         buf.writeBoolean(this.accepted);

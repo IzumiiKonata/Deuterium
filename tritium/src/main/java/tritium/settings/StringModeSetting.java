@@ -3,7 +3,6 @@ package tritium.settings;
 import lombok.Getter;
 import lombok.NonNull;
 import tritium.bridge.settings.StringModeValueWrapper;
-import tritium.bridge.settings.ValueWrapper;
 
 import java.util.*;
 import java.util.function.Supplier;

@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.ncm.music.CloudMusic;
-import tritium.ncm.music.Quality;
 import tritium.ncm.music.dto.Music;
 import tritium.management.FontManager;
 import tritium.rendering.RGBA;
@@ -17,7 +16,6 @@ import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.font.CFontRenderer;
 import tritium.screens.ncm.LyricLine;
 import tritium.settings.BooleanSetting;
-import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
 import tritium.widget.Widget;
 
@@ -211,12 +209,11 @@ public class MusicInfoWidget extends Widget {
                 artists.anim.setDuration(Duration.ofMillis(0));
             }
 
-            double offsetY = imgY;
             double progressBarWidth = width - (imgSize + imgSpacing * 3.25);
 
             String name1 = playingMusic.getName();
 
-            double musicNameY = offsetY + 3;
+            double musicNameY = imgY + 3;
             musicName.render(FontManager.pf25bold, name1, imgX + imgSize + imgSpacing, musicNameY, progressBarWidth, new Color(1f, 1f, 1f, alpha).getRGB());
 
             double progressBarOffsetY = y + height - imgSpacing - 3 - FontManager.pf14bold.getFontHeight() - 8;

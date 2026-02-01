@@ -25,7 +25,7 @@ public class ShaderOptionSwitch extends ShaderOption {
     }
 
     public String getValueColor(String val) {
-        return isTrue(val) ? "\u00a7a" : "\u00a7c";
+        return isTrue(val) ? "§a" : "§c";
     }
 
     public static ShaderOption parseOption(String line, String path) {
@@ -38,12 +38,11 @@ public class ShaderOptionSwitch extends ShaderOption {
             String s1 = matcher.group(2);
             String s2 = matcher.group(3);
 
-            if (s1 != null && s1.length() > 0) {
+            if (s1 != null && !s1.isEmpty()) {
                 boolean flag = Config.equals(s, "//");
                 boolean flag1 = !flag;
                 path = StrUtils.removePrefix(path, "/shaders/");
-                ShaderOption shaderoption = new ShaderOptionSwitch(s1, s2, String.valueOf(flag1), path);
-                return shaderoption;
+                return new ShaderOptionSwitch(s1, s2, String.valueOf(flag1), path);
             } else {
                 return null;
             }

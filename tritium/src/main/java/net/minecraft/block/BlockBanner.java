@@ -141,21 +141,10 @@ public class BlockBanner extends BlockContainer {
             this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 1.0F, 1.0F);
 
             switch (enumfacing) {
-                case NORTH:
-                default:
-                    this.setBlockBounds(f2, f, 1.0F - f4, f3, f1, 1.0F);
-                    break;
-
-                case SOUTH:
-                    this.setBlockBounds(f2, f, 0.0F, f3, f1, f4);
-                    break;
-
-                case WEST:
-                    this.setBlockBounds(1.0F - f4, f, f2, 1.0F, f1, f3);
-                    break;
-
-                case EAST:
-                    this.setBlockBounds(0.0F, f, f2, f4, f1, f3);
+                case NORTH -> this.setBlockBounds(f2, f, 1.0F - f4, f3, f1, 1.0F);
+                case SOUTH -> this.setBlockBounds(f2, f, 0.0F, f3, f1, f4);
+                case WEST -> this.setBlockBounds(1.0F - f4, f, f2, 1.0F, f1, f3);
+                case EAST -> this.setBlockBounds(0.0F, f, f2, f4, f1, f3);
             }
         }
 

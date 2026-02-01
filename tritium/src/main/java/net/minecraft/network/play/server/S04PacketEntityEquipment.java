@@ -1,6 +1,5 @@
 package net.minecraft.network.play.server;
 
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -35,7 +34,7 @@ public class S04PacketEntityEquipment implements Packet<INetHandlerPlayClient>, 
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeVarIntToBuffer(this.entityID);
         buf.writeShort(this.equipmentSlot);
         buf.writeItemStackToBuffer(this.itemStack);

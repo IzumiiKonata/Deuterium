@@ -50,9 +50,9 @@ abstract class PeerInfo {
         }
     }
 
-    protected abstract void doLockAndInitHandle() throws LWJGLException;
+    protected abstract void doLockAndInitHandle();
 
-    protected abstract void doUnlock() throws LWJGLException;
+    protected abstract void doUnlock();
 
     public final synchronized ByteBuffer lockAndGetHandle() throws LWJGLException {
         Thread this_thread = Thread.currentThread();

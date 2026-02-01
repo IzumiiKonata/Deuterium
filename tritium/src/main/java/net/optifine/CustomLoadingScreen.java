@@ -28,8 +28,7 @@ public class CustomLoadingScreen {
         final int j = i == 0 ? 2 : 1;
         final int k = parseScale(getProperty("scale", dimId, props), j);
         final boolean flag = Config.parseBoolean(getProperty("center", dimId, props), false);
-        final CustomLoadingScreen customloadingscreen = new CustomLoadingScreen(resourcelocation, i, k, flag);
-        return customloadingscreen;
+        return new CustomLoadingScreen(resourcelocation, i, k, flag);
     }
 
     private static String getProperty(final String key, final int dim, final Properties props) {
@@ -37,12 +36,10 @@ public class CustomLoadingScreen {
             return null;
         } else {
             String s = props.getProperty("dim" + dim + "." + key);
-            if (s != null) {
-                return s;
-            } else {
+            if (s == null) {
                 s = props.getProperty(key);
-                return s;
             }
+            return s;
         }
     }
 

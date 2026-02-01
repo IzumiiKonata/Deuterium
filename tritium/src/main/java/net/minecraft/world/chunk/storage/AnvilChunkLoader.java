@@ -99,7 +99,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
         }
     }
 
-    public void saveChunk(World worldIn, Chunk chunkIn) throws MinecraftException, IOException {
+    public void saveChunk(World worldIn, Chunk chunkIn) throws MinecraftException {
         ((ILightingEngineProvider) worldIn).getLightingEngine().processLightUpdates();
         worldIn.checkSessionLock();
 
@@ -167,7 +167,7 @@ public class AnvilChunkLoader implements IChunkLoader, IThreadedFileIO {
      * Save extra data associated with this Chunk not normally saved during autosave, only during chunk unload.
      * Currently unused.
      */
-    public void saveExtraChunkData(World worldIn, Chunk chunkIn) throws IOException {
+    public void saveExtraChunkData(World worldIn, Chunk chunkIn) {
     }
 
     /**

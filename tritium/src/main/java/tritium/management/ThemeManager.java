@@ -84,16 +84,12 @@ public class ThemeManager extends AbstractManager {
 
 
     public static int getActual(ThemeColor c) {
-        switch (c) {
-            case Surface:
-                return theme.surface;
-            case OnSurface:
-                return theme.onSurface;
-            case Text:
-                return theme.text;
-            default:
-                throw new IllegalArgumentException("NOT FOUND!");
-        }
+        return switch (c) {
+            case Surface -> theme.surface;
+            case OnSurface -> theme.onSurface;
+            case Text -> theme.text;
+            default -> throw new IllegalArgumentException("NOT FOUND!");
+        };
     }
 
     @RequiredArgsConstructor
@@ -110,7 +106,6 @@ public class ThemeManager extends AbstractManager {
         );
 
         public final int surface, onSurface, text;
-        public float outlineAlpha = 0;
     }
 
     public enum ThemeColor {

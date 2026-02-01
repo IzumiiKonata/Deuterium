@@ -166,7 +166,6 @@ public class OAuth {
             var mojangResponse = gson.fromJson(mojangLoginJson, JsonObject.class);
             var minecraftToken = mojangResponse.get("access_token").getAsString();
 //        var expiresIn = mojangResponse.get("expires_in").getAsLong();
-            var accessToken = minecraftToken;
             callback.setStatus("oauth.gettinguserprofile");
             Map<String, String> checkProductHeaders = new HashMap<>();
 
@@ -184,7 +183,7 @@ public class OAuth {
             var userUUID = profile.get("id").getAsString();
             var userName = profile.get("name").getAsString();
 
-            callback.onSucceed(userUUID, userName, accessToken, refreshToken);
+            callback.onSucceed(userUUID, userName, minecraftToken, refreshToken);
         } catch (Exception e) {
             callback.onFailed(e);
         }
@@ -271,7 +270,7 @@ public class OAuth {
             }
             sb.append(entry.getKey());
             sb.append("=");
-            sb.append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            sb.append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
 
         }
         return sb.toString();

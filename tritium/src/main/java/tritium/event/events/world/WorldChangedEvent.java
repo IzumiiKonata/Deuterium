@@ -3,7 +3,6 @@ package tritium.event.events.world;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.minecraft.client.multiplayer.WorldClient;
 import tritium.event.eventapi.Event;
 

@@ -1449,7 +1449,7 @@ public abstract class Entity implements ICommandSender {
             tagCompund.setLong("UUIDMost", this.getUniqueID().getMostSignificantBits());
             tagCompund.setLong("UUIDLeast", this.getUniqueID().getLeastSignificantBits());
 
-            if (this.getCustomNameTag() != null && this.getCustomNameTag().length() > 0) {
+            if (this.getCustomNameTag() != null && !this.getCustomNameTag().isEmpty()) {
                 tagCompund.setString("CustomName", this.getCustomNameTag());
                 tagCompund.setBoolean("CustomNameVisible", this.getAlwaysRenderNameTag());
             }
@@ -1525,7 +1525,7 @@ public abstract class Entity implements ICommandSender {
             this.setPosition(this.posX, this.posY, this.posZ);
             this.setRotation(this.rotationYaw, this.rotationPitch);
 
-            if (tagCompund.hasKey("CustomName", 8) && tagCompund.getString("CustomName").length() > 0) {
+            if (tagCompund.hasKey("CustomName", 8) && !tagCompund.getString("CustomName").isEmpty()) {
                 this.setCustomNameTag(tagCompund.getString("CustomName"));
             }
 
@@ -2218,13 +2218,13 @@ public abstract class Entity implements ICommandSender {
 
     public void addEntityCrashInfo(CrashReportCategory category) {
         category.addCrashSectionCallable("Entity Type", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return EntityList.getEntityString(Entity.this) + " (" + Entity.this.getClass().getCanonicalName() + ")";
             }
         });
         category.addCrashSection("Entity ID", this.entityId);
         category.addCrashSectionCallable("Entity Name", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return Entity.this.getName();
             }
         });
@@ -2232,12 +2232,12 @@ public abstract class Entity implements ICommandSender {
         category.addCrashSection("Entity's Block location", CrashReportCategory.getCoordinateInfo(MathHelper.floor_double(this.posX), MathHelper.floor_double(this.posY), MathHelper.floor_double(this.posZ)));
         category.addCrashSection("Entity's Momentum", String.format("%.2f, %.2f, %.2f", this.motionX, this.motionY, this.motionZ));
         category.addCrashSectionCallable("Entity's Rider", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return Entity.this.riddenByEntity.toString();
             }
         });
         category.addCrashSectionCallable("Entity's Vehicle", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return Entity.this.ridingEntity.toString();
             }
         });

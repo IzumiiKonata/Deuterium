@@ -73,7 +73,7 @@ public class C0EPacketClickWindow implements Packet<INetHandlerPlayServer>, CPac
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeByte(this.windowId);
         buf.writeShort(this.slotId);
         buf.writeByte(this.usedButton);

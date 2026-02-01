@@ -13,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.*;
 import java.net.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -36,16 +37,16 @@ public class HttpUtil {
         StringBuilder stringbuilder = new StringBuilder();
 
         for (Entry<String, Object> entry : data.entrySet()) {
-            if (stringbuilder.length() > 0) {
+            if (!stringbuilder.isEmpty()) {
                 stringbuilder.append('&');
             }
 
-            stringbuilder.append(URLEncoder.encode(entry.getKey(), "UTF-8"));
+            stringbuilder.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8));
 
             if (entry.getValue() != null) {
                 stringbuilder.append('=');
 
-                stringbuilder.append(URLEncoder.encode(entry.getValue().toString(), "UTF-8"));
+                stringbuilder.append(URLEncoder.encode(entry.getValue().toString(), StandardCharsets.UTF_8));
             }
         }
 

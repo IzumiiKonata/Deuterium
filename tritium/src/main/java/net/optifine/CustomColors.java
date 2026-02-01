@@ -388,8 +388,7 @@ public class CustomColors {
         if (list.size() <= 0) {
             return null;
         } else {
-            final CustomColormap[] acustomcolormap = (CustomColormap[]) list.toArray(new CustomColormap[0]);
-            return acustomcolormap;
+            return (CustomColormap[]) list.toArray(new CustomColormap[0]);
         }
     }
 
@@ -427,8 +426,7 @@ public class CustomColors {
         if (list.size() <= 0) {
             return null;
         } else {
-            final CustomColormap[][] acustomcolormap = blockListToArray(list);
-            return acustomcolormap;
+            return blockListToArray(list);
         }
     }
 
@@ -490,11 +488,10 @@ public class CustomColors {
             final int i = parseColor(s);
             if (i < 0) {
                 warn("Invalid color: " + name + " = " + s);
-                return i;
             } else {
                 dbg(name + " = " + s);
-                return i;
             }
+            return i;
         }
     }
 
@@ -504,8 +501,7 @@ public class CustomColors {
         } else {
             str = str.trim();
             try {
-                final int i = Integer.parseInt(str, 16) & 16777215;
-                return i;
+                return Integer.parseInt(str, 16) & 16777215;
             } catch (final NumberFormatException var2) {
                 return -1;
             }
@@ -616,19 +612,12 @@ public class CustomColors {
                         blockPos = blockPos.down();
                     }
                 } else if (block == Blocks.leaves) {
-                    switch (i & 3) {
-                        case 0:
-                            customcolors$icolorizer = COLORIZER_FOLIAGE;
-                            break;
-                        case 1:
-                            customcolors$icolorizer = COLORIZER_FOLIAGE_PINE;
-                            break;
-                        case 2:
-                            customcolors$icolorizer = COLORIZER_FOLIAGE_BIRCH;
-                            break;
-                        default:
-                            customcolors$icolorizer = COLORIZER_FOLIAGE;
-                    }
+                    customcolors$icolorizer = switch (i & 3) {
+                        case 0 -> COLORIZER_FOLIAGE;
+                        case 1 -> COLORIZER_FOLIAGE_PINE;
+                        case 2 -> COLORIZER_FOLIAGE_BIRCH;
+                        default -> COLORIZER_FOLIAGE;
+                    };
                 } else if (block == Blocks.leaves2) {
                     customcolors$icolorizer = COLORIZER_FOLIAGE;
                 } else {
@@ -661,16 +650,14 @@ public class CustomColors {
             final int i = blockstatebase.getBlockId();
             if (i >= 0 && i < blockColormaps.length) {
                 final CustomColormap[] acustomcolormap = blockColormaps[i];
-                if (acustomcolormap == null) {
-                    return null;
-                } else {
+                if (acustomcolormap != null) {
                     for (final CustomColormap customcolormap : acustomcolormap) {
                         if (customcolormap.matchesBlock(blockstatebase)) {
                             return customcolormap;
                         }
                     }
-                    return null;
                 }
+                return null;
             } else {
                 return null;
             }
@@ -684,11 +671,10 @@ public class CustomColors {
         final int l = blockPos.getX();
         final int i1 = blockPos.getY();
         final int j1 = blockPos.getZ();
-        final BlockPosM blockposm = blockPosM;
         for (int k1 = l - 1; k1 <= l + 1; ++k1) {
             for (int l1 = j1 - 1; l1 <= j1 + 1; ++l1) {
-                blockposm.setXyz(k1, i1, l1);
-                final int i2 = colorizer.getColor(blockState, blockAccess, blockposm);
+                blockPosM.setXyz(k1, i1, l1);
+                final int i2 = colorizer.getColor(blockState, blockAccess, blockPosM);
                 i += i2 >> 16 & 255;
                 j += i2 >> 8 & 255;
                 k += i2 & 255;
@@ -742,8 +728,7 @@ public class CustomColors {
             return -1;
         } else {
             final int i = getRedstoneLevel(blockState, 15);
-            final int j = redstoneColors.getColor(i);
-            return j;
+            return redstoneColors.getColor(i);
         }
     }
 
@@ -771,8 +756,7 @@ public class CustomColors {
             if (!(object instanceof Integer)) {
                 return def;
             } else {
-                final Integer integer = (Integer) object;
-                return integer;
+                return (Integer) object;
             }
         }
     }
@@ -791,8 +775,7 @@ public class CustomColors {
             return -1;
         } else {
             final int i = (int) Math.round((MathHelper.sin(timer) + 1.0F) * (xpOrbColors.getLength() - 1) / 2.0D);
-            final int j = xpOrbColors.getColor(i);
-            return j;
+            return xpOrbColors.getColor(i);
         }
     }
 
@@ -801,8 +784,7 @@ public class CustomColors {
             return -1;
         } else {
             final int i = dur255 * durabilityColors.getLength() / 255;
-            final int j = durabilityColors.getColor(i);
-            return j;
+            return durabilityColors.getColor(i);
         }
     }
 
@@ -862,8 +844,7 @@ public class CustomColors {
             f = f * f3;
             f1 = f1 * f4;
             f2 = f2 * f5;
-            final Vec3 vec3 = skyColorFader.getColor(f, f1, f2);
-            return vec3;
+            return skyColorFader.getColor(f, f1, f2);
         }
     }
 
@@ -884,8 +865,7 @@ public class CustomColors {
             f = f * f3;
             f1 = f1 * f4;
             f2 = f2 * f5;
-            final Vec3 vec3 = fogColorFader.getColor(f, f1, f2);
-            return vec3;
+            return fogColorFader.getColor(f, f1, f2);
         }
     }
 
@@ -908,8 +888,7 @@ public class CustomColors {
             final float f = j / 255.0F;
             final float f1 = k / 255.0F;
             final float f2 = l / 255.0F;
-            final Vec3 vec3 = underFluidColorFader.getColor(f, f1, f2);
-            return vec3;
+            return underFluidColorFader.getColor(f, f1, f2);
         }
     }
 

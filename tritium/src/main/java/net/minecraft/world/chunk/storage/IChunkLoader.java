@@ -12,13 +12,13 @@ public interface IChunkLoader {
      */
     Chunk loadChunk(World worldIn, int x, int z) throws IOException;
 
-    void saveChunk(World worldIn, Chunk chunkIn) throws MinecraftException, IOException;
+    void saveChunk(World worldIn, Chunk chunkIn) throws MinecraftException;
 
     /**
      * Save extra data associated with this Chunk not normally saved during autosave, only during chunk unload.
      * Currently unused.
      */
-    void saveExtraChunkData(World worldIn, Chunk chunkIn) throws IOException;
+    void saveExtraChunkData(World worldIn, Chunk chunkIn);
 
     /**
      * Called every World.tick()

@@ -149,33 +149,29 @@ public class LightingHooks {
     }
 
     private static void mergeFlags(final EnumSkyBlock lightType, final Chunk inChunk, final Chunk outChunk, final EnumFacing dir, final EnumFacing.AxisDirection axisDir) {
-        IChunkLightingData outChunkLightingData = outChunk;
 
-        if (outChunkLightingData.getNeighborLightChecks() == null) {
+        if (outChunk.getNeighborLightChecks() == null) {
             return;
         }
-
-        IChunkLightingData inChunkLightingData = inChunk;
 
         initNeighborLightChecks(inChunk);
 
         final int inIndex = getFlagIndex(lightType, dir, axisDir, EnumBoundaryFacing.IN);
         final int outIndex = getFlagIndex(lightType, dir.getOpposite(), axisDir, EnumBoundaryFacing.OUT);
 
-        inChunkLightingData.getNeighborLightChecks()[inIndex] |= outChunkLightingData.getNeighborLightChecks()[outIndex];
+        inChunk.getNeighborLightChecks()[inIndex] |= outChunk.getNeighborLightChecks()[outIndex];
         //no need to call Chunk.setModified() since checks are not deleted from outChunk
     }
 
     private static void scheduleRelightChecksForBoundary(final World world, final Chunk chunk, Chunk nChunk, Chunk sChunk, final EnumSkyBlock lightType, final int xOffset, final int zOffset, final EnumFacing.AxisDirection axisDir) {
-        IChunkLightingData chunkLightingData = chunk;
 
-        if (chunkLightingData.getNeighborLightChecks() == null) {
+        if (chunk.getNeighborLightChecks() == null) {
             return;
         }
 
         final int flagIndex = getFlagIndex(lightType, xOffset, zOffset, axisDir, EnumBoundaryFacing.IN); //OUT checks from neighbor are already merged
 
-        final int flags = chunkLightingData.getNeighborLightChecks()[flagIndex];
+        final int flags = chunk.getNeighborLightChecks()[flagIndex];
 
         if (flags == 0) {
             return;
@@ -199,7 +195,7 @@ public class LightingHooks {
 
         final int reverseIndex = getFlagIndex(lightType, -xOffset, -zOffset, axisDir, EnumBoundaryFacing.OUT);
 
-        chunkLightingData.getNeighborLightChecks()[flagIndex] = 0;
+        chunk.getNeighborLightChecks()[flagIndex] = 0;
 
         IChunkLightingData nChunkLightingData = nChunk;
 
@@ -239,10 +235,9 @@ public class LightingHooks {
     }
 
     public static void initNeighborLightChecks(final Chunk chunk) {
-        IChunkLightingData lightingData = chunk;
 
-        if (lightingData.getNeighborLightChecks() == null) {
-            lightingData.setNeighborLightChecks(new short[FLAG_COUNT]);
+        if (chunk.getNeighborLightChecks() == null) {
+            chunk.setNeighborLightChecks(new short[FLAG_COUNT]);
         }
     }
 

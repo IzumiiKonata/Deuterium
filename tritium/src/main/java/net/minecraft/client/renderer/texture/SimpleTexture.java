@@ -1,6 +1,5 @@
 package net.minecraft.client.renderer.texture;
 
-import lombok.Cleanup;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.IResource;
@@ -12,8 +11,6 @@ import net.optifine.EmissiveTextures;
 import net.optifine.shaders.ShadersTex;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.lwjgl.system.MemoryUtil;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.DevUtils;
@@ -41,7 +38,7 @@ public class SimpleTexture extends AbstractTexture {
         try {
             IResource iresource = resourceManager.getResource(this.textureLocation);
             inputstream = iresource.getInputStream();
-            try (NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream);) {
+            try (NativeBackedImage bufferedimage = TextureUtil.readBufferedImage(inputstream)) {
                 boolean flag = false;
                 boolean flag1 = false;
 

@@ -248,7 +248,7 @@ public class BufferedWAVEFileParser extends WAVEFileParser {
         return makeSample(reader);
     }
 
-    BufferedFloatSample makeSample(StreamedByteDataReader reader) throws IOException {
+    BufferedFloatSample makeSample(StreamedByteDataReader reader) {
         BufferedFloatSample floatSample = new BufferedFloatSample(reader, numFrames, samplesPerFrame);
 
         floatSample.setChannelsPerFrame(samplesPerFrame);

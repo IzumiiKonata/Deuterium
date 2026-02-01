@@ -72,7 +72,7 @@ public class NetworkSystem {
     /**
      * Adds a channel that listens on publicly accessible network ports
      */
-    public void addLanEndpoint(InetAddress address, int port) throws IOException {
+    public void addLanEndpoint(InetAddress address, int port) {
         synchronized (this.endpoints) {
             Class<? extends ServerSocketChannel> oclass;
             LazyLoadBase<? extends EventLoopGroup> lazyloadbase;
@@ -88,7 +88,7 @@ public class NetworkSystem {
             }
 
             this.endpoints.add((new ServerBootstrap()).channel(oclass).childHandler(new ChannelInitializer<Channel>() {
-                protected void initChannel(Channel p_initChannel_1_) throws Exception {
+                protected void initChannel(Channel p_initChannel_1_) {
                     try {
                         p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.TRUE);
                     } catch (ChannelException var3) {
@@ -112,7 +112,7 @@ public class NetworkSystem {
 
         synchronized (this.endpoints) {
             channelfuture = (new ServerBootstrap()).channel(LocalServerChannel.class).childHandler(new ChannelInitializer<Channel>() {
-                protected void initChannel(Channel p_initChannel_1_) throws Exception {
+                protected void initChannel(Channel p_initChannel_1_) {
                     NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.SERVERBOUND);
                     networkmanager.setNetHandler(new NetHandlerHandshakeMemory(NetworkSystem.this.mcServer, networkmanager));
                     NetworkSystem.this.networkManagers.add(networkmanager);
@@ -163,7 +163,7 @@ public class NetworkSystem {
                                 CrashReport crashreport = CrashReport.makeCrashReport(exception, "Ticking memory connection");
                                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Ticking connection");
                                 crashreportcategory.addCrashSectionCallable("Connection", new Callable<String>() {
-                                    public String call() throws Exception {
+                                    public String call() {
                                         return networkmanager.toString();
                                     }
                                 });
@@ -173,7 +173,7 @@ public class NetworkSystem {
                             logger.warn("Failed to handle packet for " + networkmanager.getRemoteAddress(), exception);
                             final ChatComponentText chatcomponenttext = new ChatComponentText("Internal server error");
                             networkmanager.sendPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<? super Void>>() {
-                                public void operationComplete(Future<? super Void> p_operationComplete_1_) throws Exception {
+                                public void operationComplete(Future<? super Void> p_operationComplete_1_) {
                                     networkmanager.closeChannel(chatcomponenttext);
                                 }
                             });

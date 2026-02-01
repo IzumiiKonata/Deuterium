@@ -169,7 +169,7 @@ public class RequestUtil {
         for (int i = 0; i < 6; i++) {
             randomString.append(characters.charAt(random.nextInt(characters.length())));
         }
-        return randomString.toString() + "." + System.currentTimeMillis() + ".01.0";
+        return randomString + "." + System.currentTimeMillis() + ".01.0";
     }
 
     /**
@@ -235,10 +235,10 @@ public class RequestUtil {
     private static String cookieMapToString(Map<String, String> cookieMap) {
         StringBuilder sb = new StringBuilder();
         for (Map.Entry<String, String> entry : cookieMap.entrySet()) {
-            if (sb.length() > 0) {
+            if (!sb.isEmpty()) {
                 sb.append("; ");
             }
-            sb.append(URLEncoder.encode(entry.getKey(), "UTF-8")).append("=").append(URLEncoder.encode(entry.getValue(), "UTF-8"));
+            sb.append(URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8)).append("=").append(URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8));
         }
         return sb.toString();
     }
@@ -250,8 +250,8 @@ public class RequestUtil {
         return formData.entrySet().stream()
                 .map(entry -> {
                     try {
-                        return URLEncoder.encode(entry.getKey(), "UTF-8") +
-                                "=" + URLEncoder.encode(entry.getValue(), "UTF-8");
+                        return URLEncoder.encode(entry.getKey(), StandardCharsets.UTF_8) +
+                                "=" + URLEncoder.encode(entry.getValue(), StandardCharsets.UTF_8);
                     } catch (Exception e) {
                         return entry.getKey() + "=" + entry.getValue();
                     }

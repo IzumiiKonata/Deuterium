@@ -8,7 +8,6 @@ import tritium.management.WidgetsManager;
 import tritium.module.Module;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
-import tritium.settings.NumberSetting;
 import tritium.settings.Setting;
 
 /**

@@ -33,7 +33,7 @@ public class BufferedSampleLoader extends CustomSampleLoader {
     }
 
     @SneakyThrows
-    public FloatSample loadFromFlacStream(BufferedInputStream is) throws IOException {
+    public FloatSample loadFromFlacStream(BufferedInputStream is) {
         FlacAudioFileReader fafr = new FlacAudioFileReader();
         is.mark(0);
 

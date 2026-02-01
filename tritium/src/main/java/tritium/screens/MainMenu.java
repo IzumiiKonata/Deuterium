@@ -17,7 +17,6 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.clickable.impl.ClickableIcon;
 import tritium.rendering.entities.clickable.impl.FlatMainMenuButton;
 import tritium.rendering.Rect;
-import tritium.management.FontManager;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.loading.LoadingScreenRenderer;
@@ -251,30 +250,19 @@ public class MainMenu extends BaseScreen {
     public int getColor(ColorType type) {
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
 
-        switch (theme) {
-            case Dark:
-                switch (type) {
-                    case BACKGROUND:
-                        return RGBA.color(32, 32, 43);
-                    case BUTTON:
-                        return RGBA.color(32, 32, 32);
-                    case TEXT:
-                        return RGBA.color(255, 255, 255);
-                }
-                break;
-            case Light:
-                switch (type) {
-                    case BACKGROUND:
-                        return RGBA.color(235, 235, 235);
-                    case BUTTON:
-                        return RGBA.color(246, 246, 246);
-                    case TEXT:
-                        return RGBA.color(0, 0, 0);
-                }
-                break;
-        }
+        return switch (theme) {
+            case Dark -> switch (type) {
+                case BACKGROUND -> RGBA.color(32, 32, 43);
+                case BUTTON -> RGBA.color(32, 32, 32);
+                case TEXT -> RGBA.color(255, 255, 255);
+            };
+            case Light -> switch (type) {
+                case BACKGROUND -> RGBA.color(235, 235, 235);
+                case BUTTON -> RGBA.color(246, 246, 246);
+                case TEXT -> RGBA.color(0, 0, 0);
+            };
+        };
 
-        return 0;
     }
 
     public enum ColorType {

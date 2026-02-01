@@ -40,9 +40,7 @@ import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Proxy;
 import java.nio.file.Files;
@@ -220,7 +218,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
     /**
      * Initialises the server and starts it.
      */
-    protected abstract boolean startServer() throws IOException;
+    protected abstract boolean startServer();
 
     protected void convertMapIfNeeded(String worldNameIn) {
         if (this.getActiveAnvilConverter().isOldMapFormat(worldNameIn)) {
@@ -746,7 +744,7 @@ public abstract class MinecraftServer implements Runnable, ICommandSender, IThre
      */
     public CrashReport addServerInfoToCrashReport(CrashReport report) {
         report.getCategory().addCrashSectionCallable("Profiler Position", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return "N/A (disabled)";
             }
         });

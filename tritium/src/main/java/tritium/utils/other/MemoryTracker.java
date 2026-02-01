@@ -6,8 +6,6 @@ import org.lwjgl.system.MemoryUtil;
 import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
-import java.util.Collections;
-import java.util.List;
 
 /**
  * @author IzumiiKonata

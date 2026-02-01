@@ -21,8 +21,6 @@ import today.opai.api.interfaces.render.Font;
 import tritium.command.CommandValues;
 import tritium.event.events.game.GameLoopEvent;
 import tritium.interfaces.IFontRenderer;
-import tritium.launch.Launcher;
-import tritium.rendering.StencilClipManager;
 import tritium.rendering.phosphor.api.ILightingEngineProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -87,7 +85,6 @@ import net.minecraft.world.storage.WorldInfo;
 import net.optifine.shaders.Shaders;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.Validate;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjglx.LWJGLException;
@@ -132,9 +129,7 @@ import java.net.Proxy;
 import java.net.SocketAddress;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -723,8 +718,6 @@ public class Minecraft implements IThreadListener {
 //                        MemoryTracker.memFree(icon);
 //                    }
                 }
-            } catch (IOException ioexception) {
-                logger.error("Couldn't set icon", ioexception);
             } finally {
                 IOUtils.closeQuietly(inputstream);
                 IOUtils.closeQuietly(inputstream1);
@@ -2169,30 +2162,14 @@ public class Minecraft implements IThreadListener {
                 } else if (this.objectMouseOver.entityHit instanceof EntityMinecart) {
                     EntityMinecart entityminecart = (EntityMinecart) this.objectMouseOver.entityHit;
 
-                    switch (entityminecart.getMinecartType()) {
-                        case FURNACE:
-                            item = Items.furnace_minecart;
-                            break;
-
-                        case CHEST:
-                            item = Items.chest_minecart;
-                            break;
-
-                        case TNT:
-                            item = Items.tnt_minecart;
-                            break;
-
-                        case HOPPER:
-                            item = Items.hopper_minecart;
-                            break;
-
-                        case COMMAND_BLOCK:
-                            item = Items.command_block_minecart;
-                            break;
-
-                        default:
-                            item = Items.minecart;
-                    }
+                    item = switch (entityminecart.getMinecartType()) {
+                        case FURNACE -> Items.furnace_minecart;
+                        case CHEST -> Items.chest_minecart;
+                        case TNT -> Items.tnt_minecart;
+                        case HOPPER -> Items.hopper_minecart;
+                        case COMMAND_BLOCK -> Items.command_block_minecart;
+                        default -> Items.minecart;
+                    };
                 } else if (this.objectMouseOver.entityHit instanceof EntityBoat) {
                     item = Items.boat;
                 } else if (this.objectMouseOver.entityHit instanceof EntityArmorStand) {
@@ -2307,7 +2284,7 @@ public class Minecraft implements IThreadListener {
                 StringBuilder stringbuilder = new StringBuilder();
 
                 for (String s : Minecraft.this.gameSettings.resourcePacks) {
-                    if (stringbuilder.length() > 0) {
+                    if (!stringbuilder.isEmpty()) {
                         stringbuilder.append(", ");
                     }
 

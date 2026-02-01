@@ -9,7 +9,6 @@ import tritium.ncm.api.CloudMusicApi;
 import tritium.ncm.music.CloudMusic;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Data
 public class Music {

@@ -30,8 +30,7 @@ public class Mipmaps {
                 k /= 2;
                 l /= 2;
                 if (k <= 0 && l <= 0) {
-                    final Dimension[] adimension = (Dimension[]) list.toArray(new Dimension[0]);
-                    return adimension;
+                    return (Dimension[]) list.toArray(new Dimension[0]);
                 }
                 if (k <= 0) k = 1;
                 if (l <= 0) l = 1;
@@ -74,8 +73,7 @@ public class Mipmaps {
     public static int alphaBlend(final int c1, final int c2, final int c3, final int c4) {
         final int i = alphaBlend(c1, c2);
         final int j = alphaBlend(c3, c4);
-        final int k = alphaBlend(i, j);
-        return k;
+        return alphaBlend(i, j);
     }
 
     private static int alphaBlend(int c1, int c2) {

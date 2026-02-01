@@ -2,14 +2,12 @@ package tritium.screens.clickgui.value.values;
 
 import org.lwjgl.input.Keyboard;
 import tritium.management.FontManager;
-import tritium.rendering.entities.impl.TextField;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.rendering.ui.widgets.TextFieldWidget;
 import tritium.screens.ClickGui;
-import tritium.settings.LabelSetting;
 import tritium.settings.StringSetting;
 
 import java.util.Objects;

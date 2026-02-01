@@ -13,7 +13,6 @@ import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
-import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.math.Mth;
 

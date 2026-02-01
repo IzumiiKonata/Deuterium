@@ -349,7 +349,7 @@ class LayerIDecoder implements FrameDecoder {
          *
          */
         @Override
-        public void readAllocation(Bitstream stream, Header header, Crc16 crc) throws DecoderException {
+        public void readAllocation(Bitstream stream, Header header, Crc16 crc) {
             allocation = stream.getBits(4);
             channel2Allocation = stream.getBits(4);
             if (crc != null) {

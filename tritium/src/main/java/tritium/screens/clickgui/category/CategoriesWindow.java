@@ -222,11 +222,6 @@ public class CategoriesWindow extends Window {
         this.bottomRect.onMouseClickReceived(mouseX, mouseY, mouseButton);
     }
 
-    @Override
-    public void mouseReleased(double mouseX, double mouseY, int mouseButton) {
-
-    }
-
     public int getSelectedCategoryIndex() {
         for (int i = 0; i < this.categoryButtons.size(); i++) {
             CategoryButton cb = this.categoryButtons.get(i);

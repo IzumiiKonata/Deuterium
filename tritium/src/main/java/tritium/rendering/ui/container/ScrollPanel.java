@@ -1,7 +1,6 @@
 package tritium.rendering.ui.container;
 
 import lombok.Getter;
-import lombok.Setter;
 import org.lwjgl.input.Keyboard;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
@@ -39,7 +38,7 @@ public class ScrollPanel extends AbstractWidget<ScrollPanel> {
         /**
          * 垂直排列并水平填充
          */
-        VERTICAL_WITH_HORIZONTAL_FILL;
+        VERTICAL_WITH_HORIZONTAL_FILL
     }
 
     public ScrollPanel setAlignment(Alignment alignment) {
@@ -237,7 +236,7 @@ public class ScrollPanel extends AbstractWidget<ScrollPanel> {
                     this.targetScrollOffset = childrenHeightSum - this.getHeight();
                 }
             }
-        };
+        }
 
         for (AbstractWidget<?> child : this.getChildren()) {
 

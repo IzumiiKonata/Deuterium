@@ -3,8 +3,6 @@ package tritium.widget.impl.keystrokes;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.rendering.rendersystem.RenderSystem;
 
-import java.awt.*;
-
 public class Circle implements SharedRenderingConstants {
 
     public double length = 0;

@@ -38,8 +38,7 @@ public class ShaderProfile {
 
     public String[] getOptions() {
         Set<String> set = this.mapOptionValues.keySet();
-        String[] astring = set.toArray(new String[0]);
-        return astring;
+        return set.toArray(new String[0]);
     }
 
     public String getValue(String key) {

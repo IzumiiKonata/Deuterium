@@ -105,23 +105,13 @@ public class Notification implements SharedRenderingConstants {
         RenderSystem.doScissor(renderX + width * 0.5 - openCloseAnimation.getValue(), renderY, openCloseAnimation.getValue() * 2, height + 4);
         roundedRect(renderX, renderY, width, height, 6, ThemeManager.getAsColor(ThemeManager.ThemeColor.Surface, 255));
 
-        int fontColor;
-        switch (this.type) {
-            case INFO:
-                fontColor = ThemeManager.get(ThemeManager.ThemeColor.Text);
-                break;
-            case WARNING:
-                fontColor = 0xffefbc12;
-                break;
-            case ERROR:
-                fontColor = 0xfff04747;
-                break;
-            case SUCCESS:
-                fontColor = 0xff23ad5c;
-                break;
-            default:
-                throw new IllegalArgumentException();
-        }
+        int fontColor = switch (this.type) {
+            case INFO -> ThemeManager.get(ThemeManager.ThemeColor.Text);
+            case WARNING -> 0xffefbc12;
+            case ERROR -> 0xfff04747;
+            case SUCCESS -> 0xff23ad5c;
+            default -> throw new IllegalArgumentException();
+        };
 
         FontManager.pf20bold.drawCenteredString(this.title, renderX + width * 0.5, renderY + 4, fontColor);
 

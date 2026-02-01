@@ -48,8 +48,6 @@ public class Perspective extends Module {
         }
     }
 
-    ;
-
     public Perspective() {
         super("Perspective", Category.RENDER);
         super.setKeyBind(Keyboard.KEY_LMENU);

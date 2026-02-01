@@ -17,8 +17,6 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ReportedException;
 import tritium.bridge.game.item.InventoryWrapper;
 
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Callable;
 
 public class InventoryPlayer implements IInventory {
@@ -268,9 +266,7 @@ public class InventoryPlayer implements IInventory {
             j = this.getFirstEmptyStack();
         }
 
-        if (j < 0) {
-            return i;
-        } else {
+        if (j >= 0) {
             if (this.mainInventory[j] == null) {
                 this.mainInventory[j] = new ItemStack(item, 0, itemStackIn.getMetadata());
 
@@ -294,8 +290,8 @@ public class InventoryPlayer implements IInventory {
                 this.mainInventory[j].stackSize += k;
                 this.mainInventory[j].animationsToGo = 5;
             }
-            return i;
         }
+        return i;
     }
 
     /**
@@ -377,7 +373,7 @@ public class InventoryPlayer implements IInventory {
                 crashreportcategory.addCrashSection("Item ID", Item.getIdFromItem(itemStackIn.getItem()));
                 crashreportcategory.addCrashSection("Item data", itemStackIn.getMetadata());
                 crashreportcategory.addCrashSectionCallable("Item name", new Callable<String>() {
-                    public String call() throws Exception {
+                    public String call() {
                         return itemStackIn.getDisplayName();
                     }
                 });

@@ -8,8 +8,6 @@ import tritium.interfaces.SharedRenderingConstants;
 import tritium.rendering.entities.RenderableEntity;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.dialog.Dialog;
-import tritium.settings.ClientSettings;
-import tritium.utils.cursor.CursorUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,7 +85,7 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
         this.onKeyTyped(typedChar, keyCode);
     }
 
-    private void handleMouseClicked(double mouseX, double mouseY, int mouseButton) throws IOException {
+    private void handleMouseClicked(double mouseX, double mouseY, int mouseButton) {
 
         if (this.dialog != null) {
             this.dialog.mouseClicked(mouseX, mouseY, mouseButton);
@@ -179,7 +177,7 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
 
     @Override
     @Deprecated
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
         this.handleKeyTyped(typedChar, keyCode);
     }
 

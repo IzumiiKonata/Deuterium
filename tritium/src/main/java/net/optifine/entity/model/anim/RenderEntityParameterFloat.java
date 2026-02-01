@@ -33,9 +33,7 @@ public enum RenderEntityParameterFloat implements IExpressionFloat {
 
     public float eval() {
         Render render = this.renderManager.renderRender;
-        if (render == null) {
-            return 0.0F;
-        } else {
+        if (render != null) {
             if (render instanceof RendererLivingEntity) {
                 RendererLivingEntity rendererlivingentity = (RendererLivingEntity) render;
                 switch (this) {
@@ -84,20 +82,18 @@ public enum RenderEntityParameterFloat implements IExpressionFloat {
                         }
                 }
             }
-            return 0.0F;
         }
+        return 0.0F;
     }
 
     public static RenderEntityParameterFloat parse(String str) {
-        if (str == null) {
-            return null;
-        } else {
+        if (str != null) {
             for (RenderEntityParameterFloat renderentityparameterfloat : VALUES) {
                 if (renderentityparameterfloat.getName().equals(str)) {
                     return renderentityparameterfloat;
                 }
             }
-            return null;
         }
+        return null;
     }
 }

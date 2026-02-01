@@ -1,9 +1,6 @@
 package tritium.utils.res.skin;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import net.minecraft.util.Location;
-import tritium.Tritium;
 
 public class SkinUtils {
 

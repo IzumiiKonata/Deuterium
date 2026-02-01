@@ -67,8 +67,7 @@ public class NaturalProperties {
             rotate = 0;
         }
         aint = this.transformVertexData(aint, rotate, flipU);
-        final BakedQuad bakedquad = new BakedQuad(aint, i, enumfacing, textureatlassprite);
-        return bakedquad;
+        return new BakedQuad(aint, i, enumfacing, textureatlassprite);
     }
 
     private int[] transformVertexData(final int[] vertexData, final int rotate, final boolean flipU) {

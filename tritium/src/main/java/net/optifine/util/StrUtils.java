@@ -42,7 +42,7 @@ public class StrUtils {
                         for (Object o : list) {
                             String s3 = (String) o;
 
-                            if (s3.length() > 0) {
+                            if (!s3.isEmpty()) {
                                 int k = indexOfMaskSingle(str, s3, i, wildCharSingle);
 
                                 if (k < 0) {
@@ -85,9 +85,7 @@ public class StrUtils {
     private static int indexOfMaskSingle(String str, String mask, int startPos, char wildCharSingle) {
         if (str != null && mask != null) {
             if (startPos >= 0 && startPos <= str.length()) {
-                if (str.length() < startPos + mask.length()) {
-                    return -1;
-                } else {
+                if (str.length() >= startPos + mask.length()) {
                     for (int i = startPos; i + mask.length() <= str.length(); ++i) {
                         String s = str.substring(i, i + mask.length());
 
@@ -96,8 +94,8 @@ public class StrUtils {
                         }
                     }
 
-                    return -1;
                 }
+                return -1;
             } else {
                 return -1;
             }
@@ -179,7 +177,7 @@ public class StrUtils {
                         for (Object o : list) {
                             String s3 = (String) o;
 
-                            if (s3.length() > 0) {
+                            if (!s3.isEmpty()) {
                                 int k = str.indexOf(s3, i);
 
                                 if (k < 0) {
@@ -200,7 +198,7 @@ public class StrUtils {
     }
 
     public static String[] split(String str, String separators) {
-        if (str != null && str.length() > 0) {
+        if (str != null && !str.isEmpty()) {
             if (separators == null) {
                 return new String[]{str};
             } else {
@@ -369,10 +367,8 @@ public class StrUtils {
                 str = str.substring(prefix.length());
             }
 
-            return str;
-        } else {
-            return str;
         }
+        return str;
     }
 
     public static String removeSuffix(String str, String suffix) {
@@ -381,10 +377,8 @@ public class StrUtils {
                 str = str.substring(0, str.length() - suffix.length());
             }
 
-            return str;
-        } else {
-            return str;
         }
+        return str;
     }
 
     public static String replaceSuffix(String str, String suffix, String suffixNew) {
@@ -431,10 +425,8 @@ public class StrUtils {
                 }
             }
 
-            return -1;
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     public static int findSuffix(String[] strs, String suffix) {
@@ -447,10 +439,8 @@ public class StrUtils {
                 }
             }
 
-            return -1;
-        } else {
-            return -1;
         }
+        return -1;
     }
 
     public static String[] remove(String[] strs, int start, int end) {
@@ -470,8 +460,7 @@ public class StrUtils {
                     }
                 }
 
-                String[] astring = list.toArray(new String[0]);
-                return astring;
+                return list.toArray(new String[0]);
             }
         } else {
             return strs;
@@ -490,10 +479,8 @@ public class StrUtils {
                 }
             }
 
-            return str;
-        } else {
-            return str;
         }
+        return str;
     }
 
     public static String removePrefix(String str, String[] prefixes) {
@@ -508,10 +495,8 @@ public class StrUtils {
                 }
             }
 
-            return str;
-        } else {
-            return str;
         }
+        return str;
     }
 
     public static String removePrefixSuffix(String str, String[] prefixes, String[] suffixes) {
@@ -551,10 +536,8 @@ public class StrUtils {
         if (str != null && chars != null) {
             str = trimLeading(str, chars);
             str = trimTrailing(str, chars);
-            return str;
-        } else {
-            return str;
         }
+        return str;
     }
 
     public static String trimLeading(String str, String chars) {

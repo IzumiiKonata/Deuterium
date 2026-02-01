@@ -1,7 +1,5 @@
 package net.minecraft.network.play.server;
 
-import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
@@ -43,7 +41,7 @@ public class S2FPacketSetSlot implements Packet<INetHandlerPlayClient>, SPacket2
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeByte(this.windowId);
         buf.writeShort(this.slot);
         buf.writeItemStackToBuffer(this.item);

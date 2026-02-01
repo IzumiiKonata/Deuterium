@@ -106,7 +106,7 @@ public class GuiFlatPresets extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.id == 0 && this.func_146430_p()) {
             this.parentScreen.func_146383_a(this.field_146433_u.getText());
             this.mc.displayGuiScreen(this.parentScreen);

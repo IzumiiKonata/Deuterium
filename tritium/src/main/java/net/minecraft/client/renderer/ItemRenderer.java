@@ -32,7 +32,6 @@ import tritium.event.events.rendering.BlockAnimationEvent;
 import tritium.management.EventManager;
 import tritium.management.ModuleManager;
 import tritium.module.impl.render.BlockAnimations;
-import tritium.settings.ClientSettings;
 
 public class ItemRenderer {
     private static final Location RES_MAP_BACKGROUND = Location.of("textures/map/map_background.png");

@@ -41,10 +41,10 @@ public class Sound {
 	 */
 	public Sound(int sampleRate, int outputDevice, int inputDevice, float volume) {
 		this();
-		this.sampleRate(sampleRate);
-		this.inputDevice(inputDevice);
-		this.outputDevice(outputDevice);
-		this.volume(volume);
+		sampleRate(sampleRate);
+		inputDevice(inputDevice);
+		outputDevice(outputDevice);
+		volume(volume);
 	}
 
 	public static AudioDeviceManager getAudioDeviceManager() {

@@ -27,16 +27,16 @@ public interface AudioSampleLoader {
     /**
      * Load a FloatSample from a File object.
      */
-    public FloatSample loadFloatSample(File fileIn) throws IOException;
+    FloatSample loadFloatSample(File fileIn) throws IOException;
 
     /**
      * Load a FloatSample from an InputStream. This is handy when loading Resources from a JAR file.
      */
-    public FloatSample loadFloatSample(InputStream inputStream) throws IOException;
+    FloatSample loadFloatSample(InputStream inputStream) throws IOException;
 
     /**
      * Load a FloatSample from a URL.. This is handy when loading Resources from a website.
      */
-    public FloatSample loadFloatSample(URL url) throws IOException;
+    FloatSample loadFloatSample(URL url) throws IOException;
 
 }

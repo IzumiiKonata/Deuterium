@@ -38,8 +38,7 @@ public class TooltipProviderEnumShaderOptions implements TooltipProvider {
         } else {
             GuiButtonEnumShaderOption guibuttonenumshaderoption = (GuiButtonEnumShaderOption) btn;
             EnumShaderOption enumshaderoption = guibuttonenumshaderoption.getEnumShaderOption();
-            String[] astring = this.getTooltipLines(enumshaderoption);
-            return astring;
+            return this.getTooltipLines(enumshaderoption);
         }
     }
 

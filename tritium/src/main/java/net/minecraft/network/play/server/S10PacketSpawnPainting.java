@@ -28,7 +28,7 @@ public class S10PacketSpawnPainting implements Packet<INetHandlerPlayClient> {
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.entityID = buf.readVarIntFromBuffer();
         this.title = buf.readStringFromBuffer(EntityPainting.EnumArt.field_180001_A);
         this.position = buf.readBlockPos();
@@ -38,7 +38,7 @@ public class S10PacketSpawnPainting implements Packet<INetHandlerPlayClient> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeVarIntToBuffer(this.entityID);
         buf.writeString(this.title);
         buf.writeBlockPos(this.position);

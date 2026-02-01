@@ -97,7 +97,7 @@ abstract class AudioFileParser implements ChunkHandler {
 
     abstract FloatSample finish() throws IOException;
 
-    FloatSample makeSample(float[] floatData) throws IOException {
+    FloatSample makeSample(float[] floatData) {
         FloatSample floatSample = new FloatSample(floatData, samplesPerFrame);
 
         floatSample.setChannelsPerFrame(samplesPerFrame);

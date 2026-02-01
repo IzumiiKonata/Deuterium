@@ -28,21 +28,21 @@ public interface SignalCorrelator {
      * @param value
      * @return true if a new period value has been generated
      */
-    public boolean addSample(double value);
+    boolean addSample(double value);
 
     /**
      * @return the estimated period of the waveform in samples
      */
-    public double getPeriod();
+    double getPeriod();
 
     /**
      * Measure of how confident the analyzer is of the last result.
      * 
      * @return quality of the estimate between 0.0 and 1.0
      */
-    public double getConfidence();
+    double getConfidence();
 
     /** For internal debugging. */
-    public float[] getDiffs();
+    float[] getDiffs();
 
 }

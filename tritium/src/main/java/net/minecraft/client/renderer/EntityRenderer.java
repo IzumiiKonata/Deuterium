@@ -1376,17 +1376,17 @@ public class EntityRenderer implements IResourceManagerReloadListener {
                     CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering screen");
                     CrashReportCategory crashreportcategory = crashreport.makeCategory("Screen render details");
                     crashreportcategory.addCrashSectionCallable("Screen name", new Callable<String>() {
-                        public String call() throws Exception {
+                        public String call() {
                             return EntityRenderer.this.mc.currentScreen.getClass().getCanonicalName();
                         }
                     });
                     crashreportcategory.addCrashSectionCallable("Mouse location", new Callable<String>() {
-                        public String call() throws Exception {
+                        public String call() {
                             return String.format("Scaled: (%d, %d). Absolute: (%d, %d)", k1, l1, Mouse.getX(), Mouse.getY());
                         }
                     });
                     crashreportcategory.addCrashSectionCallable("Screen size", new Callable<String>() {
-                        public String call() throws Exception {
+                        public String call() {
                             return String.format("Scaled: (%d, %d). Absolute: (%d, %d). Scale factor of %d", scaledresolution.getScaledWidth(), scaledresolution.getScaledHeight(), EntityRenderer.this.mc.displayWidth, EntityRenderer.this.mc.displayHeight, scaledresolution.getScaleFactor());
                         }
                     });
@@ -2498,7 +2498,7 @@ public class EntityRenderer implements IResourceManagerReloadListener {
             if (Config.getNewRelease() != null) {
                 String s = "HD_U".replace("HD_U", "HD Ultra").replace("L", "Light");
                 String s1 = s + " " + Config.getNewRelease();
-                ChatComponentText chatcomponenttext = new ChatComponentText(I18n.format("of.message.newVersion", "\u00a7n" + s1 + "\u00a7r"));
+                ChatComponentText chatcomponenttext = new ChatComponentText(I18n.format("of.message.newVersion", "§n" + s1 + "§r"));
                 chatcomponenttext.setChatStyle((new ChatStyle()).setChatClickEvent(new ClickEvent(ClickEvent.Action.OPEN_URL, "https://optifine.net/downloads")));
                 this.mc.ingameGUI.getChatGUI().printChatMessage(chatcomponenttext);
                 Config.setNewRelease(null);

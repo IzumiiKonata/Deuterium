@@ -2,8 +2,6 @@ package net.minecraft.client.renderer.texture;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import lombok.NonNull;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.crash.CrashReport;
@@ -17,7 +15,6 @@ import net.optifine.RandomEntities;
 import net.optifine.shaders.ShadersTex;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.other.DevUtils;
 
 import java.io.IOException;
 import java.util.*;
@@ -114,7 +111,7 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
             CrashReportCategory crashreportcategory = crashreport.makeCategory("正在注册的资源位置");
             crashreportcategory.addCrashSection("资源位置", textureLocation);
             crashreportcategory.addCrashSectionCallable("纹理对象类", new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return textureObjf.getClass().getName();
                 }
             });

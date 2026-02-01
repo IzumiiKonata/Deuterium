@@ -72,9 +72,6 @@ public class IteratorCache {
             }
         }
 
-        public void remove() {
-            throw new UnsupportedOperationException("remove");
-        }
     }
 
     public interface IteratorReusable<E> extends Iterator<E> {

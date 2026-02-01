@@ -161,31 +161,30 @@ public class FixedPredictor {
      * @param residual
      */
     public static void computeResidual(int[] data, int dataLen, int order, int[] residual) {
-        int idataLen = (int) dataLen;
 
         switch (order) {
             case 0:
-                if (idataLen >= 0) System.arraycopy(data, 0, residual, 0, idataLen);
+                if ((int) dataLen >= 0) System.arraycopy(data, 0, residual, 0, (int) dataLen);
                 break;
             case 1:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     residual[i] = data[i] - data[i - 1];
                 }
                 break;
             case 2:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     /* == data[i] - 2*data[i-1] + data[i-2] */
                     residual[i] = data[i] - (data[i - 1] << 1) + data[i - 2];
                 }
                 break;
             case 3:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     /* == data[i] - 3*data[i-1] + 3*data[i-2] - data[i-3] */
                     residual[i] = data[i] - (((data[i - 1] - data[i - 2]) << 1) + (data[i - 1] - data[i - 2])) - data[i - 3];
                 }
                 break;
             case 4:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     /* == data[i] - 4*data[i-1] + 6*data[i-2] - 4*data[i-3] + data[i-4] */
                     residual[i] = data[i] - ((data[i - 1] + data[i - 3]) << 2) + ((data[i - 2] << 2) + (data[i - 2] << 1)) + data[i - 4];
                 }
@@ -203,31 +202,30 @@ public class FixedPredictor {
      * @param startAt   The starting position in the data array
      */
     public static void restoreSignal(int[] residual, int dataLen, int order, int[] data, int startAt) {
-        int idataLen = (int) dataLen;
 
         switch (order) {
             case 0:
-                if (idataLen >= 0) System.arraycopy(residual, 0, data, 0 + startAt, idataLen);
+                if ((int) dataLen >= 0) System.arraycopy(residual, 0, data, 0 + startAt, (int) dataLen);
                 break;
             case 1:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     data[i + startAt] = residual[i] + data[i + startAt - 1];
                 }
                 break;
             case 2:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     /* == residual[i] + 2*data[i-1] - data[i-2] */
                     data[i + startAt] = residual[i] + (data[i + startAt - 1] << 1) - data[i + startAt - 2];
                 }
                 break;
             case 3:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     /* residual[i] + 3*data[i-1] - 3*data[i-2]) + data[i-3] */
                     data[i + startAt] = residual[i] + (((data[i + startAt - 1] - data[i + startAt - 2]) << 1) + (data[i + startAt - 1] - data[i + startAt - 2])) + data[i + startAt - 3];
                 }
                 break;
             case 4:
-                for (int i = 0; i < idataLen; i++) {
+                for (int i = 0; i < (int) dataLen; i++) {
                     /* == residual[i] + 4*data[i-1] - 6*data[i-2] + 4*data[i-3] - data[i-4] */
                     data[i + startAt] = residual[i] + ((data[i + startAt - 1] + data[i + startAt - 3]) << 2) - ((data[i + startAt - 2] << 2) + (data[i + startAt - 2] << 1)) - data[i + startAt - 4];
                 }

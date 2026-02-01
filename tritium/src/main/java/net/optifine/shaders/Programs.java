@@ -72,9 +72,7 @@ public class Programs {
     }
 
     public Program getProgram(String name) {
-        if (name == null) {
-            return null;
-        } else {
+        if (name != null) {
             for (Program program : this.programs) {
                 String s = program.getName();
 
@@ -83,8 +81,8 @@ public class Programs {
                 }
             }
 
-            return null;
         }
+        return null;
     }
 
     public String[] getProgramNames() {
@@ -98,8 +96,7 @@ public class Programs {
     }
 
     public Program[] getPrograms() {
-        Program[] aprogram = this.programs.toArray(new Program[0]);
-        return aprogram;
+        return this.programs.toArray(new Program[0]);
     }
 
     public Program[] getPrograms(Program programFrom, Program programTo) {

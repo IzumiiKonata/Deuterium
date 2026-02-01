@@ -23,19 +23,19 @@ public interface FrameListener {
      *
      * @param metadata The metadata frame read
      */
-    public void processMetadata(Metadata metadata);
+    void processMetadata(Metadata metadata);
 
     /**
      * Called for each data frame read.
      *
      * @param frame The data frame read
      */
-    public void processFrame(Frame frame);
+    void processFrame(Frame frame);
 
     /**
      * Called for each frame error detected.
      *
      * @param msg The error message
      */
-    public void processError(String msg);
+    void processError(String msg);
 }

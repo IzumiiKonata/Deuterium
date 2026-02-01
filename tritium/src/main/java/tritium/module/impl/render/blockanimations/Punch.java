@@ -29,8 +29,6 @@ public class Punch extends SubModule<BlockAnimations> {
         GlStateManager.rotate(-var9 * 10.0f, 1.0f, -0.4f, -0.5f);
     }
 
-    ;
-
     /**
      * Performs transformations prior to the rendering of a held item in first person.
      */

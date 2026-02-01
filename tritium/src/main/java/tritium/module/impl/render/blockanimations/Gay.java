@@ -29,8 +29,6 @@ public class Gay extends SubModule<BlockAnimations> {
         GlStateManager.rotate(-var11 * 70.0f, 1.0f, -0.4f, -0.0f);
     }
 
-    ;
-
     /**
      * Performs transformations prior to the rendering of a held item in first person.
      */

@@ -70,15 +70,11 @@ public class MidiSynthesizer extends MessageParser {
 
     @Override
     public void registeredParameter(int channel, int index14, int value14) {
-        switch (index14) {
-            case MidiConstants.RPN_BEND_RANGE:
-                int semitones = value14 >> 7;
-                int cents = value14 & 0x7F;
-                double bendRange = semitones + (cents * 0.01);
-                multiSynth.setBendRange(channel, bendRange);
-                break;
-            default:
-                break;
+        if (index14 == MidiConstants.RPN_BEND_RANGE) {
+            int semitones = value14 >> 7;
+            int cents = value14 & 0x7F;
+            double bendRange = semitones + (cents * 0.01);
+            multiSynth.setBendRange(channel, bendRange);
         }
     }
 

@@ -36,7 +36,7 @@ public class S01PacketJoinGame implements Packet<INetHandlerPlayClient> {
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.entityId = buf.readInt();
         int i = buf.readUnsignedByte();
         this.hardcoreMode = (i & 8) == 8;
@@ -57,7 +57,7 @@ public class S01PacketJoinGame implements Packet<INetHandlerPlayClient> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeInt(this.entityId);
         int i = this.gameType.getID();
 

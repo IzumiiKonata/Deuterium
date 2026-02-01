@@ -31,7 +31,7 @@ package tritium.utils.other.math;
  * Strict versions of FastMath methods.
  * Cf. README.txt for more info.
  */
-public final strictfp class StrictFastMath extends CmnFastMath {
+public final class StrictFastMath extends CmnFastMath {
     
     /*
      * We use strictfp for the whole class:
@@ -879,12 +879,11 @@ public final strictfp class StrictFastMath extends CmnFastMath {
              * so
              * asinh(x) = log1p(x * (1 + 0.5 * x * (1 + (0.5-1)/2 * x^2 * (1 + (0.5-2)/3 * x^2 + ...)))
              */
-            final double x = value;
-            final double x2 = x*x;
+            final double x2 = value * value;
             // Enough terms for good accuracy,
             // given our threshold.
-            final double argLog1p = (x *
-                    (1 + 0.5 * x
+            final double argLog1p = (value *
+                    (1 + 0.5 * value
                             * (1 + (0.5-1)/2 * x2
                                     * (1 + (0.5-2)/3 * x2
                                             * (1 + (0.5-3)/4 * x2
@@ -1980,7 +1979,7 @@ public final strictfp class StrictFastMath extends CmnFastMath {
             return ((extendedMantissa >> shift) + 1) >> 1;
         } else {
             // +-Infinity, NaN, or a mathematical integer, or tiny.
-            if (false && ANTI_SLOW_CASTS) { // not worth it
+            if (false) { // not worth it
                 if (Math.abs(value) >= -(float)Integer.MIN_VALUE) {
                     // +-Infinity or a mathematical integer (mostly) out of int range.
                     return (value < 0.0) ? Integer.MIN_VALUE : Integer.MAX_VALUE;

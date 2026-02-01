@@ -19,9 +19,7 @@ public class ModelAdapterSlime extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (!(model instanceof ModelSlime)) {
-            return null;
-        } else {
+        if (model instanceof ModelSlime) {
             ModelSlime modelslime = (ModelSlime) model;
             if (modelPart.equals("body"))
                 return modelslime.slimeBodies;
@@ -31,8 +29,8 @@ public class ModelAdapterSlime extends ModelAdapter {
                 return modelslime.slimeRightEye;
             if (modelPart.equals("mouth"))
                 return modelslime.slimeMouth;
-            return null;
         }
+        return null;
     }
 
     public String[] getModelRendererNames() {

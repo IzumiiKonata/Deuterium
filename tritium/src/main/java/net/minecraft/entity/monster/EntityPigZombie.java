@@ -98,13 +98,6 @@ public class EntityPigZombie extends EntityZombie {
     }
 
     /**
-     * Checks that the entity is not colliding with any blocks / liquids
-     */
-    public boolean isNotColliding() {
-        return this.worldObj.checkNoEntityCollision(this.getEntityBoundingBox(), this) && this.worldObj.getCollidingBoundingBoxes(this, this.getEntityBoundingBox()).isEmpty() && !this.worldObj.isAnyLiquid(this.getEntityBoundingBox());
-    }
-
-    /**
      * (abstract) Protected helper method to write subclass entity data to NBT.
      */
     public void writeEntityToNBT(NBTTagCompound tagCompound) {
@@ -126,7 +119,7 @@ public class EntityPigZombie extends EntityZombie {
         this.angerLevel = tagCompund.getShort("Anger");
         String s = tagCompund.getString("HurtBy");
 
-        if (s.length() > 0) {
+        if (!s.isEmpty()) {
             this.angerTargetUUID = UUID.fromString(s);
             EntityPlayer entityplayer = this.worldObj.getPlayerEntityByUUID(this.angerTargetUUID);
             this.setRevengeTarget(entityplayer);

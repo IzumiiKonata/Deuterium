@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.*;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.Util;
 import net.minecraft.util.*;
 import net.optifine.DynamicLights;
 import net.optifine.GlErrors;
@@ -31,7 +30,6 @@ import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjglx.LWJGLException;
 import org.lwjglx.Sys;
-import org.lwjgl.opengl.Display;
 import org.lwjglx.opengl.DisplayMode;
 import org.lwjgl.opengl.*;
 import org.lwjglx.opengl.GLContext;
@@ -370,30 +368,25 @@ public class Config {
     }
 
     public static int getMipmapType() {
-        switch (gameSettings.ofMipmapType) {
-            case 0:
-                return 9986;
-
-            case 1:
-                return 9986;
-
-            case 2:
+        return switch (gameSettings.ofMipmapType) {
+            case 0 -> 9986;
+            case 1 -> 9986;
+            case 2 -> {
                 if (isMultiTexture()) {
-                    return 9985;
+                    yield 9985;
                 }
 
-                return 9986;
-
-            case 3:
+                yield 9986;
+            }
+            case 3 -> {
                 if (isMultiTexture()) {
-                    return 9987;
+                    yield 9987;
                 }
 
-                return 9986;
-
-            default:
-                return 9986;
-        }
+                yield 9986;
+            }
+            default -> 9986;
+        };
     }
 
     public static boolean isUseAlphaFunc() {
@@ -1124,7 +1117,7 @@ public class Config {
         return astring;
     }
 
-    public static DisplayMode getDisplayMode(Dimension p_getDisplayMode_0_) throws LWJGLException {
+    public static DisplayMode getDisplayMode(Dimension p_getDisplayMode_0_) {
         DisplayMode[] adisplaymode = getDisplayModes();
 
         for (DisplayMode displaymode : adisplaymode) {
@@ -1320,7 +1313,7 @@ public class Config {
     }
 
     private static String[] splitRelease(String p_splitRelease_0_) {
-        if (p_splitRelease_0_ != null && p_splitRelease_0_.length() > 0) {
+        if (p_splitRelease_0_ != null && !p_splitRelease_0_.isEmpty()) {
             Pattern pattern = Pattern.compile("([A-Z])([0-9]+)(.*)");
             Matcher matcher = pattern.matcher(p_splitRelease_0_);
 
@@ -1464,8 +1457,6 @@ public class Config {
 //                            MemoryTracker.memFree(icon);
 //                        }
                     }
-                } catch (IOException ioexception) {
-                    warn("Error setting window icon: " + ioexception.getClass().getName() + ": " + ioexception.getMessage());
                 } finally {
                     IOUtils.closeQuietly(inputstream);
                     IOUtils.closeQuietly(inputstream1);
@@ -1474,7 +1465,7 @@ public class Config {
         }
     }
 
-    public static ByteBuffer readIconImage(InputStream p_readIconImage_0_) throws IOException {
+    public static ByteBuffer readIconImage(InputStream p_readIconImage_0_) {
         @Cleanup
         NativeBackedImage bufferedimage = NativeBackedImage.make(p_readIconImage_0_);
         int[] aint = bufferedimage.getRGB(0, 0, bufferedimage.getWidth(), bufferedimage.getHeight(), null, 0, bufferedimage.getWidth());
@@ -1639,9 +1630,7 @@ public class Config {
     }
 
     public static int getFpsMin() {
-        if (minecraft.debug == mcDebugLast) {
-            return fpsMinLast;
-        } else {
+        if (minecraft.debug != mcDebugLast) {
             mcDebugLast = minecraft.debug;
             FrameTimer frametimer = minecraft.getFrameTimer();
             long[] along = frametimer.getFrames();
@@ -1671,8 +1660,8 @@ public class Config {
                 double d0 = (double) i1 / 1.0E9D;
                 fpsMinLast = (int) (1.0D / d0);
             }
-            return fpsMinLast;
         }
+        return fpsMinLast;
     }
 
     private static String getUpdates(String p_getUpdates_0_) {
@@ -1869,34 +1858,17 @@ public class Config {
 
 
     public static String getGlErrorString(int p_getGlErrorString_0_) {
-        switch (p_getGlErrorString_0_) {
-            case 0:
-                return "No error";
-
-            case 1280:
-                return "Invalid enum";
-
-            case 1281:
-                return "Invalid value";
-
-            case 1282:
-                return "Invalid operation";
-
-            case 1283:
-                return "Stack overflow";
-
-            case 1284:
-                return "Stack underflow";
-
-            case 1285:
-                return "Out of memory";
-
-            case 1286:
-                return "Invalid framebuffer operation";
-
-            default:
-                return "Unknown";
-        }
+        return switch (p_getGlErrorString_0_) {
+            case 0 -> "No error";
+            case 1280 -> "Invalid enum";
+            case 1281 -> "Invalid value";
+            case 1282 -> "Invalid operation";
+            case 1283 -> "Stack overflow";
+            case 1284 -> "Stack underflow";
+            case 1285 -> "Out of memory";
+            case 1286 -> "Invalid framebuffer operation";
+            default -> "Unknown";
+        };
     }
 
     public static boolean isTrue(Boolean p_isTrue_0_) {

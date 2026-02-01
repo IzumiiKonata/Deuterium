@@ -355,10 +355,5 @@ public class NavigateBar extends NCMPanel {
             }));
         }
 
-        @Override
-        public void onRender(double mouseX, double mouseY) {
-
-        }
-
     }
 }

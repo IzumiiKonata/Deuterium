@@ -1,7 +1,6 @@
 package tritium.event.events.player;
 
 import lombok.*;
-import tritium.event.eventapi.Event;
 import tritium.event.eventapi.EventCancellable;
 
 /**

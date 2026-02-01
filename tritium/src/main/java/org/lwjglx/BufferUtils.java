@@ -15,7 +15,6 @@
  */
 package org.lwjglx;
 
-import org.lwjgl.system.MemoryUtil;
 import tritium.utils.other.MemoryTracker;
 
 import java.nio.*;

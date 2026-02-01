@@ -52,20 +52,15 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener {
             if (i == -1) {
                 return false;
             } else {
-                switch (i) {
-                    case 1:
-                        return this.fluidRenderer.renderFluid(blockAccess, state, pos, worldRendererIn);
-
-                    case 2:
-                        return false;
-
-                    case 3:
+                return switch (i) {
+                    case 1 -> this.fluidRenderer.renderFluid(blockAccess, state, pos, worldRendererIn);
+                    case 2 -> false;
+                    case 3 -> {
                         IBakedModel ibakedmodel = this.getModelFromBlockState(state, blockAccess, pos);
-                        return this.blockModelRenderer.renderModel(blockAccess, ibakedmodel, state, pos, worldRendererIn);
-
-                    default:
-                        return false;
-                }
+                        yield this.blockModelRenderer.renderModel(blockAccess, ibakedmodel, state, pos, worldRendererIn);
+                    }
+                    default -> false;
+                };
             }
         } catch (Throwable throwable) {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "正在曲面细分世界方块");
@@ -113,17 +108,13 @@ public class BlockRendererDispatcher implements IResourceManagerReloadListener {
 
         if (i != -1) {
             switch (i) {
-                case 1:
-                default:
-                    break;
-
-                case 2:
-                    this.chestRenderer.renderChestBrightness(state.getBlock(), brightness);
-                    break;
-
-                case 3:
+                case 2 -> this.chestRenderer.renderChestBrightness(state.getBlock(), brightness);
+                case 3 -> {
                     IBakedModel ibakedmodel = this.getBakedModel(state, null);
                     this.blockModelRenderer.renderModelBrightness(ibakedmodel, state, brightness, true);
+                }
+                default -> {
+                }
             }
         }
     }

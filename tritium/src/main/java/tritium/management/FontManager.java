@@ -8,8 +8,6 @@ import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.font.FontKerning;
 
 import java.awt.*;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.HashMap;

@@ -95,7 +95,7 @@ public class GuiLanguage extends GuiScreen {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
         if (keyCode == 1) {
             if (this.languageManager.getCurrentLanguage() != prevLanguage) {
                 GuiLanguage.this.languageManager.setCurrentLanguage(prevLanguage);
@@ -111,7 +111,7 @@ public class GuiLanguage extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             switch (button.id) {
                 case 5:

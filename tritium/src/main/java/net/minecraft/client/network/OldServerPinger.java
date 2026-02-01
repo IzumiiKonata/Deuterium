@@ -81,7 +81,7 @@ public class OldServerPinger {
                             StringBuilder stringbuilder = new StringBuilder();
 
                             for (GameProfile gameprofile : serverstatusresponse.getPlayerCountData().getPlayers()) {
-                                if (stringbuilder.length() > 0) {
+                                if (!stringbuilder.isEmpty()) {
                                     stringbuilder.append("\n");
                                 }
 
@@ -89,7 +89,7 @@ public class OldServerPinger {
                             }
 
                             if (serverstatusresponse.getPlayerCountData().getPlayers().length < serverstatusresponse.getPlayerCountData().getOnlinePlayerCount()) {
-                                if (stringbuilder.length() > 0) {
+                                if (!stringbuilder.isEmpty()) {
                                     stringbuilder.append("\n");
                                 }
 
@@ -148,7 +148,7 @@ public class OldServerPinger {
     protected void tryCompatibilityPing(final ServerData server) {
         final ServerAddress serveraddress = ServerAddress.fromString(server.serverIP);
         (new Bootstrap()).group(NetworkManager.CLIENT_NIO_EVENTLOOP.getValue()).handler(new ChannelInitializer<Channel>() {
-            protected void initChannel(Channel p_initChannel_1_) throws Exception {
+            protected void initChannel(Channel p_initChannel_1_) {
                 try {
                     p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.TRUE);
                 } catch (ChannelException var3) {
@@ -186,14 +186,14 @@ public class OldServerPinger {
                         }
                     }
 
-                    protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, ByteBuf p_channelRead0_2_) throws Exception {
+                    protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, ByteBuf p_channelRead0_2_) {
                         short short1 = p_channelRead0_2_.readUnsignedByte();
 
                         if (short1 == 255) {
                             String s = new String(p_channelRead0_2_.readBytes(p_channelRead0_2_.readShort() * 2).array(), Charsets.UTF_16BE);
                             String[] astring = Iterables.toArray(OldServerPinger.PING_RESPONSE_SPLITTER.split(s), String.class);
 
-                            if ("\u00a71".equals(astring[0])) {
+                            if ("§1".equals(astring[0])) {
                                 int i = MathHelper.parseIntWithDefault(astring[1], 0);
                                 String s1 = astring[2];
                                 String s2 = astring[3];
@@ -209,7 +209,7 @@ public class OldServerPinger {
                         p_channelRead0_1_.close();
                     }
 
-                    public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) throws Exception {
+                    public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) {
                         p_exceptionCaught_1_.close();
                     }
                 });

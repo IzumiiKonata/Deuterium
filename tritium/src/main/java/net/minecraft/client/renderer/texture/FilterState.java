@@ -7,6 +7,6 @@ package net.minecraft.client.renderer.texture;
 public enum FilterState {
 
     LINEAR,
-    NEAREST;
+    NEAREST
 
 }

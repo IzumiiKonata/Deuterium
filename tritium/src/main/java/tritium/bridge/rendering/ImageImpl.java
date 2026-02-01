@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import today.opai.api.interfaces.render.Image;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.ByteArrayInputStream;

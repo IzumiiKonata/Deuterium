@@ -31,5 +31,5 @@ public interface Function {
      * @param input
      * @return generated value
      */
-    public double evaluate(double input);
+    double evaluate(double input);
 }

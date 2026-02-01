@@ -144,17 +144,17 @@ public class GuiScreenBook extends GuiScreen {
             this.buttonSign.visible = !this.bookGettingSigned;
             this.buttonCancel.visible = this.bookGettingSigned;
             this.buttonFinalize.visible = this.bookGettingSigned;
-            this.buttonFinalize.enabled = this.bookTitle.trim().length() > 0;
+            this.buttonFinalize.enabled = !this.bookTitle.trim().isEmpty();
         }
     }
 
-    private void sendBookToServer(boolean publish) throws IOException {
+    private void sendBookToServer(boolean publish) {
         if (this.bookIsUnsigned && this.bookIsModified) {
             if (this.bookPages != null) {
                 while (this.bookPages.tagCount() > 1) {
                     String s = this.bookPages.getStringTagAt(this.bookPages.tagCount() - 1);
 
-                    if (s.length() != 0) {
+                    if (!s.isEmpty()) {
                         break;
                     }
 
@@ -262,7 +262,7 @@ public class GuiScreenBook extends GuiScreen {
                 case 14:
                     String s = this.pageGetCurrent();
 
-                    if (s.length() > 0) {
+                    if (!s.isEmpty()) {
                         this.pageSetCurrent(s.substring(0, s.length() - 1));
                     }
 
@@ -518,10 +518,8 @@ public class GuiScreenBook extends GuiScreen {
                     }
 
                 }
-                return null;
-            } else {
-                return null;
             }
+            return null;
         }
     }
 

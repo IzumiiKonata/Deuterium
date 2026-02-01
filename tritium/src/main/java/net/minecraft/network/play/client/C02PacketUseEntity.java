@@ -6,7 +6,6 @@ import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayServer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
-import today.opai.api.enums.EnumEntityAction;
 import today.opai.api.enums.EnumUseEntityAction;
 import today.opai.api.interfaces.dataset.Vector3d;
 import today.opai.api.interfaces.game.network.client.CPacket02UseEntity;
@@ -40,7 +39,7 @@ public class C02PacketUseEntity implements Packet<INetHandlerPlayServer>, CPacke
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.entityId = buf.readVarIntFromBuffer();
         this.action = buf.readEnumValue(Action.class);
 
@@ -52,7 +51,7 @@ public class C02PacketUseEntity implements Packet<INetHandlerPlayServer>, CPacke
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeVarIntToBuffer(this.entityId);
         buf.writeEnumValue(this.action);
 
@@ -88,16 +87,12 @@ public class C02PacketUseEntity implements Packet<INetHandlerPlayServer>, CPacke
         INTERACT_AT;
 
         public EnumUseEntityAction toOpai() {
-            switch (this) {
-                case INTERACT:
-                    return EnumUseEntityAction.INTERACT;
-                case ATTACK:
-                    return EnumUseEntityAction.ATTACK;
-                case INTERACT_AT:
-                    return EnumUseEntityAction.INTERACT_AT;
-                default:
-                    throw new IllegalArgumentException("Unknown use entity action: " + this);
-            }
+            return switch (this) {
+                case INTERACT -> EnumUseEntityAction.INTERACT;
+                case ATTACK -> EnumUseEntityAction.ATTACK;
+                case INTERACT_AT -> EnumUseEntityAction.INTERACT_AT;
+                default -> throw new IllegalArgumentException("Unknown use entity action: " + this);
+            };
         }
     }
 

@@ -623,10 +623,8 @@ public class ModelBakery {
                 }
 
             }
-            return p_fixModelLocation_0_;
-        } else {
-            return p_fixModelLocation_0_;
         }
+        return p_fixModelLocation_0_;
     }
 
     private static String fixResourcePath(String p_fixResourcePath_0_, String p_fixResourcePath_1_) {

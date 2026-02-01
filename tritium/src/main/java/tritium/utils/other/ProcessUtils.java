@@ -1,6 +1,5 @@
 package tritium.utils.other;
 
-import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 
 import java.io.BufferedReader;

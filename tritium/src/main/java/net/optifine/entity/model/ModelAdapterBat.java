@@ -19,9 +19,7 @@ public class ModelAdapterBat extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (!(model instanceof ModelBat)) {
-            return null;
-        } else {
+        if (model instanceof ModelBat) {
             if (modelPart.equals("head"))
                 return ((ModelBat) model).batHead;
             if (modelPart.equals("body"))
@@ -34,8 +32,8 @@ public class ModelAdapterBat extends ModelAdapter {
                 return ((ModelBat) model).batOuterRightWing;
             if (modelPart.equals("outer_left_wing"))
                 return ((ModelBat) model).batOuterLeftWing;
-            return null;
         }
+        return null;
     }
 
     public String[] getModelRendererNames() {

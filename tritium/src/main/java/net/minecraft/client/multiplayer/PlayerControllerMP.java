@@ -492,7 +492,7 @@ public class PlayerControllerMP {
      * Used in PlayerControllerMP to update the server with an ItemStack in a slot.
      */
     public void sendSlotPacket(ItemStack itemStackIn, int slotId) {
-        if (this.currentGameType.isCreative() || true) {
+        if (true) {
             this.netClientHandler.addToSendQueue(new C10PacketCreativeInventoryAction(slotId, itemStackIn));
         }
     }

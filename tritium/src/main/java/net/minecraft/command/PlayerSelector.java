@@ -237,7 +237,7 @@ public class PlayerSelector {
         List<Predicate<Entity>> list = Lists.newArrayList();
         final Map<String, Integer> map = func_96560_a(p_179657_0_);
 
-        if (map != null && map.size() > 0) {
+        if (map != null && !map.isEmpty()) {
             list.add(new Predicate<Entity>() {
                 public boolean apply(Entity p_apply_1_) {
                     Scoreboard scoreboard = MinecraftServer.getServer().worldServerForDimension(0).getScoreboard();
@@ -534,26 +534,15 @@ public class PlayerSelector {
             int j = -1;
 
             for (Matcher matcher = intListPattern.matcher(argumentString); matcher.find(); j = matcher.end()) {
-                String s = null;
+                String s = switch (i++) {
+                    case 0 -> "x";
+                    case 1 -> "y";
+                    case 2 -> "z";
+                    case 3 -> "r";
+                    default -> null;
+                };
 
-                switch (i++) {
-                    case 0:
-                        s = "x";
-                        break;
-
-                    case 1:
-                        s = "y";
-                        break;
-
-                    case 2:
-                        s = "z";
-                        break;
-
-                    case 3:
-                        s = "r";
-                }
-
-                if (s != null && matcher.group(1).length() > 0) {
+                if (s != null && !matcher.group(1).isEmpty()) {
                     map.put(s, matcher.group(1));
                 }
             }

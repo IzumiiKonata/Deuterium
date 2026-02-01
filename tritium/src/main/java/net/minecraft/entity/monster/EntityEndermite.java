@@ -72,10 +72,6 @@ public class EntityEndermite extends EntityMob {
         this.playSound("mob.silverfish.step", 0.15F, 1.0F);
     }
 
-    protected Item getDropItem() {
-        return null;
-    }
-
     /**
      * (abstract) Protected helper method to read subclass entity data from NBT.
      */

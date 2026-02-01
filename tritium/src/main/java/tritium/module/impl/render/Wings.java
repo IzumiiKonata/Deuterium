@@ -20,8 +20,6 @@ public class Wings
         }
     }
 
-    ;
-
     public Wings() {
         super("Wings", Category.RENDER);
     }

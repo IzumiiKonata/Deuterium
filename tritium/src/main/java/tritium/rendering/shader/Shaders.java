@@ -1,7 +1,6 @@
 package tritium.rendering.shader;
 
 import tritium.rendering.shader.impl.*;
-import tritium.rendering.shader.impl.StencilShader;
 
 public class Shaders {
     public static Shader BLOOM_SHADER = new BloomShader();

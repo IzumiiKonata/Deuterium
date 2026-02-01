@@ -8,7 +8,6 @@ import net.minecraft.util.Location;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.file.Files;
 import java.util.Map;
 import java.util.Set;
 
@@ -65,7 +64,7 @@ public class DefaultResourcePack implements IResourcePack {
         return defaultResourceDomains;
     }
 
-    public <T extends IMetadataSection> T getPackMetadata(IMetadataSerializer metadataSerializer, String metadataSectionName) throws IOException {
+    public <T extends IMetadataSection> T getPackMetadata(IMetadataSerializer metadataSerializer, String metadataSectionName) {
         try {
             InputStream inputstream = new FileInputStream(this.mapAssets.get("pack.mcmeta"));
             return AbstractResourcePack.readMetadata(metadataSerializer, inputstream, metadataSectionName);
@@ -76,7 +75,7 @@ public class DefaultResourcePack implements IResourcePack {
         }
     }
 
-    public BufferedImage getPackImage() throws IOException {
+    public BufferedImage getPackImage() {
         return TextureUtil.readBufferedImage(DefaultResourcePack.class.getResourceAsStream("/" + (Location.of("pack.png")).getResourcePath()));
     }
 

@@ -126,7 +126,7 @@ public class EntityTracker {
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Entity To Track");
             crashreportcategory.addCrashSection("Tracking range", trackingRange + " blocks");
             crashreportcategory.addCrashSectionCallable("Update interval", new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     String s = "Once per " + updateFrequency + " ticks";
 
                     if (updateFrequency == Integer.MAX_VALUE) {

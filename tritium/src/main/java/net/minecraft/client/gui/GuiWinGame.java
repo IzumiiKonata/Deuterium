@@ -57,7 +57,7 @@ public class GuiWinGame extends GuiScreen {
      * Fired when a key is typed (except F11 which toggles full screen). This is the equivalent of
      * KeyListener.keyTyped(KeyEvent e). Args : character (character on the key), keyCode (lwjgl Keyboard key code)
      */
-    protected void keyTyped(char typedChar, int keyCode) throws IOException {
+    protected void keyTyped(char typedChar, int keyCode) {
         if (keyCode == 1) {
             this.sendRespawnPacket();
         }
@@ -66,13 +66,6 @@ public class GuiWinGame extends GuiScreen {
     private void sendRespawnPacket() {
         this.mc.thePlayer.sendQueue.addToSendQueue(new C16PacketClientStatus(C16PacketClientStatus.EnumState.PERFORM_RESPAWN));
         this.mc.displayGuiScreen(null);
-    }
-
-    /**
-     * Returns true if this GUI should pause the game when it is displayed in single-player
-     */
-    public boolean doesGuiPauseGame() {
-        return true;
     }
 
     /**

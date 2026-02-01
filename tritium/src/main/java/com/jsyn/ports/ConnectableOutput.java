@@ -17,7 +17,7 @@
 package com.jsyn.ports;
 
 public interface ConnectableOutput {
-    public void connect(ConnectableInput other);
+    void connect(ConnectableInput other);
 
-    public void disconnect(ConnectableInput other);
+    void disconnect(ConnectableInput other);
 }

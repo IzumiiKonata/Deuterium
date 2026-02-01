@@ -49,30 +49,19 @@ public class OptionsImpl implements Options {
 
     private KeyBinding getKeyBinding(EnumKeybind key) {
 
-        switch (key) {
-            case FORWARD:
-                return Minecraft.getMinecraft().gameSettings.keyBindForward;
-            case LEFT:
-                return Minecraft.getMinecraft().gameSettings.keyBindLeft;
-            case RIGHT:
-                return Minecraft.getMinecraft().gameSettings.keyBindRight;
-            case BACK:
-                return Minecraft.getMinecraft().gameSettings.keyBindBack;
-            case JUMP:
-                return Minecraft.getMinecraft().gameSettings.keyBindJump;
-            case SNEAK:
-                return Minecraft.getMinecraft().gameSettings.keyBindSneak;
-            case SPRINT:
-                return Minecraft.getMinecraft().gameSettings.keyBindSprint;
-            case USE_ITEM:
-                return Minecraft.getMinecraft().gameSettings.keyBindUseItem;
-            case ATTACK:
-                return Minecraft.getMinecraft().gameSettings.keyBindAttack;
-            case PLAYER_LIST:
-                return Minecraft.getMinecraft().gameSettings.keyBindPlayerList;
-            default:
-                throw new IllegalArgumentException("Invalid key");
-        }
+        return switch (key) {
+            case FORWARD -> Minecraft.getMinecraft().gameSettings.keyBindForward;
+            case LEFT -> Minecraft.getMinecraft().gameSettings.keyBindLeft;
+            case RIGHT -> Minecraft.getMinecraft().gameSettings.keyBindRight;
+            case BACK -> Minecraft.getMinecraft().gameSettings.keyBindBack;
+            case JUMP -> Minecraft.getMinecraft().gameSettings.keyBindJump;
+            case SNEAK -> Minecraft.getMinecraft().gameSettings.keyBindSneak;
+            case SPRINT -> Minecraft.getMinecraft().gameSettings.keyBindSprint;
+            case USE_ITEM -> Minecraft.getMinecraft().gameSettings.keyBindUseItem;
+            case ATTACK -> Minecraft.getMinecraft().gameSettings.keyBindAttack;
+            case PLAYER_LIST -> Minecraft.getMinecraft().gameSettings.keyBindPlayerList;
+            default -> throw new IllegalArgumentException("Invalid key");
+        };
     }
 
     @Override

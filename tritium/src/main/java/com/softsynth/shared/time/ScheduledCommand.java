@@ -17,5 +17,5 @@
 package com.softsynth.shared.time;
 
 public interface ScheduledCommand {
-    public void run();
+    void run();
 }

@@ -23,6 +23,4 @@ public class Vanilla extends SubModule<BlockAnimations> {
         this.getModule().doBlockTransformations();
     }
 
-    ;
-
 }

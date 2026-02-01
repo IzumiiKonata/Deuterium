@@ -62,9 +62,8 @@ public class PCMDecoder {
      * @param frame         The FLAC frame
      * @param channelData   The decoded channel data
      * @return returns the decoded buffer data
-     * @throws IOException  Thrown if error writing to output channel
      */
-    public ByteData getFrame(Frame frame, ChannelData[] channelData) throws IOException {
+    public ByteData getFrame(Frame frame, ChannelData[] channelData) {
         boolean isUnsignedSamples = (bps <= 8);
         int wideSamples = frame.header.blockSize;
         int wideSample;

@@ -7,7 +7,6 @@ import today.opai.api.interfaces.modules.PresetModule;
 import tritium.module.Module;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.stream.Collectors;
 
 /**

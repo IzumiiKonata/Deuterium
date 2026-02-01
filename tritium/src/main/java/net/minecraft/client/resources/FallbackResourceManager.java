@@ -62,8 +62,7 @@ public class FallbackResourceManager implements IResourceManager {
     }
 
     protected InputStream getInputStream(Location location, IResourcePack resourcePack) throws IOException {
-        InputStream inputstream = InputStreamLeakageTracker.wrap(resourcePack.getInputStream(location));
-        return /*logger.isDebugEnabled() ? new InputStreamLeakedResourceLogger(inputstream, location, resourcePack.getPackName()) : */inputstream;
+        return /*logger.isDebugEnabled() ? new InputStreamLeakedResourceLogger(inputstream, location, resourcePack.getPackName()) : */InputStreamLeakageTracker.wrap(resourcePack.getInputStream(location));
     }
 
     public List<IResource> getAllResources(Location location) throws IOException {

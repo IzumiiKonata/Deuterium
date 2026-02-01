@@ -221,24 +221,10 @@ public class ShaderGroup {
             }
 
             switch (i) {
-                case 0:
-                default:
-                    break;
-
-                case 1:
-                    shaderuniform.set(afloat[0]);
-                    break;
-
-                case 2:
-                    shaderuniform.set(afloat[0], afloat[1]);
-                    break;
-
-                case 3:
-                    shaderuniform.set(afloat[0], afloat[1], afloat[2]);
-                    break;
-
-                case 4:
-                    shaderuniform.set(afloat[0], afloat[1], afloat[2], afloat[3]);
+                case 1 -> shaderuniform.set(afloat[0]);
+                case 2 -> shaderuniform.set(afloat[0], afloat[1]);
+                case 3 -> shaderuniform.set(afloat[0], afloat[1], afloat[2]);
+                case 4 -> shaderuniform.set(afloat[0], afloat[1], afloat[2], afloat[3]);
             }
         }
     }

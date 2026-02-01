@@ -30,7 +30,7 @@ public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPa
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.entityID = buf.readVarIntFromBuffer();
         this.action = buf.readEnumValue(Action.class);
         this.auxData = buf.readVarIntFromBuffer();
@@ -39,7 +39,7 @@ public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPa
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeVarIntToBuffer(this.entityID);
         buf.writeEnumValue(this.action);
         buf.writeVarIntToBuffer(this.auxData);
@@ -70,45 +70,29 @@ public class C0BPacketEntityAction implements Packet<INetHandlerPlayServer>, CPa
         OPEN_INVENTORY;
 
         public static Action fromOpai(EnumEntityAction action) {
-            switch (action) {
-                case START_SNEAKING:
-                    return START_SNEAKING;
-                case STOP_SNEAKING:
-                    return STOP_SNEAKING;
-                case START_SPRINTING:
-                    return START_SPRINTING;
-                case STOP_SPRINTING:
-                    return STOP_SPRINTING;
-                case RIDING_JUMP:
-                    return RIDING_JUMP;
-                case OPEN_INVENTORY:
-                    return OPEN_INVENTORY;
-                case STOP_SLEEPING:
-                    return STOP_SLEEPING;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (action) {
+                case START_SNEAKING -> START_SNEAKING;
+                case STOP_SNEAKING -> STOP_SNEAKING;
+                case START_SPRINTING -> START_SPRINTING;
+                case STOP_SPRINTING -> STOP_SPRINTING;
+                case RIDING_JUMP -> RIDING_JUMP;
+                case OPEN_INVENTORY -> OPEN_INVENTORY;
+                case STOP_SLEEPING -> STOP_SLEEPING;
+                default -> throw new IllegalArgumentException();
+            };
         }
 
         public EnumEntityAction toOpai() {
-            switch (this) {
-                case START_SNEAKING:
-                    return EnumEntityAction.START_SNEAKING;
-                case STOP_SNEAKING:
-                    return EnumEntityAction.STOP_SNEAKING;
-                case START_SPRINTING:
-                    return EnumEntityAction.START_SPRINTING;
-                case STOP_SPRINTING:
-                    return EnumEntityAction.STOP_SPRINTING;
-                case RIDING_JUMP:
-                    return EnumEntityAction.RIDING_JUMP;
-                case OPEN_INVENTORY:
-                    return EnumEntityAction.OPEN_INVENTORY;
-                case STOP_SLEEPING:
-                    return EnumEntityAction.STOP_SLEEPING;
-                default:
-                    throw new IllegalArgumentException();
-            }
+            return switch (this) {
+                case START_SNEAKING -> EnumEntityAction.START_SNEAKING;
+                case STOP_SNEAKING -> EnumEntityAction.STOP_SNEAKING;
+                case START_SPRINTING -> EnumEntityAction.START_SPRINTING;
+                case STOP_SPRINTING -> EnumEntityAction.STOP_SPRINTING;
+                case RIDING_JUMP -> EnumEntityAction.RIDING_JUMP;
+                case OPEN_INVENTORY -> EnumEntityAction.OPEN_INVENTORY;
+                case STOP_SLEEPING -> EnumEntityAction.STOP_SLEEPING;
+                default -> throw new IllegalArgumentException();
+            };
         }
     }
 

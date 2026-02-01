@@ -1,6 +1,5 @@
 package tritium.rendering.ui.widgets;
 
-import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
 
 /**

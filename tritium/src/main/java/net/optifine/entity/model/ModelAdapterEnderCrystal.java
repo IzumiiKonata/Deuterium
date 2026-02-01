@@ -25,9 +25,7 @@ public class ModelAdapterEnderCrystal extends ModelAdapter {
     }
 
     public ModelRenderer getModelRenderer(ModelBase model, String modelPart) {
-        if (!(model instanceof ModelEnderCrystal)) {
-            return null;
-        } else {
+        if (model instanceof ModelEnderCrystal) {
             ModelEnderCrystal modelendercrystal = (ModelEnderCrystal) model;
             if (modelPart.equals("cube"))
                 return modelendercrystal.cube;
@@ -35,8 +33,8 @@ public class ModelAdapterEnderCrystal extends ModelAdapter {
                 return modelendercrystal.glass;
             if (modelPart.equals("base"))
                 return modelendercrystal.base;
-            return null;
         }
+        return null;
     }
 
     public String[] getModelRendererNames() {

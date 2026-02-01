@@ -8,7 +8,6 @@ import tritium.Tritium;
 import tritium.rendering.Image;
 import tritium.rendering.texture.Textures;
 import tritium.widget.Widget;
-import tritium.interfaces.SharedRenderingConstants;
 
 import java.awt.image.BufferedImage;
 import java.io.File;

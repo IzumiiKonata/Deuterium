@@ -22,17 +22,6 @@ public class RafIFFParser extends IFFParser {
     }
 
     /**
-     * Size of file based on outermost chunk size plus 8. Can be used to report progress when
-     * loading samples.
-     *
-     * @return Number of bytes in outer chunk plus header.
-     */
-    @Override
-    public long getFileSize() {
-        return totalSize;
-    }
-
-    /**
      * Since IFF files use chunks with explicit size, it is important to keep track of how many
      * bytes have been read from the file. Can be used to report progress when loading samples.
      *

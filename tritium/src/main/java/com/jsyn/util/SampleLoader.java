@@ -18,7 +18,6 @@ package com.jsyn.util;
 
 import com.jsyn.data.FloatSample;
 import com.jsyn.util.soundfile.CustomSampleLoader;
-import com.jsyn.util.soundfile.IFFParser;
 import com.jsyn.util.soundfile.streamed.buffered.BufferedSampleLoader;
 import com.jsyn.util.soundfile.streamed.raf.RafSampleLoader;
 import javazoom.jl.converter.Converter;
@@ -74,7 +73,7 @@ public class SampleLoader {
     }
 
     @SneakyThrows
-    public static FloatSample loadStreamedFloatSample(File fileIn) throws IOException {
+    public static FloatSample loadStreamedFloatSample(File fileIn) {
 
         String name = fileIn.getName();
         if (name.endsWith(".flac")) {

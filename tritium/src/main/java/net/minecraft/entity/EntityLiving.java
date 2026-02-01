@@ -391,10 +391,6 @@ public abstract class EntityLiving extends EntityLivingBase {
         this.setNoAI(tagCompund.getBoolean("NoAI"));
     }
 
-    public void setMoveForward(float p_70657_1_) {
-        this.moveForward = p_70657_1_;
-    }
-
     /**
      * set the movespeed used for the new AI system
      */

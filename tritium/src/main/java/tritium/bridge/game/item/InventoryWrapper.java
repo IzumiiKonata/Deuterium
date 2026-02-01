@@ -5,7 +5,6 @@ import today.opai.api.interfaces.game.Inventory;
 import today.opai.api.interfaces.game.item.ItemStack;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 

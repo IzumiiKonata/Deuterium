@@ -20,12 +20,12 @@ import com.jsyn.io.AudioInputStream;
 
 public interface AudioDeviceInputStream extends AudioInputStream {
     /** Start the input device. */
-    public void start();
+    void start();
 
-    public void stop();
+    void stop();
 
     /**
      * @return Estimated latency in seconds.
      */
-    public double getLatency();
+    double getLatency();
 }

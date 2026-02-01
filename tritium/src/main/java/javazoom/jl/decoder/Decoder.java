@@ -228,7 +228,7 @@ public class Decoder implements DecoderErrors {
 
             // REVIEW: allow channel output selection type
             // (LEFT, RIGHT, BOTH, DOWNMIX)
-        };
+        }
 
         if (decoder == null) {
             throw newDecoderException(UNSUPPORTED_LAYER, null);
@@ -237,7 +237,7 @@ public class Decoder implements DecoderErrors {
         return decoder;
     }
 
-    private void initialize(Header header) throws DecoderException {
+    private void initialize(Header header) {
 
         // REVIEW: allow customizable scale factor
         float scalefactor = 32700.0f;

@@ -11,7 +11,6 @@ import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.QRCodeGenerator;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
-import tritium.management.ThemeManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Image;
 import tritium.rendering.Rect;

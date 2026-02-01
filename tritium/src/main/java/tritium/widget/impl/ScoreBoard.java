@@ -14,7 +14,6 @@ import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.settings.BooleanSetting;
 import tritium.widget.Widget;
-import tritium.interfaces.SharedRenderingConstants;
 
 import java.util.Collections;
 import java.util.List;

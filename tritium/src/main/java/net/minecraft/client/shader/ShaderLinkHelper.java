@@ -35,7 +35,7 @@ public class ShaderLinkHelper {
         }
     }
 
-    public void linkProgram(ShaderManager manager) throws IOException {
+    public void linkProgram(ShaderManager manager) {
         manager.getFragmentShaderLoader().attachShader(manager);
         manager.getVertexShaderLoader().attachShader(manager);
         OpenGlHelper.glLinkProgram(manager.getProgram());

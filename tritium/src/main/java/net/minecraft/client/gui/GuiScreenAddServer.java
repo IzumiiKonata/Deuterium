@@ -16,7 +16,7 @@ public class GuiScreenAddServer extends GuiScreen {
     private GuiButton serverResourcePacks;
     private final Predicate<String> field_181032_r = new Predicate<String>() {
         public boolean apply(String p_apply_1_) {
-            if (p_apply_1_.length() == 0) {
+            if (p_apply_1_.isEmpty()) {
                 return true;
             } else {
                 String[] astring = p_apply_1_.split(":");
@@ -65,7 +65,7 @@ public class GuiScreenAddServer extends GuiScreen {
         this.serverIPField.setMaxStringLength(128);
         this.serverIPField.setText(this.serverData.serverIP);
         this.serverIPField.setValidator(this.field_181032_r);
-        this.buttonList.get(0).enabled = this.serverIPField.getText().length() > 0 && this.serverIPField.getText().split(":").length > 0 && this.serverNameField.getText().length() > 0;
+        this.buttonList.get(0).enabled = !this.serverIPField.getText().isEmpty() && this.serverIPField.getText().split(":").length > 0 && !this.serverNameField.getText().isEmpty();
     }
 
     /**
@@ -78,7 +78,7 @@ public class GuiScreenAddServer extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             if (button.id == 2) {
                 this.serverData.setResourceMode(ServerData.ServerResourceMode.values()[(this.serverData.getResourceMode().ordinal() + 1) % ServerData.ServerResourceMode.values().length]);
@@ -110,7 +110,7 @@ public class GuiScreenAddServer extends GuiScreen {
             this.actionPerformed(this.buttonList.get(0));
         }
 
-        this.buttonList.get(0).enabled = this.serverIPField.getText().length() > 0 && this.serverIPField.getText().split(":").length > 0 && this.serverNameField.getText().length() > 0;
+        this.buttonList.get(0).enabled = !this.serverIPField.getText().isEmpty() && this.serverIPField.getText().split(":").length > 0 && !this.serverNameField.getText().isEmpty();
     }
 
     /**

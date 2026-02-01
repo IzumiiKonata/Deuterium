@@ -106,11 +106,11 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
         logger.debug("Enabled auto read");
     }
 
-    public void channelInactive(ChannelHandlerContext p_channelInactive_1_) throws Exception {
+    public void channelInactive(ChannelHandlerContext p_channelInactive_1_) {
         this.closeChannel(new ChatComponentTranslation("disconnect.endOfStream"));
     }
 
-    public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext p_exceptionCaught_1_, Throwable p_exceptionCaught_2_) {
         ChatComponentTranslation chatcomponenttranslation;
 
         if (p_exceptionCaught_2_ instanceof TimeoutException) {
@@ -122,7 +122,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
         this.closeChannel(chatcomponenttranslation);
     }
 
-    protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) throws Exception {
+    protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) {
         if (this.channel.isOpen()) {
             //CLIENT
             ReceivePacketEvent receivePacketEvent = EventManager.call(new ReceivePacketEvent(p_channelRead0_2_));
@@ -326,7 +326,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
         }
 
         (new Bootstrap()).group(lazyloadbase.getValue()).handler(new ChannelInitializer<Channel>() {
-            protected void initChannel(Channel p_initChannel_1_) throws Exception {
+            protected void initChannel(Channel p_initChannel_1_) {
                 try {
                     p_initChannel_1_.config().setOption(ChannelOption.TCP_NODELAY, Boolean.TRUE);
                 } catch (ChannelException var3) {
@@ -346,7 +346,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
     public static NetworkManager provideLocalClient(SocketAddress address) {
         final NetworkManager networkmanager = new NetworkManager(EnumPacketDirection.CLIENTBOUND);
         (new Bootstrap()).group(CLIENT_LOCAL_EVENTLOOP.getValue()).handler(new ChannelInitializer<Channel>() {
-            protected void initChannel(Channel p_initChannel_1_) throws Exception {
+            protected void initChannel(Channel p_initChannel_1_) {
                 p_initChannel_1_.pipeline().addLast("packet_handler", networkmanager);
             }
         }).channel(LocalChannel.class).connect(address).syncUninterruptibly();

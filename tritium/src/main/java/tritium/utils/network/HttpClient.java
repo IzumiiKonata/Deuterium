@@ -1,8 +1,6 @@
 package tritium.utils.network;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import com.google.gson.stream.JsonReader;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -225,7 +223,7 @@ public class HttpClient {
     private byte[] extractParams(Map<String, Object> params) {
         StringBuilder dataStr = new StringBuilder();
         for (Map.Entry<String, Object> value : params.entrySet()) {
-            dataStr.append(value.getKey()).append("=").append(URLEncoder.encode(String.valueOf(value.getValue()), "UTF-8")).append("&");
+            dataStr.append(value.getKey()).append("=").append(URLEncoder.encode(String.valueOf(value.getValue()), StandardCharsets.UTF_8)).append("&");
         }
         return dataStr.toString().getBytes();
     }
@@ -284,8 +282,7 @@ public class HttpClient {
             this.cookies = cookies;
 
             if (data == null) {
-                byte[] edata = {};
-                this.data = edata;
+                this.data = new byte[]{};
                 return;
             }
             this.data = data;

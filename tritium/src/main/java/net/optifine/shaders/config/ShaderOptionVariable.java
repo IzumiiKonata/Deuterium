@@ -24,13 +24,12 @@ public class ShaderOptionVariable extends ShaderOption {
         String s = Shaders.translate("prefix." + this.getName(), "");
         String s1 = super.getValueText(val);
         String s2 = Shaders.translate("suffix." + this.getName(), "");
-        String s3 = s + s1 + s2;
-        return s3;
+        return s + s1 + s2;
     }
 
     public String getValueColor(String val) {
         String s = val.toLowerCase();
-        return !s.equals("false") && !s.equals("off") ? "\u00a7a" : "\u00a7c";
+        return !s.equals("false") && !s.equals("off") ? "§a" : "§c";
     }
 
     public boolean matchesLine(String line) {
@@ -55,16 +54,15 @@ public class ShaderOptionVariable extends ShaderOption {
             String s2 = matcher.group(3);
             String s3 = StrUtils.getSegment(s2, "[", "]");
 
-            if (s3 != null && s3.length() > 0) {
+            if (s3 != null && !s3.isEmpty()) {
                 s2 = s2.replace(s3, "").trim();
             }
 
             String[] astring = parseValues(s1, s3);
 
-            if (s != null && s.length() > 0) {
+            if (s != null && !s.isEmpty()) {
                 path = StrUtils.removePrefix(path, "/shaders/");
-                ShaderOption shaderoption = new ShaderOptionVariable(s, s2, s1, astring, path);
-                return shaderoption;
+                return new ShaderOptionVariable(s, s2, s1, astring, path);
             } else {
                 return null;
             }

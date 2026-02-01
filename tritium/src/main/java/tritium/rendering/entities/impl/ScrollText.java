@@ -5,7 +5,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.GL11;
-import tritium.management.FontManager;
 import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;
@@ -15,7 +14,6 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shaders;
-import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
 
 import java.time.Duration;

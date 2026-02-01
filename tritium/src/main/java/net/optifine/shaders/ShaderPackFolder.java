@@ -6,7 +6,6 @@ import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.file.Files;
 
 public class ShaderPackFolder implements IShaderPack {
     protected File packFile;

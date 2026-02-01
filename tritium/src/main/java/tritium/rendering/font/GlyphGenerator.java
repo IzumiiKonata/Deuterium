@@ -1,8 +1,5 @@
 package tritium.rendering.font;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.util.Location;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;

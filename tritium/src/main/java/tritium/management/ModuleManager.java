@@ -10,7 +10,6 @@ import tritium.module.impl.movement.AutoSprint;
 import tritium.module.impl.other.NameSpoof;
 import tritium.module.impl.other.OpenConsole;
 import tritium.module.impl.other.Test;
-import tritium.module.impl.other.ViewLogs;
 import tritium.module.impl.render.*;
 import tritium.module.submodule.SubModule;
 import tritium.settings.ClientSettings;

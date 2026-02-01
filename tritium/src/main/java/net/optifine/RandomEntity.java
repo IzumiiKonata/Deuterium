@@ -14,8 +14,7 @@ public class RandomEntity implements IRandomEntity {
     public int getId() {
         final UUID uuid = this.entity.getUniqueID();
         final long i = uuid.getLeastSignificantBits();
-        final int j = (int) (i & 2147483647L);
-        return j;
+        return (int) (i & 2147483647L);
     }
 
     @Override

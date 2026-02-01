@@ -450,7 +450,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         } catch (ReportedException reportedexception) {
             CrashReportCategory crashreportcategory = reportedexception.getCrashReport().makeCategory("正在被获取的方块");
             crashreportcategory.addCrashSectionCallable("Location", new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return CrashReportCategory.getCoordinateInfo(new BlockPos(Chunk.this.xPosition * 16 + x, y, Chunk.this.zPosition * 16 + z));
                 }
             });
@@ -464,7 +464,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         } catch (ReportedException reportedexception) {
             CrashReportCategory crashreportcategory = reportedexception.getCrashReport().makeCategory("正在被获取的方块");
             crashreportcategory.addCrashSectionCallable("Location", new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return CrashReportCategory.getCoordinateInfo(pos);
                 }
             });
@@ -669,16 +669,15 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         this.getLightingEngine().processLightUpdates();
 
         int i = x & 15;
-        int j = y;
         int k = z & 15;
-        ExtendedBlockStorage extendedblockstorage = this.storageArrays[j >> 4];
+        ExtendedBlockStorage extendedblockstorage = this.storageArrays[y >> 4];
 
         if (extendedblockstorage == null) {
             return !this.worldObj.provider.getHasNoSky() && amount < EnumSkyBlock.SKY.defaultLightValue ? EnumSkyBlock.SKY.defaultLightValue - amount : 0;
         } else {
-            int l = this.worldObj.provider.getHasNoSky() ? 0 : extendedblockstorage.getExtSkylightValue(i, j & 15, k);
+            int l = this.worldObj.provider.getHasNoSky() ? 0 : extendedblockstorage.getExtSkylightValue(i, y & 15, k);
             l = l - amount;
-            int i1 = extendedblockstorage.getExtBlocklightValue(i, j & 15, k);
+            int i1 = extendedblockstorage.getExtBlocklightValue(i, y & 15, k);
 
             if (i1 > l) {
                 l = i1;
@@ -697,7 +696,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         int j = MathHelper.floor_double(entityIn.posZ / 16.0D);
 
         if (i != this.xPosition || j != this.zPosition) {
-            logger.warn("Wrong location! (" + i + ", " + j + ") should be (" + this.xPosition + ", " + this.zPosition + "), " + entityIn, entityIn);
+            logger.warn("Wrong location! (" + i + ", " + j + ") should be (" + this.xPosition + ", " + this.zPosition + "), {}", entityIn);
             entityIn.setDead();
         }
 
@@ -749,9 +748,8 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 
     public boolean canSeeSky(int x, int y, int z) {
         int i = x & 15;
-        int j = y;
         int k = z & 15;
-        return j >= this.heightMap[k << 4 | i];
+        return y >= this.heightMap[k << 4 | i];
     }
 
     private TileEntity createNewTileEntity(BlockPos pos) {
@@ -1585,10 +1583,9 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 
     public int getCachedLightFor(EnumSkyBlock type, int x, int y, int z) {
         int i = x & 15;
-        int j = y;
         int k = z & 15;
 
-        ExtendedBlockStorage storage = this.storageArrays[j >> 4];
+        ExtendedBlockStorage storage = this.storageArrays[y >> 4];
 
         if (storage == null) {
             if (this.canSeeSky(x, y, z)) {
@@ -1600,11 +1597,11 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             if (this.worldObj.provider.getHasNoSky()) {
                 return 0;
             } else {
-                return storage.getExtSkylightValue(i, j & 15, k);
+                return storage.getExtSkylightValue(i, y & 15, k);
             }
         } else {
             if (type == EnumSkyBlock.BLOCK) {
-                return storage.getExtBlocklightValue(i, j & 15, k);
+                return storage.getExtBlocklightValue(i, y & 15, k);
             } else {
                 return type.defaultLightValue;
             }

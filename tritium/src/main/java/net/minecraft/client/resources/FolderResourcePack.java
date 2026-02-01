@@ -4,11 +4,9 @@ import com.google.common.collect.Sets;
 import lombok.SneakyThrows;
 import org.apache.commons.io.filefilter.DirectoryFileFilter;
 import tritium.rendering.AnimatedTexture;
-import tritium.rendering.ResPackPreview;
 
 import java.io.*;
 import java.nio.file.Files;
-import java.util.Objects;
 import java.util.Set;
 
 public class FolderResourcePack extends AbstractResourcePack {

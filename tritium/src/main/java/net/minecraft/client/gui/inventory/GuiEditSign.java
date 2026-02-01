@@ -76,7 +76,7 @@ public class GuiEditSign extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             if (button.id == 0) {
                 this.tileSign.markDirty();
@@ -100,7 +100,7 @@ public class GuiEditSign extends GuiScreen {
 
         String s = this.tileSign.signText[this.editLine].getUnformattedText();
 
-        if (keyCode == 14 && s.length() > 0) {
+        if (keyCode == 14 && !s.isEmpty()) {
             s = s.substring(0, s.length() - 1);
         }
 

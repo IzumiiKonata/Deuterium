@@ -38,7 +38,7 @@ public class S35PacketUpdateTileEntity implements Packet<INetHandlerPlayClient> 
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeBlockPos(this.blockPos);
         buf.writeByte((byte) this.metadata);
         buf.writeNBTTagCompoundToBuffer(this.nbt);

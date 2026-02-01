@@ -134,7 +134,7 @@ public class Mouse {
         addMoveEvent(new_x, new_y);
     }
 
-    public static Cursor setNativeCursor(Cursor cursor) throws LWJGLException {
+    public static Cursor setNativeCursor(Cursor cursor) {
         // no-op
         return null;
     }

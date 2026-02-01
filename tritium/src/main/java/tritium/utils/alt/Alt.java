@@ -11,7 +11,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Location;
-import tritium.Tritium;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.texture.Textures;
 import tritium.utils.other.multithreading.MultiThreadingUtil;

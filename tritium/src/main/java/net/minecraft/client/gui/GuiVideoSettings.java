@@ -71,7 +71,7 @@ public class GuiVideoSettings extends GuiScreenOF {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         this.actionPerformed(button, 1);
     }
 

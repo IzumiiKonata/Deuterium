@@ -68,18 +68,13 @@ public class OutputChannels {
      *                                  channel code.
      */
     static public OutputChannels fromInt(int code) {
-        switch (code) {
-            case LEFT_CHANNEL:
-                return LEFT;
-            case RIGHT_CHANNEL:
-                return RIGHT;
-            case BOTH_CHANNELS:
-                return BOTH;
-            case DOWNMIX_CHANNELS:
-                return DOWNMIX;
-            default:
-                throw new IllegalArgumentException("Invalid channel code: " + code);
-        }
+        return switch (code) {
+            case LEFT_CHANNEL -> LEFT;
+            case RIGHT_CHANNEL -> RIGHT;
+            case BOTH_CHANNELS -> BOTH;
+            case DOWNMIX_CHANNELS -> DOWNMIX;
+            default -> throw new IllegalArgumentException("Invalid channel code: " + code);
+        };
     }
 
     private OutputChannels(int channels) {
@@ -109,8 +104,7 @@ public class OutputChannels {
      * for all other types.
      */
     public int getChannelCount() {
-        int count = (outputChannels == BOTH_CHANNELS) ? 2 : 1;
-        return count;
+        return (outputChannels == BOTH_CHANNELS) ? 2 : 1;
     }
 
     public boolean equals(Object o) {

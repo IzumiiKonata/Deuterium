@@ -7,8 +7,6 @@ import com.google.common.util.concurrent.Futures;
 import io.netty.buffer.Unpooled;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ShortMap;
 import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
 import net.minecraft.block.material.Material;
@@ -48,6 +46,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
@@ -126,7 +125,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
     public void kickPlayerFromServer(String reason) {
         final ChatComponentText chatcomponenttext = new ChatComponentText(reason);
         this.netManager.sendPacket(new S40PacketDisconnect(chatcomponenttext), new GenericFutureListener<Future<? super Void>>() {
-            public void operationComplete(Future<? super Void> p_operationComplete_1_) throws Exception {
+            public void operationComplete(Future<? super Void> p_operationComplete_1_) {
                 NetHandlerPlayServer.this.netManager.closeChannel(chatcomponenttext);
             }
         });
@@ -596,7 +595,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Sending packet");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("Packet being sent");
             crashreportcategory.addCrashSectionCallable("Packet class", new Callable<String>() {
-                public String call() throws Exception {
+                public String call() {
                     return packetIn.getClass().getCanonicalName();
                 }
             });
@@ -762,30 +761,27 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
         this.playerEntity.markPlayerActive();
         C16PacketClientStatus.EnumState c16packetclientstatus$enumstate = packetIn.getStatus();
 
-        switch (c16packetclientstatus$enumstate) {
-            case PERFORM_RESPAWN:
-                if (this.playerEntity.playerConqueredTheEnd) {
-                    this.playerEntity = this.serverController.getConfigurationManager().recreatePlayerEntity(this.playerEntity, 0, true);
-                } else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled()) {
-                    if (this.serverController.isSinglePlayer() && this.playerEntity.getName().equals(this.serverController.getServerOwner())) {
-                        this.playerEntity.playerNetServerHandler.kickPlayerFromServer("You have died. Game over, man, it's game over!");
-                        this.serverController.deleteWorldAndStopServer();
-                    } else {
-                        UserListBansEntry userlistbansentry = new UserListBansEntry(this.playerEntity.getGameProfile(), null, "(You just lost the game)", null, "Death in Hardcore");
-                        this.serverController.getConfigurationManager().getBannedPlayers().addEntry(userlistbansentry);
-                        this.playerEntity.playerNetServerHandler.kickPlayerFromServer("You have died. Game over, man, it's game over!");
-                    }
+        if (Objects.requireNonNull(c16packetclientstatus$enumstate) == C16PacketClientStatus.EnumState.PERFORM_RESPAWN) {
+            if (this.playerEntity.playerConqueredTheEnd) {
+                this.playerEntity = this.serverController.getConfigurationManager().recreatePlayerEntity(this.playerEntity, 0, true);
+            } else if (this.playerEntity.getServerForPlayer().getWorldInfo().isHardcoreModeEnabled()) {
+                if (this.serverController.isSinglePlayer() && this.playerEntity.getName().equals(this.serverController.getServerOwner())) {
+                    this.playerEntity.playerNetServerHandler.kickPlayerFromServer("You have died. Game over, man, it's game over!");
+                    this.serverController.deleteWorldAndStopServer();
                 } else {
-                    if (this.playerEntity.getHealth() > 0.0F) {
-                        return;
-                    }
-
-                    this.playerEntity = this.serverController.getConfigurationManager().recreatePlayerEntity(this.playerEntity, 0, false);
+                    UserListBansEntry userlistbansentry = new UserListBansEntry(this.playerEntity.getGameProfile(), null, "(You just lost the game)", null, "Death in Hardcore");
+                    this.serverController.getConfigurationManager().getBannedPlayers().addEntry(userlistbansentry);
+                    this.playerEntity.playerNetServerHandler.kickPlayerFromServer("You have died. Game over, man, it's game over!");
+                }
+            } else {
+                if (this.playerEntity.getHealth() > 0.0F) {
+                    return;
                 }
 
-                break;
+                this.playerEntity = this.serverController.getConfigurationManager().recreatePlayerEntity(this.playerEntity, 0, false);
+            }
 
-//            case REQUEST_STATS:
+            //            case REQUEST_STATS:
 //                this.playerEntity.getStatFile().func_150876_a(this.playerEntity);
 //                break;
 //

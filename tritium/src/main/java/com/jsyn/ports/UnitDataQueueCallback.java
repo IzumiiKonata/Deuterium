@@ -23,9 +23,9 @@ package com.jsyn.ports;
  * @author Phil Burk (C) 2011 Mobileer Inc
  */
 public interface UnitDataQueueCallback {
-    public void started(QueueDataEvent event);
+    void started(QueueDataEvent event);
 
-    public void looped(QueueDataEvent event);
+    void looped(QueueDataEvent event);
 
-    public void finished(QueueDataEvent event);
+    void finished(QueueDataEvent event);
 }

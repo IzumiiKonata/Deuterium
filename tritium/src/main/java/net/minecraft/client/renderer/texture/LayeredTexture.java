@@ -5,7 +5,6 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.src.Config;
 import net.minecraft.util.Location;
 import net.optifine.shaders.ShadersTex;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +27,7 @@ public class LayeredTexture extends AbstractTexture {
         }
     }
 
-    public void loadTexture(IResourceManager resourceManager) throws IOException {
+    public void loadTexture(IResourceManager resourceManager) {
         this.deleteGlTexture();
         BufferedImage bufferedimage = null;
 

@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.chunk.RenderChunk;
 import net.minecraft.src.Config;
 import net.minecraft.util.EnumWorldBlockLayer;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.system.MemoryUtil;
 import tritium.utils.other.MemoryTracker;
 
 import java.nio.IntBuffer;

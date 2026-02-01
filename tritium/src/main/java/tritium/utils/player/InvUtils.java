@@ -73,8 +73,7 @@ public class InvUtils {
     }
 
     public static List<ItemStack> getHotbarContent() {
-        List<ItemStack> result = new ArrayList<>(Arrays.asList(mc.thePlayer.inventory.mainInventory).subList(0, 9));
-        return result;
+        return new ArrayList<>(Arrays.asList(mc.thePlayer.inventory.mainInventory).subList(0, 9));
     }
 
     public static List<ItemStack> getAllInventoryContent() {

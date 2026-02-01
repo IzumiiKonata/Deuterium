@@ -262,7 +262,7 @@ public class SeekableByteArrayOutputStream extends OutputStream {
      * this class can be called after the stream has been closed without
      * generating an <tt>IOException</tt>.
      */
-    public void close() throws IOException {
+    public void close() {
     }
 
 }

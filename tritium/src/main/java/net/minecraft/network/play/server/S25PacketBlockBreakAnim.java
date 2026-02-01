@@ -27,7 +27,7 @@ public class S25PacketBlockBreakAnim implements Packet<INetHandlerPlayClient>, S
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.breakerId = buf.readVarIntFromBuffer();
         this.position = buf.readBlockPos();
         this.progress = buf.readUnsignedByte();
@@ -36,7 +36,7 @@ public class S25PacketBlockBreakAnim implements Packet<INetHandlerPlayClient>, S
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeVarIntToBuffer(this.breakerId);
         buf.writeBlockPos(this.position);
         buf.writeByte(this.progress);

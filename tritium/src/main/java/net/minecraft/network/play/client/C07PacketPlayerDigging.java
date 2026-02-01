@@ -34,7 +34,7 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CP
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.status = buf.readEnumValue(Action.class);
         this.position = buf.readBlockPos();
         this.facing = EnumFacing.getFront(buf.readUnsignedByte());
@@ -43,7 +43,7 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CP
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeEnumValue(this.status);
         buf.writeBlockPos(this.position);
         buf.writeByte(this.facing.getIndex());
@@ -77,41 +77,27 @@ public class C07PacketPlayerDigging implements Packet<INetHandlerPlayServer>, CP
         RELEASE_USE_ITEM;
 
         public EnumDiggingAction toEnumDiggingAction() {
-            switch (this) {
-                case START_DESTROY_BLOCK:
-                    return EnumDiggingAction.START_DESTROY_BLOCK;
-                case ABORT_DESTROY_BLOCK:
-                    return EnumDiggingAction.ABORT_DESTROY_BLOCK;
-                case STOP_DESTROY_BLOCK:
-                    return EnumDiggingAction.STOP_DESTROY_BLOCK;
-                case DROP_ALL_ITEMS:
-                    return EnumDiggingAction.DROP_ALL_ITEMS;
-                case DROP_ITEM:
-                    return EnumDiggingAction.DROP_ITEM;
-                case RELEASE_USE_ITEM:
-                    return EnumDiggingAction.RELEASE_USE_ITEM;
-                default:
-                    throw new IllegalArgumentException("Unknown action " + this);
-            }
+            return switch (this) {
+                case START_DESTROY_BLOCK -> EnumDiggingAction.START_DESTROY_BLOCK;
+                case ABORT_DESTROY_BLOCK -> EnumDiggingAction.ABORT_DESTROY_BLOCK;
+                case STOP_DESTROY_BLOCK -> EnumDiggingAction.STOP_DESTROY_BLOCK;
+                case DROP_ALL_ITEMS -> EnumDiggingAction.DROP_ALL_ITEMS;
+                case DROP_ITEM -> EnumDiggingAction.DROP_ITEM;
+                case RELEASE_USE_ITEM -> EnumDiggingAction.RELEASE_USE_ITEM;
+                default -> throw new IllegalArgumentException("Unknown action " + this);
+            };
         }
 
         public static Action fromEnumDiggingAction(EnumDiggingAction action) {
-            switch (action) {
-                case START_DESTROY_BLOCK:
-                    return START_DESTROY_BLOCK;
-                case ABORT_DESTROY_BLOCK:
-                    return ABORT_DESTROY_BLOCK;
-                case STOP_DESTROY_BLOCK:
-                    return STOP_DESTROY_BLOCK;
-                case DROP_ALL_ITEMS:
-                    return DROP_ALL_ITEMS;
-                case DROP_ITEM:
-                    return DROP_ITEM;
-                case RELEASE_USE_ITEM:
-                    return RELEASE_USE_ITEM;
-                default:
-                    throw new IllegalArgumentException("Unknown action " + action);
-            }
+            return switch (action) {
+                case START_DESTROY_BLOCK -> START_DESTROY_BLOCK;
+                case ABORT_DESTROY_BLOCK -> ABORT_DESTROY_BLOCK;
+                case STOP_DESTROY_BLOCK -> STOP_DESTROY_BLOCK;
+                case DROP_ALL_ITEMS -> DROP_ALL_ITEMS;
+                case DROP_ITEM -> DROP_ITEM;
+                case RELEASE_USE_ITEM -> RELEASE_USE_ITEM;
+                default -> throw new IllegalArgumentException("Unknown action " + action);
+            };
         }
     }
 

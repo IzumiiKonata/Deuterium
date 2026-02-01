@@ -142,7 +142,7 @@ public class Scoreboard {
             if (map2 != null) {
                 Score score = map2.remove(objective);
 
-                if (map2.size() < 1) {
+                if (map2.isEmpty()) {
                     Map<ScoreObjective, Score> map1 = this.entitiesScoreObjectives.remove(name);
 
                     if (map1 != null) {
@@ -353,27 +353,22 @@ public class Scoreboard {
      * Returns 'list' for 0, 'sidebar' for 1, 'belowName for 2, otherwise null.
      */
     public static String getObjectiveDisplaySlot(int p_96517_0_) {
-        switch (p_96517_0_) {
-            case 0:
-                return "list";
-
-            case 1:
-                return "sidebar";
-
-            case 2:
-                return "belowName";
-
-            default:
+        return switch (p_96517_0_) {
+            case 0 -> "list";
+            case 1 -> "sidebar";
+            case 2 -> "belowName";
+            default -> {
                 if (p_96517_0_ >= 3 && p_96517_0_ <= 18) {
                     EnumChatFormatting enumchatformatting = EnumChatFormatting.func_175744_a(p_96517_0_ - 3);
 
                     if (enumchatformatting != null && enumchatformatting != EnumChatFormatting.RESET) {
-                        return "sidebar.team." + enumchatformatting.getFriendlyName();
+                        yield "sidebar.team." + enumchatformatting.getFriendlyName();
                     }
                 }
 
-                return null;
-        }
+                yield null;
+            }
+        };
     }
 
     /**

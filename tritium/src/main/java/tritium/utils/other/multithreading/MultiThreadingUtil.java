@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import tritium.utils.logging.Logger;
 import tritium.utils.other.DevUtils;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
 

@@ -35,7 +35,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
     private final Predicate<String> field_175332_D = new Predicate<String>() {
         public boolean apply(String p_apply_1_) {
             Float f = Floats.tryParse(p_apply_1_);
-            return p_apply_1_.length() == 0 || f != null && Floats.isFinite(f) && f >= 0.0F;
+            return p_apply_1_.isEmpty() || f != null && Floats.isFinite(f) && f >= 0.0F;
         }
     };
     private final ChunkProviderSettings.Factory field_175334_E = new ChunkProviderSettings.Factory();
@@ -131,7 +131,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
     }
 
     public void func_175324_a(String p_175324_1_) {
-        if (p_175324_1_ != null && p_175324_1_.length() != 0) {
+        if (p_175324_1_ != null && !p_175324_1_.isEmpty()) {
             this.field_175336_F = ChunkProviderSettings.Factory.jsonToFactory(p_175324_1_);
         } else {
             this.field_175336_F = new ChunkProviderSettings.Factory();
@@ -146,72 +146,25 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
         } catch (NumberFormatException var5) {
         }
 
-        float f1 = 0.0F;
-
-        switch (p_175319_1_) {
-            case 132:
-                f1 = this.field_175336_F.mainNoiseScaleX = MathHelper.clamp_float(f, 1.0F, 5000.0F);
-                break;
-
-            case 133:
-                f1 = this.field_175336_F.mainNoiseScaleY = MathHelper.clamp_float(f, 1.0F, 5000.0F);
-                break;
-
-            case 134:
-                f1 = this.field_175336_F.mainNoiseScaleZ = MathHelper.clamp_float(f, 1.0F, 5000.0F);
-                break;
-
-            case 135:
-                f1 = this.field_175336_F.depthNoiseScaleX = MathHelper.clamp_float(f, 1.0F, 2000.0F);
-                break;
-
-            case 136:
-                f1 = this.field_175336_F.depthNoiseScaleZ = MathHelper.clamp_float(f, 1.0F, 2000.0F);
-                break;
-
-            case 137:
-                f1 = this.field_175336_F.depthNoiseScaleExponent = MathHelper.clamp_float(f, 0.01F, 20.0F);
-                break;
-
-            case 138:
-                f1 = this.field_175336_F.baseSize = MathHelper.clamp_float(f, 1.0F, 25.0F);
-                break;
-
-            case 139:
-                f1 = this.field_175336_F.coordinateScale = MathHelper.clamp_float(f, 1.0F, 6000.0F);
-                break;
-
-            case 140:
-                f1 = this.field_175336_F.heightScale = MathHelper.clamp_float(f, 1.0F, 6000.0F);
-                break;
-
-            case 141:
-                f1 = this.field_175336_F.stretchY = MathHelper.clamp_float(f, 0.01F, 50.0F);
-                break;
-
-            case 142:
-                f1 = this.field_175336_F.upperLimitScale = MathHelper.clamp_float(f, 1.0F, 5000.0F);
-                break;
-
-            case 143:
-                f1 = this.field_175336_F.lowerLimitScale = MathHelper.clamp_float(f, 1.0F, 5000.0F);
-                break;
-
-            case 144:
-                f1 = this.field_175336_F.biomeDepthWeight = MathHelper.clamp_float(f, 1.0F, 20.0F);
-                break;
-
-            case 145:
-                f1 = this.field_175336_F.biomeDepthOffset = MathHelper.clamp_float(f, 0.0F, 20.0F);
-                break;
-
-            case 146:
-                f1 = this.field_175336_F.biomeScaleWeight = MathHelper.clamp_float(f, 1.0F, 20.0F);
-                break;
-
-            case 147:
-                f1 = this.field_175336_F.biomeScaleOffset = MathHelper.clamp_float(f, 0.0F, 20.0F);
-        }
+        float f1 = switch (p_175319_1_) {
+            case 132 -> this.field_175336_F.mainNoiseScaleX = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+            case 133 -> this.field_175336_F.mainNoiseScaleY = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+            case 134 -> this.field_175336_F.mainNoiseScaleZ = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+            case 135 -> this.field_175336_F.depthNoiseScaleX = MathHelper.clamp_float(f, 1.0F, 2000.0F);
+            case 136 -> this.field_175336_F.depthNoiseScaleZ = MathHelper.clamp_float(f, 1.0F, 2000.0F);
+            case 137 -> this.field_175336_F.depthNoiseScaleExponent = MathHelper.clamp_float(f, 0.01F, 20.0F);
+            case 138 -> this.field_175336_F.baseSize = MathHelper.clamp_float(f, 1.0F, 25.0F);
+            case 139 -> this.field_175336_F.coordinateScale = MathHelper.clamp_float(f, 1.0F, 6000.0F);
+            case 140 -> this.field_175336_F.heightScale = MathHelper.clamp_float(f, 1.0F, 6000.0F);
+            case 141 -> this.field_175336_F.stretchY = MathHelper.clamp_float(f, 0.01F, 50.0F);
+            case 142 -> this.field_175336_F.upperLimitScale = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+            case 143 -> this.field_175336_F.lowerLimitScale = MathHelper.clamp_float(f, 1.0F, 5000.0F);
+            case 144 -> this.field_175336_F.biomeDepthWeight = MathHelper.clamp_float(f, 1.0F, 20.0F);
+            case 145 -> this.field_175336_F.biomeDepthOffset = MathHelper.clamp_float(f, 0.0F, 20.0F);
+            case 146 -> this.field_175336_F.biomeScaleWeight = MathHelper.clamp_float(f, 1.0F, 20.0F);
+            case 147 -> this.field_175336_F.biomeScaleOffset = MathHelper.clamp_float(f, 0.0F, 20.0F);
+            default -> 0.0F;
+        };
 
         if (f1 != f && f != 0.0F) {
             ((GuiTextField) this.field_175349_r.func_178061_c(p_175319_1_)).setText(this.func_175330_b(p_175319_1_, f1));
@@ -235,76 +188,13 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
 
     private String func_175330_b(int p_175330_1_, float p_175330_2_) {
         switch (p_175330_1_) {
-            case 100:
-            case 101:
-            case 102:
-            case 103:
-            case 104:
-            case 107:
-            case 108:
-            case 110:
-            case 111:
-            case 132:
-            case 133:
-            case 134:
-            case 135:
-            case 136:
-            case 139:
-            case 140:
-            case 142:
-            case 143:
+            case 100, 101, 102, 103, 104, 107, 108, 110, 111, 132, 133, 134, 135, 136, 139, 140, 142, 143 -> {
                 return String.format("%5.3f", p_175330_2_);
-
-            case 105:
-            case 106:
-            case 109:
-            case 112:
-            case 113:
-            case 114:
-            case 115:
-            case 137:
-            case 138:
-            case 141:
-            case 144:
-            case 145:
-            case 146:
-            case 147:
+            }
+            case 105, 106, 109, 112, 113, 114, 115, 137, 138, 141, 144, 145, 146, 147 -> {
                 return String.format("%2.3f", p_175330_2_);
-
-            case 116:
-            case 117:
-            case 118:
-            case 119:
-            case 120:
-            case 121:
-            case 122:
-            case 123:
-            case 124:
-            case 125:
-            case 126:
-            case 127:
-            case 128:
-            case 129:
-            case 130:
-            case 131:
-            case 148:
-            case 149:
-            case 150:
-            case 151:
-            case 152:
-            case 153:
-            case 154:
-            case 155:
-            case 156:
-            case 157:
-            case 158:
-            case 159:
-            case 160:
-            case 161:
-            default:
-                return String.format("%d", (int) p_175330_2_);
-
-            case 162:
+            }
+            case 162 -> {
                 if (p_175330_2_ < 0.0F) {
                     return I18n.format("gui.all");
                 } else if ((int) p_175330_2_ >= BiomeGenBase.hell.biomeID) {
@@ -314,53 +204,26 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
                     BiomeGenBase biomegenbase = BiomeGenBase.getBiomeGenArray()[(int) p_175330_2_];
                     return biomegenbase != null ? biomegenbase.biomeName : "?";
                 }
+            }
+            default -> {
+                return String.format("%d", (int) p_175330_2_);
+            }
         }
     }
 
     public void func_175321_a(int p_175321_1_, boolean p_175321_2_) {
         switch (p_175321_1_) {
-            case 148:
-                this.field_175336_F.useCaves = p_175321_2_;
-                break;
-
-            case 149:
-                this.field_175336_F.useDungeons = p_175321_2_;
-                break;
-
-            case 150:
-                this.field_175336_F.useStrongholds = p_175321_2_;
-                break;
-
-            case 151:
-                this.field_175336_F.useVillages = p_175321_2_;
-                break;
-
-            case 152:
-                this.field_175336_F.useMineShafts = p_175321_2_;
-                break;
-
-            case 153:
-                this.field_175336_F.useTemples = p_175321_2_;
-                break;
-
-            case 154:
-                this.field_175336_F.useRavines = p_175321_2_;
-                break;
-
-            case 155:
-                this.field_175336_F.useWaterLakes = p_175321_2_;
-                break;
-
-            case 156:
-                this.field_175336_F.useLavaLakes = p_175321_2_;
-                break;
-
-            case 161:
-                this.field_175336_F.useLavaOceans = p_175321_2_;
-                break;
-
-            case 210:
-                this.field_175336_F.useMonuments = p_175321_2_;
+            case 148 -> this.field_175336_F.useCaves = p_175321_2_;
+            case 149 -> this.field_175336_F.useDungeons = p_175321_2_;
+            case 150 -> this.field_175336_F.useStrongholds = p_175321_2_;
+            case 151 -> this.field_175336_F.useVillages = p_175321_2_;
+            case 152 -> this.field_175336_F.useMineShafts = p_175321_2_;
+            case 153 -> this.field_175336_F.useTemples = p_175321_2_;
+            case 154 -> this.field_175336_F.useRavines = p_175321_2_;
+            case 155 -> this.field_175336_F.useWaterLakes = p_175321_2_;
+            case 156 -> this.field_175336_F.useLavaLakes = p_175321_2_;
+            case 161 -> this.field_175336_F.useLavaOceans = p_175321_2_;
+            case 210 -> this.field_175336_F.useMonuments = p_175321_2_;
         }
 
         if (!this.field_175336_F.equals(this.field_175334_E)) {
@@ -370,317 +233,75 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
 
     public void onTick(int id, float value) {
         switch (id) {
-            case 100:
-                this.field_175336_F.mainNoiseScaleX = value;
-                break;
-
-            case 101:
-                this.field_175336_F.mainNoiseScaleY = value;
-                break;
-
-            case 102:
-                this.field_175336_F.mainNoiseScaleZ = value;
-                break;
-
-            case 103:
-                this.field_175336_F.depthNoiseScaleX = value;
-                break;
-
-            case 104:
-                this.field_175336_F.depthNoiseScaleZ = value;
-                break;
-
-            case 105:
-                this.field_175336_F.depthNoiseScaleExponent = value;
-                break;
-
-            case 106:
-                this.field_175336_F.baseSize = value;
-                break;
-
-            case 107:
-                this.field_175336_F.coordinateScale = value;
-                break;
-
-            case 108:
-                this.field_175336_F.heightScale = value;
-                break;
-
-            case 109:
-                this.field_175336_F.stretchY = value;
-                break;
-
-            case 110:
-                this.field_175336_F.upperLimitScale = value;
-                break;
-
-            case 111:
-                this.field_175336_F.lowerLimitScale = value;
-                break;
-
-            case 112:
-                this.field_175336_F.biomeDepthWeight = value;
-                break;
-
-            case 113:
-                this.field_175336_F.biomeDepthOffset = value;
-                break;
-
-            case 114:
-                this.field_175336_F.biomeScaleWeight = value;
-                break;
-
-            case 115:
-                this.field_175336_F.biomeScaleOffset = value;
-
-            case 116:
-            case 117:
-            case 118:
-            case 119:
-            case 120:
-            case 121:
-            case 122:
-            case 123:
-            case 124:
-            case 125:
-            case 126:
-            case 127:
-            case 128:
-            case 129:
-            case 130:
-            case 131:
-            case 132:
-            case 133:
-            case 134:
-            case 135:
-            case 136:
-            case 137:
-            case 138:
-            case 139:
-            case 140:
-            case 141:
-            case 142:
-            case 143:
-            case 144:
-            case 145:
-            case 146:
-            case 147:
-            case 148:
-            case 149:
-            case 150:
-            case 151:
-            case 152:
-            case 153:
-            case 154:
-            case 155:
-            case 156:
-            case 161:
-            case 188:
-            default:
-                break;
-
-            case 157:
-                this.field_175336_F.dungeonChance = (int) value;
-                break;
-
-            case 158:
-                this.field_175336_F.waterLakeChance = (int) value;
-                break;
-
-            case 159:
-                this.field_175336_F.lavaLakeChance = (int) value;
-                break;
-
-            case 160:
-                this.field_175336_F.seaLevel = (int) value;
-                break;
-
-            case 162:
-                this.field_175336_F.fixedBiome = (int) value;
-                break;
-
-            case 163:
-                this.field_175336_F.biomeSize = (int) value;
-                break;
-
-            case 164:
-                this.field_175336_F.riverSize = (int) value;
-                break;
-
-            case 165:
-                this.field_175336_F.dirtSize = (int) value;
-                break;
-
-            case 166:
-                this.field_175336_F.dirtCount = (int) value;
-                break;
-
-            case 167:
-                this.field_175336_F.dirtMinHeight = (int) value;
-                break;
-
-            case 168:
-                this.field_175336_F.dirtMaxHeight = (int) value;
-                break;
-
-            case 169:
-                this.field_175336_F.gravelSize = (int) value;
-                break;
-
-            case 170:
-                this.field_175336_F.gravelCount = (int) value;
-                break;
-
-            case 171:
-                this.field_175336_F.gravelMinHeight = (int) value;
-                break;
-
-            case 172:
-                this.field_175336_F.gravelMaxHeight = (int) value;
-                break;
-
-            case 173:
-                this.field_175336_F.graniteSize = (int) value;
-                break;
-
-            case 174:
-                this.field_175336_F.graniteCount = (int) value;
-                break;
-
-            case 175:
-                this.field_175336_F.graniteMinHeight = (int) value;
-                break;
-
-            case 176:
-                this.field_175336_F.graniteMaxHeight = (int) value;
-                break;
-
-            case 177:
-                this.field_175336_F.dioriteSize = (int) value;
-                break;
-
-            case 178:
-                this.field_175336_F.dioriteCount = (int) value;
-                break;
-
-            case 179:
-                this.field_175336_F.dioriteMinHeight = (int) value;
-                break;
-
-            case 180:
-                this.field_175336_F.dioriteMaxHeight = (int) value;
-                break;
-
-            case 181:
-                this.field_175336_F.andesiteSize = (int) value;
-                break;
-
-            case 182:
-                this.field_175336_F.andesiteCount = (int) value;
-                break;
-
-            case 183:
-                this.field_175336_F.andesiteMinHeight = (int) value;
-                break;
-
-            case 184:
-                this.field_175336_F.andesiteMaxHeight = (int) value;
-                break;
-
-            case 185:
-                this.field_175336_F.coalSize = (int) value;
-                break;
-
-            case 186:
-                this.field_175336_F.coalCount = (int) value;
-                break;
-
-            case 187:
-                this.field_175336_F.coalMinHeight = (int) value;
-                break;
-
-            case 189:
-                this.field_175336_F.coalMaxHeight = (int) value;
-                break;
-
-            case 190:
-                this.field_175336_F.ironSize = (int) value;
-                break;
-
-            case 191:
-                this.field_175336_F.ironCount = (int) value;
-                break;
-
-            case 192:
-                this.field_175336_F.ironMinHeight = (int) value;
-                break;
-
-            case 193:
-                this.field_175336_F.ironMaxHeight = (int) value;
-                break;
-
-            case 194:
-                this.field_175336_F.goldSize = (int) value;
-                break;
-
-            case 195:
-                this.field_175336_F.goldCount = (int) value;
-                break;
-
-            case 196:
-                this.field_175336_F.goldMinHeight = (int) value;
-                break;
-
-            case 197:
-                this.field_175336_F.goldMaxHeight = (int) value;
-                break;
-
-            case 198:
-                this.field_175336_F.redstoneSize = (int) value;
-                break;
-
-            case 199:
-                this.field_175336_F.redstoneCount = (int) value;
-                break;
-
-            case 200:
-                this.field_175336_F.redstoneMinHeight = (int) value;
-                break;
-
-            case 201:
-                this.field_175336_F.redstoneMaxHeight = (int) value;
-                break;
-
-            case 202:
-                this.field_175336_F.diamondSize = (int) value;
-                break;
-
-            case 203:
-                this.field_175336_F.diamondCount = (int) value;
-                break;
-
-            case 204:
-                this.field_175336_F.diamondMinHeight = (int) value;
-                break;
-
-            case 205:
-                this.field_175336_F.diamondMaxHeight = (int) value;
-                break;
-
-            case 206:
-                this.field_175336_F.lapisSize = (int) value;
-                break;
-
-            case 207:
-                this.field_175336_F.lapisCount = (int) value;
-                break;
-
-            case 208:
-                this.field_175336_F.lapisCenterHeight = (int) value;
-                break;
-
-            case 209:
-                this.field_175336_F.lapisSpread = (int) value;
+            case 100 -> this.field_175336_F.mainNoiseScaleX = value;
+            case 101 -> this.field_175336_F.mainNoiseScaleY = value;
+            case 102 -> this.field_175336_F.mainNoiseScaleZ = value;
+            case 103 -> this.field_175336_F.depthNoiseScaleX = value;
+            case 104 -> this.field_175336_F.depthNoiseScaleZ = value;
+            case 105 -> this.field_175336_F.depthNoiseScaleExponent = value;
+            case 106 -> this.field_175336_F.baseSize = value;
+            case 107 -> this.field_175336_F.coordinateScale = value;
+            case 108 -> this.field_175336_F.heightScale = value;
+            case 109 -> this.field_175336_F.stretchY = value;
+            case 110 -> this.field_175336_F.upperLimitScale = value;
+            case 111 -> this.field_175336_F.lowerLimitScale = value;
+            case 112 -> this.field_175336_F.biomeDepthWeight = value;
+            case 113 -> this.field_175336_F.biomeDepthOffset = value;
+            case 114 -> this.field_175336_F.biomeScaleWeight = value;
+            case 115 -> this.field_175336_F.biomeScaleOffset = value;
+            case 157 -> this.field_175336_F.dungeonChance = (int) value;
+            case 158 -> this.field_175336_F.waterLakeChance = (int) value;
+            case 159 -> this.field_175336_F.lavaLakeChance = (int) value;
+            case 160 -> this.field_175336_F.seaLevel = (int) value;
+            case 162 -> this.field_175336_F.fixedBiome = (int) value;
+            case 163 -> this.field_175336_F.biomeSize = (int) value;
+            case 164 -> this.field_175336_F.riverSize = (int) value;
+            case 165 -> this.field_175336_F.dirtSize = (int) value;
+            case 166 -> this.field_175336_F.dirtCount = (int) value;
+            case 167 -> this.field_175336_F.dirtMinHeight = (int) value;
+            case 168 -> this.field_175336_F.dirtMaxHeight = (int) value;
+            case 169 -> this.field_175336_F.gravelSize = (int) value;
+            case 170 -> this.field_175336_F.gravelCount = (int) value;
+            case 171 -> this.field_175336_F.gravelMinHeight = (int) value;
+            case 172 -> this.field_175336_F.gravelMaxHeight = (int) value;
+            case 173 -> this.field_175336_F.graniteSize = (int) value;
+            case 174 -> this.field_175336_F.graniteCount = (int) value;
+            case 175 -> this.field_175336_F.graniteMinHeight = (int) value;
+            case 176 -> this.field_175336_F.graniteMaxHeight = (int) value;
+            case 177 -> this.field_175336_F.dioriteSize = (int) value;
+            case 178 -> this.field_175336_F.dioriteCount = (int) value;
+            case 179 -> this.field_175336_F.dioriteMinHeight = (int) value;
+            case 180 -> this.field_175336_F.dioriteMaxHeight = (int) value;
+            case 181 -> this.field_175336_F.andesiteSize = (int) value;
+            case 182 -> this.field_175336_F.andesiteCount = (int) value;
+            case 183 -> this.field_175336_F.andesiteMinHeight = (int) value;
+            case 184 -> this.field_175336_F.andesiteMaxHeight = (int) value;
+            case 185 -> this.field_175336_F.coalSize = (int) value;
+            case 186 -> this.field_175336_F.coalCount = (int) value;
+            case 187 -> this.field_175336_F.coalMinHeight = (int) value;
+            case 189 -> this.field_175336_F.coalMaxHeight = (int) value;
+            case 190 -> this.field_175336_F.ironSize = (int) value;
+            case 191 -> this.field_175336_F.ironCount = (int) value;
+            case 192 -> this.field_175336_F.ironMinHeight = (int) value;
+            case 193 -> this.field_175336_F.ironMaxHeight = (int) value;
+            case 194 -> this.field_175336_F.goldSize = (int) value;
+            case 195 -> this.field_175336_F.goldCount = (int) value;
+            case 196 -> this.field_175336_F.goldMinHeight = (int) value;
+            case 197 -> this.field_175336_F.goldMaxHeight = (int) value;
+            case 198 -> this.field_175336_F.redstoneSize = (int) value;
+            case 199 -> this.field_175336_F.redstoneCount = (int) value;
+            case 200 -> this.field_175336_F.redstoneMinHeight = (int) value;
+            case 201 -> this.field_175336_F.redstoneMaxHeight = (int) value;
+            case 202 -> this.field_175336_F.diamondSize = (int) value;
+            case 203 -> this.field_175336_F.diamondCount = (int) value;
+            case 204 -> this.field_175336_F.diamondMinHeight = (int) value;
+            case 205 -> this.field_175336_F.diamondMaxHeight = (int) value;
+            case 206 -> this.field_175336_F.lapisSize = (int) value;
+            case 207 -> this.field_175336_F.lapisCount = (int) value;
+            case 208 -> this.field_175336_F.lapisCenterHeight = (int) value;
+            case 209 -> this.field_175336_F.lapisSpread = (int) value;
+            default -> {
+            }
         }
 
         if (id >= 100 && id < 116) {

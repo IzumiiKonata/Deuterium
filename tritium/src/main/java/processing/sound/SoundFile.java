@@ -21,12 +21,8 @@ public class SoundFile extends AudioSample {
 	public SoundFile(String path) {
 		super();
 
-		try {
-			// load WAV or AIF using JSyn
-			this.sample = SampleLoader.loadStreamedFloatSample(new File(path));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		// load WAV or AIF using JSyn
+		this.sample = SampleLoader.loadStreamedFloatSample(new File(path));
 
 		this.initiatePlayer();
 	}

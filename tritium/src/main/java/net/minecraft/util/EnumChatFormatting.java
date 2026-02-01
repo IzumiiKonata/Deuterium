@@ -38,7 +38,7 @@ public enum EnumChatFormatting {
      * Matches formatting codes that indicate that the client should treat the following text as bold, recolored,
      * obfuscated, etc.
      */
-    private static final Pattern formattingCodePattern = Pattern.compile("(?i)" + '\u00a7' + "[0-9A-FK-OR]");
+    private static final Pattern formattingCodePattern = Pattern.compile("(?i)" + '§' + "[0-9A-FK-OR]");
 
     /**
      * The name of this color/formatting
@@ -77,7 +77,7 @@ public enum EnumChatFormatting {
          */
         this.fancyStyling = fancyStylingIn;
         this.colorIndex = colorIndex;
-        this.controlString = "\u00a7" + formattingCodeIn;
+        this.controlString = "§" + formattingCodeIn;
     }
 
     /**

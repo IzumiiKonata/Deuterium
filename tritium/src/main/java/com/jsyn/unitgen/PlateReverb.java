@@ -107,7 +107,7 @@ public class PlateReverb extends UnitGenerator {
     }
 
     private static class RandomModulator {
-        private PseudoRandom randomNum = new PseudoRandom();;
+        private PseudoRandom randomNum = new PseudoRandom();
         protected float prevNoise, currNoise;
         private float mPhase;
         private float mPhaseIncrement;

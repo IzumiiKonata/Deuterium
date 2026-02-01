@@ -28,8 +28,7 @@ public class ResUtils {
             set.addAll(Arrays.asList(astring));
         }
 
-        String[] astring1 = set.toArray(new String[0]);
-        return astring1;
+        return set.toArray(new String[0]);
     }
 
     public static String[] collectFiles(IResourcePack rp, String prefix, String suffix, String[] defaultPaths) {
@@ -77,8 +76,7 @@ public class ResUtils {
                 }
             }
 
-            String[] astring = (String[]) list.toArray(new String[0]);
-            return astring;
+            return (String[]) list.toArray(new String[0]);
         }
     }
 
@@ -109,8 +107,7 @@ public class ResUtils {
                 }
             }
 
-            String[] astring1 = (String[]) list.toArray(new String[0]);
-            return astring1;
+            return (String[]) list.toArray(new String[0]);
         }
     }
 
@@ -136,8 +133,7 @@ public class ResUtils {
             }
 
             zipfile.close();
-            String[] astring = (String[]) list.toArray(new String[0]);
-            return astring;
+            return (String[]) list.toArray(new String[0]);
         } catch (IOException ioexception) {
             ioexception.printStackTrace();
             return new String[0];

@@ -1,12 +1,8 @@
 package tritium.ncm.music.dto;
 
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;
-import lombok.Getter;
 import net.minecraft.util.Location;
 import tritium.ncm.RequestUtil;
 import tritium.ncm.api.CloudMusicApi;

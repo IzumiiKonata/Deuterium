@@ -32,7 +32,7 @@ public class C0CPacketInput implements Packet<INetHandlerPlayServer> {
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.strafeSpeed = buf.readFloat();
         this.forwardSpeed = buf.readFloat();
         byte b0 = buf.readByte();
@@ -43,7 +43,7 @@ public class C0CPacketInput implements Packet<INetHandlerPlayServer> {
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeFloat(this.strafeSpeed);
         buf.writeFloat(this.forwardSpeed);
         byte b0 = 0;

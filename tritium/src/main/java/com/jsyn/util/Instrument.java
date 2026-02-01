@@ -28,11 +28,11 @@ public interface Instrument {
     // This will be applied to the voice when noteOn is called.
     void usePreset(int presetIndex, TimeStamp timeStamp);
 
-    public void noteOn(int tag, double frequency, double amplitude, TimeStamp timeStamp);
+    void noteOn(int tag, double frequency, double amplitude, TimeStamp timeStamp);
 
-    public void noteOff(int tag, TimeStamp timeStamp);
+    void noteOff(int tag, TimeStamp timeStamp);
 
-    public void setPort(int tag, String portName, double value, TimeStamp timeStamp);
+    void setPort(int tag, String portName, double value, TimeStamp timeStamp);
 
-    public void allNotesOff(TimeStamp timeStamp);
+    void allNotesOff(TimeStamp timeStamp);
 }

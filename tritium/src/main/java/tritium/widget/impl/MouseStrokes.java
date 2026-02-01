@@ -5,7 +5,6 @@ import tritium.event.eventapi.Handler;
 import tritium.event.events.input.MouseXYChangeEvent;
 import tritium.rendering.animation.Interpolations;
 import tritium.widget.Widget;
-import tritium.interfaces.SharedRenderingConstants;
 
 import java.awt.*;
 

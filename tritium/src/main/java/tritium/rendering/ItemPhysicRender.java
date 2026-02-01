@@ -95,11 +95,9 @@ public class ItemPhysicRender {
                     boolean m3 = item.isInsideOfMaterial(Material.water);
                     boolean m4 = item.isInWater();
                     if (m3 | m1 == Material.water | m2 == Material.water | m4) {
-                        EntityItem tmp748_746 = item;
-                        tmp748_746.rotationPitch = (float) ((double) tmp748_746.rotationPitch + rotation / 4.0);
+                        item.rotationPitch = (float) ((double) item.rotationPitch + rotation / 4.0);
                     } else {
-                        EntityItem tmp770_768 = item;
-                        tmp770_768.rotationPitch = (float) ((double) tmp770_768.rotationPitch + rotation * 2.0);
+                        item.rotationPitch = (float) ((double) item.rotationPitch + rotation * 2.0);
                     }
                 }
             }

@@ -161,7 +161,7 @@ public final class Matrix3f {
 
     @Override
     public String toString() {
-        String stringBuilder = "Matrix3f:\n" +
+        return "Matrix3f:\n" +
                 this.m00 +
                 " " +
                 this.m01 +
@@ -180,7 +180,6 @@ public final class Matrix3f {
                 " " +
                 this.m22 +
                 "\n";
-        return stringBuilder;
     }
 
     public void store(final FloatBuffer floatBuffer) {

@@ -11,7 +11,6 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
-import org.lwjgl.system.MemoryUtil;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 import tritium.utils.other.MemoryTracker;
@@ -217,8 +216,8 @@ public class TextureUtil {
         GlStateManager.bindTexture(p_94277_0_);
     }
 
-    public static int[] readImageData(IResourceManager resourceManager, Location imageLocation) throws IOException {
-        try (NativeBackedImage bufferedimage = readBufferedImage(resourceManager.getResource(imageLocation).getInputStream());) {
+    public static int[] readImageData(IResourceManager resourceManager, Location imageLocation) {
+        try (NativeBackedImage bufferedimage = readBufferedImage(resourceManager.getResource(imageLocation).getInputStream())) {
             if (bufferedimage == null) {
                 return null;
             } else {

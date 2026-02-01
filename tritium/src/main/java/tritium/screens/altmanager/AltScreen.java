@@ -592,41 +592,24 @@ public class AltScreen extends BaseScreen {
     public int getColor(ColorType type) {
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
 
-        switch (theme) {
-            case Light:
-                switch (type) {
-                    case BACKGROUND:
-                    case CONTAINER_ELEMENT_BACKGROUND:
-                        return 0xFFEBEBEB;
-                    case PRIMARY_TEXT:
-                        return 0xFF1F2937;
-                    case SECONDARY_TEXT:
-                        return 0xFF6B7280;
-                    case CONTAINER_BACKGROUND:
-                        return 0xFFF6F6F6;
-                    case CONTAINER_OUTLINE:
-                        return 0xFFE5E7EB;
-                    case CONTAINER_ELEMENT_HOVERING:
-                        return 0xFFF3F4F6;
-                }
-            case Dark:
-                switch (type) {
-                    case BACKGROUND:
-                    case CONTAINER_ELEMENT_BACKGROUND:
-                        return 0xFF20202B;
-                    case PRIMARY_TEXT:
-                        return 0xFFF9FAFB;
-                    case SECONDARY_TEXT:
-                        return 0xFF9CA3AF;
-                    case CONTAINER_BACKGROUND:
-                        return 0xFF202020;
-                    case CONTAINER_OUTLINE:
-                        return 0xFF374151;
-                    case CONTAINER_ELEMENT_HOVERING:
-                        return 0xFF374151;
-                }
-        }
+        return switch (theme) {
+            case Light -> switch (type) {
+                case BACKGROUND, CONTAINER_ELEMENT_BACKGROUND -> 0xFFEBEBEB;
+                case PRIMARY_TEXT -> 0xFF1F2937;
+                case SECONDARY_TEXT -> 0xFF6B7280;
+                case CONTAINER_BACKGROUND -> 0xFFF6F6F6;
+                case CONTAINER_OUTLINE -> 0xFFE5E7EB;
+                case CONTAINER_ELEMENT_HOVERING -> 0xFFF3F4F6;
+            };
+            case Dark -> switch (type) {
+                case BACKGROUND, CONTAINER_ELEMENT_BACKGROUND -> 0xFF20202B;
+                case PRIMARY_TEXT -> 0xFFF9FAFB;
+                case SECONDARY_TEXT -> 0xFF9CA3AF;
+                case CONTAINER_BACKGROUND -> 0xFF202020;
+                case CONTAINER_OUTLINE -> 0xFF374151;
+                case CONTAINER_ELEMENT_HOVERING -> 0xFF374151;
+            };
+        };
 
-        return 0;
     }
 }

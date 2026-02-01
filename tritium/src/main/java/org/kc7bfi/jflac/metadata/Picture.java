@@ -23,7 +23,7 @@ package org.kc7bfi.jflac.metadata;
 import org.kc7bfi.jflac.io.BitInputStream;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 
 /**
@@ -61,7 +61,6 @@ public class Picture extends Metadata {
         final int picType;
     }
 
-    ;
     private PictureType pictureType;
     private int mimeTypeByteCount;
     private String mimeString;      //ASCII 0x20 to 0x7e or --> (data is URL)
@@ -108,10 +107,7 @@ public class Picture extends Metadata {
             data = new byte[descStringByteCount];
             is.readByteBlockAlignedNoCRC(data, descStringByteCount);
             usedBits += descStringByteCount * 8;
-            try {
-                descString = new String(data, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-            }
+            descString = new String(data, StandardCharsets.UTF_8);
 
         } else {
             descString = new String("");

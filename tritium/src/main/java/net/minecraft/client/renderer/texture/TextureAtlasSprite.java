@@ -303,7 +303,7 @@ public class TextureAtlasSprite {
         }
     }
 
-    public void loadSprite(BufferedImage[] images, AnimationMetadataSection meta) throws IOException {
+    public void loadSprite(BufferedImage[] images, AnimationMetadataSection meta) {
         this.resetSprite();
         int i = images[0].getWidth();
         int j = images[0].getHeight();
@@ -415,11 +415,11 @@ public class TextureAtlasSprite {
                     CrashReportCategory crashreportcategory = crashreport.makeCategory("正在迭代的帧");
                     crashreportcategory.addCrashSection("帧索引", i);
                     crashreportcategory.addCrashSectionCallable("帧大小", new Callable<String>() {
-                        public String call() throws Exception {
+                        public String call() {
                             StringBuilder stringbuilder = new StringBuilder();
 
                             for (int[] aint1 : aint) {
-                                if (stringbuilder.length() > 0) {
+                                if (!stringbuilder.isEmpty()) {
                                     stringbuilder.append(", ");
                                 }
 
@@ -626,8 +626,7 @@ public class TextureAtlasSprite {
     }
 
     public List<int[][]> getFramesTextureData() {
-        List<int[][]> list = new ArrayList(this.framesTextureData);
-        return list;
+        return (List<int[][]>) new ArrayList(this.framesTextureData);
     }
 
     public AnimationMetadataSection getAnimationMetadata() {

@@ -5,7 +5,6 @@ import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Location;
 import net.minecraft.util.Tuple;
-import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL11;
 import tritium.Tritium;
 import tritium.command.CommandValues;
@@ -665,9 +664,8 @@ public class CFontRenderer implements Closeable, IFontRenderer {
             }
         }
 
-        String[] array = lines.toArray(new String[0]);
-//        System.out.println("Breaking \"" + text + "\" into [" + String.join("\", \"", array) + "]");
-        return array;
+        //        System.out.println("Breaking \"" + text + "\" into [" + String.join("\", \"", array) + "]");
+        return lines.toArray(new String[0]);
     }
 
     @Getter

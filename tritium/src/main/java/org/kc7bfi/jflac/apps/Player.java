@@ -53,9 +53,8 @@ public class Player implements PCMProcessor {
      *
      * @param inFileName The input FLAC file name
      * @throws IOException              Thrown if error reading file
-     * @throws LineUnavailableException Thrown if error playing file
      */
-    public void decode(String inFileName) throws IOException, LineUnavailableException {
+    public void decode(String inFileName) throws IOException {
 //        System.out.println("Play [" + inFileName + "]");
         FileInputStream is = new FileInputStream(inFileName);
 
@@ -118,7 +117,7 @@ public class Player implements PCMProcessor {
      * @return the Java Sound AudioFormat for this stream info.
      */
     public static AudioFormat getAudioFormat(StreamInfo streamInfo) {
-        return new AudioFormat(streamInfo.getSampleRate(), streamInfo.getBitsPerSample(), streamInfo.getChannels(), (streamInfo.getBitsPerSample() <= 8) ? false : true, false);
+        return new AudioFormat(streamInfo.getSampleRate(), streamInfo.getBitsPerSample(), streamInfo.getChannels(), streamInfo.getBitsPerSample() > 8, false);
     }
 
 }

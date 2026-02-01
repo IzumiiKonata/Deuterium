@@ -12,6 +12,7 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import tritium.event.eventapi.Handler;
 import tritium.event.events.rendering.Render3DEvent;
+import tritium.interfaces.SharedConstants;
 import tritium.module.Module;
 import tritium.rendering.animation.Interpolations;
 import tritium.settings.BooleanSetting;
@@ -174,7 +175,7 @@ public class CameraPositions extends Module {
         this.startDrawing(x, y, z);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        this.mc.getTextureManager().bindTexture(Gui.icons);
+        SharedConstants.mc.getTextureManager().bindTexture(Gui.icons);
         GlStateManager.enableBlend();
 
         GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE_MINUS_DST_COLOR, GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);

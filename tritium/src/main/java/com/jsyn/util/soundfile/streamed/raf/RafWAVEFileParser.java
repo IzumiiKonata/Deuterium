@@ -248,7 +248,7 @@ public class RafWAVEFileParser extends WAVEFileParser {
         return makeSample(reader);
     }
 
-    RafFloatSample makeSample(StreamedByteDataReader reader) throws IOException {
+    RafFloatSample makeSample(StreamedByteDataReader reader) {
         RafFloatSample floatSample = new RafFloatSample(reader, numFrames, samplesPerFrame);
 
         floatSample.setChannelsPerFrame(samplesPerFrame);

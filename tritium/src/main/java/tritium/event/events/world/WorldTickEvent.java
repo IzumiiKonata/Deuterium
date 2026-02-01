@@ -1,7 +1,5 @@
 package tritium.event.events.world;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 import tritium.event.eventapi.EventState;
 
 /**

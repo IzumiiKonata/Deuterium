@@ -23,7 +23,7 @@ package org.kc7bfi.jflac.metadata;
 import org.kc7bfi.jflac.io.BitInputStream;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 
 /**
  * An entry into the Vorbis comment.
@@ -51,11 +51,7 @@ public class VorbisString {
      */
     public String toString() {
         String s;
-        try {
-            s = new String(entry, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            s = new String("");
-        }
+        s = new String(entry, StandardCharsets.UTF_8);
         return s;
     }
 }

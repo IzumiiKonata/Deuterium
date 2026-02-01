@@ -13,7 +13,6 @@ import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.settings.ClientSettings;
 import tritium.utils.timing.Timer;
-import tritium.rendering.shader.uniform.Uniform1f;
 import tritium.rendering.shader.uniform.Uniform1i;
 import tritium.rendering.shader.uniform.Uniform2f;
 import tritium.rendering.shader.uniform.UniformFB;

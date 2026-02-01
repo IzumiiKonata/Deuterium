@@ -520,8 +520,6 @@ final class HuffCodeTab {
                 if (br.hget1bit() != 0) w[0] = -w[0];
             if (x[0] != 0)
                 if (br.hget1bit() != 0) x[0] = -x[0];
-            if (y[0] != 0)
-                if (br.hget1bit() != 0) y[0] = -y[0];
         } else {
             // Process sign and escape encodings for dual tables.
             // x and y are reversed in the test bitstream.
@@ -535,9 +533,9 @@ final class HuffCodeTab {
             if (h.linbits != 0)
                 if ((h.ylen - 1) == y[0])
                     y[0] += br.hgetbits(h.linbits);
-            if (y[0] != 0)
-                if (br.hget1bit() != 0) y[0] = -y[0];
         }
+        if (y[0] != 0)
+            if (br.hget1bit() != 0) y[0] = -y[0];
         return error;
     }
 

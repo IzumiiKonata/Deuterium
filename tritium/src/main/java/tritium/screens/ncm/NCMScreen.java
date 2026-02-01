@@ -368,25 +368,19 @@ public class NCMScreen extends BaseScreen {
         ELEMENT_BACKGROUND,
         ELEMENT_HOVER,
         PRIMARY_TEXT,
-        SECONDARY_TEXT;
+        SECONDARY_TEXT
 
     }
 
     public static int getColor(ColorType type) {
 
-        switch (type) {
-            case GENERIC_BACKGROUND:
-                return 0x1E1E1E;
-            case ELEMENT_BACKGROUND:
-                return 0x232323;
-            case ELEMENT_HOVER:
-                return 0x353535;
-            case PRIMARY_TEXT:
-                return 0xFFFFFF;
-            case SECONDARY_TEXT:
-                return 0x6B6B6B;
-        }
+        return switch (type) {
+            case GENERIC_BACKGROUND -> 0x1E1E1E;
+            case ELEMENT_BACKGROUND -> 0x232323;
+            case ELEMENT_HOVER -> 0x353535;
+            case PRIMARY_TEXT -> 0xFFFFFF;
+            case SECONDARY_TEXT -> 0x6B6B6B;
+        };
 
-        return 0;
     }
 }

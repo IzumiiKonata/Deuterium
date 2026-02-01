@@ -174,7 +174,7 @@ public class CrashReportCategory {
     public static void addBlockInfo(CrashReportCategory category, final BlockPos pos, final Block blockIn, final int blockData) {
         final int i = Block.getIdFromBlock(blockIn);
         category.addCrashSectionCallable("方块类型", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 try {
                     return String.format("ID #%d (%s // %s)", i, blockIn.getUnlocalizedName(), blockIn.getClass().getCanonicalName());
                 } catch (Throwable var2) {
@@ -183,7 +183,7 @@ public class CrashReportCategory {
             }
         });
         category.addCrashSectionCallable("Block data value", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 if (blockData < 0) {
                     return "Unknown? (Got " + blockData + ")";
                 } else {
@@ -193,7 +193,7 @@ public class CrashReportCategory {
             }
         });
         category.addCrashSectionCallable("Block location", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return CrashReportCategory.getCoordinateInfo(pos);
             }
         });
@@ -201,12 +201,12 @@ public class CrashReportCategory {
 
     public static void addBlockInfo(CrashReportCategory category, final BlockPos pos, final IBlockState state) {
         category.addCrashSectionCallable("Block", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return state.toString();
             }
         });
         category.addCrashSectionCallable("Block location", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return CrashReportCategory.getCoordinateInfo(pos);
             }
         });

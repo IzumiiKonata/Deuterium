@@ -202,10 +202,4 @@ public class ModelRabbit extends ModelBase {
         this.rabbitLeftArm.rotateAngleX = this.rabbitRightArm.rotateAngleX = (field_178701_m * -40.0F - 11.0F) * 0.017453292F;
     }
 
-    /**
-     * Used for easily adding entity-dependent animations. The second and third float params here are the same second
-     * and third as in the setRotationAngles method.
-     */
-    public void setLivingAnimations(EntityLivingBase entitylivingbaseIn, float p_78086_2_, float p_78086_3_, float partialTickTime) {
-    }
 }

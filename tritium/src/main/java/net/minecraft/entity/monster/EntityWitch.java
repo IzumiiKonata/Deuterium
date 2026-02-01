@@ -55,13 +55,6 @@ public class EntityWitch extends EntityMob implements IRangedAttackMob {
     }
 
     /**
-     * Returns the sound this mob makes while it's alive.
-     */
-    protected String getLivingSound() {
-        return null;
-    }
-
-    /**
      * Returns the sound this mob makes when it is hurt.
      */
     protected String getHurtSound() {

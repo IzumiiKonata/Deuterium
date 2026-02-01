@@ -26,9 +26,9 @@ import org.lwjglx.opengl.PixelFormatLWJGL;
  */
 interface DrawableLWJGL extends Drawable {
 
-    void setPixelFormat(PixelFormatLWJGL pf) throws LWJGLException;
+    void setPixelFormat(PixelFormatLWJGL pf);
 
-    void setPixelFormat(PixelFormatLWJGL pf, ContextAttribs attribs) throws LWJGLException;
+    void setPixelFormat(PixelFormatLWJGL pf, ContextAttribs attribs);
 
     PixelFormatLWJGL getPixelFormat();
 

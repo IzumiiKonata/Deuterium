@@ -1,12 +1,7 @@
 package net.optifine.util;
 
-import io.netty.util.internal.PlatformDependent;
-import net.minecraft.src.Config;
-
 import java.lang.management.BufferPoolMXBean;
 import java.lang.management.ManagementFactory;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 public class NativeMemory {

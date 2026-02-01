@@ -26,7 +26,7 @@ public class S48PacketResourcePackSend implements Packet<INetHandlerPlayClient>,
     /**
      * Reads the raw packet data from the data stream.
      */
-    public void readPacketData(PacketBuffer buf) throws IOException {
+    public void readPacketData(PacketBuffer buf) {
         this.url = buf.readStringFromBuffer(32767);
         this.hash = buf.readStringFromBuffer(40);
     }
@@ -34,7 +34,7 @@ public class S48PacketResourcePackSend implements Packet<INetHandlerPlayClient>,
     /**
      * Writes the raw packet data to the data stream.
      */
-    public void writePacketData(PacketBuffer buf) throws IOException {
+    public void writePacketData(PacketBuffer buf) {
         buf.writeString(this.url);
         buf.writeString(this.hash);
     }

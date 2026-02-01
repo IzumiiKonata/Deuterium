@@ -307,8 +307,7 @@ public class Matrix3f extends Matrix implements Serializable {
      * @return the determinant of the matrix
      */
     public float determinant() {
-        float f = m00 * (m11 * m22 - m12 * m21) + m01 * (m12 * m20 - m10 * m22) + m02 * (m10 * m21 - m11 * m20);
-        return f;
+        return m00 * (m11 * m22 - m12 * m21) + m01 * (m12 * m20 - m10 * m22) + m02 * (m10 * m21 - m11 * m20);
     }
 
     /**

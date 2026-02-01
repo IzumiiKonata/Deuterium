@@ -59,7 +59,7 @@ public class MidiConstants {
     public static final int RPN_BEND_RANGE = 0;
     public static final int RPN_FINE_TUNING = 1;
 
-    public static final String PITCH_NAMES[] = {
+    public static final String[] PITCH_NAMES = {
             "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"
     };
 

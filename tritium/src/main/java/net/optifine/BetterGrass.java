@@ -118,8 +118,7 @@ public class BetterGrass {
             s = textureDefault;
         }
         final Location resourcelocation1 = Location.of(s);
-        final TextureAtlasSprite textureatlassprite = textureMap.registerSprite(resourcelocation1);
-        return textureatlassprite;
+        return textureMap.registerSprite(resourcelocation1);
     }
 
     public static List getFaceQuads(final IBlockAccess blockAccess, final IBlockState blockState, final BlockPos blockPos, final EnumFacing facing, final List quads) {
@@ -187,8 +186,7 @@ public class BetterGrass {
 
     private static Block getBlockAt(final BlockPos blockPos, final EnumFacing facing, final IBlockAccess blockAccess) {
         final BlockPos blockpos = blockPos.offset(facing);
-        final Block block = blockAccess.getBlockState(blockpos).getBlock();
-        return block;
+        return blockAccess.getBlockState(blockpos).getBlock();
     }
 
     private static boolean getBoolean(final Properties props, final String key, final boolean def) {

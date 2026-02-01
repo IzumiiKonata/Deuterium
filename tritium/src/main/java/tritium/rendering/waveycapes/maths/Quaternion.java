@@ -150,11 +150,10 @@ public final class Quaternion {
 
     @Override
     public String toString() {
-        String stringBuilder = "Quaternion[" + this.r() + " + " +
+        return "Quaternion[" + this.r() + " + " +
                 this.i() + "i + " +
                 this.j() + "j + " +
                 this.k() + "k]";
-        return stringBuilder;
     }
 
     public float i() {

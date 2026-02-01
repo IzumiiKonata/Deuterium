@@ -9,11 +9,9 @@ import net.optifine.http.HttpPipeline;
 import net.optifine.http.HttpUtils;
 import net.optifine.util.Json;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 
 public class PlayerConfigurationParser {
@@ -88,8 +86,7 @@ public class PlayerConfigurationParser {
 
         try {
             byte[] abyte = HttpPipeline.get(s, Minecraft.getMinecraft().getProxy());
-            BufferedImage bufferedimage = NativeBackedImage.make(new ByteArrayInputStream(abyte));
-            return bufferedimage;
+            return NativeBackedImage.make(new ByteArrayInputStream(abyte));
         } catch (IOException ioexception) {
             Config.warn("Error loading item texture " + texturePath + ": " + ioexception.getClass().getName() + ": " + ioexception.getMessage());
             return null;
@@ -104,8 +101,7 @@ public class PlayerConfigurationParser {
             String s1 = new String(abyte, StandardCharsets.US_ASCII);
             JsonParser jsonparser = new JsonParser();
             JsonObject jsonobject = (JsonObject) jsonparser.parse(s1);
-            PlayerItemModel playeritemmodel = PlayerItemParser.parseItemModel(jsonobject);
-            return playeritemmodel;
+            return PlayerItemParser.parseItemModel(jsonobject);
         } catch (Exception exception) {
             Config.warn("Error loading item model " + modelPath + ": " + exception.getClass().getName() + ": " + exception.getMessage());
             return null;

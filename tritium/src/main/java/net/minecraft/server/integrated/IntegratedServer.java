@@ -68,8 +68,7 @@ public class IntegratedServer extends MinecraftServer {
             NBTTagCompound nbttagcompound = worldinfo.getPlayerNBTTagCompound();
 
             if (nbttagcompound != null && nbttagcompound.hasKey("Dimension")) {
-                int i = nbttagcompound.getInteger("Dimension");
-                PacketThreadUtil.lastDimensionId = i;
+                PacketThreadUtil.lastDimensionId = nbttagcompound.getInteger("Dimension");
                 this.mc.loadingScreen.setLoadingProgress(-1);
             }
         }
@@ -132,7 +131,7 @@ public class IntegratedServer extends MinecraftServer {
     /**
      * Initialises the server and starts it.
      */
-    protected boolean startServer() throws IOException {
+    protected boolean startServer() {
         logger.info("Starting integrated minecraft server version 1.9");
         this.setOnlineMode(true);
         this.setCanSpawnAnimals(true);
@@ -279,12 +278,12 @@ public class IntegratedServer extends MinecraftServer {
     public CrashReport addServerInfoToCrashReport(CrashReport report) {
         report = super.addServerInfoToCrashReport(report);
         report.getCategory().addCrashSectionCallable("Type", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 return "Integrated Server (map_client.txt)";
             }
         });
         report.getCategory().addCrashSectionCallable("Is Modded", new Callable<String>() {
-            public String call() throws Exception {
+            public String call() {
                 String s = ClientBrandRetriever.getClientModName();
 
                 if (!s.equals("vanilla")) {

@@ -254,7 +254,7 @@ public class GLUtessellatorImpl implements GLUtessellator {
 
             }
             case GLU_TESS_BOUNDARY_ONLY: {
-                assert (boundaryOnly == true || boundaryOnly == false);
+                assert (boundaryOnly || !boundaryOnly);
                 value[value_offset] = boundaryOnly ? 1 : 0;
                 break;
             }

@@ -25,8 +25,6 @@ public class AutoSprint extends Module {
 
     }
 
-    ;
-
     @Override
     public void onDisable() {
         KeyBinding.setKeyBindState(mc.gameSettings.keyBindSprint.getKeyCode(), false);

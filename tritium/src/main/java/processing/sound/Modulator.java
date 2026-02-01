@@ -8,6 +8,6 @@ import com.jsyn.ports.UnitOutputPort;
  */
 public interface Modulator {
 
-	public UnitOutputPort getModulator();
+	UnitOutputPort getModulator();
 
 }

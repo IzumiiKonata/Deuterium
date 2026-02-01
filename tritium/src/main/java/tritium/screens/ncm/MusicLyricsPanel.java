@@ -32,7 +32,6 @@ import tritium.utils.cursor.CursorUtils;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
-import tritium.widget.impl.MusicInfoWidget;
 import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
