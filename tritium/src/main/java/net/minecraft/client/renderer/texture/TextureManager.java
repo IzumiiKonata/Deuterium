@@ -116,7 +116,7 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
 
         ITextureObject prev = this.mapTextureObjects.put(textureLocation, textureObj);
 
-        if (prev != null) {
+        if (prev != null && prev.getGlTextureId() != textureObj.getGlTextureId()) {
             System.out.println("Key = " + textureLocation + ", Prev = " + prev.getGlTextureId() + ", New = " + textureObj.getGlTextureId());
 //            DevUtils.printCurrentInvokeStack();
             TextureUtil.deleteTexture(prev.getGlTextureId());
