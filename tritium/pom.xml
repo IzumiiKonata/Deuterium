@@ -46,6 +46,12 @@
 
     <dependencies>
 
+        <dependency>
+            <groupId>tritium</groupId>
+            <artifactId>java-version-checker</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+
         <!-- Mixin -->
         <dependency>
             <groupId>org.spongepowered</groupId>
