@@ -72,6 +72,22 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
             widget.onRender(mc.currentScreen instanceof MoveWidgetsScreen);
             GlStateManager.popMatrix();
 
+            if (widget.getX() + widget.getWidth() < 0) {
+                widget.setX(0);
+            }
+
+            if (widget.getX() > RenderSystem.getWidth()) {
+                widget.setX(RenderSystem.getWidth() - widget.getWidth());
+            }
+
+            if (widget.getY() + widget.getHeight() < 0) {
+                widget.setY(0);
+            }
+
+            if (widget.getY() > RenderSystem.getHeight()) {
+                widget.setY(RenderSystem.getHeight() - widget.getHeight());
+            }
+
         }
 
     }
