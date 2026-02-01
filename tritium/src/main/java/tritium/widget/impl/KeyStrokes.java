@@ -22,7 +22,7 @@ public class KeyStrokes extends Widget {
     double mouseWidth = keyWidth + spacing + keyWidth / 2.0 - spacing / 2.0;
     double mouseHeight = keyHeight;
 
-    public NumberSetting<Double> size = new NumberSetting<Double>("Size", 23d, 20d, 32d, 1d) {
+    public NumberSetting<Double> size = new NumberSetting<>("Size", 23d, 20d, 32d, 1d) {
         @Override
         public void onValueChanged(Double last, Double now) {
             keyWidth = keyHeight = now;

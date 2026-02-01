@@ -48,21 +48,11 @@ public class UnitGatePort extends UnitInputPort {
     }
 
     private void setOn(final boolean on) {
-        queueCommand(new ScheduledCommand() {
-            @Override
-            public void run() {
-                setOnInternal(on);
-            }
-        });
+        queueCommand(() -> setOnInternal(on));
     }
 
     private void setOn(final boolean on, TimeStamp timeStamp) {
-        scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                setOnInternal(on);
-            }
-        });
+        scheduleCommand(timeStamp, () -> setOnInternal(on));
     }
 
     private void setOnInternal(boolean on) {
@@ -78,21 +68,11 @@ public class UnitGatePort extends UnitInputPort {
     }
 
     public void trigger() {
-        queueCommand(new ScheduledCommand() {
-            @Override
-            public void run() {
-                triggerInternal();
-            }
-        });
+        queueCommand(() -> triggerInternal());
     }
 
     public void trigger(TimeStamp timeStamp) {
-        scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                triggerInternal();
-            }
-        });
+        scheduleCommand(timeStamp, () -> triggerInternal());
     }
 
     /**

@@ -112,10 +112,8 @@ public class CustomEntityModelParser {
                 }
 
                 copyJsonElements(jsonobject, elem);
-            } catch (IOException ioexception) {
+            } catch (IOException | JsonParseException ioexception) {
                 Config.error(ioexception.getClass().getName() + ": " + ioexception.getMessage());
-            } catch (JsonParseException jsonparseexception) {
-                Config.error(jsonparseexception.getClass().getName() + ": " + jsonparseexception.getMessage());
             } catch (Exception exception) {
                 exception.printStackTrace();
             }
@@ -175,7 +173,7 @@ public class CustomEntityModelParser {
         JsonArray jsonarray = (JsonArray) elem.get("animations");
 
         if (jsonarray != null) {
-            List<ModelVariableUpdater> list = new ArrayList();
+            List<ModelVariableUpdater> list = new ArrayList<>();
 
             for (int i = 0; i < jsonarray.size(); ++i) {
                 JsonObject jsonobject = (JsonObject) jsonarray.get(i);

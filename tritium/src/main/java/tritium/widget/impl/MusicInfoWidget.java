@@ -31,7 +31,7 @@ public class MusicInfoWidget extends Widget {
 
     public BooleanSetting turnComposerIntoLyric = new BooleanSetting("Turn Composer Into Lyric", false);
 
-    public NumberSetting<Double> volume = new NumberSetting<Double>("Volume", 0.1, 0.0, 1.0, 0.01) {
+    public NumberSetting<Double> volume = new NumberSetting<>("Volume", 0.1, 0.0, 1.0, 0.01) {
         @Override
         public void onValueChanged(Double last, Double now) {
             if (CloudMusic.player != null)

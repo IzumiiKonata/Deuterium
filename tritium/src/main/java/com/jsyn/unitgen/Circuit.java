@@ -28,9 +28,9 @@ import java.util.LinkedHashMap;
  * @author Phil Burk (C) 2009 Mobileer Inc
  */
 public class Circuit extends UnitGenerator {
-    private ArrayList<UnitGenerator> units = new ArrayList<UnitGenerator>();
+    private ArrayList<UnitGenerator> units = new ArrayList<>();
 
-    private final LinkedHashMap<String, UnitPort> portAliases = new LinkedHashMap<String, UnitPort>();
+    private final LinkedHashMap<String, UnitPort> portAliases = new LinkedHashMap<>();
 
     @Override
     public void generate(int start, int limit) {

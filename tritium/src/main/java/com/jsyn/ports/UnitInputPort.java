@@ -76,8 +76,7 @@ public class UnitInputPort extends UnitBlockPort implements ConnectableInput, Se
      */
     @Override
     public void pullData(long frameCount, int start, int limit) {
-        for (int i = 0; i < parts.length; i++) {
-            PortBlockPart part = parts[i];
+        for (PortBlockPart part : parts) {
             part.pullData(frameCount, start, limit);
         }
     }
@@ -95,12 +94,7 @@ public class UnitInputPort extends UnitBlockPort implements ConnectableInput, Se
     public void set(final int partNum, final double value) {
         // Trigger exception now if out of range.
         setValues[partNum] = value;
-        queueCommand(new ScheduledCommand() {
-            @Override
-            public void run() {
-                setValueInternal(partNum, value);
-            }
-        });
+        queueCommand(() -> setValueInternal(partNum, value));
     }
 
     public void set(double value, TimeStamp time) {
@@ -119,12 +113,7 @@ public class UnitInputPort extends UnitBlockPort implements ConnectableInput, Se
     public void set(final int partNum, final double value, TimeStamp timeStamp) {
         // Trigger exception now if out of range.
         getValue(partNum);
-        scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                setValueInternal(partNum, value);
-            }
-        });
+        scheduleCommand(timeStamp, () -> setValueInternal(partNum, value));
     }
 
     /**

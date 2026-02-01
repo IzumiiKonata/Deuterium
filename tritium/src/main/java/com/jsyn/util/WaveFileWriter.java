@@ -259,8 +259,7 @@ public class WaveFileWriter implements AudioOutputStream {
      * Fix RIFF and data chunk sizes based on final size. Assume data chunk is the last chunk.
      */
     private void fixSizes() throws IOException {
-        RandomAccessFile randomFile = new RandomAccessFile(outputFile, "rw");
-        try {
+        try (RandomAccessFile randomFile = new RandomAccessFile(outputFile, "rw")) {
             // adjust RIFF size
             long end = bytesWritten;
             int riffSize = (int) (end - riffSizePosition) - 4;
@@ -270,8 +269,6 @@ public class WaveFileWriter implements AudioOutputStream {
             int dataSize = (int) (end - dataSizePosition) - 4;
             randomFile.seek(dataSizePosition);
             writeRandomIntLittle(randomFile, dataSize);
-        } finally {
-            randomFile.close();
         }
     }
 

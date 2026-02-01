@@ -28,8 +28,8 @@ public class UUIDFetcher {
     private static final Gson gson = new GsonBuilder().registerTypeAdapter(UUID.class, new UUIDTypeAdapter()).create();
     private static final String UUID_URL = "https://api.mojang.com/users/profiles/minecraft/%s?at=%d";
     private static final String NAME_URL = "https://api.mojang.com/user/profiles/%s/names";
-    private static final Map<String, UUID> uuidCache = new HashMap<String, UUID>();
-    private static final Map<UUID, String> nameCache = new HashMap<UUID, String>();
+    private static final Map<String, UUID> uuidCache = new HashMap<>();
+    private static final Map<UUID, String> nameCache = new HashMap<>();
     private static final ExecutorService pool = Executors.newCachedThreadPool();
     @SerializedName("name")
     public String name;
@@ -46,13 +46,7 @@ public class UUIDFetcher {
     }
 
     public static void getUUIDAt(final String name, final long timestamp, final Consumer<UUID> action) {
-        pool.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                action.accept(UUIDFetcher.getUUIDAt(name, timestamp));
-            }
-        });
+        pool.execute(() -> action.accept(UUIDFetcher.getUUIDAt(name, timestamp)));
     }
 
     public static UUID getUUIDAt(String name, long timestamp) {
@@ -102,23 +96,11 @@ public class UUIDFetcher {
     }
 
     public static void getName(final UUID uuid, final Consumer<String> action) {
-        pool.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                action.accept(UUIDFetcher.getName(uuid));
-            }
-        });
+        pool.execute(() -> action.accept(UUIDFetcher.getName(uuid)));
     }
 
     public static void getCorrectUsername(final String name, final Consumer<String> action) {
-        pool.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                action.accept(UUIDFetcher.getCorrectUsername(name, System.currentTimeMillis()));
-            }
-        });
+        pool.execute(() -> action.accept(UUIDFetcher.getCorrectUsername(name, System.currentTimeMillis())));
     }
 
     public static String getName(UUID uuid) {

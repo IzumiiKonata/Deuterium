@@ -39,7 +39,7 @@ public class ExpressionParser {
             if (atoken == null) {
                 return null;
             } else {
-                Deque<Token> deque = new ArrayDeque(Arrays.asList(atoken));
+                Deque<Token> deque = new ArrayDeque<>(Arrays.asList(atoken));
                 return this.parseInfix(deque);
             }
         } catch (IOException ioexception) {
@@ -51,8 +51,8 @@ public class ExpressionParser {
         if (deque.isEmpty()) {
             return null;
         } else {
-            List<IExpression> list = new LinkedList();
-            List<Token> list1 = new LinkedList();
+            List<IExpression> list = new LinkedList<>();
+            List<Token> list1 = new LinkedList<>();
             IExpression iexpression = this.parseExpression(deque);
             checkNull(iexpression, "Missing expression");
             list.add(iexpression);
@@ -77,7 +77,7 @@ public class ExpressionParser {
     }
 
     private IExpression makeInfix(List<IExpression> listExpr, List<Token> listOper) throws ParseException {
-        List<FunctionType> list = new LinkedList();
+        List<FunctionType> list = new LinkedList<>();
 
         for (Token token : listOper) {
             FunctionType functiontype = FunctionType.parse(token.getText());
@@ -218,7 +218,7 @@ public class ExpressionParser {
     }
 
     private IExpression[] parseExpressions(Deque<Token> deque) throws ParseException {
-        List<IExpression> list = new ArrayList();
+        List<IExpression> list = new ArrayList<>();
 
         while (true) {
             Deque<Token> dequeComma = getGroup(deque, TokenType.COMMA, false);
@@ -280,9 +280,9 @@ public class ExpressionParser {
     }
 
     private static Deque<Token> getGroup(Deque<Token> deque, TokenType tokenTypeEnd, boolean tokenEndRequired) throws ParseException {
-        Deque<Token> dequeGroup = new ArrayDeque();
+        Deque<Token> dequeGroup = new ArrayDeque<>();
         int i = 0;
-        Iterator iterator = deque.iterator();
+        Iterator<Token> iterator = deque.iterator();
 
         while (iterator.hasNext()) {
             Token token = (Token) iterator.next();

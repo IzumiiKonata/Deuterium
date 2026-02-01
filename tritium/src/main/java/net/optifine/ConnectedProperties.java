@@ -133,7 +133,7 @@ public class ConnectedProperties {
     private int[] parseCtmTileIndexes(final Properties props) {
         if (this.tiles == null) return null;
         else {
-            final Map<Integer, Integer> map = new HashMap();
+            final Map<Integer, Integer> map = new HashMap<>();
             for (final Object object : props.keySet())
                 if (object instanceof String) {
                     final String s = (String) object;

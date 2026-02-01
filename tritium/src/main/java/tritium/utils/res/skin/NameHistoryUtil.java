@@ -9,7 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class NameHistoryUtil {
-    private static final HashMap<String, NameHistory> cacheHistory = new HashMap();
+    private static final HashMap<String, NameHistory> cacheHistory = new HashMap<>();
     private static final ExecutorService EXECUTOR_SERVICE = Executors.newSingleThreadExecutor();
 
     public static NameHistory getNameHistory(final String name) {
@@ -18,13 +18,9 @@ public class NameHistoryUtil {
         }
         NameHistory nameHistory = new NameHistory(UUID.randomUUID(), new UUIDFetcher[0]);
         cacheHistory.put(name, nameHistory);
-        EXECUTOR_SERVICE.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                NameHistory nameHistory = NameHistoryUtil.requestHistory(name);
-                cacheHistory.put(name, nameHistory);
-            }
+        EXECUTOR_SERVICE.execute(() -> {
+            NameHistory nameHistory1 = NameHistoryUtil.requestHistory(name);
+            cacheHistory.put(name, nameHistory1);
         });
         return nameHistory;
     }
@@ -36,14 +32,10 @@ public class NameHistoryUtil {
         }
         NameHistory nameHistory = new NameHistory(UUID.randomUUID(), new UUIDFetcher[0]);
         cacheHistory.put(name, nameHistory);
-        EXECUTOR_SERVICE.execute(new Runnable() {
-
-            @Override
-            public void run() {
-                NameHistory history = NameHistoryUtil.requestHistory(name);
-                cacheHistory.put(name, history);
-                callback.accept(history);
-            }
+        EXECUTOR_SERVICE.execute(() -> {
+            NameHistory history = NameHistoryUtil.requestHistory(name);
+            cacheHistory.put(name, history);
+            callback.accept(history);
         });
     }
 

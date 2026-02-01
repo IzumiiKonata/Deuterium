@@ -139,7 +139,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         this.heightMap = new int[256];
 
         for (int i = 0; i < this.entityLists.length; ++i) {
-            this.entityLists[i] = new ClassInheritanceMultiMap(Entity.class);
+            this.entityLists[i] = new ClassInheritanceMultiMap<>(Entity.class);
         }
 
         Arrays.fill(this.precipitationHeightMap, -999);
@@ -449,11 +449,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             return this.getBlock0(x & 15, y, z & 15);
         } catch (ReportedException reportedexception) {
             CrashReportCategory crashreportcategory = reportedexception.getCrashReport().makeCategory("正在被获取的方块");
-            crashreportcategory.addCrashSectionCallable("Location", new Callable<String>() {
-                public String call() {
-                    return CrashReportCategory.getCoordinateInfo(new BlockPos(Chunk.this.xPosition * 16 + x, y, Chunk.this.zPosition * 16 + z));
-                }
-            });
+            crashreportcategory.addCrashSectionCallable("Location", () -> CrashReportCategory.getCoordinateInfo(new BlockPos(Chunk.this.xPosition * 16 + x, y, Chunk.this.zPosition * 16 + z)));
             throw reportedexception;
         }
     }
@@ -463,11 +459,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             return this.getBlock0(pos.getX() & 15, pos.getY(), pos.getZ() & 15);
         } catch (ReportedException reportedexception) {
             CrashReportCategory crashreportcategory = reportedexception.getCrashReport().makeCategory("正在被获取的方块");
-            crashreportcategory.addCrashSectionCallable("Location", new Callable<String>() {
-                public String call() {
-                    return CrashReportCategory.getCoordinateInfo(pos);
-                }
-            });
+            crashreportcategory.addCrashSectionCallable("Location", () -> CrashReportCategory.getCoordinateInfo(pos));
             throw reportedexception;
         }
     }

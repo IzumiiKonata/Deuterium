@@ -51,9 +51,8 @@ class FrameListeners implements FrameListener {
      */
     public void processMetadata(Metadata metadata) {
         synchronized (frameListeners) {
-            Iterator it = frameListeners.iterator();
-            while (it.hasNext()) {
-                FrameListener listener = (FrameListener) it.next();
+            for (Object frameListener : frameListeners) {
+                FrameListener listener = (FrameListener) frameListener;
                 listener.processMetadata(metadata);
             }
         }
@@ -67,9 +66,8 @@ class FrameListeners implements FrameListener {
      */
     public void processFrame(Frame frame) {
         synchronized (frameListeners) {
-            Iterator it = frameListeners.iterator();
-            while (it.hasNext()) {
-                FrameListener listener = (FrameListener) it.next();
+            for (Object frameListener : frameListeners) {
+                FrameListener listener = (FrameListener) frameListener;
                 listener.processFrame(frame);
             }
         }
@@ -83,9 +81,8 @@ class FrameListeners implements FrameListener {
      */
     public void processError(String msg) {
         synchronized (frameListeners) {
-            Iterator it = frameListeners.iterator();
-            while (it.hasNext()) {
-                FrameListener listener = (FrameListener) it.next();
+            for (Object frameListener : frameListeners) {
+                FrameListener listener = (FrameListener) frameListener;
                 listener.processError(msg);
             }
         }

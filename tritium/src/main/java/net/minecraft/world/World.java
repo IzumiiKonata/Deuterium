@@ -187,11 +187,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Getting biome");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Coordinates of biome request");
-                crashreportcategory.addCrashSectionCallable("Location", new Callable<String>() {
-                    public String call() {
-                        return CrashReportCategory.getCoordinateInfo(pos);
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Location", () -> CrashReportCategory.getCoordinateInfo(pos));
                 throw new ReportedException(crashreport);
             }
         } else {
@@ -499,13 +495,11 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Exception while updating neighbours");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Block being updated");
-                crashreportcategory.addCrashSectionCallable("Source block type", new Callable<String>() {
-                    public String call() {
-                        try {
-                            return String.format("ID #%d (%s // %s)", Block.getIdFromBlock(blockIn), blockIn.getUnlocalizedName(), blockIn.getClass().getCanonicalName());
-                        } catch (Throwable var2) {
-                            return "ID #" + Block.getIdFromBlock(blockIn);
-                        }
+                crashreportcategory.addCrashSectionCallable("Source block type", () -> {
+                    try {
+                        return String.format("ID #%d (%s // %s)", Block.getIdFromBlock(blockIn), blockIn.getUnlocalizedName(), blockIn.getClass().getCanonicalName());
+                    } catch (Throwable var2) {
+                        return "ID #" + Block.getIdFromBlock(blockIn);
                     }
                 });
                 CrashReportCategory.addBlockInfo(crashreportcategory, pos, iblockstate);
@@ -3135,16 +3129,8 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     public CrashReportCategory addWorldInfoToCrashReport(CrashReport report) {
         CrashReportCategory crashreportcategory = report.makeCategoryDepth("受影响的世界", 1);
         crashreportcategory.addCrashSection("世界名称", this.worldInfo == null ? "????" : this.worldInfo.getWorldName());
-        crashreportcategory.addCrashSectionCallable("所有玩家", new Callable<String>() {
-            public String call() {
-                return "共" + World.this.playerEntities.size() + "; " + World.this.playerEntities;
-            }
-        });
-        crashreportcategory.addCrashSectionCallable("区块状态", new Callable<String>() {
-            public String call() {
-                return World.this.chunkProvider.makeString();
-            }
-        });
+        crashreportcategory.addCrashSectionCallable("所有玩家", () -> "共" + World.this.playerEntities.size() + "; " + World.this.playerEntities);
+        crashreportcategory.addCrashSectionCallable("区块状态", () -> World.this.chunkProvider.makeString());
 
         try {
             this.worldInfo.addToCrashReport(crashreportcategory);

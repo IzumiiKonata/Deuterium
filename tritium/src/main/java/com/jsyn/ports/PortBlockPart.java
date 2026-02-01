@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class PortBlockPart implements ConnectableOutput, ConnectableInput {
 
     private double[] values = new double[Synthesizer.FRAMES_PER_BLOCK];
-    private ArrayList<PortBlockPart> connections = new ArrayList<PortBlockPart>();
+    private ArrayList<PortBlockPart> connections = new ArrayList<>();
     private UnitBlockPort unitBlockPort;
 
     protected PortBlockPart(UnitBlockPort unitBlockPort, double defaultValue) {
@@ -118,48 +118,23 @@ public class PortBlockPart implements ConnectableOutput, ConnectableInput {
 
     protected void connect(final PortBlockPart destination) {
         checkConnection(destination);
-        unitBlockPort.queueCommand(new ScheduledCommand() {
-            @Override
-            public void run() {
-                connectNow(destination);
-            }
-        });
+        unitBlockPort.queueCommand(() -> connectNow(destination));
     }
 
     protected void connect(final PortBlockPart destination, TimeStamp timeStamp) {
-        unitBlockPort.scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                connectNow(destination);
-            }
-        });
+        unitBlockPort.scheduleCommand(timeStamp, () -> connectNow(destination));
     }
 
     protected void disconnect(final PortBlockPart destination) {
-        unitBlockPort.queueCommand(new ScheduledCommand() {
-            @Override
-            public void run() {
-                disconnectNow(destination);
-            }
-        });
+        unitBlockPort.queueCommand(() -> disconnectNow(destination));
     }
 
     protected void disconnect(final PortBlockPart destination, TimeStamp timeStamp) {
-        unitBlockPort.scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                disconnectNow(destination);
-            }
-        });
+        unitBlockPort.scheduleCommand(timeStamp, () -> disconnectNow(destination));
     }
 
     protected void disconnectAll() {
-        unitBlockPort.queueCommand(new ScheduledCommand() {
-            @Override
-            public void run() {
-                disconnectAllNow();
-            }
-        });
+        unitBlockPort.queueCommand(() -> disconnectAllNow());
     }
 
     @Override

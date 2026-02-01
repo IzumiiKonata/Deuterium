@@ -296,7 +296,7 @@ public class StrUtils {
         if (s.length() >= len) {
             return s;
         } else {
-            StringBuffer stringbuffer = new StringBuffer();
+            StringBuilder stringbuffer = new StringBuilder();
             int i = len - s.length();
 
             while (stringbuffer.length() < i) {
@@ -315,7 +315,7 @@ public class StrUtils {
         if (s.length() >= len) {
             return s;
         } else {
-            StringBuffer stringbuffer = new StringBuffer(s);
+            StringBuilder stringbuffer = new StringBuilder(s);
 
             while (stringbuffer.length() < len) {
                 stringbuffer.append(fillChar);
@@ -450,7 +450,7 @@ public class StrUtils {
             if (start >= end) {
                 return strs;
             } else {
-                List<String> list = new ArrayList(strs.length);
+                List<String> list = new ArrayList<>(strs.length);
 
                 for (int i = 0; i < strs.length; ++i) {
                     String s = strs[i];

@@ -23,18 +23,18 @@ public class LaunchClassLoader extends URLClassLoader {
     private List<URL> sources;
     private ClassLoader parent = getClass().getClassLoader();
 
-    private List<IClassTransformer> transformers = new ArrayList<IClassTransformer>(2);
-    private Map<String, Class<?>> cachedClasses = new ConcurrentHashMap<String, Class<?>>();
-    private Set<String> invalidClasses = new HashSet<String>(1000);
+    private List<IClassTransformer> transformers = new ArrayList<>(2);
+    private Map<String, Class<?>> cachedClasses = new ConcurrentHashMap<>();
+    private Set<String> invalidClasses = new HashSet<>(1000);
 
-    private Set<String> classLoaderExceptions = new HashSet<String>();
-    private Set<String> transformerExceptions = new HashSet<String>();
-    private Map<String,byte[]> resourceCache = new ConcurrentHashMap<String,byte[]>(1000);
-    private Set<String> negativeResourceCache = Collections.newSetFromMap(new ConcurrentHashMap<String, Boolean>());
+    private Set<String> classLoaderExceptions = new HashSet<>();
+    private Set<String> transformerExceptions = new HashSet<>();
+    private Map<String,byte[]> resourceCache = new ConcurrentHashMap<>(1000);
+    private Set<String> negativeResourceCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private IClassNameTransformer renameTransformer;
 
-    private final ThreadLocal<byte[]> loadBuffer = new ThreadLocal<byte[]>();
+    private final ThreadLocal<byte[]> loadBuffer = new ThreadLocal<>();
 
     private static final String[] RESERVED_NAMES = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 

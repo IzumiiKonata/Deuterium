@@ -18,8 +18,8 @@ public class StickSimulation {
     public int numIterations;
 
     public StickSimulation() {
-        this.points = new ArrayList<Point>();
-        this.sticks = new ArrayList<Stick>();
+        this.points = new ArrayList<>();
+        this.sticks = new ArrayList<>();
         this.gravity = 20.0f;
         this.numIterations = 30;
         this.maxBend = 5.0f;

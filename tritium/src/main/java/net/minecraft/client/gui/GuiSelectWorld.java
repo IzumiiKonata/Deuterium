@@ -74,7 +74,7 @@ public class GuiSelectWorld extends GuiScreen implements GuiYesNoCallback {
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput(int button, boolean pressed) throws IOException {
+    public void handleMouseInput(int button, boolean pressed) {
         super.handleMouseInput(button, pressed);
         this.availableWorlds.handleMouseInput(button, pressed);
     }

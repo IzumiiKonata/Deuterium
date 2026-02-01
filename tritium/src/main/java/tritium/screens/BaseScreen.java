@@ -183,7 +183,7 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
 
     @Override
     @Deprecated
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         this.handleMouseClicked(mouseX, mouseY, mouseButton);
     }
 

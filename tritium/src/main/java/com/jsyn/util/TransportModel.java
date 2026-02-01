@@ -23,7 +23,7 @@ public class TransportModel {
     public static final int STATE_PAUSED = 1;
     public static final int STATE_RUNNING = 2;
 
-    private CopyOnWriteArrayList<TransportListener> listeners = new CopyOnWriteArrayList<TransportListener>();
+    private CopyOnWriteArrayList<TransportListener> listeners = new CopyOnWriteArrayList<>();
     private int state = STATE_STOPPED;
     private long position;
 

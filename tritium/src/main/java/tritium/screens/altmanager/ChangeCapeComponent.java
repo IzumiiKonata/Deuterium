@@ -199,16 +199,16 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
             Location capeLocationFull = this.getCapeLocationFull(id);
 
             if (Minecraft.getMinecraft().getTextureManager().getTexture(capeLocation) == null || Minecraft.getMinecraft().getTextureManager().getTexture(capeLocation) == TextureUtil.missingTexture) {
-                MultiThreadingUtil.runAsync(new Runnable() {
-                    @Override
-                    @SneakyThrows
-                    public void run() {
+                MultiThreadingUtil.runAsync(() -> {
+                    try {
                         InputStream is = HttpUtils.get(url, null);
                         BufferedImage full = ImageIO.read(is);
                         BufferedImage img = crop(full, 1, 1, 10, 16, 10, 16);
 
                         Textures.loadTextureAsyncly(capeLocation, img);
                         Textures.loadTextureAsyncly(capeLocationFull, full);
+                    } catch (IOException e) {
+                        e.printStackTrace();
                     }
                 });
             }
@@ -298,14 +298,14 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
     @SneakyThrows
     private void refreshCapes() {
 
-        MultiThreadingUtil.runAsync(new Runnable() {
-            @Override
-            @SneakyThrows
-            public void run() {
+        MultiThreadingUtil.runAsync(() -> {
+            try {
                 Map<String, String> checkProductHeaders = new HashMap<>();
                 checkProductHeaders.put("Authorization", "Bearer " + ChangeCapeComponent.this.accessToken);
                 String profileJson = HttpUtils.getString("https://api.minecraftservices.com/minecraft/profile", null, checkProductHeaders);
                 ChangeCapeComponent.this.parse(profileJson);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         });
 

@@ -21,7 +21,7 @@ import java.io.InputStream;
 import java.util.*;
 
 public class RandomEntities {
-    private static final Map<String, RandomEntityProperties> mapProperties = new HashMap();
+    private static final Map<String, RandomEntityProperties> mapProperties = new HashMap<>();
     private static boolean active = false;
     private static RenderGlobal renderGlobal;
     private static final RandomEntity randomEntity = new RandomEntity();
@@ -69,7 +69,7 @@ public class RandomEntities {
 
     public static void worldChanged(final World oldWorld, final World newWorld) {
         if (newWorld != null) {
-            final List list = newWorld.getLoadedEntityList();
+            final List<Entity> list = newWorld.getLoadedEntityList();
             for (Object o : list) {
                 final Entity entity = (Entity) o;
                 entityLoaded(entity, newWorld);

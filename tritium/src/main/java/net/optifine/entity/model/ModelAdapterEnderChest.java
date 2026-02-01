@@ -6,6 +6,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityEnderChestRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityEnderChest;
 
 
@@ -33,7 +34,7 @@ public class ModelAdapterEnderChest extends ModelAdapter {
 
     public IEntityRenderer makeEntityRender(ModelBase modelBase, float shadowSize) {
         TileEntityRendererDispatcher tileentityrendererdispatcher = TileEntityRendererDispatcher.instance;
-        TileEntitySpecialRenderer tileentityspecialrenderer = tileentityrendererdispatcher.getSpecialRendererByClass(TileEntityEnderChest.class);
+        TileEntitySpecialRenderer<?> tileentityspecialrenderer = tileentityrendererdispatcher.getSpecialRendererByClass(TileEntityEnderChest.class);
 
         if (!(tileentityspecialrenderer instanceof TileEntityEnderChestRenderer)) {
             return null;

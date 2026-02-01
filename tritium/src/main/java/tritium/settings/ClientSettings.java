@@ -55,7 +55,7 @@ public class ClientSettings {
 
     public static final BooleanSetting DEBUG_MODE = new BooleanSetting("Debug Info", false, () -> !Tritium.getInstance().isObfuscated());
 
-    public static final ModeSetting<VideoPreset> VIDEO_PRESET = new ModeSetting<VideoPreset>("Video Preset", VideoPreset.Performance) {
+    public static final ModeSetting<VideoPreset> VIDEO_PRESET = new ModeSetting<>("Video Preset", VideoPreset.Performance) {
         @Override
         public void onModeChanged(VideoPreset before, VideoPreset now) {
 
@@ -103,7 +103,7 @@ public class ClientSettings {
         }
     };
 
-    public static final ModeSetting<ThemeManager.Theme> THEME = new ModeSetting<ThemeManager.Theme>("Theme", ThemeManager.Theme.Dark) {
+    public static final ModeSetting<ThemeManager.Theme> THEME = new ModeSetting<>("Theme", ThemeManager.Theme.Dark) {
         @Override
         public void onModeChanged(ThemeManager.Theme before, ThemeManager.Theme now) {
             ThemeManager.setTheme(now);
@@ -161,7 +161,7 @@ public class ClientSettings {
 
     public static final BooleanSetting GUIINGAME_CACHE = new BooleanSetting("GuiIngame Cache", true, () -> false);
 
-    public static final NumberSetting<Integer> RENDER2D_FRAMERATE = new NumberSetting<Integer>("Render2D Framerate", 250, 0, 250, 10, () -> false) {
+    public static final NumberSetting<Integer> RENDER2D_FRAMERATE = new NumberSetting<>("Render2D Framerate", 250, 0, 250, 10, () -> false) {
 
         final Localizable lUnlimited = Localizable.of("settings.unlimited.name");
         final Localizable lDesktopRefreshrate = Localizable.of("settings.desktop_refreshrate.name");
@@ -180,7 +180,7 @@ public class ClientSettings {
 
     };
 
-    public static final NumberSetting<Integer> SHADERS_FRAMERATE = new NumberSetting<Integer>("Shaders Framerate", 250, 0, 250, 10, () -> false) {
+    public static final NumberSetting<Integer> SHADERS_FRAMERATE = new NumberSetting<>("Shaders Framerate", 250, 0, 250, 10, () -> false) {
 
         final Localizable lUnlimited = Localizable.of("settings.unlimited.name");
         final Localizable lDesktopRefreshrate = Localizable.of("settings.desktop_refreshrate.name");

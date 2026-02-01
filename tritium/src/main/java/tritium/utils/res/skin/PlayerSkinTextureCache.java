@@ -20,8 +20,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PlayerSkinTextureCache {
-    private final Map<UUID, Location> loadedSkins = new HashMap<UUID, Location>();
-    private final Map<String, Location> loadedUsernameSkins = new HashMap<String, Location>();
+    private final Map<UUID, Location> loadedSkins = new HashMap<>();
+    private final Map<String, Location> loadedUsernameSkins = new HashMap<>();
     private final ExecutorService executorService = Executors.newFixedThreadPool(3);
     private final SkinManager skinManager;
     private final MinecraftSessionService minecraftSessionService;
@@ -123,23 +123,13 @@ public class PlayerSkinTextureCache {
         }
         if (minecraftProfileTexture == null) {
 //            System.out.println("minecraftProfileTexture == null");
-            this.executorService.execute(new Runnable() {
-
-                @Override
-                public void run() {
-                    MinecraftProfileTexture requestedProfileTexture;
+            this.executorService.execute(() -> {
+                MinecraftProfileTexture requestedProfileTexture;
 //                    if (!gameProfile.getId().equals(Minecraft.getMinecraft().getSession().getProfile().getId())) {
-                    PlayerSkinTextureCache.this.minecraftSessionService.fillProfileProperties(gameProfile, false);
+                PlayerSkinTextureCache.this.minecraftSessionService.fillProfileProperties(gameProfile, false);
 //                    }
-                    if ((requestedProfileTexture = PlayerSkinTextureCache.this.getMinecraftProfileTexture(gameProfile, MinecraftProfileTexture.Type.SKIN)) != null) {
-                        Minecraft.getMinecraft().addScheduledTask(new Runnable() {
-
-                            @Override
-                            public void run() {
-                                PlayerSkinTextureCache.this.loadSkinTexture(gameProfile, requestedProfileTexture, cb);
-                            }
-                        });
-                    }
+                if ((requestedProfileTexture = PlayerSkinTextureCache.this.getMinecraftProfileTexture(gameProfile, MinecraftProfileTexture.Type.SKIN)) != null) {
+                    Minecraft.getMinecraft().addScheduledTask(() -> PlayerSkinTextureCache.this.loadSkinTexture(gameProfile, requestedProfileTexture, cb));
                 }
             });
         } else {
@@ -150,15 +140,11 @@ public class PlayerSkinTextureCache {
     }
 
     private void loadSkinTexture(final GameProfile gameProfile, MinecraftProfileTexture profileTexture, Callback cb) {
-        this.skinManager.loadSkin(profileTexture, MinecraftProfileTexture.Type.SKIN, new SkinManager.SkinAvailableCallback() {
-
-            @Override
-            public void skinAvailable(MinecraftProfileTexture.Type typeIn, Location location, MinecraftProfileTexture profileTexture, BufferedImage img) {
-                if (typeIn == MinecraftProfileTexture.Type.SKIN) {
-                    PlayerSkinTextureCache.this.loadedSkins.put(gameProfile.getId(), location);
-                    PlayerSkinTextureCache.this.loadedUsernameSkins.put(gameProfile.getName(), location);
-                    cb.onLoaded(location, img);
-                }
+        this.skinManager.loadSkin(profileTexture, MinecraftProfileTexture.Type.SKIN, (typeIn, location, profileTexture1, img) -> {
+            if (typeIn == MinecraftProfileTexture.Type.SKIN) {
+                PlayerSkinTextureCache.this.loadedSkins.put(gameProfile.getId(), location);
+                PlayerSkinTextureCache.this.loadedUsernameSkins.put(gameProfile.getName(), location);
+                cb.onLoaded(location, img);
             }
         });
     }

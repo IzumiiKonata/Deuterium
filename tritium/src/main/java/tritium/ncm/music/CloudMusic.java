@@ -503,11 +503,8 @@ public class CloudMusic {
         TextureManager tm = Minecraft.getMinecraft().getTextureManager();
 
         if (tm.getTexture(musicCover) == null || forceReload) {
-            MultiThreadingUtil.runAsync(new Runnable() {
-                @Override
-                @SneakyThrows
-                public void run() {
-
+            MultiThreadingUtil.runAsync(() -> {
+                try {
                     @Cleanup
                     InputStream is = HttpUtils.downloadStream(music.getCoverUrl(320), 5);
 
@@ -528,6 +525,8 @@ public class CloudMusic {
 
                         Textures.loadTexture(musicCover, read);
                     }
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             });
         }
@@ -705,21 +704,17 @@ public class CloudMusic {
     }
 
     public static void loadLyric(Music song) {
-        MultiThreadingUtil.runAsync(new Runnable() {
-            @Override
-            @SneakyThrows
-            public void run() {
+        MultiThreadingUtil.runAsync(() -> {
 
-                String string = CloudMusicApi.lyricNew(song.getId()).toString();
+            String string = CloudMusicApi.lyricNew(song.getId()).toString();
 
-                string = string.replaceAll("[ - ]", " ");
+            string = string.replaceAll("[ - ]", " ");
 
-                JsonObject json = JsonUtils.toJsonObject(string);
+            JsonObject json = JsonUtils.toJsonObject(string);
 
-                MusicLyricsWidget.initLyric(json, song);
-                MusicLyricsPanel.initLyric(json);
+            MusicLyricsWidget.initLyric(json, song);
+            MusicLyricsPanel.initLyric(json);
 
-            }
         });
     }
 
@@ -755,16 +750,13 @@ public class CloudMusic {
 
                     if (!NCMScreen.getInstance().loginRenderer.avatarLoaded) {
                         NCMScreen.getInstance().loginRenderer.avatarLoaded = true;
-                        MultiThreadingUtil.runAsync(new Runnable() {
-                            @Override
-                            @SneakyThrows
-                            public void run() {
-                                try (InputStream is = HttpUtils.get(url, null)) {
-                                    BufferedImage img = NativeBackedImage.make(is);
+                        MultiThreadingUtil.runAsync(() -> {
+                            try (InputStream is = HttpUtils.get(url, null)) {
+                                BufferedImage img = NativeBackedImage.make(is);
 
-                                    Textures.loadTextureAsyncly(NCMScreen.getInstance().loginRenderer.tempAvatar, img);
-
-                                }
+                                Textures.loadTextureAsyncly(NCMScreen.getInstance().loginRenderer.tempAvatar, img);
+                            } catch (IOException e) {
+                                e.printStackTrace();
                             }
                         });
                     }

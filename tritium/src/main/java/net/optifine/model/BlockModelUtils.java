@@ -25,7 +25,7 @@ public class BlockModelUtils {
     public static IBakedModel makeModelCube(TextureAtlasSprite sprite, int tintIndex) {
         List list = new ArrayList();
         EnumFacing[] aenumfacing = EnumFacing.VALUES;
-        List<List<BakedQuad>> list1 = new ArrayList();
+        List<List<BakedQuad>> list1 = new ArrayList<>();
 
         for (EnumFacing enumfacing : aenumfacing) {
             List list2 = new ArrayList();
@@ -37,7 +37,7 @@ public class BlockModelUtils {
     }
 
     public static IBakedModel joinModelsCube(IBakedModel modelBase, IBakedModel modelAdd) {
-        List<BakedQuad> list = new ArrayList();
+        List<BakedQuad> list = new ArrayList<>();
         list.addAll(modelBase.getGeneralQuads());
         list.addAll(modelAdd.getGeneralQuads());
         EnumFacing[] aenumfacing = EnumFacing.VALUES;
@@ -109,7 +109,7 @@ public class BlockModelUtils {
     }
 
     private static void replaceTexture(List<BakedQuad> quads, TextureAtlasSprite spriteOld, TextureAtlasSprite spriteNew) {
-        List<BakedQuad> list = new ArrayList();
+        List<BakedQuad> list = new ArrayList<>();
 
         for (BakedQuad bakedquad : quads) {
             if (bakedquad.getSprite() == spriteOld) {

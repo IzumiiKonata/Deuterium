@@ -1222,7 +1222,7 @@ public class GameSettings {
             if (this.ofFullscreenMode.equals("Default")) {
                 return 0.0F;
             } else {
-                List list = Arrays.asList(Config.getDisplayModeNames());
+                List<String> list = Arrays.asList(Config.getDisplayModeNames());
                 int i = list.indexOf(this.ofFullscreenMode);
                 return i < 0 ? 0.0F : (float) (i + 1);
             }

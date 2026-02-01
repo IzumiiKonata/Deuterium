@@ -61,12 +61,8 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioFileFormat getAudioFileFormat(File file) throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = null;
-        try {
-            inputStream = new FileInputStream(file);
+        try (InputStream inputStream = new FileInputStream(file)) {
             return getAudioFileFormat(inputStream, (int) file.length());
-        } finally {
-            inputStream.close();
         }
     }
 
@@ -85,11 +81,8 @@ public class FlacAudioFileReader extends AudioFileReader {
      *                if an I/O exception occurs.
      */
     public AudioFileFormat getAudioFileFormat(URL url) throws UnsupportedAudioFileException, IOException {
-        InputStream inputStream = url.openStream();
-        try {
+        try (InputStream inputStream = url.openStream()) {
             return getAudioFileFormat(inputStream);
-        } finally {
-            inputStream.close();
         }
     }
 
@@ -233,10 +226,7 @@ public class FlacAudioFileReader extends AudioFileReader {
         InputStream inputStream = new FileInputStream(file);
         try {
             return getAudioInputStream(inputStream, (int) file.length());
-        } catch (UnsupportedAudioFileException e) {
-            inputStream.close();
-            throw e;
-        } catch (IOException e) {
+        } catch (UnsupportedAudioFileException | IOException e) {
             inputStream.close();
             throw e;
         }
@@ -260,10 +250,7 @@ public class FlacAudioFileReader extends AudioFileReader {
         InputStream inputStream = url.openStream();
         try {
             return getAudioInputStream(inputStream);
-        } catch (UnsupportedAudioFileException e) {
-            inputStream.close();
-            throw e;
-        } catch (IOException e) {
+        } catch (UnsupportedAudioFileException | IOException e) {
             inputStream.close();
             throw e;
         }

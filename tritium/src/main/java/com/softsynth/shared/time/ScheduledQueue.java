@@ -28,7 +28,7 @@ public class ScheduledQueue<T> {
     private final SortedMap<TimeStamp, List<T>> timeNodes;
 
     public ScheduledQueue() {
-        timeNodes = new TreeMap<TimeStamp, List<T>>();
+        timeNodes = new TreeMap<>();
     }
 
     public boolean isEmpty() {
@@ -38,7 +38,7 @@ public class ScheduledQueue<T> {
     public synchronized void add(TimeStamp time, T obj) {
         List<T> timeList = timeNodes.get(time);
         if (timeList == null) {
-            timeList = new LinkedList<T>();
+            timeList = new LinkedList<>();
             timeNodes.put(time, timeList);
         }
         timeList.add(obj);

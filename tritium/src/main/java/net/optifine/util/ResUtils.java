@@ -20,7 +20,7 @@ public class ResUtils {
     }
 
     public static String[] collectFiles(String[] prefixes, String[] suffixes) {
-        Set<String> set = new LinkedHashSet();
+        Set<String> set = new LinkedHashSet<>();
         IResourcePack[] airesourcepack = Config.getResourcePacks();
 
         for (IResourcePack iresourcepack : airesourcepack) {
@@ -117,7 +117,7 @@ public class ResUtils {
 
         try {
             ZipFile zipfile = new ZipFile(tpFile);
-            Enumeration enumeration = zipfile.entries();
+            Enumeration<? extends ZipEntry> enumeration = zipfile.entries();
 
             while (enumeration.hasMoreElements()) {
                 ZipEntry zipentry = (ZipEntry) enumeration.nextElement();
@@ -176,8 +176,6 @@ public class ResUtils {
                 properties.load(in);
                 in.close();
                 return properties;
-            } catch (FileNotFoundException var3) {
-                return null;
             } catch (IOException var4) {
                 return null;
             }

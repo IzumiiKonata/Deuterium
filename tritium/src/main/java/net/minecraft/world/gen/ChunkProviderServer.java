@@ -31,7 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkProviderServer implements IChunkProvider {
     private static final Logger logger = LogManager.getLogger("ChunkProviderServer");
-    private final Set<Long> droppedChunksSet = Collections.<Long>newSetFromMap(new ConcurrentHashMap());
+    private final Set<Long> droppedChunksSet = Collections.<Long>newSetFromMap(new ConcurrentHashMap<>());
 
     /**
      * a dummy chunk, returned in place of an actual chunk.

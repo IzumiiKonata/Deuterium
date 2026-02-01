@@ -41,7 +41,7 @@ public class ColorSetting extends Setting<Color> {
         }
 
     };
-    public NumberSetting<Float> rainbowSpeed = new NumberSetting<Float>(
+    public NumberSetting<Float> rainbowSpeed = new NumberSetting<>(
             this.getInternalName() + " RainbowSpeed",
             3f, 1f, 10f, 0.1f, () -> this.rainbow.getValue() && this.getShouldRender().get()) {
         @Override
@@ -49,7 +49,7 @@ public class ColorSetting extends Setting<Color> {
             super.setName(Localizable.of("settings.rainbowspeed.name"));
         }
     };
-    public NumberSetting<Float> chromaSpeed = new NumberSetting<Float>(
+    public NumberSetting<Float> chromaSpeed = new NumberSetting<>(
             this.getInternalName() + " ChromaSpeed",
             3f, 1f, 15f, 0.1f, () -> this.chroma.getValue() && this.getShouldRender().get()) {
         @Override
@@ -57,7 +57,7 @@ public class ColorSetting extends Setting<Color> {
             super.setName(Localizable.of("settings.chromaspeed.name"));
         }
     };
-    public NumberSetting<Long> chromaValue = new NumberSetting<Long>(
+    public NumberSetting<Long> chromaValue = new NumberSetting<>(
             this.getInternalName() + " ChromaValue",
             150L, 1L, 200L, 1L, () -> this.chroma.getValue() && this.getShouldRender().get()) {
         @Override

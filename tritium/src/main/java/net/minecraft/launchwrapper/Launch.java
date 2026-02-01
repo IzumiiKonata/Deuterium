@@ -81,9 +81,9 @@ public class Launch {
 
         assetsDir = options.valueOf(assetsDirOption);
         final String profileName = options.valueOf(profileOption);
-        final List<String> tweakClassNames = new ArrayList<String>(options.valuesOf(tweakClassOption));
+        final List<String> tweakClassNames = new ArrayList<>(options.valuesOf(tweakClassOption));
 
-        final List<String> argumentList = new ArrayList<String>();
+        final List<String> argumentList = new ArrayList<>();
         // This list of names will be interacted with through tweakers. They can append to this list
         // any 'discovered' tweakers from their preferred mod loading mechanism
         // By making this object discoverable and accessible it's possible to perform
@@ -95,11 +95,11 @@ public class Launch {
         blackboard.put("ArgumentList", argumentList);
 
         // This is to prevent duplicates - in case a tweaker decides to add itself or something
-        final Set<String> allTweakerNames = new HashSet<String>();
+        final Set<String> allTweakerNames = new HashSet<>();
         // The 'definitive' list of tweakers
-        final List<ITweaker> allTweakers = new ArrayList<ITweaker>();
+        final List<ITweaker> allTweakers = new ArrayList<>();
         try {
-            final List<ITweaker> tweakers = new ArrayList<ITweaker>(tweakClassNames.size() + 1);
+            final List<ITweaker> tweakers = new ArrayList<>(tweakClassNames.size() + 1);
             // The list of tweak instances - may be useful for interoperability
             blackboard.put("Tweaks", tweakers);
             // The primary tweaker (the first one specified on the command line) will actually

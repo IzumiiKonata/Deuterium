@@ -125,7 +125,7 @@ public class ChannelLPC extends Channel {
      * @see Object#toString()
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer("ChannelLPC: Order=" + order + " WastedBits=" + wastedBits);
+        StringBuilder sb = new StringBuilder("ChannelLPC: Order=" + order + " WastedBits=" + wastedBits);
         sb.append(" qlpCoeffPrecision=").append(qlpCoeffPrecision).append(" quantizationLevel=").append(quantizationLevel);
         sb.append("\n\t\tqlpCoeff: ");
         for (int i = 0; i < order; i++) sb.append(qlpCoeff[i]).append(" ");

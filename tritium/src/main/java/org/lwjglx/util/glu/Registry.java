@@ -59,6 +59,6 @@ public class Registry extends Util {
     public static boolean gluCheckExtension(String extName, String extString) {
         if (extString == null || extName == null) return false;
 
-        return extString.indexOf(extName) != -1;
+        return extString.contains(extName);
     }
 }

@@ -92,7 +92,7 @@ public class GuiShaders extends GuiScreenOF {
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput(int button, boolean pressed) throws IOException {
+    public void handleMouseInput(int button, boolean pressed) {
         super.handleMouseInput(button, pressed);
         this.shaderList.handleMouseInput(button, pressed);
     }
@@ -146,7 +146,7 @@ public class GuiShaders extends GuiScreenOF {
                             }
                             boolean flag = false;
                             try {
-                                Class oclass1 = Class.forName("java.awt.Desktop");
+                                Class<?> oclass1 = Class.forName("java.awt.Desktop");
                                 Object object1 = oclass1.getMethod("getDesktop", new Class[0]).invoke(null
                                 );
                                 oclass1.getMethod("browse", new Class[]{URI.class}).invoke(object1,

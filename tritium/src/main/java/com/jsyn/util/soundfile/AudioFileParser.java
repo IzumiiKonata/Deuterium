@@ -38,7 +38,7 @@ abstract class AudioFileParser implements ChunkHandler {
     public int bitsPerSample;
     public int bytesPerFrame; // in the file
     public int bytesPerSample; // in the file
-    public HashMap<Integer, SampleMarker> cueMap = new HashMap<Integer, SampleMarker>();
+    public HashMap<Integer, SampleMarker> cueMap = new HashMap<>();
     public short samplesPerFrame;
     public double frameRate;
     public int numFrames;

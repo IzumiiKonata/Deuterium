@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.RegionRenderCacheBuilder;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumWorldBlockLayer;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -98,7 +99,7 @@ public class ChunkRenderWorker implements Runnable {
             }
 
             final CompiledChunk lvt_7_1_ = generator.getCompiledChunk();
-            ArrayList lvt_8_1_ = Lists.newArrayList();
+            ArrayList<ListenableFuture<Object>> lvt_8_1_ = Lists.newArrayList();
 
             if (chunkcompiletaskgenerator$type == ChunkCompileTaskGenerator.Type.REBUILD_CHUNK) {
                 for (EnumWorldBlockLayer enumworldblocklayer : EnumWorldBlockLayer.values()) {
@@ -111,12 +112,8 @@ public class ChunkRenderWorker implements Runnable {
             }
 
             final ListenableFuture<List<Object>> listenablefuture = Futures.allAsList(lvt_8_1_);
-            generator.addFinishRunnable(new Runnable() {
-                public void run() {
-                    listenablefuture.cancel(false);
-                }
-            });
-            Futures.addCallback(listenablefuture, new FutureCallback<List<Object>>() {
+            generator.addFinishRunnable(() -> listenablefuture.cancel(false));
+            Futures.addCallback(listenablefuture, new FutureCallback<>() {
                 public void onSuccess(List<Object> p_onSuccess_1_) {
                     ChunkRenderWorker.this.freeRenderBuilder(generator);
                     generator.getLock().lock();

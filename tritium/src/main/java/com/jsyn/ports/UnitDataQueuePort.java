@@ -30,7 +30,7 @@ import java.util.LinkedList;
  * @author Phil Burk (C) 2009 Mobileer Inc
  */
 public class UnitDataQueuePort extends UnitPort {
-    private final LinkedList<QueuedBlock> blocks = new LinkedList<QueuedBlock>();
+    private final LinkedList<QueuedBlock> blocks = new LinkedList<>();
     private QueueDataCommand currentBlock;
     private int frameIndex;
     private int numChannels = 1;

@@ -74,7 +74,7 @@ public class CustomEntityModels {
             return null;
         } else {
             if (originalEntityRenderMap == null) {
-                originalEntityRenderMap = new HashMap(map);
+                originalEntityRenderMap = new HashMap<>(map);
             }
 
             return map;
@@ -85,7 +85,7 @@ public class CustomEntityModels {
         Map<Class<? extends TileEntity>, TileEntitySpecialRenderer<? extends TileEntity>> map = TileEntityRendererDispatcher.instance.mapSpecialRenderers;
 
         if (originalTileEntityRenderMap == null) {
-            originalTileEntityRenderMap = new HashMap(map);
+            originalTileEntityRenderMap = new HashMap<>(map);
         }
 
         return map;
@@ -94,7 +94,7 @@ public class CustomEntityModels {
     private static Location[] getModelLocations() {
         String s = "optifine/cem/";
         String s1 = ".jem";
-        List<Location> list = new ArrayList();
+        List<Location> list = new ArrayList<>();
         String[] astring = CustomModelRegistry.getModelNames();
 
         for (String s2 : astring) {
@@ -113,11 +113,8 @@ public class CustomEntityModels {
         try {
             JsonObject jsonobject = CustomEntityModelParser.loadJson(location);
             return parseEntityRender(jsonobject, location.getResourcePath());
-        } catch (IOException ioexception) {
+        } catch (IOException | JsonParseException ioexception) {
             Config.error(ioexception.getClass().getName() + ": " + ioexception.getMessage());
-            return null;
-        } catch (JsonParseException jsonparseexception) {
-            Config.error(jsonparseexception.getClass().getName() + ": " + jsonparseexception.getMessage());
             return null;
         } catch (Exception exception) {
             exception.printStackTrace();
@@ -205,10 +202,10 @@ public class CustomEntityModels {
 
                 if (modelrenderer.childModels != null) {
                     ModelRenderer[] amodelrenderer = modelAdapter.getModelRenderers(model);
-                    Set<ModelRenderer> set = Collections.<ModelRenderer>newSetFromMap(new IdentityHashMap());
+                    Set<ModelRenderer> set = Collections.<ModelRenderer>newSetFromMap(new IdentityHashMap<>());
                     set.addAll(Arrays.asList(amodelrenderer));
                     List<ModelRenderer> list = modelrenderer.childModels;
-                    Iterator iterator = list.iterator();
+                    Iterator<ModelRenderer> iterator = list.iterator();
 
                     while (iterator.hasNext()) {
                         ModelRenderer modelrenderer1 = (ModelRenderer) iterator.next();

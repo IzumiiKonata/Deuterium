@@ -15,7 +15,6 @@ import net.optifine.util.CounterInt;
 import net.optifine.util.TextureUtils;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -345,11 +344,8 @@ public class TextureAtlasSprite {
             this.height = this.width;
 
             if (meta.getFrameCount() > 0) {
-                Iterator iterator = meta.getFrameIndexSet().iterator();
 
-                while (iterator.hasNext()) {
-                    int i1 = (Integer) iterator.next();
-
+                for (int i1 : meta.getFrameIndexSet()) {
                     if (i1 >= j1) {
                         throw new RuntimeException("invalid frameindex " + i1);
                     }
@@ -414,20 +410,18 @@ public class TextureAtlasSprite {
                     CrashReport crashreport = CrashReport.makeCrashReport(throwable, "为帧生成 Mipmap");
                     CrashReportCategory crashreportcategory = crashreport.makeCategory("正在迭代的帧");
                     crashreportcategory.addCrashSection("帧索引", i);
-                    crashreportcategory.addCrashSectionCallable("帧大小", new Callable<String>() {
-                        public String call() {
-                            StringBuilder stringbuilder = new StringBuilder();
+                    crashreportcategory.addCrashSectionCallable("帧大小", () -> {
+                        StringBuilder stringbuilder = new StringBuilder();
 
-                            for (int[] aint1 : aint) {
-                                if (!stringbuilder.isEmpty()) {
-                                    stringbuilder.append(", ");
-                                }
-
-                                stringbuilder.append(aint1 == null ? "null" : Integer.valueOf(aint1.length));
+                        for (int[] aint1 : aint) {
+                            if (!stringbuilder.isEmpty()) {
+                                stringbuilder.append(", ");
                             }
 
-                            return stringbuilder.toString();
+                            stringbuilder.append(aint1 == null ? "null" : Integer.valueOf(aint1.length));
                         }
+
+                        return stringbuilder.toString();
                     });
                     throw new ReportedException(crashreport);
                 }

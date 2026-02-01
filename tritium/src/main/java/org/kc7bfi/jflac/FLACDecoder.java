@@ -228,7 +228,7 @@ public class FLACDecoder {
      */
     public Metadata[] readMetadata() throws IOException {
         readStreamSync();
-        Vector<Metadata> metadataList = new Vector<Metadata>();
+        Vector<Metadata> metadataList = new Vector<>();
         metadataLength = 0;
         Metadata metadata;
         do {
@@ -247,7 +247,7 @@ public class FLACDecoder {
      */
     public Metadata[] readMetadata(StreamInfo streamInfo) throws IOException {
         if (streamInfo.isLast()) return new Metadata[0];
-        Vector<Metadata> metadataList = new Vector<Metadata>();
+        Vector<Metadata> metadataList = new Vector<>();
         metadataLength = 0;
         Metadata metadata;
         do {

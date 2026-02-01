@@ -53,7 +53,7 @@ public abstract class UnitGenerator {
     public static final double FALSE = 0.0;
     public static final double TRUE = 1.0;
     protected SynthesisEngine synthesisEngine;
-    private final LinkedHashMap<String, UnitPort> ports = new LinkedHashMap<String, UnitPort>();
+    private final LinkedHashMap<String, UnitPort> ports = new LinkedHashMap<>();
     private Circuit circuit;
     private long lastFrameCount;
     private boolean enabled = true;

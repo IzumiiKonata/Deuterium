@@ -48,7 +48,7 @@ public class TooltipProviderShaderOptions extends TooltipProviderOptions {
             s4 = "§8" + Lang.getDefault() + ": " + s5;
         }
 
-        List<String> list = new ArrayList();
+        List<String> list = new ArrayList<>();
         list.add(s);
         list.addAll(Arrays.asList(astring));
 
@@ -85,7 +85,7 @@ public class TooltipProviderShaderOptions extends TooltipProviderOptions {
 
     private String[] makeTooltipLines(int width, List<String> args) {
         FontRenderer fontrenderer = Config.getMinecraft().fontRendererObj;
-        List<String> list = new ArrayList();
+        List<String> list = new ArrayList<>();
 
         for (String s : args) {
             if (s != null && !s.isEmpty()) {

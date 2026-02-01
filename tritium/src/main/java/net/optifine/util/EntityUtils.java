@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class EntityUtils {
-    private static final Map<Class, Integer> mapIdByClass = new HashMap();
-    private static final Map<String, Integer> mapIdByName = new HashMap();
-    private static final Map<String, Class> mapClassByName = new HashMap();
+    private static final Map<Class, Integer> mapIdByClass = new HashMap<>();
+    private static final Map<String, Integer> mapIdByName = new HashMap<>();
+    private static final Map<String, Class> mapClassByName = new HashMap<>();
 
     public static int getEntityIdByClass(Entity entity) {
         return entity == null ? -1 : getEntityIdByClass(entity.getClass());
@@ -32,7 +32,7 @@ public class EntityUtils {
 
     static {
         for (int i = 0; i < 1000; ++i) {
-            Class oclass = EntityList.getClassFromID(i);
+            Class<? extends Entity> oclass = EntityList.getClassFromID(i);
 
             if (oclass != null) {
                 String s = EntityList.getStringFromID(i);

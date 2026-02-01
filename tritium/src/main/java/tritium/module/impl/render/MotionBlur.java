@@ -32,7 +32,7 @@ public class MotionBlur extends Module {
     }
 
     public final NumberSetting<Float> amount = new NumberSetting<>("Amount", 7.0f, 0.0f, 10.0f, 0.1f);
-    public final NumberSetting<Integer> brightness = new NumberSetting<Integer>("Brightness", 50, 0, 100, 1, () -> mode.getValue() == Mode.Accum) {
+    public final NumberSetting<Integer> brightness = new NumberSetting<>("Brightness", 50, 0, 100, 1, () -> mode.getValue() == Mode.Accum) {
         @Override
         public String getStringForRender() {
             return this.getValue() + "%";

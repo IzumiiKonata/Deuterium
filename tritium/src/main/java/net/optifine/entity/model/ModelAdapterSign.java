@@ -6,6 +6,7 @@ import net.minecraft.client.model.ModelSign;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.renderer.tileentity.TileEntitySignRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntitySign;
 
 
@@ -33,7 +34,7 @@ public class ModelAdapterSign extends ModelAdapter {
 
     public IEntityRenderer makeEntityRender(ModelBase modelBase, float shadowSize) {
         TileEntityRendererDispatcher tileentityrendererdispatcher = TileEntityRendererDispatcher.instance;
-        TileEntitySpecialRenderer tileentityspecialrenderer = tileentityrendererdispatcher.getSpecialRendererByClass(TileEntitySign.class);
+        TileEntitySpecialRenderer<?> tileentityspecialrenderer = tileentityrendererdispatcher.getSpecialRendererByClass(TileEntitySign.class);
 
         if (!(tileentityspecialrenderer instanceof TileEntitySignRenderer)) {
             return null;

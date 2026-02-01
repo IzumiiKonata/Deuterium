@@ -23,9 +23,7 @@ public class MultipleFloatSample extends FloatSample {
         int numFramesMax = -1;
         int channelsPerFrameMax = -1;
 
-        for (int i = 0; i < samples.length; i++) {
-            FloatSample sample = samples[i];
-
+        for (FloatSample sample : samples) {
             numFramesMax = Math.max(numFramesMax, sample.getNumFrames());
             channelsPerFrameMax = Math.max(channelsPerFrameMax, sample.getChannelsPerFrame());
         }

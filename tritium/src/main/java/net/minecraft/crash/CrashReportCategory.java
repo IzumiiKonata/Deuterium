@@ -173,43 +173,27 @@ public class CrashReportCategory {
 
     public static void addBlockInfo(CrashReportCategory category, final BlockPos pos, final Block blockIn, final int blockData) {
         final int i = Block.getIdFromBlock(blockIn);
-        category.addCrashSectionCallable("方块类型", new Callable<String>() {
-            public String call() {
-                try {
-                    return String.format("ID #%d (%s // %s)", i, blockIn.getUnlocalizedName(), blockIn.getClass().getCanonicalName());
-                } catch (Throwable var2) {
-                    return "ID #" + i;
-                }
+        category.addCrashSectionCallable("方块类型", () -> {
+            try {
+                return String.format("ID #%d (%s // %s)", i, blockIn.getUnlocalizedName(), blockIn.getClass().getCanonicalName());
+            } catch (Throwable var2) {
+                return "ID #" + i;
             }
         });
-        category.addCrashSectionCallable("Block data value", new Callable<String>() {
-            public String call() {
-                if (blockData < 0) {
-                    return "Unknown? (Got " + blockData + ")";
-                } else {
-                    String s = String.format("%4s", Integer.toBinaryString(blockData)).replace(" ", "0");
-                    return String.format("%1$d / 0x%1$X / 0b%2$s", blockData, s);
-                }
+        category.addCrashSectionCallable("Block data value", () -> {
+            if (blockData < 0) {
+                return "Unknown? (Got " + blockData + ")";
+            } else {
+                String s = String.format("%4s", Integer.toBinaryString(blockData)).replace(" ", "0");
+                return String.format("%1$d / 0x%1$X / 0b%2$s", blockData, s);
             }
         });
-        category.addCrashSectionCallable("Block location", new Callable<String>() {
-            public String call() {
-                return CrashReportCategory.getCoordinateInfo(pos);
-            }
-        });
+        category.addCrashSectionCallable("Block location", () -> CrashReportCategory.getCoordinateInfo(pos));
     }
 
     public static void addBlockInfo(CrashReportCategory category, final BlockPos pos, final IBlockState state) {
-        category.addCrashSectionCallable("Block", new Callable<String>() {
-            public String call() {
-                return state.toString();
-            }
-        });
-        category.addCrashSectionCallable("Block location", new Callable<String>() {
-            public String call() {
-                return CrashReportCategory.getCoordinateInfo(pos);
-            }
-        });
+        category.addCrashSectionCallable("Block", () -> state.toString());
+        category.addCrashSectionCallable("Block location", () -> CrashReportCategory.getCoordinateInfo(pos));
     }
 
     static class Entry {

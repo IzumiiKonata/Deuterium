@@ -221,16 +221,8 @@ public class EffectRenderer {
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "粒子更新");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("被更新的粒子");
             final int i = particle.getFXLayer();
-            crashreportcategory.addCrashSectionCallable("粒子", new Callable<String>() {
-                public String call() {
-                    return particle.toString();
-                }
-            });
-            crashreportcategory.addCrashSectionCallable("粒子类型", new Callable<String>() {
-                public String call() {
-                    return i == 0 ? "MISC_TEXTURE" : (i == 1 ? "TERRAIN_TEXTURE" : (i == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i));
-                }
-            });
+            crashreportcategory.addCrashSectionCallable("粒子", () -> particle.toString());
+            crashreportcategory.addCrashSectionCallable("粒子类型", () -> i == 0 ? "MISC_TEXTURE" : (i == 1 ? "TERRAIN_TEXTURE" : (i == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i)));
             throw new ReportedException(crashreport);
         }
     }
@@ -290,16 +282,8 @@ public class EffectRenderer {
                             } catch (Throwable throwable) {
                                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "粒子渲染");
                                 CrashReportCategory crashreportcategory = crashreport.makeCategory("被渲染的粒子");
-                                crashreportcategory.addCrashSectionCallable("粒子", new Callable<String>() {
-                                    public String call() {
-                                        return entityfx.toString();
-                                    }
-                                });
-                                crashreportcategory.addCrashSectionCallable("粒子类型", new Callable<String>() {
-                                    public String call() {
-                                        return i_f == 0 ? "MISC_TEXTURE" : (i_f == 1 ? "TERRAIN_TEXTURE" : (i_f == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i_f));
-                                    }
-                                });
+                                crashreportcategory.addCrashSectionCallable("粒子", () -> entityfx.toString());
+                                crashreportcategory.addCrashSectionCallable("粒子类型", () -> i_f == 0 ? "MISC_TEXTURE" : (i_f == 1 ? "TERRAIN_TEXTURE" : (i_f == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i_f)));
                                 throw new ReportedException(crashreport);
                             }
                         }

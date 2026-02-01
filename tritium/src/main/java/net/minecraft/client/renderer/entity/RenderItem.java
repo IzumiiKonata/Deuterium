@@ -430,26 +430,10 @@ public class RenderItem implements IResourceManagerReloadListener {
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "渲染物品");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("被渲染的物品");
-                crashreportcategory.addCrashSectionCallable("物品类型", new Callable<String>() {
-                    public String call() {
-                        return String.valueOf(stack.getItem());
-                    }
-                });
-                crashreportcategory.addCrashSectionCallable("物品元数据", new Callable<String>() {
-                    public String call() {
-                        return String.valueOf(stack.getMetadata());
-                    }
-                });
-                crashreportcategory.addCrashSectionCallable("物品NBT", new Callable<String>() {
-                    public String call() {
-                        return String.valueOf(stack.getTagCompound());
-                    }
-                });
-                crashreportcategory.addCrashSectionCallable("物品效果", new Callable<String>() {
-                    public String call() {
-                        return String.valueOf(stack.hasEffect());
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("物品类型", () -> String.valueOf(stack.getItem()));
+                crashreportcategory.addCrashSectionCallable("物品元数据", () -> String.valueOf(stack.getMetadata()));
+                crashreportcategory.addCrashSectionCallable("物品NBT", () -> String.valueOf(stack.getTagCompound()));
+                crashreportcategory.addCrashSectionCallable("物品效果", () -> String.valueOf(stack.hasEffect()));
                 throw new ReportedException(crashreport);
             }
 
@@ -987,11 +971,7 @@ public class RenderItem implements IResourceManagerReloadListener {
         this.registerItem(Items.ghast_tear, "ghast_tear");
         this.registerItem(Items.gold_nugget, "gold_nugget");
         this.registerItem(Items.nether_wart, "nether_wart");
-        this.itemModelMesher.register(Items.potionitem, new ItemMeshDefinition() {
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                return ItemPotion.isSplash(stack.getMetadata()) ? new ModelResourceLocation("bottle_splash", "inventory") : new ModelResourceLocation("bottle_drinkable", "inventory");
-            }
-        });
+        this.itemModelMesher.register(Items.potionitem, stack -> ItemPotion.isSplash(stack.getMetadata()) ? new ModelResourceLocation("bottle_splash", "inventory") : new ModelResourceLocation("bottle_drinkable", "inventory"));
         this.registerItem(Items.glass_bottle, "glass_bottle");
         this.registerItem(Items.spider_eye, "spider_eye");
         this.registerItem(Items.fermented_spider_eye, "fermented_spider_eye");
@@ -1001,11 +981,7 @@ public class RenderItem implements IResourceManagerReloadListener {
         this.registerItem(Items.cauldron, "cauldron");
         this.registerItem(Items.ender_eye, "ender_eye");
         this.registerItem(Items.speckled_melon, "speckled_melon");
-        this.itemModelMesher.register(Items.spawn_egg, new ItemMeshDefinition() {
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                return new ModelResourceLocation("spawn_egg", "inventory");
-            }
-        });
+        this.itemModelMesher.register(Items.spawn_egg, stack -> new ModelResourceLocation("spawn_egg", "inventory"));
         this.registerItem(Items.experience_bottle, "experience_bottle");
         this.registerItem(Items.fire_charge, "fire_charge");
         this.registerItem(Items.writable_book, "writable_book");
@@ -1038,11 +1014,7 @@ public class RenderItem implements IResourceManagerReloadListener {
         this.registerItem(Items.diamond_horse_armor, "diamond_horse_armor");
         this.registerItem(Items.lead, "lead");
         this.registerItem(Items.name_tag, "name_tag");
-        this.itemModelMesher.register(Items.banner, new ItemMeshDefinition() {
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                return new ModelResourceLocation("banner", "inventory");
-            }
-        });
+        this.itemModelMesher.register(Items.banner, stack -> new ModelResourceLocation("banner", "inventory"));
         this.registerItem(Items.record_13, "record_13");
         this.registerItem(Items.record_cat, "record_cat");
         this.registerItem(Items.record_blocks, "record_blocks");
@@ -1057,16 +1029,8 @@ public class RenderItem implements IResourceManagerReloadListener {
         this.registerItem(Items.record_wait, "record_wait");
         this.registerItem(Items.prismarine_shard, "prismarine_shard");
         this.registerItem(Items.prismarine_crystals, "prismarine_crystals");
-        this.itemModelMesher.register(Items.enchanted_book, new ItemMeshDefinition() {
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                return new ModelResourceLocation("enchanted_book", "inventory");
-            }
-        });
-        this.itemModelMesher.register(Items.filled_map, new ItemMeshDefinition() {
-            public ModelResourceLocation getModelLocation(ItemStack stack) {
-                return new ModelResourceLocation("filled_map", "inventory");
-            }
-        });
+        this.itemModelMesher.register(Items.enchanted_book, stack -> new ModelResourceLocation("enchanted_book", "inventory"));
+        this.itemModelMesher.register(Items.filled_map, stack -> new ModelResourceLocation("filled_map", "inventory"));
         this.registerBlock(Blocks.command_block, "command_block");
         this.registerItem(Items.fireworks, "fireworks");
         this.registerItem(Items.command_block_minecart, "command_block_minecart");

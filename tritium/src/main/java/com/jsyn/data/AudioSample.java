@@ -94,7 +94,7 @@ public abstract class AudioSample extends SequentialDataCommon {
      */
     public void addMarker(SampleMarker marker) {
         if (markers == null)
-            markers = new ArrayList<SampleMarker>();
+            markers = new ArrayList<>();
         int idx = markers.size();
         for (int k = 0; k < markers.size(); k++) {
             SampleMarker cue = markers.get(k);

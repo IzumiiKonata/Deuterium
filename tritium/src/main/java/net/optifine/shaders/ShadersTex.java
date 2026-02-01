@@ -22,7 +22,7 @@ import net.minecraft.util.Location;
 import tritium.utils.other.MemoryTracker;
 
 public class ShadersTex {
-    public static Map<Integer, MultiTexID> multiTexMap = new HashMap();
+    public static Map<Integer, MultiTexID> multiTexMap = new HashMap<>();
 
     public static int roundUpPOT(int x) {
         int i = x - 1;

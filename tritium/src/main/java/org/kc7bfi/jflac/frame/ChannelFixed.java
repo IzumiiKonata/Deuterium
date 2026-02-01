@@ -82,7 +82,7 @@ public class ChannelFixed extends Channel {
      * @see Object#toString()
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer("FLACSubframe_Fixed: Order=" + order + " PartitionOrder=" + ((EntropyPartitionedRice) entropyCodingMethod).order + " WastedBits=" + wastedBits);
+        StringBuilder sb = new StringBuilder("FLACSubframe_Fixed: Order=" + order + " PartitionOrder=" + ((EntropyPartitionedRice) entropyCodingMethod).order + " WastedBits=" + wastedBits);
         for (int i = 0; i < order; i++) sb.append(" warmup[").append(i).append("]=").append(warmup[i]);
         return sb.toString();
     }

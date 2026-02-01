@@ -387,7 +387,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
             for (GuiButton guibutton : this.buttonList) {
                 if (guibutton.mousePressed(this.mc, mouseX, mouseY)) {
@@ -420,7 +420,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
     }
 
     /**
@@ -506,7 +506,7 @@ public abstract class GuiScreen extends Gui implements GuiYesNoCallback {
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput(int button, boolean pressed) throws IOException {
+    public void handleMouseInput(int button, boolean pressed) {
         int i = Mouse.getX() * this.width / this.mc.displayWidth;
         int j = this.height - Mouse.getY() * this.height / this.mc.displayHeight - 1;
 

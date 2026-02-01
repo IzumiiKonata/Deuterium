@@ -195,7 +195,7 @@ public class GuiScreenBook extends GuiScreen {
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             if (button.id == 0) {
                 this.mc.displayGuiScreen(null);
@@ -441,7 +441,7 @@ public class GuiScreenBook extends GuiScreen {
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
             IChatComponent ichatcomponent = this.func_175385_b(mouseX, mouseY);
 

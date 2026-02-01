@@ -21,6 +21,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.server.*;
 import net.minecraft.scoreboard.ScoreboardSaveData;
 import net.minecraft.scoreboard.ServerScoreboard;
@@ -54,7 +55,7 @@ public class WorldServer extends World implements IThreadListener {
     private final EntityTracker theEntityTracker;
     private final PlayerManager thePlayerManager;
     private final Set<NextTickListEntry> pendingTickListEntriesHashSet = Sets.newHashSet();
-    private final TreeSet<NextTickListEntry> pendingTickListEntriesTreeSet = new TreeSet();
+    private final TreeSet<NextTickListEntry> pendingTickListEntriesTreeSet = new TreeSet<>();
     private final Map<UUID, Entity> entitiesByUuid = Maps.newHashMap();
     public ChunkProviderServer theChunkProviderServer;
 
@@ -347,11 +348,7 @@ public class WorldServer extends World implements IThreadListener {
     protected BlockPos adjustPosToNearbyEntity(BlockPos pos) {
         BlockPos blockpos = this.getPrecipitationHeight(pos);
         AxisAlignedBB axisalignedbb = (new AxisAlignedBB(blockpos, new BlockPos(blockpos.getX(), this.getHeight(), blockpos.getZ()))).expand(3.0D, 3.0D, 3.0D);
-        List<EntityLivingBase> list = this.getEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb, new Predicate<EntityLivingBase>() {
-            public boolean apply(EntityLivingBase p_apply_1_) {
-                return p_apply_1_ != null && p_apply_1_.isEntityAlive() && WorldServer.this.canSeeSky(p_apply_1_.getPosition());
-            }
-        });
+        List<EntityLivingBase> list = this.getEntitiesWithinAABB(EntityLivingBase.class, axisalignedbb, p_apply_1_ -> p_apply_1_ != null && p_apply_1_.isEntityAlive() && WorldServer.this.canSeeSky(p_apply_1_.getPosition()));
         return !list.isEmpty() ? list.get(this.rand.nextInt(list.size())).getPosition() : blockpos;
     }
 
@@ -915,7 +912,7 @@ public class WorldServer extends World implements IThreadListener {
      * Spawns the desired particle and sends the necessary packets to the relevant connected players.
      */
     public void spawnParticle(EnumParticleTypes particleType, boolean longDistance, double xCoord, double yCoord, double zCoord, int numberOfParticles, double xOffset, double yOffset, double zOffset, double particleSpeed, int... particleArguments) {
-        Packet packet = new S2APacketParticles(particleType, longDistance, (float) xCoord, (float) yCoord, (float) zCoord, (float) xOffset, (float) yOffset, (float) zOffset, (float) particleSpeed, numberOfParticles, particleArguments);
+        Packet<INetHandlerPlayClient> packet = new S2APacketParticles(particleType, longDistance, (float) xCoord, (float) yCoord, (float) zCoord, (float) xOffset, (float) yOffset, (float) zOffset, (float) particleSpeed, numberOfParticles, particleArguments);
 
         for (EntityPlayer playerEntity : this.playerEntities) {
             EntityPlayerMP entityplayermp = (EntityPlayerMP) playerEntity;

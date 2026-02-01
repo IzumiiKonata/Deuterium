@@ -88,7 +88,7 @@ public class RenderManager {
     public RenderManager(TextureManager renderEngineIn, RenderItem itemRendererIn) {
         this.renderEngine = renderEngineIn;
         this.entityRenderMap.put(EntityCaveSpider.class, new RenderCaveSpider(this));
-        this.entityRenderMap.put(EntitySpider.class, new RenderSpider(this));
+        this.entityRenderMap.put(EntitySpider.class, new RenderSpider<>(this));
         this.entityRenderMap.put(EntityPig.class, new RenderPig(this, new ModelPig(), 0.7F));
         this.entityRenderMap.put(EntitySheep.class, new RenderSheep(this, new ModelSheep2(), 0.7F));
         this.entityRenderMap.put(EntityCow.class, new RenderCow(this, new ModelCow(), 0.7F));
@@ -124,13 +124,13 @@ public class RenderManager {
         this.entityRenderMap.put(EntityItemFrame.class, new RenderItemFrame(this, itemRendererIn));
         this.entityRenderMap.put(EntityLeashKnot.class, new RenderLeashKnot(this));
         this.entityRenderMap.put(EntityArrow.class, new RenderArrow(this));
-        this.entityRenderMap.put(EntitySnowball.class, new RenderSnowball(this, Items.snowball, itemRendererIn));
-        this.entityRenderMap.put(EntityEnderPearl.class, new RenderSnowball(this, Items.ender_pearl, itemRendererIn));
-        this.entityRenderMap.put(EntityEnderEye.class, new RenderSnowball(this, Items.ender_eye, itemRendererIn));
-        this.entityRenderMap.put(EntityEgg.class, new RenderSnowball(this, Items.egg, itemRendererIn));
+        this.entityRenderMap.put(EntitySnowball.class, new RenderSnowball<>(this, Items.snowball, itemRendererIn));
+        this.entityRenderMap.put(EntityEnderPearl.class, new RenderSnowball<>(this, Items.ender_pearl, itemRendererIn));
+        this.entityRenderMap.put(EntityEnderEye.class, new RenderSnowball<>(this, Items.ender_eye, itemRendererIn));
+        this.entityRenderMap.put(EntityEgg.class, new RenderSnowball<>(this, Items.egg, itemRendererIn));
         this.entityRenderMap.put(EntityPotion.class, new RenderPotion(this, itemRendererIn));
-        this.entityRenderMap.put(EntityExpBottle.class, new RenderSnowball(this, Items.experience_bottle, itemRendererIn));
-        this.entityRenderMap.put(EntityFireworkRocket.class, new RenderSnowball(this, Items.fireworks, itemRendererIn));
+        this.entityRenderMap.put(EntityExpBottle.class, new RenderSnowball<>(this, Items.experience_bottle, itemRendererIn));
+        this.entityRenderMap.put(EntityFireworkRocket.class, new RenderSnowball<>(this, Items.fireworks, itemRendererIn));
         this.entityRenderMap.put(EntityLargeFireball.class, new RenderFireball(this, 2.0F));
         this.entityRenderMap.put(EntitySmallFireball.class, new RenderFireball(this, 0.5F));
         this.entityRenderMap.put(EntityWitherSkull.class, new RenderWitherSkull(this));
@@ -141,7 +141,7 @@ public class RenderManager {
         this.entityRenderMap.put(EntityArmorStand.class, new ArmorStandRenderer(this));
         this.entityRenderMap.put(EntityMinecartTNT.class, new RenderTntMinecart(this));
         this.entityRenderMap.put(EntityMinecartMobSpawner.class, new RenderMinecartMobSpawner(this));
-        this.entityRenderMap.put(EntityMinecart.class, new RenderMinecart(this));
+        this.entityRenderMap.put(EntityMinecart.class, new RenderMinecart<>(this));
         this.entityRenderMap.put(EntityBoat.class, new RenderBoat(this));
         this.entityRenderMap.put(EntityFishHook.class, new RenderFish(this));
         this.entityRenderMap.put(EntityHorse.class, new RenderHorse(this, new ModelHorse(), 0.75F));
@@ -292,7 +292,7 @@ public class RenderManager {
             if (render != null && this.renderEngine != null) {
                 try {
                     if (render instanceof RendererLivingEntity) {
-                        ((RendererLivingEntity) render).setRenderOutlines(this.renderOutlines);
+                        ((RendererLivingEntity<?>) render).setRenderOutlines(this.renderOutlines);
                     }
 
                     if (CustomEntityModels.isActive()) {

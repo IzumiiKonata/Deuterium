@@ -26,7 +26,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 public class SkinManager {
-    private static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(0, 2, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue());
+    private static final ExecutorService THREAD_POOL = new ThreadPoolExecutor(0, 2, 1L, TimeUnit.MINUTES, new LinkedBlockingQueue<>());
     private final TextureManager textureManager;
     private final File skinCacheDir;
     private final LoadingCache<GameProfile, Map<Type, MinecraftProfileTexture>> skinCacheLoader;
@@ -36,7 +36,7 @@ public class SkinManager {
     public SkinManager(TextureManager textureManagerInstance, File skinCacheDirectory) {
         this.textureManager = textureManagerInstance;
         this.skinCacheDir = skinCacheDirectory;
-        this.skinCacheLoader = CacheBuilder.newBuilder().expireAfterAccess(15L, TimeUnit.SECONDS).build(new CacheLoader<GameProfile, Map<Type, MinecraftProfileTexture>>() {
+        this.skinCacheLoader = CacheBuilder.newBuilder().expireAfterAccess(15L, TimeUnit.SECONDS).build(new CacheLoader<>() {
             public Map<Type, MinecraftProfileTexture> load(GameProfile p_load_1_) {
                 return Minecraft.getMinecraft().getSessionService().getTextures(p_load_1_, false);
             }

@@ -147,7 +147,7 @@ public class CustomGuiProperties {
     }
 
     private static Map<Location, Location> parseTextureLocations(final Properties props, final String property, final EnumContainer container, final String pathPrefix, final String basePath) {
-        final Map<Location, Location> map = new HashMap();
+        final Map<Location, Location> map = new HashMap<>();
         final String s = props.getProperty(property);
         if (s != null) {
             final Location resourcelocation = getGuiTextureLocation(container);

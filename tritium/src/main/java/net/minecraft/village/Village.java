@@ -47,7 +47,7 @@ public class Village {
      * Timestamp of tick count when villager last bred
      */
     private int noBreedTicks;
-    private final TreeMap<String, Integer> playerReputation = new TreeMap();
+    private final TreeMap<String, Integer> playerReputation = new TreeMap<>();
     private final List<Village.VillageAggressor> villageAgressors = Lists.newArrayList();
     private int numIronGolems;
 

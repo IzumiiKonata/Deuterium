@@ -94,7 +94,7 @@ public class Engine {
 
 	protected Synthesizer synth;
 	boolean hasBeenUsed = false;
-	protected final Set<UnitGenerator> addedUnits = new HashSet<UnitGenerator>();
+	protected final Set<UnitGenerator> addedUnits = new HashSet<>();
 
 	// multi-channel lineouts
 	protected ChannelOut[] output;

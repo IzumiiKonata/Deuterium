@@ -32,11 +32,9 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
     private boolean field_175338_A = false;
     private int field_175339_B = 0;
     private boolean field_175340_C = false;
-    private final Predicate<String> field_175332_D = new Predicate<String>() {
-        public boolean apply(String p_apply_1_) {
-            Float f = Floats.tryParse(p_apply_1_);
-            return p_apply_1_.isEmpty() || f != null && Floats.isFinite(f) && f >= 0.0F;
-        }
+    private final Predicate<String> field_175332_D = p_apply_1_ -> {
+        Float f = Floats.tryParse(p_apply_1_);
+        return p_apply_1_.isEmpty() || f != null && Floats.isFinite(f) && f >= 0.0F;
     };
     private final ChunkProviderSettings.Factory field_175334_E = new ChunkProviderSettings.Factory();
     private ChunkProviderSettings.Factory field_175336_F;
@@ -97,7 +95,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput(int button, boolean pressed) throws IOException {
+    public void handleMouseInput(int button, boolean pressed) {
         super.handleMouseInput(button, pressed);
         this.field_175349_r.handleMouseInput(button, pressed);
     }
@@ -320,7 +318,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
     /**
      * Called by the controls from the buttonList when activated. (Mouse pressed for buttons)
      */
-    protected void actionPerformed(GuiButton button) throws IOException {
+    protected void actionPerformed(GuiButton button) {
         if (button.enabled) {
             switch (button.id) {
                 case 300:
@@ -403,7 +401,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
         this.func_175329_a(true);
     }
 
-    private void func_175331_h() throws IOException {
+    private void func_175331_h() {
         switch (this.field_175339_B) {
             case 300:
                 this.actionPerformed((GuiListButton) this.field_175349_r.func_178061_c(300));
@@ -497,7 +495,7 @@ public class GuiCustomizeWorldScreen extends GuiScreen implements GuiSlider.Form
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
 
         if (this.field_175339_B == 0 && !this.field_175340_C) {

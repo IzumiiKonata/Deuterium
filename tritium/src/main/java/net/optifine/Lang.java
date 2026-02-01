@@ -23,7 +23,7 @@ public class Lang {
 
     public static void resourcesReloaded() {
         final Map map = I18n.getLocaleProperties();
-        final List<String> list = new ArrayList();
+        final List<String> list = new ArrayList<>();
         final String s = "optifine/lang/";
         final String s1 = "en_US";
         final String s2 = ".lang";
@@ -56,7 +56,7 @@ public class Lang {
     }
 
     public static void loadLocaleData(final InputStream is, final Map localeProperties) throws IOException {
-        final Iterator iterator = IOUtils.readLines(is, Charsets.UTF_8).iterator();
+        final Iterator<String> iterator = IOUtils.readLines(is, Charsets.UTF_8).iterator();
         is.close();
         while (iterator.hasNext()) {
             final String s = (String) iterator.next();

@@ -187,7 +187,7 @@ public enum EnumConnectionState {
     }
 
     public Packet getPacket(EnumPacketDirection direction, int packetId) throws InstantiationException, IllegalAccessException {
-        Class<? extends Packet> oclass = (Class) ((BiMap) this.directionMaps.get(direction)).get(packetId);
+        Class<? extends Packet> oclass = (Class) ((BiMap<?, ?>) this.directionMaps.get(direction)).get(packetId);
         return oclass == null ? null : oclass.newInstance();
     }
 

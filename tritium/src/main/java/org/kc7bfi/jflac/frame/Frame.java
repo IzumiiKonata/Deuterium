@@ -40,7 +40,7 @@ public class Frame {
      * @see Object#toString()
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append("Frame Header: ").append(header).append("\n");
         for (int i = 0; i < header.channels; i++) {
             sb.append("\tFrame Data ").append(subframes[i].toString()).append("\n");

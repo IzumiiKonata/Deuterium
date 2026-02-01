@@ -585,7 +585,7 @@ public class CustomItemProperties {
                         final String[] astring1 = new String[]{s1};
                         final IBakedModel ibakedmodel = makeBakedModel(textureMap, itemModelGenerator, astring1, flag);
                         if (this.mapBakedModelsTexture == null) {
-                            this.mapBakedModelsTexture = new HashMap();
+                            this.mapBakedModelsTexture = new HashMap<>();
                         }
                         this.mapBakedModelsTexture.put(s2, ibakedmodel);
                     }
@@ -662,7 +662,7 @@ public class CustomItemProperties {
     }
 
     private static ModelBlock makeModelBlock(final String[] modelTextures) {
-        final StringBuffer stringbuffer = new StringBuffer();
+        final StringBuilder stringbuffer = new StringBuilder();
         stringbuffer.append("{\"parent\": \"builtin/generated\",\"textures\": {");
         for (int i = 0; i < modelTextures.length; ++i) {
             final String s = modelTextures[i];
@@ -804,7 +804,7 @@ public class CustomItemProperties {
                         Config.warn("Custom Items: Model not found " + modelresourcelocation1.getResourcePath());
                     } else {
                         if (this.mapBakedModelsFull == null) {
-                            this.mapBakedModelsFull = new HashMap();
+                            this.mapBakedModelsFull = new HashMap<>();
                         }
                         this.mapBakedModelsFull.put(s2, ibakedmodel1);
                     }

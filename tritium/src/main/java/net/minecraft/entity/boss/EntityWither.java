@@ -34,11 +34,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
      * Time before the Wither tries to break blocks
      */
     private int blockBreakCounter;
-    private static final Predicate<Entity> attackEntitySelector = new Predicate<Entity>() {
-        public boolean apply(Entity p_apply_1_) {
-            return p_apply_1_ instanceof EntityLivingBase && ((EntityLivingBase) p_apply_1_).getCreatureAttribute() != EnumCreatureAttribute.UNDEAD;
-        }
-    };
+    private static final Predicate<Entity> attackEntitySelector = p_apply_1_ -> p_apply_1_ instanceof EntityLivingBase && ((EntityLivingBase) p_apply_1_).getCreatureAttribute() != EnumCreatureAttribute.UNDEAD;
 
     public EntityWither(World worldIn) {
         super(worldIn);
@@ -52,7 +48,7 @@ public class EntityWither extends EntityMob implements IBossDisplayData, IRanged
         this.tasks.addTask(6, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
         this.tasks.addTask(7, new EntityAILookIdle(this));
         this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, false));
-        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityLiving.class, 0, false, false, attackEntitySelector));
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget<>(this, EntityLiving.class, 0, false, false, attackEntitySelector));
         this.experienceValue = 50;
     }
 

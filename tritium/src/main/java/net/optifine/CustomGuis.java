@@ -111,7 +111,7 @@ public class CustomGuis {
     public static void update() {
         guiProperties = null;
         if (Config.isCustomGuis()) {
-            final List<List<CustomGuiProperties>> list = new ArrayList();
+            final List<List<CustomGuiProperties>> list = new ArrayList<>();
             final IResourcePack[] airesourcepack = Config.getResourcePacks();
             for (int i = airesourcepack.length - 1; i >= 0; --i) {
                 final IResourcePack iresourcepack = airesourcepack[i];
@@ -176,7 +176,7 @@ public class CustomGuis {
             }
             List<CustomGuiProperties> list = listProps.get(i);
             if (list == null) {
-                list = new ArrayList();
+                list = new ArrayList<>();
                 listProps.set(i, list);
             }
             list.add(cgp);

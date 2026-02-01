@@ -51,9 +51,8 @@ class PCMProcessors implements PCMProcessor {
      */
     public void processStreamInfo(StreamInfo info) {
         synchronized (pcmProcessors) {
-            Iterator it = pcmProcessors.iterator();
-            while (it.hasNext()) {
-                PCMProcessor processor = (PCMProcessor) it.next();
+            for (Object pcmProcessor : pcmProcessors) {
+                PCMProcessor processor = (PCMProcessor) pcmProcessor;
                 processor.processStreamInfo(info);
             }
         }
@@ -67,9 +66,8 @@ class PCMProcessors implements PCMProcessor {
      */
     public void processPCM(ByteData pcm) {
         synchronized (pcmProcessors) {
-            Iterator it = pcmProcessors.iterator();
-            while (it.hasNext()) {
-                PCMProcessor processor = (PCMProcessor) it.next();
+            for (Object pcmProcessor : pcmProcessors) {
+                PCMProcessor processor = (PCMProcessor) pcmProcessor;
                 processor.processPCM(pcm);
             }
         }

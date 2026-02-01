@@ -75,7 +75,7 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput(int button, boolean pressed) throws IOException {
+    public void handleMouseInput(int button, boolean pressed) {
         super.handleMouseInput(button, pressed);
         this.serverListSelector.handleMouseInput(button, pressed);
     }
@@ -351,7 +351,7 @@ public class GuiMultiplayer extends GuiScreen implements GuiYesNoCallback {
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.serverListSelector.mouseClicked(mouseX, mouseY, mouseButton);
     }

@@ -12,16 +12,14 @@ public class PacketThreadUtil {
 
     public static <T extends INetHandler> void checkThreadAndEnqueue(final Packet<T> packet, final T handler, IThreadListener threadListener) throws ThreadQuickExitException {
         if (!threadListener.isCallingFromMinecraftThread()) {
-            threadListener.addScheduledTask(new Runnable() {
-                public void run() {
-                    PacketThreadUtil.clientPreProcessPacket(packet);
-                    if (handler instanceof NetHandlerPlayClient) {
-                        if (((NetHandlerPlayClient) handler).getNetworkManager().isChannelOpen()) {
-                            packet.processPacket(handler);
-                        }
-                    } else {
+            threadListener.addScheduledTask(() -> {
+                PacketThreadUtil.clientPreProcessPacket(packet);
+                if (handler instanceof NetHandlerPlayClient) {
+                    if (((NetHandlerPlayClient) handler).getNetworkManager().isChannelOpen()) {
                         packet.processPacket(handler);
                     }
+                } else {
+                    packet.processPacket(handler);
                 }
             });
             throw ThreadQuickExitException.INSTANCE;

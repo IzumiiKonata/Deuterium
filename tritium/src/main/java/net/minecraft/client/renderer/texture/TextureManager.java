@@ -110,11 +110,7 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
             CrashReport crashreport = CrashReport.makeCrashReport(throwable, "注册贴图");
             CrashReportCategory crashreportcategory = crashreport.makeCategory("正在注册的资源位置");
             crashreportcategory.addCrashSection("资源位置", textureLocation);
-            crashreportcategory.addCrashSectionCallable("纹理对象类", new Callable<String>() {
-                public String call() {
-                    return textureObjf.getClass().getName();
-                }
-            });
+            crashreportcategory.addCrashSectionCallable("纹理对象类", () -> textureObjf.getClass().getName());
             throw new ReportedException(crashreport);
         }
 
@@ -170,7 +166,7 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
     public void onResourceManagerReload(IResourceManager resourceManager) {
         Config.dbg("*** 重新加载贴图 ***");
         Config.log("资源包: " + Config.getResourcePackNames());
-        Iterator iterator = this.mapTextureObjects.keySet().iterator();
+        Iterator<Location> iterator = this.mapTextureObjects.keySet().iterator();
 
         while (iterator.hasNext()) {
             Location resourcelocation = (Location) iterator.next();

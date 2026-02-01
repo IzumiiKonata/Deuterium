@@ -130,7 +130,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput(int button, boolean pressed) throws IOException {
+    public void handleMouseInput(int button, boolean pressed) {
         super.handleMouseInput(button, pressed);
         this.selectedResourcePacksList.handleMouseInput(button, pressed);
         this.availableResourcePacksList.handleMouseInput(button, pressed);
@@ -242,7 +242,7 @@ public class GuiScreenResourcePacks extends GuiScreen {
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         this.availableResourcePacksList.mouseClicked(mouseX, mouseY, mouseButton);
         this.selectedResourcePacksList.mouseClicked(mouseX, mouseY, mouseButton);

@@ -38,7 +38,7 @@ public class EntityAliases {
         reset();
 
         if (shaderPack != null) {
-            List<Integer> list = new ArrayList();
+            List<Integer> list = new ArrayList<>();
             String s = "/shaders/entity.properties";
             InputStream inputstream = shaderPack.getResourceAsStream(s);
 

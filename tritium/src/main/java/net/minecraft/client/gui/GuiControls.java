@@ -59,7 +59,7 @@ public class GuiControls extends GuiScreen {
     /**
      * Handles mouse input.
      */
-    public void handleMouseInput(int button, boolean pressed) throws IOException {
+    public void handleMouseInput(int button, boolean pressed) {
         super.handleMouseInput(button, pressed);
         this.keyBindingList.handleMouseInput(button, pressed);
     }
@@ -95,7 +95,7 @@ public class GuiControls extends GuiScreen {
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (this.buttonId != null) {
             this.options.setOptionKeyBinding(this.buttonId, -100 + mouseButton);
             this.buttonId = null;

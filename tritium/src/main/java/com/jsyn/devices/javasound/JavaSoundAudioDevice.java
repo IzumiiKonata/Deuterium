@@ -44,7 +44,7 @@ public class JavaSoundAudioDevice implements AudioDeviceManager {
         if (osName.contains("Windows")) {
             suggestedOutputLatency = 0.08;
         }
-        deviceRecords = new ArrayList<DeviceInfo>();
+        deviceRecords = new ArrayList<>();
         sniffAvailableMixers();
         if (false) dumpAvailableMixers();
     }

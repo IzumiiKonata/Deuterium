@@ -128,7 +128,7 @@ public class SoundHandler implements IResourceManagerReloadListener, ITickable {
                     break;
 
                 case SOUND_EVENT:
-                    isoundeventaccessor = new ISoundEventAccessor<SoundPoolEntry>() {
+                    isoundeventaccessor = new ISoundEventAccessor<>() {
                         final Location field_148726_a = Location.of(s1, soundlist$soundentry.getSoundEntryName());
 
                         public int getWeight() {

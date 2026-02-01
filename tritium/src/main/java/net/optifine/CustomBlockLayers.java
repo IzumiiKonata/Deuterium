@@ -31,7 +31,7 @@ public class CustomBlockLayers {
     public static void update() {
         renderLayers = null;
         active = false;
-        final List<EnumWorldBlockLayer> list = new ArrayList();
+        final List<EnumWorldBlockLayer> list = new ArrayList<>();
         final String s = "optifine/block.properties";
         final Properties properties = ResUtils.readProperties(s, "CustomBlockLayers");
         if (properties != null) {

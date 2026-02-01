@@ -260,7 +260,7 @@ public class CustomColors {
         final String s = "mcpatcher/lightmap/world";
         final String s1 = ".png";
         final String[] astring = ResUtils.collectFiles(s, s1);
-        final Map<Integer, String> map = new HashMap();
+        final Map<Integer, String> map = new HashMap<>();
         for (final String s2 : astring) {
             final String s3 = StrUtils.removePrefixSuffix(s2, s, s1);
             final int j = Config.parseInt(s3, Integer.MIN_VALUE);
@@ -274,7 +274,7 @@ public class CustomColors {
         final Integer[] ainteger = set.toArray(new Integer[0]);
         Arrays.sort(ainteger);
         if (ainteger.length <= 0) {
-            return new ImmutablePair(null, 0);
+            return new ImmutablePair<>(null, 0);
         } else {
             final int j1 = ainteger[0];
             final int k1 = ainteger[ainteger.length - 1];
@@ -307,7 +307,7 @@ public class CustomColors {
                     alightmappack[l1] = lightmappack;
                 }
             }
-            return new ImmutablePair(alightmappack, j1);
+            return new ImmutablePair<>(alightmappack, j1);
         }
     }
 
@@ -953,8 +953,8 @@ public class CustomColors {
     }
 
     private static int[] readSpawnEggColors(final Properties props, final String fileName, final String prefix, final String logName) {
-        final List<Integer> list = new ArrayList();
-        final Set set = props.keySet();
+        final List<Integer> list = new ArrayList<>();
+        final Set<Object> set = props.keySet();
         int i = 0;
         for (final String s : (Set<String>) (Set<?>) set) {
             final String s1 = props.getProperty(s);
@@ -1011,7 +1011,7 @@ public class CustomColors {
 
     private static float[][] readDyeColors(final Properties props, final String fileName, final String prefix, final String logName) {
         final EnumDyeColor[] aenumdyecolor = EnumDyeColor.values();
-        final Map<String, EnumDyeColor> map = new HashMap();
+        final Map<String, EnumDyeColor> map = new HashMap<>();
         for (final EnumDyeColor enumdyecolor : aenumdyecolor) {
             map.put(enumdyecolor.getName(), enumdyecolor);
         }

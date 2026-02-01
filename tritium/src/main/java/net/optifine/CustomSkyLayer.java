@@ -86,12 +86,10 @@ public class CustomSkyLayer {
 
     private List<String> parseWeatherList(String str) {
         List<String> list = Arrays.asList("clear", "rain", "thunder");
-        List<String> list1 = new ArrayList();
+        List<String> list1 = new ArrayList<>();
         String[] astring = Config.tokenize(str, " ");
 
-        for (int i = 0; i < astring.length; ++i) {
-            String s = astring[i];
-
+        for (String s : astring) {
             if (!list.contains(s)) {
                 Config.warn("Unknown weather: " + s);
             } else {

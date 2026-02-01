@@ -16,11 +16,11 @@ public class ModelUtils {
             EnumFacing[] aenumfacing = EnumFacing.VALUES;
 
             for (EnumFacing enumfacing : aenumfacing) {
-                List list = model.getFaceQuads(enumfacing);
+                List<BakedQuad> list = model.getFaceQuads(enumfacing);
                 dbgQuads(enumfacing.getName(), list, "  ");
             }
 
-            List list1 = model.getGeneralQuads();
+            List<BakedQuad> list1 = model.getGeneralQuads();
             dbgQuads("General", list1, "  ");
         }
     }
@@ -58,7 +58,7 @@ public class ModelUtils {
         List list1 = new ArrayList();
 
         for (EnumFacing enumfacing : aenumfacing) {
-            List list2 = model.getFaceQuads(enumfacing);
+            List<BakedQuad> list2 = model.getFaceQuads(enumfacing);
             List list3 = duplicateQuadList(list2);
             list1.add(list3);
         }

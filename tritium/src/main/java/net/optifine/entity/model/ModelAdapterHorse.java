@@ -93,7 +93,7 @@ public class ModelAdapterHorse extends ModelAdapter {
 
     private static Map<String, Integer> getMapPartFields() {
         if (mapPartFields == null) {
-            mapPartFields = new HashMap();
+            mapPartFields = new HashMap<>();
             mapPartFields.put("head", 0);
             mapPartFields.put("upper_mouth", 1);
             mapPartFields.put("lower_mouth", 2);

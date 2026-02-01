@@ -28,6 +28,7 @@ import net.optifine.override.ChunkCacheOF;
 import net.optifine.render.AabbFrame;
 import net.optifine.render.RenderEnv;
 import net.optifine.shaders.SVertexBuilder;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.lwjgl.opengl.GL11;
 
 import java.nio.FloatBuffer;
@@ -152,7 +153,7 @@ public class RenderChunk {
         }
 
         VisGraph lvt_10_1_ = new VisGraph();
-        HashSet lvt_11_1_ = Sets.newHashSet();
+        HashSet<TileEntity> lvt_11_1_ = Sets.newHashSet();
 
         if (!this.isChunkRegionEmpty(blockpos)) {
             ++renderChunksUpdated;

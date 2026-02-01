@@ -163,9 +163,9 @@ public class BeatDetector extends Analyzer {
     private boolean detect(double[] samples) {
       // compute the energy level
       float level = 0;
-      for (int i = 0; i < samples.length; i++) {
-        level += (samples[i] * samples[i]);
-      }
+        for (double sample : samples) {
+            level += (sample * sample);
+        }
       level /= samples.length;
       level = (float) Math.sqrt(level);
       float instant = level * 100;
@@ -214,9 +214,9 @@ public class BeatDetector extends Analyzer {
 
     private float average(double[] arr) {
       float avg = 0;
-      for (int i = 0; i < arr.length; i++) {
-        avg += arr[i];
-      }
+        for (double v : arr) {
+            avg += v;
+        }
       avg /= arr.length;
       return avg;
     }
@@ -224,12 +224,12 @@ public class BeatDetector extends Analyzer {
     private float specAverage(double[] arr) {
       float avg = 0;
       float num = 0;
-      for (int i = 0; i < arr.length; i++) {
-        if (arr[i] > 0) {
-          avg += arr[i];
-          num++;
+        for (double v : arr) {
+            if (v > 0) {
+                avg += v;
+                num++;
+            }
         }
-      }
       if (num > 0) {
         avg /= num;
       }
@@ -238,9 +238,9 @@ public class BeatDetector extends Analyzer {
 
     private float variance(double[] arr, float val) {
       float v = 0;
-      for (int i = 0; i < arr.length; i++) {
-        v += (float) Math.pow(arr[i] - val, 2);
-      }
+        for (double value : arr) {
+            v += (float) Math.pow(value - val, 2);
+        }
       v /= arr.length;
       return v;
     }

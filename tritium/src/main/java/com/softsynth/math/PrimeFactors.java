@@ -32,7 +32,7 @@ public class PrimeFactors {
     static {
         // Use Sieve of Eratosthenes to fill Prime table
         boolean[] sieve = new boolean[SIEVE_SIZE];
-        ArrayList<Integer> primeList = new ArrayList<Integer>();
+        ArrayList<Integer> primeList = new ArrayList<>();
         int i = 2;
         while (i < (SIEVE_SIZE / 2)) {
             if (!sieve[i]) {
@@ -85,7 +85,7 @@ public class PrimeFactors {
             min = factorsA.length;
             max = factorsB.length;
         }
-        ArrayList<Integer> primeList = new ArrayList<Integer>();
+        ArrayList<Integer> primeList = new ArrayList<>();
         int i;
         for (i = 0; i < min; i++) {
             primeList.add(factorsA[i] - factorsB[i]);
@@ -113,7 +113,7 @@ public class PrimeFactors {
             min = factorsA.length;
             max = factorsB.length;
         }
-        ArrayList<Integer> primeList = new ArrayList<Integer>();
+        ArrayList<Integer> primeList = new ArrayList<>();
         int i;
         for (i = 0; i < min; i++) {
             primeList.add(factorsA[i] + factorsB[i]);
@@ -144,7 +144,7 @@ public class PrimeFactors {
     }
 
     public static int[] factor(int n) {
-        ArrayList<Integer> primeList = new ArrayList<Integer>();
+        ArrayList<Integer> primeList = new ArrayList<>();
         int i = 0;
         int p = primes[i];
         int exponent = 0;

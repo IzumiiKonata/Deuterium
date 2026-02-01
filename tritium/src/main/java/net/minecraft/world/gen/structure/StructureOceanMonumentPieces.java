@@ -608,7 +608,7 @@ public class StructureOceanMonumentPieces {
 
             for (StructureOceanMonumentPieces.RoomDefinition structureoceanmonumentpieces$roomdefinition : list) {
                 if (!structureoceanmonumentpieces$roomdefinition.field_175963_d && !structureoceanmonumentpieces$roomdefinition.func_175961_b()) {
-                    Iterator iterator = list1.iterator();
+                    Iterator<MonumentRoomFitHelper> iterator = list1.iterator();
                     StructureOceanMonumentPieces.MonumentRoomFitHelper structureoceanmonumentpieces$monumentroomfithelper;
 
                     do {

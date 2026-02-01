@@ -54,11 +54,6 @@ public class UnitVariablePort extends UnitPort implements SettablePort {
 
     @Override
     public void set(int partNum, final double value, TimeStamp timeStamp) {
-        scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                set(value);
-            }
-        });
+        scheduleCommand(timeStamp, () -> set(value));
     }
 }

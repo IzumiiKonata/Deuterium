@@ -25,7 +25,7 @@ public class ArrayCache {
 
     public synchronized void free(Object arr) {
         if (arr != null) {
-            Class oclass = arr.getClass();
+            Class<? extends Object> oclass = arr.getClass();
 
             if (oclass.getComponentType() != this.elementClass) {
                 throw new IllegalArgumentException("Wrong component type");

@@ -46,7 +46,7 @@ public class EntityAITasks {
     public void onUpdateTasks() {
         int tickRate = 3;
         if (this.tickCount++ % tickRate == 0) {
-            Iterator iterator = this.taskEntries.iterator();
+            Iterator<EntityAITaskEntry> iterator = this.taskEntries.iterator();
             label38:
 
             while (true) {

@@ -11,7 +11,7 @@ import java.util.List;
 
 public class AltManager {
     @Getter
-    public static final List<Alt> alts = Collections.synchronizedList(new ArrayList<Alt>());
+    public static final List<Alt> alts = Collections.synchronizedList(new ArrayList<>());
     public static Alt lastAlt;
 
     public Alt getLastAlt() {

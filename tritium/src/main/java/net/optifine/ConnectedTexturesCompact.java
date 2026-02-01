@@ -147,7 +147,7 @@ public class ConnectedTexturesCompact {
                 }
                 Map<BakedQuad, BakedQuad> map = amap1[dir.ordinal()];
                 if (map == null) {
-                    map = new IdentityHashMap(1);
+                    map = new IdentityHashMap<>(1);
                     amap1[dir.ordinal()] = map;
                 }
                 BakedQuad bakedquad = map.get(quadIn);

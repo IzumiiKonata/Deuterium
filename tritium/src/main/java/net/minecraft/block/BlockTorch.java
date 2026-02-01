@@ -14,11 +14,7 @@ import net.minecraft.world.World;
 import java.util.Random;
 
 public class BlockTorch extends Block {
-    public static final PropertyDirection FACING = PropertyDirection.create("facing", new Predicate<EnumFacing>() {
-        public boolean apply(EnumFacing p_apply_1_) {
-            return p_apply_1_ != EnumFacing.DOWN;
-        }
-    });
+    public static final PropertyDirection FACING = PropertyDirection.create("facing", p_apply_1_ -> p_apply_1_ != EnumFacing.DOWN);
 
     protected BlockTorch() {
         super(Material.circuits);

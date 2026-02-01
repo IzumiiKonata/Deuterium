@@ -40,7 +40,7 @@ public class CustomPanorama {
     }
 
     private static String[] getPanoramaFolders() {
-        final List<String> list = new ArrayList();
+        final List<String> list = new ArrayList<>();
         list.add("textures/gui/title/background");
         for (int i = 0; i < 100; ++i) {
             final String s = "optifine/gui/background" + i;

@@ -38,12 +38,10 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class ResourcePackRepository {
     private static final Logger logger = LogManager.getLogger("ResourcePackRepository");
-    private static final FileFilter resourcePackFilter = new FileFilter() {
-        public boolean accept(File p_accept_1_) {
-            boolean flag = p_accept_1_.isFile() && p_accept_1_.getName().endsWith(".zip");
-            boolean flag1 = p_accept_1_.isDirectory() && (new File(p_accept_1_, "pack.mcmeta")).isFile();
-            return flag || flag1;
-        }
+    private static final FileFilter resourcePackFilter = p_accept_1_ -> {
+        boolean flag = p_accept_1_.isFile() && p_accept_1_.getName().endsWith(".zip");
+        boolean flag1 = p_accept_1_.isDirectory() && (new File(p_accept_1_, "pack.mcmeta")).isFile();
+        return flag || flag1;
     };
     private final File dirResourcepacks;
     public final IResourcePack rprDefaultResourcePack;
@@ -208,14 +206,10 @@ public class ResourcePackRepository {
             final GuiScreenWorking guiscreenworking = new GuiScreenWorking();
             Map<String, String> map = Minecraft.getSessionInfo();
             final Minecraft minecraft = Minecraft.getMinecraft();
-            Futures.getUnchecked(minecraft.addScheduledTask(new Runnable() {
-                public void run() {
-                    minecraft.displayGuiScreen(guiscreenworking);
-                }
-            }));
+            Futures.getUnchecked(minecraft.addScheduledTask(() -> minecraft.displayGuiScreen(guiscreenworking)));
             final SettableFuture<Object> settablefuture = SettableFuture.create();
             this.downloadingPacks = HttpUtil.downloadResourcePack(file1, url, map, 52428800, guiscreenworking, minecraft.getProxy());
-            Futures.addCallback(this.downloadingPacks, new FutureCallback<Object>() {
+            Futures.addCallback(this.downloadingPacks, new FutureCallback<>() {
                 public void onSuccess(Object p_onSuccess_1_) {
                     ResourcePackRepository.this.setResourcePackInstance(file1);
                     settablefuture.set(null);

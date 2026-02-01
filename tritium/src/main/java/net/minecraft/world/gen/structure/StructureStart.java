@@ -10,7 +10,7 @@ import java.util.LinkedList;
 import java.util.Random;
 
 public abstract class StructureStart {
-    protected LinkedList<StructureComponent> components = new LinkedList();
+    protected LinkedList<StructureComponent> components = new LinkedList<>();
     protected StructureBoundingBox boundingBox;
     private int chunkPosX;
     private int chunkPosZ;

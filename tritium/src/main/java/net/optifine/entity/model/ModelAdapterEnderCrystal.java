@@ -7,6 +7,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.RenderEnderCrystal;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.src.Config;
 
@@ -43,7 +44,7 @@ public class ModelAdapterEnderCrystal extends ModelAdapter {
 
     public IEntityRenderer makeEntityRender(ModelBase modelBase, float shadowSize) {
         RenderManager rendermanager = Minecraft.getMinecraft().getRenderManager();
-        Render render = rendermanager.getEntityRenderMap().get(EntityEnderCrystal.class);
+        Render<? extends Entity> render = rendermanager.getEntityRenderMap().get(EntityEnderCrystal.class);
 
         if (!(render instanceof RenderEnderCrystal)) {
             Config.warn("Not an instance of RenderEnderCrystal: " + render);

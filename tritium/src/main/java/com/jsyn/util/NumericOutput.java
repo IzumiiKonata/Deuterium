@@ -44,7 +44,7 @@ public class NumericOutput {
     public static String integerToString(int n, int width, boolean leadingZeros, int radix) {
         if (width > 32)
             width = 32;
-        StringBuffer buf = new StringBuffer();
+        StringBuilder buf = new StringBuilder();
         long ln = n;
         boolean ifNeg = false;
         // only do sign if decimal

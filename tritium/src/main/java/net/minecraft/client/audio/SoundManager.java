@@ -93,33 +93,31 @@ public class SoundManager {
         try {
             if (!this.loaded) {
                 try {
-                    (new Thread(new Runnable() {
-                        public void run() {
-                            SoundSystemConfig.setLogger(new SoundSystemLogger() {
-                                public void message(String p_message_1_, int p_message_2_) {
-                                    if (!p_message_1_.isEmpty()) {
-                                        SoundManager.logger.info(p_message_1_);
-                                    }
+                    (new Thread(() -> {
+                        SoundSystemConfig.setLogger(new SoundSystemLogger() {
+                            public void message(String p_message_1_, int p_message_2_) {
+                                if (!p_message_1_.isEmpty()) {
+                                    SoundManager.logger.info(p_message_1_);
                                 }
+                            }
 
-                                public void importantMessage(String p_importantMessage_1_, int p_importantMessage_2_) {
-                                    if (!p_importantMessage_1_.isEmpty()) {
-                                        SoundManager.logger.warn(p_importantMessage_1_);
-                                    }
+                            public void importantMessage(String p_importantMessage_1_, int p_importantMessage_2_) {
+                                if (!p_importantMessage_1_.isEmpty()) {
+                                    SoundManager.logger.warn(p_importantMessage_1_);
                                 }
+                            }
 
-                                public void errorMessage(String p_errorMessage_1_, String p_errorMessage_2_, int p_errorMessage_3_) {
-                                    if (!p_errorMessage_2_.isEmpty()) {
-                                        SoundManager.logger.error("Error in class '" + p_errorMessage_1_ + "'");
-                                        SoundManager.logger.error(p_errorMessage_2_);
-                                    }
+                            public void errorMessage(String p_errorMessage_1_, String p_errorMessage_2_, int p_errorMessage_3_) {
+                                if (!p_errorMessage_2_.isEmpty()) {
+                                    SoundManager.logger.error("Error in class '" + p_errorMessage_1_ + "'");
+                                    SoundManager.logger.error(p_errorMessage_2_);
                                 }
-                            });
-                            SoundManager.this.sndSystem = SoundManager.this.new SoundSystemStarterThread();
-                            SoundManager.this.loaded = true;
-                            SoundManager.this.sndSystem.setMasterVolume(SoundManager.this.options.getSoundLevel(SoundCategory.MASTER));
-                            SoundManager.logger.info("声音引擎已启动.");
-                        }
+                            }
+                        });
+                        SoundManager.this.sndSystem = SoundManager.this.new SoundSystemStarterThread();
+                        SoundManager.this.loaded = true;
+                        SoundManager.this.sndSystem.setMasterVolume(SoundManager.this.options.getSoundLevel(SoundCategory.MASTER));
+                        SoundManager.logger.info("声音引擎已启动.");
                     }, "Sound Library Loader")).start();
                 } catch (RuntimeException runtimeexception) {
                     logger.error("启动 SoundSystem 时出错. 声音和音乐已关闭.", runtimeexception);

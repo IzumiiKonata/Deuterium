@@ -26,7 +26,7 @@ public class EnumTypeAdapterFactory implements TypeAdapterFactory {
                 map.put(this.func_151232_a(t), t);
             }
 
-            return new TypeAdapter<T>() {
+            return new TypeAdapter<>() {
                 public void write(JsonWriter p_write_1_, T p_write_2_) throws IOException {
                     if (p_write_2_ == null) {
                         p_write_1_.nullValue();
@@ -48,6 +48,6 @@ public class EnumTypeAdapterFactory implements TypeAdapterFactory {
     }
 
     private String func_151232_a(Object p_151232_1_) {
-        return p_151232_1_ instanceof Enum ? ((Enum) p_151232_1_).name().toLowerCase(Locale.US) : p_151232_1_.toString().toLowerCase(Locale.US);
+        return p_151232_1_ instanceof Enum ? ((Enum<?>) p_151232_1_).name().toLowerCase(Locale.US) : p_151232_1_.toString().toLowerCase(Locale.US);
     }
 }

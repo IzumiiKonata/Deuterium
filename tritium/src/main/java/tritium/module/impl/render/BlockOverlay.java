@@ -29,7 +29,7 @@ public class BlockOverlay extends Module {
 
     public BooleanSetting rect = new BooleanSetting("Rect", true);
     public BooleanSetting outline = new BooleanSetting("Outline", true);
-    public NumberSetting<Double> lineWidth = new NumberSetting<Double>("LineWidth", 2.0, 2.0, 5.0, 1.0);
+    public NumberSetting<Double> lineWidth = new NumberSetting<>("LineWidth", 2.0, 2.0, 5.0, 1.0);
 
     public ColorSetting rectColor = new ColorSetting("RectColor", new HSBColor(255, 255, 255, 160));
     public ColorSetting outlineColor = new ColorSetting("OutlineColor", new HSBColor(255, 255, 255, 255));

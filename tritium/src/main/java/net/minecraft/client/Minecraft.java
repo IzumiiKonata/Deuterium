@@ -826,7 +826,7 @@ public class Minecraft implements IThreadListener {
                 }
 
                 if (!flag) {
-                    Iterator iterator = set.iterator();
+                    Iterator<DisplayMode> iterator = set.iterator();
                     DisplayMode displaymode3;
 
                     do {
@@ -1529,13 +1529,7 @@ public class Minecraft implements IThreadListener {
             } else {
 
                 if (this.currentScreen instanceof GuiContainer) {
-                    clickActions.add(new Runnable() {
-                        @Override
-                        @SneakyThrows
-                        public void run() {
-                            Minecraft.this.currentScreen.handleMouseInput(button, pressed);
-                        }
-                    });
+                    clickActions.add(() -> Minecraft.this.currentScreen.handleMouseInput(button, pressed));
                 } else {
                     Minecraft.this.currentScreen.handleMouseInput(button, pressed);
                 }
@@ -1629,11 +1623,7 @@ public class Minecraft implements IThreadListener {
             } catch (Throwable throwable1) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable1, "Updating screen events");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("Affected screen");
-                crashreportcategory.addCrashSectionCallable("Screen name", new Callable<String>() {
-                    public String call() {
-                        return Minecraft.this.currentScreen.getClass().getCanonicalName();
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
                 throw new ReportedException(crashreport);
             }
 
@@ -1643,11 +1633,7 @@ public class Minecraft implements IThreadListener {
                 } catch (Throwable throwable) {
                     CrashReport crashreport1 = CrashReport.makeCrashReport(throwable, "Ticking screen");
                     CrashReportCategory crashreportcategory1 = crashreport1.makeCategory("Affected screen");
-                    crashreportcategory1.addCrashSectionCallable("Screen name", new Callable<String>() {
-                        public String call() {
-                            return Minecraft.this.currentScreen.getClass().getCanonicalName();
-                        }
-                    });
+                    crashreportcategory1.addCrashSectionCallable("Screen name", () -> Minecraft.this.currentScreen.getClass().getCanonicalName());
                     throw new ReportedException(crashreport1);
                 }
             }
@@ -2235,84 +2221,46 @@ public class Minecraft implements IThreadListener {
      * adds core server Info (GL version , Texture pack, isModded, type), and the worldInfo to the crash report
      */
     public CrashReport addGraphicsAndWorldToCrashReport(CrashReport theCrash) {
-        theCrash.getCategory().addCrashSectionCallable("启动的版本", new Callable<String>() {
-            public String call() {
-                return Minecraft.this.launchedVersion;
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("LWJGL版本", new Callable<String>() {
-            public String call() {
-                return Sys.getVersion();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("OpenGL版本", new Callable<String>() {
-            public String call() {
-                if (!Display.isCreated()) {
-                    return "Pre-start crash";
+        theCrash.getCategory().addCrashSectionCallable("启动的版本", () -> Minecraft.this.launchedVersion);
+        theCrash.getCategory().addCrashSectionCallable("LWJGL版本", () -> Sys.getVersion());
+        theCrash.getCategory().addCrashSectionCallable("OpenGL版本", () -> {
+            if (!Display.isCreated()) {
+                return "Pre-start crash";
+            } else {
+                if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+                    return GL11.glGetString(GL11.GL_RENDERER) + " GL 版本 " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
                 } else {
-                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-                        return GL11.glGetString(GL11.GL_RENDERER) + " GL 版本 " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
-                    } else {
-                        return "不适用";
-                    }
+                    return "不适用";
                 }
             }
         });
-        theCrash.getCategory().addCrashSectionCallable("OpenGL 功能支持", new Callable<String>() {
-            public String call() {
-                return "\n\t\t" + String.join("\n\t\t", OpenGlHelper.getLogText().split("\n"));
-            }
+        theCrash.getCategory().addCrashSectionCallable("OpenGL 功能支持", () -> "\n\t\t" + String.join("\n\t\t", OpenGlHelper.getLogText().split("\n")));
+        theCrash.getCategory().addCrashSectionCallable("使用VBO", () -> Minecraft.this.gameSettings.useVbo ? "是" : "否");
+        theCrash.getCategory().addCrashSectionCallable("已被修改", () -> {
+            String s = ClientBrandRetriever.getClientModName();
+            return !s.equals("vanilla") ? "肯定的; 客户端标识已被更改为 '" + s + "'" : (Minecraft.class.getSigners() == null ? "很有可能; Jar签名已失效" : "可能没有. Jar签名有效, 客户端标识未更改.");
         });
-        theCrash.getCategory().addCrashSectionCallable("使用VBO", new Callable<String>() {
-            public String call() {
-                return Minecraft.this.gameSettings.useVbo ? "是" : "否";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("已被修改", new Callable<String>() {
-            public String call() {
-                String s = ClientBrandRetriever.getClientModName();
-                return !s.equals("vanilla") ? "肯定的; 客户端标识已被更改为 '" + s + "'" : (Minecraft.class.getSigners() == null ? "很有可能; Jar签名已失效" : "可能没有. Jar签名有效, 客户端标识未更改.");
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("类型", new Callable<String>() {
-            public String call() {
-                return "客户端 (map_client.txt)";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("资源包", new Callable<String>() {
-            public String call() {
-                StringBuilder stringbuilder = new StringBuilder();
+        theCrash.getCategory().addCrashSectionCallable("类型", () -> "客户端 (map_client.txt)");
+        theCrash.getCategory().addCrashSectionCallable("资源包", () -> {
+            StringBuilder stringbuilder = new StringBuilder();
 
-                for (String s : Minecraft.this.gameSettings.resourcePacks) {
-                    if (!stringbuilder.isEmpty()) {
-                        stringbuilder.append(", ");
-                    }
-
-                    stringbuilder.append(s);
-
-                    if (Minecraft.this.gameSettings.incompatibleResourcePacks.contains(s)) {
-                        stringbuilder.append(" (不支持)");
-                    }
+            for (String s : Minecraft.this.gameSettings.resourcePacks) {
+                if (!stringbuilder.isEmpty()) {
+                    stringbuilder.append(", ");
                 }
 
-                return stringbuilder.toString();
+                stringbuilder.append(s);
+
+                if (Minecraft.this.gameSettings.incompatibleResourcePacks.contains(s)) {
+                    stringbuilder.append(" (不支持)");
+                }
             }
+
+            return stringbuilder.toString();
         });
-        theCrash.getCategory().addCrashSectionCallable("选中的语言", new Callable<String>() {
-            public String call() {
-                return Minecraft.this.mcLanguageManager.getCurrentLanguage().toString();
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("分析器断点", new Callable<String>() {
-            public String call() {
-                return "N/A (已关闭)";
-            }
-        });
-        theCrash.getCategory().addCrashSectionCallable("CPU", new Callable<String>() {
-            public String call() {
-                return OpenGlHelper.getCpu();
-            }
-        });
+        theCrash.getCategory().addCrashSectionCallable("选中的语言", () -> Minecraft.this.mcLanguageManager.getCurrentLanguage().toString());
+        theCrash.getCategory().addCrashSectionCallable("分析器断点", () -> "N/A (已关闭)");
+        theCrash.getCategory().addCrashSectionCallable("CPU", () -> OpenGlHelper.getCpu());
 
         if (this.theWorld != null) {
             this.theWorld.addWorldInfoToCrashReport(theCrash);
@@ -2344,11 +2292,7 @@ public class Minecraft implements IThreadListener {
     }
 
     public ListenableFuture<Object> scheduleResourcesRefresh() {
-        return this.addScheduledTask(new Runnable() {
-            public void run() {
-                Minecraft.this.refreshResources();
-            }
-        });
+        return this.addScheduledTask(() -> Minecraft.this.refreshResources());
     }
 
 

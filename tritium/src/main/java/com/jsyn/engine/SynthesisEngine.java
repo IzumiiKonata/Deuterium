@@ -65,7 +65,7 @@ public class SynthesisEngine implements Synthesizer {
 
     private final AudioDeviceManager audioDeviceManager;
     private EngineThread engineThread;
-    private final ScheduledQueue<ScheduledCommand> commandQueue = new ScheduledQueue<ScheduledCommand>();
+    private final ScheduledQueue<ScheduledCommand> commandQueue = new ScheduledQueue<>();
 
     private InterleavingBuffer inputBuffer;
     private InterleavingBuffer outputBuffer;
@@ -78,16 +78,16 @@ public class SynthesisEngine implements Synthesizer {
     private double framePeriod = 1.0 / frameRate;
 
     // List of all units added to the synth.
-    private final ArrayList<UnitGenerator> allUnitList = new ArrayList<UnitGenerator>();
+    private final ArrayList<UnitGenerator> allUnitList = new ArrayList<>();
     // List of running units.
-    private final ArrayList<UnitGenerator> runningUnitList = new ArrayList<UnitGenerator>();
+    private final ArrayList<UnitGenerator> runningUnitList = new ArrayList<>();
     // List of units stopping because of autoStop.
-    private final ArrayList<UnitGenerator> stoppingUnitList = new ArrayList<UnitGenerator>();
+    private final ArrayList<UnitGenerator> stoppingUnitList = new ArrayList<>();
 
     private LoadAnalyzer loadAnalyzer;
     // private int numOutputChannels;
     // private int numInputChannels;
-    private final CopyOnWriteArrayList<Runnable> audioTasks = new CopyOnWriteArrayList<Runnable>();
+    private final CopyOnWriteArrayList<Runnable> audioTasks = new CopyOnWriteArrayList<>();
     private double mOutputLatency;
     private double mInputLatency;
     /** A fraction corresponding to exactly -96 dB. */
@@ -159,8 +159,7 @@ public class SynthesisEngine implements Synthesizer {
 
         int deinterleave(int inIndex) {
             for (int jf = 0; jf < Synthesizer.FRAMES_PER_BLOCK; jf++) {
-                for (int iob = 0; iob < blockBuffers.length; iob++) {
-                    ChannelBlockBuffer buffer = blockBuffers[iob];
+                for (ChannelBlockBuffer buffer : blockBuffers) {
                     buffer.values[jf] = interleavedBuffer[inIndex++];
                 }
             }
@@ -169,8 +168,7 @@ public class SynthesisEngine implements Synthesizer {
 
         int interleave(int outIndex) {
             for (int jf = 0; jf < Synthesizer.FRAMES_PER_BLOCK; jf++) {
-                for (int iob = 0; iob < blockBuffers.length; iob++) {
-                    ChannelBlockBuffer buffer = blockBuffers[iob];
+                for (ChannelBlockBuffer buffer : blockBuffers) {
                     interleavedBuffer[outIndex++] = buffer.values[jf];
                 }
             }
@@ -182,8 +180,8 @@ public class SynthesisEngine implements Synthesizer {
         }
 
         public void clear() {
-            for (int i = 0; i < blockBuffers.length; i++) {
-                blockBuffers[i].clear();
+            for (ChannelBlockBuffer blockBuffer : blockBuffers) {
+                blockBuffer.clear();
             }
         }
     }
@@ -460,9 +458,7 @@ public class SynthesisEngine implements Synthesizer {
     private void synthesizeBuffer() {
         synchronized (runningUnitList) {
             try {
-                ListIterator<UnitGenerator> iterator = runningUnitList.listIterator();
-                while (iterator.hasNext()) {
-                    UnitGenerator unit = iterator.next();
+                for (UnitGenerator unit : runningUnitList) {
                     if (pullDataEnabled) {
                         unit.pullData(getFrameCount(), 0, Synthesizer.FRAMES_PER_BLOCK);
                     } else {
@@ -525,23 +521,13 @@ public class SynthesisEngine implements Synthesizer {
         // Don't start if it is a component in a circuit because it will be
         // executed by the circuit.
         if (unit.getCircuit() == null) {
-            scheduleCommand(timeStamp, new ScheduledCommand() {
-                @Override
-                public void run() {
-                    internalStartUnit(unit);
-                }
-            });
+            scheduleCommand(timeStamp, () -> internalStartUnit(unit));
         }
     }
 
     @Override
     public void stopUnit(final UnitGenerator unit, TimeStamp timeStamp) {
-        scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                internalStopUnit(unit);
-            }
-        });
+        scheduleCommand(timeStamp, () -> internalStopUnit(unit));
     }
 
     @Override
@@ -702,9 +688,7 @@ public class SynthesisEngine implements Synthesizer {
 
     public void printConnections() {
         if (pullDataEnabled) {
-            ListIterator<UnitGenerator> iterator = runningUnitList.listIterator();
-            while (iterator.hasNext()) {
-                UnitGenerator unit = iterator.next();
+            for (UnitGenerator unit : runningUnitList) {
                 unit.printConnections();
             }
         }

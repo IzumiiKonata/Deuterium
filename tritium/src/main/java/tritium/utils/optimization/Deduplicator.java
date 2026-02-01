@@ -53,17 +53,14 @@ public class Deduplicator {
 
     public static void registerReloadListener() {
         // Register the reload listener s.t. its "sync" part runs after the model loader reload
-        ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(new IResourceManagerReloadListener() {
-            @Override
-            public void onResourceManagerReload(IResourceManager resourceManager) {
-                VARIANT_IDENTITIES.clear();
+        ((SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> {
+            VARIANT_IDENTITIES.clear();
 //                KNOWN_MULTIPART_MODELS.clear();
-                OR_PREDICATE_CACHE.clear();
-                AND_PREDICATE_CACHE.clear();
-                synchronized (BAKED_QUAD_CACHE) {
-                    BAKED_QUAD_CACHE.clear();
-                    BAKED_QUAD_CACHE.trim();
-                }
+            OR_PREDICATE_CACHE.clear();
+            AND_PREDICATE_CACHE.clear();
+            synchronized (BAKED_QUAD_CACHE) {
+                BAKED_QUAD_CACHE.clear();
+                BAKED_QUAD_CACHE.trim();
             }
         });
     }

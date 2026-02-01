@@ -196,7 +196,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     private final List renderInfosTileEntitiesShadow = new ArrayList(1024);
     private int renderDistance = 0;
     private int renderDistanceSq = 0;
-    private static final Set SET_ALL_FACINGS = Collections.unmodifiableSet(new HashSet(Arrays.asList(EnumFacing.VALUES)));
+    private static final Set<EnumFacing> SET_ALL_FACINGS = Collections.unmodifiableSet(new HashSet<>(Arrays.asList(EnumFacing.VALUES)));
     private int countTileEntitiesRendered;
     private IChunkProvider worldChunkProvider = null;
     private Long2ObjectMap<Chunk> worldChunkProviderMap = null;
@@ -265,12 +265,8 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 this.entityOutlineShader = new ShaderGroup(this.mc.getTextureManager(), this.mc.getResourceManager(), this.mc.getFramebuffer(), resourcelocation);
                 this.entityOutlineShader.createBindFramebuffers(this.mc.displayWidth, this.mc.displayHeight);
                 this.entityOutlineFramebuffer = this.entityOutlineShader.getFramebufferRaw("final");
-            } catch (IOException ioexception) {
+            } catch (IOException | JsonSyntaxException ioexception) {
                 logger.warn("Failed to load shader: " + resourcelocation, ioexception);
-                this.entityOutlineShader = null;
-                this.entityOutlineFramebuffer = null;
-            } catch (JsonSyntaxException jsonsyntaxexception) {
-                logger.warn("Failed to load shader: " + resourcelocation, jsonsyntaxexception);
                 this.entityOutlineShader = null;
                 this.entityOutlineFramebuffer = null;
             }
@@ -664,7 +660,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 ClassInheritanceMultiMap<Entity> classinheritancemultimap = chunk.getEntityLists()[renderglobal$containerlocalrenderinformation.renderChunk.getPosition().getY() / 16];
 
                 if (!classinheritancemultimap.isEmpty()) {
-                    Iterator iterator = classinheritancemultimap.iterator();
+                    Iterator<Entity> iterator = classinheritancemultimap.iterator();
 
                     while (true) {
                         Entity entity2;
@@ -729,7 +725,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 List<TileEntity> list1 = renderglobal$containerlocalrenderinformation1.renderChunk.getCompiledChunk().getTileEntities();
 
                 if (!list1.isEmpty()) {
-                    Iterator iterator1 = list1.iterator();
+                    Iterator<TileEntity> iterator1 = list1.iterator();
 
                     while (true) {
                         TileEntity tileentity1;
@@ -2298,11 +2294,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                 crashreportcategory.addCrashSection("Parameters", parameters);
             }
 
-            crashreportcategory.addCrashSectionCallable("Position", new Callable<String>() {
-                public String call() {
-                    return CrashReportCategory.getCoordinateInfo(xCoord, yCoord, zCoord);
-                }
-            });
+            crashreportcategory.addCrashSectionCallable("Position", () -> CrashReportCategory.getCoordinateInfo(xCoord, yCoord, zCoord));
             throw new ReportedException(crashreport);
         }
     }
@@ -2739,7 +2731,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
 
     private void clearRenderInfos() {
         if (renderEntitiesCounter > 0) {
-            this.renderInfos = new ArrayList(this.renderInfos.size() + 16);
+            this.renderInfos = new ArrayList<>(this.renderInfos.size() + 16);
             this.renderInfosEntities = new ArrayList(this.renderInfosEntities.size() + 16);
             this.renderInfosTileEntities = new ArrayList(this.renderInfosTileEntities.size() + 16);
         } else {

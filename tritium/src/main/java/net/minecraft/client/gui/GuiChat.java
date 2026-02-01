@@ -140,7 +140,7 @@ public class GuiChat extends GuiScreen {
     /**
      * Called when the mouse is clicked. Args : mouseX, mouseY, clickedButton
      */
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
         if (mouseButton == 0) {
             IChatComponent ichatcomponent = this.mc.ingameGUI.getChatGUI().getChatComponent((int) Mouse.getX(), (int) Mouse.getY());
 

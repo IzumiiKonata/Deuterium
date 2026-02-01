@@ -136,16 +136,8 @@ public abstract class CommandBlockLogic implements ICommandSender {
             } catch (Throwable throwable) {
                 CrashReport crashreport = CrashReport.makeCrashReport(throwable, "正在执行命令方块");
                 CrashReportCategory crashreportcategory = crashreport.makeCategory("要执行的命令");
-                crashreportcategory.addCrashSectionCallable("Command", new Callable<String>() {
-                    public String call() {
-                        return CommandBlockLogic.this.getCommand();
-                    }
-                });
-                crashreportcategory.addCrashSectionCallable("Name", new Callable<String>() {
-                    public String call() {
-                        return CommandBlockLogic.this.getName();
-                    }
-                });
+                crashreportcategory.addCrashSectionCallable("Command", () -> CommandBlockLogic.this.getCommand());
+                crashreportcategory.addCrashSectionCallable("Name", () -> CommandBlockLogic.this.getName());
                 throw new ReportedException(crashreport);
             }
         } else {

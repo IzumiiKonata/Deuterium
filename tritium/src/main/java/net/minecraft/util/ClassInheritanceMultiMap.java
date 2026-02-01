@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ClassInheritanceMultiMap<T> extends AbstractSet<T> {
-    private static final Set<Class<?>> field_181158_a = Collections.<Class<?>>newSetFromMap(new ConcurrentHashMap());
+    private static final Set<Class<?>> field_181158_a = Collections.<Class<?>>newSetFromMap(new ConcurrentHashMap<>());
     private final Map<Class<?>, List<T>> map = Maps.newHashMap();
     private final Set<Class<?>> knownKeys = Sets.newIdentityHashSet();
     private final Class<T> baseClass;
@@ -100,16 +100,14 @@ public class ClassInheritanceMultiMap<T> extends AbstractSet<T> {
     }
 
     public <S> Iterable<S> getByClass(final Class<S> clazz) {
-        return new Iterable<S>() {
-            public Iterator<S> iterator() {
-                List<T> list = ClassInheritanceMultiMap.this.map.get(ClassInheritanceMultiMap.this.initializeClassLookup(clazz));
+        return () -> {
+            List<T> list = ClassInheritanceMultiMap.this.map.get(ClassInheritanceMultiMap.this.initializeClassLookup(clazz));
 
-                if (list == null) {
-                    return Collections.emptyIterator();
-                } else {
-                    Iterator<T> iterator = list.iterator();
-                    return Iterators.filter(iterator, clazz);
-                }
+            if (list == null) {
+                return Collections.emptyIterator();
+            } else {
+                Iterator<T> iterator = list.iterator();
+                return Iterators.filter(iterator, clazz);
             }
         };
     }

@@ -22,7 +22,7 @@ import java.util.Set;
 public abstract class Effect<EffectType extends UnitFilter> {
 
 	// store references to all input sources
-	protected Set<SoundObject> inputs = new HashSet<SoundObject>();
+	protected Set<SoundObject> inputs = new HashSet<>();
 
 	protected EffectType left;
 	protected EffectType right;

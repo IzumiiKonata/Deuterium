@@ -159,11 +159,7 @@ public class PlayerUtils {
             Entity pointedEntity = null;
             Vec3 vec33 = null;
             float f = 1.0F;
-            List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * (double) distance, vec31.yCoord * (double) distance, vec31.zCoord * (double) distance).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>() {
-                public boolean apply(Entity p_apply_1_) {
-                    return p_apply_1_.canBeCollidedWith();
-                }
-            }));
+            List<Entity> list = mc.theWorld.getEntitiesInAABBexcluding(entity, entity.getEntityBoundingBox().addCoord(vec31.xCoord * (double) distance, vec31.yCoord * (double) distance, vec31.zCoord * (double) distance).expand(f, f, f), Predicates.and(EntitySelectors.NOT_SPECTATING, p_apply_1_ -> p_apply_1_.canBeCollidedWith()));
 
             double d2 = distance;
 

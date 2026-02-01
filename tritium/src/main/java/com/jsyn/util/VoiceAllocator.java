@@ -162,14 +162,11 @@ public class VoiceAllocator implements Instrument {
     /** Turn off all the note currently on. */
     @Override
     public void allNotesOff(TimeStamp timeStamp) {
-        getSynthesizer().scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                for (VoiceTracker tracker : trackers) {
-                    if (tracker.on) {
-                        tracker.voice.noteOff(getSynthesizer().createTimeStamp());
-                        tracker.off();
-                    }
+        getSynthesizer().scheduleCommand(timeStamp, () -> {
+            for (VoiceTracker tracker : trackers) {
+                if (tracker.on) {
+                    tracker.voice.noteOff(getSynthesizer().createTimeStamp());
+                    tracker.off();
                 }
             }
         });
@@ -182,16 +179,13 @@ public class VoiceAllocator implements Instrument {
     @Override
     public void noteOn(final int tag, final double frequency, final double amplitude,
             TimeStamp timeStamp) {
-        getSynthesizer().scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                VoiceTracker voiceTracker = allocateTracker(tag);
-                if (voiceTracker.presetIndex != mPresetIndex) {
-                    voiceTracker.voice.usePreset(mPresetIndex);
-                    voiceTracker.presetIndex = mPresetIndex;
-                }
-                voiceTracker.voice.noteOn(frequency, amplitude, getSynthesizer().createTimeStamp());
+        getSynthesizer().scheduleCommand(timeStamp, () -> {
+            VoiceTracker voiceTracker = allocateTracker(tag);
+            if (voiceTracker.presetIndex != mPresetIndex) {
+                voiceTracker.voice.usePreset(mPresetIndex);
+                voiceTracker.presetIndex = mPresetIndex;
             }
+            voiceTracker.voice.noteOn(frequency, amplitude, getSynthesizer().createTimeStamp());
         });
     }
 
@@ -205,27 +199,21 @@ public class VoiceAllocator implements Instrument {
             final double amplitude,
             final VoiceOperation operation,
             TimeStamp timeStamp) {
-        getSynthesizer().scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                VoiceTracker voiceTracker = allocateTracker(tag);
-                operation.operate(voiceTracker.voice);
-                voiceTracker.voice.noteOn(frequency, amplitude, getSynthesizer().createTimeStamp());
-            }
+        getSynthesizer().scheduleCommand(timeStamp, () -> {
+            VoiceTracker voiceTracker = allocateTracker(tag);
+            operation.operate(voiceTracker.voice);
+            voiceTracker.voice.noteOn(frequency, amplitude, getSynthesizer().createTimeStamp());
         });
     }
 
     /** Turn off the voice associated with the given tag if allocated. */
     @Override
     public void noteOff(final int tag, TimeStamp timeStamp) {
-        getSynthesizer().scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                VoiceTracker voiceTracker = findVoice(tag);
-                if (voiceTracker != null) {
-                    voiceTracker.voice.noteOff(getSynthesizer().createTimeStamp());
-                    off(tag);
-                }
+        getSynthesizer().scheduleCommand(timeStamp, () -> {
+            VoiceTracker voiceTracker = findVoice(tag);
+            if (voiceTracker != null) {
+                voiceTracker.voice.noteOff(getSynthesizer().createTimeStamp());
+                off(tag);
             }
         });
     }
@@ -234,25 +222,17 @@ public class VoiceAllocator implements Instrument {
     @Override
     public void setPort(final int tag, final String portName, final double value,
             TimeStamp timeStamp) {
-        getSynthesizer().scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                VoiceTracker voiceTracker = findVoice(tag);
-                if (voiceTracker != null) {
-                    voiceTracker.voice.setPort(portName, value, getSynthesizer().createTimeStamp());
-                }
+        getSynthesizer().scheduleCommand(timeStamp, () -> {
+            VoiceTracker voiceTracker = findVoice(tag);
+            if (voiceTracker != null) {
+                voiceTracker.voice.setPort(portName, value, getSynthesizer().createTimeStamp());
             }
         });
     }
 
     @Override
     public void usePreset(final int presetIndex, TimeStamp timeStamp) {
-        getSynthesizer().scheduleCommand(timeStamp, new ScheduledCommand() {
-            @Override
-            public void run() {
-                mPresetIndex = presetIndex;
-            }
-        });
+        getSynthesizer().scheduleCommand(timeStamp, () -> mPresetIndex = presetIndex);
     }
 
 }

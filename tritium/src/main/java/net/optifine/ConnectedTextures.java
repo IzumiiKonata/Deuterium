@@ -988,7 +988,7 @@ public class ConnectedTextures {
         if (ibakedmodel == null) return null;
         else {
             final EnumFacing enumfacing = getFacing(side);
-            List list = ibakedmodel.getFaceQuads(enumfacing);
+            List<BakedQuad> list = ibakedmodel.getFaceQuads(enumfacing);
             if (list == null) return null;
             else {
                 if (Config.isBetterGrass())
@@ -997,7 +997,7 @@ public class ConnectedTextures {
                     final BakedQuad bakedquad1 = (BakedQuad) list.get(0);
                     return bakedquad1.getSprite();
                 } else {
-                    final List list1 = ibakedmodel.getGeneralQuads();
+                    final List<BakedQuad> list1 = ibakedmodel.getGeneralQuads();
                     if (list1 == null) {
                     }
                     else {

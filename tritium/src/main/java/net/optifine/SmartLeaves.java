@@ -40,7 +40,7 @@ public class SmartLeaves {
         if (!Config.isTreesSmart()) {
             return model;
         } else {
-            final List list = model.getGeneralQuads();
+            final List<BakedQuad> list = model.getGeneralQuads();
             return list == generalQuadsCullAcacia ? modelLeavesDoubleAcacia
                     : list == generalQuadsCullBirch ? modelLeavesDoubleBirch
                     : list == generalQuadsCullDarkOak ? modelLeavesDoubleDarkOak
@@ -111,7 +111,7 @@ public class SmartLeaves {
                             return null;
                         } else {
                             for (final BakedQuad bakedquad : list) {
-                                final List list1 = ibakedmodel.getFaceQuads(bakedquad.getFace());
+                                final List<BakedQuad> list1 = ibakedmodel.getFaceQuads(bakedquad.getFace());
                                 if (!list1.isEmpty()) {
                                     return null;
                                 }

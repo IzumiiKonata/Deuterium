@@ -50,7 +50,7 @@ public class MusicSpectrumWidget extends Widget {
     public final BooleanSetting absVol = new BooleanSetting("Absolute Volume", true);
     public final BooleanSetting stereo = new BooleanSetting("Waveform Stereo", false);
 
-    public final NumberSetting<Float> windowTime = new NumberSetting<Float>("Window Time (ms)", 16.0f, 4.0f, 256.0f, 0.1f) {
+    public final NumberSetting<Float> windowTime = new NumberSetting<>("Window Time (ms)", 16.0f, 4.0f, 256.0f, 0.1f) {
         @Override
         public void onValueChanged(Float last, Float now) {
             if (CloudMusic.player != null) {

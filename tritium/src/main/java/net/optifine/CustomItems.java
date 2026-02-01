@@ -178,7 +178,7 @@ public class CustomItems {
     }
 
     private static List<CustomItemProperties> getAllProperties() {
-        final List<CustomItemProperties> list = new ArrayList();
+        final List<CustomItemProperties> list = new ArrayList<>();
         addAll(itemProperties, list);
         addAll(enchantmentProperties, list);
         return list;
@@ -238,7 +238,7 @@ public class CustomItems {
                 Config.warn("Potion not found for image: " + path);
                 return null;
             } else {
-                final StringBuffer stringbuffer = new StringBuffer();
+                final StringBuilder stringbuffer = new StringBuilder();
                 for (int i = 0; i < aint.length; ++i) {
                     int j = aint[i];
                     if (type.equals("splash")) {
@@ -420,7 +420,7 @@ public class CustomItems {
             } else {
                 final ItemArmor itemarmor = (ItemArmor) item;
                 final String s = itemarmor.getArmorMaterial().getName();
-                final StringBuffer stringbuffer = new StringBuffer();
+                final StringBuilder stringbuffer = new StringBuilder();
                 stringbuffer.append("texture.");
                 stringbuffer.append(s);
                 stringbuffer.append("_layer_");

@@ -63,7 +63,7 @@ public class VorbisComment extends Metadata {
      * @see Object#toString()
      */
     public String toString() {
-        StringBuffer sb = new StringBuffer("VendorString '" + new String(vendorString) + "'\n");
+        StringBuilder sb = new StringBuilder("VendorString '" + new String(vendorString) + "'\n");
         sb.append("VorbisComment (count=").append(numComments).append(")");
 
         for (int i = 0; i < numComments; i++) {

@@ -20,7 +20,7 @@ public class ColorSaturation extends Module {
 
     private Location phosphorBlur = Location.of("shaders/post/color_convolve.json");
 
-    public NumberSetting<Float> amount = new NumberSetting<Float>("Amount", 1f, -1f, 5f, 0.1f) {
+    public NumberSetting<Float> amount = new NumberSetting<>("Amount", 1f, -1f, 5f, 0.1f) {
         @Override
         public void onValueChanged(Float last, Float now) {
 
