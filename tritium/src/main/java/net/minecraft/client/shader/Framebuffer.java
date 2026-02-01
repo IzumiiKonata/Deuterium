@@ -9,9 +9,11 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL30;
 import tritium.rendering.FramebufferCaching;
+import tritium.rendering.StencilClipManager;
 import tritium.rendering.shader.Shaders;
 
 import java.nio.ByteBuffer;
+import java.util.Stack;
 
 import static tritium.rendering.rendersystem.RenderSystem.DIVIDE_BY_255;
 
@@ -26,6 +28,19 @@ public class Framebuffer {
     public int depthBuffer;
     public float[] framebufferColor;
     public int framebufferFilter;
+
+    public Stack<StencilClipManager.StencilState> stencilStack = new Stack<>();
+    public int currentStencilValue = 0;
+
+    private boolean stencilTestEnabled = false;
+    private int stencilFunc = GL11.GL_ALWAYS;
+    private int stencilRef = 0;
+    private int stencilValueMask = 0xFF;
+    private int stencilWriteMask = 0xFF;
+    private int stencilOpFail = GL11.GL_KEEP;
+    private int stencilOpZFail = GL11.GL_KEEP;
+    private int stencilOpZPass = GL11.GL_KEEP;
+    private boolean stencilStateInitialized = false;
 
     public static Framebuffer currentlyBinding = null;
 
@@ -170,6 +185,41 @@ public class Framebuffer {
         }
     }
 
+    private void saveStencilState() {
+        if (!this.useDepth) {
+            return;
+        }
+
+        this.stencilTestEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
+
+        if (this.stencilTestEnabled) {
+            this.stencilFunc = GL11.glGetInteger(GL11.GL_STENCIL_FUNC);
+            this.stencilRef = GL11.glGetInteger(GL11.GL_STENCIL_REF);
+            this.stencilValueMask = GL11.glGetInteger(GL11.GL_STENCIL_VALUE_MASK);
+            this.stencilWriteMask = GL11.glGetInteger(GL11.GL_STENCIL_WRITEMASK);
+            this.stencilOpFail = GL11.glGetInteger(GL11.GL_STENCIL_FAIL);
+            this.stencilOpZFail = GL11.glGetInteger(GL11.GL_STENCIL_PASS_DEPTH_FAIL);
+            this.stencilOpZPass = GL11.glGetInteger(GL11.GL_STENCIL_PASS_DEPTH_PASS);
+        }
+
+        this.stencilStateInitialized = true;
+    }
+
+    private void restoreStencilState() {
+        if (!this.useDepth || !this.stencilStateInitialized) {
+            return;
+        }
+
+        if (this.stencilTestEnabled) {
+            GL11.glEnable(GL11.GL_STENCIL_TEST);
+            GL11.glStencilFunc(this.stencilFunc, this.stencilRef, this.stencilValueMask);
+            GL11.glStencilMask(this.stencilWriteMask);
+            GL11.glStencilOp(this.stencilOpFail, this.stencilOpZFail, this.stencilOpZPass);
+        } else {
+            GL11.glDisable(GL11.GL_STENCIL_TEST);
+        }
+    }
+
     public void bindFramebuffer(boolean p_147610_1_) {
 
         if (this == Minecraft.getMinecraft().getFramebuffer() && FramebufferCaching.getOverridingFramebuffer() != null && FramebufferCaching.getOverridingFramebuffer() != Minecraft.getMinecraft().getFramebuffer()) {
@@ -180,6 +230,10 @@ public class Framebuffer {
         if (this == currentlyBinding)
             return;
 
+        if (currentlyBinding != null) {
+            currentlyBinding.saveStencilState();
+        }
+
         currentlyBinding = this;
 
         if (OpenGlHelper.isFramebufferEnabled()) {
@@ -189,6 +243,8 @@ public class Framebuffer {
                 GlStateManager.viewport(0, 0, this.framebufferWidth, this.framebufferHeight);
             }
         }
+
+        this.restoreStencilState();
     }
 
     public void unbindFramebuffer() {
@@ -196,6 +252,10 @@ public class Framebuffer {
         if (this == Minecraft.getMinecraft().getFramebuffer() && FramebufferCaching.getOverridingFramebuffer() != null && FramebufferCaching.getOverridingFramebuffer() != Minecraft.getMinecraft().getFramebuffer()) {
             FramebufferCaching.getOverridingFramebuffer().unbindFramebuffer();
             return;
+        }
+
+        if (currentlyBinding != null) {
+            currentlyBinding.saveStencilState();
         }
 
         currentlyBinding = null;
@@ -304,28 +364,21 @@ public class Framebuffer {
     public void framebufferClearNoBinding() {
 //        this.bindFramebuffer(true);
         GlStateManager.clearColor(this.framebufferColor[0], this.framebufferColor[1], this.framebufferColor[2], this.framebufferColor[3]);
-        int i = 16384;
+        int i = GL11.GL_COLOR_BUFFER_BIT;
 
         if (this.useDepth) {
             GlStateManager.clearDepth(1.0D);
-            i |= 256;
+            i |= GL11.GL_DEPTH_BUFFER_BIT | GL11.GL_STENCIL_BUFFER_BIT;
         }
 
         GlStateManager.clear(i);
+        StencilClipManager.clear();
 //        this.unbindFramebuffer();
     }
 
     public void framebufferClear() {
         this.bindFramebuffer(true);
-        GlStateManager.clearColor(this.framebufferColor[0], this.framebufferColor[1], this.framebufferColor[2], this.framebufferColor[3]);
-        int i = 16384;
-
-        if (this.useDepth) {
-            GlStateManager.clearDepth(1.0D);
-            i |= 256;
-        }
-
-        GlStateManager.clear(i);
+        this.framebufferClearNoBinding();
         this.unbindFramebuffer();
     }
 }

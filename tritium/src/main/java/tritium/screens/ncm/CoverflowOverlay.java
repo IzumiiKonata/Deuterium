@@ -316,7 +316,7 @@ public class CoverflowOverlay extends BaseScreen {
                     if (is == null)
                         return;
 
-                    Textures.loadTextureAsyncly(al.getCoverLocation(), NativeBackedImage.make(is), true);
+                    Textures.loadTexture(al.getCoverLocation(), NativeBackedImage.make(is), true, true);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }

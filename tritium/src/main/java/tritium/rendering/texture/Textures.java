@@ -8,10 +8,12 @@ import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.interfaces.SharedConstants;
-import tritium.rendering.async.AsyncGLContext;
+import tritium.utils.network.HttpUtils;
+import tritium.utils.other.DevUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.Optional;
 
 /**
@@ -34,8 +36,24 @@ public class Textures implements SharedConstants {
         return Optional.ofNullable(texture);
     }
 
+    public void downloadTextureAndLoadAsync(String url, Location location) {
+        MultiThreadingUtil.runAsync(() -> {
+            try (InputStream inputStream = HttpUtils.downloadStream(url)) {
+                if (inputStream != null) {
+                    NativeBackedImage img = NativeBackedImage.make(inputStream);
+
+                    if (img != null) {
+                        Textures.loadTexture(location, img);
+                    }
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
     public void loadTexture(Location location, BufferedImage img) {
-        /*return */Textures.loadTexture(location, img, true, false);
+        Textures.loadTexture(location, img, true, false);
     }
 
     public void loadTexture(Location location, BufferedImage img, boolean clearable, boolean linear) {
@@ -43,11 +61,13 @@ public class Textures implements SharedConstants {
         if (img == null)
             return;
 
+        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            Minecraft.getMinecraft().addScheduledTask(() -> loadTexture(location, img, clearable, linear));
+            return;
+        }
+
         DynamicTexture dynamicTexture = new DynamicTexture(img, clearable, linear);
-
         mc.getTextureManager().loadTexture(location, dynamicTexture);
-
-//        return dynamicTexture;
 
     }
 

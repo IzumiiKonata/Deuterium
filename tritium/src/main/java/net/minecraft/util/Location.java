@@ -1,5 +1,6 @@
 package net.minecraft.util;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 import tritium.utils.optimization.IdentifierCaches;
@@ -7,8 +8,13 @@ import tritium.utils.optimization.IdentifierCaches;
 import java.util.HashMap;
 import java.util.Map;
 
+@EqualsAndHashCode(onlyExplicitlyIncluded = true, cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY)
 public class Location {
+
+    @EqualsAndHashCode.Include
     protected final String resourceDomain;
+
+    @EqualsAndHashCode.Include
     protected final String resourcePath;
 
     protected Location(String resourceDomain, String resourcePath) {
@@ -48,20 +54,19 @@ public class Location {
         return this.resourceDomain + ':' + this.resourcePath;
     }
 
-    public boolean equals(Object p_equals_1_) {
-        if (this == p_equals_1_) {
-            return true;
-        } else if (!(p_equals_1_ instanceof Location)) {
-            return false;
-        } else {
-            Location resourcelocation = (Location) p_equals_1_;
-            return this.resourceDomain.equals(resourcelocation.resourceDomain) && this.resourcePath.equals(resourcelocation.resourcePath);
-        }
-    }
-
-    public int hashCode() {
-        return 31 * this.resourceDomain.hashCode() + this.resourcePath.hashCode();
-    }
+//    public boolean equals(Object p_equals_1_) {
+//        if (this == p_equals_1_) {
+//            return true;
+//        } else if (!(p_equals_1_ instanceof Location resourcelocation)) {
+//            return false;
+//        } else {
+//            return this.resourceDomain.equals(resourcelocation.resourceDomain) && this.resourcePath.equals(resourcelocation.resourcePath);
+//        }
+//    }
+//
+//    public int hashCode() {
+//        return 31 * this.resourceDomain.hashCode() + this.resourcePath.hashCode();
+//    }
 
     private static final Map<String, Location> locationCache = new HashMap<>();
     public static final Map<String, Map<String, Location>> twoDimensionsCache = new HashMap<>();

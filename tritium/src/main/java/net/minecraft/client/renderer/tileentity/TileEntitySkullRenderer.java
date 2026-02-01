@@ -41,23 +41,18 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
         instance = this;
     }
 
-    public void renderSkull(float p_180543_1_, float p_180543_2_, float p_180543_3_, EnumFacing p_180543_4_, float p_180543_5_, int p_180543_6_, GameProfile p_180543_7_, int p_180543_8_) {
+    public void renderSkull(float x, float y, float z, EnumFacing facing, float rot, int skullType, GameProfile profile, int destroyStage) {
         ModelBase modelbase = this.skeletonHead;
 
-        if (p_180543_8_ >= 0) {
-            this.bindTexture(DESTROY_STAGES[p_180543_8_]);
+        if (destroyStage >= 0) {
+            this.bindTexture(DESTROY_STAGES[destroyStage]);
             GlStateManager.matrixMode(GL11.GL_TEXTURE);
             GlStateManager.pushMatrix();
             GlStateManager.scale(4.0F, 2.0F, 1.0F);
             GlStateManager.translate(0.0625F, 0.0625F, 0.0625F);
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         } else {
-            switch (p_180543_6_) {
-                case 0:
-                default:
-                    this.bindTexture(SKELETON_TEXTURES);
-                    break;
-
+            switch (skullType) {
                 case 1:
                     this.bindTexture(WITHER_SKELETON_TEXTURES);
                     break;
@@ -71,20 +66,20 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
                     modelbase = this.humanoidHead;
                     Location resourcelocation = DefaultPlayerSkin.getDefaultSkinLegacy();
 
-                    if (p_180543_7_ != null) {
-                        resourcelocation = skinTextureCache.get(p_180543_7_);
+                    if (profile != null) {
+                        resourcelocation = skinTextureCache.get(profile);
                         
                         if (resourcelocation == null) {
                             Minecraft minecraft = Minecraft.getMinecraft();
-                            Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(p_180543_7_);
+                            Map<Type, MinecraftProfileTexture> map = minecraft.getSkinManager().loadSkinFromCache(profile);
 
                             if (map.containsKey(Type.SKIN)) {
                                 resourcelocation = minecraft.getSkinManager().loadSkin(map.get(Type.SKIN), Type.SKIN);
-                                skinTextureCache.put(p_180543_7_, resourcelocation);
+                                skinTextureCache.put(profile, resourcelocation);
                             } else {
-                                UUID uuid = EntityPlayer.getUUID(p_180543_7_);
+                                UUID uuid = EntityPlayer.getUUID(profile);
                                 resourcelocation = DefaultPlayerSkin.getDefaultSkin(uuid);
-                                skinTextureCache.put(p_180543_7_, resourcelocation);
+                                skinTextureCache.put(profile, resourcelocation);
                             }
                         }
                     }
@@ -94,45 +89,51 @@ public class TileEntitySkullRenderer extends TileEntitySpecialRenderer<TileEntit
 
                 case 4:
                     this.bindTexture(CREEPER_TEXTURES);
+                    break;
+
+                case 0:
+                default:
+                    this.bindTexture(SKELETON_TEXTURES);
+                    break;
             }
         }
 
         GlStateManager.pushMatrix();
         GlStateManager.disableCull();
 
-        if (p_180543_4_ != EnumFacing.UP) {
-            switch (p_180543_4_) {
+        if (facing != EnumFacing.UP) {
+            switch (facing) {
                 case NORTH:
-                    GlStateManager.translate(p_180543_1_ + 0.5F, p_180543_2_ + 0.25F, p_180543_3_ + 0.74F);
+                    GlStateManager.translate(x + 0.5F, y + 0.25F, z + 0.74F);
                     break;
 
                 case SOUTH:
-                    GlStateManager.translate(p_180543_1_ + 0.5F, p_180543_2_ + 0.25F, p_180543_3_ + 0.26F);
-                    p_180543_5_ = 180.0F;
+                    GlStateManager.translate(x + 0.5F, y + 0.25F, z + 0.26F);
+                    rot = 180.0F;
                     break;
 
                 case WEST:
-                    GlStateManager.translate(p_180543_1_ + 0.74F, p_180543_2_ + 0.25F, p_180543_3_ + 0.5F);
-                    p_180543_5_ = 270.0F;
+                    GlStateManager.translate(x + 0.74F, y + 0.25F, z + 0.5F);
+                    rot = 270.0F;
                     break;
 
                 case EAST:
                 default:
-                    GlStateManager.translate(p_180543_1_ + 0.26F, p_180543_2_ + 0.25F, p_180543_3_ + 0.5F);
-                    p_180543_5_ = 90.0F;
+                    GlStateManager.translate(x + 0.26F, y + 0.25F, z + 0.5F);
+                    rot = 90.0F;
             }
         } else {
-            GlStateManager.translate(p_180543_1_ + 0.5F, p_180543_2_, p_180543_3_ + 0.5F);
+            GlStateManager.translate(x + 0.5F, y, z + 0.5F);
         }
 
         float f = 0.0625F;
         GlStateManager.enableRescaleNormal();
         GlStateManager.scale(-1.0F, -1.0F, 1.0F);
         GlStateManager.enableAlpha();
-        modelbase.render(null, 0.0F, 0.0F, 0.0F, p_180543_5_, 0.0F, f);
+        modelbase.render(null, 0.0F, 0.0F, 0.0F, rot, 0.0F, f);
         GlStateManager.popMatrix();
 
-        if (p_180543_8_ >= 0) {
+        if (destroyStage >= 0) {
             GlStateManager.matrixMode(GL11.GL_TEXTURE);
             GlStateManager.popMatrix();
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);

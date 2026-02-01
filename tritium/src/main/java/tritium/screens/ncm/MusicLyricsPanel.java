@@ -455,6 +455,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             int scale = 2;
                             int fbWidth = ((int) stringWidthD) * scale, fbHeight = (FontManager.pf65bold.getHeight() + 6) * scale;
 
+//                            if (StencilClipManager.stencilClipping())
+//                                GL11.glDisable(GL11.GL_STENCIL_TEST);
+
                             GlStateManager.matrixMode(GL11.GL_PROJECTION);
                             GlStateManager.pushMatrix();
                             GlStateManager.loadIdentity();
@@ -463,8 +466,6 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             GlStateManager.pushMatrix();
                             GlStateManager.loadIdentity();
                             GlStateManager.translate(0.0F, 0.0F, -2000.0F);
-
-                            GL11.glDisable(GL11.GL_STENCIL_TEST);
 
                             double gradientWidth = 16;
 
@@ -509,6 +510,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             GlStateManager.matrixMode(GL11.GL_PROJECTION);
                             GlStateManager.popMatrix();
                             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+
+//                            if (StencilClipManager.stencilClipping())
+//                                GL11.glEnable(GL11.GL_STENCIL_TEST);
 
                             Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, renderX, renderY - 2, fbWidth * .5, fbHeight * .5);
 
@@ -861,8 +865,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     private void renderBackground(double posX, double posY, double width, double height, float alpha) {
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        Location musicCoverBlured = CloudMusic.currentlyPlaying == null ? null : CloudMusic.currentlyPlaying.getBlurredCoverLocation();
-        ITextureObject texBg = CloudMusic.currentlyPlaying == null ? null : textureManager.getTexture(musicCoverBlured);
+        Location musicCoverBlurred = CloudMusic.currentlyPlaying == null ? null : CloudMusic.currentlyPlaying.getBlurredCoverLocation();
+        ITextureObject texBg = CloudMusic.currentlyPlaying == null ? null : textureManager.getTexture(musicCoverBlurred);
 
         if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying != prevMusic) {
 
@@ -894,7 +898,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             double bgSize = Math.max(width, height);
 
             if (prevBg != null && musicBgAlpha < 0.99f) {
-                GlStateManager.bindTexture(prevBg.getGlTextureId());
+                int glTextureId = prevBg.getGlTextureId();
+                GlStateManager.bindTexture(glTextureId);
                 prevBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha);
                 Image.draw(posX + width * .5 - bgSize * .5, posY + height * .5 - bgSize * .5, bgSize, bgSize, Image.Type.NoColor);

@@ -142,7 +142,7 @@ public class Music {
         JsonObject result = CloudMusicApi.songUrlV1(this.id, CloudMusic.quality.getQuality().toLowerCase()).toJsonObject();
         JsonObject music = result.get("data").getAsJsonArray().get(0).getAsJsonObject();
         if (music.get("code").getAsInt() != 200) {
-            throw new RuntimeException(this.name);
+            return null;
         }
 
         String url = music.get("url").getAsString();

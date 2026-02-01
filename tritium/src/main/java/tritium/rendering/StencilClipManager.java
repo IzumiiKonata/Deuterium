@@ -2,6 +2,7 @@ package tritium.rendering;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.GL11;
 import java.util.Stack;
 
@@ -18,13 +19,12 @@ public class StencilClipManager {
         }
     }
 
-    public static Stack<StencilState> stencilStack = new Stack<>();
-    public static int currentStencilValue = 0;
+    public static boolean stencilClipping() {
+        return !Framebuffer.currentlyBinding.stencilStack.isEmpty();
+    }
 
     public static void initialize() {
-        Stencil.checkSetupFBO(FramebufferCaching.getOverridingFramebuffer() != null ?
-                FramebufferCaching.getOverridingFramebuffer() :
-                Minecraft.getMinecraft().getFramebuffer());
+        Stencil.checkSetupFBO(Framebuffer.currentlyBinding);
         GL11.glClearStencil(0);
         GlStateManager.enableDepth();
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
@@ -34,33 +34,33 @@ public class StencilClipManager {
     static boolean depthMask = false;
 
     public static void beginClip() {
-        if (currentStencilValue == 0) {
+        if (Framebuffer.currentlyBinding.currentStencilValue == 0) {
             initialize();
         }
 
         boolean colorMask = GL11.glGetBoolean(GL11.GL_COLOR_WRITEMASK);
         depthMask = GL11.glGetBoolean(GL11.GL_DEPTH_WRITEMASK);
-        stencilStack.push(new StencilState(currentStencilValue, colorMask, depthMask));
+        Framebuffer.currentlyBinding.stencilStack.push(new StencilState(Framebuffer.currentlyBinding.currentStencilValue, colorMask, depthMask));
 
         GlStateManager.colorMask(false, false, false, false);
         GlStateManager.depthMask(false);
 
-        if (currentStencilValue == 0) {
+        if (Framebuffer.currentlyBinding.currentStencilValue == 0) {
             GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 0xFF);
         } else {
-            GL11.glStencilFunc(GL11.GL_EQUAL, currentStencilValue, 0xFF);
+            GL11.glStencilFunc(GL11.GL_EQUAL, Framebuffer.currentlyBinding.currentStencilValue, 0xFF);
         }
 
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_INCR);
     }
 
     public static void updateClip() {
-        currentStencilValue++;
+        Framebuffer.currentlyBinding.currentStencilValue++;
 
         GlStateManager.colorMask(true, true, true, true);
         GlStateManager.depthMask(depthMask);
 
-        GL11.glStencilFunc(GL11.GL_EQUAL, currentStencilValue, 0xFF);
+        GL11.glStencilFunc(GL11.GL_EQUAL, Framebuffer.currentlyBinding.currentStencilValue, 0xFF);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
     }
 
@@ -73,19 +73,19 @@ public class StencilClipManager {
     }
 
     public static void endClip() {
-        if (stencilStack.isEmpty()) {
+        if (Framebuffer.currentlyBinding.stencilStack.isEmpty()) {
             System.err.println("Stencil stack underflow");
             return;
         }
 
-        StencilState state = stencilStack.pop();
-        currentStencilValue = state.stencilValue;
+        StencilState state = Framebuffer.currentlyBinding.stencilStack.pop();
+        Framebuffer.currentlyBinding.currentStencilValue = state.stencilValue;
 
         GlStateManager.colorMask(state.colorMask, state.colorMask, state.colorMask, state.colorMask);
         GlStateManager.depthMask(state.depthMask);
 
-        if (currentStencilValue > 0) {
-            GL11.glStencilFunc(GL11.GL_EQUAL, currentStencilValue, 0xFF);
+        if (Framebuffer.currentlyBinding.currentStencilValue > 0) {
+            GL11.glStencilFunc(GL11.GL_EQUAL, Framebuffer.currentlyBinding.currentStencilValue, 0xFF);
             GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
         } else {
             disable();
@@ -94,13 +94,12 @@ public class StencilClipManager {
 
     public static void disable() {
         GL11.glDisable(GL11.GL_STENCIL_TEST);
-        currentStencilValue = 0;
+        Framebuffer.currentlyBinding.currentStencilValue = 0;
     }
 
     // 清除模板缓冲区
     public static void clear() {
-        GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-        currentStencilValue = 0;
-        stencilStack.clear();
+        Framebuffer.currentlyBinding.currentStencilValue = 0;
+        Framebuffer.currentlyBinding.stencilStack.clear();
     }
 }

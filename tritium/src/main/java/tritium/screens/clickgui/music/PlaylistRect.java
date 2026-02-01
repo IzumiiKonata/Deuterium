@@ -1,24 +1,19 @@
 package tritium.screens.clickgui.music;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.ncm.music.CloudMusic;
 import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.widgets.ImageWidget;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.screens.ClickGui;
-import tritium.utils.network.HttpUtils;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;
-import java.io.InputStream;
 import java.util.function.Supplier;
 
 /**
@@ -71,31 +66,17 @@ public class PlaylistRect extends RectWidget {
 
             Location coverLoc = Location.of("tritium/textures/playlist_" + playlist.getId() + ".png");
 
+            if (imgLoaded)
+                return coverLoc;
+
             TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
             if (textureManager.getTexture(coverLoc) == null) {
-
-                if (!imgLoaded) {
-                    imgLoaded = true;
-                    MultiThreadingUtil.runAsync(() -> {
-                        try (InputStream inputStream = HttpUtils.downloadStream(playlist.getCoverUrl() + "?param=" + (int) (imgBg.getWidth() * 2) + "y" + (int) (imgBg.getHeight() * 2))) {
-                            if (inputStream != null) {
-                                NativeBackedImage img = NativeBackedImage.make(inputStream);
-                                MultiThreadingUtil.runAsync(() -> {
-                                    if (textureManager.getTexture(coverLoc) != null) {
-                                        textureManager.deleteTexture(coverLoc);
-                                    }
-                                    Textures.loadTexture(coverLoc, img);
-                                    img.close();
-                                });
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    });
-                }
-
+                imgLoaded = true;
+                Textures.downloadTextureAndLoadAsync(playlist.getCoverUrl() + "?param=" + (int) (imgBg.getWidth() * 2) + "y" + (int) (imgBg.getHeight() * 2), coverLoc);
                 return null;
             }
+
+            imgLoaded = true;
 
             return coverLoc;
         }, 0, 0, imgBg.getWidth(), imgBg.getHeight()) {

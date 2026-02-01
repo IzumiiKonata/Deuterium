@@ -1172,9 +1172,9 @@ public class Minecraft implements IThreadListener {
     public void updateDisplay() {
         Display.update();
         this.checkWindowResize();
-        if (!StencilClipManager.stencilStack.isEmpty())
+        if (!framebufferMc.stencilStack.isEmpty())
             System.err.println("Stencil stack overflow");
-        StencilClipManager.currentStencilValue = 0;
+        framebufferMc.currentStencilValue = 0;
         ++this.fpsCounter;
     }
 

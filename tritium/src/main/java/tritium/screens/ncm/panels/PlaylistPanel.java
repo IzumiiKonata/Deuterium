@@ -2,7 +2,6 @@ package tritium.screens.ncm.panels;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import org.lwjgl.input.Keyboard;
@@ -20,10 +19,7 @@ import tritium.rendering.ui.widgets.*;
 import tritium.screens.ncm.CoverflowOverlay;
 import tritium.screens.ncm.NCMPanel;
 import tritium.screens.ncm.NCMScreen;
-import tritium.utils.network.HttpUtils;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -360,24 +356,7 @@ public class PlaylistPanel extends NCMPanel {
         if (textureManager.getTexture(coverLoc) != null)
             return;
 
-        MultiThreadingUtil.runAsync(() -> {
-            try (InputStream inputStream = HttpUtils.downloadStream(playList.getCoverUrl() + "?param=256y256")) {
-                if (inputStream != null) {
-                    NativeBackedImage img = NativeBackedImage.make(inputStream);
-                    if (textureManager.getTexture(coverLoc) != null) {
-                        MultiThreadingUtil.runOnMainThreadBlocking(() -> {
-                            textureManager.deleteTexture(coverLoc);
-                            return null;
-                        });
-                    }
-                    Textures.loadTexture(coverLoc, img);
-                    img.close();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
+        Textures.downloadTextureAndLoadAsync(playList.getCoverUrl() + "?param=256y256", coverLoc);
     }
 
     private void loadAvatar() {
@@ -385,25 +364,8 @@ public class PlaylistPanel extends NCMPanel {
         Location avatarLoc = this.playList.getCreator().getAvatarLocation();
         if (textureManager.getTexture(avatarLoc) != null)
             return;
-        MultiThreadingUtil.runAsync(() -> {
-            try (InputStream inputStream = HttpUtils.downloadStream(playList.getCreator().getAvatarUrl() + "?param=32y32")) {
-                if (inputStream != null) {
-                    NativeBackedImage img = NativeBackedImage.make(inputStream);
-                    MultiThreadingUtil.runAsync(() -> {
-                        if (textureManager.getTexture(avatarLoc) != null) {
-                            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
-                                textureManager.deleteTexture(avatarLoc);
-                                return null;
-                            });
-                        }
-                        Textures.loadTexture(avatarLoc, img);
-                        img.close();
-                    });
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+
+        Textures.downloadTextureAndLoadAsync(playList.getCreator().getAvatarUrl() + "?param=32y32", avatarLoc);
     }
 
 }

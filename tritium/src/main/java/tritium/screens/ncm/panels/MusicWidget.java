@@ -1,7 +1,6 @@
 package tritium.screens.ncm.panels;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
@@ -10,17 +9,13 @@ import tritium.ncm.music.dto.Music;
 import tritium.ncm.music.dto.PlayList;
 import tritium.management.FontManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.texture.Textures;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RoundedImageWidget;
 import tritium.rendering.ui.widgets.RoundedRectWidget;
 import tritium.screens.ncm.NCMScreen;
-import tritium.utils.network.HttpUtils;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.*;
-import java.io.InputStream;
 
 /**
  * @author IzumiiKonata
@@ -105,7 +100,7 @@ public class MusicWidget extends RoundedRectWidget {
             return true;
         });
 
-        RoundedImageWidget cover = new RoundedImageWidget(this.music.getCoverLocation(), 0, 0, 0, 0);
+        RoundedImageWidget cover = new RoundedImageWidget(this.music.getSmallCoverLocation(), 0, 0, 0, 0);
         this.addChild(cover);
         cover.fadeIn();
         cover.setLinearFilter(true);
@@ -223,28 +218,11 @@ public class MusicWidget extends RoundedRectWidget {
     private void loadCover() {
 
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-        Location coverLoc = this.music.getCoverLocation();
+        Location coverLoc = this.music.getSmallCoverLocation();
         if (textureManager.getTexture(coverLoc) != null)
             return;
 
-        MultiThreadingUtil.runAsync(() -> {
-            try (InputStream inputStream = HttpUtils.downloadStream(music.getCoverUrl(64))) {
-                if (inputStream != null) {
-                    NativeBackedImage img = NativeBackedImage.make(inputStream);
-
-                    if (img != null) {
-                        if (textureManager.getTexture(coverLoc) != null) {
-                            textureManager.deleteTexture(coverLoc);
-                        }
-                        Textures.loadTexture(coverLoc, img);
-                        img.close();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
-
+        Textures.downloadTextureAndLoadAsync(music.getCoverUrl(64), coverLoc);
     }
 
 }

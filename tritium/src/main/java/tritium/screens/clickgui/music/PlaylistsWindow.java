@@ -3,7 +3,6 @@ package tritium.screens.clickgui.music;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import org.lwjgl.input.Keyboard;
@@ -27,12 +26,9 @@ import tritium.screens.ClickGui;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.category.CategoriesWindow;
 import tritium.screens.ncm.MusicLyricsPanel;
-import tritium.utils.network.HttpUtils;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
-import java.io.InputStream;
 import java.util.List;
 import java.util.function.Supplier;
 
@@ -104,31 +100,17 @@ public class PlaylistsWindow extends Window {
 
                 Location avatarLoc = Location.of("tritium/textures/ncm_avatar_" + CloudMusic.profile.getName() + ".png");
 
+                if (avatarLoaded)
+                    return avatarLoc;
+
                 TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
                 if (textureManager.getTexture(avatarLoc) == null) {
-
-                    if (!avatarLoaded) {
-                        avatarLoaded = true;
-                        MultiThreadingUtil.runAsync(() -> {
-                            try (InputStream inputStream = HttpUtils.downloadStream(CloudMusic.profile.getAvatarUrl() + "?param=32y32")) {
-                                if (inputStream != null) {
-                                    NativeBackedImage img = NativeBackedImage.make(inputStream);
-                                    MultiThreadingUtil.runAsync(() -> {
-                                        if (textureManager.getTexture(avatarLoc) != null) {
-                                            textureManager.deleteTexture(avatarLoc);
-                                        }
-                                        Textures.loadTexture(avatarLoc, img);
-                                        img.close();
-                                    });
-                                }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
-
+                    avatarLoaded = true;
+                    Textures.downloadTextureAndLoadAsync(CloudMusic.profile.getAvatarUrl() + "?param=32y32", avatarLoc);
                     return null;
                 }
+
+                avatarLoaded = true;
 
                 return avatarLoc;
             }, 0, 0, 16, 16);

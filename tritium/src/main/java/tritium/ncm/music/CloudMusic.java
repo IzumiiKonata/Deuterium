@@ -307,39 +307,43 @@ public class CloudMusic {
 
                 Tuple<String, String> playUrl = song.getPlayUrl();
 
-                WidgetsManager.musicInfo.downloading = false;
-                File musicFile = getMusicFile(playUrl, song);
+                if (playUrl != null) {
+                    WidgetsManager.musicInfo.downloading = false;
+                    File musicFile = getMusicFile(playUrl, song);
 
-                try {
-                    player = initializePlayer(musicFile);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    ConsoleScreen.log(EnumChatFormatting.RED + "[NCM] Failed to initiate audio player! Error: {}", e.getMessage());
-                    break;
+                    try {
+                        player = initializePlayer(musicFile);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        ConsoleScreen.log(EnumChatFormatting.RED + "[NCM] Failed to initiate audio player! Error: {}", e.getMessage());
+                        break;
+                    }
+
+                    MusicToast.pushMusicToast(song.getArtistsName() + " - " + song.getName());
+                    ConsoleScreen.log("[NCM] Now playing: {}, id {}", song.getName(), song.getId());
+
+                    try {
+                        player.play();
+                    } catch (ChannelMismatchException e) {
+                        player.player.cleanUp();
+                        musicFile.delete();
+                        player = initializePlayer(getMusicFile(playUrl, song));
+                    }
+                    playing.set(true);
+
+                    player.setAfterPlayed(() -> {
+                        this.notifyWaitLock();
+                        playing.set(false);
+                    });
+                } else {
+                    Minecraft mc = Minecraft.getMinecraft();
+
+                    if (mc.thePlayer != null) {
+                        mc.thePlayer.addChatMessage(EnumChatFormatting.RED + "无法播放: " + song.getName() + " - " + song.getArtistsName());
+                    }
+
+                    ConsoleScreen.log("{}无法播放: {} - {}, 可能因为该歌曲没有版权", EnumChatFormatting.RED, song.getName(), song.getArtistsName());
                 }
-
-//                OpenApiInstance.api.popNotification(EnumNotificationType.INFO, "Now Playing", song.getName(), 1500);
-
-                MusicToast.pushMusicToast(song.getArtistsName() + " - " + song.getName());
-                ConsoleScreen.log("[NCM] Now playing: {}, id {}", song.getName(), song.getId());
-//                ConsoleScreen.log("[NCM]     ID: {}", song.getId());
-//                ConsoleScreen.log("[NCM]     Name: {}", song.getName());
-//                ConsoleScreen.log("[NCM]     Album: {}", song.getAlbum().getName());
-//                ConsoleScreen.log("[NCM]     Artists: {}", song.getArtists().stream().map(Artist::getName).collect(Collectors.joining(", ")));
-
-                try {
-                    player.play();
-                } catch (ChannelMismatchException e) {
-                    player.player.cleanUp();
-                    musicFile.delete();
-                    player = initializePlayer(getMusicFile(playUrl, song));
-                }
-                playing.set(true);
-
-                player.setAfterPlayed(() -> {
-                    this.notifyWaitLock();
-                    playing.set(false);
-                });
 
                 // load next music's cover
                 if (curIdx + 1 < playList.size()) {
@@ -501,7 +505,7 @@ public class CloudMusic {
         Location musicCoverBlur = music.getBlurredCoverLocation();
         TextureManager tm = Minecraft.getMinecraft().getTextureManager();
 
-        if (tm.getTexture(musicCover) == null || !forceReload) {
+        if (tm.getTexture(musicCover) == null || forceReload) {
             MultiThreadingUtil.runAsync(new Runnable() {
                 @Override
                 @SneakyThrows
@@ -516,48 +520,31 @@ public class CloudMusic {
                     BufferedImage read = NativeBackedImage.make(new ByteArrayInputStream(byteArray));
 
                     if (read != null) {
-                        BufferedImage input = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                        input.setRGB(0, 0, read.getWidth(), read.getHeight(), read.getRGB(0, 0, read.getWidth(), read.getHeight(), null, 0, read.getWidth()), 0, read.getWidth());
 
                         MultiThreadingUtil.runAsync(() -> {
+                            BufferedImage input = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
+                            input.setRGB(0, 0, read.getWidth(), read.getHeight(), read.getRGB(0, 0, read.getWidth(), read.getHeight(), null, 0, read.getWidth()), 0, read.getWidth());
+
                             BufferedImage blurred = gaussianBlur(input, 31);
-                            Textures.loadTextureAsyncly(musicCoverBlur, blurred);
+                            Textures.loadTexture(musicCoverBlur, blurred);
                         });
 
-                        Textures.loadTextureAsyncly(musicCover, read);
+                        Textures.loadTexture(musicCover, read);
                     }
                 }
             });
         }
 
-        if (tm.getTexture(musicCoverSmall) == null || !forceReload) {
+        if (tm.getTexture(musicCoverSmall) == null || forceReload) {
             MultiThreadingUtil.runAsync(() -> {
                 InputStream isSmall = HttpUtils.downloadStream(music.getCoverUrl(128), 5);
 
                 BufferedImage readSmall = NativeBackedImage.make(isSmall);
-                Textures.loadTextureAsyncly(musicCoverSmall, readSmall);
+                Textures.loadTexture(musicCoverSmall, readSmall);
             });
         }
 
 
-    }
-
-    public static void loadMusicCover(Music music, boolean forceReload, int size, Location location) {
-        MultiThreadingUtil.runAsync(new Runnable() {
-            @Override
-            @SneakyThrows
-            public void run() {
-                ITextureObject texture = Minecraft.getMinecraft().getTextureManager().getTexture(location);
-
-                if (texture != null && !forceReload)
-                    return;
-
-                @Cleanup
-                InputStream inputStream = HttpUtils.downloadStream(music.getCoverUrl(size), 5);
-
-                Textures.loadTextureAsyncly(location, NativeBackedImage.make(inputStream));
-            }
-        });
     }
 
     private static final Kernel GAUSSIAN_KERNEL = new Kernel(41, 41, GaussianKernel.generate(41));

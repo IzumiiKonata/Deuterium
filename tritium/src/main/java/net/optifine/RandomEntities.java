@@ -93,16 +93,13 @@ public class RandomEntities {
                         s = getHorseTexturePath(s, "horse/".length());
                     }
                     if (!s.startsWith("textures/entity/") && !s.startsWith("textures/painting/")) {
-                        final Location resourcelocation2 = loc;
-                        return resourcelocation2;
+                        return loc;
                     }
                     final RandomEntityProperties randomentityproperties = mapProperties.get(s);
                     if (randomentityproperties == null) {
-                        final Location resourcelocation3 = loc;
-                        return resourcelocation3;
+                        return loc;
                     }
-                    final Location resourcelocation1 = randomentityproperties.getTextureLocation(loc, irandomentity);
-                    return resourcelocation1;
+                    return randomentityproperties.getTextureLocation(loc, irandomentity);
                 }
                 name = loc;
             } finally {

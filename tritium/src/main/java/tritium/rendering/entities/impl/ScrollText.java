@@ -81,7 +81,7 @@ public class ScrollText {
             GlStateManager.loadIdentity();
             GlStateManager.translate(0.0F, 0.0F, -2000.0F);
 
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
+//            GL11.glDisable(GL11.GL_STENCIL_TEST);
 
             fb = RenderSystem.createFrameBuffer(fb);
             fb.bindFramebuffer(true);
