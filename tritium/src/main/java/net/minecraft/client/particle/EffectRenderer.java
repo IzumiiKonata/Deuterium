@@ -261,8 +261,9 @@ public class EffectRenderer {
 
                     if (i == 1) {
                         this.renderer.bindTexture(TextureMap.locationBlocksTexture);
+                    } else {
+                        this.renderer.bindTexture(particleTextures);
                     }
-                    this.renderer.bindTexture(particleTextures);
 
                     GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                     Tessellator tessellator = Tessellator.getInstance();
