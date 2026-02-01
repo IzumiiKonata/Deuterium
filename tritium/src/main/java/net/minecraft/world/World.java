@@ -3,6 +3,8 @@ package net.minecraft.world;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.longs.LongOpenHashSet;
 import lombok.Getter;
 import tritium.bridge.game.WorldWrapper;
@@ -55,7 +57,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     private final List<TileEntity> tileEntitiesToBeRemoved = Lists.newArrayList();
     public final List<EntityPlayer> playerEntities = Lists.newArrayList();
     public final List<Entity> weatherEffects = Lists.newArrayList();
-    protected final IntHashMap<Entity> entitiesById = new IntHashMap();
+    protected final Int2ObjectMap<Entity> entitiesById = new Int2ObjectOpenHashMap<>();
 
     private final LightingEngine lightingEngine;
 
@@ -1813,7 +1815,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                         Block block = iblockstate.getBlock();
 
                         if (block.getMaterial() == materialIn) {
-                            double d0 = (float) (l1 + 1) - BlockLiquid.getLiquidHeightPercent(iblockstate.getValue(BlockLiquid.LEVEL).intValue());
+                            double d0 = (float) (l1 + 1) - BlockLiquid.getLiquidHeightPercent(iblockstate.getValue(BlockLiquid.LEVEL));
 
                             if ((double) l >= d0) {
                                 flag = true;
@@ -1880,7 +1882,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
                     Block block = iblockstate.getBlock();
 
                     if (block.getMaterial() == materialIn) {
-                        int j2 = iblockstate.getValue(BlockLiquid.LEVEL).intValue();
+                        int j2 = iblockstate.getValue(BlockLiquid.LEVEL);
                         double d0 = l1 + 1;
 
                         if (j2 < 8) {
@@ -2068,7 +2070,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
     public static boolean doesBlockHaveSolidTopSurface(IBlockAccess blockAccess, BlockPos pos) {
         IBlockState iblockstate = blockAccess.getBlockState(pos);
         Block block = iblockstate.getBlock();
-        return block.getMaterial().isOpaque() && block.isFullCube() || (block instanceof BlockStairs ? iblockstate.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP : (block instanceof BlockSlab ? iblockstate.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP : (block instanceof BlockHopper || (block instanceof BlockSnow && iblockstate.getValue(BlockSnow.LAYERS).intValue() == 7))));
+        return block.getMaterial().isOpaque() && block.isFullCube() || (block instanceof BlockStairs ? iblockstate.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP : (block instanceof BlockSlab ? iblockstate.getValue(BlockSlab.HALF) == BlockSlab.EnumBlockHalf.TOP : (block instanceof BlockHopper || (block instanceof BlockSnow && iblockstate.getValue(BlockSnow.LAYERS) == 7))));
     }
 
     /**
@@ -2629,7 +2631,7 @@ public abstract class World implements IBlockAccess, SharedConstants, ILightingE
      * Returns the Entity with the given ID, or null if it doesn't exist in this World.
      */
     public Entity getEntityByID(int id) {
-        return this.entitiesById.lookup(id);
+        return this.entitiesById.get(id);
     }
 
     public List<Entity> getLoadedEntityList() {

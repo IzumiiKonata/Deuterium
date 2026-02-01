@@ -101,7 +101,7 @@ public class VertexFormat {
     }
 
     public int getUvOffsetById(int id) {
-        return this.uvOffsetsById.get(id).intValue();
+        return this.uvOffsetsById.get(id);
     }
 
     public String toString() {
@@ -153,7 +153,7 @@ public class VertexFormat {
     }
 
     public int getOffset(int p_181720_1_) {
-        return this.offsets.get(p_181720_1_).intValue();
+        return this.offsets.get(p_181720_1_);
     }
 
     public boolean equals(Object p_equals_1_) {

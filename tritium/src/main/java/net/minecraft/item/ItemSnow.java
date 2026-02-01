@@ -36,7 +36,7 @@ public class ItemSnow extends ItemBlock {
             }
 
             if (block == this.block) {
-                int i = iblockstate.getValue(BlockSnow.LAYERS).intValue();
+                int i = iblockstate.getValue(BlockSnow.LAYERS);
 
                 if (i <= 7) {
                     IBlockState iblockstate1 = iblockstate.withProperty(BlockSnow.LAYERS, i + 1);

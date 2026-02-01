@@ -221,7 +221,7 @@ public class PlayerControllerMP {
                     block1.onBlockClicked(this.mc.theWorld, loc, this.mc.thePlayer);
                 }
 
-                if (flag && block1.getPlayerRelativeBlockHardness(this.mc.thePlayer, this.mc.thePlayer.worldObj, loc) >= 1.0F) {
+                if (flag && block1.getPlayerRelativeBlockHardness(this.mc.thePlayer) >= 1.0F) {
                     this.onPlayerDestroyBlock(loc, face);
                 } else {
                     this.isHittingBlock = true;
@@ -267,7 +267,7 @@ public class PlayerControllerMP {
                 this.isHittingBlock = false;
                 return false;
             } else {
-                this.curBlockDamageMP += block.getPlayerRelativeBlockHardness(this.mc.thePlayer, this.mc.thePlayer.worldObj, posBlock);
+                this.curBlockDamageMP += block.getPlayerRelativeBlockHardness(this.mc.thePlayer);
 
                 if (this.stepSoundTickCounter % 4.0F == 0.0F) {
                     this.mc.getSoundHandler().playSound(new PositionedSoundRecord(Location.of(block.stepSound.getStepSound()), (block.stepSound.getVolume() + 1.0F) / 8.0F, block.stepSound.getFrequency() * 0.5F, (float) posBlock.getX() + 0.5F, (float) posBlock.getY() + 0.5F, (float) posBlock.getZ() + 0.5F));

@@ -44,7 +44,7 @@ public class BlockFarmland extends Block {
     }
 
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
-        int i = state.getValue(MOISTURE).intValue();
+        int i = state.getValue(MOISTURE);
 
         if (!this.hasWater(worldIn, pos) && !worldIn.isRainingAt(pos.up())) {
             if (i > 0) {
@@ -139,7 +139,7 @@ public class BlockFarmland extends Block {
      * Convert the BlockState into the correct metadata value
      */
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(MOISTURE).intValue();
+        return state.getValue(MOISTURE);
     }
 
     protected BlockState createBlockState() {

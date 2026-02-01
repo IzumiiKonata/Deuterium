@@ -51,7 +51,7 @@ public class DataWatcher {
         } else if (this.watchedObjects.containsKey(id)) {
             throw new IllegalArgumentException("Duplicate id value for " + id + "!");
         } else {
-            DataWatcher.WatchableObject datawatcher$watchableobject = new DataWatcher.WatchableObject(integer.intValue(), id, object);
+            DataWatcher.WatchableObject datawatcher$watchableobject = new DataWatcher.WatchableObject(integer, id, object);
             this.lock.writeLock().lock();
             this.watchedObjects.put(id, datawatcher$watchableobject);
             this.lock.writeLock().unlock();
@@ -85,7 +85,7 @@ public class DataWatcher {
      * gets a watchable object and returns it as a Integer
      */
     public int getWatchableObjectInt(int id) {
-        return ((Integer) this.getWatchedObject(id).getObject()).intValue();
+        return (Integer) this.getWatchedObject(id).getObject();
     }
 
     public float getWatchableObjectFloat(int id) {
@@ -229,19 +229,19 @@ public class DataWatcher {
 
         switch (object.getObjectType()) {
             case 0:
-                buffer.writeByte(((Byte) object.getObject()).byteValue());
+                buffer.writeByte((Byte) object.getObject());
                 break;
 
             case 1:
-                buffer.writeShort(((Short) object.getObject()).shortValue());
+                buffer.writeShort((Short) object.getObject());
                 break;
 
             case 2:
-                buffer.writeInt(((Integer) object.getObject()).intValue());
+                buffer.writeInt((Integer) object.getObject());
                 break;
 
             case 3:
-                buffer.writeFloat(((Float) object.getObject()).floatValue());
+                buffer.writeFloat((Float) object.getObject());
                 break;
 
             case 4:

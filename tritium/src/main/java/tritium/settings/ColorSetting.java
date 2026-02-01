@@ -137,14 +137,14 @@ public class ColorSetting extends Setting<Color> {
 
     public HSBColor getValue(double count) {
         if (this.chroma.getValue()) {
-            float speed = this.chromaSpeed.getValue().floatValue();
+            float speed = this.chromaSpeed.getValue();
             long value = this.chromaValue.getValue();
             double v = (1 - speed / (this.chromaSpeed.getMaximum() + 0.1)) * 6000;
             float hue = (float) ((System.currentTimeMillis() + (count * value)) % (int) v);
             hue /= (int) v;
             ((HSBColor) super.getValue()).setHue(hue);
         } else if (this.rainbow.getValue()) {
-            float speed = this.rainbowSpeed.getValue().floatValue();
+            float speed = this.rainbowSpeed.getValue();
             double v = (1 - speed / (this.rainbowSpeed.getMaximum() + 0.1)) * 6000;
             float hue = System.currentTimeMillis() % (int) v;
             hue /= (int) v;

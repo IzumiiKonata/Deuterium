@@ -20,15 +20,12 @@ import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.Validate;
 import tritium.event.events.packet.ReceivePacketEvent;
 import tritium.event.events.packet.SendPacketEvent;
 import tritium.management.EventManager;
-import tritium.screens.ConsoleScreen;
-import tritium.utils.other.DevUtils;
 import tritium.utils.timing.Counter;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -335,7 +332,7 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
                 } catch (ChannelException var3) {
                 }
 
-                p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("splitter", new MessageDeserializer2()).addLast("decoder", new MessageDeserializer(EnumPacketDirection.CLIENTBOUND)).addLast("prepender", new MessageSerializer2()).addLast("encoder", new MessageSerializer(EnumPacketDirection.SERVERBOUND)).addLast("packet_handler", networkmanager);
+                p_initChannel_1_.pipeline().addLast("timeout", new ReadTimeoutHandler(30)).addLast("splitter", new MessageDeserializerSplitter()).addLast("decoder", new MessageDeserializer(EnumPacketDirection.CLIENTBOUND)).addLast("prepender", new MessageSerializerPrepender()).addLast("encoder", new MessageSerializer(EnumPacketDirection.SERVERBOUND)).addLast("packet_handler", networkmanager);
 
             }
         }).channel(oclass).connect(address, serverPort).syncUninterruptibly();

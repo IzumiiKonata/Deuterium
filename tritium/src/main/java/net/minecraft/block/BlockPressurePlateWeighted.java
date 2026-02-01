@@ -36,7 +36,7 @@ public class BlockPressurePlateWeighted extends BlockBasePressurePlate {
     }
 
     protected int getRedstoneStrength(IBlockState state) {
-        return state.getValue(POWER).intValue();
+        return state.getValue(POWER);
     }
 
     protected IBlockState setRedstoneStrength(IBlockState state, int strength) {
@@ -61,7 +61,7 @@ public class BlockPressurePlateWeighted extends BlockBasePressurePlate {
      * Convert the BlockState into the correct metadata value
      */
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(POWER).intValue();
+        return state.getValue(POWER);
     }
 
     protected BlockState createBlockState() {

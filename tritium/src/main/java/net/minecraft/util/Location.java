@@ -8,7 +8,11 @@ import tritium.utils.optimization.IdentifierCaches;
 import java.util.HashMap;
 import java.util.Map;
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true, cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY)
+@Getter
+@EqualsAndHashCode(
+        onlyExplicitlyIncluded = true,
+        cacheStrategy = EqualsAndHashCode.CacheStrategy.LAZY
+)
 public class Location {
 
     @EqualsAndHashCode.Include
@@ -40,14 +44,6 @@ public class Location {
         }
 
         return astring;
-    }
-
-    public String getResourcePath() {
-        return this.resourcePath;
-    }
-
-    public String getResourceDomain() {
-        return this.resourceDomain;
     }
 
     public String toString() {

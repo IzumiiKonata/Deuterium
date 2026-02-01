@@ -136,7 +136,7 @@ public class BlockSkull extends BlockContainer {
 
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
         if (!worldIn.isRemote) {
-            if (!state.getValue(NODROP).booleanValue()) {
+            if (!state.getValue(NODROP)) {
                 TileEntity tileentity = worldIn.getTileEntity(pos);
 
                 if (tileentity instanceof TileEntitySkull) {
@@ -224,7 +224,7 @@ public class BlockSkull extends BlockContainer {
         int i = 0;
         i = i | state.getValue(FACING).getIndex();
 
-        if (state.getValue(NODROP).booleanValue()) {
+        if (state.getValue(NODROP)) {
             i |= 8;
         }
 

@@ -4,10 +4,9 @@ import java.util.function.Supplier;
 
 public abstract class LazyLoadBase<T> {
     private T value;
-    private boolean isLoaded = false;
+    private volatile boolean isLoaded = false;
 
     public T getValue() {
-        //noinspection DoubleCheckedLocking
         if (!this.isLoaded) {
             synchronized (this) {
                 if (!this.isLoaded) {

@@ -69,7 +69,7 @@ public class BlockAnvil extends BlockFalling {
      * returns the metadata of the dropped item based on the old metadata of the block.
      */
     public int damageDropped(IBlockState state) {
-        return state.getValue(DAMAGE).intValue();
+        return state.getValue(DAMAGE);
     }
 
     public void setBlockBoundsBasedOnState(IBlockAccess worldIn, BlockPos pos) {
@@ -123,7 +123,7 @@ public class BlockAnvil extends BlockFalling {
     public int getMetaFromState(IBlockState state) {
         int i = 0;
         i = i | state.getValue(FACING).getHorizontalIndex();
-        i = i | state.getValue(DAMAGE).intValue() << 2;
+        i = i | state.getValue(DAMAGE) << 2;
         return i;
     }
 

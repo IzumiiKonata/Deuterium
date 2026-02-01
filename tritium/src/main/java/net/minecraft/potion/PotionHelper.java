@@ -3,7 +3,6 @@ package net.minecraft.potion;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import net.minecraft.src.Config;
-import net.minecraft.util.IntegerCache;
 import net.optifine.CustomColors;
 
 import java.util.Collection;
@@ -121,18 +120,18 @@ public class PotionHelper {
      * Given a potion data value, get the associated liquid color (optionally bypassing the cache)
      */
     public static int getLiquidColor(int dataValue, boolean bypassCache) {
-        Integer integer = IntegerCache.getInteger(dataValue);
+        Integer integer = dataValue;
 
         if (!bypassCache) {
             if (DATAVALUE_COLORS.containsKey(integer)) {
-                return DATAVALUE_COLORS.get(integer).intValue();
+                return DATAVALUE_COLORS.get(integer);
             } else {
-                int i = calcPotionLiquidColor(getPotionEffects(integer.intValue(), false));
+                int i = calcPotionLiquidColor(getPotionEffects(integer, false));
                 DATAVALUE_COLORS.put(integer, i);
                 return i;
             }
         } else {
-            return calcPotionLiquidColor(getPotionEffects(integer.intValue(), true));
+            return calcPotionLiquidColor(getPotionEffects(integer, true));
         }
     }
 

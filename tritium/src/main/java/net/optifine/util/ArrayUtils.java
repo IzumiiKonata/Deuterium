@@ -276,7 +276,7 @@ public class ArrayUtils {
             int[] aint = new int[arr.length];
 
             for (int i = 0; i < aint.length; ++i) {
-                aint[i] = arr[i].intValue();
+                aint[i] = arr[i];
             }
 
             return aint;

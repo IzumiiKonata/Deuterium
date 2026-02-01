@@ -32,7 +32,7 @@ public class ModelAdapterOcelot extends ModelAdapter {
             Map<String, Integer> map = getMapPartFields();
 
             if (map.containsKey(modelPart)) {
-                int i = map.get(modelPart).intValue();
+                int i = map.get(modelPart);
 
                 List<ModelRenderer> list = Arrays.asList(
                         modelocelot.ocelotBackLeftLeg,

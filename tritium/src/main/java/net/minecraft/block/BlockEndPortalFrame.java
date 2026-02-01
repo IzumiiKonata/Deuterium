@@ -47,7 +47,7 @@ public class BlockEndPortalFrame extends Block {
         this.setBlockBounds(0.0F, 0.0F, 0.0F, 1.0F, 0.8125F, 1.0F);
         super.addCollisionBoxesToList(worldIn, pos, state, mask, list, collidingEntity);
 
-        if (worldIn.getBlockState(pos).getValue(EYE).booleanValue()) {
+        if (worldIn.getBlockState(pos).getValue(EYE)) {
             this.setBlockBounds(0.3125F, 0.8125F, 0.3125F, 0.6875F, 1.0F, 0.6875F);
             super.addCollisionBoxesToList(worldIn, pos, state, mask, list, collidingEntity);
         }
@@ -75,7 +75,7 @@ public class BlockEndPortalFrame extends Block {
     }
 
     public int getComparatorInputOverride(World worldIn, BlockPos pos) {
-        return worldIn.getBlockState(pos).getValue(EYE).booleanValue() ? 15 : 0;
+        return worldIn.getBlockState(pos).getValue(EYE) ? 15 : 0;
     }
 
     /**
@@ -92,7 +92,7 @@ public class BlockEndPortalFrame extends Block {
         int i = 0;
         i = i | state.getValue(FACING).getHorizontalIndex();
 
-        if (state.getValue(EYE).booleanValue()) {
+        if (state.getValue(EYE)) {
             i |= 4;
         }
 

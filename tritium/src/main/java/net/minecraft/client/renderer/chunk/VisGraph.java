@@ -2,7 +2,6 @@ package net.minecraft.client.renderer.chunk;
 
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.util.IntegerCache;
 
 import java.util.*;
 
@@ -51,12 +50,12 @@ public class VisGraph {
 
     private Set<EnumFacing> func_178604_a(int p_178604_1_) {
         Set<EnumFacing> set = EnumSet.noneOf(EnumFacing.class);
-        Queue<Integer> queue = new ArrayDeque(384);
-        queue.add(IntegerCache.getInteger(p_178604_1_));
+        Queue<Integer> queue = new ArrayDeque<>(384);
+        queue.add(p_178604_1_);
         this.field_178612_d.set(p_178604_1_, true);
 
         while (!queue.isEmpty()) {
-            int i = queue.poll().intValue();
+            int i = queue.poll();
             this.func_178610_a(i, set);
 
             for (EnumFacing enumfacing : EnumFacing.VALUES) {
@@ -64,7 +63,7 @@ public class VisGraph {
 
                 if (j >= 0 && !this.field_178612_d.get(j)) {
                     this.field_178612_d.set(j, true);
-                    queue.add(IntegerCache.getInteger(j));
+                    queue.add(j);
                 }
             }
         }

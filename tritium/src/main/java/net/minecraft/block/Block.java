@@ -30,8 +30,8 @@ public class Block {
      * Location for the Air block
      */
     private static final Location AIR_ID = Location.of("air");
-    public static final RegistryNamespacedDefaultedByKey<Location, Block> blockRegistry = new RegistryNamespacedDefaultedByKey(AIR_ID);
-    public static final ObjectIntIdentityMap<IBlockState> BLOCK_STATE_IDS = new ObjectIntIdentityMap();
+    public static final RegistryNamespacedDefaultedByKey<Location, Block> blockRegistry = new RegistryNamespacedDefaultedByKey<>(AIR_ID);
+    public static final ObjectIntIdentityMap<IBlockState> BLOCK_STATE_IDS = new ObjectIntIdentityMap<>();
     private CreativeTabs displayOnCreativeTab;
     public static final Block.SoundType soundTypeStone = new Block.SoundType("stone", 1.0F, 1.0F);
 
@@ -86,17 +86,25 @@ public class Block {
             return "mob.slime.small";
         }
     };
+    @Getter
     protected boolean fullBlock;
 
     /**
      * How much light is subtracted for going through this block
      */
+    @Getter
     protected int lightOpacity;
+    /**
+     * -- GETTER --
+     *  Used in the renderer to apply ambient occlusion
+     */
+    @Getter
     protected boolean translucent;
 
     /**
      * Amount of light emitted
      */
+    @Getter
     protected int lightValue;
 
     /**
@@ -107,6 +115,7 @@ public class Block {
     /**
      * Indicates how many hits it takes to break a block.
      */
+    @Getter
     protected float blockHardness;
 
     /**
@@ -148,6 +157,7 @@ public class Block {
      * Determines how much velocity is maintained while moving on top of this block
      */
     public float slipperiness;
+    @Getter
     protected final BlockState blockState;
     private IBlockState defaultBlockState;
     private String unlocalizedName;
@@ -195,27 +205,8 @@ public class Block {
         }
     }
 
-    public boolean isFullBlock() {
-        return this.fullBlock;
-    }
-
-    public int getLightOpacity() {
-        return this.lightOpacity;
-    }
-
-    /**
-     * Used in the renderer to apply ambient occlusion
-     */
-    public boolean isTranslucent() {
-        return this.translucent;
-    }
-
     public boolean isTranslucentAO() {
         return !this.isVisuallyOpaque() || this.getLightOpacity() == 0;
-    }
-
-    public int getLightValue() {
-        return this.lightValue;
     }
 
     /**
@@ -380,10 +371,6 @@ public class Block {
         return this;
     }
 
-    public float getBlockHardness(World worldIn, BlockPos pos) {
-        return this.blockHardness;
-    }
-
     /**
      * Sets whether this block type will receive random update ticks
      */
@@ -529,8 +516,8 @@ public class Block {
     /**
      * Get the hardness of this Block relative to the ability of the given player
      */
-    public float getPlayerRelativeBlockHardness(EntityPlayer playerIn, World worldIn, BlockPos pos) {
-        float f = this.getBlockHardness(worldIn, pos);
+    public float getPlayerRelativeBlockHardness(EntityPlayer playerIn) {
+        float f = this.getBlockHardness();
         return f < 0.0F ? 0.0F : (!playerIn.canHarvestBlock(this) ? playerIn.getToolDigEfficiency(this) / f / 100.0F : playerIn.getToolDigEfficiency(this) / f / 30.0F);
     }
 
@@ -1057,10 +1044,6 @@ public class Block {
         return new BlockState(this);
     }
 
-    public BlockState getBlockState() {
-        return this.blockState;
-    }
-
     protected final void setDefaultState(IBlockState state) {
         this.defaultBlockState = state;
     }
@@ -1341,21 +1324,15 @@ public class Block {
 
     public static class SoundType {
         public final String soundName;
+        @Getter
         public final float volume;
+        @Getter
         public final float frequency;
 
         public SoundType(String name, float volume, float frequency) {
             this.soundName = name;
             this.volume = volume;
             this.frequency = frequency;
-        }
-
-        public float getVolume() {
-            return this.volume;
-        }
-
-        public float getFrequency() {
-            return this.frequency;
         }
 
         public String getBreakSound() {

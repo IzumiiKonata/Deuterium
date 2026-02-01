@@ -7,6 +7,10 @@ import com.google.common.util.concurrent.Futures;
 import io.netty.buffer.Unpooled;
 import io.netty.util.concurrent.Future;
 import io.netty.util.concurrent.GenericFutureListener;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
+import it.unimi.dsi.fastutil.ints.Int2ShortMap;
+import it.unimi.dsi.fastutil.ints.Int2ShortOpenHashMap;
 import net.minecraft.block.material.Material;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.crash.CrashReport;
@@ -71,7 +75,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
      */
     private int chatSpamThresholdCount;
     private int itemDropThreshold;
-    private final IntHashMap<Short> field_147372_n = new IntHashMap();
+    private final Int2ShortMap field_147372_n = new Int2ShortOpenHashMap();
     private double lastPosX;
     private double lastPosY;
     private double lastPosZ;
@@ -826,7 +830,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
                     this.playerEntity.updateHeldItem();
                     this.playerEntity.isChangingQuantityOnly = false;
                 } else {
-                    this.field_147372_n.addKey(this.playerEntity.openContainer.windowId, (short) packetIn.getActionNumber());
+                    this.field_147372_n.put(this.playerEntity.openContainer.windowId, (short) packetIn.getActionNumber());
                     this.playerEntity.playerNetServerHandler.sendPacket(new S32PacketConfirmTransaction(packetIn.getWindowId(), (short) packetIn.getActionNumber(), false));
                     this.playerEntity.openContainer.setCanCraft(this.playerEntity, false);
                     List<ItemStack> list1 = Lists.newArrayList();
@@ -909,9 +913,9 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
      */
     public void processConfirmTransaction(C0FPacketConfirmTransaction packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.playerEntity.getServerForPlayer());
-        Short oshort = this.field_147372_n.lookup(this.playerEntity.openContainer.windowId);
+        short oshort = this.field_147372_n.get(this.playerEntity.openContainer.windowId);
 
-        if (oshort != null && packetIn.getUid() == oshort.shortValue() && this.playerEntity.openContainer.windowId == packetIn.getWindowId() && !this.playerEntity.openContainer.getCanCraft(this.playerEntity) && !this.playerEntity.isSpectator()) {
+        if (packetIn.getUid() == oshort && this.playerEntity.openContainer.windowId == packetIn.getWindowId() && !this.playerEntity.openContainer.getCanCraft(this.playerEntity) && !this.playerEntity.isSpectator()) {
             this.playerEntity.openContainer.setCanCraft(this.playerEntity, true);
         }
     }

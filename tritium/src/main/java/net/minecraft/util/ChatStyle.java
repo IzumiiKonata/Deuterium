@@ -125,35 +125,35 @@ public class ChatStyle {
      * Whether or not text of this ChatStyle should be in bold.
      */
     public boolean getBold() {
-        return this.bold == null ? this.getParent().getBold() : this.bold.booleanValue();
+        return this.bold == null ? this.getParent().getBold() : this.bold;
     }
 
     /**
      * Whether or not text of this ChatStyle should be italicized.
      */
     public boolean getItalic() {
-        return this.italic == null ? this.getParent().getItalic() : this.italic.booleanValue();
+        return this.italic == null ? this.getParent().getItalic() : this.italic;
     }
 
     /**
      * Whether or not to format text of this ChatStyle using strikethrough.
      */
     public boolean getStrikethrough() {
-        return this.strikethrough == null ? this.getParent().getStrikethrough() : this.strikethrough.booleanValue();
+        return this.strikethrough == null ? this.getParent().getStrikethrough() : this.strikethrough;
     }
 
     /**
      * Whether or not text of this ChatStyle should be underlined.
      */
     public boolean getUnderlined() {
-        return this.underlined == null ? this.getParent().getUnderlined() : this.underlined.booleanValue();
+        return this.underlined == null ? this.getParent().getUnderlined() : this.underlined;
     }
 
     /**
      * Whether or not text of this ChatStyle should be obfuscated.
      */
     public boolean getObfuscated() {
-        return this.obfuscated == null ? this.getParent().getObfuscated() : this.obfuscated.booleanValue();
+        return this.obfuscated == null ? this.getParent().getObfuscated() : this.obfuscated;
     }
 
     /**

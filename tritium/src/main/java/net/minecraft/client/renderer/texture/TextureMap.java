@@ -668,8 +668,8 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
         int l1;
 
         for (Iterator iterator = set1.iterator(); iterator.hasNext(); l += l1) {
-            int j1 = ((Integer) iterator.next()).intValue();
-            l1 = ((Integer) map.get(j1)).intValue();
+            int j1 = (Integer) iterator.next();
+            l1 = (Integer) map.get(j1);
         }
 
         int i1 = 16;
@@ -678,8 +678,8 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
         Iterator iterator1 = set1.iterator();
 
         while (iterator1.hasNext()) {
-            int i2 = ((Integer) iterator1.next()).intValue();
-            int j2 = ((Integer) map.get(i2)).intValue();
+            int i2 = (Integer) iterator1.next();
+            int j2 = (Integer) map.get(i2);
             k1 += j2;
 
             if (i2 > i1) {

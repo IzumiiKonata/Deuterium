@@ -2025,7 +2025,7 @@ public class Shaders {
             Boolean obool = aboolean1[i];
 
             if (obool != null) {
-                aboolean[i] = obool.booleanValue();
+                aboolean[i] = obool;
             }
         }
     }

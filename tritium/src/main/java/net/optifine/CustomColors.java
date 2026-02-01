@@ -287,7 +287,7 @@ public class CustomColors {
                     if (customcolormap.getWidth() < 16) {
                         warn("Invalid lightmap width: " + customcolormap.getWidth() + ", path: " + s4);
                     } else {
-                        final int i1 = integer.intValue() - j1;
+                        final int i1 = integer - j1;
                         acustomcolormap[i1] = customcolormap;
                     }
                 }

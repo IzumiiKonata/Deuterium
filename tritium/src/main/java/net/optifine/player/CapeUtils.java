@@ -31,7 +31,7 @@ public class CapeUtils {
                 ThreadDownloadImageData threaddownloadimagedata = (ThreadDownloadImageData) itextureobject;
 
                 if (threaddownloadimagedata.imageFound != null) {
-                    if (threaddownloadimagedata.imageFound.booleanValue()) {
+                    if (threaddownloadimagedata.imageFound) {
                         player.setLocationOfCape(resourcelocation);
 
                         if (threaddownloadimagedata.getImageBuffer() instanceof CapeImageBuffer) {

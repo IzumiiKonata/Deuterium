@@ -260,7 +260,7 @@ public class BlockFlowerPot extends BlockContainer {
      * Convert the BlockState into the correct metadata value
      */
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(LEGACY_DATA).intValue();
+        return state.getValue(LEGACY_DATA);
     }
 
     /**

@@ -163,7 +163,7 @@ public class EntityFallingBlock extends Entity {
                 }
 
                 if (flag && (double) this.rand.nextFloat() < 0.05000000074505806D + (double) i * 0.05D) {
-                    int j = this.fallTile.getValue(BlockAnvil.DAMAGE).intValue();
+                    int j = this.fallTile.getValue(BlockAnvil.DAMAGE);
                     ++j;
 
                     if (j > 2) {

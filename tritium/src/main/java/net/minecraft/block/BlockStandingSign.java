@@ -36,7 +36,7 @@ public class BlockStandingSign extends BlockSign {
      * Convert the BlockState into the correct metadata value
      */
     public int getMetaFromState(IBlockState state) {
-        return state.getValue(ROTATION).intValue();
+        return state.getValue(ROTATION);
     }
 
     protected BlockState createBlockState() {

@@ -4,14 +4,15 @@ import com.google.common.base.MoreObjects;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import it.unimi.dsi.fastutil.ints.Int2ObjectOpenHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.IntHashMap;
 
 import java.util.List;
 
 public class GuiPageButtonList extends GuiListExtended {
     private final List<GuiPageButtonList.GuiEntry> field_178074_u = Lists.newArrayList();
-    private final IntHashMap<Gui> field_178073_v = new IntHashMap();
+    private final Int2ObjectMap<Gui> field_178073_v = new Int2ObjectOpenHashMap<>();
     private final List<GuiTextField> field_178072_w = Lists.newArrayList();
     private final GuiPageButtonList.GuiListEntry[][] field_178078_x;
     private int field_178077_y;
@@ -38,7 +39,7 @@ public class GuiPageButtonList extends GuiListExtended {
                 this.field_178074_u.add(guipagebuttonlist$guientry);
 
                 if (guipagebuttonlist$guilistentry != null && gui != null) {
-                    this.field_178073_v.addKey(guipagebuttonlist$guilistentry.func_178935_b(), gui);
+                    this.field_178073_v.put(guipagebuttonlist$guilistentry.func_178935_b(), gui);
 
                     if (gui instanceof GuiTextField) {
                         this.field_178072_w.add((GuiTextField) gui);
@@ -46,7 +47,7 @@ public class GuiPageButtonList extends GuiListExtended {
                 }
 
                 if (guipagebuttonlist$guilistentry1 != null && gui1 != null) {
-                    this.field_178073_v.addKey(guipagebuttonlist$guilistentry1.func_178935_b(), gui1);
+                    this.field_178073_v.put(guipagebuttonlist$guilistentry1.func_178935_b(), gui1);
 
                     if (gui1 instanceof GuiTextField) {
                         this.field_178072_w.add((GuiTextField) gui1);
@@ -62,8 +63,8 @@ public class GuiPageButtonList extends GuiListExtended {
         for (int i = 0; i < this.field_178078_x[this.field_178077_y].length; i += 2) {
             GuiPageButtonList.GuiListEntry guipagebuttonlist$guilistentry = this.field_178078_x[this.field_178077_y][i];
             GuiPageButtonList.GuiListEntry guipagebuttonlist$guilistentry1 = i < this.field_178078_x[this.field_178077_y].length - 1 ? this.field_178078_x[this.field_178077_y][i + 1] : null;
-            Gui gui = this.field_178073_v.lookup(guipagebuttonlist$guilistentry.func_178935_b());
-            Gui gui1 = guipagebuttonlist$guilistentry1 != null ? this.field_178073_v.lookup(guipagebuttonlist$guilistentry1.func_178935_b()) : null;
+            Gui gui = this.field_178073_v.get(guipagebuttonlist$guilistentry.func_178935_b());
+            Gui gui1 = guipagebuttonlist$guilistentry1 != null ? this.field_178073_v.get(guipagebuttonlist$guilistentry1.func_178935_b()) : null;
             GuiPageButtonList.GuiEntry guipagebuttonlist$guientry = new GuiPageButtonList.GuiEntry(gui, gui1);
             this.field_178074_u.add(guipagebuttonlist$guientry);
         }
@@ -104,19 +105,19 @@ public class GuiPageButtonList extends GuiListExtended {
     }
 
     public Gui func_178061_c(int p_178061_1_) {
-        return this.field_178073_v.lookup(p_178061_1_);
+        return this.field_178073_v.get(p_178061_1_);
     }
 
     private void func_178060_e(int p_178060_1_, int p_178060_2_) {
         for (GuiPageButtonList.GuiListEntry guipagebuttonlist$guilistentry : this.field_178078_x[p_178060_1_]) {
             if (guipagebuttonlist$guilistentry != null) {
-                this.func_178066_a(this.field_178073_v.lookup(guipagebuttonlist$guilistentry.func_178935_b()), false);
+                this.func_178066_a(this.field_178073_v.get(guipagebuttonlist$guilistentry.func_178935_b()), false);
             }
         }
 
         for (GuiPageButtonList.GuiListEntry guipagebuttonlist$guilistentry1 : this.field_178078_x[p_178060_2_]) {
             if (guipagebuttonlist$guilistentry1 != null) {
-                this.func_178066_a(this.field_178073_v.lookup(guipagebuttonlist$guilistentry1.func_178935_b()), true);
+                this.func_178066_a(this.field_178073_v.get(guipagebuttonlist$guilistentry1.func_178935_b()), true);
             }
         }
     }

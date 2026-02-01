@@ -110,7 +110,7 @@ public abstract class BlockButton extends Block {
 
     private void updateBlockBounds(IBlockState state) {
         EnumFacing enumfacing = state.getValue(FACING);
-        boolean flag = state.getValue(POWERED).booleanValue();
+        boolean flag = state.getValue(POWERED);
         float f = 0.25F;
         float f1 = 0.375F;
         float f2 = (float) (flag ? 1 : 2) / 16.0F;
@@ -144,7 +144,7 @@ public abstract class BlockButton extends Block {
     }
 
     public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn, EnumFacing side, float hitX, float hitY, float hitZ) {
-        if (state.getValue(POWERED).booleanValue()) {
+        if (state.getValue(POWERED)) {
             return true;
         } else {
             worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.TRUE), 3);
@@ -157,7 +157,7 @@ public abstract class BlockButton extends Block {
     }
 
     public void breakBlock(World worldIn, BlockPos pos, IBlockState state) {
-        if (state.getValue(POWERED).booleanValue()) {
+        if (state.getValue(POWERED)) {
             this.notifyNeighbors(worldIn, pos, state.getValue(FACING));
         }
 
@@ -165,11 +165,11 @@ public abstract class BlockButton extends Block {
     }
 
     public int getWeakPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side) {
-        return state.getValue(POWERED).booleanValue() ? 15 : 0;
+        return state.getValue(POWERED) ? 15 : 0;
     }
 
     public int getStrongPower(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing side) {
-        return !state.getValue(POWERED).booleanValue() ? 0 : (state.getValue(FACING) == side ? 15 : 0);
+        return !state.getValue(POWERED) ? 0 : (state.getValue(FACING) == side ? 15 : 0);
     }
 
     /**
@@ -187,7 +187,7 @@ public abstract class BlockButton extends Block {
 
     public void updateTick(World worldIn, BlockPos pos, IBlockState state, Random rand) {
         if (!worldIn.isRemote) {
-            if (state.getValue(POWERED).booleanValue()) {
+            if (state.getValue(POWERED)) {
                 if (this.wooden) {
                     this.checkForArrows(worldIn, pos, state);
                 } else {
@@ -216,7 +216,7 @@ public abstract class BlockButton extends Block {
     public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) {
         if (!worldIn.isRemote) {
             if (this.wooden) {
-                if (!state.getValue(POWERED).booleanValue()) {
+                if (!state.getValue(POWERED)) {
                     this.checkForArrows(worldIn, pos, state);
                 }
             }
@@ -227,7 +227,7 @@ public abstract class BlockButton extends Block {
         this.updateBlockBounds(state);
         List<? extends Entity> list = worldIn.<Entity>getEntitiesWithinAABB(EntityArrow.class, new AxisAlignedBB((double) pos.getX() + this.minX, (double) pos.getY() + this.minY, (double) pos.getZ() + this.minZ, (double) pos.getX() + this.maxX, (double) pos.getY() + this.maxY, (double) pos.getZ() + this.maxZ));
         boolean flag = !list.isEmpty();
-        boolean flag1 = state.getValue(POWERED).booleanValue();
+        boolean flag1 = state.getValue(POWERED);
 
         if (flag && !flag1) {
             worldIn.setBlockState(pos, state.withProperty(POWERED, Boolean.TRUE));
@@ -320,7 +320,7 @@ public abstract class BlockButton extends Block {
                 i = 0;
         }
 
-        if (state.getValue(POWERED).booleanValue()) {
+        if (state.getValue(POWERED)) {
             i |= 8;
         }
 

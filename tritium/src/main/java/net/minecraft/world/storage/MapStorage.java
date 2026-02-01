@@ -151,7 +151,7 @@ public class MapStorage {
         if (oshort == null) {
             oshort = (short) 0;
         } else {
-            oshort = (short) (oshort.shortValue() + 1);
+            oshort = (short) (oshort + 1);
         }
 
         this.idCounts.put(key, oshort);
@@ -164,7 +164,7 @@ public class MapStorage {
                     NBTTagCompound nbttagcompound = new NBTTagCompound();
 
                     for (String s : this.idCounts.keySet()) {
-                        short short1 = this.idCounts.get(s).shortValue();
+                        short short1 = this.idCounts.get(s);
                         nbttagcompound.setShort(s, short1);
                     }
 
@@ -177,6 +177,6 @@ public class MapStorage {
             }
 
         }
-        return oshort.shortValue();
+        return oshort;
     }
 }

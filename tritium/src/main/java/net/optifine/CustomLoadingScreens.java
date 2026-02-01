@@ -68,7 +68,7 @@ public class CustomLoadingScreens {
             final CustomLoadingScreen[] acustomloadingscreen = new CustomLoadingScreen[i1];
             for (final Integer integer : ainteger) {
                 final String s4 = map.get(integer);
-                acustomloadingscreen[integer.intValue() - k] = CustomLoadingScreen.parseScreen(s4, integer, properties);
+                acustomloadingscreen[integer - k] = CustomLoadingScreen.parseScreen(s4, integer, properties);
             }
             return new ImmutablePair(acustomloadingscreen, k);
         }

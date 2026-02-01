@@ -71,7 +71,7 @@ public class AudioPlayer {
     };
 
     @Getter
-    Waveform waveform = new Waveform(WidgetsManager.musicSpectrum.windowTime.getValue().floatValue() * 0.001f);
+    Waveform waveform = new Waveform(WidgetsManager.musicSpectrum.windowTime.getValue() * 0.001f);
     public final Object lock = new Object();
     public float[] wave, waveRight;
 
@@ -95,7 +95,7 @@ public class AudioPlayer {
     public void setListeners() {
         fft.removeInput();
 
-        float windowTime = WidgetsManager.musicSpectrum.windowTime.getValue().floatValue() * 0.001f;
+        float windowTime = WidgetsManager.musicSpectrum.windowTime.getValue() * 0.001f;
         int nsamples = (int) (Engine.getEngine().getSampleRate() * windowTime);
         waveform.removeInput();
 
