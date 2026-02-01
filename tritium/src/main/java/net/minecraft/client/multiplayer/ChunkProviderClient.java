@@ -1,10 +1,12 @@
 package net.minecraft.client.multiplayer;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.IProgressUpdate;
-import net.minecraft.util.LongHashMap;
+
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -24,10 +26,10 @@ public class ChunkProviderClient implements IChunkProvider {
      * coordinates.
      */
     private final Chunk blankChunk;
-    public final LongHashMap<Chunk> chunkMapping = new LongHashMap();
+    public final Long2ObjectMap<Chunk> chunkMapping = new Long2ObjectOpenHashMap<>();
     private final List<Chunk> chunkListing = Lists.newArrayList();
 
-    public LongHashMap<Chunk> getChunkStorage() {
+    public Long2ObjectMap<Chunk> getChunkStorage() {
         return this.chunkMapping;
     }
 
@@ -71,7 +73,7 @@ public class ChunkProviderClient implements IChunkProvider {
      */
     public Chunk loadChunk(int chunkX, int chunkZ) {
         Chunk chunk = new Chunk(this.worldObj, chunkX, chunkZ);
-        this.chunkMapping.add(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ), chunk);
+        this.chunkMapping.put(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ), chunk);
         this.chunkListing.add(chunk);
         chunk.setChunkLoaded(true);
         return chunk;
@@ -82,7 +84,7 @@ public class ChunkProviderClient implements IChunkProvider {
      * specified chunk from the map seed and chunk seed
      */
     public Chunk provideChunk(int x, int z) {
-        Chunk chunk = this.chunkMapping.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));
+        Chunk chunk = this.chunkMapping.get(ChunkCoordIntPair.chunkXZ2Int(x, z));
         return chunk == null ? this.blankChunk : chunk;
     }
 
@@ -139,7 +141,7 @@ public class ChunkProviderClient implements IChunkProvider {
      * Converts the instance data to a readable string.
      */
     public String makeString() {
-        return "MultiplayerChunkCache: " + this.chunkMapping.getNumHashElements() + ", " + this.chunkListing.size();
+        return "MultiplayerChunkCache: " + this.chunkMapping.size() + ", " + this.chunkListing.size();
     }
 
     public List<BiomeGenBase.SpawnListEntry> getPossibleCreatures(EnumCreatureType creatureType, BlockPos pos) {

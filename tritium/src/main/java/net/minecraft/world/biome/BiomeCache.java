@@ -1,8 +1,10 @@
 package net.minecraft.world.biome;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.LongHashMap;
+
 
 import java.util.List;
 
@@ -16,7 +18,7 @@ public class BiomeCache {
      * The last time this BiomeCache was cleaned, in milliseconds.
      */
     private long lastCleanupTime;
-    private final LongHashMap<BiomeCache.Block> cacheMap = new LongHashMap();
+    private final Long2ObjectMap<Block> cacheMap = new Long2ObjectOpenHashMap<>();
     private final List<BiomeCache.Block> cache = Lists.newArrayList();
 
     public BiomeCache(WorldChunkManager chunkManagerIn) {
@@ -30,11 +32,11 @@ public class BiomeCache {
         x = x >> 4;
         z = z >> 4;
         long i = (long) x & 4294967295L | ((long) z & 4294967295L) << 32;
-        BiomeCache.Block biomecache$block = this.cacheMap.getValueByKey(i);
+        BiomeCache.Block biomecache$block = this.cacheMap.get(i);
 
         if (biomecache$block == null) {
             biomecache$block = new BiomeCache.Block(x, z);
-            this.cacheMap.add(i, biomecache$block);
+            this.cacheMap.put(i, biomecache$block);
             this.cache.add(biomecache$block);
         }
 

@@ -1,10 +1,11 @@
 package tritium.rendering.phosphor.mod.world.lighting;
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.multiplayer.ChunkProviderClient;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.LongHashMap;
+
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.chunk.Chunk;
@@ -43,12 +44,12 @@ public class LightingEngineHelpers {
 
     public static Chunk getLoadedChunk(IChunkProvider chunkProvider, int x, int z) {
         if (chunkProvider instanceof ChunkProviderServer) {
-            LongHashMap<Chunk> chunkStorage = ((ChunkProviderServer) chunkProvider).getChunkStorage();
-            return chunkStorage.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));
+            Long2ObjectMap<Chunk> chunkStorage = ((ChunkProviderServer) chunkProvider).getChunkStorage();
+            return chunkStorage.get(ChunkCoordIntPair.chunkXZ2Int(x, z));
         }
         if (chunkProvider instanceof ChunkProviderClient) {
-            LongHashMap<Chunk> chunkStorage = ((ChunkProviderClient) chunkProvider).getChunkStorage();
-            return chunkStorage.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(x, z));
+            Long2ObjectMap<Chunk> chunkStorage = ((ChunkProviderClient) chunkProvider).getChunkStorage();
+            return chunkStorage.get(ChunkCoordIntPair.chunkXZ2Int(x, z));
         }
 
         // Fallback for other providers, hopefully this doesn't break...

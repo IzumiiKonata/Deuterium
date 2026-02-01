@@ -1,6 +1,8 @@
 package net.minecraft.server.management;
 
 import com.google.common.collect.Lists;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
+import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S21PacketChunkData;
@@ -9,7 +11,7 @@ import net.minecraft.network.play.server.S23PacketBlockChange;
 import net.minecraft.src.Config;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.LongHashMap;
+
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldProvider;
@@ -26,7 +28,7 @@ public class PlayerManager {
     private static final Logger pmLogger = LogManager.getLogger("PlayerManager");
     private final WorldServer theWorldServer;
     private final List<EntityPlayerMP> players = Lists.newArrayList();
-    private final LongHashMap<PlayerManager.PlayerInstance> playerInstances = new LongHashMap();
+    private final Long2ObjectMap<PlayerInstance> playerInstances = new Long2ObjectOpenHashMap<>();
     private final List<PlayerManager.PlayerInstance> playerInstancesToUpdate = Lists.newArrayList();
     private final List<PlayerManager.PlayerInstance> playerInstanceList = Lists.newArrayList();
 
@@ -118,7 +120,7 @@ public class PlayerManager {
 
     public boolean hasPlayerInstance(int chunkX, int chunkZ) {
         long i = (long) chunkX + 2147483647L | (long) chunkZ + 2147483647L << 32;
-        return this.playerInstances.getValueByKey(i) != null;
+        return this.playerInstances.get(i) != null;
     }
 
     /**
@@ -126,11 +128,11 @@ public class PlayerManager {
      */
     private PlayerManager.PlayerInstance getPlayerInstance(int chunkX, int chunkZ, boolean createIfAbsent) {
         long i = (long) chunkX + 2147483647L | (long) chunkZ + 2147483647L << 32;
-        PlayerManager.PlayerInstance playermanager$playerinstance = this.playerInstances.getValueByKey(i);
+        PlayerManager.PlayerInstance playermanager$playerinstance = this.playerInstances.get(i);
 
         if (playermanager$playerinstance == null && createIfAbsent) {
             playermanager$playerinstance = new PlayerManager.PlayerInstance(chunkX, chunkZ);
-            this.playerInstances.add(i, playermanager$playerinstance);
+            this.playerInstances.put(i, playermanager$playerinstance);
             this.playerInstanceList.add(playermanager$playerinstance);
         }
 

@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Sets;
 import com.google.gson.JsonSyntaxException;
+import it.unimi.dsi.fastutil.longs.Long2ObjectMap;
 import net.minecraft.block.*;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
@@ -198,7 +199,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
     private static final Set SET_ALL_FACINGS = Collections.unmodifiableSet(new HashSet(Arrays.asList(EnumFacing.VALUES)));
     private int countTileEntitiesRendered;
     private IChunkProvider worldChunkProvider = null;
-    private LongHashMap worldChunkProviderMap = null;
+    private Long2ObjectMap<Chunk> worldChunkProviderMap = null;
     private int countLoadedChunksPrev = 0;
     private final RenderEnv renderEnv = new RenderEnv(Blocks.air.getDefaultState(), new BlockPos(0, 0, 0));
     public boolean renderOverlayDamaged = false;
@@ -2719,7 +2720,7 @@ public class RenderGlobal implements IWorldAccess, IResourceManagerReloadListene
                         this.worldChunkProviderMap = ((ChunkProviderServer) ichunkprovider).id2ChunkMap;
                 }
 
-                return this.worldChunkProviderMap == null ? 0 : this.worldChunkProviderMap.getNumHashElements();
+                return this.worldChunkProviderMap == null ? 0 : this.worldChunkProviderMap.size();
             }
         }
     }
