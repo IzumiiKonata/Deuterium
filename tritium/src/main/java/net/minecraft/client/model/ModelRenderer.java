@@ -12,6 +12,7 @@ import net.optifine.shaders.Shaders;
 import org.lwjglx.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjglx.util.vector.Vector3f;
+import tritium.command.CommandValues;
 
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
@@ -306,10 +307,6 @@ public class ModelRenderer {
 
         this.compiledState = true;
 
-        if (!Config.isShaders()) {
-            Tessellator.getInstance().getWorldRenderer().begin(7, DefaultVertexFormats.OLDMODEL_POSITION_TEX_NORMAL);
-        }
-
         WorldRenderer worldrenderer = Tessellator.getInstance().getWorldRenderer();
 
         for (ModelBox modelBox : this.cubeList) {
@@ -319,10 +316,6 @@ public class ModelRenderer {
         for (Object o : this.spriteList) {
             ModelSprite modelsprite = (ModelSprite) o;
             modelsprite.render(Tessellator.getInstance(), scale);
-        }
-
-        if (!Config.isShaders()) {
-            Tessellator.getInstance().draw();
         }
 
         GL11.glEndList();
