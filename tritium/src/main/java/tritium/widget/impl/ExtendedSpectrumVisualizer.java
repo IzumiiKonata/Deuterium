@@ -130,23 +130,17 @@ public class ExtendedSpectrumVisualizer {
         }
     }
 
-    /**
-     * 增强的Bark分布 - 在低频区域提供更多细分
-     */
     private void generateEnhancedBarkBands(float minFreq, float maxFreq) {
         float lowFreqFactor = .3f;
         int lowFreqBands = (int) (numBands * lowFreqFactor);
         int highFreqBands = numBands - lowFreqBands;
 
-
         float lowFreqMax = Math.min(lowFreqCutoff, maxFreq);
         generateDenseBarkBands(minFreq, lowFreqMax, lowFreqBands);
 
-
         if (lowFreqMax < maxFreq) {
-            float barkMin = freqToBark(lowFreqMax * .25f);
+            float barkMin = freqToBark(lowFreqMax * .21f);
             float barkMax = freqToBark(maxFreq);
-//            System.out.println("maxFreq * lowFreqFactor: " + (maxFreq * lowFreqFactor) + ", lowFreqMax: " + lowFreqMax);
             float barkStep = (barkMax - barkMin) / highFreqBands;
 
             for (int i = 0; i < highFreqBands; i++) {
@@ -162,9 +156,6 @@ public class ExtendedSpectrumVisualizer {
         }
     }
 
-    /**
-     * 自适应Bark分布 - 根据频率范围动态调整频带宽度
-     */
     private void generateAdaptiveBarkBands(float minFreq, float maxFreq) {
         float barkMin = freqToBark(minFreq);
         float barkMax = freqToBark(maxFreq);
@@ -213,16 +204,12 @@ public class ExtendedSpectrumVisualizer {
         }
     }
 
-    /**
-     * 在指定频率范围内生成密集的Bark频带
-     */
     private void generateDenseBarkBands(float minFreq, float maxFreq, int bandCount) {
 
         int linearBands = bandCount / 5;
         int barkBands = bandCount - linearBands;
 
-        float midFreq = minFreq + (maxFreq - minFreq) * .35f;
-
+        float midFreq = minFreq + (maxFreq - minFreq) * .3f;
 
         float linearStep = (midFreq - minFreq) / linearBands;
         for (int i = 0; i < linearBands; i++) {
