@@ -2,6 +2,7 @@ package net.minecraft.client.renderer.texture;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.crash.CrashReport;
@@ -119,7 +120,11 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
         if (prev != null && prev.getGlTextureId() != textureObj.getGlTextureId()) {
             System.out.println("Key = " + textureLocation + ", Prev = " + prev.getGlTextureId() + ", New = " + textureObj.getGlTextureId());
 //            DevUtils.printCurrentInvokeStack();
-            TextureUtil.deleteTexture(prev.getGlTextureId());
+            if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+                Minecraft.getMinecraft().addScheduledTask(() -> TextureUtil.deleteTexture(prev.getGlTextureId()));
+            } else {
+                TextureUtil.deleteTexture(prev.getGlTextureId());
+            }
         }
 
         return flag;
