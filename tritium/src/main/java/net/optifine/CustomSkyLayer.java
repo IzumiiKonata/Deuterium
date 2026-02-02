@@ -1,6 +1,7 @@
 package net.optifine;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
@@ -17,6 +18,7 @@ import net.optifine.render.Blender;
 import net.optifine.util.NumUtils;
 import net.optifine.util.SmoothFloat;
 import net.optifine.util.TextureUtils;
+import org.lwjgl.opengl.GL11;
 import tritium.rendering.rendersystem.RenderSystem;
 
 import java.util.ArrayList;
@@ -262,7 +264,7 @@ public class CustomSkyLayer {
 
         if (f3 >= 1.0E-4F) {
             GlStateManager.bindTexture(this.textureId);
-            RenderSystem.nearestFilter();
+//            RenderSystem.nearestFilter();
             Blender.setupBlend(this.blend, f3);
             GlStateManager.pushMatrix();
 
@@ -298,6 +300,7 @@ public class CustomSkyLayer {
             GlStateManager.rotate(90.0F, 0.0F, 0.0F, 1.0F);
             this.renderSide(tessellator, 3);
             GlStateManager.popMatrix();
+            GlStateManager.bindTexture(0);
         }
     }
 
@@ -377,16 +380,28 @@ public class CustomSkyLayer {
         }
     }
 
+    int[] sideCallList = new int[] { -1, -1, -1, -1, -1, -1 };
+
     private void renderSide(Tessellator tess, int side) {
-        WorldRenderer worldrenderer = tess.getWorldRenderer();
-        double d0 = (double) (side % 3) / 3.0D;
-        double d1 = (double) (side / 3) / 2.0D;
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos(-100.0D, -100.0D, -100.0D).tex(d0, d1).endVertex();
-        worldrenderer.pos(-100.0D, -100.0D, 100.0D).tex(d0, d1 + 0.5D).endVertex();
-        worldrenderer.pos(100.0D, -100.0D, 100.0D).tex(d0 + 0.3333333333333333D, d1 + 0.5D).endVertex();
-        worldrenderer.pos(100.0D, -100.0D, -100.0D).tex(d0 + 0.3333333333333333D, d1).endVertex();
-        tess.draw();
+
+        if (sideCallList[side] != -1) {
+            GlStateManager.callList(sideCallList[side]);
+        } else {
+            sideCallList[side] = GLAllocation.generateDisplayLists(1);
+
+            GL11.glNewList(sideCallList[side], GL11.GL_COMPILE_AND_EXECUTE);
+            WorldRenderer worldrenderer = tess.getWorldRenderer();
+            double d0 = (double) (side % 3) / 3.0D;
+            double d1 = (double) (side / 3) / 2.0D;
+            worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+            worldrenderer.pos(-100.0D, -100.0D, -100.0D).tex(d0, d1).endVertex();
+            worldrenderer.pos(-100.0D, -100.0D, 100.0D).tex(d0, d1 + 0.5D).endVertex();
+            worldrenderer.pos(100.0D, -100.0D, 100.0D).tex(d0 + 0.3333333333333333D, d1 + 0.5D).endVertex();
+            worldrenderer.pos(100.0D, -100.0D, -100.0D).tex(d0 + 0.3333333333333333D, d1).endVertex();
+            tess.draw();
+            GL11.glEndList();
+        }
+
     }
 
     public boolean isActive(World world, int timeOfDay) {

@@ -1,6 +1,7 @@
 package net.optifine;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -10,6 +11,7 @@ import net.minecraft.util.Location;
 import net.minecraft.world.World;
 import net.optifine.render.Blender;
 import net.optifine.util.PropertiesOrdered;
+import tritium.rendering.rendersystem.RenderSystem;
 
 import javax.imageio.ImageIO;
 import java.io.FileNotFoundException;
@@ -75,6 +77,8 @@ public class CustomSky {
                             itextureobject = new DynamicTexture(ImageIO.read(inputstream));
 //                            img.close();
                             customskylayer.textureId = itextureobject.getGlTextureId();
+                            GlStateManager.bindTexture(customskylayer.textureId);
+                            RenderSystem.nearestFilter();
                             list.add(customskylayer);
                             inputstream.close();
                         }
