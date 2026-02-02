@@ -475,7 +475,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                 stencilFb.setFramebufferColor(1, 1, 1, 0);
                                 stencilFb.framebufferClearNoBinding();
 
-                                GL11.glDisable(GL11.GL_STENCIL_TEST);
+                                GlStateManager.disableStencilTest();
 
                                 double w = progress * (stringWidthD + gradientWidth);
                                 Rect.draw(0, 0, w - gradientWidth, FontManager.pf65bold.getHeight() + 6, -1);
@@ -489,7 +489,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                 baseFb.setFramebufferColor(1, 1, 1, 0);
                                 baseFb.framebufferClearNoBinding();
 
-                                GL11.glDisable(GL11.GL_STENCIL_TEST);
+                                GlStateManager.disableStencilTest();
 
                                 int prog = (int) (progress * charArray.length);
 

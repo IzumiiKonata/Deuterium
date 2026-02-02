@@ -105,7 +105,7 @@ public class GaussianBlurShader extends Shader {
             this.inputFramebuffer.setFramebufferColor(1, 1, 1, 0);
             this.inputFramebuffer.framebufferClearNoBinding();
 
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
+            GlStateManager.disableStencilTest();
             runnable.forEach(Runnable::run);
 
             // TODO: make radius and other things as a setting
@@ -114,7 +114,7 @@ public class GaussianBlurShader extends Shader {
 
             this.outputFramebuffer.bindFramebuffer(true);
             this.outputFramebuffer.framebufferClearNoBinding();
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
+            GlStateManager.disableStencilTest();
 
             this.blurProgram.start();
 

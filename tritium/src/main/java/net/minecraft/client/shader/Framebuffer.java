@@ -188,7 +188,7 @@ public class Framebuffer {
             return;
         }
 
-        this.stencilTestEnabled = GL11.glIsEnabled(GL11.GL_STENCIL_TEST);
+        this.stencilTestEnabled = GlStateManager.isStencilEnabled();
 
         if (this.stencilTestEnabled) {
             this.stencilFunc = GL11.glGetInteger(GL11.GL_STENCIL_FUNC);
@@ -209,12 +209,12 @@ public class Framebuffer {
         }
 
         if (this.stencilTestEnabled) {
-            GL11.glEnable(GL11.GL_STENCIL_TEST);
+            GlStateManager.enableStencilTest();
             GL11.glStencilFunc(this.stencilFunc, this.stencilRef, this.stencilValueMask);
             GL11.glStencilMask(this.stencilWriteMask);
             GL11.glStencilOp(this.stencilOpFail, this.stencilOpZFail, this.stencilOpZPass);
         } else {
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
+            GlStateManager.disableStencilTest();
         }
     }
 

@@ -26,7 +26,7 @@ public class StencilClipManager {
         GL11.glClearStencil(0);
         GlStateManager.enableDepth();
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GlStateManager.enableStencilTest();
     }
 
     static boolean depthMask = false;
@@ -91,7 +91,7 @@ public class StencilClipManager {
     }
 
     public static void disable() {
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
+        GlStateManager.disableStencilTest();
         Framebuffer.currentlyBinding.currentStencilValue = 0;
     }
 

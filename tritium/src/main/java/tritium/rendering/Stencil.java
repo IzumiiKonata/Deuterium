@@ -18,7 +18,7 @@ public class Stencil {
         GL11.glClearStencil(0);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GlStateManager.enableStencilTest();
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 65535);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         GlStateManager.colorMask(false, false, false, false);
@@ -35,7 +35,7 @@ public class Stencil {
         GL11.glClearStencil(0);
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GlStateManager.enableStencilTest();
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 65535);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         GlStateManager.colorMask(false, false, false, false);
@@ -45,7 +45,7 @@ public class Stencil {
     public static void writeNoClear() {
         Stencil.checkSetupFBO(mc.getFramebuffer());
         GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_STENCIL_TEST);
+        GlStateManager.enableStencilTest();
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 65535);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
         GlStateManager.colorMask(false, false, false, false);
@@ -71,7 +71,7 @@ public class Stencil {
 
     public static void dispose() {
         isErasing = false;
-        GL11.glDisable(GL11.GL_STENCIL_TEST);
+        GlStateManager.disableStencilTest();
 //        GlStateManager.disableAlpha();
 //        GlStateManager.disableBlend();
 //        GL11.glDisable(GL11.GL_DEPTH_TEST);

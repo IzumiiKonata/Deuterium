@@ -10,6 +10,8 @@ import net.optifine.shaders.Shaders;
 import net.optifine.util.LockCounter;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
 import tritium.rendering.FramebufferCaching;
@@ -23,24 +25,33 @@ import static org.lwjgl.opengl.GL11.GL_ONE_MINUS_SRC_ALPHA;
 
 public class GlStateManager {
     private static final GlStateManager.AlphaState alphaState = new GlStateManager.AlphaState();
-    private static final GlStateManager.BooleanState lightingState = new GlStateManager.BooleanState(2896);
+
+    private static final BooleanState stencilState = new GlStateManager.BooleanState(GL11.GL_STENCIL_TEST);
+    private static final GlStateManager.BooleanState lightingState = new GlStateManager.BooleanState(GL11.GL_LIGHTING);
     private static final GlStateManager.BooleanState[] lightState = new GlStateManager.BooleanState[8];
-    private static final GlStateManager.ColorMaterialState colorMaterialState = new GlStateManager.ColorMaterialState();
+    private static final GlStateManager.BooleanState normalizeState = new GlStateManager.BooleanState(GL11.GL_NORMALIZE);
+    private static final GlStateManager.BooleanState rescaleNormalState = new GlStateManager.BooleanState(GL12.GL_RESCALE_NORMAL);
+
     private static final GlStateManager.BlendState blendState = new GlStateManager.BlendState();
-    public static final GlStateManager.DepthState depthState = new GlStateManager.DepthState();
-    private static final GlStateManager.FogState fogState = new GlStateManager.FogState();
-    public static final GlStateManager.CullState cullState = new GlStateManager.CullState();
-    private static final GlStateManager.PolygonOffsetState polygonOffsetState = new GlStateManager.PolygonOffsetState();
+
+    private static final GlStateManager.ColorMaterialState colorMaterialState = new GlStateManager.ColorMaterialState();
     private static final GlStateManager.ColorLogicState colorLogicState = new GlStateManager.ColorLogicState();
-    private static final GlStateManager.TexGenState texGenState = new GlStateManager.TexGenState();
-    private static final GlStateManager.ClearState clearState = new GlStateManager.ClearState();
-    private static final GlStateManager.BooleanState normalizeState = new GlStateManager.BooleanState(2977);
-    public static int activeTextureUnit = 0;
-    public static final GlStateManager.TextureState[] textureState = new GlStateManager.TextureState[32];
-    private static int activeShadeModel = 7425;
-    private static final GlStateManager.BooleanState rescaleNormalState = new GlStateManager.BooleanState(32826);
     private static final GlStateManager.ColorMask colorMaskState = new GlStateManager.ColorMask();
+    private static final GlStateManager.ClearState clearState = new GlStateManager.ClearState();
+    public static final GlStateManager.CullState cullState = new GlStateManager.CullState();
     private static final GlStateManager.Color colorState = new GlStateManager.Color();
+
+    public static final GlStateManager.DepthState depthState = new GlStateManager.DepthState();
+
+    private static final GlStateManager.FogState fogState = new GlStateManager.FogState();
+
+    private static final GlStateManager.PolygonOffsetState polygonOffsetState = new GlStateManager.PolygonOffsetState();
+    private static final GlStateManager.TexGenState texGenState = new GlStateManager.TexGenState();
+    public static final GlStateManager.TextureState[] textureState = new GlStateManager.TextureState[32];
+
+    public static int activeTextureUnit = 0;
+    private static int activeShadeModel = GL11.GL_SMOOTH;
+
     public static boolean clearEnabled = true;
     private static final LockCounter alphaLock = new LockCounter();
     private static final GlAlphaState alphaLockState = new GlAlphaState();
@@ -55,6 +66,18 @@ public class GlStateManager {
 
     public static void popAttrib() {
         GL11.glPopAttrib();
+    }
+
+    public static void disableStencilTest() {
+        stencilState.setDisabled();
+    }
+
+    public static void enableStencilTest() {
+        stencilState.setEnabled();
+    }
+
+    public static boolean isStencilEnabled() {
+        return stencilState.currentState;
     }
 
     public static void disableAlpha() {
