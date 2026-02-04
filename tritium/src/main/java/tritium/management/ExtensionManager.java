@@ -23,7 +23,7 @@ import java.util.jar.JarFile;
 public class ExtensionManager extends AbstractManager {
 
     public ExtensionManager() {
-        super("Extension Manager");
+        super("ExtensionManager");
     }
 
     @Getter
@@ -97,9 +97,9 @@ public class ExtensionManager extends AbstractManager {
         ExtensionInfo annotation = extensionClass.getAnnotation(ExtensionInfo.class);
 
         try {
-            Extension extension = (Extension) extensionClass.newInstance();
+            Extension extension = (Extension) extensionClass.getConstructor().newInstance();
 
-            System.out.println("Loading extension " + annotation.name() + " by " + annotation.author() + ", version " + annotation.version());
+            logger.info("Loading extension {} by {}, version {}", annotation.name(), annotation.author(), annotation.version());
             extension.initialize(OpenAPIImpl.getInstance());
 
             loadedExtensions.put(annotation, extension);
@@ -140,12 +140,12 @@ public class ExtensionManager extends AbstractManager {
             ExtensionInfo info = entry.getKey();
             Extension extension = entry.getValue();
 
-            System.out.println("Unloading extension " + info.name() + " by " + info.author());
+            logger.info("Unloading extension {} by {}", info.name(), info.author());
 
             try {
                 extension.onUnload();
             } catch (Exception e) {
-                System.err.println("Cannot unload extension: " + info.name() + " by " + info.author());
+                logger.error("Cannot unload extension: {} by {}", info.name(), info.author());
                 e.printStackTrace();
             }
 
