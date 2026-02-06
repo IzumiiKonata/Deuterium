@@ -849,23 +849,36 @@ public class CloudMusic {
 
     static {
         CommandManager.registerCommand("set_player_rate", (Float rate) -> {
-            if (player == null)
+            if (player == null) {
+                ConsoleScreen.log("{}Not playing!", EnumChatFormatting.RED);
                 return;
+            }
 
+            if (rate <= 0) {
+                ConsoleScreen.log("{}Invalid rate! Rate should be greater than 0", EnumChatFormatting.RED);
+                return;
+            }
+
+            float prevRate = player.player.getRate();
             player.player.rate(rate);
+            ConsoleScreen.log("set rate: {} => {}", prevRate, rate);
         }, Float.class, "rate").setDescription("Set audio player's playback rate");
 
         CommandManager.registerCommand("set_player_volume", (Float volume) -> {
-            if (player == null)
+            if (player == null) {
+                ConsoleScreen.log("{}Not playing!", EnumChatFormatting.RED);
                 return;
+            }
 
+            float prevVol = player.getVolume();
             player.setVolume(Math.max(0, Math.min(1, volume)));
+            ConsoleScreen.log("set volume: {} => {}", prevVol, player.getVolume());
         }, Float.class, "volume").setDescription("Set audio player's volume");
 
         CommandManager.registerCommand("play", (Long id) -> MultiThreadingUtil.runAsync(() -> {
             JsonArray songs = CloudMusicApi.songDetail(id).toJsonObject().getAsJsonArray("songs");
             if (songs.isEmpty()) {
-                ConsoleScreen.log(EnumChatFormatting.RED + "No such song: {}", id);
+                ConsoleScreen.log("{}No such song: {}", EnumChatFormatting.RED, id);
                 return;
             }
 

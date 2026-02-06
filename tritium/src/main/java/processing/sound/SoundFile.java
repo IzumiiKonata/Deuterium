@@ -290,4 +290,8 @@ public class SoundFile extends AudioSample {
 		super.rate(rate);
 	}
 
+	public float getRate() {
+		return (float) super.player.rate.get();
+	}
+
 }
