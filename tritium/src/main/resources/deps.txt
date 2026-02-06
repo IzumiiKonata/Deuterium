@@ -15,21 +15,21 @@ net.java.dev.jna:jna:5.14.0
 net.java.dev.jna:jna-platform:5.14.0
 
 # LWJGL 3
-org.lwjgl:lwjgl-glfw:3.3.6
-org.lwjgl:lwjgl-openal:3.3.6
-org.lwjgl:lwjgl-opengl:3.3.6
-org.lwjgl:lwjgl-stb:3.3.6
-org.lwjgl:lwjgl:3.3.6
-org.lwjgl:lwjgl-jemalloc:3.3.6
-org.lwjgl:lwjgl-freetype:3.3.6
-org.lwjgl:lwjgl-harfbuzz:3.3.6
-org.lwjgl:lwjgl-freetype:natives-windows:3.3.6
-org.lwjgl:lwjgl-harfbuzz:natives-windows:3.3.6
-org.lwjgl:lwjgl:natives-windows:3.3.6
-org.lwjgl:lwjgl-jemalloc:natives-windows:3.3.6
-org.lwjgl:lwjgl-openal:natives-windows:3.3.6
-org.lwjgl:lwjgl-opengl:natives-windows:3.3.6
-org.lwjgl:lwjgl-stb:natives-windows:3.3.6
+org.lwjgl:lwjgl-glfw:3.4.1
+org.lwjgl:lwjgl-openal:3.4.1
+org.lwjgl:lwjgl-opengl:3.4.1
+org.lwjgl:lwjgl-stb:3.4.1
+org.lwjgl:lwjgl:3.4.1
+org.lwjgl:lwjgl-jemalloc:3.4.1
+org.lwjgl:lwjgl-freetype:3.4.1
+org.lwjgl:lwjgl-harfbuzz:3.4.1
+org.lwjgl:lwjgl-freetype:natives-windows:3.4.1
+org.lwjgl:lwjgl-harfbuzz:natives-windows:3.4.1
+org.lwjgl:lwjgl:natives-windows:3.4.1
+org.lwjgl:lwjgl-jemalloc:natives-windows:3.4.1
+org.lwjgl:lwjgl-openal:natives-windows:3.4.1
+org.lwjgl:lwjgl-opengl:natives-windows:3.4.1
+org.lwjgl:lwjgl-stb:natives-windows:3.4.1
 
 # mixin
 org.ow2.asm:asm:9.8

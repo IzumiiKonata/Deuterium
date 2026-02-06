@@ -153,16 +153,18 @@ public class LaunchClassLoader extends URLClassLoader {
                         final Manifest manifest = jarFile.getManifest();
                         final JarEntry entry = jarFile.getJarEntry(fileName);
 
-                        Package pkg = getPackage(packageName);
-                        getClassBytes(untransformedName);
-                        signers = entry.getCodeSigners();
-                        if (pkg == null) {
-                            pkg = definePackage(packageName, manifest, jarURLConnection.getJarFileURL());
-                        } else {
-                            if (pkg.isSealed() && !pkg.isSealed(jarURLConnection.getJarFileURL())) {
-                                LogWrapper.severe("The jar file %s is trying to seal already secured path %s", jarFile.getName(), packageName);
-                            } else if (isSealed(packageName, manifest)) {
-                                LogWrapper.severe("The jar file %s has a security seal for path %s, but that path is defined and not secure", jarFile.getName(), packageName);
+                        if (entry != null) {
+                            Package pkg = getPackage(packageName);
+                            getClassBytes(untransformedName);
+                            signers = entry.getCodeSigners();
+                            if (pkg == null) {
+                                pkg = definePackage(packageName, manifest, jarURLConnection.getJarFileURL());
+                            } else {
+                                if (pkg.isSealed() && !pkg.isSealed(jarURLConnection.getJarFileURL())) {
+                                    LogWrapper.severe("The jar file %s is trying to seal already secured path %s", jarFile.getName(), packageName);
+                                } else if (isSealed(packageName, manifest)) {
+                                    LogWrapper.severe("The jar file %s has a security seal for path %s, but that path is defined and not secure", jarFile.getName(), packageName);
+                                }
                             }
                         }
                     }
