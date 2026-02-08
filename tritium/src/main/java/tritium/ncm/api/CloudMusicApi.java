@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
+import tritium.ncm.DeviceIdGenerator;
 import tritium.ncm.OptionsUtil;
 import tritium.ncm.RequestUtil;
 import tritium.utils.json.JsonUtils;
@@ -289,31 +290,12 @@ public class CloudMusicApi {
         }
     }
 
-    private String randomDeviceId() {
-//        if (list.isEmpty()) {
-//            throw new IllegalArgumentException("List cannot be empty");
-//        }
-//        int randomIndex = ThreadLocalRandom.current().nextInt(list.size());
-//        return list.get(randomIndex);
-        int length = 52;
-
-        String str = "ABCDEF0123456789";
-        char[] charArray = str.toCharArray();
-
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(charArray[ThreadLocalRandom.current().nextInt(str.length())]);
-        }
-
-        return sb.toString();
-    }
-
     @SneakyThrows
     public RequestUtil.RequestAnswer registerAnonimous() {
-        String deviceId = randomDeviceId();
+        String deviceId = DeviceIdGenerator.generate();
         RequestUtil.globalDeviceId = deviceId;
 
-        System.out.println("Device ID: " + deviceId);
+//        System.out.println("Device ID: " + deviceId);
 
         String encodedId = Base64.getEncoder().encodeToString(
                 (deviceId + " " + ncmDllEncodeId(deviceId)).getBytes(StandardCharsets.UTF_8)
@@ -323,7 +305,7 @@ public class CloudMusicApi {
         data.put("username", encodedId);
 
         RequestUtil.RequestAnswer request = RequestUtil.createRequest("/api/register/anonimous", data, OptionsUtil.createOptions("weapi"));
-        System.out.println(request);
+//        System.out.println(request);
         return request;
     }
 
