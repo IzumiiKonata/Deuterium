@@ -134,8 +134,7 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 
-import static org.lwjgl.glfw.GLFW.glfwGetPrimaryMonitor;
-import static org.lwjgl.glfw.GLFW.glfwGetVideoMode;
+import static org.lwjgl.glfw.GLFW.*;
 
 public class Minecraft implements IThreadListener {
     @Getter
@@ -1170,7 +1169,7 @@ public class Minecraft implements IThreadListener {
     }
 
     protected void checkWindowResize() {
-        if (!this.fullscreen && Display.wasResized()) {
+        if (!this.fullscreen && Display.wasResized() && glfwGetWindowAttrib(Display.getWindow(), GLFW_ICONIFIED) == GLFW_FALSE) {
             int i = this.displayWidth;
             int j = this.displayHeight;
             this.displayWidth = Display.getWidth();
