@@ -36,6 +36,10 @@ public class CustomSky {
         }
     }
 
+    public static boolean renderingCustomSky() {
+        return Config.isCustomSky() && worldSkyLayers != null && hasSkyLayers(Minecraft.getMinecraft().getWorld());
+    }
+
     private static CustomSkyLayer[][] readCustomSkies() {
         CustomSkyLayer[][] acustomskylayer = new CustomSkyLayer[10][0];
         String s = "mcpatcher/sky/world";

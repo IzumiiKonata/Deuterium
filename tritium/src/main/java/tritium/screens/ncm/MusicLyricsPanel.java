@@ -24,6 +24,7 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
@@ -35,9 +36,7 @@ import tritium.utils.timing.Timer;
 import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -684,9 +683,20 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         coverSize = Interpolations.interpBezier(coverSize, player == null || player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
 
         double xOffset = (RenderSystem.getWidth() * .5 - center - this.getCoverSizeMax() * .5) * 0;
+        double coverSizePerc = coverSize / this.getCoverSizeMax();
+        double coverRadius = 7;
+
+        GlStateManager.pushMatrix();
+        this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
+        Shaders.BLOOM_SHADER.runNoCaching(Collections.singletonList(() -> {
+            this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, -.5, 0, 0, 0, alpha * .8f);
+        }));
+        GlStateManager.popMatrix();
+
+
         if (prevCover != null && coverAlpha <= .9f) {
             GlStateManager.bindTexture(prevCover.getGlTextureId());
-            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, 3, alpha);
+            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, alpha);
         }
 
         Location musicCover = CloudMusic.currentlyPlaying.getCoverLocation();
@@ -696,7 +706,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             coverAlpha = Interpolations.interpBezier(coverAlpha, 1.0f, 0.2f);
             GlStateManager.bindTexture(tex.getGlTextureId());
             tex.linearFilter();
-            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, 3, alpha * coverAlpha);
+            this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, alpha * coverAlpha);
         }
 
         double elementsXOffset = center - this.getCoverSizeMax() * .5 + xOffset;
@@ -709,7 +719,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         double progressBarYOffset = elementsYOffset + FontManager.pf20bold.getHeight() + 8 + FontManager.pf20bold.getHeight() + 12;
         double progressBarWidth = this.getCoverSizeMax();
 
-        roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha * .5f));
+        roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha * .5f));
 
         float currentTimeMillis = player == null ? 0 : player.getCurrentTimeMillis();
         float totalTimeMillis = player == null ? 0.01f : player.getTotalTimeMillis();
@@ -717,7 +727,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         StencilClipManager.beginClip(() -> Rect.draw(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth * perc, progressBarHeight, -1));
 
-        roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha));
+        roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha));
         StencilClipManager.endClip();
 
         boolean hoveringProgressBar = this.isHovered(mouseX, mouseY, elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, 8);
@@ -752,9 +762,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidthD("J") + 4, volumeIconY, hexColor(1, 1, 1, alpha * .5f));
 
         double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidthD("I") - 2;
-        roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha * .5f));
+        roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha * .5f));
         StencilClipManager.beginClip(() -> Rect.draw(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth * (player == null ? 0 : player.getVolume()), volumeBarHeight, -1));
-        roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 3, hexColor(1, 1, 1, alpha));
+        roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha));
         StencilClipManager.endClip();
 
         boolean hoveringVolumeBar = this.isHovered(mouseX, mouseY, volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, 8);
@@ -915,6 +925,6 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             GlStateManager.popMatrix();
         }
 
-        Rect.draw(posX, posY, width, height, hexColor(0, 0, 0, alpha * .3f));
+        Rect.draw(posX, posY, width, height, hexColor(0, 0, 0, alpha * .35f));
     }
 }

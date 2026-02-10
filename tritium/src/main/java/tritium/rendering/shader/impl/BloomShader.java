@@ -104,7 +104,7 @@ public class BloomShader extends Shader {
             runnable.forEach(Runnable::run);
 
             // TODO: make radius and other things as a setting
-            final int radius = 8;
+            final int radius = 12;
             final float compression = 2F;
             final int programId = this.bloomProgram.getProgramId();
 
