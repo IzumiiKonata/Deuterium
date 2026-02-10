@@ -30,6 +30,8 @@ import tritium.rendering.GaussianKernel;
 import tritium.rendering.MusicToast;
 import tritium.rendering.texture.Textures;
 import tritium.screens.ConsoleScreen;
+import tritium.screens.ncm.LyricLine;
+import tritium.screens.ncm.LyricParser;
 import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.screens.ncm.NCMScreen;
 import tritium.utils.json.JsonUtils;
@@ -43,6 +45,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
@@ -703,17 +706,40 @@ public class CloudMusic {
         dest.flush();
     }
 
-    public static void loadLyric(Music song) {
+    public static void loadLyric(Music music) {
         MultiThreadingUtil.runAsync(() -> {
 
-            String string = CloudMusicApi.lyricNew(song.getId()).toString();
+            String string = CloudMusicApi.lyricNew(music.getId()).toString();
 
             string = string.replaceAll("[ - ]", " ");
 
             JsonObject json = JsonUtils.toJsonObject(string);
 
-            MusicLyricsWidget.initLyric(json, song);
-            MusicLyricsPanel.initLyric(json);
+            List<LyricLine> parsed = LyricParser.parse(json);
+
+            InputStream stream = MusicLyricsPanel.class.getResourceAsStream("/assets/minecraft/tritium/yrc/" + music.getId() + ".yrc");
+            if (stream != null) {
+                try {
+                    String s = new String(stream.readAllBytes(), StandardCharsets.UTF_8);
+                    List<LyricLine> newLines = new ArrayList<>();
+                    LyricParser.parseYrc(s, newLines);
+
+                    for (int i = 0; i < newLines.size(); i++) {
+                        LyricLine newLine = newLines.get(i);
+                        LyricLine oldLine = parsed.get(i);
+                        oldLine.words.clear();
+                        oldLine.words.addAll(newLine.words);
+                        oldLine.timestamp = newLine.timestamp;
+                        oldLine.lyric = newLine.lyric;
+                    }
+
+                    stream.close();
+                } catch (IOException ignored) {
+                }
+            }
+
+            MusicLyricsWidget.initLyric(json, music, parsed);
+            MusicLyricsPanel.initLyric(json, music, parsed);
 
         });
     }

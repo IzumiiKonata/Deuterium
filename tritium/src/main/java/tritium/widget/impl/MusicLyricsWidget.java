@@ -86,19 +86,16 @@ public class MusicLyricsWidget extends Widget {
         if (hasLyricsType(lyric, "romalrc") || hasLyricsType(lyric, "yromalrc")) hasRomanization = true;
     }
 
-    public static void initLyric(JsonObject lyric, Music music) {
+    public static void initLyric(JsonObject rawLyricData, Music music, List<LyricLine> parsedLyrics) {
         // reset states
         hasTransLyrics = false;
         hasRomanization = false;
 
-        detectTranslations(lyric);
-        List<LyricLine> parsed = LyricParser.parse(lyric);
-
-//        fetchTTMLLyrics(music, parsed);
+        detectTranslations(rawLyricData);
 
         synchronized (allLyrics) {
             allLyrics.clear();
-            allLyrics.addAll(parsed);
+            allLyrics.addAll(parsedLyrics);
         }
 
         scrollOffset = 0;

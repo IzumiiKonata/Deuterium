@@ -36,6 +36,9 @@ import tritium.utils.timing.Timer;
 import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -86,10 +89,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
-    public static void initLyric(JsonObject lyric) {
+    public static void initLyric(JsonObject rawLyricData, Music music, List<LyricLine> parsed) {
         // reset states
-
-        List<LyricLine> parsed = LyricParser.parse(lyric);
 
         if (parsed.isEmpty()) {
             parsed.add(new LyricLine(0L, "暂无歌词"));
@@ -689,7 +690,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
         Shaders.BLOOM_SHADER.runNoCaching(Collections.singletonList(() -> {
-            this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, -.5, 0, 0, 0, alpha * .8f);
+            this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, -.5, 0, 0, 0, alpha * .7f);
         }));
         GlStateManager.popMatrix();
 
