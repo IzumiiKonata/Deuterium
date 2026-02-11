@@ -690,7 +690,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 / (1.1 - (alpha * 0.1)));
         Shaders.BLOOM_SHADER.runNoCaching(Collections.singletonList(() -> {
-            this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, -.5, 0, 0, 0, alpha * .7f);
+            this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, -.5, 0, 0, 0, alpha * .4f);
         }));
         GlStateManager.popMatrix();
 

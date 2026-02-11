@@ -101,6 +101,7 @@ public class BloomShader extends Shader {
         if (this.isActive()) {
             this.inputFramebuffer.bindFramebuffer(true);
             this.inputFramebuffer.framebufferClearNoBinding();
+            GlStateManager.disableStencilTest();
             runnable.forEach(Runnable::run);
 
             // TODO: make radius and other things as a setting
@@ -110,6 +111,7 @@ public class BloomShader extends Shader {
 
             this.outputFramebuffer.bindFramebuffer(true);
             this.outputFramebuffer.framebufferClearNoBinding();
+            GlStateManager.disableStencilTest();
 
             GlStateManager.disableAlpha();
 
@@ -142,6 +144,7 @@ public class BloomShader extends Shader {
             if (cache) {
                 cacheBuffer.bindFramebuffer(true);
                 cacheBuffer.framebufferClearNoBinding();
+                GlStateManager.disableStencilTest();
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_ONE , GL11.GL_ONE_MINUS_SRC_COLOR, GL11.GL_ONE, GL11.GL_ZERO);
             } else {
                 mc.getFramebuffer().bindFramebuffer(true);
