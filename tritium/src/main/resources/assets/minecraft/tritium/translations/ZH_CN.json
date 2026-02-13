@@ -734,6 +734,8 @@
 
     "setting.name tag background.name": "显示 NameTag 背景",
 
+    "setting.remove hand inertia animation.name": "移除手臂惯性动画",
+
     "clickgui.nosettingshere": "这里没有设置."
   }
 }

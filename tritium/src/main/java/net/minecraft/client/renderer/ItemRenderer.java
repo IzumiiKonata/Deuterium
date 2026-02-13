@@ -135,10 +135,10 @@ public class ItemRenderer {
 
         if (this.isLeftHanded()) {
             GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * -0.1F, 0.0F, 1.0F, 0.0F);
-            return;
+        } else {
+            GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * 0.1F, 0.0F, 1.0F, 0.0F);
         }
 
-        GlStateManager.rotate((entityplayerspIn.rotationYaw - f1) * 0.1F, 0.0F, 1.0F, 0.0F);
     }
 
     /**
@@ -380,7 +380,6 @@ public class ItemRenderer {
     public void renderItemInFirstPerson(float partialTicks) {
         if (!Config.isShaders() || !Shaders.isSkipRenderHand()) {
 
-            BlockAnimations ba = ModuleManager.blockAnimations;
             GlStateManager.pushMatrix();
             int k = this.isLeftHanded() ? -1 : 1;
             GlStateManager.translate(CommandValues.getValues().viewmodel_offset_x * k, CommandValues.getValues().viewmodel_offset_y, CommandValues.getValues().viewmodel_offset_z);
@@ -409,7 +408,8 @@ public class ItemRenderer {
         float f3 = abstractclientplayer.prevRotationYaw + (abstractclientplayer.rotationYaw - abstractclientplayer.prevRotationYaw) * partialTicks;
         this.rotateArroundXAndY(f2, f3);
         this.setLightMapFromPlayer(abstractclientplayer);
-        this.rotateWithPlayerRotations(abstractclientplayer, partialTicks);
+        if (!ModuleManager.cameraPositions.isEnabled() || !ModuleManager.cameraPositions.removeHandInertiaAnimation.getValue())
+            this.rotateWithPlayerRotations(abstractclientplayer, partialTicks);
         GlStateManager.enableRescaleNormal();
         GlStateManager.pushMatrix();
 

@@ -912,6 +912,8 @@
 
     "setting.name tag background.name": "Name tag background",
 
+    "setting.remove hand inertia animation.name": "Remove hand inertia animation",
+
     "clickgui.nosettingshere": "No Settings Here."
   }
 }

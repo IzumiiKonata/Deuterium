@@ -36,6 +36,7 @@ public class CameraPositions extends Module {
 
     public final BooleanSetting removeViewBobbing = new BooleanSetting("Remove View Bobbing", false);
     public final BooleanSetting removeHandViewBobbing = new BooleanSetting("Remove Hand View Bobbing", false);
+    public final BooleanSetting removeHandInertiaAnimation = new BooleanSetting("Remove Hand Inertia Animation", false);
     public final BooleanSetting smoothThirdPerson = new BooleanSetting("Smooth Third Person", false);
     public NumberSetting<Double> smooth = new NumberSetting<>("Speed", 1.0, 1.0, 4.0, 0.1, this.smoothThirdPerson::getValue);
 
