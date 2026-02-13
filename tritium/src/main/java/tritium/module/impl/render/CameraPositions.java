@@ -32,7 +32,7 @@ public class CameraPositions extends Module {
     public NumberSetting<Double> x = new NumberSetting<>("X", 0.0, -5.0, 5.0, 0.1);
     public NumberSetting<Double> y = new NumberSetting<>("Y", 0.0, -5.0, 5.0, 0.1);
     public NumberSetting<Double> z = new NumberSetting<>("Z", 0.0, -5.0, 5.0, 0.1);
-    public NumberSetting<Double> scale = new NumberSetting<>("Scale", 1.0, 0.1, 2.0, 0.05);
+    public NumberSetting<Double> scale = new NumberSetting<>("Scale", 1.0, 0.1, 2.0, 0.01);
 
     public final BooleanSetting removeViewBobbing = new BooleanSetting("Remove View Bobbing", false);
     public final BooleanSetting removeHandViewBobbing = new BooleanSetting("Remove Hand View Bobbing", false);
@@ -41,7 +41,7 @@ public class CameraPositions extends Module {
 
     public final BooleanSetting movementCamera = new BooleanSetting("Movement Camera", false);
 
-    public final ModeSetting<Mode> mode = new ModeSetting<>("Mode", Mode.Simple, this.movementCamera::getValue);
+    public final ModeSetting<Mode> mode = new ModeSetting<>("Mode", Mode.Simple, () -> this.movementCamera.getValue() && false);
 
     public enum Mode {
         Simple,
@@ -81,7 +81,7 @@ public class CameraPositions extends Module {
 
         if (this.movementCamera.getValue()) {
 
-            double v = this.interp.getValue() * 0.1f;
+            double v = this.interp.getValue() * 0.05f;
             Vec3 cameraPos = Minecraft.getMinecraft().getRenderViewEntity().getPositionEyes(Minecraft.getMinecraft().timer.renderPartialTicks);
 
             double diff = cameraPos.distanceTo(new Vec3(this.interpX, this.interpY, this.interpZ));
@@ -90,9 +90,9 @@ public class CameraPositions extends Module {
             if (this.mode.getValue() == Mode.Advanced) {
 
                 if (diff <= this.rangeNear.getValue()) {
-                    v = this.interpNear.getValue() * 0.25f;
+                    v = this.interpNear.getValue() * 0.1f;
                 } else {
-                    v = this.interpFar.getValue() * 0.25f;
+                    v = this.interpFar.getValue() * 0.1f;
                 }
 
             }
@@ -112,22 +112,19 @@ public class CameraPositions extends Module {
             float yaw = Perspective.getCameraYaw();
             float pitch = Perspective.getCameraPitch();
 
-            double[] t = rotateByY(cameraPos.xCoord - this.interpX, cameraPos.zCoord - this.interpZ, yaw % 360.0f);
+            double rotX = cameraPos.xCoord - this.interpX;
+            double rotZ = cameraPos.zCoord - this.interpZ;
+            double ry = yaw % 360.0f * Math.PI / 180;
+            double outx = Math.cos(ry) * rotX + Math.sin(ry) * rotZ;
+            double outz = Math.cos(ry) * rotZ - Math.sin(ry) * rotX;
 
             GlStateManager.rotate(-pitch, -1, 0, 0);
-            GlStateManager.translate(-t[0], cameraPos.yCoord - this.interpY, -t[1]);
+            GlStateManager.translate(-outx, cameraPos.yCoord - this.interpY, -outz);
             GlStateManager.rotate(pitch, -1, 0, 0);
 
             lastView = Minecraft.getMinecraft().gameSettings.thirdPersonView;
         }
 
-    }
-
-    public static double[] rotateByY(double x, double z, float theta) {
-        double ry = theta * Math.PI / 180;
-        double outx = Math.cos(ry) * x + Math.sin(ry) * z;
-        double outz = Math.cos(ry) * z - Math.sin(ry) * x;
-        return new double[] { outx, outz };
     }
 
     private static double calcCameraDistance(World world, double distance) {
@@ -166,7 +163,17 @@ public class CameraPositions extends Module {
 
         double distance = 3.0;
 
-        Vec3 targetPos = lookVec.multiply(distance).add(eyePos);
+        Vec3 targetPos = eyePos.add(lookVec.multiply(distance));
+        MovingObjectPosition hitResult = mc.theWorld.rayTraceBlocks(eyePos, targetPos, false, true, false);
+
+        if (hitResult != null) {
+//            double newDistance = hitResult.hitVec.distanceTo(cameraPos);
+//
+//            if (newDistance < distance) {
+//                distance = newDistance - 0.2;
+//            }
+            targetPos = hitResult.hitVec;
+        }
 
         double x = targetPos.xCoord - mc.getRenderManager().renderPosX;
         double y = targetPos.yCoord - mc.getRenderManager().renderPosY;

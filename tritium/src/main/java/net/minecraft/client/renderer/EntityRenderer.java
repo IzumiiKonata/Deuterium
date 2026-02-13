@@ -815,11 +815,10 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
         this.hurtCameraEffect(partialTicks);
 
-        if (this.mc.gameSettings.viewBobbing) {
+        boolean flag = !ModuleManager.cameraPositions.isEnabled() || (!ModuleManager.cameraPositions.movementCamera.getValue() && !ModuleManager.cameraPositions.removeViewBobbing.getValue());
 
-            if (!ModuleManager.cameraPositions.isEnabled() || (!ModuleManager.cameraPositions.movementCamera.getValue() && !ModuleManager.cameraPositions.removeViewBobbing.getValue()))
-                this.setupViewBobbing(partialTicks);
-
+        if (this.mc.gameSettings.viewBobbing && flag) {
+            this.setupViewBobbing(partialTicks);
         }
 
         float f1 = this.mc.thePlayer.prevTimeInPortal + (this.mc.thePlayer.timeInPortal - this.mc.thePlayer.prevTimeInPortal) * partialTicks;
