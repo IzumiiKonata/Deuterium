@@ -295,18 +295,26 @@ public class EntityRenderer implements IResourceManagerReloadListener {
      */
     public void loadEntityShader(Entity entityIn) {
         if (OpenGlHelper.shadersSupported) {
-            if (this.theShaderGroup != null) {
-                this.theShaderGroup.deleteShaderGroup();
-            }
+//            if (this.theShaderGroup != null) {
+//                this.theShaderGroup.deleteShaderGroup();
+//            }
+//
+//            this.theShaderGroup = null;
 
-            this.theShaderGroup = null;
+            Location shaderToLoad = null;
 
             if (entityIn instanceof EntityCreeper) {
-                this.loadShader(Location.of("shaders/post/creeper.json"));
+                shaderToLoad = Location.of("shaders/post/creeper.json");
             } else if (entityIn instanceof EntitySpider) {
-                this.loadShader(Location.of("shaders/post/spider.json"));
+                shaderToLoad = Location.of("shaders/post/spider.json");
             } else if (entityIn instanceof EntityEnderman) {
-                this.loadShader(Location.of("shaders/post/invert.json"));
+                shaderToLoad = Location.of("shaders/post/invert.json");
+            }
+
+            if (shaderToLoad != null) {
+                this.loadShader(shaderToLoad);
+            } else if (!ModuleManager.colorSaturation.isEnabled()) {
+                this.stopUseShader();
             }
         }
     }
@@ -329,6 +337,12 @@ public class EntityRenderer implements IResourceManagerReloadListener {
 
     public void loadShader(Location resourceLocationIn) {
         if (OpenGlHelper.isFramebufferEnabled()) {
+
+            if (this.theShaderGroup != null) {
+                this.theShaderGroup.deleteShaderGroup();
+            }
+            this.theShaderGroup = null;
+
             try {
                 this.theShaderGroup = new ShaderGroup(this.mc.getTextureManager(), this.resourceManager, this.mc.getFramebuffer(), resourceLocationIn);
                 this.theShaderGroup.createBindFramebuffers(this.mc.displayWidth, this.mc.displayHeight);

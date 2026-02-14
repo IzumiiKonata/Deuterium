@@ -18,7 +18,7 @@ public class ColorSaturation extends Module {
         super("ColorSaturation", Category.RENDER);
     }
 
-    private Location phosphorBlur = Location.of("shaders/post/color_convolve.json");
+    public final Location phosphorBlur = Location.of("shaders/post/color_convolve.json");
 
     public NumberSetting<Float> amount = new NumberSetting<>("Amount", 1f, -1f, 5f, 0.1f) {
         @Override
