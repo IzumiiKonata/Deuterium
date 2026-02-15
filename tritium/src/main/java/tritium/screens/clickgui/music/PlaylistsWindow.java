@@ -201,7 +201,7 @@ public class PlaylistsWindow extends Window {
                     if (CloudMusic.player != null) {
                         float progress = (float) (percent * CloudMusic.player.getTotalTimeMillis());
                         CloudMusic.player.setPlaybackTime(progress);
-                        MusicLyricsWidget.quickResetProgress(progress);
+                        MusicLyricsWidget.resetProgress(progress);
                         MusicLyricsPanel.resetProgress(progress);
                     }
                 }

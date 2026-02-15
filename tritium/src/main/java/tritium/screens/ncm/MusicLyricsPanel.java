@@ -1,6 +1,5 @@
 package tritium.screens.ncm;
 
-import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
@@ -24,7 +23,6 @@ import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.impl.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.shader.Shader;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
@@ -36,21 +34,14 @@ import tritium.utils.timing.Timer;
 import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author IzumiiKonata
  * Date: 2025/10/17 21:56
  */
 public class MusicLyricsPanel implements SharedRenderingConstants {
-
-    public static final List<LyricLine> lyrics = new CopyOnWriteArrayList<>();
-    public static LyricLine currentDisplaying = null;
 
     static double scrollOffset, scrollTarget;
 
@@ -78,76 +69,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     IconWidget prev = new IconWidget("E", FontManager.music40, 0, 0, 32, 32);
     IconWidget next = new IconWidget("H", FontManager.music40, 0, 0, 32, 32);
 
-    // 提前跳转到下一行
-    static final float JUMP_TO_NEXT_LINE_MILLIS = 300.0f;
-
     private final Music music;
     public MusicLyricsPanel(Music music) {
         this.music = music;
-        float currentTimeMillis = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
-        updateCurrentDisplayingLyric(currentTimeMillis);
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
-    }
-
-    public static void initLyric(JsonObject rawLyricData, Music music, List<LyricLine> parsed) {
-        // reset states
-
-        if (parsed.isEmpty()) {
-            parsed.add(new LyricLine(0L, "暂无歌词"));
-        }
-
-//        fetchTTMLLyrics(music, parsed);
-
-        addLyrics(parsed);
-    }
-
-    private static void addLyrics(List<LyricLine> lyricLines) {
-        synchronized (lyrics) {
-            lyrics.clear();
-            lyrics.addAll(lyricLines);
-
-            currentDisplaying = lyrics.getFirst();
-            addLongBreaks();
-            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
-//            scrollTarget = scrollOffset = 0;
-        }
-    }
-
-    private static void addLongBreaks() {
-        long longBreaksDuration = 3000L;
-        if (lyrics.stream().allMatch(l -> l.words.isEmpty())) {
-
-            long timeStamp = lyrics.getFirst().getTimestamp();
-            if (timeStamp >= longBreaksDuration) {
-                LyricLine line = new LyricLine(0L, "● ● ●");
-//                line.renderEmphasizes = false;
-                line.words.add(new LyricLine.Word("● ● ●", timeStamp));
-
-                lyrics.add(line);
-                lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
-            }
-
-            return;
-        }
-
-        long last = 0L;
-
-        List<LyricLine> breaksToAdd = new ArrayList<>();
-
-        for (LyricLine lyric : lyrics) {
-            long curDur = getLyricDuration(lyric);
-            long l = lyric.getTimestamp() - last;
-            if (l >= longBreaksDuration) {
-                LyricLine line = new LyricLine(last, "● ● ●");
-//                line.renderEmphasizes = false;
-                line.words.add(new LyricLine.Word("● ● ●", l));
-                breaksToAdd.add(line);
-            }
-            last = lyric.getTimestamp() + curDur;
-        }
-
-        lyrics.addAll(breaksToAdd);
-        lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
     }
 
     private static long getLyricDuration(LyricLine line) {
@@ -178,14 +103,14 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                 }
 
-                addLyrics(lyricLines);
+//                CloudMusic.addLyrics(lyricLines);
             } catch (Exception ignored) {
             }
         });
     }
 
     public static void resetProgress(float progress) {
-        updateCurrentDisplayingLyric(progress);
+        CloudMusic.updateCurrentLyric(progress);
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
@@ -203,15 +128,15 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     private static void updateLyricPositionsImmediate(double width) {
 
-        if (currentDisplaying == null) return;
+        if (CloudMusic.currentLyric == null) return;
 
         double offsetY = RenderSystem.getHeight() * lyricFraction() - getLyricLineSpacing();
-        int toIndex = lyrics.indexOf(currentDisplaying);
+        int toIndex = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
 
-        if (toIndex == -1 || toIndex >= lyrics.size()) return;
+        if (toIndex == -1 || toIndex >= CloudMusic.lyrics.size()) return;
 
-        synchronized (lyrics) {
-            List<LyricLine> subList = lyrics.subList(0, toIndex);
+        synchronized (CloudMusic.lyrics) {
+            List<LyricLine> subList = CloudMusic.lyrics.subList(0, toIndex);
             for (int i = subList.size() - 1; i >= 0; i--) {
                 LyricLine lyric = subList.get(i);
 
@@ -228,7 +153,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             }
 
             offsetY = RenderSystem.getHeight() * lyricFraction();
-            for (LyricLine lyric : lyrics.subList(toIndex, lyrics.size())) {
+            for (LyricLine lyric : CloudMusic.lyrics.subList(toIndex, CloudMusic.lyrics.size())) {
                 lyric.posY = offsetY;
                 lyric.spring.setPosition(offsetY);
 
@@ -239,47 +164,12 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     }
 
-    /**
-     * 更新当前显示的歌词行
-     */
-    private static void updateCurrentDisplayingLyric(float songProgress) {
-
-        LyricLine cur = currentDisplaying;
-
-        for (int i = 0; i < lyrics.size(); i++) {
-            LyricLine lyric = lyrics.get(i);
-
-            if (lyric.getTimestamp() > songProgress + JUMP_TO_NEXT_LINE_MILLIS) {
-                if (i > 0) {
-                    currentDisplaying = lyrics.get(i - 1);
-                }
-                break;
-            } else if (i == lyrics.size() - 1) {
-                currentDisplaying = lyrics.get(i);
-            }
-        }
-
-        if (cur != currentDisplaying) {
-            resetLyricStatus();
-        }
-    }
-
     private static long getLyricInterpolationWaitTimeMillis() {
         return 75;
     }
 
     private static void resetLyricStatus() {
-        lyrics.forEach(l -> {
-            l.shouldUpdatePosition = false;
-
-            l.delayTimer.reset();
-
-            for (LyricLine.Word word : l.words) {
-                Arrays.fill(word.emphasizes, 0);
-            }
-
-            l.markDirty();
-        });
+        CloudMusic.resetLyricStatus();
     }
 
     public void onInit() {
@@ -311,11 +201,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     private void renderLyrics(double mouseX, double mouseY, double posX, double posY, double width, double height, int dWheel, float alpha) {
 
-        if (lyrics.isEmpty()) return;
+        if (CloudMusic.lyrics.isEmpty()) return;
 
         float songProgress = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
-
-        updateCurrentDisplayingLyric(songProgress);
 
         double lyricsWidth = width * getLyricWidthFactor();
         this.updateLyricPositions(posY, height, lyricsWidth);
@@ -345,8 +233,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         scrollOffset = Interpolations.interpBezier(scrollOffset, scrollTarget, 0.25f);
 
         double lyricRenderOffsetX = RenderSystem.getWidth() * .48;
-        for (int k = 0; k < lyrics.size(); k++) {
-            LyricLine lyric = lyrics.get(k);
+        for (int k = 0; k < CloudMusic.lyrics.size(); k++) {
+            LyricLine lyric = CloudMusic.lyrics.get(k);
 
             if (lyric.posY + lyric.height + getLyricLineSpacing() + scrollOffset < posY) {
                 continue;
@@ -356,9 +244,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 break;
             }
 
-            int indexOf = lyrics.indexOf(currentDisplaying);
+            int indexOf = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
 
-            lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == currentDisplaying ? 1f : 0f, 0.1f);
+            lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == CloudMusic.currentLyric ? 1f : 0f, 0.1f);
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.05f);
@@ -386,7 +274,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             double renderX = lyricRenderOffsetX + lyric.reboundAnimation;
             double renderY = lyric.posY + lyric.reboundAnimation + scrollOffset;
 
-            lyric.reboundAnimation = Interpolations.interpBezier(lyric.reboundAnimation, lyric == currentDisplaying ? 2f : 0f, 0.1f);
+            lyric.reboundAnimation = Interpolations.interpBezier(lyric.reboundAnimation, lyric == CloudMusic.currentLyric ? 2f : 0f, 0.1f);
 
             List<LyricLine.Word> words = lyric.words;
             if (!words.isEmpty()) {
@@ -408,7 +296,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     double emphasizeTarget = 1;
                     double emphasizeSpeed = 0.05;
 
-                    if (lyric == currentDisplaying) {
+                    if (lyric == CloudMusic.currentLyric) {
                         if (charArray.length > 1) {
                             double x = renderX;
                             for (int j = 0; j < charArray.length; j++) {
@@ -424,7 +312,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
                     }
 
-                    if (lyrics.indexOf(currentDisplaying) - k <= 1) {
+                    if (CloudMusic.lyrics.indexOf(CloudMusic.currentLyric) - k <= 1) {
                         LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
 
                         long prevTiming = i == 0 ? 0 : prev.timestamp;
@@ -594,16 +482,16 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     private void updateLyricPositions(double posY, double height, double width) {
 
-        if (currentDisplaying == null) return;
+        if (CloudMusic.currentLyric == null) return;
 
-        int idxCurrent = lyrics.indexOf(currentDisplaying);
+        int idxCurrent = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
 
-        if (idxCurrent < 0 || idxCurrent >= lyrics.size()) return;
+        if (idxCurrent < 0 || idxCurrent >= CloudMusic.lyrics.size()) return;
 //
-        double offsetY = RenderSystem.getHeight() * lyricFraction()/* - (idxCurrent > 0 ? lyrics.get(idxCurrent - 1).height : 0)*/;
+        double offsetY = RenderSystem.getHeight() * lyricFraction()/* - (idxCurrent > 0 ? CloudMusic.lyrics.get(idxCurrent - 1).height : 0)*/;
 
-        synchronized (lyrics) {
-            List<LyricLine> subList = lyrics.subList(0, idxCurrent);
+        synchronized (CloudMusic.lyrics) {
+            List<LyricLine> subList = CloudMusic.lyrics.subList(0, idxCurrent);
             double frameDeltaTime = RenderSystem.getFrameDeltaTime() * .0125;
             for (int i = subList.size() - 1; i >= 0; i--) {
                 LyricLine lyric = subList.get(i);
@@ -621,16 +509,16 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             }
 
             offsetY = RenderSystem.getHeight() * lyricFraction();
-            List<LyricLine> list = lyrics.subList(idxCurrent, lyrics.size());
+            List<LyricLine> list = CloudMusic.lyrics.subList(idxCurrent, CloudMusic.lyrics.size());
             int oobCounter = 0;
             for (LyricLine lyric : list) {
-                int j = lyrics.indexOf(lyric);
+                int j = CloudMusic.lyrics.indexOf(lyric);
 
 //                Rect.draw(RenderSystem.getWidth() * .5 + lyric.reboundAnimation, lyric.posY, width, lyric.height, 0x80FFFFFF);
 
                 lyric.computeHeight(width);
 
-                LyricLine prev = j > 0 ? lyrics.get(j - 1) : null;
+                LyricLine prev = j > 0 ? CloudMusic.lyrics.get(j - 1) : null;
 
                 if (prev != null) {
                     if (prev.delayTimer.isDelayed(getLyricInterpolationWaitTimeMillis()))
@@ -742,7 +630,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             if (player != null) {
                 float progress = (float) (percent * totalTimeMillis);
                 player.setPlaybackTime(progress);
-                MusicLyricsWidget.quickResetProgress(progress);
+                MusicLyricsWidget.resetProgress(progress);
                 MusicLyricsPanel.resetProgress(progress);
                 scrollTarget = scrollOffset = 0;
             }

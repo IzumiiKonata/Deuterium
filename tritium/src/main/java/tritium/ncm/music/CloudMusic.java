@@ -36,6 +36,7 @@ import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.screens.ncm.NCMScreen;
 import tritium.utils.json.JsonUtils;
 import tritium.utils.network.HttpUtils;
+import tritium.utils.other.StringUtils;
 import tritium.utils.other.WrappedInputStream;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.impl.MusicLyricsWidget;
@@ -51,6 +52,7 @@ import java.nio.file.StandardOpenOption;
 import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -76,7 +78,184 @@ public class CloudMusic {
 
     public static Quality quality = Quality.STANDARD;
 
+    public static final List<LyricLine> lyrics = new CopyOnWriteArrayList<>();
+    public static LyricLine currentLyric = null;
+    public static boolean hasTransLyrics = false;
+    public static boolean hasRomanization = false;
+
     public static final File COOKIE_FILE = new File(ConfigManager.configDir, "NCMCookie.txt");
+
+    public static void initLyrics(JsonObject rawLyricData, Music music, List<LyricLine> parsedLyrics) {
+        hasTransLyrics = false;
+        hasRomanization = false;
+        
+        detectTranslations(rawLyricData);
+        
+        synchronized (lyrics) {
+            lyrics.clear();
+            lyrics.addAll(parsedLyrics);
+            
+            if (lyrics.isEmpty()) {
+                lyrics.add(new LyricLine(0L, "暂无歌词"));
+            }
+            
+            currentLyric = lyrics.getFirst();
+            addLongBreaks();
+        }
+    }
+
+    private static void detectTranslations(JsonObject lyric) {
+        if (hasLyricsType(lyric, "tlyric") || hasLyricsType(lyric, "ytlrc")) hasTransLyrics = true;
+        if (hasLyricsType(lyric, "romalrc") || hasLyricsType(lyric, "yromalrc")) hasRomanization = true;
+    }
+
+    private static boolean hasLyricsType(JsonObject lyric, String type) {
+        if (lyric.has(type) && lyric.get(type).isJsonObject()) {
+            JsonObject lyricTypeObj = lyric.get(type).getAsJsonObject();
+            return lyricTypeObj.has("lyric") && !lyricTypeObj.get("lyric").getAsString().isEmpty();
+        }
+        return false;
+    }
+
+    private static void addLongBreaks() {
+        long longBreaksDuration = 3000L;
+        if (lyrics.stream().allMatch(l -> l.words.isEmpty())) {
+            long timeStamp = lyrics.getFirst().getTimestamp();
+            if (timeStamp >= longBreaksDuration) {
+                LyricLine line = new LyricLine(0L, "● ● ●");
+                line.words.add(new LyricLine.Word("● ● ●", timeStamp));
+                lyrics.add(line);
+                lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
+            }
+            return;
+        }
+
+        long last = 0L;
+        List<LyricLine> breaksToAdd = new ArrayList<>();
+
+        for (LyricLine lyric : lyrics) {
+            long curDur = getLyricDuration(lyric);
+            long l = lyric.getTimestamp() - last;
+            if (l >= longBreaksDuration) {
+                LyricLine line = new LyricLine(last, "● ● ●");
+                line.words.add(new LyricLine.Word("● ● ●", l));
+                breaksToAdd.add(line);
+            }
+            last = lyric.getTimestamp() + curDur;
+        }
+
+        lyrics.addAll(breaksToAdd);
+        lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
+    }
+
+    private static long getLyricDuration(LyricLine line) {
+        return line.words.isEmpty() ? 0 : line.words.getLast().timestamp;
+    }
+
+    public static void updateCurrentLyric(float songProgress) {
+        LyricLine cur = currentLyric;
+        
+        for (int i = 0; i < lyrics.size(); i++) {
+            LyricLine lyric = lyrics.get(i);
+            
+            if (lyric.getTimestamp() > songProgress) {
+                if (i > 0) {
+                    currentLyric = lyrics.get(i - 1);
+                }
+                break;
+            } else if (i == lyrics.size() - 1) {
+                currentLyric = lyrics.get(i);
+            }
+        }
+        
+        if (cur != currentLyric) {
+            resetLyricStatus();
+        }
+    }
+
+    public static void resetLyricStatus() {
+        lyrics.forEach(l -> {
+            l.shouldUpdatePosition = false;
+            l.delayTimer.reset();
+            
+            for (LyricLine.Word word : l.words) {
+                Arrays.fill(word.emphasizes, 0);
+            }
+            
+            l.markDirty();
+        });
+    }
+
+    /**
+     * 快速重置进度
+     */
+    public static void quickResetProgress(float progress) {
+        if (lyrics.isEmpty()) return;
+        
+        try {
+            resetAllLyricsState();
+            resetWordStates();
+            updateCurrentLyric(progress);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 重置所有歌词状态
+     */
+    private static void resetAllLyricsState() {
+        for (LyricLine l : lyrics) {
+            l.scrollWidth = 0;
+            l.offsetX = 0;
+            l.offsetY = Double.MIN_VALUE;
+            l.targetOffsetX = 0;
+        }
+    }
+
+    /**
+     * 重置单词状态
+     */
+    private static void resetWordStates() {
+        for (LyricLine allLyric : lyrics) {
+            for (LyricLine.Word word : allLyric.words) {
+                word.alpha = 0.0f;
+                word.progress = 0.0;
+            }
+        }
+    }
+
+    /**
+     * 获取辅助歌词文本（翻译或罗马音）
+     */
+    public static String getSecondaryLyrics(LyricLine bean) {
+        if (hasTransLyrics) {
+            if (!WidgetsManager.musicLyrics.showRoman.getValue()) {
+                return StringUtils.returnEmptyStringIfNull(bean.getTranslationText());
+            } else {
+                if (hasRomanization) {
+                    return StringUtils.returnEmptyStringIfNull(bean.getRomanizationText());
+                } else {
+                    return StringUtils.returnEmptyStringIfNull(bean.getTranslationText());
+                }
+            }
+        }
+
+        if (hasRomanization) {
+            if (WidgetsManager.musicLyrics.showRoman.getValue()) {
+                return StringUtils.returnEmptyStringIfNull(bean.getRomanizationText());
+            }
+        }
+
+        return "";
+    }
+
+    /**
+     * 检查是否有辅助歌词
+     */
+    public static boolean hasSecondaryLyrics() {
+        return (hasTransLyrics || hasRomanization) && WidgetsManager.musicLyrics.showTranslation.getValue();
+    }
 
     @SneakyThrows
     public static void initNCM() {
@@ -256,13 +435,10 @@ public class CloudMusic {
             startIdx = 0;
         }
 
-        MusicLyricsWidget.allLyrics.clear();
         playList = songs;
 
         playThread = new PlayThread(songs, startIdx);
         doBreak = false;
-        MusicLyricsWidget.allLyrics.clear();
-        MusicLyricsWidget.currentDisplaying = null;
         playing.set(false);
         playThread.start();
     }
@@ -351,12 +527,14 @@ public class CloudMusic {
                 }
 
                 while (playing.get()) {
-
                     if (this.isInterrupted() || doBreak)
                         break mainCycle;
 
+                    CloudMusic.updateCurrentLyric(player.getCurrentTimeMillis());
+
                     try {
                         player.doDetections();
+                        Thread.sleep(10L);
                     } catch (Exception e) {
 //                        e.printStackTrace();
                     }
@@ -369,8 +547,6 @@ public class CloudMusic {
                 }
 
                 player.close();
-
-                MusicLyricsWidget.allLyrics.clear();
 
                 updateCurIdx();
 
@@ -738,8 +914,8 @@ public class CloudMusic {
                 }
             }
 
-            MusicLyricsWidget.initLyric(json, music, parsed);
-            MusicLyricsPanel.initLyric(json, music, parsed);
+            // 使用集中式歌词管理
+            initLyrics(json, music, parsed);
 
         });
     }

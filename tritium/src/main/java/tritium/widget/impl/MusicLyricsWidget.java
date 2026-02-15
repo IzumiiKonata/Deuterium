@@ -1,9 +1,7 @@
 package tritium.widget.impl;
 
-import com.google.gson.JsonObject;
 import net.minecraft.client.renderer.GlStateManager;
 import tritium.ncm.music.CloudMusic;
-import tritium.ncm.music.dto.Music;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
 import tritium.rendering.RGBA;
@@ -13,18 +11,10 @@ import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.screens.ncm.LyricLine;
-import tritium.screens.ncm.LyricParser;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
-import tritium.utils.network.HttpUtils;
-import tritium.utils.other.StringUtils;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.widget.Widget;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * @author IzumiiKonata
@@ -32,11 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class MusicLyricsWidget extends Widget {
 
-    public static final List<LyricLine> allLyrics = new CopyOnWriteArrayList<>();
     static double scrollOffset = 0;
-    public static LyricLine currentDisplaying = null;
-
-    public static boolean hasTransLyrics = false, hasRomanization = false;
 
     public ModeSetting<ScrollEffects> scrollEffects = new ModeSetting<>("Scroll Effects", ScrollEffects.Scroll);
     public ModeSetting<AlignMode> alignMode = new ModeSetting<>("Align Mode", AlignMode.Center);
@@ -70,153 +56,29 @@ public class MusicLyricsWidget extends Widget {
         showRoman.setShouldRender(() -> showTranslation.getValue());
     }
 
-    private static boolean hasLyricsType(JsonObject lyric, String type) {
-        if (
-                lyric.has(type) &&
-                lyric.get(type).isJsonObject()
-        ) {
-            JsonObject lyricTypeObj = lyric.get(type).getAsJsonObject();
-            return lyricTypeObj.has("lyric") && !lyricTypeObj.get("lyric").getAsString().isEmpty();
-        }
-        return false;
-    }
-
-    private static void detectTranslations(JsonObject lyric) {
-        if (hasLyricsType(lyric, "tlyric") || hasLyricsType(lyric, "ytlrc")) hasTransLyrics = true;
-        if (hasLyricsType(lyric, "romalrc") || hasLyricsType(lyric, "yromalrc")) hasRomanization = true;
-    }
-
-    public static void initLyric(JsonObject rawLyricData, Music music, List<LyricLine> parsedLyrics) {
-        // reset states
-        hasTransLyrics = false;
-        hasRomanization = false;
-
-        detectTranslations(rawLyricData);
-
-        synchronized (allLyrics) {
-            allLyrics.clear();
-            allLyrics.addAll(parsedLyrics);
-        }
-
-        scrollOffset = 0;
-    }
-
-    private static void fetchTTMLLyrics(Music music, List<LyricLine> parsed) {
-        MultiThreadingUtil.runAsync(() -> {
-            try {
-                String lrc = HttpUtils.getString(
-                        "https://gitee.com/IzumiiKonata/amll-ttml-db/raw/main/ncm-lyrics/" + music.getId() + ".yrc",
-                        null
-                );
-                System.out.println("歌曲 " + music.getName() + " 存在 ttml 歌词, 获取中...");
-
-                ArrayList<LyricLine> lines = new ArrayList<>();
-                LyricParser.parseYrc(lrc, lines);
-
-                for (LyricLine bean : lines) {
-
-//                    System.out.println(bean.words.size());
-
-                    for (LyricLine line : parsed) {
-                        if (line.getLyric().toLowerCase().replace(" ", "").equals(bean.lyric.toLowerCase().replace(" ", ""))) {
-                            bean.romanizationText = line.romanizationText;
-                            bean.translationText = line.translationText;
-                            break;
-                        }
-                    }
-
-                }
-
-                synchronized (allLyrics) {
-                    allLyrics.addAll(lines);
-                }
-            } catch (Exception ignored) {
-            }
-        });
-    }
-
-    public static void quickResetProgress(float progress) {
-        if (allLyrics.isEmpty()) return;
+    public static void resetProgress(float progress) {
+        if (CloudMusic.lyrics.isEmpty()) return;
 
         try {
-            resetAllLyricsState();
-
-            resetWordStates();
-
-            scrollOffset = 0;
-
-            findCurrentLyric(progress);
-
-            scrollOffset = (allLyrics.indexOf(currentDisplaying)) * getLyricHeight();
+            CloudMusic.quickResetProgress(progress);
+            scrollOffset = (CloudMusic.lyrics.indexOf(CloudMusic.currentLyric)) * getLyricHeight();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private static void resetAllLyricsState() {
-        for (LyricLine l : allLyrics) {
-            l.scrollWidth = 0;
-            l.offsetX = 0;
-            l.offsetY = Double.MIN_VALUE;
-            l.targetOffsetX = 0;
-        }
-    }
-
-    private static void resetWordStates() {
-        for (LyricLine allLyric : allLyrics) {
-            for (LyricLine.Word word : allLyric.words) {
-                word.alpha = 0.0f;
-                word.progress = 0.0;
-            }
-        }
-    }
-
-    private static void findCurrentLyric(float progress) {
-        currentDisplaying = allLyrics.getFirst();
-
-        for (LyricLine line : allLyrics) {
-            if (line.getTimestamp() > progress) {
-                int i = allLyrics.indexOf(line);
-                if (i > 0) {
-                    currentDisplaying = allLyrics.get(i - 1);
-                }
-                break;
-            }
-        }
-    }
-
     public static double getLyricHeight() {
         double baseHeight = getFontRenderer().getHeight();
-        double adjustment = hasSecondaryLyrics() ? 0 : -getSmallFontRenderer().getHeight() - 4;
+        double adjustment = CloudMusic.hasSecondaryLyrics() ? 0 : -getSmallFontRenderer().getHeight() - 4;
         return baseHeight + adjustment + WidgetsManager.musicLyrics.lyricHeight.getValue();
     }
 
     public static boolean hasSecondaryLyrics() {
-        return (hasTransLyrics || hasRomanization) && WidgetsManager.musicLyrics.showTranslation.getValue();
+        return CloudMusic.hasSecondaryLyrics();
     }
 
     public static String getSecondaryLyrics(LyricLine bean) {
-        if (hasTransLyrics) {
-            if (!WidgetsManager.musicLyrics.showRoman.getValue()) {
-                return StringUtils.returnEmptyStringIfNull(bean.getTranslationText());
-            } else {
-                // 如果有罗马音且开启了罗马音显示
-                if (hasRomanization) {
-                    return StringUtils.returnEmptyStringIfNull(bean.getRomanizationText());
-                } else {
-                    return StringUtils.returnEmptyStringIfNull(bean.getTranslationText());
-                }
-            }
-        }
-
-        // 只有罗马音
-        if (hasRomanization) {
-            if (WidgetsManager.musicLyrics.showRoman.getValue()) {
-                return StringUtils.returnEmptyStringIfNull(bean.getRomanizationText());
-            }
-        }
-
-        return "";
+        return CloudMusic.getSecondaryLyrics(bean);
     }
 
     @Override
@@ -227,8 +89,6 @@ public class MusicLyricsWidget extends Widget {
         }
 
         float songProgress = CloudMusic.player.getCurrentTimeMillis();
-
-        updateCurrentDisplayingLyric(songProgress);
 
         boolean shouldNotDisplayOtherLyrics = this.singleLine.getValue();
 
@@ -247,37 +107,22 @@ public class MusicLyricsWidget extends Widget {
     }
 
     private boolean shouldRender() {
-        return CloudMusic.player != null && !CloudMusic.player.isFinished() && !allLyrics.isEmpty();
-    }
-
-    private void updateCurrentDisplayingLyric(float songProgress) {
-        for (int i = 0; i < allLyrics.size(); i++) {
-            LyricLine line = allLyrics.get(i);
-
-            if (line.getTimestamp() > songProgress) {
-                if (i > 0) {
-                    currentDisplaying = allLyrics.get(i - 1);
-                }
-                break;
-            } else if (i == allLyrics.size() - 1) {
-                currentDisplaying = allLyrics.get(i);
-            }
-        }
+        return CloudMusic.player != null && !CloudMusic.player.isFinished() && !CloudMusic.lyrics.isEmpty();
     }
 
     private void handleSingleLineMode(boolean shouldNotDisplayOtherLyrics) {
-        if (shouldNotDisplayOtherLyrics && currentDisplaying == null) {
-            if (!allLyrics.isEmpty()) {
-                currentDisplaying = allLyrics.getFirst();
+        if (shouldNotDisplayOtherLyrics && CloudMusic.currentLyric == null) {
+            if (!CloudMusic.lyrics.isEmpty()) {
+                CloudMusic.currentLyric = CloudMusic.lyrics.getFirst();
             }
         }
     }
 
     private void updateScrollOffset(boolean shouldNotDisplayOtherLyrics) {
-        int indexOf = allLyrics.indexOf(currentDisplaying);
+        int indexOf = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
 
         if (!shouldNotDisplayOtherLyrics) {
-            if (currentDisplaying == null) {
+            if (CloudMusic.currentLyric == null) {
                 scrollOffset = 0;
             } else {
                 scrollOffset = Interpolations.interpBezier(scrollOffset, (indexOf * getLyricHeight()), 0.2f);
@@ -287,11 +132,11 @@ public class MusicLyricsWidget extends Widget {
 
     private void renderAllLyrics(boolean shouldNotDisplayOtherLyrics, float songProgress) {
         double offsetY = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0 - scrollOffset;
-        int indexOf = allLyrics.indexOf(currentDisplaying);
+        int indexOf = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
 
-        synchronized (allLyrics) {
-            for (int i = 0; i < allLyrics.size(); i++) {
-                LyricLine line = allLyrics.get(i);
+        synchronized (CloudMusic.lyrics) {
+            for (int i = 0; i < CloudMusic.lyrics.size(); i++) {
+                LyricLine line = CloudMusic.lyrics.get(i);
 
                 if (shouldNotDisplayOtherLyrics) {
                     if (i < indexOf) continue;
@@ -315,7 +160,7 @@ public class MusicLyricsWidget extends Widget {
 
                 renderLyricText(line, renderInfo, i, indexOf);
 
-                if (line == currentDisplaying && !line.words.isEmpty()) {
+                if (line == CloudMusic.currentLyric && !line.words.isEmpty()) {
                     handleScrollEffects(line, renderInfo, songProgress);
                 }
 
@@ -364,7 +209,7 @@ public class MusicLyricsWidget extends Widget {
 
         try {
             if (index > 0) {
-                prevLrc = allLyrics.get(index - 1);
+                prevLrc = CloudMusic.lyrics.get(index - 1);
             }
         } catch (Exception ignored) {}
 
@@ -510,7 +355,7 @@ public class MusicLyricsWidget extends Widget {
     }
 
     private void updateScrollWidth(LyricLine line, WordInfo wordInfo, float songProgress) {
-        LyricLine.Word prev = getPrevWord(wordInfo.currentIndex, allLyrics.indexOf(line), line);
+        LyricLine.Word prev = getPrevWord(wordInfo.currentIndex, CloudMusic.lyrics.indexOf(line), line);
         LyricLine.Word current = line.words.get(wordInfo.currentIndex);
 
         long prevWordTimestamp = wordInfo.currentIndex == 0 ? 0 : prev.timestamp;
@@ -608,7 +453,7 @@ public class MusicLyricsWidget extends Widget {
 
     private void updateCurrentWordAnimation(LyricLine.Word word, LyricLine line,
                                             int currentIndex, float songProgress) {
-        LyricLine.Word prev = getPrevWord(currentIndex, allLyrics.indexOf(line), line);
+        LyricLine.Word prev = getPrevWord(currentIndex, CloudMusic.lyrics.indexOf(line), line);
         long prevWordTimestamp = currentIndex == 0 ? 0 : prev.timestamp;
 
         double perc = (songProgress - line.timestamp - prevWordTimestamp) /
@@ -713,7 +558,7 @@ public class MusicLyricsWidget extends Widget {
             if (j - 1 < 0) {
                 prev = line.words.getFirst();
             } else {
-                prev = allLyrics.get(j - 1).words.getLast();
+                prev = CloudMusic.lyrics.get(j - 1).words.getLast();
             }
         } else {
             prev = line.words.get(cur - 1);

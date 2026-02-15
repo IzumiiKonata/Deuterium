@@ -170,20 +170,13 @@ public class MusicInfoWidget extends Widget {
             String secondaryText = playingMusic.getArtistsName();
 
             if (this.turnComposerIntoLyric.getValue() && CloudMusic.player != null) {
-                LyricLine currentDisplaying = null, next = null;
-                List<LyricLine> allLyrics = MusicLyricsWidget.allLyrics;
+                LyricLine currentDisplaying = CloudMusic.currentLyric;
+                LyricLine next = null;
 
-                for (int i = 0; i < allLyrics.size(); i++) {
-                    LyricLine lyric = allLyrics.get(i);
-
-                    if (lyric.getTimestamp() > CloudMusic.player.getCurrentTimeMillis()) {
-                        if (i > 0) {
-                            currentDisplaying = allLyrics.get(i - 1);
-                        }
-                        next = allLyrics.get(i);
-                        break;
-                    } else if (i == allLyrics.size() - 1) {
-                        currentDisplaying = allLyrics.get(i);
+                if (!CloudMusic.lyrics.isEmpty()) {
+                    int currentIndex = CloudMusic.lyrics.indexOf(currentDisplaying);
+                    if (currentIndex >= 0 && currentIndex < CloudMusic.lyrics.size() - 1) {
+                        next = CloudMusic.lyrics.get(currentIndex + 1);
                     }
                 }
 
