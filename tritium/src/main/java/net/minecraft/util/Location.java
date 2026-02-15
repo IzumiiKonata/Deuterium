@@ -1,5 +1,7 @@
 package net.minecraft.util;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
@@ -64,8 +66,8 @@ public class Location {
 //        return 31 * this.resourceDomain.hashCode() + this.resourcePath.hashCode();
 //    }
 
-    private static final Map<String, Location> locationCache = new HashMap<>();
-    public static final Map<String, Map<String, Location>> twoDimensionsCache = new HashMap<>();
+    private static final Object2ObjectMap<String, Location> locationCache = new Object2ObjectOpenHashMap<>();
+    public static final Object2ObjectMap<String, Map<String, Location>> twoDimensionsCache = new Object2ObjectOpenHashMap<>();
 
     public static Location of(String path) {
 
