@@ -86,21 +86,29 @@ public class CloudMusic {
     public static final File COOKIE_FILE = new File(ConfigManager.configDir, "NCMCookie.txt");
 
     public static void initLyrics(JsonObject rawLyricData, Music music, List<LyricLine> parsedLyrics) {
-        hasTransLyrics = false;
-        hasRomanization = false;
-        
+        resetLyricFlags();
         detectTranslations(rawLyricData);
         
         synchronized (lyrics) {
-            lyrics.clear();
-            lyrics.addAll(parsedLyrics);
-            
-            if (lyrics.isEmpty()) {
-                lyrics.add(new LyricLine(0L, "暂无歌词"));
-            }
-            
+            updateLyricsList(parsedLyrics);
             currentLyric = lyrics.getFirst();
             addLongBreaks();
+        }
+
+        MusicLyricsPanel.updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * MusicLyricsPanel.getLyricWidthFactor());
+    }
+    
+    private static void resetLyricFlags() {
+        hasTransLyrics = false;
+        hasRomanization = false;
+    }
+    
+    private static void updateLyricsList(List<LyricLine> parsedLyrics) {
+        lyrics.clear();
+        lyrics.addAll(parsedLyrics);
+        
+        if (lyrics.isEmpty()) {
+            lyrics.add(new LyricLine(0L, "暂无歌词"));
         }
     }
 
@@ -118,33 +126,58 @@ public class CloudMusic {
     }
 
     private static void addLongBreaks() {
-        long longBreaksDuration = 3000L;
-        if (lyrics.stream().allMatch(l -> l.words.isEmpty())) {
-            long timeStamp = lyrics.getFirst().getTimestamp();
-            if (timeStamp >= longBreaksDuration) {
-                LyricLine line = new LyricLine(0L, "● ● ●");
-                line.words.add(new LyricLine.Word("● ● ●", timeStamp));
-                lyrics.add(line);
-                lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
-            }
+        final long longBreaksDuration = 3000L;
+        
+        if (hasEmptyLyrics()) {
+            addInitialBreakIfNeeded(longBreaksDuration);
             return;
         }
-
-        long last = 0L;
+        
+        addBreaksBetweenLyrics(longBreaksDuration);
+    }
+    
+    private static boolean hasEmptyLyrics() {
+        return lyrics.stream().allMatch(l -> l.words.isEmpty());
+    }
+    
+    private static void addInitialBreakIfNeeded(long duration) {
+        long firstTimestamp = lyrics.getFirst().getTimestamp();
+        if (firstTimestamp >= duration) {
+            addBreakLine(0L, firstTimestamp);
+        }
+    }
+    
+    private static void addBreaksBetweenLyrics(long duration) {
+        long lastTimestamp = 0L;
         List<LyricLine> breaksToAdd = new ArrayList<>();
 
         for (LyricLine lyric : lyrics) {
-            long curDur = getLyricDuration(lyric);
-            long l = lyric.getTimestamp() - last;
-            if (l >= longBreaksDuration) {
-                LyricLine line = new LyricLine(last, "● ● ●");
-                line.words.add(new LyricLine.Word("● ● ●", l));
-                breaksToAdd.add(line);
+            long lyricDuration = getLyricDuration(lyric);
+            long gap = lyric.getTimestamp() - lastTimestamp;
+            
+            if (gap >= duration) {
+                breaksToAdd.add(createBreakLine(lastTimestamp, gap));
             }
-            last = lyric.getTimestamp() + curDur;
+            
+            lastTimestamp = lyric.getTimestamp() + lyricDuration;
         }
 
-        lyrics.addAll(breaksToAdd);
+        addAndSortBreaks(breaksToAdd);
+    }
+    
+    private static LyricLine createBreakLine(long timestamp, long duration) {
+        LyricLine line = new LyricLine(timestamp, "● ● ●");
+        line.words.add(new LyricLine.Word("● ● ●", duration));
+        return line;
+    }
+    
+    private static void addBreakLine(long timestamp, long duration) {
+        lyrics.add(createBreakLine(timestamp, duration));
+        lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
+    }
+    
+    private static void addAndSortBreaks(List<LyricLine> breaks) {
+        lyrics.addAll(breaks);
         lyrics.sort(Comparator.comparingLong(LyricLine::getTimestamp));
     }
 
@@ -153,24 +186,25 @@ public class CloudMusic {
     }
 
     public static void updateCurrentLyric(float songProgress) {
-        LyricLine cur = currentLyric;
+        LyricLine previousLyric = currentLyric;
+        currentLyric = findCurrentLyric(songProgress);
         
+        if (previousLyric != currentLyric) {
+            resetLyricStatus();
+        }
+    }
+    
+    private static LyricLine findCurrentLyric(float songProgress) {
         for (int i = 0; i < lyrics.size(); i++) {
             LyricLine lyric = lyrics.get(i);
             
             if (lyric.getTimestamp() > songProgress) {
-                if (i > 0) {
-                    currentLyric = lyrics.get(i - 1);
-                }
-                break;
+                return i > 0 ? lyrics.get(i - 1) : currentLyric;
             } else if (i == lyrics.size() - 1) {
-                currentLyric = lyrics.get(i);
+                return lyrics.get(i);
             }
         }
-        
-        if (cur != currentLyric) {
-            resetLyricStatus();
-        }
+        return currentLyric;
     }
 
     public static void resetLyricStatus() {
@@ -186,115 +220,112 @@ public class CloudMusic {
         });
     }
 
-    /**
-     * 快速重置进度
-     */
     public static void quickResetProgress(float progress) {
         if (lyrics.isEmpty()) return;
         
         try {
-            resetAllLyricsState();
-            resetWordStates();
+            resetLyricDisplayStates();
             updateCurrentLyric(progress);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    /**
-     * 重置所有歌词状态
-     */
+    private static void resetLyricDisplayStates() {
+        resetAllLyricsState();
+        resetWordStates();
+    }
+
     private static void resetAllLyricsState() {
-        for (LyricLine l : lyrics) {
-            l.scrollWidth = 0;
-            l.offsetX = 0;
-            l.offsetY = Double.MIN_VALUE;
-            l.targetOffsetX = 0;
+        for (LyricLine lyric : lyrics) {
+            lyric.scrollWidth = 0;
+            lyric.offsetX = 0;
+            lyric.offsetY = Double.MIN_VALUE;
+            lyric.targetOffsetX = 0;
         }
     }
 
-    /**
-     * 重置单词状态
-     */
     private static void resetWordStates() {
-        for (LyricLine allLyric : lyrics) {
-            for (LyricLine.Word word : allLyric.words) {
+        for (LyricLine lyric : lyrics) {
+            for (LyricLine.Word word : lyric.words) {
                 word.alpha = 0.0f;
                 word.progress = 0.0;
             }
         }
     }
 
-    /**
-     * 获取辅助歌词文本（翻译或罗马音）
-     */
-    public static String getSecondaryLyrics(LyricLine bean) {
+    public static String getSecondaryLyrics(LyricLine lyricLine) {
         if (hasTransLyrics) {
-            if (!WidgetsManager.musicLyrics.showRoman.getValue()) {
-                return StringUtils.returnEmptyStringIfNull(bean.getTranslationText());
-            } else {
-                if (hasRomanization) {
-                    return StringUtils.returnEmptyStringIfNull(bean.getRomanizationText());
-                } else {
-                    return StringUtils.returnEmptyStringIfNull(bean.getTranslationText());
-                }
-            }
+            return getTranslationOrRomanizationText(lyricLine);
         }
-
+        
         if (hasRomanization) {
-            if (WidgetsManager.musicLyrics.showRoman.getValue()) {
-                return StringUtils.returnEmptyStringIfNull(bean.getRomanizationText());
-            }
+            return getRomanizationTextIfEnabled(lyricLine);
         }
-
+        
+        return "";
+    }
+    
+    private static String getTranslationOrRomanizationText(LyricLine lyricLine) {
+        boolean showRoman = WidgetsManager.musicLyrics.showRoman.getValue();
+        
+        if (!showRoman) {
+            return StringUtils.returnEmptyStringIfNull(lyricLine.getTranslationText());
+        }
+        
+        if (hasRomanization) {
+            return StringUtils.returnEmptyStringIfNull(lyricLine.getRomanizationText());
+        }
+        
+        return StringUtils.returnEmptyStringIfNull(lyricLine.getTranslationText());
+    }
+    
+    private static String getRomanizationTextIfEnabled(LyricLine lyricLine) {
+        if (WidgetsManager.musicLyrics.showRoman.getValue()) {
+            return StringUtils.returnEmptyStringIfNull(lyricLine.getRomanizationText());
+        }
         return "";
     }
 
-    /**
-     * 检查是否有辅助歌词
-     */
     public static boolean hasSecondaryLyrics() {
-        return (hasTransLyrics || hasRomanization) && WidgetsManager.musicLyrics.showTranslation.getValue();
+        boolean hasAvailableLyrics = hasTransLyrics || hasRomanization;
+        boolean showTranslationEnabled = WidgetsManager.musicLyrics.showTranslation.getValue();
+        return hasAvailableLyrics && showTranslationEnabled;
     }
 
     @SneakyThrows
     public static void initNCM() {
-        String s = loadCookie();
-
-        if (s.isEmpty()) {
-            s = OptionsUtil.getCookie();
-        }
-
-        if (!s.isEmpty()) {
-            loadNCM(s);
-        } else {
+        String cookie = getCookieFromFileOrOptions();
+        
+        if (cookie.isEmpty()) {
             ConsoleScreen.log("[NCM] Not logged in.");
+        } else {
+            loadNCM(cookie);
         }
-
     }
 
     @SneakyThrows
     private static String loadCookie() {
-
         if (!COOKIE_FILE.exists()) {
             return "";
         }
-
-        List<String> strings = Files.readAllLines(COOKIE_FILE.toPath());
-
-        if (strings.isEmpty())
-            return "";
-
-        return strings.getFirst();
-
+        
+        List<String> cookieLines = Files.readAllLines(COOKIE_FILE.toPath());
+        return cookieLines.isEmpty() ? "" : cookieLines.getFirst();
+    }
+    
+    private static String getCookieFromFileOrOptions() {
+        String cookie = loadCookie();
+        return cookie.isEmpty() ? OptionsUtil.getCookie() : cookie;
     }
 
     public static void loadNCM(String cookie) {
         OptionsUtil.setCookie(cookie);
         profile = getUserProfile();
 
-        if (profile == null)
+        if (profile == null) {
             return;
+        }
 
         ConsoleScreen.log("[NCM] Logged in as {}({})", profile.getName(), profile.getId());
 
@@ -302,35 +333,37 @@ public class CloudMusic {
             onStop();
         }
 
-        List<PlayList> playLists = new ArrayList<>();
-
-        int page = 0;
-
-        while (true) {
-
-            List<PlayList> pl;
-
-            try {
-                pl = profile.playLists(page, 30);
-
-                if (pl.isEmpty())
-                    break;
-
-                playLists.addAll(pl);
-            } catch (Exception e) {
-
-            }
-
-            page += 1;
-        }
-
-        CloudMusic.playLists = playLists;
-
+        CloudMusic.playLists = loadUserPlaylists();
         ConsoleScreen.log("[NCM] Loaded {} playlists", playLists.size());
 
         likeList = likeList();
-
         NCMScreen.getInstance().markDirty();
+    }
+    
+    private static List<PlayList> loadUserPlaylists() {
+        List<PlayList> userPlaylists = new ArrayList<>();
+        int page = 0;
+
+        while (true) {
+            List<PlayList> pagePlaylists = fetchPlaylistsPage(page);
+            
+            if (pagePlaylists.isEmpty()) {
+                break;
+            }
+            
+            userPlaylists.addAll(pagePlaylists);
+            page++;
+        }
+        
+        return userPlaylists;
+    }
+    
+    private static List<PlayList> fetchPlaylistsPage(int page) {
+        try {
+            return profile.playLists(page, 30);
+        } catch (Exception e) {
+            return new ArrayList<>();
+        }
     }
 
     @SneakyThrows
@@ -359,84 +392,114 @@ public class CloudMusic {
     public static volatile boolean dontAdd = false;
 
     public static void prev() {
-
-        if (playedFrom != null) {
-            playList.get(curIdx).updPlayCount(playedFrom, player.getCurrentTimeSeconds());
+        updatePlayCountIfNeeded();
+        
+        if (!canPlayPrevious()) {
+            return;
         }
-
-        if (curIdx - 1 < 0) {
-
-            if (playMode == PlayMode.LoopInList) {
-                curIdx = playList.size();
-            } else if (playMode == PlayMode.LoopSingle) {
-                curIdx++;
-            } else {
-                return;
-            }
-        }
-
+        
         if (player != null && !playList.isEmpty()) {
-
+            prepareForTrackChange();
             curIdx--;
-
-            player.close();
-
-            dontAdd = true;
-            playing.set(false);
+            stopCurrentPlayback();
         }
+    }
+    
+    private static boolean canPlayPrevious() {
+        if (curIdx - 1 >= 0) {
+            return true;
+        }
+        
+        if (playMode == PlayMode.LoopInList) {
+            curIdx = playList.size();
+            return true;
+        } else if (playMode == PlayMode.LoopSingle) {
+            curIdx++;
+            return true;
+        }
+        
+        return false;
     }
 
     public static void next() {
-        if (curIdx + 1 > playList.size() - 1 && playMode == PlayMode.Sequential)
+        if (!canPlayNext()) {
             return;
-
-        if (player != null && !playList.isEmpty()) {
-            player.close();
-
-            if (playedFrom != null) {
-                playList.get(curIdx).updPlayCount(playedFrom, player.getCurrentTimeSeconds());
-            }
-
-            curIdx ++;
-
-            dontAdd = true;
-            playing.set(false);
         }
+        
+        if (player != null && !playList.isEmpty()) {
+            updatePlayCountIfNeeded();
+            prepareForTrackChange();
+            curIdx++;
+            stopCurrentPlayback();
+        }
+    }
+    
+    private static boolean canPlayNext() {
+        if (curIdx + 1 > playList.size() - 1 && playMode == PlayMode.Sequential) {
+            return false;
+        }
+        return true;
+    }
+    
+    private static void updatePlayCountIfNeeded() {
+        if (playedFrom != null && player != null) {
+            playList.get(curIdx).updPlayCount(playedFrom, player.getCurrentTimeSeconds());
+        }
+    }
+    
+    private static void prepareForTrackChange() {
+        dontAdd = true;
+    }
+    
+    private static void stopCurrentPlayback() {
+        player.close();
+        playing.set(false);
     }
 
     public static PlayList playedFrom = null;
 
     @SneakyThrows
     public static void play(List<Music> songs, int startIdx) {
-
-        // avoid modifying the list
-        songs = new ArrayList<>(songs);
-
+        List<Music> safeSongList = new ArrayList<>(songs);
+        
+        stopExistingPlayThread();
+        
+        if (playMode == PlayMode.Random) {
+            startIdx = handleRandomPlayMode(safeSongList, startIdx);
+        }
+        
+        startIdx = normalizeStartIndex(startIdx);
+        loadMusicCover(safeSongList.getFirst());
+        
+        playList = safeSongList;
+        startNewPlayThread(safeSongList, startIdx);
+    }
+    
+    private static void stopExistingPlayThread() throws InterruptedException {
         if (playThread != null) {
             doBreak = true;
             playing.set(false);
             playThread.interrupt();
             playThread.join();
         }
-
-        if (playMode == PlayMode.Random) {
-            if (startIdx == -1) {
-                Collections.shuffle(songs);
-            } else {
-                Music music = songs.get(startIdx);
-                Collections.shuffle(songs);
-                startIdx = songs.indexOf(music);
-            }
-        }
-
-        loadMusicCover(songs.getFirst());
-
+    }
+    
+    private static int handleRandomPlayMode(List<Music> songs, int startIdx) {
         if (startIdx == -1) {
-            startIdx = 0;
+            Collections.shuffle(songs);
+        } else {
+            Music selectedMusic = songs.get(startIdx);
+            Collections.shuffle(songs);
+            startIdx = songs.indexOf(selectedMusic);
         }
-
-        playList = songs;
-
+        return startIdx;
+    }
+    
+    private static int normalizeStartIndex(int startIdx) {
+        return startIdx == -1 ? 0 : startIdx;
+    }
+    
+    private static void startNewPlayThread(List<Music> songs, int startIdx) {
         playThread = new PlayThread(songs, startIdx);
         doBreak = false;
         playing.set(false);
@@ -459,101 +522,144 @@ public class CloudMusic {
 
         @Override
         public void run() {
-
             curIdx = startIdx;
 
-            mainCycle:
-            while (curIdx < playList.size() && !doBreak && !this.isInterrupted()) {
-                Music song = playList.get(curIdx);
-
-                if (playList != songs) {
+            while (shouldContinuePlayback()) {
+                if (playListChanged()) {
                     break;
                 }
 
-                if (player != null && !player.isFinished()) {
-                    player.close();
-                    sleep(250);
+                Music currentSong = playList.get(curIdx);
+                prepareForPlayback();
+                
+                if (!playSong(currentSong)) {
+                    break;
                 }
-
-                loadMusicCover(playList.get(curIdx));
-
-                loadLyric(song);
-
-                currentlyPlaying = song;
-
-                Tuple<String, String> playUrl = song.getPlayUrl();
-
-                if (playUrl != null) {
-                    WidgetsManager.musicInfo.downloading = false;
-                    File musicFile = getMusicFile(playUrl, song);
-
-                    try {
-                        player = initializePlayer(musicFile);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        ConsoleScreen.log(EnumChatFormatting.RED + "[NCM] Failed to initiate audio player! Error: {}", e.getMessage());
-                        break;
-                    }
-
-                    MusicToast.pushMusicToast(song.getArtistsName() + " - " + song.getName());
-                    ConsoleScreen.log("[NCM] Now playing: {}, id {}", song.getName(), song.getId());
-
-                    try {
-                        player.play();
-                    } catch (ChannelMismatchException e) {
-                        player.player.cleanUp();
-                        musicFile.delete();
-                        player = initializePlayer(getMusicFile(playUrl, song));
-                    }
-                    playing.set(true);
-
-                    player.setAfterPlayed(() -> {
-                        this.notifyWaitLock();
-                        playing.set(false);
-                    });
-                } else {
-                    Minecraft mc = Minecraft.getMinecraft();
-
-                    if (mc.thePlayer != null) {
-                        mc.thePlayer.addChatMessage(EnumChatFormatting.RED + "无法播放: " + song.getName() + " - " + song.getArtistsName());
-                    }
-
-                    ConsoleScreen.log("{}无法播放: {} - {}, 可能因为该歌曲没有版权", EnumChatFormatting.RED, song.getName(), song.getArtistsName());
-                }
-
-                // load next music's cover
-                if (curIdx + 1 < playList.size()) {
-                    loadMusicCover(playList.get(curIdx + 1));
-                }
-
-                while (playing.get()) {
-                    if (this.isInterrupted() || doBreak)
-                        break mainCycle;
-
-                    CloudMusic.updateCurrentLyric(player.getCurrentTimeMillis());
-
-                    try {
-                        player.doDetections();
-                        Thread.sleep(10L);
-                    } catch (Exception e) {
-//                        e.printStackTrace();
-                    }
-                }
-
-                if (!dontAdd) {
-                    if (playedFrom != null) {
-                        playList.get(curIdx).updPlayCount(playedFrom, player.getCurrentTimeSeconds());
-                    }
-                }
-
-                player.close();
-
-                updateCurIdx();
-
-//                if (curIdx < playList.size()) {
-//                    loadMusicCover(playList.get(curIdx));
-//                }
+                
+                preloadNextCover();
+                waitForPlaybackCompletion();
+                handlePlaybackCompletion();
+                updateCurrentIndex();
             }
+        }
+        
+        private boolean shouldContinuePlayback() {
+            return curIdx < playList.size() && !doBreak && !this.isInterrupted();
+        }
+        
+        private boolean playListChanged() {
+            return playList != songs;
+        }
+        
+        private void prepareForPlayback() {
+            stopPreviousPlayer();
+            loadMusicCover(playList.get(curIdx));
+        }
+        
+        private boolean playSong(Music song) {
+            loadLyric(song);
+            currentlyPlaying = song;
+            
+            Tuple<String, String> playUrl = song.getPlayUrl();
+            
+            if (playUrl == null) {
+                handleUnplayableSong(song);
+                return false;
+            }
+            
+            return initializeAndPlaySong(song, playUrl);
+        }
+        
+        private boolean initializeAndPlaySong(Music song, Tuple<String, String> playUrl) {
+            WidgetsManager.musicInfo.downloading = false;
+            File musicFile = getMusicFile(playUrl, song);
+            
+            try {
+                player = initializePlayer(musicFile);
+            } catch (Exception e) {
+                handlePlayerInitializationError(e);
+                return false;
+            }
+            
+            notifySongStart(song);
+            startPlayback(song, playUrl, musicFile);
+            return true;
+        }
+        
+        private void waitForPlaybackCompletion() {
+            while (playing.get()) {
+                if (this.isInterrupted() || doBreak) {
+                    break;
+                }
+                
+                CloudMusic.updateCurrentLyric(player.getCurrentTimeMillis());
+                
+                try {
+                    player.doDetections();
+                    Thread.sleep(10L);
+                } catch (Exception e) {
+                    // Ignore interruption exceptions during playback
+                }
+            }
+        }
+        
+        private void handlePlaybackCompletion() {
+            if (!dontAdd && playedFrom != null) {
+                playList.get(curIdx).updPlayCount(playedFrom, player.getCurrentTimeSeconds());
+            }
+            
+            player.close();
+        }
+        
+        private void stopPreviousPlayer() {
+            if (player != null && !player.isFinished()) {
+                player.close();
+                sleep(250);
+            }
+        }
+        
+        private void handleUnplayableSong(Music song) {
+            Minecraft mc = Minecraft.getMinecraft();
+            if (mc.thePlayer != null) {
+                mc.thePlayer.addChatMessage(EnumChatFormatting.RED + "无法播放: " + song.getName() + " - " + song.getArtistsName());
+            }
+            ConsoleScreen.log("{}无法播放: {} - {}, 可能因为该歌曲没有版权", EnumChatFormatting.RED, song.getName(), song.getArtistsName());
+        }
+        
+        private void handlePlayerInitializationError(Exception e) {
+            e.printStackTrace();
+            ConsoleScreen.log(EnumChatFormatting.RED + "[NCM] Failed to initiate audio player! Error: {}", e.getMessage());
+        }
+        
+        private void notifySongStart(Music song) {
+            MusicToast.pushMusicToast(song.getArtistsName() + " - " + song.getName());
+            ConsoleScreen.log("[NCM] Now playing: {}, id {}", song.getName(), song.getId());
+        }
+        
+        private void startPlayback(Music song, Tuple<String, String> playUrl, File musicFile) {
+            try {
+                player.play();
+            } catch (ChannelMismatchException e) {
+                player.player.cleanUp();
+                musicFile.delete();
+                player = initializePlayer(getMusicFile(playUrl, song));
+            }
+            playing.set(true);
+            
+            player.setAfterPlayed(() -> {
+                this.notifyWaitLock();
+                playing.set(false);
+            });
+        }
+        
+        private void preloadNextCover() {
+            if (curIdx + 1 < playList.size()) {
+                loadMusicCover(playList.get(curIdx + 1));
+            }
+        }
+        
+        private void updateCurrentIndex() {
+            updateCurIdx();
         }
 
         private File getMusicFile(Tuple<String, String> playUrl, Music song) {
@@ -671,55 +777,66 @@ public class CloudMusic {
     }
 
     public static void loadMusicCover(Music music) {
-        CloudMusic.loadMusicCover(music, false);
+        loadMusicCover(music, false);
     }
 
     public static void loadMusicCover(Music music, boolean forceReload) {
-
         Location musicCover = music.getCoverLocation();
         Location musicCoverSmall = music.getSmallCoverLocation();
         Location musicCoverBlur = music.getBlurredCoverLocation();
-        TextureManager tm = Minecraft.getMinecraft().getTextureManager();
+        TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
 
-        if (tm.getTexture(musicCover) == null || forceReload) {
-            MultiThreadingUtil.runAsync(() -> {
-                try {
-                    @Cleanup
-                    InputStream is = HttpUtils.downloadStream(music.getCoverUrl(320), 5);
+        if (shouldLoadCover(textureManager, musicCover, forceReload)) {
+            loadMainCoverAsync(music, musicCover, musicCoverBlur);
+        }
 
-                    byte[] byteArray = IOUtils.toByteArray(is);
-                    is.close();
-
-                    BufferedImage read = NativeBackedImage.make(new ByteArrayInputStream(byteArray));
-
-                    if (read != null) {
-
-                        MultiThreadingUtil.runAsync(() -> {
-                            BufferedImage input = new BufferedImage(read.getWidth(), read.getHeight(), BufferedImage.TYPE_INT_ARGB);
-                            input.setRGB(0, 0, read.getWidth(), read.getHeight(), read.getRGB(0, 0, read.getWidth(), read.getHeight(), null, 0, read.getWidth()), 0, read.getWidth());
-
-                            BufferedImage blurred = gaussianBlur(input, 31);
-                            Textures.loadTexture(musicCoverBlur, blurred);
-                        });
-
-                        Textures.loadTexture(musicCover, read);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
+        if (shouldLoadCover(textureManager, musicCoverSmall, forceReload)) {
+            loadSmallCoverAsync(music, musicCoverSmall);
+        }
+    }
+    
+    private static boolean shouldLoadCover(TextureManager textureManager, Location coverLocation, boolean forceReload) {
+        return textureManager.getTexture(coverLocation) == null || forceReload;
+    }
+    
+    private static void loadMainCoverAsync(Music music, Location musicCover, Location musicCoverBlur) {
+        MultiThreadingUtil.runAsync(() -> {
+            try {
+                @Cleanup
+                InputStream coverStream = HttpUtils.downloadStream(music.getCoverUrl(320), 5);
+                byte[] imageData = IOUtils.toByteArray(coverStream);
+                
+                BufferedImage coverImage = NativeBackedImage.make(new ByteArrayInputStream(imageData));
+                
+                if (coverImage != null) {
+                    loadCoverTextures(coverImage, musicCover, musicCoverBlur);
                 }
-            });
-        }
-
-        if (tm.getTexture(musicCoverSmall) == null || forceReload) {
-            MultiThreadingUtil.runAsync(() -> {
-                InputStream isSmall = HttpUtils.downloadStream(music.getCoverUrl(128), 5);
-
-                BufferedImage readSmall = NativeBackedImage.make(isSmall);
-                Textures.loadTexture(musicCoverSmall, readSmall);
-            });
-        }
-
-
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    
+    private static void loadCoverTextures(BufferedImage coverImage, Location musicCover, Location musicCoverBlur) {
+        Textures.loadTexture(musicCover, coverImage);
+        
+        MultiThreadingUtil.runAsync(() -> {
+            BufferedImage inputImage = new BufferedImage(coverImage.getWidth(), coverImage.getHeight(), BufferedImage.TYPE_INT_ARGB);
+            inputImage.setRGB(0, 0, coverImage.getWidth(), coverImage.getHeight(), 
+                             coverImage.getRGB(0, 0, coverImage.getWidth(), coverImage.getHeight(), null, 0, coverImage.getWidth()), 
+                             0, coverImage.getWidth());
+            
+            BufferedImage blurredImage = gaussianBlur(inputImage, 31);
+            Textures.loadTexture(musicCoverBlur, blurredImage);
+        });
+    }
+    
+    private static void loadSmallCoverAsync(Music music, Location musicCoverSmall) {
+        MultiThreadingUtil.runAsync(() -> {
+            InputStream smallCoverStream = HttpUtils.downloadStream(music.getCoverUrl(128), 5);
+            BufferedImage smallCoverImage = NativeBackedImage.make(smallCoverStream);
+            Textures.loadTexture(musicCoverSmall, smallCoverImage);
+        });
     }
 
     private static final Kernel GAUSSIAN_KERNEL = new Kernel(41, 41, GaussianKernel.generate(41));
@@ -1005,30 +1122,27 @@ public class CloudMusic {
 
 
     public static List<Music> search(String keyWord) {
-        List<Music> list = new ArrayList<>();
-
-        JsonObject json = CloudMusicApi.cloudSearch(keyWord, CloudMusicApi.SearchType.Single).toJsonObject();
-
-        JsonArray songs = null;
-        try {
-            JsonObject result = json.getAsJsonObject("result");
-            if (result != null) {
-                songs = result.getAsJsonArray("songs");
-
-            }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
+        List<Music> searchResults = new ArrayList<>();
+        JsonObject searchResponse = CloudMusicApi.cloudSearch(keyWord, CloudMusicApi.SearchType.Single).toJsonObject();
+        
+        JsonArray songs = extractSongsFromResponse(searchResponse);
+        
         if (songs != null) {
             for (JsonElement song : songs) {
-                list.add(JsonUtils.parse(song.getAsJsonObject(), Music.class));
+                searchResults.add(JsonUtils.parse(song.getAsJsonObject(), Music.class));
             }
         }
-//        JsonObject data = post.toJson();
-
-
-        return list;
+        
+        return searchResults;
+    }
+    
+    private static JsonArray extractSongsFromResponse(JsonObject searchResponse) {
+        try {
+            JsonObject result = searchResponse.getAsJsonObject("result");
+            return result != null ? result.getAsJsonArray("songs") : null;
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse search response", e);
+        }
     }
 
     public static List<Long> likeList() {

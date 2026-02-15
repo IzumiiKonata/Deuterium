@@ -114,7 +114,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
     }
 
-    private static double getLyricWidthFactor() {
+    public static double getLyricWidthFactor() {
         return .48;
     }
 
@@ -126,7 +126,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         return .25;
     }
 
-    private static void updateLyricPositionsImmediate(double width) {
+    public static void updateLyricPositionsImmediate(double width) {
 
         if (CloudMusic.currentLyric == null) return;
 
