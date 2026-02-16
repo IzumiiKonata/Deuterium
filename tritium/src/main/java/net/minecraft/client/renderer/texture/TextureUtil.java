@@ -148,23 +148,35 @@ public class TextureUtil {
         return textureId;
     }
 
-    static final int[] textureData = new int[4194304];
-
     private static void uploadTextureImageSubImpl(BufferedImage img, int xOffset, int yOffset, boolean blur, boolean clamp) {
         int width = img.getWidth();
         int height = img.getHeight();
-        int k = 4194304 / width;
+
+        int maxBufferSize = 4194304;
+        int maxInts = maxBufferSize / 4;
+        int chunkHeight = Math.max(1, Math.min(maxInts / width, height));
+        int optimalBufferSize = width * chunkHeight;
+
         setTextureBlurred(blur);
         setTextureClamped(clamp);
 
-        IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(4194304);
+        IntBuffer dataBuffer = GLAllocation.createDirectIntBuffer(optimalBufferSize);
 
-        for (int l = 0; l < width * height; l += width * k) {
-            int i1 = l / width;
-            int j1 = Math.min(k, height - i1);
-            int k1 = width * j1;
-            img.getRGB(0, i1, width, j1, textureData, 0, width);
-            copyToBuffer(textureData, k1, dataBuffer);
+        for (int i1 = 0; i1 < height; i1 += chunkHeight) {
+            int j1 = Math.min(chunkHeight, height - i1);
+
+            dataBuffer.clear();
+            for (int y = 0; y < j1; y++) {
+                for (int x = 0; x < width; x++) {
+                    int pixel = img.getRGB(x, i1 + y);
+                    if (Minecraft.getMinecraft().gameSettings.anaglyph) {
+                        pixel = anaglyphColor(pixel);
+                    }
+                    dataBuffer.put(pixel);
+                }
+            }
+            dataBuffer.flip();
+
             GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, xOffset, yOffset + i1, width, j1, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
         }
 
@@ -242,22 +254,6 @@ public class TextureUtil {
                 bufferedimage = NativeBackedImage.make(imageStream);
             } finally {
                 IOUtils.closeQuietly(imageStream);
-            }
-
-            return bufferedimage;
-        }
-    }
-
-    public static NativeBackedImage readBufferedImageNoClosing(InputStream imageStream)  {
-        if (imageStream == null) {
-            return null;
-        } else {
-            NativeBackedImage bufferedimage;
-
-            try {
-                bufferedimage = NativeBackedImage.makeNoClosing(imageStream);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
 
             return bufferedimage;

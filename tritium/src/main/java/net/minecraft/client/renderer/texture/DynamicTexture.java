@@ -15,6 +15,7 @@ import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 @Getter
@@ -136,9 +137,6 @@ public class DynamicTexture extends AbstractTexture {
     @Setter
     protected boolean linear = false;
 
-    static final int BUFFER_SIZE = 2097152;
-    static final IntBuffer DATA_BUFFER = MemoryTracker.memAllocInt(BUFFER_SIZE);
-
     @SneakyThrows
     public void updateDynamicTexture() {
 
@@ -161,35 +159,53 @@ public class DynamicTexture extends AbstractTexture {
             DevUtils.printCurrentInvokeStack();
         }
 
-        IntBuffer dataBuffer = DATA_BUFFER;
-        dataBuffer.clear();
-        MemoryUtil.memSet(dataBuffer, 0);
-        dataBuffer.clear();
+        int maxBufferSize = 2097152;
+        int bytesPerPixel = alphaTexture ? 1 : 4;
+        int maxPixels = maxBufferSize / bytesPerPixel;
+        int chunkHeight = Math.max(1, Math.min(maxPixels / width, height));
 
-        synchronized (dataBuffer) {
-            int i = BUFFER_SIZE / width;
-            int j;
+        int optimalBufferSize = width * chunkHeight * bytesPerPixel;
 
+        ByteBuffer dataBuffer = MemoryTracker.memAlloc(optimalBufferSize);
+
+        try {
             int[] aint = this.dynamicTextureData;
 
             if (mc.gameSettings.anaglyph) {
                 aint = TextureUtil.updateAnaglyph(this.dynamicTextureData);
             }
 
-            for (int k = 0; k < width * height; k += width * j) {
-                int l = k / width;
-                j = Math.min(i, height - l);
-                int i1 = width * j;
+            for (int l = 0; l < height; l += chunkHeight) {
+                int j = Math.min(chunkHeight, height - l);
+                int k = l * width;
+                int pixelCount = width * j;
 
                 dataBuffer.clear();
-                dataBuffer.put(aint, k, i1);
+
+                if (alphaTexture) {
+                    for (int i = 0; i < pixelCount; i++) {
+                        int pixel = aint[k + i];
+                        dataBuffer.put((byte) ((pixel >> 24) & 0xFF));
+                    }
+                } else {
+                    for (int i = 0; i < pixelCount; i++) {
+                        int pixel = aint[k + i];
+                        dataBuffer.putInt(pixel);
+                    }
+                }
+
                 dataBuffer.flip();
 
-                if (alphaTexture)
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL11.GL_ALPHA, GL12.GL_UNSIGNED_BYTE, dataBuffer);
-                else
-                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, dataBuffer);
+                if (alphaTexture) {
+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j,
+                            GL11.GL_ALPHA, GL11.GL_UNSIGNED_BYTE, dataBuffer);
+                } else {
+                    GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, l, width, j,
+                            GL12.GL_BGRA, GL11.GL_UNSIGNED_BYTE, dataBuffer);
+                }
             }
+        } finally {
+            MemoryTracker.memFree(dataBuffer);
         }
 
         if (mc.checkGLError("Dynamic Texture @ updateDynamicTexture @ indirect subImage2D")) {
