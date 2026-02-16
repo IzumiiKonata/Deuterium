@@ -49,13 +49,16 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
     public int[] getRGB(int startX, int startY, int w, int h, int[] rgbArray, int offset, int scansize) {
 
         if (rgbArray == null) {
-            rgbArray = new int[offset+h*scansize];
+            int requiredSize = offset + h * scansize;
+            rgbArray = new int[requiredSize];
         }
 
-        // Inverse itr for cache coherency
-        for (int z = startY; z < h; z++) {
-            for (int x = startX; x < w; x++) {
-                int color = MemoryUtil.memGetInt(this.pointer + ((x + (long) z * width) * 4));
+        long basePointer = this.pointer + ((startX + (long) startY * width) * 4);
+        
+        for (int z = 0; z < h; z++) {
+            long rowPointer = basePointer + ((long) z * width * 4);
+            for (int x = 0; x < w; x++) {
+                int color = MemoryUtil.memGetInt(rowPointer + (x * 4));
                 // ABGR -> ARGB
                 int a = (color >> 24) & 0xFF;
                 int b = (color >> 16) & 0xFF;
@@ -64,7 +67,7 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
 
                 int finalColor = (a << 24) | (r << 16) | (g << 8) | b;
 
-                rgbArray[x + (z * width)] = finalColor;
+                rgbArray[offset + x + (z * scansize)] = finalColor;
             }
         }
 
@@ -177,9 +180,14 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
         ByteBuffer byteBuffer;
         if (inputStream instanceof FileInputStream) {
             FileChannel fileChannel = ((FileInputStream) inputStream).getChannel();
-            byteBuffer = MemoryTracker.memAlloc((int) fileChannel.size() + 1);
+            long fileSize = fileChannel.size();
+            
+            byteBuffer = MemoryTracker.memAlloc((int) fileSize);
 
-            while (fileChannel.read(byteBuffer) != -1) {
+            int totalRead = 0;
+            int read;
+            while (totalRead < fileSize && (read = fileChannel.read(byteBuffer)) != -1) {
+                totalRead += read;
             }
         } else {
             int sizeGuess = 4096;
@@ -188,12 +196,17 @@ public class NativeBackedImage extends BufferedImage implements AutoCloseable {
             } catch (IOException ignored) {
             }
 
-            byteBuffer = MemoryTracker.memAlloc(sizeGuess * 2);
+            byteBuffer = MemoryTracker.memAlloc(sizeGuess);
 
-            while (read(byteBuffer, inputStream) != -1) {
-                // If we've filled the buffer, make it twice as large and reparse
+            while (true) {
+                int read = read(byteBuffer, inputStream);
+                if (read == -1) {
+                    break;
+                }
+                
                 if (byteBuffer.remaining() == 0) {
-                    byteBuffer = MemoryTracker.memRealloc(byteBuffer, byteBuffer.capacity() * 2);
+                    int newCapacity = byteBuffer.capacity() + Math.max(4096, byteBuffer.capacity() / 2);
+                    byteBuffer = MemoryTracker.memRealloc(byteBuffer, newCapacity);
                 }
             }
         }
