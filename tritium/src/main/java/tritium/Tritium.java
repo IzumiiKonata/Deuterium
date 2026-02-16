@@ -81,7 +81,7 @@ public class Tritium {
 
     public void run() {
 
-        logger.debug("run() 方法 已被调用");
+        logger.debug("Tritium.run() got called");
 
         Version ver = Tritium.getVersion();
 
@@ -113,7 +113,7 @@ public class Tritium {
 
         for (AbstractManager manager : this.managers) {
 
-            logger.debug("正在调用 {} 的 init() 方法...", manager.getName());
+            logger.debug("calling init() on {}...", manager.getName());
             manager.init();
             EventManager.register(manager);
 
@@ -123,16 +123,12 @@ public class Tritium {
 
         RenderSystem.refreshSkinCache();
 
-        // init ingame ime
         IngameIMEJNI.loadNative();
         if (IngameIMEJNI.supported && ClientSettings.IN_GAME_IME.getValue())
             IngameIMERenderer.createInputCtx();
 
         LoadingRenderer.setProgress(100, NAME + " - Finish");
 
-        logger.debug("加载完成!");
-
-        System.gc();
         clientLoaded = true;
 
         ConsoleScreen.log("[Tritium] Tritium {}", ver.toString());
@@ -140,11 +136,11 @@ public class Tritium {
     }
 
     public void stop() {
-        logger.debug("stop() 方法 已被调用");
+        logger.debug("Tritium.stop() got called");
 
         for (AbstractManager manager : this.managers) {
 
-            logger.debug("正在调用 {} 的 stop() 方法...", manager.getName());
+            logger.debug("calling stop() on {}...", manager.getName());
             manager.stop();
             EventManager.unregister(manager);
 

@@ -210,8 +210,8 @@ public class IngameIMEJNI {
         if (initialized)
             return;
 
-        if (Util.getOSType() == Util.EnumOS.OSX) {
-            supported = true;
+        if (Util.getOSType() != Util.EnumOS.WINDOWS) {
+            supported = false;
             return;
         }
 
