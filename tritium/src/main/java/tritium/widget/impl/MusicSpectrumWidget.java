@@ -153,8 +153,8 @@ public class MusicSpectrumWidget extends Widget {
                 GlStateManager.disableTexture2D();
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-                int zLayerFixer = 100;
-                GlStateManager.translate(0, 0, -zLayerFixer);
+//                int zLayerFixer = 100;
+//                GlStateManager.translate(0, 0, -zLayerFixer);
 
                 boolean gradientRect = this.rectColor.chroma.getValue();
 
@@ -172,7 +172,7 @@ public class MusicSpectrumWidget extends Widget {
                     GlStateManager.shadeModel(GL11.GL_FLAT);
                 }
 
-                GlStateManager.translate(0, 0, zLayerFixer);
+//                GlStateManager.translate(0, 0, zLayerFixer);
             }
 
             if (waveform) {
