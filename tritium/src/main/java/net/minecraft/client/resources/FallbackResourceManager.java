@@ -5,7 +5,6 @@ import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.util.Location;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
-import tritium.utils.optimization.InputStreamLeakageTracker;
 
 import java.io.*;
 import java.util.List;
@@ -62,7 +61,7 @@ public class FallbackResourceManager implements IResourceManager {
     }
 
     protected InputStream getInputStream(Location location, IResourcePack resourcePack) throws IOException {
-        return /*logger.isDebugEnabled() ? new InputStreamLeakedResourceLogger(inputstream, location, resourcePack.getPackName()) : */InputStreamLeakageTracker.wrap(resourcePack.getInputStream(location));
+        return /*logger.isDebugEnabled() ? new InputStreamLeakedResourceLogger(inputstream, location, resourcePack.getPackName()) : */resourcePack.getInputStream(location);
     }
 
     public List<IResource> getAllResources(Location location) throws IOException {

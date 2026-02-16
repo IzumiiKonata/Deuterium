@@ -29,12 +29,9 @@ public class LaunchClassLoader extends URLClassLoader {
 
     private Set<String> classLoaderExceptions = new HashSet<>();
     private Set<String> transformerExceptions = new HashSet<>();
-    private Map<String,byte[]> resourceCache = new ConcurrentHashMap<>(1000);
     private Set<String> negativeResourceCache = Collections.newSetFromMap(new ConcurrentHashMap<>());
 
     private IClassNameTransformer renameTransformer;
-
-    private final ThreadLocal<byte[]> loadBuffer = new ThreadLocal<>();
 
     private static final String[] RESERVED_NAMES = {"CON", "PRN", "AUX", "NUL", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"};
 
@@ -299,37 +296,19 @@ public class LaunchClassLoader extends URLClassLoader {
 
     private byte[] readFully(InputStream stream) {
         try {
-            byte[] buffer = getOrCreateBuffer();
+            byte[] buffer = new byte[BUFFER_SIZE];
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
             int read;
-            int totalLength = 0;
-            while ((read = stream.read(buffer, totalLength, buffer.length - totalLength)) != -1) {
-                totalLength += read;
-
-                // Extend our buffer
-                if (totalLength >= buffer.length - 1) {
-                    byte[] newBuffer = new byte[buffer.length + BUFFER_SIZE];
-                    System.arraycopy(buffer, 0, newBuffer, 0, buffer.length);
-                    buffer = newBuffer;
-                }
+            while ((read = stream.read(buffer)) != -1) {
+                outputStream.write(buffer, 0, read);
             }
 
-            final byte[] result = new byte[totalLength];
-            System.arraycopy(buffer, 0, result, 0, totalLength);
-            return result;
+            return outputStream.toByteArray();
         } catch (Throwable t) {
             LogWrapper.log(Level.WARN, t, "Problem loading class");
             return new byte[0];
         }
-    }
-
-    private byte[] getOrCreateBuffer() {
-        byte[] buffer = loadBuffer.get();
-        if (buffer == null) {
-            loadBuffer.set(new byte[BUFFER_SIZE]);
-            buffer = loadBuffer.get();
-        }
-        return buffer;
     }
 
     public List<IClassTransformer> getTransformers() {
@@ -347,16 +326,32 @@ public class LaunchClassLoader extends URLClassLoader {
     public byte[] getClassBytes(String name) throws IOException {
         if (negativeResourceCache.contains(name)) {
             return null;
-        } else if (resourceCache.containsKey(name)) {
-            return resourceCache.get(name);
         }
+        
+        // Handle reserved names without recursion
         if (name.indexOf('.') == -1) {
             for (final String reservedName : RESERVED_NAMES) {
                 if (name.toUpperCase(Locale.ENGLISH).startsWith(reservedName)) {
-                    final byte[] data = getClassBytes("_" + name);
-                    if (data != null) {
-                        resourceCache.put(name, data);
-                        return data;
+                    String modifiedName = "_" + name;
+                    if (negativeResourceCache.contains(modifiedName)) {
+                        return null;
+                    }
+                    
+                    final String resourcePath = modifiedName.replace('.', '/').concat(".class");
+                    final URL classResource = findResource(resourcePath);
+                    
+                    if (classResource != null) {
+                        InputStream classStream = null;
+                        try {
+                            classStream = classResource.openStream();
+                            if (DEBUG) LogWrapper.finest("Loading class %s from resource %s", modifiedName, classResource.toString());
+                            return readFully(classStream);
+                        } finally {
+                            closeSilently(classStream);
+                        }
+                    } else {
+                        negativeResourceCache.add(modifiedName);
+                        return null;
                     }
                 }
             }
@@ -376,7 +371,6 @@ public class LaunchClassLoader extends URLClassLoader {
 
             if (DEBUG) LogWrapper.finest("Loading class %s from resource %s", name, classResource.toString());
             final byte[] data = readFully(classStream);
-            resourceCache.put(name, data);
             return data;
         } finally {
             closeSilently(classStream);
