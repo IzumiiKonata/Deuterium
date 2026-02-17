@@ -43,49 +43,12 @@ public class PaperDoll extends Widget {
         double posX = this.getX();
         double posY = this.getY();
 
-        if (ClientSettings.VIDEO_PRESET.getValue() == ClientSettings.VideoPreset.Quality) {
-
-            GlStateManager.pushMatrix();
-            this.doScale();
-            GlStateManager.color(1, 1, 1, 1);
-
-            fb = RenderSystem.createFrameBuffer(fb);
-
-            fb.bindFramebuffer(true);
-            fb.framebufferClearNoBinding();
-//                GlStateManager.pushMatrix();
-
-            drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
-            GlStateManager.popMatrix();
-
-//                GlStateManager.popMatrix();
-
-            mc.getFramebuffer().bindFramebuffer(true);
-
-            GlStateManager.bindTexture(fb.framebufferTexture);
-            ShaderProgram.drawQuadFlipped();
-
-            SharedRenderingConstants.BLOOM.add(() -> {
-//                GlStateManager.pushMatrix();
-//                this.doScale();
-
-                GlStateManager.enableBlend();
-                GlStateManager.disableAlpha();
-                OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-                GlStateManager.bindTexture(fb.framebufferTexture);
-                GlStateManager.color(0, 0, 0, 1);
-                ShaderProgram.drawQuadFlipped();
-                GlStateManager.bindTexture(0);
-//                GlStateManager.popMatrix();
-            });
-        } else {
-            GlStateManager.pushMatrix();
-            this.doScale();
-            GlStateManager.color(1, 1, 1, 1);
-            drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
-            GlStateManager.popMatrix();
-        }
-
+        GlStateManager.pushMatrix();
+        this.doScale();
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.depthMask(true);
+        drawEntityOnScreen(posX, posY, 100, mc.thePlayer);
+        GlStateManager.popMatrix();
 //        GlStateManager.popAttrib();
 
         this.setWidth(115);
