@@ -193,6 +193,9 @@ public class GuiIngame extends Gui {
 
             GlStateManager.enableBlend();
             OpenGlHelper.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GlStateManager.enableTexture2D();
+//            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
 
             ItemStack itemstack = this.mc.thePlayer.inventory.armorItemInSlot(3);
 

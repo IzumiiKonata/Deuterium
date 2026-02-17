@@ -40,6 +40,8 @@ public class Inventory extends Widget {
 
         int count = 0;
 
+//        GlStateManager.enableDepth();
+        GlStateManager.depthMask(false);
 
         for (ItemStack stack : InvUtils.getInventoryContent()) {
 
