@@ -92,210 +92,65 @@ public class WorldRenderer {
         }
     }
 
-    public void sortVertexData(float p_181674_1_, float p_181674_2_, float p_181674_3_) {
-//        int i = this.vertexCount / 4;
-//        final float[] afloat = new float[i];
-//
-//        for (int j = 0; j < i; ++j) {
-//            afloat[j] = getDistanceSq(this.rawFloatBuffer, (float) ((double) p_181674_1_ + this.xOffset), (float) ((double) p_181674_2_ + this.yOffset), (float) ((double) p_181674_3_ + this.zOffset), this.vertexFormat.getIntegerSize(), j * this.vertexFormat.getNextOffset());
-//        }
-//
-//        Integer[] ainteger = new Integer[i];
-//
-//        for (int k = 0; k < ainteger.length; ++k) {
-//            ainteger[k] = k;
-//        }
-//
-//        Arrays.sort(ainteger, new Comparator<Integer>() {
-//            public int compare(Integer p_compare_1_, Integer p_compare_2_) {
-//                return Floats.compare(afloat[p_compare_2_.intValue()], afloat[p_compare_1_.intValue()]);
-//            }
-//        });
-//        BitSet bitset = new BitSet();
-//        int l = this.vertexFormat.getNextOffset();
-//        int[] aint = new int[l];
-//
-//        for (int l1 = 0; (l1 = bitset.nextClearBit(l1)) < ainteger.length; ++l1) {
-//            int i1 = ainteger[l1].intValue();
-//
-//            if (i1 != l1) {
-//                this.rawIntBuffer.limit(i1 * l + l);
-//                this.rawIntBuffer.position(i1 * l);
-//                this.rawIntBuffer.get(aint);
-//                int j1 = i1;
-//
-//                for (int k1 = ainteger[i1].intValue(); j1 != l1; k1 = ainteger[k1].intValue()) {
-//                    this.rawIntBuffer.limit(k1 * l + l);
-//                    this.rawIntBuffer.position(k1 * l);
-//                    IntBuffer intbuffer = this.rawIntBuffer.slice();
-//                    this.rawIntBuffer.limit(j1 * l + l);
-//                    this.rawIntBuffer.position(j1 * l);
-//                    this.rawIntBuffer.put(intbuffer);
-//                    bitset.set(j1);
-//                    j1 = k1;
-//                }
-//
-//                this.rawIntBuffer.limit(l1 * l + l);
-//                this.rawIntBuffer.position(l1 * l);
-//                this.rawIntBuffer.put(aint);
-//            }
-//
-//            bitset.set(l1);
-//        }
-//
-//        this.rawIntBuffer.limit(this.rawIntBuffer.capacity());
-//        this.rawIntBuffer.position(this.getBufferSize());
-//
-//        if (this.quadSprites != null) {
-//            TextureAtlasSprite[] atextureatlassprite = new TextureAtlasSprite[this.vertexCount / 4];
-//            int i2 = this.vertexFormat.getNextOffset() / 4 * 4;
-//
-//            for (int j2 = 0; j2 < ainteger.length; ++j2) {
-//                int k2 = ainteger[j2].intValue();
-//                atextureatlassprite[j2] = this.quadSprites[k2];
-//            }
-//
-//            System.arraycopy(atextureatlassprite, 0, this.quadSprites, 0, atextureatlassprite.length);
-//        }
+    public void sortVertexData(float x, float y, float z) {
+        int i = this.vertexCount / 4;
+        final float[] afloat = new float[i];
 
-        this.byteBuffer.clear();
-        FloatBuffer floatBuffer = this.byteBuffer.asFloatBuffer();
-
-        int vertexStride = this.vertexFormat.getSize();
-        int quadStride = this.vertexFormat.getIntegerSize() * 4;
-
-        int quadCount = this.vertexCount / 4;
-        int vertexSizeInteger = this.vertexFormat.getIntegerSize();
-
-        float[] distanceArray = new float[quadCount];
-        int[] indicesArray = new int[quadCount];
-
-        for (int quadIdx = 0; quadIdx < quadCount; ++quadIdx) {
-            distanceArray[quadIdx] = getDistanceSq(floatBuffer, p_181674_1_, p_181674_2_, p_181674_3_, vertexSizeInteger, quadIdx * vertexStride);
-            indicesArray[quadIdx] = quadIdx;
+        for (int j = 0; j < i; ++j) {
+            afloat[j] = getDistanceSq(this.rawFloatBuffer, (float) ((double) x + this.xOffset), (float) ((double) y + this.yOffset), (float) ((double) z + this.zOffset), this.vertexFormat.getIntegerSize(), j * this.vertexFormat.getSize());
         }
 
-        mergeSort(indicesArray, distanceArray);
+        Integer[] ainteger = new Integer[i];
 
-        BitSet bits = new BitSet();
+        for (int k = 0; k < ainteger.length; ++k) {
+            ainteger[k] = k;
+        }
 
-        FloatBuffer tmp = FloatBuffer.allocate(vertexSizeInteger * 4);
+        Arrays.sort(ainteger, (p1, p2) -> Floats.compare(afloat[p2], afloat[p1]));
+        BitSet bitset = new BitSet();
+        int l = this.vertexFormat.getSize();
+        int[] aint = new int[l];
 
-        for (int l = bits.nextClearBit(0); l < indicesArray.length; l = bits.nextClearBit(l + 1)) {
-            int m = indicesArray[l];
+        for (int l1 = 0; (l1 = bitset.nextClearBit(l1)) < ainteger.length; ++l1) {
+            int i1 = ainteger[l1];
 
-            if (m != l) {
-                sliceQuad(floatBuffer, m, quadStride);
-                tmp.clear();
-                tmp.put(floatBuffer);
+            if (i1 != l1) {
+                this.rawIntBuffer.limit(i1 * l + l);
+                this.rawIntBuffer.position(i1 * l);
+                this.rawIntBuffer.get(aint);
+                int j1 = i1;
 
-                int n = m;
-
-                for (int o = indicesArray[m]; n != l; o = indicesArray[o]) {
-                    sliceQuad(floatBuffer, o, quadStride);
-                    FloatBuffer floatBuffer3 = floatBuffer.slice();
-
-                    sliceQuad(floatBuffer, n, quadStride);
-                    floatBuffer.put(floatBuffer3);
-
-                    bits.set(n);
-                    n = o;
+                for (int k1 = ainteger[i1]; j1 != l1; k1 = ainteger[k1]) {
+                    this.rawIntBuffer.limit(k1 * l + l);
+                    this.rawIntBuffer.position(k1 * l);
+                    IntBuffer intbuffer = this.rawIntBuffer.slice();
+                    this.rawIntBuffer.limit(j1 * l + l);
+                    this.rawIntBuffer.position(j1 * l);
+                    this.rawIntBuffer.put(intbuffer);
+                    bitset.set(j1);
+                    j1 = k1;
                 }
 
-                sliceQuad(floatBuffer, l, quadStride);
-                tmp.flip();
-
-                floatBuffer.put(tmp);
+                this.rawIntBuffer.limit(l1 * l + l);
+                this.rawIntBuffer.position(l1 * l);
+                this.rawIntBuffer.put(aint);
             }
 
-            bits.set(l);
-        }
-    }
-
-    private static void mergeSort(int[] indicesArray, float[] distanceArray) {
-        mergeSort(indicesArray, 0, indicesArray.length, distanceArray, Arrays.copyOf(indicesArray, indicesArray.length));
-    }
-
-    private static void sliceQuad(FloatBuffer floatBuffer, int quadIdx, int quadStride) {
-        int base = quadIdx * quadStride;
-
-        floatBuffer.limit(base + quadStride);
-        floatBuffer.position(base);
-    }
-
-    private static float getDistanceSq(FloatBuffer buffer, float xCenter, float yCenter, float zCenter, int stride, int start) {
-        int vertexBase = start;
-        float x1 = buffer.get(vertexBase);
-        float y1 = buffer.get(vertexBase + 1);
-        float z1 = buffer.get(vertexBase + 2);
-
-        vertexBase += stride;
-        float x2 = buffer.get(vertexBase);
-        float y2 = buffer.get(vertexBase + 1);
-        float z2 = buffer.get(vertexBase + 2);
-
-        vertexBase += stride;
-        float x3 = buffer.get(vertexBase);
-        float y3 = buffer.get(vertexBase + 1);
-        float z3 = buffer.get(vertexBase + 2);
-
-        vertexBase += stride;
-        float x4 = buffer.get(vertexBase);
-        float y4 = buffer.get(vertexBase + 1);
-        float z4 = buffer.get(vertexBase + 2);
-
-        float xDist = ((x1 + x2 + x3 + x4) * 0.25F) - xCenter;
-        float yDist = ((y1 + y2 + y3 + y4) * 0.25F) - yCenter;
-        float zDist = ((z1 + z2 + z3 + z4) * 0.25F) - zCenter;
-
-        return (xDist * xDist) + (yDist * yDist) + (zDist * zDist);
-    }
-
-    private static void mergeSort(final int[] a, final int from, final int to, float[] dist, final int[] supp) {
-        int len = to - from;
-
-        // Insertion sort on smallest arrays
-        if (len < 16) {
-            insertionSort(a, from, to, dist);
-            return;
+            bitset.set(l1);
         }
 
-        // Recursively sort halves of a into supp
-        final int mid = (from + to) >>> 1;
-        mergeSort(supp, from, mid, dist, a);
-        mergeSort(supp, mid, to, dist, a);
+        this.rawIntBuffer.limit(this.rawIntBuffer.capacity());
+        this.rawIntBuffer.position(this.getBufferSize());
 
-        // If list is already sorted, just copy from supp to a. This is an
-        // optimization that results in faster sorts for nearly ordered lists.
-        if (Floats.compare(dist[supp[mid]], dist[supp[mid - 1]]) <= 0) {
-            System.arraycopy(supp, from, a, from, len);
-            return;
-        }
+        if (this.quadSprites != null) {
+            TextureAtlasSprite[] atextureatlassprite = new TextureAtlasSprite[this.vertexCount / 4];
 
-        // Merge sorted halves (now in supp) into a
-        for (int i = from, p = from, q = mid; i < to; i++) {
-            if (q >= to || p < mid && Floats.compare(dist[supp[q]], dist[supp[p]]) <= 0) {
-                a[i] = supp[p++];
-            } else {
-                a[i] = supp[q++];
-            }
-        }
-    }
-
-    private static void insertionSort(final int[] a, final int from, final int to, final float[] dist) {
-        for (int i = from; ++i < to; ) {
-            int t = a[i];
-            int j = i;
-
-            for (int u = a[j - 1]; Floats.compare(dist[u], dist[t]) < 0; u = a[--j - 1]) {
-                a[j] = u;
-                if (from == j - 1) {
-                    --j;
-                    break;
-                }
+            for (int j2 = 0; j2 < ainteger.length; ++j2) {
+                int k2 = ainteger[j2];
+                atextureatlassprite[j2] = this.quadSprites[k2];
             }
 
-            a[j] = t;
+            System.arraycopy(atextureatlassprite, 0, this.quadSprites, 0, atextureatlassprite.length);
         }
     }
 
@@ -320,6 +175,25 @@ public class WorldRenderer {
 
     public int getBufferSize() {
         return this.vertexCount * this.vertexFormat.getIntegerSize();
+    }
+
+    private static float getDistanceSq(FloatBuffer buffer, float p_181665_1_, float p_181665_2_, float p_181665_3_, int p_181665_4_, int p_181665_5_) {
+        float f = buffer.get(p_181665_5_ + p_181665_4_ * 0 + 0);
+        float f1 = buffer.get(p_181665_5_ + p_181665_4_ * 0 + 1);
+        float f2 = buffer.get(p_181665_5_ + p_181665_4_ * 0 + 2);
+        float f3 = buffer.get(p_181665_5_ + p_181665_4_ * 1 + 0);
+        float f4 = buffer.get(p_181665_5_ + p_181665_4_ * 1 + 1);
+        float f5 = buffer.get(p_181665_5_ + p_181665_4_ * 1 + 2);
+        float f6 = buffer.get(p_181665_5_ + p_181665_4_ * 2 + 0);
+        float f7 = buffer.get(p_181665_5_ + p_181665_4_ * 2 + 1);
+        float f8 = buffer.get(p_181665_5_ + p_181665_4_ * 2 + 2);
+        float f9 = buffer.get(p_181665_5_ + p_181665_4_ * 3 + 0);
+        float f10 = buffer.get(p_181665_5_ + p_181665_4_ * 3 + 1);
+        float f11 = buffer.get(p_181665_5_ + p_181665_4_ * 3 + 2);
+        float f12 = (f + f3 + f6 + f9) * 0.25F - p_181665_1_;
+        float f13 = (f1 + f4 + f7 + f10) * 0.25F - p_181665_2_;
+        float f14 = (f2 + f5 + f8 + f11) * 0.25F - p_181665_3_;
+        return f12 * f12 + f13 * f13 + f14 * f14;
     }
 
     final VertexFormat vfmt = new VertexFormat();
