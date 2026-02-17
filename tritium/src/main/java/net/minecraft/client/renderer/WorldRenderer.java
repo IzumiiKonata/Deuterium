@@ -1,6 +1,7 @@
 package net.minecraft.client.renderer;
 
 import com.google.common.primitives.Floats;
+import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.vertex.VertexFormat;
@@ -38,11 +39,17 @@ public class WorldRenderer {
      */
     public boolean noColor;
     public int drawMode;
+    @Getter
     private double xOffset;
+    @Getter
     private double yOffset;
+    @Getter
     private double zOffset;
+    @Getter
     private VertexFormat vertexFormat;
+    @Getter
     private boolean isDrawing;
+    @Getter
     private EnumWorldBlockLayer blockLayer = null;
     private boolean[] drawnIcons = new boolean[256];
     private TextureAtlasSprite[] quadSprites = null;
@@ -56,19 +63,22 @@ public class WorldRenderer {
     private ByteBuffer byteBufferTriangles;
 
     public WorldRenderer(int bufferSizeIn) {
-        this.byteBuffer = MemoryTracker.memAlloc(bufferSizeIn * 4);
+        this.byteBuffer = MemoryTracker.memAlloc(bufferSizeIn * 4); // 4 bytes per int
         this.rawIntBuffer = this.byteBuffer.asIntBuffer();
         this.rawShortBuffer = this.byteBuffer.asShortBuffer();
         this.rawFloatBuffer = this.byteBuffer.asFloatBuffer();
         SVertexBuilder.initVertexBuilder(this);
     }
 
-    private void growBuffer(int p_181670_1_) {
-        if (p_181670_1_ > this.rawIntBuffer.remaining()) {
+    /**
+     * @param growSize needed size to grow (in ints)
+     */
+    private void growBuffer(int growSize) {
+        if (growSize > this.rawIntBuffer.remaining()) {
             int i = this.byteBuffer.capacity();
             int j = i % 2097152;
-            int k = j + (((this.rawIntBuffer.position() + p_181670_1_) * 4 - j) / 2097152 + 1) * 2097152;
-            logger.warn("Needed to grow BufferBuilder buffer: Old size " + i + " bytes, new size " + k + " bytes.");
+            int k = j + (((this.rawIntBuffer.position() + growSize) * 4 - j) / 2097152 + 1) * 2097152;
+            logger.warn("Needed to grow BufferBuilder buffer: Old size {} bytes, new size {} bytes.", i, k);
             int l = this.rawIntBuffer.position();
             ByteBuffer bytebuffer = MemoryTracker.memAlloc(k);
             this.byteBuffer.position(0);
@@ -106,37 +116,37 @@ public class WorldRenderer {
             ainteger[k] = k;
         }
 
-        Arrays.sort(ainteger, (p1, p2) -> Floats.compare(afloat[p2], afloat[p1]));
+        Arrays.sort(ainteger, (idxA, idxB) -> Floats.compare(afloat[idxB], afloat[idxA]));
         BitSet bitset = new BitSet();
         int l = this.vertexFormat.getSize();
         int[] aint = new int[l];
 
-        for (int l1 = 0; (l1 = bitset.nextClearBit(l1)) < ainteger.length; ++l1) {
-            int i1 = ainteger[l1];
+        for (int outerIndex = 0; (outerIndex = bitset.nextClearBit(outerIndex)) < ainteger.length; ++outerIndex) {
+            int targetIndex = ainteger[outerIndex];
 
-            if (i1 != l1) {
-                this.rawIntBuffer.limit(i1 * l + l);
-                this.rawIntBuffer.position(i1 * l);
+            if (targetIndex != outerIndex) {
+                this.rawIntBuffer.limit(targetIndex * l + l);
+                this.rawIntBuffer.position(targetIndex * l);
                 this.rawIntBuffer.get(aint);
-                int j1 = i1;
+                int currIndex = targetIndex;
 
-                for (int k1 = ainteger[i1]; j1 != l1; k1 = ainteger[k1]) {
-                    this.rawIntBuffer.limit(k1 * l + l);
-                    this.rawIntBuffer.position(k1 * l);
+                for (int nextIndex = ainteger[targetIndex]; currIndex != outerIndex; nextIndex = ainteger[nextIndex]) {
+                    this.rawIntBuffer.limit(nextIndex * l + l);
+                    this.rawIntBuffer.position(nextIndex * l);
                     IntBuffer intbuffer = this.rawIntBuffer.slice();
-                    this.rawIntBuffer.limit(j1 * l + l);
-                    this.rawIntBuffer.position(j1 * l);
+                    this.rawIntBuffer.limit(currIndex * l + l);
+                    this.rawIntBuffer.position(currIndex * l);
                     this.rawIntBuffer.put(intbuffer);
-                    bitset.set(j1);
-                    j1 = k1;
+                    bitset.set(currIndex);
+                    currIndex = nextIndex;
                 }
 
-                this.rawIntBuffer.limit(l1 * l + l);
-                this.rawIntBuffer.position(l1 * l);
+                this.rawIntBuffer.limit(outerIndex * l + l);
+                this.rawIntBuffer.position(outerIndex * l);
                 this.rawIntBuffer.put(aint);
             }
 
-            bitset.set(l1);
+            bitset.set(outerIndex);
         }
 
         this.rawIntBuffer.limit(this.rawIntBuffer.capacity());
@@ -177,22 +187,22 @@ public class WorldRenderer {
         return this.vertexCount * this.vertexFormat.getIntegerSize();
     }
 
-    private static float getDistanceSq(FloatBuffer buffer, float p_181665_1_, float p_181665_2_, float p_181665_3_, int p_181665_4_, int p_181665_5_) {
-        float f = buffer.get(p_181665_5_ + p_181665_4_ * 0 + 0);
-        float f1 = buffer.get(p_181665_5_ + p_181665_4_ * 0 + 1);
-        float f2 = buffer.get(p_181665_5_ + p_181665_4_ * 0 + 2);
-        float f3 = buffer.get(p_181665_5_ + p_181665_4_ * 1 + 0);
-        float f4 = buffer.get(p_181665_5_ + p_181665_4_ * 1 + 1);
-        float f5 = buffer.get(p_181665_5_ + p_181665_4_ * 1 + 2);
-        float f6 = buffer.get(p_181665_5_ + p_181665_4_ * 2 + 0);
-        float f7 = buffer.get(p_181665_5_ + p_181665_4_ * 2 + 1);
-        float f8 = buffer.get(p_181665_5_ + p_181665_4_ * 2 + 2);
-        float f9 = buffer.get(p_181665_5_ + p_181665_4_ * 3 + 0);
-        float f10 = buffer.get(p_181665_5_ + p_181665_4_ * 3 + 1);
-        float f11 = buffer.get(p_181665_5_ + p_181665_4_ * 3 + 2);
-        float f12 = (f + f3 + f6 + f9) * 0.25F - p_181665_1_;
-        float f13 = (f1 + f4 + f7 + f10) * 0.25F - p_181665_2_;
-        float f14 = (f2 + f5 + f8 + f11) * 0.25F - p_181665_3_;
+    private static float getDistanceSq(FloatBuffer buffer, float x, float y, float z, int stride, int index) {
+        float f = buffer.get(index);
+        float f1 = buffer.get(index + 1);
+        float f2 = buffer.get(index + 2);
+        float f3 = buffer.get(index + stride);
+        float f4 = buffer.get(index + stride + 1);
+        float f5 = buffer.get(index + stride + 2);
+        float f6 = buffer.get(index + stride * 2);
+        float f7 = buffer.get(index + stride * 2 + 1);
+        float f8 = buffer.get(index + stride * 2 + 2);
+        float f9 = buffer.get(index + stride * 3);
+        float f10 = buffer.get(index + stride * 3 + 1);
+        float f11 = buffer.get(index + stride * 3 + 2);
+        float f12 = (f + f3 + f6 + f9) * 0.25F - x;
+        float f13 = (f1 + f4 + f7 + f10) * 0.25F - y;
+        float f14 = (f2 + f5 + f8 + f11) * 0.25F - z;
         return f12 * f12 + f13 * f13 + f14 * f14;
     }
 
@@ -354,13 +364,13 @@ public class WorldRenderer {
         return this;
     }
 
-    public void putBrightness4(int p_178962_1_, int p_178962_2_, int p_178962_3_, int p_178962_4_) {
+    public void putBrightness4(int bright0, int bright1, int bright2, int bright3) {
         int i = (this.vertexCount - 4) * this.vertexFormat.getIntegerSize() + this.vertexFormat.getUvOffsetById(1) / 4;
         int j = this.vertexFormat.getSize() >> 2;
-        this.rawIntBuffer.put(i, p_178962_1_);
-        this.rawIntBuffer.put(i + j, p_178962_2_);
-        this.rawIntBuffer.put(i + j * 2, p_178962_3_);
-        this.rawIntBuffer.put(i + j * 3, p_178962_4_);
+        this.rawIntBuffer.put(i, bright0);
+        this.rawIntBuffer.put(i + j, bright1);
+        this.rawIntBuffer.put(i + j * 2, bright2);
+        this.rawIntBuffer.put(i + j * 3, bright3);
     }
 
     public void putPosition(double x, double y, double z) {
@@ -380,12 +390,12 @@ public class WorldRenderer {
     /**
      * Takes in the pass the call list is being requested for. Args: renderPass
      */
-    public int getColorIndex(int p_78909_1_) {
-        return ((this.vertexCount - p_78909_1_) * this.vertexFormat.getSize() + this.vertexFormat.getColorOffset()) / 4;
+    public int getColorIndex(int vertexIndex) {
+        return ((this.vertexCount - vertexIndex) * this.vertexFormat.getSize() + this.vertexFormat.getColorOffset()) / 4;
     }
 
-    public void putColorMultiplier(float red, float green, float blue, int p_178978_4_) {
-        int i = this.getColorIndex(p_178978_4_);
+    public void putColorMultiplier(float red, float green, float blue, int vertexIndex) {
+        int i = this.getColorIndex(vertexIndex);
         int j = -1;
 
         if (!this.noColor) {
@@ -409,8 +419,8 @@ public class WorldRenderer {
         this.rawIntBuffer.put(i, j);
     }
 
-    public void putColor(int argb, int p_178988_2_) {
-        int i = this.getColorIndex(p_178988_2_);
+    public void putColor(int argb, int vertexIndex) {
+        int i = this.getColorIndex(vertexIndex);
         int j = argb >> 16 & 255;
         int k = argb >> 8 & 255;
         int l = argb & 255;
@@ -418,24 +428,24 @@ public class WorldRenderer {
         this.putColorRGBA(i, j, k, l, i1);
     }
 
-    public void putColorRGB_F(float red, float green, float blue, int p_178994_4_) {
-        int i = this.getColorIndex(p_178994_4_);
+    public void putColorRGB_F(float red, float green, float blue, int vertexIndex) {
+        int i = this.getColorIndex(vertexIndex);
         int j = MathHelper.clamp_int((int) (red * 255.0F), 0, 255);
         int k = MathHelper.clamp_int((int) (green * 255.0F), 0, 255);
         int l = MathHelper.clamp_int((int) (blue * 255.0F), 0, 255);
         this.putColorRGBA(i, j, k, l, 255);
     }
 
-    public void putColorRGBA(int index, int red, int p_178972_3_, int p_178972_4_, int p_178972_5_) {
+    public void putColorRGBA(int index, int red, int green, int blue, int alpha) {
         if (ByteOrder.nativeOrder() == ByteOrder.LITTLE_ENDIAN) {
-            this.rawIntBuffer.put(index, p_178972_5_ << 24 | p_178972_4_ << 16 | p_178972_3_ << 8 | red);
+            this.rawIntBuffer.put(index, alpha << 24 | blue << 16 | green << 8 | red);
         } else {
-            this.rawIntBuffer.put(index, red << 24 | p_178972_3_ << 16 | p_178972_4_ << 8 | p_178972_5_);
+            this.rawIntBuffer.put(index, red << 24 | green << 16 | blue << 8 | alpha);
         }
     }
 
     /**
-     * Disabels color processing.
+     * Disables color processing.
      */
     public void noColor() {
         this.noColor = true;
@@ -564,12 +574,12 @@ public class WorldRenderer {
         int j = (byte) ((int) (y * 127.0F)) & 255;
         int k = (byte) ((int) (z * 127.0F)) & 255;
         int l = i | j << 8 | k << 16;
-        int i1 = this.vertexFormat.getSize() >> 2;
-        int j1 = (this.vertexCount - 4) * i1 + this.vertexFormat.getNormalOffset() / 4;
-        this.rawIntBuffer.put(j1, l);
-        this.rawIntBuffer.put(j1 + i1, l);
-        this.rawIntBuffer.put(j1 + i1 * 2, l);
-        this.rawIntBuffer.put(j1 + i1 * 3, l);
+        int integerSize = this.vertexFormat.getSize() >> 2;
+        int normalOffset = (this.vertexCount - 4) * integerSize + this.vertexFormat.getNormalOffset() / 4;
+        this.rawIntBuffer.put(normalOffset, l);
+        this.rawIntBuffer.put(normalOffset + integerSize, l);
+        this.rawIntBuffer.put(normalOffset + integerSize * 2, l);
+        this.rawIntBuffer.put(normalOffset + integerSize * 3, l);
     }
 
     public void nextVertexFormatIndex() {
@@ -638,10 +648,6 @@ public class WorldRenderer {
         return this.modeTriangles ? this.byteBufferTriangles : this.byteBuffer;
     }
 
-    public VertexFormat getVertexFormat() {
-        return this.vertexFormat;
-    }
-
     public int getVertexCount() {
         return this.modeTriangles ? this.vertexCount / 4 * 6 : this.vertexCount;
     }
@@ -696,7 +702,6 @@ public class WorldRenderer {
             }
 
             Arrays.fill(this.drawnIcons, false);
-            int j = 0;
             int k = -1;
             int l = this.vertexCount / 4;
 
@@ -713,7 +718,6 @@ public class WorldRenderer {
                             }
                         } else {
                             i1 = this.drawForIcon(textureatlassprite, i1) - 1;
-                            ++j;
 
                             if (this.blockLayer != EnumWorldBlockLayer.TRANSLUCENT) {
                                 this.drawnIcons[j1] = true;
@@ -725,10 +729,6 @@ public class WorldRenderer {
 
             if (k >= 0) {
                 this.drawForIcon(TextureUtils.iconGrassSideOverlay, k);
-                ++j;
-            }
-
-            if (j > 0) {
             }
         }
     }
@@ -808,26 +808,6 @@ public class WorldRenderer {
         return this.renderEnv;
     }
 
-    public boolean isDrawing() {
-        return this.isDrawing;
-    }
-
-    public double getXOffset() {
-        return this.xOffset;
-    }
-
-    public double getYOffset() {
-        return this.yOffset;
-    }
-
-    public double getZOffset() {
-        return this.zOffset;
-    }
-
-    public EnumWorldBlockLayer getBlockLayer() {
-        return this.blockLayer;
-    }
-
     public void putColorMultiplierRgba(float p_putColorMultiplierRgba_1_, float p_putColorMultiplierRgba_2_, float p_putColorMultiplierRgba_3_, float p_putColorMultiplierRgba_4_, int p_putColorMultiplierRgba_5_) {
         int i = this.getColorIndex(p_putColorMultiplierRgba_5_);
         int j = -1;
@@ -896,10 +876,10 @@ public class WorldRenderer {
         private final VertexFormat stateVertexFormat;
         private TextureAtlasSprite[] stateQuadSprites;
 
-        public State(int[] p_i1_2_, VertexFormat p_i1_3_, TextureAtlasSprite[] p_i1_4_) {
-            this.stateRawBuffer = p_i1_2_;
-            this.stateVertexFormat = p_i1_3_;
-            this.stateQuadSprites = p_i1_4_;
+        public State(int[] rawBuffer, VertexFormat vertexFormat, TextureAtlasSprite[] quadSprites) {
+            this.stateRawBuffer = rawBuffer;
+            this.stateVertexFormat = vertexFormat;
+            this.stateQuadSprites = quadSprites;
         }
 
         public State(int[] buffer, VertexFormat format) {
