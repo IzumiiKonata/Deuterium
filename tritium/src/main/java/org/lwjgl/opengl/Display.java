@@ -1,5 +1,6 @@
 package org.lwjgl.opengl;
 
+import net.minecraft.client.Minecraft;
 import org.lwjgl.glfw.*;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.Platform;
@@ -141,6 +142,10 @@ public class Display {
         // on MacOS
 
         glfwWindowHint(GLFW_MOUSE_PASSTHROUGH, GLFW_FALSE);
+
+        // aa
+        int ofAaLevel = Minecraft.getMinecraft().gameSettings.ofAaLevel;
+        glfwWindowHint(GLFW_SAMPLES, ofAaLevel);
 
         Window.handle = glfwCreateWindow(mode.getWidth(), mode.getHeight(), windowTitle, NULL, NULL);
         if (Window.handle == 0L) {

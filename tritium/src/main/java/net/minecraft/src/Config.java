@@ -118,7 +118,6 @@ public class Config {
     public static void initDisplay() {
         checkInitialized();
         antialiasingLevel = gameSettings.ofAaLevel;
-        checkDisplaySettings();
         checkDisplayMode();
         minecraftThread = Thread.currentThread();
         updateThreadPriorities();
@@ -915,7 +914,7 @@ public class Config {
     }
 
     public static boolean isMultiTexture() {
-        return getAnisotropicFilterLevel() > 1 || getAntialiasingLevel() > 0;
+        return getAnisotropicFilterLevel() > 1;
     }
 
     public static boolean between(int p_between_0_, int p_between_1_, int p_between_2_) {
@@ -1411,46 +1410,6 @@ public class Config {
 
     public static String normalize(String p_normalize_0_) {
         return p_normalize_0_ == null ? "" : p_normalize_0_;
-    }
-
-    public static void checkDisplaySettings() {
-        int i = getAntialiasingLevel();
-
-        if (i > 0) {
-            DisplayMode displaymode = Display.getDisplayMode();
-            dbg("FSAA Samples: " + i);
-
-            Display.destroy();
-            Display.setDisplayMode(displaymode);
-            Display.create((new PixelFormat()).withDepthBits(24).withSamples(i));
-
-            if (Util.getOSType() == Util.EnumOS.WINDOWS) {
-                Display.setResizable(false);
-                Display.setResizable(true);
-            }
-
-            if (!Minecraft.isRunningOnMac && getDefaultResourcePack() != null) {
-                InputStream inputstream = null;
-                InputStream inputstream1 = null;
-
-                try {
-                    inputstream = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_16x16.png");
-                    inputstream1 = Minecraft.class.getResourceAsStream("/assets/minecraft/tritium/textures/icons/icon_32x32.png");
-
-                    if (inputstream != null && inputstream1 != null) {
-                        ByteBuffer[] icons = {readIconImage(inputstream), readIconImage(inputstream1)};
-                        Display.setIcon(icons);
-
-//                        for (ByteBuffer icon : icons) {
-//                            MemoryTracker.memFree(icon);
-//                        }
-                    }
-                } finally {
-                    IOUtils.closeQuietly(inputstream);
-                    IOUtils.closeQuietly(inputstream1);
-                }
-            }
-        }
     }
 
     public static ByteBuffer readIconImage(InputStream p_readIconImage_0_) {
