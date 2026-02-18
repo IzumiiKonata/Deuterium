@@ -86,7 +86,7 @@ public class EnchantmentHelper {
             if (enchantment != null) {
                 NBTTagCompound nbttagcompound = new NBTTagCompound();
                 nbttagcompound.setShort("id", (short) i);
-                nbttagcompound.setShort("lvl", (short) enchMap.get(i).intValue());
+                nbttagcompound.setShort("lvl", enchMap.get(i).shortValue());
                 nbttaglist.appendTag(nbttagcompound);
 
                 if (stack.getItem() == Items.enchanted_book) {
