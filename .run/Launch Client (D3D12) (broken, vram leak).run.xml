@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Launch Client (D3D12) (broken, vram leak)" type="Application" factoryName="Application" folderName="Renderers">
+    <option name="ALTERNATIVE_JRE_PATH" value="graalvm-jdk-25" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="Start" />
+    <module name="tritium" />
+    <option name="VM_PARAMETERS" value="--sun-misc-unsafe-memory-access=deny -Xmx2G -Xss512k -XX:+UseCompactObjectHeaders -XX:+UseG1GC -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=8m -XX:G1ReservePercent=15 -XX:InitiatingHeapOccupancyPercent=30 -XX:ReservedCodeCacheSize=128m -XX:+AlwaysPreTouch -XX:+DisableExplicitGC -XX:+UseStringDeduplication -Dsun.rmi.dgc.server.gcInterval=2147483646 -Dsun.rmi.dgc.client.gcInterval=2147483646 &quot;-javaagent:$ProjectFileDir$\run\mesa-loader-windows-25.3.5-x64.jar=d3d12&quot;" />
+    <option name="WORKING_DIRECTORY" value="$ProjectFileDir$/run" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="net.minecraft.client.main.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

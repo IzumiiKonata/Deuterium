@@ -1,0 +1,20 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Prelauncher" type="Application" factoryName="Application">
+    <option name="ALTERNATIVE_JRE_PATH" value="graalvm-ce-23" />
+    <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+    <option name="MAIN_CLASS_NAME" value="net.minecraft.client.main.Main" />
+    <module name="tritium" />
+    <option name="PROGRAM_PARAMETERS" value="--gameDir $ProjectFileDir$\run --assetsDir $ProjectFileDir$\run\assets --assetIndex 1.8 --accessToken 0 --version Tritium" />
+    <option name="VM_PARAMETERS" value="-Xmx2G -XX:NativeMemoryTracking=detail" />
+    <option name="WORKING_DIRECTORY" value="$ProjectFileDir$/run" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="net.minecraft.client.main.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
