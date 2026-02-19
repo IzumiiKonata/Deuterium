@@ -1,5 +1,6 @@
 package tritium.bridge.entity;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import today.opai.api.interfaces.game.entity.Player;
 
@@ -7,20 +8,24 @@ import today.opai.api.interfaces.game.entity.Player;
  * @author IzumiiKonata
  * Date: 2025/10/24 17:03
  */
-public class PlayerWrapper<T extends EntityPlayer> extends LivingEntityWrapper<T> implements Player {
+public class PlayerWrapper<T extends EntityPlayer> extends LivingEntityWrapper<EntityPlayer> implements Player {
 
     public PlayerWrapper(T mcEntity) {
         super(mcEntity);
     }
 
+    public EntityPlayer getMcEntity() {
+        return (EntityPlayer) super.getMcEntity();
+    }
+
     @Override
     public boolean canFlying() {
-        return ((EntityPlayer) this.mcEntity).capabilities.allowFlying;
+        return this.getMcEntity().capabilities.allowFlying;
     }
 
     @Override
     public boolean getFlying() {
-        return ((EntityPlayer) this.mcEntity).capabilities.isFlying;
+        return this.getMcEntity().capabilities.isFlying;
     }
 
     @Override
@@ -45,31 +50,31 @@ public class PlayerWrapper<T extends EntityPlayer> extends LivingEntityWrapper<T
 
     @Override
     public void setItemInUseCount(int count) {
-        ((EntityPlayer) this.mcEntity).itemInUseCount = count;
+        this.getMcEntity().itemInUseCount = count;
     }
 
     @Override
     public int getItemInUseCount() {
-        return ((EntityPlayer) this.mcEntity).itemInUseCount;
+        return this.getMcEntity().itemInUseCount;
     }
 
     @Override
     public boolean isBlocking() {
-        return ((EntityPlayer) this.mcEntity).isBlocking();
+        return this.getMcEntity().isBlocking();
     }
 
     @Override
     public boolean isUsingItem() {
-        return ((EntityPlayer) this.mcEntity).isUsingItem();
+        return this.getMcEntity().isUsingItem();
     }
 
     @Override
     public int getFoodLevel() {
-        return ((EntityPlayer) this.mcEntity).getFoodStats().getFoodLevel();
+        return this.getMcEntity().getFoodStats().getFoodLevel();
     }
 
     @Override
     public String getProfileName() {
-        return ((EntityPlayer) this.mcEntity).getGameProfile().getName();
+        return this.getMcEntity().getGameProfile().getName();
     }
 }

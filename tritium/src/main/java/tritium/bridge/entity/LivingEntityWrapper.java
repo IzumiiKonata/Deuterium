@@ -19,82 +19,87 @@ public class LivingEntityWrapper<T extends EntityLivingBase> extends EntityWrapp
     }
 
     @Override
+    public EntityLivingBase getMcEntity() {
+        return super.getMcEntity();
+    }
+
+    @Override
     public float getAbsorption() {
-        return mcEntity.getAbsorption();
+        return this.getMcEntity().getAbsorption();
     }
 
     @Override
     public float getMoveForward() {
-        return mcEntity.moveForward;
+        return this.getMcEntity().moveForward;
     }
 
     @Override
     public float getMoveStrafing() {
-        return mcEntity.moveStrafing;
+        return this.getMcEntity().moveStrafing;
     }
 
     @Override
     public void setMoveForward(float forward) {
-        mcEntity.moveForward = forward;
+        this.getMcEntity().moveForward = forward;
     }
 
     @Override
     public void setMoveStrafing(float strafing) {
-        mcEntity.moveStrafing = strafing;
+        this.getMcEntity().moveStrafing = strafing;
     }
 
     @Override
     public float getHealth() {
-        return mcEntity.getHealth();
+        return this.getMcEntity().getHealth();
     }
 
     @Override
     public float getMaxHealth() {
-        return mcEntity.getMaxHealth();
+        return this.getMcEntity().getMaxHealth();
     }
 
     @Override
     public boolean isOnLadder() {
-        return mcEntity.isOnLadder();
+        return this.getMcEntity().isOnLadder();
     }
 
     @Override
     public int getHurtTime() {
-        return mcEntity.hurtTime;
+        return this.getMcEntity().hurtTime;
     }
 
     @Override
     public void setJumpMovementFactor(float factor) {
-        mcEntity.jumpMovementFactor = factor;
+        this.getMcEntity().jumpMovementFactor = factor;
     }
 
     @Override
     public float getJumpMovementFactor() {
-        return mcEntity.jumpMovementFactor;
+        return this.getMcEntity().jumpMovementFactor;
     }
 
     @Override
     public ItemStack getArmorSlot(int slot) {
-        return this.mcEntity.getCurrentArmor(slot).getWrapper();
+        return this.getMcEntity().getCurrentArmor(slot).getWrapper();
     }
 
     @Override
     public ItemStack getHeldItem() {
-        return this.mcEntity.getHeldItem().getWrapper();
+        return this.getMcEntity().getHeldItem().getWrapper();
     }
 
     @Override
     public float getEyeHeight() {
-        return mcEntity.getEyeHeight();
+        return this.getMcEntity().getEyeHeight();
     }
 
     @Override
     public List<PotionEffect> getPotionEffects() {
-        return this.mcEntity.getActivePotionEffects().stream().map(net.minecraft.potion.PotionEffect::getWrapper).collect(Collectors.toList());
+        return this.getMcEntity().getActivePotionEffects().stream().map(net.minecraft.potion.PotionEffect::getWrapper).collect(Collectors.toList());
     }
 
     @Override
     public float getSwingProgress() {
-        return mcEntity.getSwingProgress();
+        return this.getMcEntity().getSwingProgress();
     }
 }

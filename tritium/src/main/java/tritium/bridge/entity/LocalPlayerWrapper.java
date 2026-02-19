@@ -2,6 +2,7 @@ package tritium.bridge.entity;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import today.opai.api.dataset.RotationData;
 import today.opai.api.enums.EnumResource;
@@ -18,50 +19,55 @@ import tritium.utils.player.PlayerUtils;
  * @author IzumiiKonata
  * Date: 2025/10/24 17:08
  */
-public class LocalPlayerWrapper<T extends EntityPlayerSP> extends PlayerWrapper<T> implements LocalPlayer {
+public class LocalPlayerWrapper<T extends EntityPlayerSP> extends PlayerWrapper<EntityPlayerSP> implements LocalPlayer {
 
     public LocalPlayerWrapper(T player) {
         super(player);
     }
 
     @Override
+    public EntityPlayerSP getMcEntity() {
+        return (EntityPlayerSP) super.getMcEntity();
+    }
+
+    @Override
     public void attack(Entity target) {
-        ((EntityPlayerSP) this.mcEntity).attackTargetEntityWithCurrentItem(mcEntity.worldObj.getEntityByID(target.getEntityId()));
+        this.getMcEntity().attackTargetEntityWithCurrentItem(this.getMcEntity().worldObj.getEntityByID(target.getEntityId()));
     }
 
     @Override
     public Inventory getInventory() {
-        return ((EntityPlayerSP) this.mcEntity).inventory.getWrapper();
+        return this.getMcEntity().inventory.getWrapper();
     }
 
     @Override
     public void sendChatMessage(String message) {
-        ((EntityPlayerSP) this.mcEntity).sendChatMessage(message);
+        this.getMcEntity().sendChatMessage(message);
     }
 
     @Override
     public void jump() {
-        ((EntityPlayerSP) this.mcEntity).jump();
+        this.getMcEntity().jump();
     }
 
     @Override
     public void swingItem() {
-        this.mcEntity.swingItem();
+        this.getMcEntity().swingItem();
     }
 
     @Override
     public void setSpeed(double speed) {
-        ((EntityPlayerSP) this.mcEntity).setMotion(speed);
+        this.getMcEntity().setMotion(speed);
     }
 
     @Override
     public int getItemSlot() {
-        return ((EntityPlayerSP) this.mcEntity).inventory.currentItem;
+        return this.getMcEntity().inventory.currentItem;
     }
 
     @Override
     public void setItemSlot(int slotId) {
-        ((EntityPlayerSP) this.mcEntity).inventory.currentItem = slotId;
+        this.getMcEntity().inventory.currentItem = slotId;
     }
 
     @Override
@@ -97,8 +103,8 @@ public class LocalPlayerWrapper<T extends EntityPlayerSP> extends PlayerWrapper<
     @Override
     public double getBaseMoveSpeed() {
         double baseSpeed = 0.2875D;
-        if (this.mcEntity.isPotionActive(Potion.moveSpeed))
-            baseSpeed *= 1.0D + 0.2D * (this.mcEntity.getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1);
+        if (this.getMcEntity().isPotionActive(Potion.moveSpeed))
+            baseSpeed *= 1.0D + 0.2D * (this.getMcEntity().getActivePotionEffect(Potion.moveSpeed).getAmplifier() + 1);
         return baseSpeed;
     }
 
