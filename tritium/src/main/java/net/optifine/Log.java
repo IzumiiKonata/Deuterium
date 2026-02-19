@@ -9,28 +9,28 @@ public class Log {
 
     public static void detail(final String s) {
         if (logDetail) {
-            LOGGER.info("[OptiFine] " + s);
+            LOGGER.info("[OptiFine] {}", s);
         }
     }
 
     public static void dbg(final String s) {
-        LOGGER.info("[OptiFine] " + s);
+        LOGGER.info("[OptiFine] {}", s);
     }
 
     public static void warn(final String s) {
-        LOGGER.warn("[OptiFine] " + s);
+        LOGGER.warn("[OptiFine] {}", s);
     }
 
     public static void warn(final String s, final Throwable t) {
-        LOGGER.warn("[OptiFine] " + s, t);
+        LOGGER.warn("[OptiFine] {}", s, t);
     }
 
     public static void error(final String s) {
-        LOGGER.error("[OptiFine] " + s);
+        LOGGER.error("[OptiFine] {}", s);
     }
 
     public static void error(final String s, final Throwable t) {
-        LOGGER.error("[OptiFine] " + s, t);
+        LOGGER.error("[OptiFine] {}", s, t);
     }
 
     public static void log(final String s) {

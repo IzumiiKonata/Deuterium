@@ -268,7 +268,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
                     double d15 = d11 * d11 + d12 * d12 + d13 * d13;
 
                     if (d15 - d14 > 100.0D && (!this.serverController.isSinglePlayer() || !this.serverController.getServerOwner().equals(this.playerEntity.getName()))) {
-                        logger.warn(this.playerEntity.getName() + " moved too quickly! " + d11 + "," + d12 + "," + d13 + " (" + d11 + ", " + d12 + ", " + d13 + ")");
+                        logger.warn("{} moved too quickly! {},{},{} ({}, {}, {})", this.playerEntity.getName(), d11, d12, d13, d11, d12, d13);
                         this.setPlayerLocation(this.lastPosX, this.lastPosY, this.lastPosZ, this.playerEntity.rotationYaw, this.playerEntity.rotationPitch);
                         return;
                     }
@@ -295,7 +295,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
 
                     if (d15 > 0.0625D && !this.playerEntity.isPlayerSleeping() && !this.playerEntity.theItemInWorldManager.isCreative()) {
                         flag1 = true;
-                        logger.warn(this.playerEntity.getName() + " moved wrongly!");
+                        logger.warn("{} moved wrongly!", this.playerEntity.getName());
                     }
 
                     this.playerEntity.setPositionAndRotation(d8, d9, d10, f1, f2);
@@ -317,7 +317,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
                             ++this.floatingTickCount;
 
                             if (this.floatingTickCount > 80) {
-                                logger.warn(this.playerEntity.getName() + " was kicked for floating too long!");
+                                logger.warn("{} was kicked for floating too long!", this.playerEntity.getName());
                                 this.kickPlayerFromServer("Flying is not enabled on this server");
                                 return;
                             }
@@ -553,7 +553,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
      * Invoked when disconnecting, the parameter is a ChatComponent describing the reason for termination
      */
     public void onDisconnect(IChatComponent reason) {
-        logger.info(this.playerEntity.getName() + " lost connection: " + reason);
+        logger.info("{} lost connection: {}", this.playerEntity.getName(), reason);
         this.serverController.refreshStatusNextTick();
         ChatComponentTranslation chatcomponenttranslation = new ChatComponentTranslation("multiplayer.player.left", this.playerEntity.getDisplayName());
         chatcomponenttranslation.getChatStyle().setColor(EnumChatFormatting.YELLOW);
@@ -600,7 +600,7 @@ public class NetHandlerPlayServer implements INetHandlerPlayServer, ITickable {
             this.playerEntity.inventory.currentItem = packetIn.getSlotId();
             this.playerEntity.markPlayerActive();
         } else {
-            logger.warn(this.playerEntity.getName() + " tried to set an invalid carried item");
+            logger.warn("{} tried to set an invalid carried item", this.playerEntity.getName());
         }
     }
 

@@ -53,7 +53,7 @@ public class GuiConnecting extends GuiScreen {
     }
 
     private void connect(final String ip, final int port) {
-        logger.info("Connecting to " + ip + ", " + port);
+        logger.info("Connecting to {}, {}", ip, port);
         (new Thread("Server Connector #" + CONNECTION_ID.incrementAndGet()) {
             public void run() {
                 InetAddress inetaddress = null;
@@ -102,7 +102,7 @@ public class GuiConnecting extends GuiScreen {
         mc.setServerData(new ServerData("Server", addr, false));
         String ip = serveraddress.getIP();
         int port = serveraddress.getPort();
-        logger.info("Connecting to " + ip + ", " + port);
+        logger.info("Connecting to {}, {}", ip, port);
         ConsoleScreen.log("Connecting to {}, {}", ip, port);
         (new Thread("Server Connector #" + CONNECTION_ID.incrementAndGet()) {
             NetworkManager networkManager;

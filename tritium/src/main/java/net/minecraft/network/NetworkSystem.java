@@ -166,7 +166,7 @@ public class NetworkSystem {
                                 throw new ReportedException(crashreport);
                             }
 
-                            logger.warn("Failed to handle packet for " + networkmanager.getRemoteAddress(), exception);
+                            logger.warn("Failed to handle packet for {}", networkmanager.getRemoteAddress(), exception);
                             final ChatComponentText chatcomponenttext = new ChatComponentText("Internal server error");
                             networkmanager.sendPacket(new S40PacketDisconnect(chatcomponenttext), p_operationComplete_1_ -> networkmanager.closeChannel(chatcomponenttext));
                             networkmanager.disableAutoRead();

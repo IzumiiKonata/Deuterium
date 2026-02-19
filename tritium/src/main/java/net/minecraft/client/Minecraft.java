@@ -367,7 +367,7 @@ public class Minecraft implements IThreadListener {
 
         this.proxy = gameConfig.userInfo.proxy == null ? Proxy.NO_PROXY : gameConfig.userInfo.proxy;
         this.session = gameConfig.userInfo.session;
-        logger.info("Setting user: " + this.session.getUsername());
+        logger.info("Setting user: {}", this.session.getUsername());
 //        logger.info("(Session ID is " + this.session.getSessionID() + ")");
         MultiThreadingUtil.runAsync(() -> this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService());
 
@@ -452,7 +452,7 @@ public class Minecraft implements IThreadListener {
 
         ConsoleScreen.log("[LWJGL] Version: {}", Sys.getVersion());
 
-        logger.info("LWJGL Version: " + Sys.getVersion());
+        logger.info("LWJGL Version: {}", Sys.getVersion());
         this.setInitialDisplayMode();
         this.createDisplay();
         this.setWindowIcon();
@@ -950,8 +950,8 @@ public class Minecraft implements IThreadListener {
             if (i != 0) {
                 String s = org.lwjglx.opengl.Util.translateGLErrorString(i);
                 logger.error("########## GL ERROR ##########");
-                logger.error("@ " + message);
-                logger.error(i + ": " + s);
+                logger.error("@ {}", message);
+                logger.error("{}: {}", i, s);
                 return true;
             }
         }

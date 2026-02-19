@@ -681,7 +681,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
         int j = MathHelper.floor_double(entityIn.posZ / 16.0D);
 
         if (i != this.xPosition || j != this.zPosition) {
-            logger.warn("Wrong location! (" + i + ", " + j + ") should be (" + this.xPosition + ", " + this.zPosition + "), {}", entityIn);
+            logger.warn("Wrong location! ({}, {}) should be ({}, {}), {}", i, j, this.xPosition, this.zPosition, entityIn);
             entityIn.setDead();
         }
 
@@ -1043,7 +1043,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 
     public void setStorageArrays(ExtendedBlockStorage[] newStorageArrays) {
         if (this.storageArrays.length != newStorageArrays.length) {
-            logger.warn("Could not set level chunk sections, array length is " + newStorageArrays.length + " instead of " + this.storageArrays.length);
+            logger.warn("Could not set level chunk sections, array length is {} instead of {}", newStorageArrays.length, this.storageArrays.length);
         } else {
             System.arraycopy(newStorageArrays, 0, this.storageArrays, 0, this.storageArrays.length);
         }
@@ -1139,7 +1139,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
      */
     public void setBiomeArray(byte[] biomeArray) {
         if (this.blockBiomeArray.length != biomeArray.length) {
-            logger.warn("Could not set level chunk biomes, array length is " + biomeArray.length + " instead of " + this.blockBiomeArray.length);
+            logger.warn("Could not set level chunk biomes, array length is {} instead of {}", biomeArray.length, this.blockBiomeArray.length);
         } else {
             System.arraycopy(biomeArray, 0, this.blockBiomeArray, 0, this.blockBiomeArray.length);
         }
@@ -1351,7 +1351,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
 
     public void setHeightMap(int[] newHeightMap) {
         if (this.heightMap.length != newHeightMap.length) {
-            logger.warn("Could not set level chunk heightmap, array length is " + newHeightMap.length + " instead of " + this.heightMap.length);
+            logger.warn("Could not set level chunk heightmap, array length is {} instead of {}", newHeightMap.length, this.heightMap.length);
         } else {
             System.arraycopy(newHeightMap, 0, this.heightMap, 0, this.heightMap.length);
         }
@@ -1472,7 +1472,7 @@ public class Chunk implements IChunkLighting, IChunkLightingData, ILightingEngin
             }
 
         } else {
-            Minecraft.getLogger().warn("Chunk is null! x: " + x + " z: " + z + " maxValue: " + maxValue);
+            Minecraft.getLogger().warn("Chunk is null! x: {} z: {} maxValue: {}", x, z, maxValue);
         }
     }
 
