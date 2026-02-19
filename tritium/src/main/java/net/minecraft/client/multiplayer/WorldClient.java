@@ -337,10 +337,10 @@ public class WorldClient extends World {
      */
     public CrashReportCategory addWorldInfoToCrashReport(CrashReport report) {
         CrashReportCategory crashreportcategory = super.addWorldInfoToCrashReport(report);
-        crashreportcategory.addCrashSectionCallable("Forced entities", () -> "共 " + WorldClient.this.entityList.size() + "; " + WorldClient.this.entityList);
-        crashreportcategory.addCrashSectionCallable("Retry entities", () -> "共 " + WorldClient.this.entitySpawnQueue.size() + "; " + WorldClient.this.entitySpawnQueue);
-        crashreportcategory.addCrashSectionCallable("服务器标识", () -> WorldClient.this.mc.thePlayer.getClientBrand());
-        crashreportcategory.addCrashSectionCallable("服务器类型", () -> WorldClient.this.mc.getIntegratedServer() == null ? "非本地多人服务器" : "本地单人服务器");
+        crashreportcategory.addCrashSectionCallable("Forced entities", () -> WorldClient.this.entityList.size() + " total; " + WorldClient.this.entityList);
+        crashreportcategory.addCrashSectionCallable("Retry entities", () -> WorldClient.this.entitySpawnQueue.size() + " total; " + WorldClient.this.entitySpawnQueue);
+        crashreportcategory.addCrashSectionCallable("Server brand", () -> WorldClient.this.mc.thePlayer.getClientBrand());
+        crashreportcategory.addCrashSectionCallable("Server type", () -> WorldClient.this.mc.getIntegratedServer() == null ? "Non-integrated multiplayer server" : "Integrated singleplayer server");
         return crashreportcategory;
     }
 

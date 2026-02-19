@@ -367,7 +367,7 @@ public class Minecraft implements IThreadListener {
 
         this.proxy = gameConfig.userInfo.proxy == null ? Proxy.NO_PROXY : gameConfig.userInfo.proxy;
         this.session = gameConfig.userInfo.session;
-        logger.info("正在设置用户名: " + this.session.getUsername());
+        logger.info("Setting user: " + this.session.getUsername());
 //        logger.info("(Session ID is " + this.session.getSessionID() + ")");
         MultiThreadingUtil.runAsync(() -> this.sessionService = (new YggdrasilAuthenticationService(gameConfig.userInfo.proxy, UUID.randomUUID().toString())).createMinecraftSessionService());
 
@@ -452,7 +452,7 @@ public class Minecraft implements IThreadListener {
 
         ConsoleScreen.log("[LWJGL] Version: {}", Sys.getVersion());
 
-        logger.info("LWJGL版本: " + Sys.getVersion());
+        logger.info("LWJGL Version: " + Sys.getVersion());
         this.setInitialDisplayMode();
         this.createDisplay();
         this.setWindowIcon();
@@ -649,6 +649,8 @@ public class Minecraft implements IThreadListener {
         ConsoleScreen.log("[Tritium] Client launched. Time used: %.2fs", startupTime);
 
         loaded = true;
+
+        ((String) null).getBytes();
     }
 
     private void registerMetadataSerializers() {
@@ -758,13 +760,13 @@ public class Minecraft implements IThreadListener {
         Bootstrap.printToSYSOUT(crashReportIn.getCompleteReport());
 
         if (crashReportIn.getFile() != null) {
-            Bootstrap.printToSYSOUT("#@!@# 游戏崩溃了! 崩溃报告已保存到: #@!@# " + crashReportIn.getFile());
+            Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + crashReportIn.getFile());
             System.exit(-1);
         } else if (crashReportIn.saveToFile(file2)) {
-            Bootstrap.printToSYSOUT("#@!@# 游戏崩溃了! 崩溃报告已保存到: #@!@# " + file2.getAbsolutePath());
+            Bootstrap.printToSYSOUT("#@!@# Game crashed! Crash report saved to: #@!@# " + file2.getAbsolutePath());
             System.exit(-1);
         } else {
-            Bootstrap.printToSYSOUT("#@?@# 游戏崩溃了! 崩溃报告无法保存. #@?@#");
+            Bootstrap.printToSYSOUT("#@?@# Game crashed! Crash report could not be saved. #@?@#");
             System.exit(-2);
         }
     }
@@ -1883,8 +1885,8 @@ public class Minecraft implements IThreadListener {
                     CrashReport crashreport2 = CrashReport.makeCrashReport(throwable2, "Exception in world tick");
 
                     if (this.theWorld == null) {
-                        CrashReportCategory crashreportcategory2 = crashreport2.makeCategory("受影响的世界");
-                        crashreportcategory2.addCrashSection("问题", "世界为空!");
+                        CrashReportCategory crashreportcategory2 = crashreport2.makeCategory("Affected level");
+                        crashreportcategory2.addCrashSection("Problem", "Level is null!");
                     } else {
                         this.theWorld.addWorldInfoToCrashReport(crashreport2);
                     }
@@ -2213,27 +2215,27 @@ public class Minecraft implements IThreadListener {
      * adds core server Info (GL version , Texture pack, isModded, type), and the worldInfo to the crash report
      */
     public CrashReport addGraphicsAndWorldToCrashReport(CrashReport theCrash) {
-        theCrash.getCategory().addCrashSectionCallable("启动的版本", () -> Minecraft.this.launchedVersion);
-        theCrash.getCategory().addCrashSectionCallable("LWJGL版本", Sys::getVersion);
-        theCrash.getCategory().addCrashSectionCallable("OpenGL版本", () -> {
+        theCrash.getCategory().addCrashSectionCallable("Launched Version", () -> Minecraft.this.launchedVersion);
+        theCrash.getCategory().addCrashSectionCallable("LWJGL", Sys::getVersion);
+        theCrash.getCategory().addCrashSectionCallable("OpenGL", () -> {
             if (!Display.isCreated()) {
-                return "Pre-start crash";
+                return "Pre-startup crash";
             } else {
                 if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-                    return GL11.glGetString(GL11.GL_RENDERER) + " GL 版本 " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
+                    return GL11.glGetString(GL11.GL_RENDERER) + " GL version " + GL11.glGetString(GL11.GL_VERSION) + ", " + GL11.glGetString(GL11.GL_VENDOR);
                 } else {
-                    return "不适用";
+                    return "N/A, not crashed from main thread";
                 }
             }
         });
-        theCrash.getCategory().addCrashSectionCallable("OpenGL 功能支持", () -> "\n\t\t" + String.join("\n\t\t", OpenGlHelper.getLogText().split("\n")));
-        theCrash.getCategory().addCrashSectionCallable("使用VBO", () -> Minecraft.this.gameSettings.useVbo ? "是" : "否");
-        theCrash.getCategory().addCrashSectionCallable("已被修改", () -> {
+        theCrash.getCategory().addCrashSectionCallable("GL Caps", () -> "\n\t\t" + String.join("\n\t\t", OpenGlHelper.getLogText().split("\n")));
+        theCrash.getCategory().addCrashSectionCallable("Using VBOs", () -> Minecraft.this.gameSettings.useVbo ? "Yes" : "No");
+        theCrash.getCategory().addCrashSectionCallable("Is Modded", () -> {
             String s = ClientBrandRetriever.getClientModName();
-            return !s.equals("vanilla") ? "肯定的; 客户端标识已被更改为 '" + s + "'" : (Minecraft.class.getSigners() == null ? "很有可能; Jar签名已失效" : "可能没有. Jar签名有效, 客户端标识未更改.");
+            return !s.equals("vanilla") ? "Definitely; Client brand changed to '" + s + "'" : (Minecraft.class.getSigners() == null ? "Very likely; Jar signature invalidated" : "Probably not. Jar signature remains and client brand is untouched.");
         });
-        theCrash.getCategory().addCrashSectionCallable("类型", () -> "客户端 (map_client.txt)");
-        theCrash.getCategory().addCrashSectionCallable("资源包", () -> {
+        theCrash.getCategory().addCrashSectionCallable("Type", () -> "Client (map_client.txt)");
+        theCrash.getCategory().addCrashSectionCallable("Resource Packs", () -> {
             StringBuilder stringbuilder = new StringBuilder();
 
             for (String s : Minecraft.this.gameSettings.resourcePacks) {
@@ -2244,34 +2246,34 @@ public class Minecraft implements IThreadListener {
                 stringbuilder.append(s);
 
                 if (Minecraft.this.gameSettings.incompatibleResourcePacks.contains(s)) {
-                    stringbuilder.append(" (不支持)");
+                    stringbuilder.append(" (incompatible)");
                 }
             }
 
             return stringbuilder.toString();
         });
-        theCrash.getCategory().addCrashSectionCallable("选中的语言", () -> Minecraft.this.mcLanguageManager.getCurrentLanguage().toString());
-        theCrash.getCategory().addCrashSectionCallable("分析器断点", () -> "N/A (已关闭)");
+        theCrash.getCategory().addCrashSectionCallable("Current Language", () -> Minecraft.this.mcLanguageManager.getCurrentLanguage().toString());
+        theCrash.getCategory().addCrashSectionCallable("Profiler Position", () -> "N/A (disabled)");
         theCrash.getCategory().addCrashSectionCallable("CPU", OpenGlHelper::getCpu);
 
         if (this.theWorld != null) {
             this.theWorld.addWorldInfoToCrashReport(theCrash);
         }
 
-        theCrash.getCategory().addCrashSection("OptiFine版本", Config.getVersion());
-        theCrash.getCategory().addCrashSection("OptiFine构建", Config.getBuild());
+        theCrash.getCategory().addCrashSection("OptiFine Version", Config.getVersion());
+        theCrash.getCategory().addCrashSection("OptiFine Build", Config.getBuild());
         if (Config.getGameSettings() != null) {
-            theCrash.getCategory().addCrashSection("区块渲染距离", "" + Config.getChunkViewDistance());
-            theCrash.getCategory().addCrashSection("Mipmaps (多级渐远纹理)", "" + Config.getMipmapLevels());
-            theCrash.getCategory().addCrashSection("各向异性过滤", "" + Config.getAnisotropicFilterLevel());
-            theCrash.getCategory().addCrashSection("抗锯齿", "" + Config.getAntialiasingLevel());
-            theCrash.getCategory().addCrashSection("多重纹理", "" + Config.isMultiTexture());
+            theCrash.getCategory().addCrashSection("Render Distance Chunks", "" + Config.getChunkViewDistance());
+            theCrash.getCategory().addCrashSection("Mipmaps", "" + Config.getMipmapLevels());
+            theCrash.getCategory().addCrashSection("Anisotropic Filtering", "" + Config.getAnisotropicFilterLevel());
+            theCrash.getCategory().addCrashSection("Antialiasing", "" + Config.getAntialiasingLevel());
+            theCrash.getCategory().addCrashSection("Multitexture", "" + Config.isMultiTexture());
         }
-        theCrash.getCategory().addCrashSection("光影包", Shaders.getShaderPackName());
-        theCrash.getCategory().addCrashSection("OpenGl版本", Config.openGlVersion);
-        theCrash.getCategory().addCrashSection("OpenGl渲染器", Config.openGlRenderer);
-        theCrash.getCategory().addCrashSection("OpenGl厂商", Config.openGlVendor);
-        theCrash.getCategory().addCrashSection("CPU核心数", "" + Config.getAvailableProcessors());
+        theCrash.getCategory().addCrashSection("Shaders", Shaders.getShaderPackName());
+        theCrash.getCategory().addCrashSection("OpenGL Version", Config.openGlVersion);
+        theCrash.getCategory().addCrashSection("OpenGL Renderer", Config.openGlRenderer);
+        theCrash.getCategory().addCrashSection("OpenGL Vendor", Config.openGlVendor);
+        theCrash.getCategory().addCrashSection("CPU Count", "" + Config.getAvailableProcessors());
 
         return theCrash;
     }

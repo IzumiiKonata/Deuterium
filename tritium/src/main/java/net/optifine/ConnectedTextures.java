@@ -1235,11 +1235,11 @@ public class ConnectedTextures {
         final List list = makePropertyList(tileProperties);
         final List list1 = makePropertyList(blockProperties);
         for (final String s : astring) {
-            Config.dbg("连接纹理: " + s);
+            Config.dbg("ConnectedTextures: " + s);
             try {
                 final Location resourcelocation = Location.of(s);
                 final InputStream inputstream = rp.getInputStream(resourcelocation);
-                if (inputstream == null) Config.warn("连接纹理文件未找到: " + s);
+                if (inputstream == null) Config.warn("ConnectedTextures file not found: " + s);
                 else {
                     final Properties properties = new PropertiesOrdered();
                     properties.load(inputstream);
@@ -1260,7 +1260,7 @@ public class ConnectedTextures {
         blockProperties = propertyListToArray(list1);
         tileProperties = propertyListToArray(list);
         multipass = detectMultipass();
-        Config.dbg("多通道连接纹理: " + multipass);
+        Config.dbg("Multipass connected textures: " + multipass);
     }
 
     private static List makePropertyList(final ConnectedProperties[][] propsArr) {

@@ -120,7 +120,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
     }
 
     public void loadTextureAtlas(IResourceManager resourceManager) {
-        Config.dbg("多重纹理: " + Config.isMultiTexture());
+        Config.dbg("Multitexture: " + Config.isMultiTexture());
 
         if (Config.isMultiTexture()) {
             for (TextureAtlasSprite textureatlassprite : this.mapUploadedSprites.values()) {
@@ -292,7 +292,7 @@ public class TextureMap extends AbstractTexture implements ITickableTextureObjec
                 throw stitcherexception;
             }
 
-            logger.info("已创建: {}x{} {}-纹理集", stitcher.getCurrentWidth(), stitcher.getCurrentHeight(), this.basePath);
+            logger.info("Created: {}x{} {}-atlas", stitcher.getCurrentWidth(), stitcher.getCurrentHeight(), this.basePath);
 
             if (Config.isShaders()) {
                 ShadersTex.allocateTextureMap(this.getGlTextureId(), this.mipmapLevels, stitcher.getCurrentWidth(), stitcher.getCurrentHeight(), stitcher, this);

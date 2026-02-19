@@ -210,7 +210,7 @@ public class TextureUtils {
 
     public static void resourcesReloaded(IResourceManager rm) {
         if (getTextureMapBlocks() != null) {
-            Config.dbg("*** 正在重新加载自定义纹理 ***");
+            Config.dbg("*** Reloading custom textures ***");
             CustomSky.reset();
             TextureAnimations.reset();
             update();

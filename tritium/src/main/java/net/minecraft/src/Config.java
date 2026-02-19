@@ -137,37 +137,37 @@ public class Config {
     private static void checkOpenGlCaps() {
         log("");
         log(getVersion());
-        log("Optifine构建: " + getBuild());
-        log("操作系统: " + System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") 版本 " + System.getProperty("os.version"));
+        log("Optifine Build: " + getBuild());
+        log("OS: " + System.getProperty("os.name") + " (" + System.getProperty("os.arch") + ") version " + System.getProperty("os.version"));
         log("Java: " + System.getProperty("java.version") + ", " + System.getProperty("java.vendor"));
-        log("Java虚拟机: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
+        log("JVM: " + System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor"));
         log("LWJGL: " + Sys.getVersion());
         openGlVersion = GL11.glGetString(GL11.GL_VERSION);
         openGlRenderer = GL11.glGetString(GL11.GL_RENDERER);
         openGlVendor = GL11.glGetString(GL11.GL_VENDOR);
-        log("OpenGL渲染器: " + openGlRenderer + ", 版本 " + openGlVersion + ", " + openGlVendor);
-        log("OpenGL 版本: " + getOpenGlVersionString());
+        log("OpenGL Renderer: " + openGlRenderer + ", version " + openGlVersion + ", " + openGlVendor);
+        log("OpenGL Version: " + getOpenGlVersionString());
 
 
 
         if (!GLContext.getCapabilities().OpenGL12) {
-            log("OpenGL Mipmap 等级: 不可用 (GL12.GL_TEXTURE_MAX_LEVEL)");
+            log("OpenGL Mipmap levels: Not available (GL12.GL_TEXTURE_MAX_LEVEL)");
         }
 
         fancyFogAvailable = GLContext.getCapabilities().GL_NV_fog_distance;
 
         if (!fancyFogAvailable) {
-            log("OpenGL 高级雾: 不可用 (GL_NV_fog_distance)");
+            log("OpenGL Fancy fog: Not available (GL_NV_fog_distance)");
         }
 
         occlusionAvailable = GLContext.getCapabilities().GL_ARB_occlusion_query;
 
         if (!occlusionAvailable) {
-            log("OpenGL 遮挡剔除: 不可用 (GL_ARB_occlusion_query)");
+            log("OpenGL Occlussion culling: Not available (GL_ARB_occlusion_query)");
         }
 
         int i = TextureUtils.getGLMaximumTextureSize();
-        dbg("最大贴图大小: " + i + "x" + i);
+        dbg("Maximum texture size: " + i + "x" + i);
     }
 
     public static String getBuild() {

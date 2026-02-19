@@ -117,10 +117,10 @@ public class SoundManager {
                         SoundManager.this.sndSystem = new SoundSystemStarterThread();
                         SoundManager.this.loaded = true;
                         SoundManager.this.sndSystem.setMasterVolume(SoundManager.this.options.getSoundLevel(SoundCategory.MASTER));
-                        SoundManager.logger.info("声音引擎已启动.");
+                        SoundManager.logger.info("Sound engine started.");
                     }, "Sound Library Loader")).start();
                 } catch (RuntimeException runtimeexception) {
-                    logger.error("启动 SoundSystem 时出错. 声音和音乐已关闭.", runtimeexception);
+                    logger.error("Error starting SoundSystem. Turning off sounds & music.", runtimeexception);
                     this.options.setSoundLevel(SoundCategory.MASTER, 0.0F);
                     this.options.saveOptions();
                 }

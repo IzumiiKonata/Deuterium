@@ -87,7 +87,7 @@ public class BetterGrass {
             final InputStream inputstream = Config.getResourceStream(resourcelocation);
             if (inputstream == null) return;
             final boolean flag = Config.isFromDefaultResourcePack(resourcelocation);
-            if (flag) Config.dbg("BetterGrass: 解析默认配置 " + s);
+            if (flag) Config.dbg("BetterGrass: Parsing default configuration " + s);
             else Config.dbg("BetterGrass: Parsing configuration " + s);
             final Properties properties = new PropertiesOrdered();
             properties.load(inputstream);

@@ -485,7 +485,7 @@ public class Shaders {
     }
 
     public static void loadConfig() {
-        SMCLog.info("加载光影配置.");
+        SMCLog.info("Load shaders configuration.");
 
         try {
             if (!shaderPacksDir.exists()) {
@@ -693,12 +693,12 @@ public class Shaders {
         boolean flag2 = false;
 
         if (Config.isAntialiasing()) {
-            SMCLog.info("无法加载光影, 抗锯齿功能已启用: " + Config.getAntialiasingLevel() + "x");
+            SMCLog.info("Shaders can not be loaded, Antialiasing is enabled: " + Config.getAntialiasingLevel() + "x");
             flag2 = true;
         }
 
         if (Config.isAnisotropicFiltering()) {
-            SMCLog.info("无法加载光影, 各向异性过滤已启用: " + Config.getAnisotropicFilterLevel() + "x");
+            SMCLog.info("Shaders can not be loaded, Anisotropic Filtering is enabled: " + Config.getAnisotropicFilterLevel() + "x");
             flag2 = true;
         }
 
@@ -710,9 +710,9 @@ public class Shaders {
         }
 
         if (shaderPackLoaded) {
-            SMCLog.info("已加载光影: " + getShaderPackName());
+            SMCLog.info("Loaded shaderpack: " + getShaderPackName());
         } else {
-            SMCLog.info("未加载光影包.");
+            SMCLog.info("No shaderpack loaded.");
             shaderPack = new ShaderPackNone();
         }
 
@@ -1570,7 +1570,7 @@ public class Shaders {
         glVersionString = GL11.glGetString(GL11.GL_VERSION);
         glVendorString = GL11.glGetString(GL11.GL_VENDOR);
         glRendererString = GL11.glGetString(GL11.GL_RENDERER);
-        SMCLog.info("Opengl 版本支持: " + (capabilities.OpenGL20 ? " 2.0 " : " - ") + (capabilities.OpenGL21 ? " 2.1 " : " - ") + (capabilities.OpenGL30 ? " 3.0 " : " - ") + (capabilities.OpenGL32 ? " 3.2 " : " - ") + (capabilities.OpenGL40 ? " 4.0 " : " - "));
+        SMCLog.info("OpenGL Capabilities: " + (capabilities.OpenGL20 ? " 2.0 " : " - ") + (capabilities.OpenGL21 ? " 2.1 " : " - ") + (capabilities.OpenGL30 ? " 3.0 " : " - ") + (capabilities.OpenGL32 ? " 3.2 " : " - ") + (capabilities.OpenGL40 ? " 4.0 " : " - "));
         SMCLog.info("GL_MAX_DRAW_BUFFERS: " + GL11.glGetInteger(GL20.GL_MAX_DRAW_BUFFERS));
         SMCLog.info("GL_MAX_COLOR_ATTACHMENTS_EXT: " + GL11.glGetInteger(36063));
         SMCLog.info("GL_MAX_TEXTURE_IMAGE_UNITS: " + GL11.glGetInteger(GL20.GL_MAX_TEXTURE_IMAGE_UNITS));

@@ -74,7 +74,7 @@ public class SimpleReloadableResourceManager implements IReloadableResourceManag
 
     public void reloadResources(List<IResourcePack> resourcesPacksList) {
         this.clearResources();
-        logger.info("正在重载资源管理器: " + joinerResourcePacks.join(Iterables.transform(resourcesPacksList, IResourcePack::getPackName)));
+        logger.info("Reloading ResourceManager: " + joinerResourcePacks.join(Iterables.transform(resourcesPacksList, IResourcePack::getPackName)));
 
         for (IResourcePack iresourcepack : resourcesPacksList) {
             this.reloadResourcePack(iresourcepack);

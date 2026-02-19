@@ -51,9 +51,9 @@ public class SoundEngine extends Library {
         errors = this.checkALError();
 
         if (errors) {
-            this.importantMessage("OpenAL 未正确初始化!");
+            this.importantMessage("OpenAL did not initialize properly!");
         } else {
-            this.message("OpenAL 已初始化.");
+            this.message("OpenAL initialized.");
         }
 
         this.listenerPositionAL = BufferUtils.createFloatBuffer(3).put(new float[]{this.listener.position.x, this.listener.position.y, this.listener.position.z});
@@ -530,7 +530,7 @@ public class SoundEngine extends Library {
     }
 
     public static String getDescription() {
-        return "OpenAL 的 LWJGL 绑定. 有关详细信息，请参阅http://www.lwjgl.org";
+        return "The LWJGL binding of OpenAL. For more information, see https://www.lwjgl.org";
     }
 
     public String getClassName() {

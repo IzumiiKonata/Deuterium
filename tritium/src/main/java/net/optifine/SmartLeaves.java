@@ -80,7 +80,7 @@ public class SmartLeaves {
         modelLeavesDoubleOak = getModelDoubleFace(modelLeavesCullOak);
         modelLeavesDoubleSpruce = getModelDoubleFace(modelLeavesCullSpruce);
         if (!list.isEmpty()) {
-            Config.dbg("启用面剔除: " + Config.arrayToString(list.toArray()));
+            Config.dbg("Enable face culling: " + Config.arrayToString(list.toArray()));
         }
     }
 
