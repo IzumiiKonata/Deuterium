@@ -29,7 +29,7 @@ public class ConfigManager extends AbstractManager {
         super("ConfigManager");
     }
 
-    public static final File configDir = new File(Minecraft.getMinecraft().mcDataDir, Tritium.NAME);
+    public static final File configDir = new File(Minecraft.getMinecraft() == null ? new File(".") : Minecraft.getMinecraft().mcDataDir, Tritium.NAME);
     private final File ALT = new File(configDir, "Alts.json");
 
     public static final File configFile = new File(configDir, "Config.json");
