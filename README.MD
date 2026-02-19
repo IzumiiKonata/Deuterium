@@ -1,5 +1,5 @@
 <div align="center">
- <img src="src/main/resources/assets/minecraft/tritium/textures/logo_white.png" alt="Tritium Logo">
+ <img src="tritium/src/main/resources/assets/minecraft/tritium/textures/logo_white.png" alt="Tritium Logo">
  <h1>Tritium-X</h1>
 </div>
 
