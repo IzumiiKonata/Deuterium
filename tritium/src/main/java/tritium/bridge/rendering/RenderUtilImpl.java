@@ -28,6 +28,7 @@ import today.opai.api.interfaces.game.entity.Player;
 import today.opai.api.interfaces.game.item.ItemStack;
 import today.opai.api.interfaces.render.Image;
 import today.opai.api.interfaces.render.RenderUtil;
+import tritium.bridge.misc.math.Vector2fImpl;
 import tritium.interfaces.SharedRenderingConstants;
 import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
@@ -86,7 +87,6 @@ public class RenderUtilImpl implements RenderUtil, SharedRenderingConstants {
         double camY = rm.viewerPosY;
         double camZ = rm.viewerPosZ;
 
-        // 转为相机相对坐标
         float x = (float) (worldX - camX);
         float y = (float) (worldY - camY);
         float z = (float) (worldZ - camZ);
@@ -219,7 +219,12 @@ public class RenderUtilImpl implements RenderUtil, SharedRenderingConstants {
 
     @Override
     public Vector2f worldToScreen(float x, float y, float z) {
-        return null;
+        this.worldToScreen(x, y, (double) z);
+
+        if (getProjectedZ() < 0 || getProjectedZ() > 1)
+            return null;
+
+        return new Vector2fImpl(getProjectedX(), getProjectedY());
     }
 
     @Override
