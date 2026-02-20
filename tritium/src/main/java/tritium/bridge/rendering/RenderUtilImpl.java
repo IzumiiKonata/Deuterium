@@ -1,14 +1,25 @@
 package tritium.bridge.rendering;
 
 import lombok.Getter;
+import net.minecraft.block.BlockAir;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Location;
 import org.lwjgl.opengl.GL11;
+import org.lwjglx.util.glu.GLU;
 import today.opai.api.dataset.BlockPosition;
 import today.opai.api.dataset.BoundingBox;
+import today.opai.api.dataset.PositionData;
+import today.opai.api.dataset.Vec3Data;
 import today.opai.api.features.ExtensionWidget;
 import today.opai.api.interfaces.dataset.Vector2f;
 import today.opai.api.interfaces.functions.WorldToScreenCallback;
@@ -22,9 +33,11 @@ import tritium.management.FontManager;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
+import tritium.settings.ClientSettings;
 
 import java.awt.*;
 import java.io.InputStream;
+import java.nio.FloatBuffer;
 
 /**
  * @author IzumiiKonata
@@ -63,19 +76,145 @@ public class RenderUtilImpl implements RenderUtil, SharedRenderingConstants {
         StencilClipManager.endClip();
     }
 
+    final FloatBuffer buffer = GLAllocation.createDirectFloatBuffer(3);
+
+    private void worldToScreen(double worldX, double worldY, double worldZ) {
+        Minecraft mc = Minecraft.getMinecraft();
+        RenderManager rm = mc.getRenderManager();
+
+        double camX = rm.viewerPosX;
+        double camY = rm.viewerPosY;
+        double camZ = rm.viewerPosZ;
+
+        // 转为相机相对坐标
+        float x = (float) (worldX - camX);
+        float y = (float) (worldY - camY);
+        float z = (float) (worldZ - camZ);
+
+        GLU.gluProject(x, y, z, ActiveRenderInfo.MODELVIEW, ActiveRenderInfo.PROJECTION, ActiveRenderInfo.VIEWPORT, buffer);
+    }
+
+    private float getProjectedX() {
+        int guiScale = ClientSettings.FIXED_SCALE.getValue() ? 2 : Minecraft.getMinecraft().gameSettings.guiScale;
+        return buffer.get(0) / guiScale;
+    }
+
+    private float getProjectedY() {
+        int guiScale = ClientSettings.FIXED_SCALE.getValue() ? 2 : Minecraft.getMinecraft().gameSettings.guiScale;
+        return (float) (RenderSystem.getHeight() - buffer.get(1) / guiScale);
+    }
+
+    private float getProjectedZ() {
+        return buffer.get(2);
+    }
+
     @Override
     public void worldToScreen(Entity entity, WorldToScreenCallback callback) {
-
+        BoundingBox bb = entity.getBoundingBox();
+        PositionData lastTickPosition = entity.getLastTickPosition();
+        double deltaX = (entity.getPosition().getX() - lastTickPosition.getX()) * Minecraft.getMinecraft().timer.renderPartialTicks - (entity.getPosition().getX() - entity.getLastTickPosition().getX());
+        double deltaY = (entity.getPosition().getY() - lastTickPosition.getY()) * Minecraft.getMinecraft().timer.renderPartialTicks - (entity.getPosition().getY() - entity.getLastTickPosition().getY());
+        double deltaZ = (entity.getPosition().getZ() - lastTickPosition.getZ()) * Minecraft.getMinecraft().timer.renderPartialTicks - (entity.getPosition().getZ() - entity.getLastTickPosition().getZ());
+        bb.getMin().xCoord += deltaX;
+        bb.getMin().yCoord += deltaY;
+        bb.getMin().zCoord += deltaZ;
+        bb.getMax().xCoord += deltaX;
+        bb.getMax().yCoord += deltaY;
+        bb.getMax().zCoord += deltaZ;
+        this.worldToScreen(bb, callback);
     }
 
     @Override
     public void worldToScreen(BlockPosition position, WorldToScreenCallback callback) {
+        IBlockState blockState = Minecraft.getMinecraft().theWorld.getBlockState(position.x, position.y, position.z);
 
+        if (blockState.getBlock() instanceof BlockAir) {
+            return;
+        }
+
+        AxisAlignedBB bb = blockState.getBlock().getSelectedBoundingBox(Minecraft.getMinecraft().theWorld, new BlockPos(position.x, position.y, position.z)/*, blockState*/);
+        this.worldToScreen(bb.toBoundingBox(), callback);
     }
 
     @Override
     public void worldToScreen(BoundingBox boundingBox, WorldToScreenCallback callback) {
+        Vec3Data min = boundingBox.getMin();
+        Vec3Data max = boundingBox.getMax();
 
+        float minX = Float.MAX_VALUE;
+        float minY = Float.MAX_VALUE;
+        float maxX = Float.MIN_VALUE;
+        float maxY = Float.MIN_VALUE;
+
+        boolean visible = false;
+
+        worldToScreen(min.getX(), min.getY(), min.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+        worldToScreen(min.getX(), min.getY(), max.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+        worldToScreen(min.getX(), max.getY(), min.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+        worldToScreen(min.getX(), max.getY(), max.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+        worldToScreen(max.getX(), min.getY(), min.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+        worldToScreen(max.getX(), min.getY(), max.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+        worldToScreen(max.getX(), max.getY(), min.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+        worldToScreen(max.getX(), max.getY(), max.getZ());
+        if (getProjectedZ() >= 0 && getProjectedZ() <= 1) {
+            visible = true;
+            minX = Math.min(minX, getProjectedX());
+            minY = Math.min(minY, getProjectedY());
+            maxX = Math.max(maxX, getProjectedX());
+            maxY = Math.max(maxY, getProjectedY());
+        }
+
+        if (visible)
+            callback.render(minX, minY, maxX - minX, maxY - minY);
     }
 
     @Override

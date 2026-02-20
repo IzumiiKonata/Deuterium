@@ -1,5 +1,8 @@
 package net.minecraft.util;
 
+import today.opai.api.dataset.BoundingBox;
+import today.opai.api.dataset.Vec3Data;
+
 public class AxisAlignedBB {
     public double minX;
     public double minY;
@@ -24,6 +27,10 @@ public class AxisAlignedBB {
         this.maxX = pos2.getX();
         this.maxY = pos2.getY();
         this.maxZ = pos2.getZ();
+    }
+
+    public BoundingBox toBoundingBox() {
+        return new BoundingBox(new Vec3Data(minX, minY, minZ), new Vec3Data(maxX, maxY, maxZ));
     }
 
     private static final AxisAlignedBB DUMMY = new AxisAlignedBB(0.0D, 0.0D, 0.0D, 0.0D, 0.0D, 0.0D);
