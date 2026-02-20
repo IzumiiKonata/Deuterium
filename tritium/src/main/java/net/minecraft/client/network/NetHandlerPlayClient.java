@@ -353,7 +353,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 
         entityotherplayermp.setPositionAndRotation(d0, d1, d2, f, f1);
         this.clientWorldController.addEntityToWorld(packetIn.getEntityID(), entityotherplayermp);
-        List<DataWatcher.WatchableObject> list = packetIn.func_148944_c();
+        List<DataWatcher.WatchableObject> list = packetIn.getListObjects();
 
         if (list != null) {
             entityotherplayermp.getDataWatcher().updateWatchedObjectsFromList(list);
@@ -763,7 +763,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
 
     public void handleSetExperience(S1FPacketSetExperience packetIn) {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
-        this.gameController.thePlayer.setXPStats(packetIn.func_149397_c(), packetIn.getTotalExperience(), packetIn.getLevel());
+        this.gameController.thePlayer.setXPStats(packetIn.getExperience(), packetIn.getTotalExperience(), packetIn.getLevel());
     }
 
     public void handleRespawn(S07PacketRespawn packetIn) {
@@ -1025,7 +1025,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         EntityPlayer entityplayer = this.gameController.thePlayer;
         int i = packetIn.getGameState();
-        float f = packetIn.func_149137_d();
+        float f = packetIn.getParameter();
         int j = MathHelper.floor_float(f + 0.5F);
 
         if (i >= 0 && i < S2BPacketChangeGameState.MESSAGE_NAMES.length && S2BPacketChangeGameState.MESSAGE_NAMES[i] != null) {

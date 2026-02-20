@@ -4,19 +4,17 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.INetHandlerPlayClient;
 
-import java.io.IOException;
-
 public class S2BPacketChangeGameState implements Packet<INetHandlerPlayClient> {
     public static final String[] MESSAGE_NAMES = new String[]{"tile.bed.notValid"};
     private int state;
-    private float field_149141_c;
+    private float parameter;
 
     public S2BPacketChangeGameState() {
     }
 
-    public S2BPacketChangeGameState(int stateIn, float p_i45194_2_) {
+    public S2BPacketChangeGameState(int stateIn, float param) {
         this.state = stateIn;
-        this.field_149141_c = p_i45194_2_;
+        this.parameter = param;
     }
 
     /**
@@ -24,7 +22,7 @@ public class S2BPacketChangeGameState implements Packet<INetHandlerPlayClient> {
      */
     public void readPacketData(PacketBuffer buf) {
         this.state = buf.readUnsignedByte();
-        this.field_149141_c = buf.readFloat();
+        this.parameter = buf.readFloat();
     }
 
     /**
@@ -32,7 +30,7 @@ public class S2BPacketChangeGameState implements Packet<INetHandlerPlayClient> {
      */
     public void writePacketData(PacketBuffer buf) {
         buf.writeByte(this.state);
-        buf.writeFloat(this.field_149141_c);
+        buf.writeFloat(this.parameter);
     }
 
     /**
@@ -46,7 +44,7 @@ public class S2BPacketChangeGameState implements Packet<INetHandlerPlayClient> {
         return this.state;
     }
 
-    public float func_149137_d() {
-        return this.field_149141_c;
+    public float getParameter() {
+        return this.parameter;
     }
 }

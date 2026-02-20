@@ -10,18 +10,18 @@ import java.util.List;
 
 public class S1CPacketEntityMetadata implements Packet<INetHandlerPlayClient> {
     private int entityId;
-    private List<DataWatcher.WatchableObject> field_149378_b;
+    private List<DataWatcher.WatchableObject> objects;
 
     public S1CPacketEntityMetadata() {
     }
 
-    public S1CPacketEntityMetadata(int entityIdIn, DataWatcher p_i45217_2_, boolean p_i45217_3_) {
+    public S1CPacketEntityMetadata(int entityIdIn, DataWatcher watcher, boolean fullUpdate) {
         this.entityId = entityIdIn;
 
-        if (p_i45217_3_) {
-            this.field_149378_b = p_i45217_2_.getAllWatched();
+        if (fullUpdate) {
+            this.objects = watcher.getAllWatched();
         } else {
-            this.field_149378_b = p_i45217_2_.getChanged();
+            this.objects = watcher.getChanged();
         }
     }
 
@@ -30,7 +30,7 @@ public class S1CPacketEntityMetadata implements Packet<INetHandlerPlayClient> {
      */
     public void readPacketData(PacketBuffer buf) throws IOException {
         this.entityId = buf.readVarIntFromBuffer();
-        this.field_149378_b = DataWatcher.readWatchedListFromPacketBuffer(buf);
+        this.objects = DataWatcher.readWatchedListFromPacketBuffer(buf);
     }
 
     /**
@@ -38,7 +38,7 @@ public class S1CPacketEntityMetadata implements Packet<INetHandlerPlayClient> {
      */
     public void writePacketData(PacketBuffer buf) throws IOException {
         buf.writeVarIntToBuffer(this.entityId);
-        DataWatcher.writeWatchedListToPacketBuffer(this.field_149378_b, buf);
+        DataWatcher.writeWatchedListToPacketBuffer(this.objects, buf);
     }
 
     /**
@@ -49,7 +49,7 @@ public class S1CPacketEntityMetadata implements Packet<INetHandlerPlayClient> {
     }
 
     public List<DataWatcher.WatchableObject> func_149376_c() {
-        return this.field_149378_b;
+        return this.objects;
     }
 
     public int getEntityId() {

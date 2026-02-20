@@ -17,10 +17,10 @@ public class S3BPacketScoreboardObjective implements Packet<INetHandlerPlayClien
     public S3BPacketScoreboardObjective() {
     }
 
-    public S3BPacketScoreboardObjective(ScoreObjective p_i45224_1_, int p_i45224_2_) {
-        this.objectiveName = p_i45224_1_.getName();
-        this.objectiveValue = p_i45224_1_.getDisplayName();
-        this.type = p_i45224_1_.getCriteria().getRenderType();
+    public S3BPacketScoreboardObjective(ScoreObjective objective, int p_i45224_2_) {
+        this.objectiveName = objective.getName();
+        this.objectiveValue = objective.getDisplayName();
+        this.type = objective.getCriteria().getRenderType();
         this.field_149342_c = p_i45224_2_;
     }
 

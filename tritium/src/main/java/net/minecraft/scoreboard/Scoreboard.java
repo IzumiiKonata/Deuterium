@@ -166,26 +166,30 @@ public class Scoreboard {
         return map;
     }
 
-    public void removeObjective(ScoreObjective p_96519_1_) {
-        this.scoreObjectives.remove(p_96519_1_.getName());
+    public void removeObjective(ScoreObjective objective) {
+
+        if (objective == null)
+            return;
+
+        this.scoreObjectives.remove(objective.getName());
 
         for (int i = 0; i < 19; ++i) {
-            if (this.getObjectiveInDisplaySlot(i) == p_96519_1_) {
+            if (this.getObjectiveInDisplaySlot(i) == objective) {
                 this.setObjectiveInDisplaySlot(i, null);
             }
         }
 
-        List<ScoreObjective> list = this.scoreObjectiveCriterias.get(p_96519_1_.getCriteria());
+        List<ScoreObjective> list = this.scoreObjectiveCriterias.get(objective.getCriteria());
 
         if (list != null) {
-            list.remove(p_96519_1_);
+            list.remove(objective);
         }
 
         for (Map<ScoreObjective, Score> map : this.entitiesScoreObjectives.values()) {
-            map.remove(p_96519_1_);
+            map.remove(objective);
         }
 
-        this.onScoreObjectiveRemoved(p_96519_1_);
+        this.onScoreObjectiveRemoved(objective);
     }
 
     /**

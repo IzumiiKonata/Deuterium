@@ -1570,7 +1570,19 @@ public class Shaders {
         glVersionString = GL11.glGetString(GL11.GL_VERSION);
         glVendorString = GL11.glGetString(GL11.GL_VENDOR);
         glRendererString = GL11.glGetString(GL11.GL_RENDERER);
-        SMCLog.info("OpenGL Capabilities: " + (capabilities.OpenGL20 ? " 2.0 " : " - ") + (capabilities.OpenGL21 ? " 2.1 " : " - ") + (capabilities.OpenGL30 ? " 3.0 " : " - ") + (capabilities.OpenGL32 ? " 3.2 " : " - ") + (capabilities.OpenGL40 ? " 4.0 " : " - "));
+        SMCLog.info("OpenGL Capabilities: " +
+                (capabilities.OpenGL20 ? " 2.0 " : " - ") +
+                (capabilities.OpenGL21 ? " 2.1 " : " - ") +
+                (capabilities.OpenGL30 ? " 3.0 " : " - ") +
+                (capabilities.OpenGL31 ? " 3.1 " : " - ") +
+                (capabilities.OpenGL32 ? " 3.2 " : " - ") +
+                (capabilities.OpenGL40 ? " 4.0 " : " - ") +
+                (capabilities.OpenGL41 ? " 4.1 " : " - ") +
+                (capabilities.OpenGL42 ? " 4.2 " : " - ") +
+                (capabilities.OpenGL43 ? " 4.3 " : " - ") +
+                (capabilities.OpenGL44 ? " 4.4 " : " - ") +
+                (capabilities.OpenGL45 ? " 4.5 " : " - ") +
+                (capabilities.OpenGL46 ? " 4.6 " : " - "));
         SMCLog.info("GL_MAX_DRAW_BUFFERS: " + GL11.glGetInteger(GL20.GL_MAX_DRAW_BUFFERS));
         SMCLog.info("GL_MAX_COLOR_ATTACHMENTS_EXT: " + GL11.glGetInteger(36063));
         SMCLog.info("GL_MAX_TEXTURE_IMAGE_UNITS: " + GL11.glGetInteger(GL20.GL_MAX_TEXTURE_IMAGE_UNITS));
