@@ -118,8 +118,6 @@ public class Display {
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_TRUE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
         glfwWindowHint(GLFW_MAXIMIZED, GLFW_FALSE);
         glfwWindowHint(GLFW_FOCUSED, GLFW_TRUE);
@@ -131,9 +129,7 @@ public class Display {
         glfwWindowHint(GLFW_SRGB_CAPABLE, GLFW_FALSE);
         glfwWindowHint(GLFW_DOUBLEBUFFER, GLFW_TRUE);
         glfwWindowHint(GLFW_CONTEXT_NO_ERROR, GLFW_FALSE);
-        glfwWindowHint(
-                GLFW_OPENGL_DEBUG_CONTEXT,
-                GLFW_FALSE);
+        glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_FALSE);
 
         glfwWindowHintString(GLFW_X11_CLASS_NAME, "minecraft");
         glfwWindowHintString(GLFW_COCOA_FRAME_NAME, "minecraft");

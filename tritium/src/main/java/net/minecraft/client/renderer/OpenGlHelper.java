@@ -117,24 +117,24 @@ public class OpenGlHelper {
                 list.add("OpenGL 1.4");
             }
 
-            String s = "不支持 VboRegions, 缺失: " + Config.listToString(list);
+            String s = "VboRegions not supported, missing: " + Config.listToString(list);
             Config.dbg(s);
             logText = logText + s + "\n";
         }
 
         if (arbMultitexture) {
-            logText = logText + "正在使用 ARB_multitexture.\n";
+            logText = logText + "Using ARB_multitexture.\n";
         } else {
-            logText = logText + "正在使用 GL 1.3 多重纹理.\n";
+            logText = logText + "Using GL 1.3 multitexturing.\n";
         }
         defaultTexUnit = GL13.GL_TEXTURE0;
         lightmapTexUnit = 33985;
         GL_TEXTURE2 = 33986;
 
         if (arbTextureEnvCombine) {
-            logText = logText + "正在使用 ARB_texture_env_combine.\n";
+            logText = logText + "Using ARB_texture_env_combine.\n";
         } else {
-            logText = logText + "正在使用 GL 1.3 纹理组合.\n";
+            logText = logText + "Using GL 1.3 texture combiners.\n";
         }
         GL_COMBINE = 34160;
         GL_INTERPOLATE = 34165;
@@ -161,10 +161,10 @@ public class OpenGlHelper {
         framebufferSupported = openGL14 && (contextcapabilities.GL_ARB_framebuffer_object || contextcapabilities.GL_EXT_framebuffer_object || contextcapabilities.OpenGL30);
 
         if (framebufferSupported) {
-            logText = logText + "使用帧缓冲区对象, 原因: ";
+            logText = logText + "Using framebuffer objects because ";
 
             if (contextcapabilities.OpenGL30) {
-                logText = logText + "支持 OpenGL 3.0, 并支持分离混合.\n";
+                logText = logText + "OpenGL 3.0 is supported and separate blending is supported.\n";
                 framebufferType = 0;
                 GL_FRAMEBUFFER = GL30.GL_FRAMEBUFFER;
                 GL_RENDERBUFFER = 36161;
@@ -176,49 +176,49 @@ public class OpenGlHelper {
                 GL_FB_INCOMPLETE_DRAW_BUFFER = 36059;
                 GL_FB_INCOMPLETE_READ_BUFFER = 36060;
             } else if (contextcapabilities.GL_ARB_framebuffer_object) {
-                logText = logText + "支持 ARB_framebuffer_object, 并支持分离混合.\n";
+                logText = logText + "ARB_framebuffer_object is supported and separate blending is supported.\n";
                 framebufferType = 1;
                 GL_FRAMEBUFFER = GL30.GL_FRAMEBUFFER;
                 GL_RENDERBUFFER = 36161;
                 GL_COLOR_ATTACHMENT0 = GL30.GL_COLOR_ATTACHMENT0;
                 GL_DEPTH_ATTACHMENT = GL30.GL_DEPTH_ATTACHMENT;
                 GL_FRAMEBUFFER_COMPLETE = 36053;
-                GL_FB_INCOMPLETE_MISS_ATTACH = 36055;
                 GL_FB_INCOMPLETE_ATTACHMENT = 36054;
+                GL_FB_INCOMPLETE_MISS_ATTACH = 36055;
                 GL_FB_INCOMPLETE_DRAW_BUFFER = 36059;
                 GL_FB_INCOMPLETE_READ_BUFFER = 36060;
             } else {
-                logText = logText + "支持 EXT_framebuffer_object.\n";
+                logText = logText + "EXT_framebuffer_object is supported.\n";
                 framebufferType = 2;
                 GL_FRAMEBUFFER = GL30.GL_FRAMEBUFFER;
                 GL_RENDERBUFFER = 36161;
                 GL_COLOR_ATTACHMENT0 = GL30.GL_COLOR_ATTACHMENT0;
                 GL_DEPTH_ATTACHMENT = GL30.GL_DEPTH_ATTACHMENT;
                 GL_FRAMEBUFFER_COMPLETE = 36053;
-                GL_FB_INCOMPLETE_MISS_ATTACH = 36055;
                 GL_FB_INCOMPLETE_ATTACHMENT = 36054;
+                GL_FB_INCOMPLETE_MISS_ATTACH = 36055;
                 GL_FB_INCOMPLETE_DRAW_BUFFER = 36059;
                 GL_FB_INCOMPLETE_READ_BUFFER = 36060;
             }
         } else {
-            logText = logText + "不使用帧缓冲区对象, 因为 ";
-            logText = logText + "OpenGL 1.4 是" + (contextcapabilities.OpenGL14 ? "" : "不被") + "支持的, ";
-            logText = logText + "EXT_blend_func_separate 是" + (contextcapabilities.GL_EXT_blend_func_separate ? "" : "不被") + "支持的, ";
-            logText = logText + "OpenGL 3.0 是" + (contextcapabilities.OpenGL30 ? "" : "不被") + "支持的, ";
-            logText = logText + "ARB_framebuffer_object 是" + (contextcapabilities.GL_ARB_framebuffer_object ? "" : "不被") + "支持的, 并且 ";
-            logText = logText + "EXT_framebuffer_object 是" + (contextcapabilities.GL_EXT_framebuffer_object ? "" : "不被") + "支持的.\n";
+            logText = logText + "Not using framebuffer objects because ";
+            logText = logText + "OpenGL 1.4 is " + (contextcapabilities.OpenGL14 ? "" : "not ") + "supported, ";
+            logText = logText + "EXT_blend_func_separate is " + (contextcapabilities.GL_EXT_blend_func_separate ? "" : "not ") + "supported, ";
+            logText = logText + "OpenGL 3.0 is " + (contextcapabilities.OpenGL30 ? "" : "not ") + "supported, ";
+            logText = logText + "ARB_framebuffer_object is " + (contextcapabilities.GL_ARB_framebuffer_object ? "" : "not ") + "supported, and ";
+            logText = logText + "EXT_framebuffer_object is " + (contextcapabilities.GL_EXT_framebuffer_object ? "" : "not ") + "supported.\n";
         }
 
         openGL21 = contextcapabilities.OpenGL21;
         boolean shadersAvailable = openGL21 || contextcapabilities.GL_ARB_vertex_shader && contextcapabilities.GL_ARB_fragment_shader && contextcapabilities.GL_ARB_shader_objects;
-        logText = logText + "着色器是" + (shadersAvailable ? "" : "不被") + "支持的 因为 ";
+        logText = logText + "Shaders are " + (shadersAvailable ? "" : "not ") + "available because ";
 
         if (shadersAvailable) {
             if (contextcapabilities.OpenGL21) {
-                logText = logText + "支持OpenGL 2.1.\n";
+                logText = logText + "OpenGL 2.1 is supported.\n";
                 arbShaders = false;
             } else {
-                logText = logText + "支持ARB_shader_objects, ARB_vertex_shader, 和 ARB_fragment_shader.\n";
+                logText = logText + "ARB_shader_objects, ARB_vertex_shader, and ARB_fragment_shader are supported.\n";
                 arbShaders = true;
             }
             GL_LINK_STATUS = 35714;
@@ -226,10 +226,10 @@ public class OpenGlHelper {
             GL_VERTEX_SHADER = 35633;
             GL_FRAGMENT_SHADER = 35632;
         } else {
-            logText = logText + "OpenGL 2.1 是" + "不被" + "支持的, ";
-            logText = logText + "ARB_shader_objects 是" + (contextcapabilities.GL_ARB_shader_objects ? "" : "不被") + "支持的, ";
-            logText = logText + "ARB_vertex_shader 是" + (contextcapabilities.GL_ARB_vertex_shader ? "" : "不被") + "支持的, 并且 ";
-            logText = logText + "ARB_fragment_shader 是" + (contextcapabilities.GL_ARB_fragment_shader ? "" : "不被") + "支持的.\n";
+            logText = logText + "OpenGL 2.1 is not supported, ";
+            logText = logText + "ARB_shader_objects is " + (contextcapabilities.GL_ARB_shader_objects ? "" : "not ") + "supported, ";
+            logText = logText + "ARB_vertex_shader is " + (contextcapabilities.GL_ARB_vertex_shader ? "" : "not ") + "supported, and ";
+            logText = logText + "ARB_fragment_shader is " + (contextcapabilities.GL_ARB_fragment_shader ? "" : "not ") + "supported.\n";
         }
 
         shadersSupported = framebufferSupported && shadersAvailable;
@@ -237,13 +237,13 @@ public class OpenGlHelper {
         nvidia = s1.contains("nvidia");
         arbVbo = !contextcapabilities.OpenGL15 && contextcapabilities.GL_ARB_vertex_buffer_object;
         vboSupported = contextcapabilities.OpenGL15 || arbVbo;
-        logText = logText + "VBO是" + (vboSupported ? "" : "不被") + "支持的 因为 ";
+        logText = logText + "VBOs are " + (vboSupported ? "" : "not ") + "available because ";
 
         if (vboSupported) {
             if (arbVbo) {
-                logText = logText + "支持ARB_vertex_buffer_object.\n";
+                logText = logText + "ARB_vertex_buffer_object is supported.\n";
             } else {
-                logText = logText + "支持OpenGL 1.5.\n";
+                logText = logText + "OpenGL 1.5 is supported.\n";
             }
             GL_STATIC_DRAW = 35044;
             GL_ARRAY_BUFFER = 34962;

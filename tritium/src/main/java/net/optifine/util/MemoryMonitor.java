@@ -1,5 +1,7 @@
 package net.optifine.util;
 
+import tritium.utils.timing.Timer;
+
 public class MemoryMonitor {
     private static long startTimeMs = System.currentTimeMillis();
     private static long startMemory = getMemoryUsed();
@@ -9,7 +11,16 @@ public class MemoryMonitor {
     private static int memBytesSec = 0;
     private static final long MB = 1048576L;
 
+    static final Timer updateTimer = new Timer();
+
     public static void update() {
+
+        if (!updateTimer.isDelayed(100)) {
+            return;
+        }
+
+        updateTimer.reset();
+
         long i = System.currentTimeMillis();
         long j = getMemoryUsed();
         gcEvent = j < lastMemory;
