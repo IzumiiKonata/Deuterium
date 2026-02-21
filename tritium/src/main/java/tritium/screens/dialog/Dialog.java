@@ -32,7 +32,7 @@ public abstract class Dialog implements SharedRenderingConstants {
     public void onRender(double mouseX, double mouseY) {
         this.drawBackgroundMask();
 
-        this.openCloseScale = Interpolations.interpBezier(this.openCloseScale, this.isClosing() ? 1.1 : 1, 0.3);
+        this.openCloseScale = Interpolations.interpolate(this.openCloseScale, this.isClosing() ? 1.1 : 1, 0.3);
 
         this.doGlPreTransforms(this.openCloseScale);
 
@@ -56,8 +56,8 @@ public abstract class Dialog implements SharedRenderingConstants {
     }
 
     protected void drawBackgroundMask() {
-        this.maskAlpha = Interpolations.interpBezier(this.maskAlpha, this.closing ? 0.0f : 0.6f, 0.2f);
-        this.alpha = Interpolations.interpBezier(this.alpha, this.closing ? 0.0f : 1f, 0.2f);
+        this.maskAlpha = Interpolations.interpolate(this.maskAlpha, this.closing ? 0.0f : 0.6f, 0.2f);
+        this.alpha = Interpolations.interpolate(this.alpha, this.closing ? 0.0f : 1f, 0.2f);
         Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), RGBA.color(0, 0, 0, (int) (this.maskAlpha * 255)), Rect.RectType.EXPAND);
     }
 

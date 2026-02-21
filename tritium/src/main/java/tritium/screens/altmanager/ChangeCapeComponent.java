@@ -74,7 +74,7 @@ public class ChangeCapeComponent implements SharedRenderingConstants {
 
         handleScrolling(mouseX, mouseY, posX, posY, width, height, dWheel);
 
-        realOffset = Interpolations.interpBezier(realOffset, targetOffset, 0.2f);
+        realOffset = Interpolations.interpolate(realOffset, targetOffset, 0.2f);
 
         if (!this.capes.isEmpty()) {
 

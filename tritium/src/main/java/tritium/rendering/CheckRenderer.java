@@ -78,7 +78,7 @@ public class CheckRenderer implements SharedRenderingConstants {
 
             rBounced = false;
 
-            alpha = Interpolations.interpBezier(alpha, 0, 0.4f);
+            alpha = Interpolations.interpolate(alpha, 0, 0.4f);
         }
 
         double lVal = checked ? left.getValue() : 1;

@@ -207,7 +207,7 @@ public class MoveWidgetsScreen extends BaseScreen {
 
         boolean hovered = isHovered(mouseX, mouseY, widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight());
 
-        widget.hoveredAlpha = Interpolations.interpBezier(widget.hoveredAlpha, hovered ? 0.3f : 0f, 0.4f);
+        widget.hoveredAlpha = Interpolations.interpolate(widget.hoveredAlpha, hovered ? 0.3f : 0f, 0.4f);
 
 //        Rect.draw(widget.getX(), widget.getY(), widget.getWidth(), widget.getHeight(), hexColor(0, 0, 0, 40), Rect.RectType.EXPAND);
 

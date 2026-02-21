@@ -90,7 +90,7 @@ public class MusicsWindow extends Window {
 
         open = (playlists.getOnSetting() != null) && (playlists.getOnSetting() == playlists.getLastOnSetting());
 
-        this.stencilWidth = Interpolations.interpBezier(this.stencilWidth, open ? 150 : 0, 0.3f);
+        this.stencilWidth = Interpolations.interpolate(this.stencilWidth, open ? 150 : 0, 0.3f);
 
 
         if (!open && this.stencilWidth <= 1) {

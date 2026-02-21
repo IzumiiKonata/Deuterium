@@ -105,8 +105,8 @@ public class ScrollText {
 
                 boolean delayed = t.isDelayed(waitTime);
                 if (delayed) {
-                    scrollOffset = Interpolations.interpLinear((float) scrollOffset, (float) dest, 2f);
-                    this.leftGradientAlpha = Interpolations.interpLinear(this.leftGradientAlpha, 0f, 0.5f);
+                    scrollOffset = Interpolations.interpolateLinear((float) scrollOffset, (float) dest, 2f);
+                    this.leftGradientAlpha = Interpolations.interpolateLinear(this.leftGradientAlpha, 0f, 0.5f);
                 }
 
                 fr.drawString(s + text, x + w + scrollOffset, y, color);

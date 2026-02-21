@@ -188,7 +188,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         if (prevMouse && !Mouse.isButtonDown(0)) prevMouse = false;
 
-        alpha = Interpolations.interpBezier(alpha, closing ? 0.0f : 1f, 0.3f);
+        alpha = Interpolations.interpolate(alpha, closing ? 0.0f : 1f, 0.3f);
 
         GlStateManager.pushMatrix();
         scaleAtPos(posX + width * .5, posY + height * .5, 1.1 - (alpha * 0.1));
@@ -230,7 +230,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             scrollTarget = 0;
         }
 
-        scrollOffset = Interpolations.interpBezier(scrollOffset, scrollTarget, 0.25f);
+        scrollOffset = Interpolations.interpolate(scrollOffset, scrollTarget, 0.25f);
 
         double lyricRenderOffsetX = RenderSystem.getWidth() * .48;
         for (int k = 0; k < CloudMusic.lyrics.size(); k++) {
@@ -246,10 +246,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
             int indexOf = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
 
-            lyric.alpha = Interpolations.interpBezier(lyric.alpha, lyric == CloudMusic.currentLyric ? 1f : 0f, 0.1f);
+            lyric.alpha = Interpolations.interpolate(lyric.alpha, lyric == CloudMusic.currentLyric ? 1f : 0f, 0.1f);
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
-            lyric.hoveringAlpha = Interpolations.interpBezier(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
-            lyric.blurAlpha = Interpolations.interpBezier(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.05f);
+            lyric.hoveringAlpha = Interpolations.interpolate(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
+            lyric.blurAlpha = Interpolations.interpolate(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.05f);
 
             if (isHovering) {
                 CursorUtils.setOverride(CursorUtils.HAND);
@@ -274,7 +274,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             double renderX = lyricRenderOffsetX + lyric.reboundAnimation;
             double renderY = lyric.posY + lyric.reboundAnimation + scrollOffset;
 
-            lyric.reboundAnimation = Interpolations.interpBezier(lyric.reboundAnimation, lyric == CloudMusic.currentLyric ? 2f : 0f, 0.1f);
+            lyric.reboundAnimation = Interpolations.interpolate(lyric.reboundAnimation, lyric == CloudMusic.currentLyric ? 2f : 0f, 0.1f);
 
             List<LyricLine.Word> words = lyric.words;
             if (!words.isEmpty()) {
@@ -330,7 +330,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                                 char c = charArray[j];
 
                                 if (lyric.renderEmphasizes)
-                                    word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
+                                    word.emphasizes[j] = Interpolations.interpolate(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
 
                                 FontManager.pf65bold.drawString(String.valueOf(c), x, renderY - word.emphasizes[j], hexColor(1, 1, 1, alpha * lyric.alpha));
                                 x += FontManager.pf65bold.getCharWidth(c, j + 1 < charArray.length ? charArray[j + 1] : '\0');
@@ -387,7 +387,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                                     if (j <= prog) {
                                         if (lyric.renderEmphasizes)
-                                            word.emphasizes[j] = Interpolations.interpBezier(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
+                                            word.emphasizes[j] = Interpolations.interpolate(word.emphasizes[j], emphasizeTarget, emphasizeSpeed);
                                     }
 
                                     FontManager.pf65bold.drawString(String.valueOf(c), x, 2 - word.emphasizes[j], hexColor(1, 1, 1, alpha * lyric.alpha));
@@ -502,7 +502,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 if ((scrollTarget == 0 && (subList.size() - 1 - i) >= 3) && lyric.posY + lyric.height + getLyricLineSpacing() + 2 + scrollOffset < posY)
                     break;
 
-//                lyric.posY = Interpolations.interpBezier(lyric.posY, offsetY, fraction);
+//                lyric.posY = Interpolations.interpolate(lyric.posY, offsetY, fraction);
                 lyric.spring.setTargetPosition(offsetY);
                 lyric.spring.update(frameDeltaTime);
                 lyric.posY = lyric.spring.getCurrentPosition();
@@ -569,7 +569,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         AudioPlayer player = CloudMusic.player;
 
         double center = this.getCoverSizeMin();
-        coverSize = Interpolations.interpBezier(coverSize, player == null || player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
+        coverSize = Interpolations.interpolate(coverSize, player == null || player.isPausing() ? this.getCoverSizeMin() : this.getCoverSizeMax(), 0.2f);
 
         double xOffset = (RenderSystem.getWidth() * .5 - center - this.getCoverSizeMax() * .5) * 0;
         double coverSizePerc = coverSize / this.getCoverSizeMax();
@@ -592,7 +592,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         ITextureObject tex = textureManager.getTexture(musicCover);
 
         if (tex != null) {
-            coverAlpha = Interpolations.interpBezier(coverAlpha, 1.0f, 0.2f);
+            coverAlpha = Interpolations.interpolate(coverAlpha, 1.0f, 0.2f);
             GlStateManager.bindTexture(tex.getGlTextureId());
             tex.linearFilter();
             this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, alpha * coverAlpha);
@@ -620,7 +620,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         StencilClipManager.endClip();
 
         boolean hoveringProgressBar = this.isHovered(mouseX, mouseY, elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, 8);
-        this.progressBarHeight = Interpolations.interpBezier(this.progressBarHeight, hoveringProgressBar ? 8 : 5, 0.3f);
+        this.progressBarHeight = Interpolations.interpolate(this.progressBarHeight, hoveringProgressBar ? 8 : 5, 0.3f);
 
         if (hoveringProgressBar && Mouse.isButtonDown(0) && !prevMouse) {
             prevMouse = true;
@@ -657,7 +657,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         StencilClipManager.endClip();
 
         boolean hoveringVolumeBar = this.isHovered(mouseX, mouseY, volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, 8);
-        this.volumeBarHeight = Interpolations.interpBezier(this.volumeBarHeight, hoveringVolumeBar ? 8 : 5, 0.3f);
+        this.volumeBarHeight = Interpolations.interpolate(this.volumeBarHeight, hoveringVolumeBar ? 8 : 5, 0.3f);
         if (hoveringVolumeBar && Mouse.isButtonDown(0)) {
             double xDelta = Math.max(0, Math.min(volumeBarWidth, (mouseX - (volumeBarXOffset))));
             double percent = xDelta / volumeBarWidth;
@@ -789,7 +789,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
             if (!Float.isFinite(max) || max <= .1f) max = 0;
 
-            fftScale = Interpolations.interpBezier(fftScale, max * .05, .4f);
+            fftScale = Interpolations.interpolate(fftScale, max * .05, .4f);
 
             scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 + fftScale);
 
@@ -804,7 +804,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             }
 
             if (texBg != null) {
-                this.musicBgAlpha = Interpolations.interpBezier(this.musicBgAlpha, 1.0f, prevBg == null ? 0.15f : 0.05f);
+                this.musicBgAlpha = Interpolations.interpolate(this.musicBgAlpha, 1.0f, prevBg == null ? 0.15f : 0.05f);
                 GlStateManager.bindTexture(texBg.getGlTextureId());
                 texBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha * this.musicBgAlpha);

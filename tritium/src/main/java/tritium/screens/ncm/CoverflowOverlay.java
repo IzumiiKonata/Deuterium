@@ -5,7 +5,6 @@ import lombok.SneakyThrows;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
-import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -28,13 +27,10 @@ import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shaders;
 import tritium.rendering.texture.Textures;
 import tritium.screens.BaseScreen;
-import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
 
 import java.awt.*;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -168,7 +164,7 @@ public class CoverflowOverlay extends BaseScreen {
     @SneakyThrows
     public void drawScreen(double mouseX, double mouseY) {
 
-        alpha = Interpolations.interpBezier(alpha, closing ? .0f : 1f, 0.2f);
+        alpha = Interpolations.interpolate(alpha, closing ? .0f : 1f, 0.2f);
 
         if (alpha <= 0.05)
             return;
@@ -238,7 +234,7 @@ public class CoverflowOverlay extends BaseScreen {
 
         float rotDegTarget = 45;
 
-        scrollOffset = Interpolations.interpBezier(scrollOffset, index * (coverSize * 0.5 + spacing), 0.2f);
+        scrollOffset = Interpolations.interpolate(scrollOffset, index * (coverSize * 0.5 + spacing), 0.2f);
 
         double offsetX = -coverSize * 0.5 - scrollOffset;
 
@@ -331,12 +327,12 @@ public class CoverflowOverlay extends BaseScreen {
         GlStateManager.translate(offsetX + coverSize * 0.5, coverSize * 0.5, 0);
 
         if (index != i) {
-            renderingData.rotateDeg = Interpolations.interpBezier(renderingData.rotateDeg, rotDegTarget * (left ? 1 : -1), 0.2f);
-            renderingData.scale = Interpolations.interpBezier(renderingData.scale, 0.75, 0.2f);
+            renderingData.rotateDeg = Interpolations.interpolate(renderingData.rotateDeg, rotDegTarget * (left ? 1 : -1), 0.2f);
+            renderingData.scale = Interpolations.interpolate(renderingData.scale, 0.75, 0.2f);
             renderingData.flipped = false;
         } else {
-            renderingData.rotateDeg = Interpolations.interpBezier(renderingData.rotateDeg, renderingData.flipped ? -180 : 0, renderingData.flipped ? 0.1f : 0.2f);
-            renderingData.scale = Interpolations.interpBezier(renderingData.scale, 1.0, 0.2f);
+            renderingData.rotateDeg = Interpolations.interpolate(renderingData.rotateDeg, renderingData.flipped ? -180 : 0, renderingData.flipped ? 0.1f : 0.2f);
+            renderingData.scale = Interpolations.interpolate(renderingData.scale, 1.0, 0.2f);
         }
 
         // rotate
@@ -398,18 +394,18 @@ public class CoverflowOverlay extends BaseScreen {
                         renderingData.scrollTarget += yAdd;
                 }
 
-                renderingData.scrollTarget = Interpolations.interpBezier(renderingData.scrollTarget, 0, 0.4f);
-                renderingData.scrollOffset = Interpolations.interpBezier(renderingData.scrollOffset, renderingData.scrollTarget, 1f);
+                renderingData.scrollTarget = Interpolations.interpolate(renderingData.scrollTarget, 0, 0.4f);
+                renderingData.scrollOffset = Interpolations.interpolate(renderingData.scrollOffset, renderingData.scrollTarget, 1f);
 
                 if (renderingData.scrollTarget < 0)
-                    renderingData.scrollTarget = Interpolations.interpBezier(renderingData.scrollTarget, 0, 0.2f);
+                    renderingData.scrollTarget = Interpolations.interpolate(renderingData.scrollTarget, 0, 0.2f);
 
                 double yOffset = contentPaneY - renderingData.scrollOffset;
                 double entryHeight = fr.getHeight() * fontScale + 4;
                 List<Music> musics = albumList.get(al);
 
                 if (renderingData.scrollTarget > (musics.size() - 1) * entryHeight)
-                    renderingData.scrollTarget = Interpolations.interpBezier(renderingData.scrollTarget, (musics.size() - 1) * entryHeight, 0.2f);
+                    renderingData.scrollTarget = Interpolations.interpolate(renderingData.scrollTarget, (musics.size() - 1) * entryHeight, 0.2f);
 
                 fr = FontManager.pf25;
 
@@ -437,7 +433,7 @@ public class CoverflowOverlay extends BaseScreen {
 
                     boolean hovered = RenderSystem.isHovered(mouseX, mouseY, contentPaneX, yOffset, contentPaneWidth, entryHeight);
 
-                    musicData.hoverAlpha = Interpolations.interpBezier(musicData.hoverAlpha, hovered ? 0.2f : 0.0f, 0.2f);
+                    musicData.hoverAlpha = Interpolations.interpolate(musicData.hoverAlpha, hovered ? 0.2f : 0.0f, 0.2f);
 
                     if (hovered && Mouse.isButtonDown(0) && !lmbPressed && renderingData.rotateDeg < -145 && renderingData.flipped) {
                         lmbPressed = true;

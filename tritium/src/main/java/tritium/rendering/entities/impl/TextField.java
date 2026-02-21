@@ -454,7 +454,7 @@ public class TextField extends GuiTextField {
         }
 
         wholeAlpha = MathUtils.clamp(wholeAlpha, 0, 1);
-        opacity = Interpolations.interpBezier(opacity, 1.0f, 0.05f) * wholeAlpha;
+        opacity = Interpolations.interpolate(opacity, 1.0f, 0.05f) * wholeAlpha;
 
         double textScrollOffset = calculateTextScrollOffset();
 
@@ -524,7 +524,7 @@ public class TextField extends GuiTextField {
         lineColor = Interpolations.getColorAnimationState(lineColor, targetColor, 100f);
 
         float targetAlpha = (isHovered || isFocused) ? 0.4f : 0.3f;
-        hoverAlpha = Interpolations.interpLinear(hoverAlpha, targetAlpha, 0.1f) * wholeAlpha;
+        hoverAlpha = Interpolations.interpolateLinear(hoverAlpha, targetAlpha, 0.1f) * wholeAlpha;
     }
 
     private void setupClipping() {
@@ -616,7 +616,7 @@ public class TextField extends GuiTextField {
 
         if (animatedCursorX == -1)
             animatedCursorX = cursorX;
-        animatedCursorX = Interpolations.interpBezier(animatedCursorX, cursorX, .4f);
+        animatedCursorX = Interpolations.interpolate(animatedCursorX, cursorX, .4f);
 
         if (alpha > 127 || !cursorForceShowTimer.isDelayed(750)) {
             RenderSystem.drawRect(animatedCursorX, posY - 2, animatedCursorX + 0.5f,

@@ -58,7 +58,7 @@ public class Key implements SharedRenderingConstants {
 
         WidgetsManager.keyStrokes.doScale();
 
-        this.pressedAlpha = Interpolations.interpBezier(this.pressedAlpha, this.key.pressed ? 120 * RenderSystem.DIVIDE_BY_255 : 0, 0.2f);
+        this.pressedAlpha = Interpolations.interpolate(this.pressedAlpha, this.key.pressed ? 120 * RenderSystem.DIVIDE_BY_255 : 0, 0.2f);
 
         Rect.draw(x + xOffset, y + yOffset, width, height, RGBA.color(0, 0, 0, 50), Rect.RectType.EXPAND);
         Rect.draw(x + xOffset, y + yOffset, width, height, RGBA.color(255, 255, 255, (int) (this.pressedAlpha * 255)), Rect.RectType.EXPAND);
@@ -71,12 +71,12 @@ public class Key implements SharedRenderingConstants {
         while (it.hasNext()) {
             Circle circle = it.next();
 
-            circle.length = Interpolations.interpBezier(circle.length, width * 1.1, 0.12);
+            circle.length = Interpolations.interpolate(circle.length, width * 1.1, 0.12);
 
             circle.draw(x + xOffset + width * 0.5, y + yOffset + height * 0.5);
 
             if (circle.length >= width * 0.7)
-                circle.alpha = Interpolations.interpBezier(circle.alpha, 0f, 0.12f);
+                circle.alpha = Interpolations.interpolate(circle.alpha, 0f, 0.12f);
 
             if (circle.length >= width * 0.95)
                 it.remove();

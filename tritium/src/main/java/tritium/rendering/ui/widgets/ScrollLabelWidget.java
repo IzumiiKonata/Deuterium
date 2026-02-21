@@ -40,7 +40,7 @@ public class ScrollLabelWidget extends LabelWidget {
             double dest = -(stringWidth + font.getWidth(spacing));
 
             if (t.isDelayed(waitTime)) {
-                scrollOffset = Interpolations.interpBezier(scrollOffset, dest, .5f);
+                scrollOffset = Interpolations.interpolate(scrollOffset, dest, .5f);
             }
 
             font.drawString(spacing + label, x + stringWidth + scrollOffset, y, this.getHexColor());

@@ -74,7 +74,7 @@ public class NavigateBar extends NCMPanel {
             if (!searchField.isFocused()) {
                 searchBarFocusAnimation.setAlpha(0);
             } else {
-                searchBarFocusAnimation.setAlpha(Interpolations.interpBezier(searchBarFocusAnimation.getAlpha(), 1f, .3f));
+                searchBarFocusAnimation.setAlpha(Interpolations.interpolate(searchBarFocusAnimation.getAlpha(), 1f, .3f));
                 searchBarFocusAnimation.setRadius(4);
                 searchBarFocusAnimation.setColor(0xff780C17);
                 searchBarFocusAnimation.setBounds(searchBar.getRelativeX(), searchBar.getRelativeY(), searchBar.getWidth(), searchBar.getHeight());

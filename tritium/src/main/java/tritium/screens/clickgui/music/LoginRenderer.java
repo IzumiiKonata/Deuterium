@@ -52,8 +52,8 @@ public class LoginRenderer implements SharedRenderingConstants {
     }
 
     public void render(double mouseX, double mouseY, double posX, double posY, double width, double height, float alpha) {
-        screeMaskAlpha = Interpolations.interpBezier(screeMaskAlpha * 255, this.isClosing() ? 0 : 120, 0.3f) * RenderSystem.DIVIDE_BY_255;
-//        scale = Interpolations.interpBezier(scale, this.isClosing() ? 0 : 0.99999, 0.2);
+        screeMaskAlpha = Interpolations.interpolate(screeMaskAlpha * 255, this.isClosing() ? 0 : 120, 0.3f) * RenderSystem.DIVIDE_BY_255;
+//        scale = Interpolations.interpolate(scale, this.isClosing() ? 0 : 0.99999, 0.2);
 
 //        Rect.draw(posX, posY, width, height, RenderSystem.hexColor(0, 0, 0, (int) (screeMaskAlpha * 255)));
 

@@ -125,7 +125,7 @@ public class MusicLyricsWidget extends Widget {
             if (CloudMusic.currentLyric == null) {
                 scrollOffset = 0;
             } else {
-                scrollOffset = Interpolations.interpBezier(scrollOffset, (indexOf * getLyricHeight()), 0.2f);
+                scrollOffset = Interpolations.interpolate(scrollOffset, (indexOf * getLyricHeight()), 0.2f);
             }
         }
     }
@@ -220,16 +220,16 @@ public class MusicLyricsWidget extends Widget {
 
             // 前一行接近目标位置时才开始滚动
             if (v < MusicLyricsWidget.getLyricHeight() * 0.55f) {
-                line.offsetY = Interpolations.interpBezier(line.offsetY, dest, speed);
+                line.offsetY = Interpolations.interpolate(line.offsetY, dest, speed);
             }
         } else {
             // 第一行直接滚动
-            line.offsetY = Interpolations.interpBezier(line.offsetY, dest, speed);
+            line.offsetY = Interpolations.interpolate(line.offsetY, dest, speed);
         }
     }
 
     private void updateLyricAnimation(LyricLine line, boolean isCurrent) {
-        line.alpha = Interpolations.interpBezier(
+        line.alpha = Interpolations.interpolate(
                 line.alpha,
                 isCurrent ? 1f : .25f,
                 0.1f
@@ -460,7 +460,7 @@ public class MusicLyricsWidget extends Widget {
                 (double) (word.timestamp - prevWordTimestamp);
         double clamped = Math.max(0, Math.min(1, perc));
 
-        word.progress = Interpolations.interpBezier(word.progress, clamped, 1);
+        word.progress = Interpolations.interpolate(word.progress, clamped, 1);
         word.alpha = (float) Math.min(1, clamped * 1.25f);
     }
 

@@ -147,7 +147,7 @@ public class HomePanel extends NCMPanel {
                             this.loadCover();
                         }
 
-                        this.emphasizeAnim = Interpolations.interpBezier(this.emphasizeAnim, cover.isHovering() ? emphasizeAnimMax : 0, .2f);
+                        this.emphasizeAnim = Interpolations.interpolate(this.emphasizeAnim, cover.isHovering() ? emphasizeAnimMax : 0, .2f);
 
                         cover
                                 .setBounds(size + this.emphasizeAnim)

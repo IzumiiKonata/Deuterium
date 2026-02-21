@@ -134,7 +134,7 @@ public class NCMScreen extends BaseScreen {
         if (closing && alpha <= 0.02f)
             mc.displayGuiScreen(null);
 
-        alpha = Interpolations.interpBezier(alpha, closing ? 0f : 1f, 0.4f);
+        alpha = Interpolations.interpolate(alpha, closing ? 0f : 1f, 0.4f);
 
 //        Shaders.GAUSSIAN_BLUR_SHADER.run(Collections.singletonList(() -> {
 //            Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), hexColor(1, 1, 1, alpha));
@@ -155,7 +155,7 @@ public class NCMScreen extends BaseScreen {
 
             float alphaInterpolateSpeed = 0.4f;
             if (this.prevAnimatingPanel != null) {
-                this.prevAnimatingPanel.setAlpha(this.prevAnimatingPanelAlpha = Interpolations.interpBezier(this.prevAnimatingPanelAlpha, 0f, alphaInterpolateSpeed));
+                this.prevAnimatingPanel.setAlpha(this.prevAnimatingPanelAlpha = Interpolations.interpolate(this.prevAnimatingPanelAlpha, 0f, alphaInterpolateSpeed));
                 this.prevAnimatingPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
 
                 GlStateManager.pushMatrix();
@@ -166,7 +166,7 @@ public class NCMScreen extends BaseScreen {
                 if (this.prevAnimatingPanelAlpha <= 0.02f)
                     this.prevAnimatingPanel = null;
             } else if (this.currentPanel != null) {
-                curPanelAlphaAnimation = Interpolations.interpBezier(curPanelAlphaAnimation, 1f, alphaInterpolateSpeed);
+                curPanelAlphaAnimation = Interpolations.interpolate(curPanelAlphaAnimation, 1f, alphaInterpolateSpeed);
                 this.currentPanel.setAlpha(Math.min(this.basePanel.getAlpha(), curPanelAlphaAnimation));
                 this.currentPanel.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY(), this.currentPanelBg.getWidth(), this.currentPanelBg.getHeight());
 
@@ -232,7 +232,7 @@ public class NCMScreen extends BaseScreen {
 
     private void renderDownloadingPanel() {
 //        this.downloading = true;
-        this.downloadPanelAlpha = Interpolations.interpBezier(this.downloadPanelAlpha, this.downloading ? 1f : 0f, 0.3f);
+        this.downloadPanelAlpha = Interpolations.interpolate(this.downloadPanelAlpha, this.downloading ? 1f : 0f, 0.3f);
 
         if (this.downloadPanelAlpha <= 0.02f)
             return;

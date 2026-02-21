@@ -49,19 +49,19 @@ public class IconWidget extends AbstractWidget<IconWidget> {
         }
 
         if (run) {
-            alphaAnim2 = Interpolations.interpBezier(alphaAnim2, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
+            alphaAnim2 = Interpolations.interpolate(alphaAnim2, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
 
             if (Math.abs(alphaAnim2 - 40 * RenderSystem.DIVIDE_BY_255) < 0.05f) {
                 run = false;
             }
         } else {
-            alphaAnim2 = Interpolations.interpBezier(alphaAnim2, 0, 0.2f);
+            alphaAnim2 = Interpolations.interpolate(alphaAnim2, 0, 0.2f);
         }
 
         if (this.isHovering()) {
-            alphaAnim = Interpolations.interpBezier(alphaAnim, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
+            alphaAnim = Interpolations.interpolate(alphaAnim, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
         } else {
-            alphaAnim = Interpolations.interpBezier(alphaAnim, 0, 0.2f);
+            alphaAnim = Interpolations.interpolate(alphaAnim, 0, 0.2f);
         }
 
         int w = fr.getStringWidth(icon);

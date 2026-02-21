@@ -135,8 +135,8 @@ public class Chat extends Module {
 
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
-                                chatline.rectY = Interpolations.interpBezier(chatline.rectY, chatLineY, 0.4f);
-                                chatline.textY = Interpolations.interpBezier(chatline.textY, chatLineY - chatLineHeight * 0.5 - fontRenderer.getHeight() * 0.5, 0.4f);
+                                chatline.rectY = Interpolations.interpolate(chatline.rectY, chatLineY, 0.4f);
+                                chatline.textY = Interpolations.interpolate(chatline.textY, chatLineY - chatLineHeight * 0.5 - fontRenderer.getHeight() * 0.5, 0.4f);
                             }
                         }
                     }

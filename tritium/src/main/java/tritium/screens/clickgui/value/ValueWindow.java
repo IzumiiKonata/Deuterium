@@ -80,7 +80,7 @@ public class ValueWindow extends Window {
 
         open = (moduleList.getOnSetting() != null) && (moduleList.getOnSetting() == moduleList.getLastOnSetting());
 
-        this.stencilWidth = Interpolations.interpBezier(this.stencilWidth, open ? 150 : 0, 0.3f);
+        this.stencilWidth = Interpolations.interpolate(this.stencilWidth, open ? 150 : 0, 0.3f);
 
         if (!open && this.stencilWidth <= 1) {
             moduleList.setLastOnSetting(moduleList.getOnSetting());

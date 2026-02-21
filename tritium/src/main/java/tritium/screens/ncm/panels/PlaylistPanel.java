@@ -139,7 +139,7 @@ public class PlaylistPanel extends NCMPanel {
                         return true;
                     })
                     .setBeforeRenderCallback(() -> {
-                        tfOpenAnimation = Interpolations.interpBezier(tfOpenAnimation, this.tfSearch.isFocused() ? 80 : 20, .3f);
+                        tfOpenAnimation = Interpolations.interpolate(tfOpenAnimation, this.tfSearch.isFocused() ? 80 : 20, .3f);
 
                         this.tfSearch.setHidden(!this.tfSearch.isFocused() && tfOpenAnimation < 21);
 

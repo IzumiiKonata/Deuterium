@@ -139,7 +139,7 @@ public class MusicSpectrumWidget extends Widget {
                     }
 
                     float factor = 1f;
-                    renderSpectrum[i] = Interpolations.interpBezier(renderSpectrum[i], target, (float) (2f - (this.absVol.getValue() ? 0 : .5f * (1 - WidgetsManager.musicInfo.volume.getValue()))) * factor);
+                    renderSpectrum[i] = Interpolations.interpolate(renderSpectrum[i], target, (float) (2f - (this.absVol.getValue() ? 0 : .5f * (1 - WidgetsManager.musicInfo.volume.getValue()))) * factor);
                     maximumSpectrum = (Math.max(maximumSpectrum, target));
                 }
 
@@ -317,7 +317,7 @@ public class MusicSpectrumWidget extends Widget {
                     long timeStamp = indicatorTimeStamp.computeIfAbsent(i, k -> System.currentTimeMillis());
 
                     if (System.currentTimeMillis() - timeStamp > 200) {
-                        renderSpectrumIndicator[i] = Interpolations.interpLinear(renderSpectrumIndicator[i], (float) 6, 8);
+                        renderSpectrumIndicator[i] = Interpolations.interpolateLinear(renderSpectrumIndicator[i], (float) 6, 8);
                     }
 
                 }

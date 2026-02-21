@@ -94,7 +94,7 @@ public class Notification implements SharedRenderingConstants {
 
     public void draw(double offsetX, double offsetY) {
 
-        renderY = Interpolations.interpBezier(renderY, offsetY, 0.2);
+        renderY = Interpolations.interpolate(renderY, offsetY, 0.2);
 
         renderX = RenderSystem.getWidth() * 0.5 - width * 0.5;
 

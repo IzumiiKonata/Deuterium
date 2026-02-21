@@ -26,10 +26,10 @@ public class InterpolatableColor {
     }
 
     public void interpolate(float r, float g, float b, float a, float speed) {
-        this.r = Interpolations.interpBezier(this.r, r, speed);
-        this.g = Interpolations.interpBezier(this.g, g, speed);
-        this.b = Interpolations.interpBezier(this.b, b, speed);
-        this.a = Interpolations.interpBezier(this.a, a, speed);
+        this.r = Interpolations.interpolate(this.r, r, speed);
+        this.g = Interpolations.interpolate(this.g, g, speed);
+        this.b = Interpolations.interpolate(this.b, b, speed);
+        this.a = Interpolations.interpolate(this.a, a, speed);
     }
 
     public void interpolate(int hexColor, float speed) {

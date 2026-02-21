@@ -58,8 +58,8 @@ public class ModeRenderer extends AbstractWidget<ModeRenderer> {
                 double targetW = (open ? this.getMaxEntryWidth() : pf14.getWidth(setting.getTranslation(setting.getValue()))) + 4;
                 double targetH = this.getEntryHeight() * (this.open ? (setting.getConstants().length + 1) : 1);
 
-                width = Interpolations.interpBezier(width, targetW, 0.2);
-                height = Interpolations.interpBezier(height, targetH, 0.2);
+                width = Interpolations.interpolate(width, targetW, 0.2);
+                height = Interpolations.interpolate(height, targetH, 0.2);
 
                 ModeRenderer.this.setHeight(height);
 

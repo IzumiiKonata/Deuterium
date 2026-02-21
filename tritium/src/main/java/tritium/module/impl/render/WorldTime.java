@@ -57,7 +57,7 @@ public class WorldTime extends Module {
 //            long delta = Math.abs(mc.theWorld.getWorldTime() - time.getValue() * 100);
 
             if (worldJoinTimer.isDelayed(500)) {
-                mc.theWorld.setWorldTime((long) Interpolations.interpBezier(mc.theWorld.getWorldTime(), time.getValue() * 100, 0.25f));
+                mc.theWorld.setWorldTime((long) Interpolations.interpolate(mc.theWorld.getWorldTime(), time.getValue() * 100, 0.25f));
             } else {
                 mc.theWorld.setWorldTime(time.getValue() * 100);
             }

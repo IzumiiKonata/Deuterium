@@ -106,9 +106,9 @@ public class CameraPositions extends Module {
                 this.interpZ = cameraPos.zCoord;
             }
 
-            this.interpX = Interpolations.interpBezier(this.interpX, cameraPos.xCoord, v);
-            this.interpY = Interpolations.interpBezier(this.interpY, cameraPos.yCoord, v * 4f);
-            this.interpZ = Interpolations.interpBezier(this.interpZ, cameraPos.zCoord, v);
+            this.interpX = Interpolations.interpolate(this.interpX, cameraPos.xCoord, v);
+            this.interpY = Interpolations.interpolate(this.interpY, cameraPos.yCoord, v * 4f);
+            this.interpZ = Interpolations.interpolate(this.interpZ, cameraPos.zCoord, v);
 
             float yaw = Perspective.getCameraYaw();
             float pitch = Perspective.getCameraPitch();

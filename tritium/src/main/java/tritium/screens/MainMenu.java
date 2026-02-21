@@ -141,7 +141,7 @@ public class MainMenu extends BaseScreen {
 
         // render loading screen outro
         LoadingScreenRenderer renderer = LoadingRenderer.loadingScreenRenderer;
-        renderer.alpha = Interpolations.interpBezier(renderer.alpha, 0, .1f);
+        renderer.alpha = Interpolations.interpolate(renderer.alpha, 0, .1f);
         if (renderer.alpha > .02f)
             renderer.render(RenderSystem.getWidth(), RenderSystem.getHeight());
     }
@@ -229,7 +229,7 @@ public class MainMenu extends BaseScreen {
             double y = angY <= 0 ? 0 : Math.sin(-Math.toRadians(angY % 360.0f)) * 36;
 
             float alpha = alphas[i];
-            alphas[i] = Interpolations.interpBezier(alpha, angX > 0 && angY > 0 ? 1 : 0, .1f);
+            alphas[i] = Interpolations.interpolate(alpha, angX > 0 && angY > 0 ? 1 : 0, .1f);
 
             fr.drawString(String.valueOf(c), RenderSystem.getWidth() * .5 + x, RenderSystem.getHeight() / 3.5d + y, reAlpha(this.getColor(ColorType.TEXT), alpha));
         }

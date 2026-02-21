@@ -44,11 +44,11 @@ public class MouseStrokes extends Widget {
         this.roundedRect(x, y, circleSize, circleSize, circleSize * 0.5 - 0.75, Color.WHITE);
 
         float speed = 2f;
-        relativeX = Interpolations.interpBezier(relativeX, relativeXSmooth, speed);
-        relativeY = Interpolations.interpBezier(relativeY, relativeYSmooth, speed);
+        relativeX = Interpolations.interpolate(relativeX, relativeXSmooth, speed);
+        relativeY = Interpolations.interpolate(relativeY, relativeYSmooth, speed);
 
-        relativeXSmooth = Interpolations.interpBezier(relativeXSmooth, 0, speed * 0.5);
-        relativeYSmooth = Interpolations.interpBezier(relativeYSmooth, 0, speed * 0.5);
+        relativeXSmooth = Interpolations.interpolate(relativeXSmooth, 0, speed * 0.5);
+        relativeYSmooth = Interpolations.interpolate(relativeYSmooth, 0, speed * 0.5);
 
         GlStateManager.popMatrix();
 

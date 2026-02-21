@@ -56,8 +56,8 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
     @Override
     public void onRender(double mouseX, double mouseY) {
 
-        this.scale = Interpolations.interpBezier(this.scale, selected ? 1 : 0, 0.4);
-        this.selectIndicatorAlpha = Interpolations.interpBezier(this.selectIndicatorAlpha, selected ? 1 : 0, 0.3f);
+        this.scale = Interpolations.interpolate(this.scale, selected ? 1 : 0, 0.4);
+        this.selectIndicatorAlpha = Interpolations.interpolate(this.selectIndicatorAlpha, selected ? 1 : 0, 0.3f);
 
         double radius = 6;
 
@@ -70,7 +70,7 @@ public class CategoryButton extends AbstractWidget<CategoryButton> {
                 RenderSystem.reAlpha(ClickGui.getColor(7), Math.min(this.selectIndicatorAlpha, this.getAlpha()))
         );
 
-        this.hoverIndicatorAlpha = Interpolations.interpBezier(this.hoverIndicatorAlpha, CategoryButton.this.isHovering() ? .15f : 0, 0.2f);
+        this.hoverIndicatorAlpha = Interpolations.interpolate(this.hoverIndicatorAlpha, CategoryButton.this.isHovering() ? .15f : 0, 0.2f);
 
         this.roundedRect(
                 this.getX(), this.getY(),

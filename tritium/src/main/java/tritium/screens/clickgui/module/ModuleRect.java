@@ -109,14 +109,14 @@ public class ModuleRect extends AbstractWidget<ModuleRect> {
         if (this.module != ClientSettings.settingsModule) {
             Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RGBA.color(223, 1, 1, (int) (this.getAlpha() * 255)));
 
-            this.moduleEnableAlpha = Interpolations.interpBezier(this.moduleEnableAlpha, this.module.isEnabled() ? 1f : 0f, 0.2f);
+            this.moduleEnableAlpha = Interpolations.interpolate(this.moduleEnableAlpha, this.module.isEnabled() ? 1f : 0f, 0.2f);
 
             if (this.moduleEnableAlpha > .05f) {
                 Rect.draw(this.getX(), this.getY(), 2, this.getHeight(), RGBA.color(1, 223, 1, (int) (Math.min(this.moduleEnableAlpha, this.getAlpha()) * 255)));
             }
         }
 
-        this.nameHoverAnimation = Interpolations.interpBezier(this.nameHoverAnimation, this.isHovering() ? 4 : 0, 0.3f);
+        this.nameHoverAnimation = Interpolations.interpolate(this.nameHoverAnimation, this.isHovering() ? 4 : 0, 0.3f);
 
         FontManager.pf18.drawString(this.module.getName().get(), this.getX() + 8 + this.nameHoverAnimation, this.getY() + this.getHeight() * .5 - FontManager.pf18.getHeight() * .5, RenderSystem.reAlpha(ClickGui.getColor(9), this.getAlpha()));
     }

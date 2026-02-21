@@ -52,19 +52,19 @@ public class ClickableIcon extends ClickEntity {
 //        RenderSystem.circle(this.getX() + this.getWidth() * 0.5, this.getY() + this.getHeight() * 0.5, smallFr ? 8 : 12, GlobalSettings.THEME.getValue() == ThemeManager.Theme.Light ? hexColor(0, 0, 0, (int) (alphaAnim2 * 255)) : hexColor(255, 255, 255, (int) (alphaAnim2 * 255)));
 
         if (run) {
-            alphaAnim2 = Interpolations.interpBezier(alphaAnim2, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
+            alphaAnim2 = Interpolations.interpolate(alphaAnim2, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
 
             if (Math.abs(alphaAnim2 - 40 * RenderSystem.DIVIDE_BY_255) < 0.05f) {
                 run = false;
             }
         } else {
-            alphaAnim2 = Interpolations.interpBezier(alphaAnim2, 0, 0.2f);
+            alphaAnim2 = Interpolations.interpolate(alphaAnim2, 0, 0.2f);
         }
 
         if (isInBounds(mouseX, mouseY)) {
-            alphaAnim = Interpolations.interpBezier(alphaAnim, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
+            alphaAnim = Interpolations.interpolate(alphaAnim, 40 * RenderSystem.DIVIDE_BY_255, 0.2f);
         } else {
-            alphaAnim = Interpolations.interpBezier(alphaAnim, 0, 0.2f);
+            alphaAnim = Interpolations.interpolate(alphaAnim, 0, 0.2f);
         }
 
         int w = fr.getStringWidth(icon);

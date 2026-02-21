@@ -21,7 +21,6 @@ import tritium.widget.Widget;
 
 import java.awt.*;
 import java.time.Duration;
-import java.util.List;
 
 /**
  * @author IzumiiKonata
@@ -69,10 +68,10 @@ public class MusicInfoWidget extends Widget {
 
         boolean playing = playingMusic != null && CloudMusic.player != null && !CloudMusic.player.isFinished();
 
-        alpha = Interpolations.interpBezier(alpha, playing ? 1 : 0, playing ? 0.15f : 0.2f);
+        alpha = Interpolations.interpolate(alpha, playing ? 1 : 0, playing ? 0.15f : 0.2f);
 
-        this.downloadProgHeight = Interpolations.interpBezier(this.downloadProgHeight, this.downloading ? (playing ? 26 : -26) : 0, 0.2f);
-        this.downloadPanelAlpha = Interpolations.interpBezier(this.downloadPanelAlpha, this.downloading ? 1.0f : 0.0f, 0.4f);
+        this.downloadProgHeight = Interpolations.interpolate(this.downloadProgHeight, this.downloading ? (playing ? 26 : -26) : 0, 0.2f);
+        this.downloadPanelAlpha = Interpolations.interpolate(this.downloadPanelAlpha, this.downloading ? 1.0f : 0.0f, 0.4f);
 
         if (playingMusic != null) {
 
@@ -122,7 +121,7 @@ public class MusicInfoWidget extends Widget {
                     }
 
                     if (texBg != null) {
-                        this.musicBgAlpha = Interpolations.interpBezier(this.musicBgAlpha, 1.0f, 0.3f);
+                        this.musicBgAlpha = Interpolations.interpolate(this.musicBgAlpha, 1.0f, 0.3f);
                         GlStateManager.bindTexture(texBg.getGlTextureId());
                         texBg.linearFilter();
                         this.roundedRectTextured(posX, posY, width, height + downloadProgHeight, 0, .5 - v * .5, 1, v, bgRound, 1, this.musicBgAlpha * alpha);

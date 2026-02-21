@@ -72,7 +72,7 @@ public class ClickGui extends BaseScreen {
     @Override
     public void drawScreen(double mouseX, double mouseY) {
 
-        this.alpha = Interpolations.interpBezier(this.alpha, this.closing ? .0f : 1f, 0.3f);
+        this.alpha = Interpolations.interpolate(this.alpha, this.closing ? .0f : 1f, 0.3f);
 
         if (this.alpha <= .05f && this.closing)
             mc.displayGuiScreen(null);

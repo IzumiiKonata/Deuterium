@@ -61,7 +61,7 @@ public class RoundedImageWidget extends AbstractWidget<RoundedImageWidget> {
             return;
 
         if (fadeIn)
-            this.setAlpha(Interpolations.interpBezier(this.getWidgetAlpha(), 1.0f, 0.15f));
+            this.setAlpha(Interpolations.interpolate(this.getWidgetAlpha(), 1.0f, 0.15f));
 
         GlStateManager.color(1, 1, 1, this.getAlpha());
         GlStateManager.bindTexture(textureObject.getGlTextureId());

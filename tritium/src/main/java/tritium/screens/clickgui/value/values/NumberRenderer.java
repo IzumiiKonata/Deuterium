@@ -104,7 +104,7 @@ public class NumberRenderer extends AbstractWidget<NumberRenderer> {
         slider.setClickable(false);
 
         slider.setBeforeRenderCallback(() -> {
-            sliderWidth = Interpolations.interpBezier(sliderWidth, this.getWidth() * (setting.getValue().doubleValue() - setting.getMinimum().doubleValue()) / (setting.getMaximum().doubleValue() - setting.getMinimum().doubleValue()), 0.2);
+            sliderWidth = Interpolations.interpolate(sliderWidth, this.getWidth() * (setting.getValue().doubleValue() - setting.getMinimum().doubleValue()) / (setting.getMaximum().doubleValue() - setting.getMinimum().doubleValue()), 0.2);
             slider.setBounds(sliderWidth, 2);
             slider.setColor(ClickGui.getColor(27));
         });

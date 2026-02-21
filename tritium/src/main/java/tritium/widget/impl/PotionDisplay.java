@@ -114,13 +114,13 @@ public class PotionDisplay extends Widget {
                     float speed = 0.2f;
 
                     if (effect.fade) {
-                        effect.hightlightAlpha = Interpolations.interpBezier(effect.hightlightAlpha, 0.0F, speed);
+                        effect.hightlightAlpha = Interpolations.interpolate(effect.hightlightAlpha, 0.0F, speed);
 
                         if (effect.hightlightAlpha < 0.02f) {
                             effect.fade = false;
                         }
                     } else {
-                        effect.hightlightAlpha = Interpolations.interpBezier(effect.hightlightAlpha, 1.0F, speed);
+                        effect.hightlightAlpha = Interpolations.interpolate(effect.hightlightAlpha, 1.0F, speed);
 
                         if (effect.hightlightAlpha > 0.98f) {
                             effect.fade = true;

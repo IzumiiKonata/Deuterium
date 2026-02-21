@@ -68,15 +68,15 @@ public class MusicWidget extends RoundedRectWidget {
 
             if (CloudMusic.currentlyPlaying != null && CloudMusic.currentlyPlaying.getId() == music.getId()) {
 //                this.setColor(0xFFD60017);
-                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getWidgetAlpha(), .9f, .4f));
+                rrPlayingIndicator.setAlpha(Interpolations.interpolate(rrPlayingIndicator.getWidgetAlpha(), .9f, .4f));
                 rrPlayingIndicator.setHidden(false);
             } else if (this.isHovering()) {
 //                this.setColor(NCMScreen.getColor(NCMScreen.ColorType.ELEMENT_HOVER));
-                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getWidgetAlpha(), 1, .3f));
+                rrHoverIndicator.setAlpha(Interpolations.interpolate(rrHoverIndicator.getWidgetAlpha(), 1, .3f));
                 rrHoverIndicator.setHidden(false);
             } else {
-                rrPlayingIndicator.setAlpha(Interpolations.interpBezier(rrPlayingIndicator.getWidgetAlpha(), 0, .4f));
-                rrHoverIndicator.setAlpha(Interpolations.interpBezier(rrHoverIndicator.getWidgetAlpha(), 0, .3f));
+                rrPlayingIndicator.setAlpha(Interpolations.interpolate(rrPlayingIndicator.getWidgetAlpha(), 0, .4f));
+                rrHoverIndicator.setAlpha(Interpolations.interpolate(rrHoverIndicator.getWidgetAlpha(), 0, .3f));
 
                 if (rrPlayingIndicator.getWidgetAlpha() <= .05f)
                     rrPlayingIndicator.setHidden(true);

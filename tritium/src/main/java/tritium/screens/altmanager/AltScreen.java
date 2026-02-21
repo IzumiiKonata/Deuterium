@@ -155,7 +155,7 @@ public class AltScreen extends BaseScreen {
             getFrTitle().drawCenteredString(status, this.getWidth() * 0.5, spacing * 1.5, ThemeManager.get(ThemeManager.ThemeColor.Text, (int) (statusAlpha * 255)));
         }
         boolean bDelayed = statusAlphaFadeTimer.isDelayed(4000);
-        statusAlpha = Interpolations.interpBezier(statusAlpha, bDelayed ? 0.0f : 1.0f, bDelayed ? 0.2f : 0.1f);
+        statusAlpha = Interpolations.interpolate(statusAlpha, bDelayed ? 0.0f : 1.0f, bDelayed ? 0.2f : 0.1f);
     }
 
     RectWidget buttonWidget = new RectWidget();
@@ -356,7 +356,7 @@ public class AltScreen extends BaseScreen {
                 rwHoverEffect.setBeforeRenderCallback(() -> {
                     rwHoverEffect.setMargin(0);
                     rwHoverEffect.setColor(this.getColor(ColorType.CONTAINER_ELEMENT_HOVERING));
-                    rwHoverEffect.setAlpha(Interpolations.interpBezier(rwHoverEffect.getAlpha(), rw.isHovering() ? 1f : 0f, 0.2f));
+                    rwHoverEffect.setAlpha(Interpolations.interpolate(rwHoverEffect.getAlpha(), rw.isHovering() ? 1f : 0f, 0.2f));
                 });
 
                 RectWidget avatarBg = new RectWidget();

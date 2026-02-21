@@ -49,10 +49,10 @@ public class ThemeManager extends AbstractManager {
         int g = (to >> 8 & 255);
         int b = (to & 255);
 
-        from.r = Interpolations.interpBezier(from.r, r, speed);
-        from.g = Interpolations.interpBezier(from.g, g, speed);
-        from.b = Interpolations.interpBezier(from.b, b, speed);
-        from.a = Interpolations.interpBezier(from.a, 255, speed);
+        from.r = Interpolations.interpolate(from.r, r, speed);
+        from.g = Interpolations.interpolate(from.g, g, speed);
+        from.b = Interpolations.interpolate(from.b, b, speed);
+        from.a = Interpolations.interpolate(from.a, 255, speed);
     }
 
     @Handler

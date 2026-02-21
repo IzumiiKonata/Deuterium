@@ -141,8 +141,8 @@ public class GuiNewChat extends Gui implements SharedRenderingConstants {
 
                                 GlStateManager.disableAlpha();
                                 GlStateManager.disableBlend();
-                                chatline.rectY = Interpolations.interpBezier(chatline.rectY, chatLineY, 0.4f);
-                                chatline.textY = Interpolations.interpBezier(chatline.textY, chatLineY - 8, 0.4f);
+                                chatline.rectY = Interpolations.interpolate(chatline.rectY, chatLineY, 0.4f);
+                                chatline.textY = Interpolations.interpolate(chatline.textY, chatLineY - 8, 0.4f);
                             }
                         }
                     }

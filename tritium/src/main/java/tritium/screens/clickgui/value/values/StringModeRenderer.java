@@ -60,8 +60,8 @@ public class StringModeRenderer extends AbstractWidget<StringModeRenderer> {
                 double targetW = (open ? this.getMaxEntryWidth() : pf14.getWidth(setting.getValue())) + 4;
                 double targetH = this.getEntryHeight() * (this.open ? (setting.getModes().size() + 1) : 1);
 
-                width = Interpolations.interpBezier(width, targetW, 0.2);
-                height = Interpolations.interpBezier(height, targetH, 0.2);
+                width = Interpolations.interpolate(width, targetW, 0.2);
+                height = Interpolations.interpolate(height, targetH, 0.2);
 
                 StringModeRenderer.this.setHeight(height);
 

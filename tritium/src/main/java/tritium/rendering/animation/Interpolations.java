@@ -24,8 +24,8 @@ public class Interpolations {
      * @param fraction   speed
      * @return animation value
      */
-    public static double interpBezier(double startValue, double endValue,
-                                      double fraction) {
+    public static double interpolate(double startValue, double endValue,
+                                     double fraction) {
         boolean increasing = startValue < endValue;
 
         double result = Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5, startValue, endValue);
@@ -38,13 +38,8 @@ public class Interpolations {
 
     }
 
-    public static double interpBezierNoLimit(double startValue, double endValue,
-                                      double fraction) {
-        return Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5, startValue, endValue);
-    }
-
-    public static float interpBezier(float startValue, float endValue,
-                                     float fraction) {
+    public static float interpolate(float startValue, float endValue,
+                                    float fraction) {
         boolean increasing = startValue < endValue;
 
         float result = (float) Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5f, startValue, endValue);
@@ -56,8 +51,8 @@ public class Interpolations {
         }
     }
 
-    public static double interpBezier(double startValue, double endValue,
-                                      double fraction, double delta) {
+    public static double interpolate(double startValue, double endValue,
+                                     double fraction, double delta) {
         boolean increasing = startValue < endValue;
 
         double result = Mth.lerp(delta * fraction * 0.5, startValue, endValue);
@@ -70,8 +65,8 @@ public class Interpolations {
 
     }
 
-    public static float interpBezier(float startValue, float endValue,
-                                     float fraction, float delta) {
+    public static float interpolate(float startValue, float endValue,
+                                    float fraction, float delta) {
         boolean increasing = startValue < endValue;
 
         double result = startValue + (endValue - startValue) * interpolateCurve(fraction) * delta;
@@ -181,7 +176,7 @@ public class Interpolations {
         return new Color(animationr, animationg, animationb, finalStatea);
     }
 
-    public static double interpLinear(double now, double end, float interpolation) {
+    public static double interpolateLinear(double now, double end, float interpolation) {
         double add = RenderSystem.getFrameDeltaTime() * 0.1 * interpolation;
         if (now < end) {
             if (now + add < end)
@@ -197,7 +192,7 @@ public class Interpolations {
         return now;
     }
 
-    public static float interpLinear(float now, float end, float interpolation) {
+    public static float interpolateLinear(float now, float end, float interpolation) {
         float add = (float) (RenderSystem.getFrameDeltaTime() * 0.1 * interpolation);
         if (now < end) {
             if (now + add < end)
@@ -226,6 +221,6 @@ public class Interpolations {
             }
         }
 
-        return interpBezier(startValue, endValue, fraction);
+        return interpolate(startValue, endValue, fraction);
     }
 }

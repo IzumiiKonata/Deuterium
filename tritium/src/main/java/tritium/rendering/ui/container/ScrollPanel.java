@@ -52,7 +52,7 @@ public class ScrollPanel extends AbstractWidget<ScrollPanel> {
 
     @Override
     public void onRender(double mouseX, double mouseY) {
-        this.actualScrollOffset = Interpolations.interpBezier(this.actualScrollOffset, this.targetScrollOffset, 1f);
+        this.actualScrollOffset = Interpolations.interpolate(this.actualScrollOffset, this.targetScrollOffset, 1f);
 
         // 设置子组件的垂直位置
         this.alignChildren();

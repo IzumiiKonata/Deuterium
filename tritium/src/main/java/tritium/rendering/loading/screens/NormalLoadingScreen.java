@@ -42,7 +42,7 @@ public class NormalLoadingScreen extends LoadingScreenRenderer implements Shared
         GlStateManager.disableAlpha();
 
         pbWidth = width * .45;
-        progressWidth = Interpolations.interpBezier(progressWidth, pbWidth * MathHelper.clamp_double(LoadingRenderer.progress / 100F, 0, 1), 0.2f);
+        progressWidth = Interpolations.interpolate(progressWidth, pbWidth * MathHelper.clamp_double(LoadingRenderer.progress / 100F, 0, 1), 0.2f);
 
         ThemeManager.Theme theme = ClientSettings.THEME.getValue();
 
@@ -68,7 +68,7 @@ public class NormalLoadingScreen extends LoadingScreenRenderer implements Shared
         Rect.draw(width / 2.0d - pbWidth / 2.0, height * 5.0 / 6.0, progressWidth, 4, progressBarColor);
 
         if (timer.isDelayed(500)) {
-            screenMaskAlpha = Interpolations.interpBezier(screenMaskAlpha, 0, 0.1f);
+            screenMaskAlpha = Interpolations.interpolate(screenMaskAlpha, 0, 0.1f);
         }
 
         Rect.draw(0, 0, Display.getWidth(), Display.getHeight(), hexColor(0, 0, 0, (int) (screenMaskAlpha * 255)), Rect.RectType.EXPAND);

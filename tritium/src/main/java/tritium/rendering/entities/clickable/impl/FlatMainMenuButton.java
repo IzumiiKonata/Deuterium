@@ -42,7 +42,7 @@ public class FlatMainMenuButton extends ClickableEntity {
         boolean inBounds = this.isInBounds(mouseX, mouseY);
         this.textColor.interpolate(this.getColor(inBounds ? ColorType.TEXT : ColorType.UNFOCUSED), .15f);
 
-        this.animationsRectWidth = Interpolations.interpBezier(this.animationsRectWidth, inBounds ? this.getWidth() * .5 : 0, .3f);
+        this.animationsRectWidth = Interpolations.interpolate(this.animationsRectWidth, inBounds ? this.getWidth() * .5 : 0, .3f);
 
         CFontRenderer fr = FontManager.pf18;
         fr.drawCenteredString(

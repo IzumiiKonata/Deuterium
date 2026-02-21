@@ -86,7 +86,7 @@ public class PlaylistRect extends RectWidget {
                 super.onRender(mouseX, mouseY);
                 this.setAlpha(alpha);
 
-                alpha = Interpolations.interpBezier(alpha, this.getLocImg().get() != null ? 1f : 0f, 0.2f);
+                alpha = Interpolations.interpolate(alpha, this.getLocImg().get() != null ? 1f : 0f, 0.2f);
             }
         };
         imgBg.addChild(cover);
