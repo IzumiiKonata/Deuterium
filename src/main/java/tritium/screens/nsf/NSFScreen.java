@@ -43,7 +43,7 @@ public class NSFScreen extends BaseScreen {
     List<PhaseAlignedOsc> phaseOscs = new ArrayList<>();
 
     boolean loaded = false, renderFinished = false;
-    boolean usePhaseAlignment = true; // Toggle for phase-aligned view
+    boolean usePhaseAlignment = true;
 
     public NSFScreen() {
     }
@@ -74,7 +74,7 @@ public class NSFScreen extends BaseScreen {
         System.gc();
     }
 
-    float nSamples = 30.0f;
+    float nSamples = 16.0f;
     float totTime = 0;
     SoundFile player = null;
     NSFRenderer.NSFRenderInfo[] infos;
@@ -388,265 +388,130 @@ public class NSFScreen extends BaseScreen {
     }
 
     private float getVolume() {
-        return .75f;
+        return 1f;
     }
 
     /**
      * Phase-aligned oscilloscope wrapper for Processing Waveform
      */
     private static class PhaseAlignedOsc {
-        private static final int FFT_SIZE = 8192;
-        private static final int BUFFER_SIZE = 65536;
-
-        private DoubleFFT_1D fft;
-        private DoubleFFT_1D ifft;
-
-        private double[] inBuf;
-        private double[] fftBuf;
-        private double[] corrBuf;
-
-        private short[] audioBuffer;
-        private int bufferWritePos = 0;
-        private boolean ready = false;
-
-        private double waveLen = 0;
-        private double pitch = 0;
+        private float[] previousWaveform = null;
+        private int phaseLockCounter = 0;
 
         public PhaseAlignedOsc() {
-            try {
-                inBuf = new double[FFT_SIZE];
-                fftBuf = new double[FFT_SIZE * 2];
-                corrBuf = new double[FFT_SIZE];
-                audioBuffer = new short[BUFFER_SIZE];
-
-                // Initialize with silence
-                for (int i = 0; i < BUFFER_SIZE; i++) {
-                    audioBuffer[i] = 0;
-                }
-
-                fft = new DoubleFFT_1D(FFT_SIZE);
-                ifft = new DoubleFFT_1D(FFT_SIZE);
-
-                ready = true;
-            } catch (Exception e) {
-                System.err.println("Failed to initialize phase-aligned osc: " + e.getMessage());
-                ready = false;
-            }
+            previousWaveform = null;
+            phaseLockCounter = 0;
         }
 
-        public float[] getAlignedWaveform(float[] rawWave) {
-            if (!ready) {
-                return rawWave; // Fallback to raw waveform
+        public float[] getAlignedWaveform(float[] input) {
+            int phaseAlignedStart = findPhaseAlignedStart(input);
+
+            float[] output = new float[input.length];
+
+            for (int i = 0; i < input.length; i++) {
+                int sourceIndex = (phaseAlignedStart + i) % input.length;
+                output[i] = input[sourceIndex];
             }
 
-            // Get raw waveform data
-            if (rawWave == null) {
-                return null;
-            }
+            previousWaveform = output.clone();
 
-            // Convert float samples to short and store in circular buffer
-            for (int i = 0; i < rawWave.length; i++) {
-                audioBuffer[bufferWritePos] = (short)(rawWave[i] * 32767.0f);
-                bufferWritePos = (bufferWritePos + 1) & 0xFFFF;
-            }
-
-            // Process with phase alignment
-            return processBuffer(30.0f, true, 0.0);
+            return output;
         }
 
-        private float[] processBuffer(float windowSize, boolean waveCorr, double phaseOffset) {
-            int needle = bufferWritePos;
-            boolean loudEnough = false;
-
-            int displaySize = (int)(65536.0 * (windowSize / 1000.0));
-            int displaySize2 = (int)(65536.0 * (windowSize / 500.0));
-
-            // Fill input buffer with windowed signal
-            loudEnough = fillInputBuffer(needle, displaySize2);
-
-            if (!loudEnough) {
-                return extractWaveform(needle - displaySize, displaySize);
+        private int findPhaseAlignedStart(float[] data) {
+            if (previousWaveform == null || phaseLockCounter < 5) {
+                int zeroCrossing = findStableZeroCrossing(data);
+                previousWaveform = data.clone();
+                phaseLockCounter++;
+                return zeroCrossing;
             }
 
-            // Perform FFT
-            System.arraycopy(inBuf, 0, fftBuf, 0, FFT_SIZE);
-            fft.realForwardFull(fftBuf);
+            int bestOffset = 0;
+            float bestCorrelation = -1;
 
-            // Auto-correlation preparation
-            prepareAutoCorrelation();
+            int searchRange = Math.min(100, data.length / 4);
 
-            // Inverse FFT
-            ifft.complexInverse(fftBuf, true);
+            for (int offset = -searchRange; offset <= searchRange; offset++) {
+                float correlation = 0;
+                int validSamples = 0;
 
-            // Extract correlation buffer
-            for (int i = 0; i < FFT_SIZE; i++) {
-                corrBuf[i] = fftBuf[i * 2];
-            }
+                for (int i = 0; i < data.length; i++) {
+                    int prevIndex = i;
+                    int currentIndex = (i + offset + data.length) % data.length;
 
-            // Apply window to correlation
-            for (int j = 0; j < (FFT_SIZE >> 1); j++) {
-                corrBuf[j] *= 1.0 - ((double)j / (double)(FFT_SIZE << 1));
-            }
-
-            // Find period size
-            findPeriodSize();
-
-            double phase = 0.0;
-
-            // Calculate phase if valid period found
-            if (waveLen < (FFT_SIZE - 32)) {
-                pitch = Math.pow(1.0 - (waveLen / (double)(FFT_SIZE >> 1)), 4.0);
-                waveLen *= (double)displaySize * 2.0 / (double)FFT_SIZE;
-
-                phase = calculatePhase(needle, displaySize);
-
-                if (waveCorr) {
-                    needle -= (int)((phase + (phaseOffset * 2)) * waveLen);
-                }
-            }
-
-            needle -= displaySize;
-
-
-
-            return extractWaveform(needle, displaySize);
-        }
-
-        private boolean fillInputBuffer(int needle, int displaySize2) {
-            int k = 0;
-            short lastSample = 0;
-            boolean loud = false;
-
-            for (int i = 0; i < FFT_SIZE; i++) {
-                inBuf[i] = 0.0;
-            }
-
-            if (displaySize2 < FFT_SIZE) {
-                for (int j = -FFT_SIZE; j < FFT_SIZE; j++) {
-                    int bufIndex = (needle - displaySize2 + ((j * displaySize2) / FFT_SIZE)) & 0xFFFF;
-                    short newData = audioBuffer[bufIndex];
-
-                    if (newData != -1) {
-                        lastSample = newData;
+                    if (currentIndex >= 0 && currentIndex < data.length) {
+                        correlation += previousWaveform[prevIndex] * data[currentIndex];
+                        validSamples++;
                     }
+                }
 
-                    if (j < 0) continue;
+                if (validSamples > 0) {
+                    correlation /= validSamples;
 
-                    inBuf[j] = (double)lastSample / 32768.0;
-
-                    if (Math.abs(inBuf[j]) > 0.001) {
-                        loud = true;
+                    if (correlation > bestCorrelation) {
+                        bestCorrelation = correlation;
+                        bestOffset = offset;
                     }
-
-                    // Hamming window
-                    inBuf[j] *= 0.55 - 0.45 * Math.cos(Math.PI * (double)j / (double)(FFT_SIZE >> 1));
                 }
-            } else {
-                for (int j = needle - displaySize2; k < displaySize2; j++, k++) {
-                    int kIn = (k * FFT_SIZE) / displaySize2;
-                    if (kIn >= FFT_SIZE) break;
+            }
 
-                    int bufIndex = j & 0xFFFF;
-                    if (audioBuffer[bufIndex] != -1) {
-                        lastSample = audioBuffer[bufIndex];
+            int zeroCrossing = findStableZeroCrossing(data);
+
+            if (bestCorrelation > 0.3f) {
+                int phaseAlignedStart = (zeroCrossing + bestOffset + data.length) % data.length;
+
+                if (Math.abs(bestOffset) < data.length / 8) {
+                    return phaseAlignedStart;
+                }
+            }
+
+            return zeroCrossing;
+        }
+
+        private int findStableZeroCrossing(float[] data) {
+            int searchStart = data.length / 4;
+            int searchEnd = data.length * 3 / 4;
+
+            float maxAmplitude = 0;
+            int bestCrossing = data.length / 2;
+
+            for (int i = searchStart + 1; i < searchEnd; i++) {
+                if (data[i - 1] <= 0 && data[i] > 0) {
+                    float fraction = -data[i - 1] / (data[i] - data[i - 1]);
+                    float crossingPoint = i - 1 + fraction;
+
+                    float amplitude = Math.abs(data[i]) + Math.abs(data[i - 1]);
+
+                    if (amplitude > maxAmplitude) {
+                        maxAmplitude = amplitude;
+                        bestCrossing = (int) crossingPoint;
                     }
-
-                    inBuf[kIn] = (double)lastSample / 32768.0;
-
-                    if (Math.abs(inBuf[kIn]) > 0.001) {
-                        loud = true;
-                    }
-
-                    // Hamming window
-                    inBuf[kIn] *= 0.55 - 0.45 * Math.cos(Math.PI * (double)kIn / (double)(FFT_SIZE >> 1));
                 }
             }
 
-            return loud;
+            if (maxAmplitude > 0.01f) {
+                return bestCrossing;
+            }
+
+            for (int i = 1; i < data.length; i++) {
+                if (data[i - 1] <= 0 && data[i] > 0) {
+                    float fraction = -data[i - 1] / (data[i] - data[i - 1]);
+                    return (int) (i - 1 + fraction);
+                }
+            }
+
+            for (int i = 1; i < data.length; i++) {
+                if (data[i - 1] < 0 && data[i] >= 0) {
+                    float fraction = -data[i - 1] / (data[i] - data[i - 1]);
+                    return (int) (i - 1 + fraction);
+                }
+            }
+
+            return data.length / 2;
         }
 
-        private void prepareAutoCorrelation() {
-            for (int j = 0; j < FFT_SIZE; j++) {
-                double real = fftBuf[j * 2] / FFT_SIZE;
-                double imag = fftBuf[j * 2 + 1] / FFT_SIZE;
-
-                fftBuf[j * 2] = real * real + imag * imag;
-                fftBuf[j * 2 + 1] = 0;
-            }
-
-            fftBuf[0] = 0;
-            fftBuf[1] = 0;
-            fftBuf[2] = 0;
-            fftBuf[3] = 0;
-        }
-
-        private void findPeriodSize() {
-            double waveLenCandL = Double.MAX_VALUE;
-            double waveLenCandH = Double.MIN_VALUE;
-            waveLen = FFT_SIZE - 1;
-            int waveLenBottom = 0;
-
-            // Find lowest point
-            for (int j = (FFT_SIZE >> 2); j > 2; j--) {
-                if (corrBuf[j] < waveLenCandL) {
-                    waveLenCandL = corrBuf[j];
-                    waveLenBottom = j;
-                }
-            }
-
-            // Find highest point
-            for (int j = (FFT_SIZE >> 1) - 1; j > waveLenBottom; j--) {
-                if (corrBuf[j] > waveLenCandH) {
-                    waveLenCandH = corrBuf[j];
-                    waveLen = j;
-                }
-            }
-        }
-
-        private double calculatePhase(int needle, int displaySize) {
-            double dftReal = 0.0;
-            double dftImag = 0.0;
-            short lastSample = 0;
-
-            int startJ = needle - 1 - displaySize - (int)waveLen;
-            int k = -(displaySize >> 1);
-
-            for (int j = startJ; k < waveLen; j++, k++) {
-                int bufIndex = j & 0xFFFF;
-
-                if (audioBuffer[bufIndex] != -1) {
-                    lastSample = audioBuffer[bufIndex];
-                }
-
-                if (k < 0) continue;
-
-                double sampleValue = (double)lastSample / 32768.0;
-                double angle = (double)k * (-2.0 * Math.PI) / waveLen;
-
-                dftReal += sampleValue * Math.cos(angle);
-                dftImag += sampleValue * Math.sin(angle);
-            }
-
-            return 0.5 + (Math.atan2(dftImag, dftReal) / (2.0 * Math.PI));
-        }
-
-        private float[] extractWaveform(int needle, int displaySize) {
-            int numSamples = (int) (Engine.getEngine().getSampleRate() * 30.0f * 0.001f);
-            float[] waveform = new float[numSamples];
-
-            short lastSample = 0;
-
-            for (int i = 0; i < numSamples; i++) {
-                int bufIndex = (needle + (i * displaySize) / numSamples) & 0xFFFF;
-
-                if (audioBuffer[bufIndex] != -1) {
-                    lastSample = audioBuffer[bufIndex];
-                }
-
-                waveform[i] = (float)lastSample / 32768.0f;
-            }
-
-            return waveform;
+        private int findZeroCrossing(float[] data) {
+            return findStableZeroCrossing(data);
         }
     }
 }
