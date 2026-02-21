@@ -352,7 +352,8 @@ public class GuiScreenBook extends GuiScreen {
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+        GlStateManager.enableTexture2D();
         this.mc.getTextureManager().bindTexture(bookGuiTextures);
         int i = (this.width - this.bookImageWidth) / 2;
         int j = 2;

@@ -262,7 +262,7 @@ public class MusicSpectrumWidget extends Widget {
             GlStateManager.enableBlend();
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GlStateManager.disableTexture2D();
 
             GL11.glEnable(GL11.GL_LINE_SMOOTH);
             GL11.glLineWidth(1f);
@@ -283,7 +283,7 @@ public class MusicSpectrumWidget extends Widget {
             GlStateManager.popMatrix();
 
             GL11.glDisable(GL11.GL_LINE_SMOOTH);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GlStateManager.enableTexture2D();
         }
     }
 

@@ -877,6 +877,9 @@ public class FontRenderer implements IResourceManagerReloadListener {
 //            worldrenderer.pos(this.posX, this.posY + (float) (this.FONT_HEIGHT / 2) - 1.0F, 0.0D).endVertex();
 //            tessellator.draw();
 //            GlStateManager.enableTexture2D();
+
+            // 在这里 不要!! 使用 GlStateManager
+            // 因为 glCallList 需要记录所有的状态变化
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glBegin(GL11.GL_QUADS);
             GL11.glVertex2f(this.posX, this.posY + (float) (this.FONT_HEIGHT / 2));
@@ -899,6 +902,9 @@ public class FontRenderer implements IResourceManagerReloadListener {
 //            worldrenderer1.pos(this.posX + (float) i, this.posY + (float) this.FONT_HEIGHT - 1.0F, 0.0D).endVertex();
 //            tessellator1.draw();
 //            GlStateManager.enableTexture2D();
+
+            // 在这里 不要!! 使用 GlStateManager
+            // 因为 glCallList 需要记录所有的状态变化
             GL11.glDisable(GL11.GL_TEXTURE_2D);
             GL11.glBegin(GL11.GL_QUADS);
             GL11.glVertex2f(this.posX + (float) i, this.posY + (float) this.FONT_HEIGHT);

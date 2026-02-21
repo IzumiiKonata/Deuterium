@@ -16,7 +16,7 @@ public class Stencil {
     public static void write(Framebuffer givenFramebuffer) {
         Stencil.checkSetupFBO(givenFramebuffer);
         GL11.glClearStencil(0);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
         GlStateManager.enableStencilTest();
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 65535);
@@ -33,7 +33,7 @@ public class Stencil {
 
         Stencil.checkSetupFBO(mc.getFramebuffer());
         GL11.glClearStencil(0);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
         GL11.glClear(GL11.GL_STENCIL_BUFFER_BIT);
         GlStateManager.enableStencilTest();
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 65535);
@@ -44,7 +44,7 @@ public class Stencil {
 
     public static void writeNoClear() {
         Stencil.checkSetupFBO(mc.getFramebuffer());
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GlStateManager.enableDepth();
         GlStateManager.enableStencilTest();
         GL11.glStencilFunc(GL11.GL_ALWAYS, 1, 65535);
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_REPLACE);
