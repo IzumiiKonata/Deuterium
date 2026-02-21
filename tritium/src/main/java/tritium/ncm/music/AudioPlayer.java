@@ -79,12 +79,11 @@ public class AudioPlayer {
     public ByteBuffer waveVertexesBufferBackend, waveRightVertexesBufferBackend;
     public FloatBuffer waveVertexesBuffer, waveRightVertexesBuffer;
 
-    private int lastZeroCrossingIndexL = 0;
-    private float smoothedZeroCrossingIndexL = 0;
+    private float[] previousWaveform = null;
+    private int phaseLockCounter = 0;
 
     public final ReentrantLock lockL = new ReentrantLock(), lockR = new ReentrantLock();
     public volatile boolean spectrumDataLFilled = false, spectrumDataRFilled = false;
-
 
     public void setListeners() {
         fft.removeInput();
@@ -94,6 +93,9 @@ public class AudioPlayer {
         waveform.removeInput();
 
         waveform.resize(windowTime);
+
+        previousWaveform = null;
+        phaseLockCounter = 0;
 
         lockL.lock();
         wave = new float[nsamples];
@@ -128,7 +130,7 @@ public class AudioPlayer {
             return;
         }
 
-        if ((style == MusicSpectrumWidget.Style.Waveform || style == MusicSpectrumWidget.Style.Oscilloscope) && waveRightVertexes.length == waveRight.length * 2) {
+        if (style == MusicSpectrumWidget.Style.Waveform || style == MusicSpectrumWidget.Style.Oscilloscope) {
 
             wave = waveform.analyze();
             waveRight = waveform.analyzeRight();
@@ -207,29 +209,11 @@ public class AudioPlayer {
     public void computeOscilloscopeVertexes(float[] input, float[] output, float[] vertexes) {
         MusicSpectrumWidget ms = WidgetsManager.musicSpectrum;
 
-        int zeroCrossingIndex = findZeroCrossing(input);
-        
-        if (lastZeroCrossingIndexL == 0) {
-            lastZeroCrossingIndexL = zeroCrossingIndex;
-            smoothedZeroCrossingIndexL = zeroCrossingIndex;
-        } else {
-            int diff = zeroCrossingIndex - lastZeroCrossingIndexL;
-            
-            if (Math.abs(diff) > 10) {
-                smoothedZeroCrossingIndexL = smoothedZeroCrossingIndexL * 0.9f + lastZeroCrossingIndexL * 0.1f;
-            } else {
-                smoothedZeroCrossingIndexL = smoothedZeroCrossingIndexL * 0.7f + zeroCrossingIndex * 0.3f;
-            }
-            
-            lastZeroCrossingIndexL = zeroCrossingIndex;
-        }
+        int phaseAlignedStart = findPhaseAlignedStart(input);
         
         for (int i = 0; i < input.length; i++) {
-            float sourceIndex = (smoothedZeroCrossingIndexL + i) % input.length;
-            int idx1 = (int) sourceIndex;
-            int idx2 = (idx1 + 1) % input.length;
-            float fraction = sourceIndex - idx1;
-            output[i] = input[idx1] * (1 - fraction) + input[idx2] * fraction;
+            int sourceIndex = (phaseAlignedStart + i) % input.length;
+            output[i] = input[sourceIndex];
         }
 
         double spacing = (ms.getWidth() - 8) / input.length;
@@ -242,14 +226,86 @@ public class AudioPlayer {
             vertexes[vertexIdx + 1] = (float) (height * v / (WidgetsManager.musicSpectrum.absVol.getValue() ? (WidgetsManager.musicInfo.volume.getValue() * 2) : .5 + (WidgetsManager.musicInfo.volume.getValue() * 1.75)));
         }
 
+        previousWaveform = output.clone();
+    }
+    
+    private int findPhaseAlignedStart(float[] data) {
+        if (previousWaveform == null || phaseLockCounter < 5) {
+            int zeroCrossing = findStableZeroCrossing(data);
+            previousWaveform = data.clone();
+            phaseLockCounter++;
+            return zeroCrossing;
+        }
+        
+        int bestOffset = 0;
+        float bestCorrelation = -1;
+        
+        int searchRange = Math.min(100, data.length / 4);
+        
+        for (int offset = -searchRange; offset <= searchRange; offset++) {
+            float correlation = 0;
+            int validSamples = 0;
+            
+            for (int i = 0; i < data.length; i++) {
+                int prevIndex = i;
+                int currentIndex = (i + offset + data.length) % data.length;
+                
+                if (currentIndex >= 0 && currentIndex < data.length) {
+                    correlation += previousWaveform[prevIndex] * data[currentIndex];
+                    validSamples++;
+                }
+            }
+            
+            if (validSamples > 0) {
+                correlation /= validSamples;
+                
+                if (correlation > bestCorrelation) {
+                    bestCorrelation = correlation;
+                    bestOffset = offset;
+                }
+            }
+        }
+        
+        int zeroCrossing = findStableZeroCrossing(data);
+        
+        if (bestCorrelation > 0.3f) {
+            int phaseAlignedStart = (zeroCrossing + bestOffset + data.length) % data.length;
+            
+            if (Math.abs(bestOffset) < data.length / 8) {
+                return phaseAlignedStart;
+            }
+        }
+        
+        return zeroCrossing;
     }
 
-    private int findZeroCrossing(float[] data) {
+    private int findStableZeroCrossing(float[] data) {
         int searchStart = data.length / 4;
-        int searchEnd = data.length / 2;
+        int searchEnd = data.length * 3 / 4;
+        
+        float maxAmplitude = 0;
+        int bestCrossing = data.length / 2;
         
         for (int i = searchStart + 1; i < searchEnd; i++) {
-            if (data[i - 1] < 0 && data[i] >= 0) {
+            if (data[i - 1] <= 0 && data[i] > 0) {
+                float fraction = -data[i - 1] / (data[i] - data[i - 1]);
+                float crossingPoint = i - 1 + fraction;
+                
+                float amplitude = Math.abs(data[i]) + Math.abs(data[i - 1]);
+                
+                if (amplitude > maxAmplitude) {
+                    maxAmplitude = amplitude;
+                    bestCrossing = (int) crossingPoint;
+                }
+            }
+        }
+        
+        if (maxAmplitude > 0.01f) {
+            return bestCrossing;
+        }
+        
+        for (int i = 1; i < data.length; i++) {
+            if (data[i - 1] <= 0 && data[i] > 0) {
                 float fraction = -data[i - 1] / (data[i] - data[i - 1]);
                 return (int) (i - 1 + fraction);
             }
@@ -262,7 +318,11 @@ public class AudioPlayer {
             }
         }
         
-        return 0;
+        return data.length / 2;
+    }
+    
+    private int findZeroCrossing(float[] data) {
+        return findStableZeroCrossing(data);
     }
 
     public void play() {
