@@ -51,8 +51,16 @@ public class Image {
         fr.drawStringWithShadow(str, dbgX, dbgY, -1);
     }
 
+    public static void draw(Location img, double x, double y, double width, double height) {
+        draw(img, x, y, width, height, Type.Normal);
+    }
+
     public static void draw(Location img, double x, double y, double width, double height, Type type) {
         draw(img, x, y, width, height, width, height, type);
+    }
+
+    public static void draw(ITextureObject img, double x, double y, double width, double height) {
+        draw(img, x, y, width, height, Type.Normal);
     }
 
     public static void draw(ITextureObject img, double x, double y, double width, double height, Type type) {
