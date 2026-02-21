@@ -227,6 +227,7 @@ public class CoverflowOverlay extends BaseScreen {
         this.setupProjectionTransformation();
 
         GlStateManager.clear(GL11.GL_DEPTH_BUFFER_BIT);
+        GlStateManager.disableDepth();
         GlStateManager.depthMask(false);
 //        GlStateManager.disableDepth();
 //        GlStateManager.clearDepth(1.0D);
@@ -305,22 +306,8 @@ public class CoverflowOverlay extends BaseScreen {
 
         if (texture == null && !renderingData.coverLoaded) {
             renderingData.coverLoaded = true;
-            MultiThreadingUtil.runAsync(() -> {
-
-                try {
-
-                    int cSize = 512;
-                    InputStream is = HttpUtils.get(al.getPicUrl() + "?param=" + cSize + "y" + cSize, null);
-
-                    if (is == null)
-                        return;
-
-                    Textures.loadTexture(al.getCoverLocation(), NativeBackedImage.make(is), true, true);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-            });
+            int cSize = 512;
+            Textures.downloadTextureAndLoadAsync(al.getPicUrl() + "?param=" + cSize + "y" + cSize, al.getCoverLocation());
         }
 
         double fovy = 45.0f;
