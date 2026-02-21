@@ -60,7 +60,7 @@ public class MusicLyricsWidget extends Widget {
         if (CloudMusic.lyrics.isEmpty()) return;
 
         try {
-            CloudMusic.quickResetProgress(progress);
+            CloudMusic.setLyricsProgress(progress);
             scrollOffset = (CloudMusic.lyrics.indexOf(CloudMusic.currentLyric)) * getLyricHeight();
         } catch (Exception e) {
             e.printStackTrace();

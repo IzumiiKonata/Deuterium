@@ -39,7 +39,6 @@ import tritium.utils.network.HttpUtils;
 import tritium.utils.other.StringUtils;
 import tritium.utils.other.WrappedInputStream;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
-import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -125,21 +124,29 @@ public class CloudMusic {
         return false;
     }
 
+    /**
+     * 为歌词添加长间隔时的 "● ● ●"
+     */
     private static void addLongBreaks() {
         final long longBreaksDuration = 3000L;
         
-        if (hasEmptyLyrics()) {
+        if (lyricsHaveNoWords()) {
+            // 如果不为逐字歌词的话只在开头添加长间隔
             addInitialBreakIfNeeded(longBreaksDuration);
             return;
         }
         
         addBreaksBetweenLyrics(longBreaksDuration);
     }
-    
-    private static boolean hasEmptyLyrics() {
+
+    /**
+     * 歌词是否不为逐字歌词
+     * @return true 表示不为逐字歌词
+     */
+    private static boolean lyricsHaveNoWords() {
         return lyrics.stream().allMatch(l -> l.words.isEmpty());
     }
-    
+
     private static void addInitialBreakIfNeeded(long duration) {
         long firstTimestamp = lyrics.getFirst().getTimestamp();
         if (firstTimestamp >= duration) {
@@ -185,6 +192,10 @@ public class CloudMusic {
         return line.words.isEmpty() ? 0 : line.words.getLast().timestamp;
     }
 
+    /**
+     * 更新当前歌词行
+     * @param songProgress 歌曲进度 (ms)
+     */
     public static void updateCurrentLyric(float songProgress) {
         LyricLine previousLyric = currentLyric;
         currentLyric = findCurrentLyric(songProgress);
@@ -220,7 +231,7 @@ public class CloudMusic {
         });
     }
 
-    public static void quickResetProgress(float progress) {
+    public static void setLyricsProgress(float progress) {
         if (lyrics.isEmpty()) return;
         
         try {
@@ -321,6 +332,7 @@ public class CloudMusic {
 
     public static void loadNCM(String cookie) {
         OptionsUtil.setCookie(cookie);
+        // 获取用户信息
         profile = getUserProfile();
 
         if (profile == null) {
@@ -330,12 +342,15 @@ public class CloudMusic {
         ConsoleScreen.log("[NCM] Logged in as {}({})", profile.getName(), profile.getId());
 
         if (!OptionsUtil.getCookie().isEmpty()) {
+            // 保存一次
             onStop();
         }
 
+        // 加载用户歌单
         CloudMusic.playLists = loadUserPlaylists();
         ConsoleScreen.log("[NCM] Loaded {} playlists", playLists.size());
 
+        // 加载喜欢列表
         likeList = likeList();
         NCMScreen.getInstance().markDirty();
     }
@@ -387,8 +402,8 @@ public class CloudMusic {
         }
     }
 
-    private static final DecimalFormat df = new DecimalFormat("##.##");
-
+    // 以下这些 上一首/下一首 以及 播放/暂停 的逻辑我写完我自己都看不懂
+    // BUT IT WORKS
     public static volatile boolean dontAdd = false;
 
     public static void prev() {
@@ -440,7 +455,10 @@ public class CloudMusic {
         }
         return true;
     }
-    
+
+    /**
+     * 给网易云发送当前歌曲的播放时长
+     */
     private static void updatePlayCountIfNeeded() {
         if (playedFrom != null && player != null) {
             playList.get(curIdx).updPlayCount(playedFrom, player.getCurrentTimeSeconds());
@@ -456,15 +474,25 @@ public class CloudMusic {
         playing.set(false);
     }
 
+    /**
+     * 播放来源, 用于记录播放时长
+     */
     public static PlayList playedFrom = null;
 
+    /**
+     * 播放给定的列表中的所有歌曲
+     * @param songs 歌曲列表
+     * @param startIdx 第一首播放的索引
+     */
     @SneakyThrows
     public static void play(List<Music> songs, int startIdx) {
+        // 深拷贝一份以避免打乱的时候影响传进来的列表的顺序
         List<Music> safeSongList = new ArrayList<>(songs);
         
         stopExistingPlayThread();
         
         if (playMode == PlayMode.Random) {
+            // 打乱列表以及开始索引
             startIdx = handleRandomPlayMode(safeSongList, startIdx);
         }
         
@@ -825,7 +853,8 @@ public class CloudMusic {
             inputImage.setRGB(0, 0, coverImage.getWidth(), coverImage.getHeight(), 
                              coverImage.getRGB(0, 0, coverImage.getWidth(), coverImage.getHeight(), null, 0, coverImage.getWidth()), 
                              0, coverImage.getWidth());
-            
+
+            // 创建高斯模糊之后的歌曲封面, 目前仅在播放器的歌词界面使用
             BufferedImage blurredImage = gaussianBlur(inputImage, 31);
             Textures.loadTexture(musicCoverBlur, blurredImage);
         });
@@ -1045,7 +1074,6 @@ public class CloudMusic {
         while (true) {
 
             if (Thread.currentThread().isInterrupted()) {
-                System.out.println("! Interrupted login thread");
                 return "";
             }
 
@@ -1164,6 +1192,7 @@ public class CloudMusic {
     }
 
     static {
+        // 设置播放器播放速率, (0, +∞)
         CommandManager.registerCommand("set_player_rate", (Float rate) -> {
             if (player == null) {
                 ConsoleScreen.log("{}Not playing!", EnumChatFormatting.RED);
@@ -1180,6 +1209,7 @@ public class CloudMusic {
             ConsoleScreen.log("set rate: {} => {}", prevRate, rate);
         }, Float.class, "rate").setDescription("Set audio player's playback rate");
 
+        // 设置播放器音量, [0, 1]
         CommandManager.registerCommand("set_player_volume", (Float volume) -> {
             if (player == null) {
                 ConsoleScreen.log("{}Not playing!", EnumChatFormatting.RED);
@@ -1191,6 +1221,7 @@ public class CloudMusic {
             ConsoleScreen.log("set volume: {} => {}", prevVol, player.getVolume());
         }, Float.class, "volume").setDescription("Set audio player's volume");
 
+        // 播放歌曲, 传入网易云音乐歌曲id
         CommandManager.registerCommand("play", (Long id) -> MultiThreadingUtil.runAsync(() -> {
             JsonArray songs = CloudMusicApi.songDetail(id).toJsonObject().getAsJsonArray("songs");
             if (songs.isEmpty()) {

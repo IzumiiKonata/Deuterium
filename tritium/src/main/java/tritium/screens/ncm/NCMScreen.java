@@ -52,6 +52,10 @@ public class NCMScreen extends BaseScreen {
 
     public MusicLyricsPanel musicLyricsPanel = null;
 
+    /**
+     * 表示是否需要重新布局, 当用户信息和用户歌单加载完设置为 true,
+     * 然后会自动进行重新布局并设为 false
+     */
     private boolean dirty = true;
 
     public NCMScreen() {

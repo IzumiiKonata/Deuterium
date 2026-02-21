@@ -146,19 +146,19 @@ public class AudioPlayer {
             // ⚠⚠⚠ race conditions 警告 ⚠⚠⚠
 //            if (lockL.tryLock()) {
 
-                if (waveVertexesBuffer == null || waveVertexesBuffer.capacity() != CloudMusic.player.waveVertexes.length) {
+                if (waveVertexesBuffer == null || waveVertexesBuffer.capacity() != this.waveVertexes.length) {
                     lockL.lock();
                     if (waveVertexesBuffer != null) {
                         MemoryTracker.memFree(waveVertexesBufferBackend);
                     }
 
-                    waveVertexesBufferBackend = MemoryTracker.memAlloc(CloudMusic.player.waveVertexes.length << 2);
+                    waveVertexesBufferBackend = MemoryTracker.memAlloc(this.waveVertexes.length << 2);
                     waveVertexesBuffer = waveVertexesBufferBackend.asFloatBuffer();
-                    waveVertexesBuffer.put(CloudMusic.player.waveVertexes);
+                    waveVertexesBuffer.put(this.waveVertexes);
                     lockL.unlock();
                 } else {
                     waveVertexesBuffer.clear();
-                    waveVertexesBuffer.put(CloudMusic.player.waveVertexes);
+                    waveVertexesBuffer.put(this.waveVertexes);
                 }
 
                 waveVertexesBuffer.flip();
@@ -166,19 +166,19 @@ public class AudioPlayer {
 //            }
 
 //            if (lockR.tryLock()) {
-                if (waveRightVertexesBuffer == null || waveRightVertexesBuffer.capacity() != CloudMusic.player.waveRightVertexes.length) {
+                if (waveRightVertexesBuffer == null || waveRightVertexesBuffer.capacity() != this.waveRightVertexes.length) {
                     lockR.lock();
                     if (waveRightVertexesBuffer != null) {
                         MemoryTracker.memFree(waveRightVertexesBufferBackend);
                     }
 
-                    waveRightVertexesBufferBackend = MemoryTracker.memAlloc(CloudMusic.player.waveRightVertexes.length << 2);
+                    waveRightVertexesBufferBackend = MemoryTracker.memAlloc(this.waveRightVertexes.length << 2);
                     waveRightVertexesBuffer = waveRightVertexesBufferBackend.asFloatBuffer();
-                    waveRightVertexesBuffer.put(CloudMusic.player.waveRightVertexes);
+                    waveRightVertexesBuffer.put(this.waveRightVertexes);
                     lockR.unlock();
                 } else {
                     waveRightVertexesBuffer.clear();
-                    waveRightVertexesBuffer.put(CloudMusic.player.waveRightVertexes);
+                    waveRightVertexesBuffer.put(this.waveRightVertexes);
                 }
 
                 waveRightVertexesBuffer.flip();
