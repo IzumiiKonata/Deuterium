@@ -175,45 +175,27 @@ public class MusicSpectrumWidget extends Widget {
 //                GlStateManager.translate(0, 0, zLayerFixer);
             }
 
-            if (waveform) {
+            if (waveform || oscilloscope) {
                 boolean stereo = this.stereo.getValue();
 
                 double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
 
                 // ⚠⚠⚠ race conditions 警告 ⚠⚠⚠
-                if (CloudMusic.player.spectrumDataLFilled) {
+                if (CloudMusic.player.spectrumDataLFilled && CloudMusic.player.lockL.tryLock()) {
                     GlStateManager.color(1, 1, 1, 1);
                     this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.waveVertexesBufferBackend, CloudMusic.player.waveVertexes.length / 2);
+                    CloudMusic.player.lockL.unlock();
                 }
 
-                if (stereo && CloudMusic.player.spectrumDataRFilled) {
+                if (stereo && CloudMusic.player.spectrumDataRFilled && CloudMusic.player.lockR.tryLock()) {
                     double lineHeight = 0.5;
                     tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
 
                     GlStateManager.color(1, 1, 1, 1);
                     this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.waveRightVertexesBufferBackend, CloudMusic.player.waveRightVertexes.length / 2);
+                    CloudMusic.player.lockR.unlock();
                 }
 
-            }
-
-            // 渲染oscilloscope模式
-            if (oscilloscope) {
-                boolean stereo = this.stereo.getValue();
-
-                double pWidgetHeight = stereo ? this.getHeight() * 0.5 : this.getHeight();
-
-                if (CloudMusic.player.oscilloscopeDataLFilled) {
-                    GlStateManager.color(1, 1, 1, 1);
-                    this.drawWaveSub(pWidgetHeight, false, CloudMusic.player.oscilloscopeVertexesBufferBackendL, CloudMusic.player.oscilloscopeVertexesL.length / 2);
-                }
-
-                if (stereo && CloudMusic.player.oscilloscopeDataRFilled) {
-                    double lineHeight = 0.5;
-                    tritium.rendering.Rect.draw(this.getX() + 4, (float) (this.getY() + pWidgetHeight - lineHeight * 0.5), this.getWidth() - 8, (float) lineHeight, hexColor(255, 255, 255, 160));
-
-                    GlStateManager.color(1, 1, 1, 1);
-                    this.drawWaveSub(pWidgetHeight, true, CloudMusic.player.oscilloscopeVertexesBufferBackendR, CloudMusic.player.oscilloscopeVertexesR.length / 2);
-                }
             }
 
             if (line) {

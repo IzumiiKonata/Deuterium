@@ -75,14 +75,9 @@ public class AudioPlayer {
     public float[] wave, waveRight;
 
     public float[] waveVertexes, waveRightVertexes;
+    public float[] osc, oscRight;
     public ByteBuffer waveVertexesBufferBackend, waveRightVertexesBufferBackend;
     public FloatBuffer waveVertexesBuffer, waveRightVertexesBuffer;
-
-    public float[] oscilloscopeL, oscilloscopeR;
-    public float[] oscilloscopeVertexesL, oscilloscopeVertexesR;
-    public ByteBuffer oscilloscopeVertexesBufferBackendL, oscilloscopeVertexesBufferBackendR;
-    public FloatBuffer oscilloscopeVertexesBufferL, oscilloscopeVertexesBufferR;
-    public volatile boolean oscilloscopeDataLFilled = false, oscilloscopeDataRFilled = false;
 
     private int lastZeroCrossingIndexL = 0;
     private float smoothedZeroCrossingIndexL = 0;
@@ -103,15 +98,13 @@ public class AudioPlayer {
         lockL.lock();
         wave = new float[nsamples];
         waveVertexes = new float[nsamples * 2];
-        oscilloscopeL = new float[nsamples];
-        oscilloscopeVertexesL = new float[nsamples * 2];
+        osc = new float[nsamples];
         lockL.unlock();
 
         lockR.lock();
         waveRight = new float[nsamples];
         waveRightVertexes = new float[nsamples * 2];
-        oscilloscopeR = new float[nsamples];
-        oscilloscopeVertexesR = new float[nsamples * 2];
+        oscRight = new float[nsamples];
         lockR.unlock();
 
         waveform.input(this.player);
@@ -135,19 +128,24 @@ public class AudioPlayer {
             return;
         }
 
-        if (style == MusicSpectrumWidget.Style.Waveform && waveRightVertexes.length == waveRight.length * 2) {
+        if ((style == MusicSpectrumWidget.Style.Waveform || style == MusicSpectrumWidget.Style.Oscilloscope) && waveRightVertexes.length == waveRight.length * 2) {
 
             wave = waveform.analyze();
             waveRight = waveform.analyzeRight();
 
-            this.computeVertexes(wave, waveVertexes);
-            this.computeVertexes(waveRight, waveRightVertexes);
+            if (style == MusicSpectrumWidget.Style.Waveform) {
+                this.computeVertexes(wave, waveVertexes);
+                this.computeVertexes(waveRight, waveRightVertexes);
+            } else {
+                this.computeOscilloscopeVertexes(wave, osc, waveVertexes);
+                this.computeOscilloscopeVertexes(waveRight, oscRight, waveRightVertexes);
+            }
 
             // ⚠⚠⚠ race conditions 警告 ⚠⚠⚠
 //            if (lockL.tryLock()) {
 
                 if (waveVertexesBuffer == null || waveVertexesBuffer.capacity() != CloudMusic.player.waveVertexes.length) {
-
+                    lockL.lock();
                     if (waveVertexesBuffer != null) {
                         MemoryTracker.memFree(waveVertexesBufferBackend);
                     }
@@ -155,6 +153,7 @@ public class AudioPlayer {
                     waveVertexesBufferBackend = MemoryTracker.memAlloc(CloudMusic.player.waveVertexes.length << 2);
                     waveVertexesBuffer = waveVertexesBufferBackend.asFloatBuffer();
                     waveVertexesBuffer.put(CloudMusic.player.waveVertexes);
+                    lockL.unlock();
                 } else {
                     waveVertexesBuffer.clear();
                     waveVertexesBuffer.put(CloudMusic.player.waveVertexes);
@@ -162,18 +161,19 @@ public class AudioPlayer {
 
                 waveVertexesBuffer.flip();
                 spectrumDataLFilled = true;
-//                lockL.unlock();
 //            }
 
 //            if (lockR.tryLock()) {
                 if (waveRightVertexesBuffer == null || waveRightVertexesBuffer.capacity() != CloudMusic.player.waveRightVertexes.length) {
-
+                    lockR.lock();
                     if (waveRightVertexesBuffer != null) {
                         MemoryTracker.memFree(waveRightVertexesBufferBackend);
                     }
 
                     waveRightVertexesBufferBackend = MemoryTracker.memAlloc(CloudMusic.player.waveRightVertexes.length << 2);
                     waveRightVertexesBuffer = waveRightVertexesBufferBackend.asFloatBuffer();
+                    waveRightVertexesBuffer.put(CloudMusic.player.waveRightVertexes);
+                    lockR.unlock();
                 } else {
                     waveRightVertexesBuffer.clear();
                     waveRightVertexesBuffer.put(CloudMusic.player.waveRightVertexes);
@@ -186,41 +186,6 @@ public class AudioPlayer {
 
         }
 
-        if (style == MusicSpectrumWidget.Style.Oscilloscope) {
-            wave = waveform.analyze();
-            waveRight = waveform.analyzeRight();
-
-            this.computeOscilloscopeVertexes(wave, oscilloscopeL, oscilloscopeVertexesL);
-            this.computeOscilloscopeVertexes(waveRight, oscilloscopeR, oscilloscopeVertexesR);
-
-            if (oscilloscopeVertexesBufferL == null || oscilloscopeVertexesBufferL.capacity() != oscilloscopeVertexesL.length) {
-                if (oscilloscopeVertexesBufferL != null) {
-                    MemoryTracker.memFree(oscilloscopeVertexesBufferBackendL);
-                }
-
-                oscilloscopeVertexesBufferBackendL = MemoryTracker.memAlloc(oscilloscopeVertexesL.length << 2);
-                oscilloscopeVertexesBufferL = oscilloscopeVertexesBufferBackendL.asFloatBuffer();
-            } else {
-                oscilloscopeVertexesBufferL.clear();
-            }
-            oscilloscopeVertexesBufferL.put(oscilloscopeVertexesL);
-            oscilloscopeVertexesBufferL.flip();
-            oscilloscopeDataLFilled = true;
-
-            if (oscilloscopeVertexesBufferR == null || oscilloscopeVertexesBufferR.capacity() != oscilloscopeVertexesR.length) {
-                if (oscilloscopeVertexesBufferR != null) {
-                    MemoryTracker.memFree(oscilloscopeVertexesBufferBackendR);
-                }
-
-                oscilloscopeVertexesBufferBackendR = MemoryTracker.memAlloc(oscilloscopeVertexesR.length << 2);
-                oscilloscopeVertexesBufferR = oscilloscopeVertexesBufferBackendR.asFloatBuffer();
-            } else {
-                oscilloscopeVertexesBufferR.clear();
-            }
-            oscilloscopeVertexesBufferR.put(oscilloscopeVertexesR);
-            oscilloscopeVertexesBufferR.flip();
-            oscilloscopeDataRFilled = true;
-        }
     }
 
     public void computeVertexes(float[] input, float[] output) {
