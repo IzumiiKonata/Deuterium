@@ -133,6 +133,7 @@ public class Display {
 
         glfwWindowHintString(GLFW_X11_CLASS_NAME, "minecraft");
         glfwWindowHintString(GLFW_COCOA_FRAME_NAME, "minecraft");
+        glfwWindowHint(GLFW_TRANSPARENT_FRAMEBUFFER, GLFW_FALSE);
 
         glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE); // request a non-hidpi framebuffer on Retina displays
         // on MacOS

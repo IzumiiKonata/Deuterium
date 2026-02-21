@@ -12,7 +12,6 @@ public class Launcher {
         long startTime = System.currentTimeMillis();
         System.setProperty("tritium.startupTime", String.valueOf(startTime));
 
-        System.setProperty("java.awt.headless", "true");
         System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", String.valueOf(Runtime.getRuntime().availableProcessors() - 1));
 
         System.setProperty("log4j2.contextSelector", "org.apache.logging.log4j.core.async.AsyncLoggerContextSelector");
