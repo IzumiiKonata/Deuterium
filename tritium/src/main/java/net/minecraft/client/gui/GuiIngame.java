@@ -269,6 +269,31 @@ public class GuiIngame extends Gui {
                 this.overlayDebug.renderDebugInfo(scaledresolution);
             }
 
+            if (this.recordPlayingUpFor > 0) {
+                float f2 = (float) this.recordPlayingUpFor - partialTicks;
+                int l1 = (int) (f2 * 255.0F / 20.0F);
+
+                if (l1 > 255) {
+                    l1 = 255;
+                }
+
+                if (l1 > 8) {
+                    GlStateManager.pushMatrix();
+                    GlStateManager.translate((float) (i / 2), (float) (j - 68), 0.0F);
+                    GlStateManager.enableBlend();
+                    GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+                    int l = 16777215;
+
+                    if (this.recordIsPlaying) {
+                        l = MathHelper.hsvToRGB(f2 / 50.0F, 0.7F, 0.6F) & 16777215;
+                    }
+
+                    this.getFontRenderer().drawString(this.recordPlaying, -this.getFontRenderer().getStringWidth(this.recordPlaying) / 2, -4, l + (l1 << 24 & -16777216));
+                    GlStateManager.disableBlend();
+                    GlStateManager.popMatrix();
+                }
+            }
+
             if (this.titlesTimer > 0) {
                 float f3 = (float) this.titlesTimer - partialTicks;
                 int i2 = 255;
