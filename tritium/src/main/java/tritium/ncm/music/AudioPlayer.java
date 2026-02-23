@@ -146,43 +146,43 @@ public class AudioPlayer {
             // ⚠⚠⚠ race conditions 警告 ⚠⚠⚠
 //            if (lockL.tryLock()) {
 
-                if (waveVertexesBuffer == null || waveVertexesBuffer.capacity() != this.waveVertexes.length) {
-                    lockL.lock();
-                    if (waveVertexesBuffer != null) {
-                        MemoryTracker.memFree(waveVertexesBufferBackend);
-                    }
-
-                    waveVertexesBufferBackend = MemoryTracker.memAlloc(this.waveVertexes.length << 2);
-                    waveVertexesBuffer = waveVertexesBufferBackend.asFloatBuffer();
-                    waveVertexesBuffer.put(this.waveVertexes);
-                    lockL.unlock();
-                } else {
-                    waveVertexesBuffer.clear();
-                    waveVertexesBuffer.put(this.waveVertexes);
+            if (waveVertexesBuffer == null || waveVertexesBuffer.capacity() != this.waveVertexes.length) {
+                lockL.lock();
+                if (waveVertexesBuffer != null) {
+                    MemoryTracker.memFree(waveVertexesBufferBackend);
                 }
 
-                waveVertexesBuffer.flip();
-                spectrumDataLFilled = true;
+                waveVertexesBufferBackend = MemoryTracker.memAlloc(this.waveVertexes.length << 2);
+                waveVertexesBuffer = waveVertexesBufferBackend.asFloatBuffer();
+                waveVertexesBuffer.put(this.waveVertexes);
+                lockL.unlock();
+            } else {
+                waveVertexesBuffer.clear();
+                waveVertexesBuffer.put(this.waveVertexes);
+            }
+
+            waveVertexesBuffer.flip();
+            spectrumDataLFilled = true;
 //            }
 
 //            if (lockR.tryLock()) {
-                if (waveRightVertexesBuffer == null || waveRightVertexesBuffer.capacity() != this.waveRightVertexes.length) {
-                    lockR.lock();
-                    if (waveRightVertexesBuffer != null) {
-                        MemoryTracker.memFree(waveRightVertexesBufferBackend);
-                    }
-
-                    waveRightVertexesBufferBackend = MemoryTracker.memAlloc(this.waveRightVertexes.length << 2);
-                    waveRightVertexesBuffer = waveRightVertexesBufferBackend.asFloatBuffer();
-                    waveRightVertexesBuffer.put(this.waveRightVertexes);
-                    lockR.unlock();
-                } else {
-                    waveRightVertexesBuffer.clear();
-                    waveRightVertexesBuffer.put(this.waveRightVertexes);
+            if (waveRightVertexesBuffer == null || waveRightVertexesBuffer.capacity() != this.waveRightVertexes.length) {
+                lockR.lock();
+                if (waveRightVertexesBuffer != null) {
+                    MemoryTracker.memFree(waveRightVertexesBufferBackend);
                 }
 
-                waveRightVertexesBuffer.flip();
-                spectrumDataRFilled = true;
+                waveRightVertexesBufferBackend = MemoryTracker.memAlloc(this.waveRightVertexes.length << 2);
+                waveRightVertexesBuffer = waveRightVertexesBufferBackend.asFloatBuffer();
+                waveRightVertexesBuffer.put(this.waveRightVertexes);
+                lockR.unlock();
+            } else {
+                waveRightVertexesBuffer.clear();
+                waveRightVertexesBuffer.put(this.waveRightVertexes);
+            }
+
+            waveRightVertexesBuffer.flip();
+            spectrumDataRFilled = true;
 //                lockR.unlock();
 //            }
 
@@ -209,11 +209,22 @@ public class AudioPlayer {
     public void computeOscilloscopeVertexes(float[] input, float[] output, float[] vertexes) {
         MusicSpectrumWidget ms = WidgetsManager.musicSpectrum;
 
-        int phaseAlignedStart = findPhaseAlignedStart(input);
-        
+        // Apply DC offset correction first
+        float dcOffset = calculateDCOffset(input);
+        float[] correctedInput = new float[input.length];
         for (int i = 0; i < input.length; i++) {
-            int sourceIndex = (phaseAlignedStart + i) % input.length;
-            output[i] = input[sourceIndex];
+            correctedInput[i] = input[i] - dcOffset;
+        }
+
+        // Find stable phase-aligned start and ensure waveform continuity
+        int phaseAlignedStart = findStablePhaseAlignedStart(correctedInput);
+
+        // Ensure we start at a complete cycle boundary to avoid discontinuity
+        int cycleAdjustedStart = adjustToCycleBoundary(correctedInput, phaseAlignedStart);
+
+        for (int i = 0; i < input.length; i++) {
+            int sourceIndex = (cycleAdjustedStart + i) % input.length;
+            output[i] = correctedInput[sourceIndex];
         }
 
         double spacing = (ms.getWidth() - 8) / input.length;
@@ -228,101 +239,171 @@ public class AudioPlayer {
 
         previousWaveform = output.clone();
     }
-    
-    private int findPhaseAlignedStart(float[] data) {
-        if (previousWaveform == null || phaseLockCounter < 5) {
-            int zeroCrossing = findStableZeroCrossing(data);
-            previousWaveform = data.clone();
-            phaseLockCounter++;
-            return zeroCrossing;
+
+    private float calculateDCOffset(float[] data) {
+        // Simple DC offset calculation using mean value
+        float sum = 0;
+        for (float sample : data) {
+            sum += sample;
         }
-        
-        int bestOffset = 0;
-        float bestCorrelation = -1;
-        
-        int searchRange = Math.min(100, data.length / 4);
-        
-        for (int offset = -searchRange; offset <= searchRange; offset++) {
-            float correlation = 0;
-            int validSamples = 0;
-            
-            for (int i = 0; i < data.length; i++) {
-                int prevIndex = i;
-                int currentIndex = (i + offset + data.length) % data.length;
-                
-                if (currentIndex >= 0 && currentIndex < data.length) {
-                    correlation += previousWaveform[prevIndex] * data[currentIndex];
-                    validSamples++;
-                }
-            }
-            
-            if (validSamples > 0) {
-                correlation /= validSamples;
-                
-                if (correlation > bestCorrelation) {
-                    bestCorrelation = correlation;
-                    bestOffset = offset;
-                }
-            }
-        }
-        
-        int zeroCrossing = findStableZeroCrossing(data);
-        
-        if (bestCorrelation > 0.3f) {
-            int phaseAlignedStart = (zeroCrossing + bestOffset + data.length) % data.length;
-            
-            if (Math.abs(bestOffset) < data.length / 8) {
-                return phaseAlignedStart;
-            }
-        }
-        
-        return zeroCrossing;
+        return sum / data.length;
     }
 
-    private int findStableZeroCrossing(float[] data) {
+    private int findStablePhaseAlignedStart(float[] data) {
+        // Use amplitude-based zero crossing detection for stability
+        int bestCrossing = findAmplitudeBasedZeroCrossing(data);
+
+        // If we have a previous waveform, try to maintain phase continuity
+        if (previousWaveform != null && phaseLockCounter >= 3) {
+            int stableCrossing = findPhaseContinuousCrossing(data, bestCrossing);
+            if (stableCrossing != -1) {
+                bestCrossing = stableCrossing;
+            }
+        }
+
+        phaseLockCounter++;
+        return bestCrossing;
+    }
+
+    private int findAmplitudeBasedZeroCrossing(float[] data) {
+        // Find the strongest zero crossing in the central region
         int searchStart = data.length / 4;
         int searchEnd = data.length * 3 / 4;
-        
+
         float maxAmplitude = 0;
         int bestCrossing = data.length / 2;
-        
+
         for (int i = searchStart + 1; i < searchEnd; i++) {
+            // Look for positive-going zero crossing
             if (data[i - 1] <= 0 && data[i] > 0) {
+                // Calculate exact crossing point using linear interpolation
                 float fraction = -data[i - 1] / (data[i] - data[i - 1]);
                 float crossingPoint = i - 1 + fraction;
-                
+
+                // Calculate amplitude around the crossing
                 float amplitude = Math.abs(data[i]) + Math.abs(data[i - 1]);
-                
+
+                // Prefer crossings with higher amplitude for stability
                 if (amplitude > maxAmplitude) {
                     maxAmplitude = amplitude;
-                    bestCrossing = (int) crossingPoint;
+                    bestCrossing = (int) Math.round(crossingPoint);
                 }
             }
         }
-        
-        if (maxAmplitude > 0.01f) {
-            return bestCrossing;
+
+        // If no good crossing found, use the center
+        if (maxAmplitude < 0.01f) {
+            return data.length / 2;
         }
-        
-        for (int i = 1; i < data.length; i++) {
-            if (data[i - 1] <= 0 && data[i] > 0) {
-                float fraction = -data[i - 1] / (data[i] - data[i - 1]);
-                return (int) (i - 1 + fraction);
-            }
-        }
-        
-        for (int i = 1; i < data.length; i++) {
-            if (data[i - 1] < 0 && data[i] >= 0) {
-                float fraction = -data[i - 1] / (data[i] - data[i - 1]);
-                return (int) (i - 1 + fraction);
-            }
-        }
-        
-        return data.length / 2;
+
+        return bestCrossing;
     }
-    
-    private int findZeroCrossing(float[] data) {
-        return findStableZeroCrossing(data);
+
+    private int findPhaseContinuousCrossing(float[] currentData, int suggestedCrossing) {
+        // Try to maintain phase continuity with previous waveform
+        int searchRange = Math.min(50, currentData.length / 8);
+        float bestCorrelation = -1;
+        int bestOffset = 0;
+
+        for (int offset = -searchRange; offset <= searchRange; offset++) {
+            int testCrossing = (suggestedCrossing + offset + currentData.length) % currentData.length;
+
+            // Calculate correlation around the crossing point
+            float correlation = calculateLocalCorrelation(currentData, testCrossing, 20);
+
+            if (correlation > bestCorrelation) {
+                bestCorrelation = correlation;
+                bestOffset = offset;
+            }
+        }
+
+        // Only apply correction if correlation is reasonably good
+        if (bestCorrelation > 0.5f && Math.abs(bestOffset) < currentData.length / 16) {
+            return (suggestedCrossing + bestOffset + currentData.length) % currentData.length;
+        }
+
+        return -1; // No good correction found
+    }
+
+    private float calculateLocalCorrelation(float[] currentData, int crossing, int windowSize) {
+        float correlation = 0;
+        int validSamples = 0;
+
+        for (int i = -windowSize; i <= windowSize; i++) {
+            int currentIdx = (crossing + i + currentData.length) % currentData.length;
+            int prevIdx = (crossing + i + previousWaveform.length) % previousWaveform.length;
+
+            if (currentIdx >= 0 && currentIdx < currentData.length &&
+                    prevIdx >= 0 && prevIdx < previousWaveform.length) {
+                correlation += currentData[currentIdx] * previousWaveform[prevIdx];
+                validSamples++;
+            }
+        }
+
+        return validSamples > 0 ? correlation / validSamples : -1;
+    }
+
+    private int adjustToCycleBoundary(float[] data, int suggestedStart) {
+        // Find the next complete cycle boundary to avoid discontinuity
+        int cycleLength = estimateCycleLength(data, suggestedStart);
+
+        if (cycleLength > 0 && cycleLength < data.length / 2) {
+            // Adjust to the nearest cycle boundary
+            int cyclesFromStart = suggestedStart / cycleLength;
+            int adjustedStart = cyclesFromStart * cycleLength;
+
+            // Ensure the adjusted start is within bounds
+            if (adjustedStart >= 0 && adjustedStart < data.length) {
+                return adjustedStart;
+            }
+        }
+
+        // Fallback: use the original start position
+        return suggestedStart;
+    }
+
+    private int estimateCycleLength(float[] data, int startPos) {
+        // Simple cycle length estimation using zero crossing detection
+        int searchRange = Math.min(200, data.length / 4);
+
+        // Find the next zero crossing after startPos
+        int nextCrossing = -1;
+        for (int i = startPos + 1; i < startPos + searchRange; i++) {
+            int idx = i % data.length;
+            int prevIdx = (i - 1 + data.length) % data.length;
+
+            if (data[prevIdx] <= 0 && data[idx] > 0) {
+                nextCrossing = idx;
+                break;
+            }
+        }
+
+        if (nextCrossing == -1) {
+            return -1; // No cycle detected
+        }
+
+        // Find the crossing after that to estimate cycle length
+        int secondCrossing = -1;
+        for (int i = nextCrossing + 1; i < nextCrossing + searchRange; i++) {
+            int idx = i % data.length;
+            int prevIdx = (i - 1 + data.length) % data.length;
+
+            if (data[prevIdx] <= 0 && data[idx] > 0) {
+                secondCrossing = idx;
+                break;
+            }
+        }
+
+        if (secondCrossing == -1) {
+            return -1; // Only one cycle detected
+        }
+
+        int cycleLength = secondCrossing - nextCrossing;
+        if (cycleLength < 0) {
+            cycleLength += data.length;
+        }
+
+        return cycleLength;
     }
 
     public void play() {
