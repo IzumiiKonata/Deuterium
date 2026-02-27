@@ -649,6 +649,10 @@ public class Minecraft implements IThreadListener {
         ConsoleScreen.log("[Tritium] Client launched. Time used: %.2fs", startupTime);
 
         loaded = true;
+
+        if (System.getProperty("tritium.startupTest", "false").equals("true")) {
+            System.exit(0);
+        }
     }
 
     private void registerMetadataSerializers() {
