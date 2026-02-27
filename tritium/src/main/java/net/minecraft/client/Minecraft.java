@@ -1108,6 +1108,7 @@ public class Minecraft implements IThreadListener {
                 GlStateManager.translate(0.0F, 0.0F, -2000.0F);
                 GlStateManager.viewport(0, 0, this.displayWidth, this.displayHeight);
                 GlStateManager.disableAlpha();
+                GlStateManager.disableDepth();
                 GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
                 tritium.rendering.shader.Shaders.MOTION.run(framebufferMc.framebufferTexture, lastFrameTex, this.displayWidth, this.displayHeight);
             }
@@ -1123,11 +1124,11 @@ public class Minecraft implements IThreadListener {
 
         if (ClientSettings.FRAME_PREDICT.getValue() && lastFrameTex != -1) {
             // update content
-            this.framebufferMc.bindFramebuffer(true);
+//            this.framebufferMc.bindFramebuffer(true);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, lastFrameTex);
             GL11.glCopyTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, 0, 0, this.displayWidth, this.displayHeight);
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
-            this.framebufferMc.unbindFramebuffer();
+//            this.framebufferMc.unbindFramebuffer();
         }
 
         GlStateManager.popMatrix();

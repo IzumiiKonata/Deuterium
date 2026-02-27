@@ -5,7 +5,6 @@ import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.uniform.Uniform1i;
 import tritium.rendering.shader.uniform.Uniform2f;
 import tritium.rendering.shader.uniform.Uniform3f;
-import tritium.utils.math.RandomUtils;
 
 /**
  * @author IzumiiKonata
@@ -23,19 +22,26 @@ public class Deconverge {
     Uniform3f radConvX = new Uniform3f(deconvergeProgram, "radConvX");
     Uniform3f radConvY = new Uniform3f(deconvergeProgram, "radConvY");
 
-    public void render() {
+    public void render(float randomNess) {
         this.deconvergeProgram.start();
         textureIn.setValue(0);
         texelSize.setValue(1.0F / Minecraft.getMinecraft().displayWidth, 1.0F / Minecraft.getMinecraft().displayHeight);
 
-        this.setConvergeX(RandomUtils.nextFloat(-3, 3), RandomUtils.nextFloat(-3, 3),
-                RandomUtils.nextFloat(-3, 3));
+        this.setConvergeX(this.nextFloat(-randomNess, randomNess), this.nextFloat(-randomNess, randomNess),
+                this.nextFloat(-randomNess, randomNess));
 
-        this.setConvergeY(RandomUtils.nextFloat(-3, 3), RandomUtils.nextFloat(-3, 3),
-                RandomUtils.nextFloat(-3, 3));
+        this.setConvergeY(this.nextFloat(-randomNess, randomNess), this.nextFloat(-randomNess, randomNess),
+                this.nextFloat(-randomNess, randomNess));
 
         ShaderProgram.drawQuadFlipped();
         ShaderProgram.stop();
+    }
+
+    private float nextFloat(final float startInclusive, final float endInclusive) {
+        if(startInclusive == endInclusive || endInclusive - startInclusive <= 0F)
+            return startInclusive;
+
+        return (float) (startInclusive + ((endInclusive - startInclusive) * Math.random()));
     }
 
     public void setConvergeX(float red, float green, float blue) {

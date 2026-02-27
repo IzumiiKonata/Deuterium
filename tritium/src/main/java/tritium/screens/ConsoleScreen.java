@@ -17,7 +17,7 @@ import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.LabelWidget;
 import tritium.rendering.ui.widgets.RectWidget;
 import tritium.rendering.ui.widgets.TextFieldWidget;
-import tritium.utils.other.StringFormatter;
+import tritium.utils.logging.StringFormatter;
 import tritium.utils.other.info.Version;
 
 import java.util.ArrayList;

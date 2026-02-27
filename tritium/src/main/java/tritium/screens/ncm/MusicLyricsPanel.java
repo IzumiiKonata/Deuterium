@@ -582,6 +582,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         }));
         GlStateManager.popMatrix();
 
+        GlStateManager.disableAlpha();
 
         if (prevCover != null && coverAlpha <= .9f) {
             GlStateManager.bindTexture(prevCover.getGlTextureId());

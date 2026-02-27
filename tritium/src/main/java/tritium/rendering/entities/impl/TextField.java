@@ -22,7 +22,6 @@ import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.font.CFontRenderer;
 import tritium.settings.ClientSettings;
-import tritium.utils.other.math.MathUtils;
 import tritium.utils.timing.Timer;
 
 import java.awt.*;
@@ -453,7 +452,7 @@ public class TextField extends GuiTextField {
             return;
         }
 
-        wholeAlpha = MathUtils.clamp(wholeAlpha, 0, 1);
+        wholeAlpha = Math.min(Math.max(0, wholeAlpha), 1);
         opacity = Interpolations.interpolate(opacity, 1.0f, 0.05f) * wholeAlpha;
 
         double textScrollOffset = calculateTextScrollOffset();

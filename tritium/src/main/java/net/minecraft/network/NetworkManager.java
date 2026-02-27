@@ -157,7 +157,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
         if (this.isChannelOpen()) {
             this.flushOutboundQueue();
             //CLIENT
-            Counter.pps.add();
             if (!sendPacketEvent.isCancelled()) {
                 this.dispatchPacket(sendPacketEvent.getPacket(), null);
             }

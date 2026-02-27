@@ -42,8 +42,8 @@ public class Alt {
 
     public transient float hoveredAlpha = 0.0f;
 
-    public Alt(String crackedName) {
-        this.username = crackedName;
+    public Alt(String offlineName) {
+        this.username = offlineName;
     }
 
     public Alt(String userName, String refreshToken, String accessToken, String userUUID) {

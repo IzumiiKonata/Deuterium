@@ -204,7 +204,7 @@ public class PlayerUtils {
     }
 
     public static MovingObjectPosition rayTrace(float yaw, float pitch, double distance) {
-        Vec3 vec3 = mc.thePlayer.getPositionEyes(1.0f);
+        Vec3 vec3 = mc.thePlayer.getPositionEyes(mc.timer.renderPartialTicks);
         Vec3 vec4 = mc.thePlayer.getVectorForRotation(pitch, yaw);
         Vec3 vec5 = vec3.addVector(vec4.xCoord * distance, vec4.yCoord * distance, vec4.zCoord * distance);
         return mc.theWorld.rayTraceBlocks(vec3, vec5, !mc.thePlayer.isInWater(), false, false);

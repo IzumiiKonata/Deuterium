@@ -13,10 +13,10 @@ import tritium.Tritium;
 import tritium.interfaces.SharedConstants;
 import tritium.management.*;
 import tritium.rendering.RGBA;
+import tritium.rendering.Rect;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.entities.clickable.impl.ClickableIcon;
 import tritium.rendering.entities.clickable.impl.FlatMainMenuButton;
-import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.loading.LoadingScreenRenderer;
@@ -198,7 +198,7 @@ public class MainMenu extends BaseScreen {
         Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
         GlStateManager.bindTexture(fbConverge.framebufferTexture);
-        Shaders.DECONVERGE.render();
+        Shaders.DECONVERGE.render(3);
     }
 
     long startTime = System.currentTimeMillis();

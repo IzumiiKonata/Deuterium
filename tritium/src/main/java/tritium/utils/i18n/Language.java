@@ -13,8 +13,8 @@ import java.util.Map;
  * @author IzumiiKonata
  * @since 4/30/2023 10:00 PM
  */
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
 public class Language {
 
 

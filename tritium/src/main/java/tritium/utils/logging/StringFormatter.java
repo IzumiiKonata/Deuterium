@@ -1,4 +1,4 @@
-package tritium.utils.other;
+package tritium.utils.logging;
 
 import java.util.ArrayList;
 import java.util.List;

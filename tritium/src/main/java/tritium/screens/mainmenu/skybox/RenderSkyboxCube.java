@@ -21,7 +21,7 @@ public class RenderSkyboxCube {
 
     public void render(Minecraft mc, float pitch, float yaw, float alpha) {
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer bufferbuilder = tessellator.getWorldRenderer();
+        WorldRenderer wr = tessellator.getWorldRenderer();
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.pushMatrix();
         GlStateManager.loadIdentity();
@@ -32,84 +32,72 @@ public class RenderSkyboxCube {
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
         GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.disableCull();
-        GlStateManager.depthMask(false);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-        int i = 2;
 
-        for (int j = 0; j < 4; ++j) {
-            GlStateManager.pushMatrix();
-            float f = ((float) (j % 2) / 2.0F - 0.5F) / 256.0F;
-            float f1 = ((float) (j / 2) / 2.0F - 0.5F) / 256.0F;
-            float f2 = 0.0F;
-            GlStateManager.translate(f, f1, 0.0F);
-            GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
-            GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
+        GlStateManager.pushMatrix();
+//        float f = -0.5F / 256.0F;
+//        float f1 = -0.5F / 256.0F;
+//        GlStateManager.translate(f, f1, 0.0F);
+        GlStateManager.rotate(pitch, 1.0F, 0.0F, 0.0F);
+        GlStateManager.rotate(yaw, 0.0F, 1.0F, 0.0F);
 
-            for (int k = 0; k < 6; ++k) {
-                mc.getTextureManager().bindTexture(this.locations[k]);
-                RenderSystem.nearestFilter();
-                bufferbuilder.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
-                int l = Math.round(255.0F * alpha) / (j + 1);
+        for (int k = 0; k < 6; ++k) {
+            mc.getTextureManager().bindTexture(this.locations[k]);
+            RenderSystem.nearestFilter();
+            wr.begin(7, DefaultVertexFormats.POSITION_TEX_COLOR);
+            int l = Math.round(255.0F * alpha);
 
-                if (k == 0) {
-                    bufferbuilder.pos(-1.0D, -1.0D, 1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, 1.0D, 1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, 1.0D, 1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, -1.0D, 1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                }
-
-                if (k == 1) {
-                    bufferbuilder.pos(1.0D, -1.0D, 1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, 1.0D, 1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, 1.0D, -1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, -1.0D, -1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                }
-
-                if (k == 2) {
-                    bufferbuilder.pos(1.0D, -1.0D, -1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, 1.0D, -1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, 1.0D, -1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, -1.0D, -1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                }
-
-                if (k == 3) {
-                    bufferbuilder.pos(-1.0D, -1.0D, -1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, 1.0D, -1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, 1.0D, 1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, -1.0D, 1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                }
-
-                if (k == 4) {
-                    bufferbuilder.pos(-1.0D, -1.0D, -1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, -1.0D, 1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, -1.0D, 1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, -1.0D, -1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                }
-
-                if (k == 5) {
-                    bufferbuilder.pos(-1.0D, 1.0D, 1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(-1.0D, 1.0D, -1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, 1.0D, -1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
-                    bufferbuilder.pos(1.0D, 1.0D, 1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
-                }
-
-                tessellator.draw();
+            if (k == 0) {
+                wr.pos(-1.0D, -1.0D, 1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, 1.0D, 1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, 1.0D, 1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, -1.0D, 1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
             }
 
-            GlStateManager.popMatrix();
-            GlStateManager.colorMask(true, true, true, false);
+            if (k == 1) {
+                wr.pos(1.0D, -1.0D, 1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, 1.0D, 1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, 1.0D, -1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, -1.0D, -1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
+            }
+
+            if (k == 2) {
+                wr.pos(1.0D, -1.0D, -1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, 1.0D, -1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, 1.0D, -1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, -1.0D, -1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
+            }
+
+            if (k == 3) {
+                wr.pos(-1.0D, -1.0D, -1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, 1.0D, -1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, 1.0D, 1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, -1.0D, 1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
+            }
+
+            if (k == 4) {
+                wr.pos(-1.0D, -1.0D, -1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, -1.0D, 1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, -1.0D, 1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, -1.0D, -1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
+            }
+
+            if (k == 5) {
+                wr.pos(-1.0D, 1.0D, 1.0D).tex(0.0F, 0.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(-1.0D, 1.0D, -1.0D).tex(0.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, 1.0D, -1.0D).tex(1.0F, 1.0F).color(255, 255, 255, l).endVertex();
+                wr.pos(1.0D, 1.0D, 1.0D).tex(1.0F, 0.0F).color(255, 255, 255, l).endVertex();
+            }
+
+            tessellator.draw();
         }
 
-        GlStateManager.colorMask(true, true, true, true);
+        GlStateManager.popMatrix();
+
         GlStateManager.matrixMode(GL11.GL_PROJECTION);
         GlStateManager.popMatrix();
         GlStateManager.matrixMode(GL11.GL_MODELVIEW);
         GlStateManager.popMatrix();
-        GlStateManager.depthMask(true);
-        GlStateManager.enableCull();
-        GlStateManager.enableDepth();
     }
 
 }

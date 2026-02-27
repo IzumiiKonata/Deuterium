@@ -13,8 +13,6 @@ import java.util.List;
 @UtilityClass
 public class Counter {
 
-    public static final SecondCounter pps = new SecondCounter();
-
     public class SecondCounter {
         private final List<Long> counted = new ArrayList<>();
 
