@@ -188,9 +188,9 @@ public class RenderSystem {
         worldrenderer.pos(left, top, 0.0).color(sr, sg, sb, sa).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
+//        GlStateManager.disableBlend();
+//        GlStateManager.enableAlpha();
+//        GlStateManager.enableTexture2D();
     }
 
     public static void drawGradientRectBottomToTop(final double left, final double top, final double right, final double bottom, final int startColor, final int endColor) {
