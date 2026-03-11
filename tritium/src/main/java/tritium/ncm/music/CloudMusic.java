@@ -205,7 +205,7 @@ public class CloudMusic {
         }
     }
     
-    private static LyricLine findCurrentLyric(float songProgress) {
+    public static LyricLine findCurrentLyric(double songProgress) {
         for (int i = 0; i < lyrics.size(); i++) {
             LyricLine lyric = lyrics.get(i);
             

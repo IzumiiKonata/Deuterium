@@ -60,6 +60,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     double coverSize = (CloudMusic.player == null || CloudMusic.player.isPausing()) ? this.getCoverSizeMin() : this.getCoverSizeMax();
     float coverAlpha = 1f;
 
+    boolean progressBarDragging = false;
+    double progressBarProgressOverride = 0;
     double progressBarHeight = 8, volumeBarHeight = 8;
 
     boolean prevMouse = false;
@@ -164,6 +166,92 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     }
 
+    public static void updateLyricPositionsImmediate(double width, double playbackProgress) {
+        if (CloudMusic.currentLyric == null) return;
+
+        double offsetY = RenderSystem.getHeight() * lyricFraction() - getLyricLineSpacing();
+        int toIndex = CloudMusic.lyrics.indexOf(CloudMusic.findCurrentLyric(playbackProgress));
+
+        if (toIndex == -1 || toIndex >= CloudMusic.lyrics.size()) return;
+
+        synchronized (CloudMusic.lyrics) {
+            List<LyricLine> subList = CloudMusic.lyrics.subList(0, toIndex);
+            for (int i = subList.size() - 1; i >= 0; i--) {
+                LyricLine lyric = subList.get(i);
+
+                if (i >= subList.size() - 2) {
+                    lyric.computeHeight(width);
+                    offsetY -= lyric.height;
+                }
+
+                lyric.posY = offsetY;
+                lyric.spring.setPosition(offsetY);
+
+                lyric.computeHeight(width);
+                offsetY -= lyric.height + getLyricLineSpacing();
+            }
+
+            offsetY = RenderSystem.getHeight() * lyricFraction();
+            for (LyricLine lyric : CloudMusic.lyrics.subList(toIndex, CloudMusic.lyrics.size())) {
+                lyric.posY = offsetY;
+                lyric.spring.setPosition(offsetY);
+
+                lyric.computeHeight(width);
+                offsetY += lyric.height + getLyricLineSpacing();
+            }
+        }
+
+    }
+
+    public static void updateLyricPositions(double width, double playbackProgress) {
+        if (CloudMusic.currentLyric == null) return;
+
+        double offsetY = RenderSystem.getHeight() * lyricFraction() - getLyricLineSpacing();
+
+        LyricLine currentLyric = CloudMusic.findCurrentLyric(playbackProgress);
+        int toIndex = CloudMusic.lyrics.indexOf(currentLyric);
+
+        if (toIndex == -1 || toIndex >= CloudMusic.lyrics.size()) return;
+
+        LyricLine nextLyric = toIndex + 1 >= CloudMusic.lyrics.size() ? null : CloudMusic.lyrics.get(toIndex + 1);
+
+        double scrollY = 0;
+
+        if (nextLyric != null) {
+            scrollY = (playbackProgress - currentLyric.timestamp) / (nextLyric.timestamp - currentLyric.timestamp) * currentLyric.height;
+            offsetY -= scrollY;
+        }
+
+        synchronized (CloudMusic.lyrics) {
+            List<LyricLine> subList = CloudMusic.lyrics.subList(0, toIndex);
+            float fraction = .4f;
+            for (int i = subList.size() - 1; i >= 0; i--) {
+                LyricLine lyric = subList.get(i);
+
+                if (i >= subList.size() - 2) {
+                    lyric.computeHeight(width);
+                    offsetY -= lyric.height;
+                }
+
+                lyric.posY = Interpolations.interpolate(lyric.posY, offsetY, fraction);
+                lyric.spring.setPosition(Interpolations.interpolate(lyric.spring.getCurrentPosition(), offsetY, fraction));
+
+                lyric.computeHeight(width);
+                offsetY -= lyric.height + getLyricLineSpacing();
+            }
+
+            offsetY = RenderSystem.getHeight() * lyricFraction() - scrollY;
+            for (LyricLine lyric : CloudMusic.lyrics.subList(toIndex, CloudMusic.lyrics.size())) {
+                lyric.posY = Interpolations.interpolate(lyric.posY, offsetY, fraction);
+                lyric.spring.setPosition(Interpolations.interpolate(lyric.spring.getCurrentPosition(), offsetY, fraction));
+
+                lyric.computeHeight(width);
+                offsetY += lyric.height + getLyricLineSpacing();
+            }
+        }
+
+    }
+
     private static long getLyricInterpolationWaitTimeMillis() {
         return 75;
     }
@@ -203,7 +291,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         if (CloudMusic.lyrics.isEmpty()) return;
 
-        float songProgress = CloudMusic.player == null ? 0 : CloudMusic.player.getCurrentTimeMillis();
+        double overridePlaybackProgress = progressBarProgressOverride * CloudMusic.player.getTotalTimeMillis();
+        double songProgress = CloudMusic.player == null ? 0 : (progressBarDragging ? overridePlaybackProgress : CloudMusic.player.getCurrentTimeMillis());
 
         double lyricsWidth = width * getLyricWidthFactor();
         this.updateLyricPositions(posY, height, lyricsWidth);
@@ -244,9 +333,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 break;
             }
 
-            int indexOf = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
+            LyricLine currentLyric = progressBarDragging ? CloudMusic.findCurrentLyric(overridePlaybackProgress) : CloudMusic.currentLyric;
+            int indexOf = CloudMusic.lyrics.indexOf(currentLyric);
 
-            lyric.alpha = Interpolations.interpolate(lyric.alpha, lyric == CloudMusic.currentLyric ? 1f : 0f, 0.1f);
+            lyric.alpha = Interpolations.interpolate(lyric.alpha, lyric == currentLyric ? 1f : 0f, 0.1f);
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpolate(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpolate(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.05f);
@@ -274,7 +364,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             double renderX = lyricRenderOffsetX + lyric.reboundAnimation;
             double renderY = lyric.posY + lyric.reboundAnimation + scrollOffset;
 
-            lyric.reboundAnimation = Interpolations.interpolate(lyric.reboundAnimation, lyric == CloudMusic.currentLyric ? 2f : 0f, 0.1f);
+            lyric.reboundAnimation = Interpolations.interpolate(lyric.reboundAnimation, lyric == currentLyric ? 2f : 0f, 0.1f);
 
             List<LyricLine.Word> words = lyric.words;
             if (!words.isEmpty()) {
@@ -296,7 +386,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     double emphasizeTarget = 1;
                     double emphasizeSpeed = 0.05;
 
-                    if (lyric == CloudMusic.currentLyric) {
+                    if (lyric == currentLyric) {
                         if (charArray.length > 1) {
                             double x = renderX;
                             for (int j = 0; j < charArray.length; j++) {
@@ -312,7 +402,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
                     }
 
-                    if (CloudMusic.lyrics.indexOf(CloudMusic.currentLyric) - k <= 1) {
+                    if (CloudMusic.lyrics.indexOf(currentLyric) - k <= 1) {
                         LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
 
                         long prevTiming = i == 0 ? 0 : prev.timestamp;
@@ -613,7 +703,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         float currentTimeMillis = player == null ? 0 : player.getCurrentTimeMillis();
         float totalTimeMillis = player == null ? 0.01f : player.getTotalTimeMillis();
-        float perc = player == null ? 0 : currentTimeMillis / totalTimeMillis;
+        double perc = player == null ? 0 : (progressBarDragging ? progressBarProgressOverride : currentTimeMillis / totalTimeMillis);
 
         StencilClipManager.beginClip(() -> Rect.draw(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth * perc, progressBarHeight, -1));
 
@@ -623,17 +713,33 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         boolean hoveringProgressBar = this.isHovered(mouseX, mouseY, elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, 8);
         this.progressBarHeight = Interpolations.interpolate(this.progressBarHeight, hoveringProgressBar ? 8 : 5, 0.3f);
 
-        if (hoveringProgressBar && Mouse.isButtonDown(0) && !prevMouse) {
+        boolean lmbDown = Mouse.isButtonDown(0);
+        if (hoveringProgressBar && lmbDown && !prevMouse) {
             prevMouse = true;
-            double xDelta = Math.max(0, Math.min(progressBarWidth, (mouseX - elementsXOffset)));
-            double percent = xDelta / progressBarWidth;
+            progressBarDragging = true;
 
-            if (player != null) {
-                float progress = (float) (percent * totalTimeMillis);
-                player.setPlaybackTime(progress);
-                MusicLyricsWidget.resetProgress(progress);
-                MusicLyricsPanel.resetProgress(progress);
-                scrollTarget = scrollOffset = 0;
+            double xDelta = Math.max(0, Math.min(progressBarWidth, (mouseX - elementsXOffset)));
+            this.progressBarProgressOverride = xDelta / progressBarWidth;
+            updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor(), progressBarProgressOverride * totalTimeMillis);
+        }
+
+        if (progressBarDragging) {
+            if (!lmbDown) {
+                progressBarDragging = false;
+
+                double percent = this.progressBarProgressOverride;
+
+                if (player != null) {
+                    float progress = (float) (percent * totalTimeMillis);
+                    player.setPlaybackTime(progress);
+                    MusicLyricsWidget.resetProgress(progress);
+                    MusicLyricsPanel.resetProgress(progress);
+                    scrollTarget = scrollOffset = 0;
+                }
+            } else {
+                double xDelta = Math.max(0, Math.min(progressBarWidth, (mouseX - elementsXOffset)));
+                this.progressBarProgressOverride = xDelta / progressBarWidth;
+                updateLyricPositions(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor(), progressBarProgressOverride * totalTimeMillis);
             }
         }
 
@@ -659,7 +765,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         boolean hoveringVolumeBar = this.isHovered(mouseX, mouseY, volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, 8);
         this.volumeBarHeight = Interpolations.interpolate(this.volumeBarHeight, hoveringVolumeBar ? 8 : 5, 0.3f);
-        if (hoveringVolumeBar && Mouse.isButtonDown(0)) {
+        if (hoveringVolumeBar && lmbDown) {
             double xDelta = Math.max(0, Math.min(volumeBarWidth, (mouseX - (volumeBarXOffset))));
             double percent = xDelta / volumeBarWidth;
 
