@@ -12,9 +12,9 @@ import net.minecraft.util.MathHelper;
 import tritium.management.ModuleManager;
 import tritium.rendering.waveycapes.CapeMovement;
 import tritium.rendering.waveycapes.CapeStyle;
-import tritium.rendering.waveycapes.Mth;
 import tritium.rendering.waveycapes.WindMode;
 import tritium.rendering.waveycapes.simulation.StickSimulation;
+import tritium.utils.math.Mth;
 
 public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer> {
     static final int partCount = 16;
@@ -119,9 +119,9 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
 
     void modifyPoseStackVanilla(final AbstractClientPlayer abstractClientPlayer, final float h, final int part) {
         GlStateManager.translate(0.0, 0.0, 0.125);
-        final double d = Mth.lerp(h, abstractClientPlayer.prevChasingPosX, abstractClientPlayer.chasingPosX) - Mth.lerp(h, abstractClientPlayer.prevPosX, abstractClientPlayer.posX);
-        final double e = Mth.lerp(h, abstractClientPlayer.prevChasingPosY, abstractClientPlayer.chasingPosY) - Mth.lerp(h, abstractClientPlayer.prevPosY, abstractClientPlayer.posY);
-        final double m = Mth.lerp(h, abstractClientPlayer.prevChasingPosZ, abstractClientPlayer.chasingPosZ) - Mth.lerp(h, abstractClientPlayer.prevPosZ, abstractClientPlayer.posZ);
+        final double d = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevChasingPosX, abstractClientPlayer.chasingPosX) - tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevPosX, abstractClientPlayer.posX);
+        final double e = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevChasingPosY, abstractClientPlayer.chasingPosY) - tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevPosY, abstractClientPlayer.posY);
+        final double m = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevChasingPosZ, abstractClientPlayer.chasingPosZ) - Mth.lerp(h, abstractClientPlayer.prevPosZ, abstractClientPlayer.posZ);
         final float n = abstractClientPlayer.prevRenderYawOffset + abstractClientPlayer.renderYawOffset - abstractClientPlayer.prevRenderYawOffset;
         final double o = Math.sin(n * 0.017453292f);
         final double p = -Math.cos(n * 0.017453292f);
@@ -131,8 +131,8 @@ public class CustomCapeRenderLayer implements LayerRenderer<AbstractClientPlayer
         swing = MathHelper.clamp_float(swing, 0.0f, 150.0f * easeOutSine(0.0625f * part));
         float sidewaysRotationOffset = (float) (d * p - m * o) * 100.0f;
         sidewaysRotationOffset = MathHelper.clamp_float(sidewaysRotationOffset, -20.0f, 20.0f);
-        final float t = Mth.lerp(h, abstractClientPlayer.prevCameraYaw, abstractClientPlayer.cameraYaw);
-        height += (float) (Math.sin(Mth.lerp(h, abstractClientPlayer.prevDistanceWalkedModified, abstractClientPlayer.distanceWalkedModified) * 6.0f) * 32.0 * t);
+        final float t = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevCameraYaw, abstractClientPlayer.cameraYaw);
+        height += (float) (Math.sin(tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevDistanceWalkedModified, abstractClientPlayer.distanceWalkedModified) * 6.0f) * 32.0 * t);
         if (abstractClientPlayer.isSneaking()) {
             height += 25.0f;
             GlStateManager.translate(0.0f, 0.15f, 0.0f);

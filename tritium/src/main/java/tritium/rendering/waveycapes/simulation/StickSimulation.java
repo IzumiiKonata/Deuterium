@@ -1,7 +1,7 @@
 package tritium.rendering.waveycapes.simulation;
 
 import tritium.management.ModuleManager;
-import tritium.rendering.waveycapes.Mth;
+import tritium.utils.math.Mth;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,7 +108,7 @@ public class StickSimulation {
         }
 
         public float getLerpX(final float delta) {
-            return Mth.lerp(delta, this.prevPosition.x, this.position.x);
+            return tritium.utils.math.Mth.lerp(delta, this.prevPosition.x, this.position.x);
         }
 
         public float getLerpY(final float delta) {

@@ -158,15 +158,15 @@ public class CloudMusic {
         long lastTimestamp = 0L;
         List<LyricLine> breaksToAdd = new ArrayList<>();
 
-        for (LyricLine lyric : lyrics) {
-            long lyricDuration = getLyricDuration(lyric);
-            long gap = lyric.getTimestamp() - lastTimestamp;
+        for (LyricLine line : lyrics) {
+            long lineDuration = line.duration;
+            long gap = line.getTimestamp() - lastTimestamp;
             
             if (gap >= duration) {
                 breaksToAdd.add(createBreakLine(lastTimestamp, gap));
             }
             
-            lastTimestamp = lyric.getTimestamp() + lyricDuration;
+            lastTimestamp = line.getTimestamp() + lineDuration;
         }
 
         addAndSortBreaks(breaksToAdd);
@@ -174,7 +174,7 @@ public class CloudMusic {
     
     private static LyricLine createBreakLine(long timestamp, long duration) {
         LyricLine line = new LyricLine(timestamp, "● ● ●");
-        line.words.add(new LyricLine.Word("● ● ●", duration));
+        line.words.add(new LyricLine.Word("● ● ●", timestamp, duration));
         return line;
     }
     
@@ -189,7 +189,7 @@ public class CloudMusic {
     }
 
     private static long getLyricDuration(LyricLine line) {
-        return line.words.isEmpty() ? 0 : line.words.getLast().timestamp;
+        return line.duration;
     }
 
     /**
@@ -1053,6 +1053,7 @@ public class CloudMusic {
                         oldLine.words.addAll(newLine.words);
                         oldLine.timestamp = newLine.timestamp;
                         oldLine.lyric = newLine.lyric;
+                        oldLine.duration = newLine.duration;
                     }
 
                     stream.close();

@@ -1,6 +1,6 @@
 package tritium.rendering.waveycapes.maths;
 
-import tritium.rendering.waveycapes.Mth;
+import tritium.utils.math.Mth;
 
 public final class Quaternion {
     public static final Quaternion ONE;

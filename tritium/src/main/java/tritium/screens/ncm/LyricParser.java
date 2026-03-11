@@ -206,6 +206,7 @@ public class LyricParser {
                 continue;
 
             LyricLine l = new LyricLine(startDuration, "");
+            l.duration = duration;
 
             parseWordTimings(l, line.substring(line.indexOf("]") + 1));
 
@@ -233,16 +234,14 @@ public class LyricParser {
     private static void parseWordTimings(LyricLine l, String text) {
         Pattern pattern = Pattern.compile("\\((\\d+),(\\d+),0\\)((?!\\(\\d+,\\d+,0\\)|\\(\\d+,\\d+,0\\\\).)*");
         Matcher matcher = pattern.matcher(text);
-        long sumDuration = 0;
 
         while (matcher.find()) {
             String group = matcher.group();
-            String metadata = group.substring(0, group.indexOf(")") + 1);
+            String metadata = group.substring(1, group.indexOf(")") + 1);
             String[] metadataParts = metadata.split(",");
             String lyric = group.substring(group.indexOf(")") + 1);
-            sumDuration += Long.parseLong(metadataParts[1]);  // 累加持续时间
 
-            LyricLine.Word wordTiming = new LyricLine.Word(lyric, sumDuration);
+            LyricLine.Word wordTiming = new LyricLine.Word(lyric, Long.parseLong(metadataParts[0]), Long.parseLong(metadataParts[1]));
             l.words.add(wordTiming);
         }
     }

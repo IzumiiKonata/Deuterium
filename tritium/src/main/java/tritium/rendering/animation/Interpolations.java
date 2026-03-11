@@ -1,7 +1,7 @@
 package tritium.rendering.animation;
 
 import tritium.rendering.rendersystem.RenderSystem;
-import tritium.rendering.waveycapes.Mth;
+import tritium.utils.math.Mth;
 
 import java.awt.*;
 
@@ -28,7 +28,7 @@ public class Interpolations {
                                      double fraction) {
         boolean increasing = startValue < endValue;
 
-        double result = Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5, startValue, endValue);
+        double result = tritium.utils.math.Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5, startValue, endValue);
 
         if (increasing) {
             return Math.min(endValue, result);
@@ -42,7 +42,7 @@ public class Interpolations {
                                     float fraction) {
         boolean increasing = startValue < endValue;
 
-        float result = (float) Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5f, startValue, endValue);
+        float result = (float) tritium.utils.math.Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5f, startValue, endValue);
 
         if (increasing) {
             return Math.min(endValue, result);

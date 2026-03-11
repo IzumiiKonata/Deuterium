@@ -1,6 +1,7 @@
 package tritium.widget.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
+import net.optifine.util.MathUtils;
 import tritium.ncm.music.CloudMusic;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
@@ -14,6 +15,7 @@ import tritium.screens.ncm.LyricLine;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
+import tritium.utils.math.Mth;
 import tritium.widget.Widget;
 
 /**
@@ -333,8 +335,8 @@ public class MusicLyricsWidget extends Widget {
         for (int k = 0; k < line.words.size(); k++) {
             LyricLine.Word word = line.words.get(k);
 
-            if (word.timestamp > songProgress - line.timestamp) {
-                info.currentIndex = k;
+            if (word.timestamp > songProgress) {
+                info.currentIndex = Math.max(0, k - 1);
                 break;
             } else if (k == line.words.size() - 1) {
                 info.currentIndex = k;
@@ -355,11 +357,9 @@ public class MusicLyricsWidget extends Widget {
     }
 
     private void updateScrollWidth(LyricLine line, WordInfo wordInfo, float songProgress) {
-        LyricLine.Word prev = getPrevWord(wordInfo.currentIndex, CloudMusic.lyrics.indexOf(line), line);
         LyricLine.Word current = line.words.get(wordInfo.currentIndex);
 
-        long prevWordTimestamp = wordInfo.currentIndex == 0 ? 0 : prev.timestamp;
-        double progress = (songProgress - line.timestamp - prevWordTimestamp) / (double) (current.timestamp - prevWordTimestamp);
+        double progress = Mth.limit((songProgress - current.timestamp) / (double) (current.duration), 0, 1);
 
         double offsetX = progress * getFontRenderer().getStringWidthD(current.word);
 
@@ -453,11 +453,7 @@ public class MusicLyricsWidget extends Widget {
 
     private void updateCurrentWordAnimation(LyricLine.Word word, LyricLine line,
                                             int currentIndex, float songProgress) {
-        LyricLine.Word prev = getPrevWord(currentIndex, CloudMusic.lyrics.indexOf(line), line);
-        long prevWordTimestamp = currentIndex == 0 ? 0 : prev.timestamp;
-
-        double perc = (songProgress - line.timestamp - prevWordTimestamp) /
-                (double) (word.timestamp - prevWordTimestamp);
+        double perc = Mth.limit((songProgress - word.timestamp) / (double) (word.duration), 0, 1);
         double clamped = Math.max(0, Math.min(1, perc));
 
         word.progress = Interpolations.interpolate(word.progress, clamped, 1);

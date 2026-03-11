@@ -1,7 +1,7 @@
 package tritium.rendering.waveycapes.maths;
 
 import com.google.common.collect.Queues;
-import tritium.rendering.waveycapes.Mth;
+import tritium.utils.math.Mth;
 
 import java.util.Deque;
 

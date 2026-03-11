@@ -28,6 +28,7 @@ import tritium.rendering.shader.Shaders;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.settings.ClientSettings;
 import tritium.utils.cursor.CursorUtils;
+import tritium.utils.math.Mth;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
@@ -75,10 +76,6 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     public MusicLyricsPanel(Music music) {
         this.music = music;
         updateLyricPositionsImmediate(NCMScreen.getInstance().getPanelWidth() * getLyricWidthFactor());
-    }
-
-    private static long getLyricDuration(LyricLine line) {
-        return line.words.isEmpty() ? 0 : line.words.getLast().timestamp;
     }
 
     private static void fetchTTMLLyrics(Music music, List<LyricLine> parsed) {
@@ -403,12 +400,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     }
 
                     if (CloudMusic.lyrics.indexOf(currentLyric) - k <= 1) {
-                        LyricLine.Word prev = i > 0 ? words.get(i - 1) : null;
-
-                        long prevTiming = i == 0 ? 0 : prev.timestamp;
-                        long timestamp = word.timestamp;
-
-                        double progress = Math.max(0, Math.min(1, (songProgress - lyric.timestamp - prevTiming) / (double) (timestamp - prevTiming)));
+                        double progress = Mth.limit((songProgress - word.timestamp) / (double) (word.duration), 0, 1);
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
 
                         boolean shouldClip = progress > 0 && progress < 1;

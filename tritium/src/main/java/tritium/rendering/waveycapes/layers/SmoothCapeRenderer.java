@@ -7,12 +7,12 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
 import tritium.management.ModuleManager;
 import tritium.rendering.waveycapes.CapeMovement;
-import tritium.rendering.waveycapes.Mth;
 import tritium.rendering.waveycapes.maths.Matrix4f;
 import tritium.rendering.waveycapes.maths.PoseStack;
 import tritium.rendering.waveycapes.maths.Vector3f;
 import tritium.rendering.waveycapes.maths.Vector4f;
 import tritium.rendering.waveycapes.simulation.StickSimulation;
+import tritium.utils.math.Mth;
 
 public class SmoothCapeRenderer {
     private static void addBackVertex(final WorldRenderer worldrenderer, Matrix4f matrix, Matrix4f oldMatrix, float x1, float y1, final float z1, float x2, float y2, final float z2, final int part) {
@@ -254,9 +254,9 @@ public class SmoothCapeRenderer {
     private void modifyPoseStackVanilla(final CustomCapeRenderLayer layer, final PoseStack poseStack, final AbstractClientPlayer abstractClientPlayer, final float h, final int part) {
         poseStack.pushPose();
         poseStack.translate(0.0, 0.0, 0.125);
-        final double d = Mth.lerp(h, abstractClientPlayer.prevChasingPosX, abstractClientPlayer.chasingPosX) - Mth.lerp(h, abstractClientPlayer.prevPosX, abstractClientPlayer.posX);
-        final double e = Mth.lerp(h, abstractClientPlayer.prevChasingPosY, abstractClientPlayer.chasingPosY) - Mth.lerp(h, abstractClientPlayer.prevPosY, abstractClientPlayer.posY);
-        final double m = Mth.lerp(h, abstractClientPlayer.prevChasingPosZ, abstractClientPlayer.chasingPosZ) - Mth.lerp(h, abstractClientPlayer.prevPosZ, abstractClientPlayer.posZ);
+        final double d = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevChasingPosX, abstractClientPlayer.chasingPosX) - tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevPosX, abstractClientPlayer.posX);
+        final double e = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevChasingPosY, abstractClientPlayer.chasingPosY) - tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevPosY, abstractClientPlayer.posY);
+        final double m = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevChasingPosZ, abstractClientPlayer.chasingPosZ) - Mth.lerp(h, abstractClientPlayer.prevPosZ, abstractClientPlayer.posZ);
         final float n = abstractClientPlayer.prevRenderYawOffset + abstractClientPlayer.renderYawOffset - abstractClientPlayer.prevRenderYawOffset;
         final double o = Math.sin(n * 0.017453292f);
         final double p = -Math.cos(n * 0.017453292f);
@@ -266,8 +266,8 @@ public class SmoothCapeRenderer {
         swing = MathHelper.clamp_float(swing, 0.0f, 150.0f * easeOutSine(0.0625f * part));
         float sidewaysRotationOffset = (float) (d * p - m * o) * 100.0f;
         sidewaysRotationOffset = MathHelper.clamp_float(sidewaysRotationOffset, -20.0f, 20.0f);
-        final float t = Mth.lerp(h, abstractClientPlayer.prevCameraYaw, abstractClientPlayer.cameraYaw);
-        height += (float) (Math.sin(Mth.lerp(h, abstractClientPlayer.prevDistanceWalkedModified, abstractClientPlayer.distanceWalkedModified) * 6.0f) * 32.0 * t);
+        final float t = tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevCameraYaw, abstractClientPlayer.cameraYaw);
+        height += (float) (Math.sin(tritium.utils.math.Mth.lerp(h, abstractClientPlayer.prevDistanceWalkedModified, abstractClientPlayer.distanceWalkedModified) * 6.0f) * 32.0 * t);
         if (abstractClientPlayer.isSneaking()) {
             height += 25.0f;
             poseStack.translate(0.0, 0.15000000596046448, 0.0);

@@ -33,6 +33,7 @@ public class LyricLine {
     @Getter
     public String romanizationText; // 罗马音文本
 
+    public long duration;
     public double posY = 0;
     public double height = 0;
     public float alpha = .4f;
@@ -56,16 +57,17 @@ public class LyricLine {
 
     public static class Word {
         public final String word;
-        public final long timestamp;
+        public final long timestamp, duration;
         public final double[] emphasizes;
 
         // fields for MusicLyricsWidget
         public float alpha = 0.0f;
         public double progress = 0.0;
 
-        public Word(String word, long timestamp) {
+        public Word(String word, long timestamp, long duration) {
             this.word = word;
             this.timestamp = timestamp;
+            this.duration = duration;
             this.emphasizes = new double[word.length()];
         }
     }

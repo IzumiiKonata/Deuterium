@@ -1,7 +1,7 @@
 package tritium.rendering.waveycapes.maths;
 
 import net.minecraft.util.MathHelper;
-import tritium.rendering.waveycapes.Mth;
+import tritium.utils.math.Mth;
 
 public final class Vector3f {
     public static Vector3f XN;

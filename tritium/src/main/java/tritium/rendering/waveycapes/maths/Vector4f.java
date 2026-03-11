@@ -1,6 +1,6 @@
 package tritium.rendering.waveycapes.maths;
 
-import tritium.rendering.waveycapes.Mth;
+import tritium.utils.math.Mth;
 
 public class Vector4f {
     private float x;
