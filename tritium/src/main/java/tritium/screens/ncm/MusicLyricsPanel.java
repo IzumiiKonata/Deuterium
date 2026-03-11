@@ -217,10 +217,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         double scrollY = 0;
 
-        if (nextLyric != null) {
-            scrollY = (playbackProgress - currentLyric.timestamp) / (nextLyric.timestamp - currentLyric.timestamp) * currentLyric.height;
-            offsetY -= scrollY;
-        }
+//        if (nextLyric != null) {
+//            scrollY = (playbackProgress - currentLyric.timestamp) / (nextLyric.timestamp - currentLyric.timestamp) * currentLyric.height;
+//            offsetY -= scrollY;
+//        }
 
         synchronized (CloudMusic.lyrics) {
             List<LyricLine> subList = CloudMusic.lyrics.subList(0, toIndex);
