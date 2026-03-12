@@ -30,9 +30,12 @@ public abstract class SequentialDataReader extends UnitGenerator {
     public UnitInputPort amplitude;
     public UnitOutputPort output;
 
+    public static final double DEFAULT_FREQUENCY = 440.0;
+    public static final double DEFAULT_AMPLITUDE = 1.0;
+
     /* Define Unit Ports used by connect() and set(). */
     public SequentialDataReader() {
         addPort(dataQueue = new UnitDataQueuePort("Data"));
-        addPort(amplitude = new UnitInputPort("Amplitude", UnitOscillator.DEFAULT_AMPLITUDE));
+        addPort(amplitude = new UnitInputPort("Amplitude", DEFAULT_AMPLITUDE));
     }
 }

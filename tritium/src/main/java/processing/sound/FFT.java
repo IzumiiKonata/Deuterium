@@ -1,7 +1,7 @@
 package processing.sound;
 
 import com.jsyn.ports.UnitOutputPort;
-import com.softsynth.math.FourierMath;
+import com.jsyn.util.FourierMath;
 import lombok.Getter;
 
 

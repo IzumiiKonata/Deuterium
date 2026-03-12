@@ -17,8 +17,6 @@
 package com.jsyn.data;
 
 import com.jsyn.engine.SynthesisEngine;
-import com.jsyn.unitgen.FixedRateMonoReader;
-import com.jsyn.unitgen.FixedRateStereoReader;
 import com.jsyn.unitgen.VariableRateMonoReader;
 import com.jsyn.unitgen.VariableRateStereoReader;
 import com.jsyn.util.SampleLoader;
@@ -28,8 +26,6 @@ import com.jsyn.util.SampleLoader;
  * 
  * @author Phil Burk (C) 2010 Mobileer Inc
  * @see SampleLoader
- * @see FixedRateMonoReader
- * @see FixedRateStereoReader
  * @see VariableRateMonoReader
  * @see VariableRateStereoReader
  */

@@ -81,7 +81,6 @@ public class SynthesisEngine implements Synthesizer {
     // List of units stopping because of autoStop.
     private final ArrayList<UnitGenerator> stoppingUnitList = new ArrayList<>();
 
-    private LoadAnalyzer loadAnalyzer;
     // private int numOutputChannels;
     // private int numInputChannels;
     private final CopyOnWriteArrayList<Runnable> audioTasks = new CopyOnWriteArrayList<>();
@@ -315,7 +314,6 @@ public class SynthesisEngine implements Synthesizer {
                     throw new RuntimeException(e);
                 }
             }
-            loadAnalyzer = new LoadAnalyzer();
 
             while (go) {
                 try {
@@ -327,10 +325,8 @@ public class SynthesisEngine implements Synthesizer {
                         throttled = true;
                     }
 
-                    loadAnalyzer.start();
                     runAudioTasks();
                     generateNextBuffer();
-                    loadAnalyzer.stop();
 
                     if (audioOutputStream != null) {
                         // This call will block when the output is full.
@@ -610,12 +606,7 @@ public class SynthesisEngine implements Synthesizer {
     @Override
     public double getUsage() {
         // use temp so we don't have to synchronize
-        LoadAnalyzer temp = loadAnalyzer;
-        if (temp != null) {
-            return temp.getAverageLoad();
-        } else {
-            return 0.0;
-        }
+        return 0.0;
     }
 
     @Override

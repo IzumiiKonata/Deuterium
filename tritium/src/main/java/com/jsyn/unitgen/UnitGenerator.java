@@ -155,7 +155,6 @@ public abstract class UnitGenerator {
         if (halfLife < (2.0 * getFramePeriod())) {
             return 1.0;
         } else {
-            // Oddly enough, this code is valid for both PeakFollower and AsymptoticRamp.
             return 1.0 - Math.pow(0.5, 1.0 / (halfLife * getSynthesisEngine().getFrameRate()));
         }
     }
@@ -229,7 +228,6 @@ public abstract class UnitGenerator {
      * turn off the entire tree, thus saving CPU cycles.
      *
      * @param enabled
-     * @see UnitGate#setupAutoDisable(UnitGenerator)
      * @see #start()
      */
     public void setEnabled(boolean enabled) {

@@ -16,8 +16,6 @@
 
 package com.jsyn.data;
 
-import com.jsyn.unitgen.FixedRateMonoReader;
-import com.jsyn.unitgen.FixedRateStereoReader;
 import com.jsyn.unitgen.VariableRateMonoReader;
 import com.jsyn.unitgen.VariableRateStereoReader;
 import com.jsyn.util.SampleLoader;
@@ -29,12 +27,10 @@ import lombok.Getter;
  *
  * @author Phil Burk (C) 2010 Mobileer Inc
  * @see SampleLoader
- * @see FixedRateMonoReader
- * @see FixedRateStereoReader
  * @see VariableRateMonoReader
  * @see VariableRateStereoReader
  */
-public class FloatSample extends AudioSample implements Function {
+public class FloatSample extends AudioSample {
     @Getter
     public float[] buffer;
 
@@ -166,20 +162,6 @@ public class FloatSample extends AudioSample implements Function {
         return ((target - source) * phase) + source;
     }
 
-    /**
-     * Note that this will only work for mono, single channel samples.
-     */
-    @Override
-    public double evaluate(double input) {
-        // Input ranges from -1 to +1
-        // Map it to range of sample with guard point.
-        double normalizedInput = (input + 1.0) * 0.5;
-        // Clip so it does not go out of range of the sample.
-        if (normalizedInput < 0.0) normalizedInput = 0.0;
-        else if (normalizedInput > 1.0) normalizedInput = 1.0;
-        double fractionalIndex = (getNumFrames() - 1.01) * normalizedInput;
-        return interpolate(fractionalIndex);
-    }
 
     public void cleanUp() {
         this.buffer = null;

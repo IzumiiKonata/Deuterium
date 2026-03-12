@@ -16,9 +16,6 @@
 
 package com.jsyn.data;
 
-import com.jsyn.unitgen.SpectralFFT;
-import com.jsyn.unitgen.SpectralIFFT;
-import com.jsyn.unitgen.SpectralProcessor;
 
 /**
  * Complex spectrum with real and imaginary parts. The frequency associated with each bin of the
@@ -34,9 +31,6 @@ import com.jsyn.unitgen.SpectralProcessor;
  * 
  * @author Phil Burk (C) 2013 Mobileer Inc
  * @version 016
- * @see SpectralFFT
- * @see SpectralIFFT
- * @see SpectralProcessor
  */
 public class Spectrum {
     private double[] real;

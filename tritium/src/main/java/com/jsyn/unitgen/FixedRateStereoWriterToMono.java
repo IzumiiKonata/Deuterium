@@ -25,7 +25,6 @@ import com.jsyn.ports.UnitInputPort;
  *
  * Note that you must call start() on this unit because it does not have an output for pulling data.
  *
- * @see FixedRateMonoWriter
  * @author Phil Burk (C) 2009 Mobileer Inc
  */
 public class FixedRateStereoWriterToMono extends SequentialDataWriter {

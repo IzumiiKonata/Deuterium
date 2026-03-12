@@ -32,8 +32,6 @@ import com.jsyn.ports.UnitOutputPort;
  * 
  * @author Phil Burk (C) 2009 Mobileer Inc
  * @version 016
- * @see MultiplyAdd
- * @see Subtract
  */
 public class Multiply extends UnitBinaryOperator {
     public Multiply() {

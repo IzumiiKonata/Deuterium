@@ -17,13 +17,12 @@
 package com.jsyn.unitgen;
 
 import com.jsyn.data.FloatSample;
-import com.jsyn.data.SegmentedEnvelope;
 import com.jsyn.data.ShortSample;
 import com.jsyn.ports.UnitOutputPort;
 
 /**
  * This reader can play any SequentialData and will interpolate between adjacent values. It can play
- * both {@link SegmentedEnvelope envelopes} and {@link FloatSample samples}.
+ * {@link FloatSample samples}.
  *
  * <pre><code>
 	// Queue an envelope to the dataQueue port.
@@ -33,7 +32,6 @@ import com.jsyn.ports.UnitOutputPort;
  * @author Phil Burk (C) 2009 Mobileer Inc
  * @see FloatSample
  * @see ShortSample
- * @see SegmentedEnvelope
  */
 public class VariableRateMonoReader extends VariableRateDataReader {
     private double phase; // ranges from 0.0 to 1.0

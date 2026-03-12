@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.softsynth.math;
+package com.jsyn.util;
 
 //Simple Fast Fourier Transform.
 public class FourierMath {

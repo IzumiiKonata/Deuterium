@@ -23,10 +23,6 @@ import com.jsyn.unitgen.*;
  * internally so they can be shared by multiple readers.
  *
  * @author Phil Burk (C) 2010 Mobileer Inc
- * @see FixedRateMonoReader
- * @see FixedRateStereoReader
- * @see FixedRateMonoWriter
- * @see FixedRateStereoWriter
  * @see VariableRateMonoReader
  * @see VariableRateStereoReader
  */

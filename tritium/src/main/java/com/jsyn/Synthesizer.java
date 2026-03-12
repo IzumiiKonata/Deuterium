@@ -53,7 +53,6 @@ public interface Synthesizer {
      * JPortAudio is available at
      * <a href="http://www.softsynth.com/jsyn/developers/download.php">http://www.softsynth.com/jsyn/developers/download.php</a>.
      * <p>
-     * If you use more than 2 inputs or outputs then you will probably want to use {@link com.jsyn.unitgen.ChannelIn}
      * or {@link com.jsyn.unitgen.ChannelOut}, which can be associated with any indexed channel.
      *
      * @param frameRate in Hertz

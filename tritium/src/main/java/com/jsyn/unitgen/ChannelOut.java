@@ -24,7 +24,6 @@ import com.jsyn.ports.UnitInputPort;
  * the {@link com.jsyn.Synthesizer} start() method with numOutputChannels &gt; 2.
  *
  * @author Phil Burk (C) 2009 Mobileer Inc
- * @see ChannelIn
  */
 public class ChannelOut extends UnitGenerator {
     public UnitInputPort input;
