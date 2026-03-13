@@ -4,10 +4,10 @@ import repackage.com.jsyn.data.FloatSample;
 import repackage.com.jsyn.util.soundfile.CustomSampleLoader;
 import repackage.com.jsyn.util.soundfile.WAVEFileParser;
 import lombok.SneakyThrows;
-import org.kc7bfi.jflac.metadata.StreamInfo;
-import org.kc7bfi.jflac.sound.spi.Flac2PcmAudioInputStream;
-import org.kc7bfi.jflac.sound.spi.FlacAudioFileReader;
-import org.kc7bfi.jflac.sound.spi.FlacEncoding;
+import repackage.org.kc7bfi.jflac.metadata.StreamInfo;
+import repackage.org.kc7bfi.jflac.sound.spi.Flac2PcmAudioInputStream;
+import repackage.org.kc7bfi.jflac.sound.spi.FlacAudioFileReader;
+import repackage.org.kc7bfi.jflac.sound.spi.FlacEncoding;
 
 import javax.sound.sampled.AudioFormat;
 import java.io.BufferedInputStream;
