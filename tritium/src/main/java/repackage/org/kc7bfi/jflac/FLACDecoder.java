@@ -20,11 +20,9 @@ package repackage.org.kc7bfi.jflac;
  * Boston, MA  02111-1307, USA.
  */
 
-import org.kc7bfi.jflac.frame.*;
 import repackage.org.kc7bfi.jflac.frame.*;
 import repackage.org.kc7bfi.jflac.io.BitInputStream;
 import repackage.org.kc7bfi.jflac.io.RandomFileInputStream;
-import org.kc7bfi.jflac.metadata.*;
 import repackage.org.kc7bfi.jflac.metadata.*;
 import repackage.org.kc7bfi.jflac.util.ByteData;
 import repackage.org.kc7bfi.jflac.util.CRC16;
