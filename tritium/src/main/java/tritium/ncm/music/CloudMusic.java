@@ -1,8 +1,8 @@
 package tritium.ncm.music;
 
 import com.google.gson.*;
-import com.jsyn.exceptions.ChannelMismatchException;
-import javazoom.jl.converter.Converter;
+import repackage.com.jsyn.exceptions.ChannelMismatchException;
+import repackage.javazoom.jl.converter.Converter;
 import lombok.Cleanup;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -48,7 +48,6 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.text.DecimalFormat;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
