@@ -247,7 +247,7 @@ public class PlaylistPanel extends NCMPanel {
 
             musicsContainerOffsetY = cover.getRelativeY() + cover.getHeight() + 24;
         } else {
-            musicsContainerOffsetY = 20;
+            musicsContainerOffsetY = 18;
         }
 
         Panel rwMusicsContainer = new Panel();
@@ -274,22 +274,22 @@ public class PlaylistPanel extends NCMPanel {
                 if (text.isEmpty()) {
                     musicsPanel.getChildren().forEach(child -> child.setHidden(false));
                 } else {
-                    for (AbstractWidget<?> child : musicsPanel.getChildren()) {
-                        if (child instanceof MusicWidget widget) {
-
-                            if (
-                                    widget.music.getName().toLowerCase().contains(text.toLowerCase()) ||
-                                    widget.music.getTranslatedNames().toLowerCase().contains(text.toLowerCase()) ||
-                                    widget.music.getArtists().stream().anyMatch(artist -> artist != null && artist.getName() != null && artist.getName().toLowerCase().contains(text.toLowerCase())) ||
-                                    (widget.music.getAlbum() != null && widget.music.getAlbum().getName() != null && widget.music.getAlbum().getName().toLowerCase().contains(text.toLowerCase()))
-                            ) {
-                                widget.setHidden(false);
-                            } else {
-                                widget.setHidden(true);
-                            }
-
-                        }
-                    }
+                    musicsPanel.getChildren()
+                            .stream()
+                            .filter(child -> child instanceof MusicWidget)
+                            .map(child -> (MusicWidget) child)
+                            .forEach(widget -> {
+                                    if (
+                                            widget.music.getName().toLowerCase().contains(text.toLowerCase()) ||
+                                            widget.music.getTranslatedNames().toLowerCase().contains(text.toLowerCase()) ||
+                                            widget.music.getArtists().stream().anyMatch(artist -> artist != null && artist.getName() != null && artist.getName().toLowerCase().contains(text.toLowerCase())) ||
+                                            (widget.music.getAlbum() != null && widget.music.getAlbum().getName() != null && widget.music.getAlbum().getName().toLowerCase().contains(text.toLowerCase()))
+                                    ) {
+                                        widget.setHidden(false);
+                                    } else {
+                                        widget.setHidden(true);
+                                    }
+                            });
                 }
 
             });
