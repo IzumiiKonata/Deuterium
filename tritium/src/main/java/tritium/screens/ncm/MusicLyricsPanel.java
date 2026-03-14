@@ -879,16 +879,15 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
             GlStateManager.pushMatrix();
 
-            float max = 0;
-            for (int i = 0; i < Math.min(20, AudioPlayer.bandValues.length); i++) {
-                max = Math.max(max, AudioPlayer.bandValues[i]);
-            }
-
+            float lowFreqEnergy = calculateLowFrequencyEnergy();
+            
             if (!Double.isFinite(fftScale)) fftScale = 0;
-
-            if (!Float.isFinite(max) || max <= .1f) max = 0;
-
-            fftScale = Interpolations.interpolate(fftScale, max * .05, .4f);
+            if (!Float.isFinite(lowFreqEnergy) || lowFreqEnergy <= 0.01f) lowFreqEnergy = 0;
+            
+            float scaledEnergy = (float) Math.log1p(lowFreqEnergy * 10) * 0.05f;
+            
+            float damping = lowFreqEnergy > fftScale ? 0.3f : 0.6f;
+            fftScale = Interpolations.interpolate(fftScale, scaledEnergy, damping);
 
             scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 + fftScale);
 
@@ -914,5 +913,42 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         }
 
         Rect.draw(posX, posY, width, height, hexColor(0, 0, 0, alpha * .35f));
+    }
+
+    private float calculateLowFrequencyEnergy() {
+        if (AudioPlayer.bandValues == null || AudioPlayer.bandValues.length == 0) {
+            return 0.0f;
+        }
+
+        int lowFreqBands = Math.min(12, AudioPlayer.bandValues.length);
+        
+        float totalWeight = 0.0f;
+        float weightedSum = 0.0f;
+        
+        for (int i = 0; i < lowFreqBands; i++) {
+            float weight = (float) Math.exp(-i * 0.2f);
+            float bandValue = AudioPlayer.bandValues[i];
+            
+            bandValue = Math.min(bandValue, 2.0f);
+            
+            weightedSum += bandValue * weight;
+            totalWeight += weight;
+        }
+        
+        if (totalWeight <= 0.0f) {
+            return 0.0f;
+        }
+        
+        float weightedAverage = weightedSum / totalWeight;
+        
+        float rms = 0.0f;
+        for (int i = 0; i < lowFreqBands; i++) {
+            float bandValue = AudioPlayer.bandValues[i];
+            bandValue = Math.min(bandValue, 2.0f);
+            rms += bandValue * bandValue;
+        }
+        rms = (float) Math.sqrt(rms / lowFreqBands);
+        
+        return (weightedAverage * 0.7f + rms * 0.3f);
     }
 }
