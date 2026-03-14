@@ -7,7 +7,7 @@ import repackage.processing.sound.*;
 import tritium.management.WidgetsManager;
 import tritium.screens.ncm.NCMScreen;
 import tritium.utils.other.MemoryTracker;
-import tritium.widget.impl.ExtendedSpectrumVisualizer;
+import tritium.widget.impl.SpectrumVisualizer;
 import tritium.widget.impl.MusicSpectrumWidget;
 
 import java.io.File;
@@ -44,7 +44,8 @@ public class AudioPlayer {
     FFT fft = new FFT(128, callback);
 
     public static float[] bandValues = new float[1];
-    public static ExtendedSpectrumVisualizer visualizer;
+    public static final SpectrumVisualizer visualizer = new SpectrumVisualizer(48000, JSynFFT.FFT_SIZE, 1024);
+
 
     static int skipCount = 0;
 
@@ -52,10 +53,6 @@ public class AudioPlayer {
 
         if (!WidgetsManager.musicSpectrum.isEnabled() && !(Minecraft.getMinecraft().currentScreen instanceof NCMScreen))
             return;
-
-        if (visualizer == null || visualizer.getSampleRate() != 44100 || visualizer.getFftSize() != JSynFFT.FFT_SIZE) {
-            visualizer = new ExtendedSpectrumVisualizer(44100, JSynFFT.FFT_SIZE, 1024, ExtendedSpectrumVisualizer.FrequencyDistribution.BARK_ENHANCED);
-        }
 
         int skipAmount = 4;
 
