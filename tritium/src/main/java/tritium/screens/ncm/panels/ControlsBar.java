@@ -243,21 +243,20 @@ public class ControlsBar extends NCMPanel {
     }
 
     private String formatDuration(float totalMillis) {
-        float totalSeconds = totalMillis / 1000;
+        int totalSeconds = (int) (totalMillis / 1000);
+        int hours = totalSeconds / 3600;
+        int minutes = (totalSeconds % 3600) / 60;
+        int seconds = totalSeconds % 60;
 
-        float hours = totalSeconds / 3600;
-        float minutes = (totalSeconds % 3600) / 60;
-        float seconds = totalSeconds % 60;
+        String result = "";
 
-        StringBuilder sb = new StringBuilder();
-
-        if ((int) hours > 0) {
-            sb.append(String.format("%02d:", (int) hours));
+        if (hours > 0) {
+            result += (hours < 10 ? "0" : "") + hours + ":";
         }
 
-        sb.append(String.format("%02d:", (int) minutes));
-        sb.append(String.format("%02d", (int) seconds));
+        result += (minutes < 10 ? "0" : "") + minutes + ":";
+        result += (seconds < 10 ? "0" : "") + seconds;
 
-        return sb.toString();
+        return result;
     }
 }

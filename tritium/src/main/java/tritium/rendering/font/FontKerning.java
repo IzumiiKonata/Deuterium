@@ -1,5 +1,6 @@
 package tritium.rendering.font;
 
+import it.unimi.dsi.fastutil.longs.Long2FloatOpenHashMap;
 import org.lwjgl.PointerBuffer;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.util.freetype.FT_Face;
@@ -26,7 +27,12 @@ public final class FontKerning {
     private final FT_Face ftFace;
     private final ByteBuffer fontData;
 
+    private final Long2FloatOpenHashMap kerningCache = new Long2FloatOpenHashMap();
+
     public FontKerning(String resPath) {
+
+        this.kerningCache.defaultReturnValue(Float.NaN);
+
         try {
 
             InputStream resourceAsStream = FontKerning.class.getResourceAsStream(resPath);
@@ -112,13 +118,15 @@ public final class FontKerning {
         }
     }
 
-    private final HashMap<Long, Float> kerningCache = new HashMap<>();
-
     public synchronized float getKerning(char left, char right, float fontSizePx) {
 
-        long key = Objects.hash(left, right, fontSizePx);
-        if (kerningCache.containsKey(key)) {
-            return kerningCache.get(key);
+        long key = ((long) left << 48)
+                | ((long) right << 32)
+                | (Float.floatToRawIntBits(fontSizePx) & 0xFFFFFFFFL);
+
+        float cached = kerningCache.get(key);
+        if (!Float.isNaN(cached)) {
+            return cached;
         }
 
         setFontSize(fontSizePx);
