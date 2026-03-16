@@ -688,7 +688,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         stArtists.render(FontManager.pf20bold, CloudMusic.currentlyPlaying.getArtistsName(), elementsXOffset, elementsYOffset + FontManager.pf20bold.getHeight() + 8, this.getCoverSizeMax(), RGBA.color((float) 1, (float) 1, (float) 1, alpha * .8f));
 
         // progressbar 背景
-        double progressBarYOffset = elementsYOffset + FontManager.pf20bold.getHeight() + 8 + FontManager.pf20bold.getHeight() + 12;
+        double progressBarYOffset = elementsYOffset + FontManager.pf20bold.getHeight() + 8 + FontManager.pf20bold.getHeight() + 8;
         double progressBarWidth = this.getCoverSizeMax();
 
         roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha * .5f));
@@ -702,7 +702,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha));
         StencilClipManager.endClip();
 
-        boolean hoveringProgressBar = this.isHovered(mouseX, mouseY, elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, 8);
+        boolean hoveringProgressBar = progressBarDragging || this.isHovered(mouseX, mouseY, elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, 8);
         this.progressBarHeight = Interpolations.interpolate(this.progressBarHeight, hoveringProgressBar ? 8 : 5, 0.3f);
 
         boolean lmbDown = Mouse.isButtonDown(0);
@@ -736,9 +736,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         }
 
         // curTime
-        FontManager.pf12bold.drawString(formatDuration(currentTimeMillis), elementsXOffset, progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
-        String remainingTime = "-" + formatDuration(totalTimeMillis - currentTimeMillis);
-        FontManager.pf12bold.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12bold.getStringWidthD(remainingTime), progressBarYOffset + 12, hexColor(1, 1, 1, alpha * .5f));
+        float curTime = progressBarDragging ? (float) (progressBarProgressOverride * totalTimeMillis) : currentTimeMillis;
+        FontManager.pf12bold.drawString(formatDuration(curTime), elementsXOffset, progressBarYOffset + 8, hexColor(1, 1, 1, alpha * .5f));
+        String remainingTime = "-" + formatDuration(totalTimeMillis - curTime);
+        FontManager.pf12bold.drawString(remainingTime, elementsXOffset + progressBarWidth - FontManager.pf12bold.getStringWidthD(remainingTime), progressBarYOffset + 8, hexColor(1, 1, 1, alpha * .5f));
 
         double volumeBarYOffset = posY + height - (center - getCoverSizeMax() * .575 - NCMScreen.getInstance().getSpacing()) - FontManager.music40.getHeight() * .5 + 2;
         double volumeBarWidth = this.getCoverSizeMax() - FontManager.music40.getStringWidthD("I") - FontManager.music40.getStringWidthD("J");
