@@ -20,8 +20,8 @@ public abstract class AbstractTexture implements ITextureObject {
     public void setBlurMipmapDirect(boolean blur, boolean mipmap) {
         this.blur = blur;
         this.mipmap = mipmap;
-        int minFilter = -1;
-        int magFilter = -1;
+        int minFilter;
+        int magFilter;
 
         if (blur) {
             minFilter = mipmap ? GL11.GL_LINEAR_MIPMAP_LINEAR : GL11.GL_LINEAR;
@@ -65,6 +65,7 @@ public abstract class AbstractTexture implements ITextureObject {
     public void linearFilter() {
 
         if (this.filterState != FilterState.LINEAR) {
+            this.filterState = FilterState.LINEAR;
             RenderSystem.linearFilter();
         }
 
@@ -74,6 +75,7 @@ public abstract class AbstractTexture implements ITextureObject {
     public void nearestFilter() {
 
         if (this.filterState != FilterState.NEAREST) {
+            this.filterState = FilterState.NEAREST;
             RenderSystem.nearestFilter();
         }
 
