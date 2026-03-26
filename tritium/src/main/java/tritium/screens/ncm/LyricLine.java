@@ -50,6 +50,7 @@ public class LyricLine {
     public double scrollWidth = 0;
     public double offsetX = 0;
     public double targetOffsetX = 0;
+    public float lineAlpha = .4f;
 
     public double offsetY = Double.MIN_VALUE;
 

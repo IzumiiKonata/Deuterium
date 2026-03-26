@@ -80,6 +80,7 @@ public class CloudMusic {
     public static LyricLine currentLyric = null;
     public static boolean hasTransLyrics = false;
     public static boolean hasRomanization = false;
+    public static boolean haveNoWords = false;
 
     public static final File COOKIE_FILE = new File(ConfigManager.configDir, "NCMCookie.txt");
 
@@ -90,6 +91,7 @@ public class CloudMusic {
         synchronized (lyrics) {
             updateLyricsList(parsedLyrics);
             currentLyric = lyrics.getFirst();
+            haveNoWords = lyricsHaveNoWords();
             addLongBreaks();
         }
 
@@ -129,7 +131,7 @@ public class CloudMusic {
     private static void addLongBreaks() {
         final long longBreaksDuration = 3000L;
         
-        if (lyricsHaveNoWords()) {
+        if (haveNoWords) {
             // 如果不为逐字歌词的话只在开头添加长间隔
             addInitialBreakIfNeeded(longBreaksDuration);
             return;
@@ -200,21 +202,66 @@ public class CloudMusic {
         currentLyric = findCurrentLyric(songProgress);
         
         if (previousLyric != currentLyric) {
-            resetLyricStatus();
+            resetLyricPositionUpdate();
         }
+    }
+
+    static final float JUMP_TO_NEXT_MILLIS = 300.0f;
+
+    static boolean canJumpToNextEarly(double songProgress, LyricLine lyric) {
+        if (lyric == null || lyric.words.isEmpty())
+            return false;
+
+        LyricLine.Word last = lyric.words.getLast();
+
+        double lineStart = lyric.getTimestamp();
+        double lineEnd = lineStart + lyric.duration;
+
+        double lastWordStart = last.timestamp;
+        double lastWordEnd = lastWordStart + last.duration;
+
+        double tailGap = lineEnd - lastWordEnd;
+
+        double available = Math.max(last.duration, tailGap);
+
+        if (available < JUMP_TO_NEXT_MILLIS)
+            return false;
+
+        if (songProgress < lineEnd - JUMP_TO_NEXT_MILLIS)
+            return false;
+
+        return true;
     }
     
     public static LyricLine findCurrentLyric(double songProgress) {
         for (int i = 0; i < lyrics.size(); i++) {
             LyricLine lyric = lyrics.get(i);
-            
+            LyricLine prev = i > 0 ? lyrics.get(i - 1) : null;
+
+            if (!haveNoWords
+                    && lyric.getTimestamp() > songProgress
+                    && lyric.getTimestamp() - songProgress <= JUMP_TO_NEXT_MILLIS
+                    && canJumpToNextEarly(songProgress, prev)) {
+
+                return lyric;
+            }
+
             if (lyric.getTimestamp() > songProgress) {
                 return i > 0 ? lyrics.get(i - 1) : currentLyric;
-            } else if (i == lyrics.size() - 1) {
-                return lyrics.get(i);
+            }
+
+            if (i == lyrics.size() - 1) {
+                return lyric;
             }
         }
         return currentLyric;
+    }
+
+    public static void resetLyricPositionUpdate() {
+        lyrics.forEach(l -> {
+            l.shouldUpdatePosition = false;
+            l.delayTimer.reset();
+        });
     }
 
     public static void resetLyricStatus() {

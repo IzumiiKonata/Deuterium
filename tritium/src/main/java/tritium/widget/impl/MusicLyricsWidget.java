@@ -231,8 +231,8 @@ public class MusicLyricsWidget extends Widget {
     }
 
     private void updateLyricAnimation(LyricLine line, boolean isCurrent) {
-        line.alpha = Interpolations.interpolate(
-                line.alpha,
+        line.lineAlpha = Interpolations.interpolate(
+                line.lineAlpha,
                 isCurrent ? 1f : .25f,
                 0.1f
         );
@@ -260,9 +260,9 @@ public class MusicLyricsWidget extends Widget {
 
     private int calculateAlpha(LyricLine line, int index, int currentIndex, boolean hasWords) {
         if (hasWords) {
-            return index != currentIndex ? (int) (line.alpha * 255) : 80;
+            return index != currentIndex ? (int) (line.lineAlpha * 255) : 80;
         } else {
-            return (int) (line.alpha * 255);
+            return (int) (line.lineAlpha * 255);
         }
     }
 
@@ -272,7 +272,7 @@ public class MusicLyricsWidget extends Widget {
                                       boolean isActive) {
         return () -> {
             int hexColor = RGBA.color(255, 255, 255, alpha);
-            int rgb = RGBA.color(255, 255, 255, isActive ? (int) (line.alpha * 255) : 100);
+            int rgb = RGBA.color(255, 255, 255, isActive ? (int) (line.lineAlpha * 255) : 100);
 
             renderByAlignment(line, renderInfo, secondaryLyric, secondaryLyricEmpty,
                     shouldRender, hexColor, rgb);

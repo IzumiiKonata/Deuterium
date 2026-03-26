@@ -210,7 +210,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         if (toIndex == -1 || toIndex >= CloudMusic.lyrics.size()) return;
 
-        LyricLine nextLyric = toIndex + 1 >= CloudMusic.lyrics.size() ? null : CloudMusic.lyrics.get(toIndex + 1);
+//        LyricLine nextLyric = toIndex + 1 >= CloudMusic.lyrics.size() ? null : CloudMusic.lyrics.get(toIndex + 1);
 
         double scrollY = 0;
 
