@@ -18,7 +18,7 @@ ___
   - OptiFine 反射
   - ...更多香草狗屎
 - **低内存占用**
-- **插件支持**：实现了 **部分** Opai 扩展 API
+- **插件支持**：实现了 **部分** Opai 扩展 API, 支持 Mixin
 - 更多内容自己看，我忘了。
 
 ## [插件编写](https://github.com/IzumiiKonata/tritium-extension-template)
