@@ -333,7 +333,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             LyricLine currentLyric = progressBarDragging ? CloudMusic.findCurrentLyric(overridePlaybackProgress) : CloudMusic.currentLyric;
             int indexOf = CloudMusic.lyrics.indexOf(currentLyric);
 
-            lyric.alpha = Interpolations.interpolate(lyric.alpha, lyric == currentLyric ? 1f : 0f, 0.1f);
+            boolean isCurrentLyric = lyric == currentLyric;
+            lyric.alpha = Interpolations.interpolate(lyric.alpha, isCurrentLyric ? 1f : 0f, isCurrentLyric ? 0.1f : .05f);
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpolate(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
             lyric.blurAlpha = Interpolations.interpolate(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.05f);
@@ -361,7 +362,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             double renderX = lyricRenderOffsetX + lyric.reboundAnimation;
             double renderY = lyric.posY + lyric.reboundAnimation + scrollOffset;
 
-            lyric.reboundAnimation = Interpolations.interpolate(lyric.reboundAnimation, lyric == currentLyric ? 2f : 0f, 0.1f);
+            lyric.reboundAnimation = Interpolations.interpolate(lyric.reboundAnimation, isCurrentLyric ? 2f : 0f, 0.1f);
 
             List<LyricLine.Word> words = lyric.words;
             if (!words.isEmpty()) {
@@ -383,7 +384,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     double emphasizeTarget = 1;
                     double emphasizeSpeed = 0.05;
 
-                    if (lyric == currentLyric) {
+                    if (isCurrentLyric) {
                         if (charArray.length > 1) {
                             double x = renderX;
                             for (int j = 0; j < charArray.length; j++) {
