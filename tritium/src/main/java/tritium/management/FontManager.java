@@ -74,6 +74,15 @@ public class FontManager extends AbstractManager {
         String normalName = "pf_normal";
         String boldName = "pf_middleblack";
 
+        pf12 = create(12, normalName);
+        pf14 = create(14, normalName);
+        pf16 = create(16, normalName);
+        pf20 = create(20, normalName);
+        pf25 = create(25, normalName);
+        pf28 = create(28, normalName);
+        pf32 = create(32, normalName);
+        pf40 = create(40, normalName);
+
         tritium42 = create(42, "tritium");
         arial60bold = create(60, "arialBold");
         pf18 = create(18, normalName);
@@ -90,16 +99,6 @@ public class FontManager extends AbstractManager {
         pf50bold = create(50, boldName);
         pf65bold = create(65, boldName);
         pf100bold = create(100, boldName);
-
-
-        pf12 = create(12, normalName);
-        pf14 = create(14, normalName);
-        pf16 = create(16, normalName);
-        pf20 = create(20, normalName);
-        pf25 = create(25, normalName);
-        pf28 = create(28, normalName);
-        pf32 = create(32, normalName);
-        pf40 = create(40, normalName);
 
         icon18 = create(18, "icomoon");
         icon25 = create(25, "icomoon");
