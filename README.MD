@@ -53,17 +53,20 @@ ___
 | `PacketUtil`                                                                              | `✅`   |
 
 ## Screenshots
-<div align="center">
-<img src="img/mainmenu.png" alt="Main Menu"/>
-<p><b>Main Menu</b></p>
-<img src="img/altmanager.png" alt="Alt Manager"/>
-<p><b>Alt Manager</b></p>
-<img src="img/clickgui.png" alt="Click Gui"/>
-<p><b>Click Gui</b></p>
-<img src="img/musicscreen.png" alt="Music Screen"/>
-<p><b>Music Screen</b></p>
-<img src="img/lyrics.png" alt="Lyrics"/>
-<p><b>Lyrics</b></p>
-<img src="img/respack%20preview.png" alt="Resourcepack Preview"/>
-<p><b>Resourcepack Preview</b></p>
-</div>
+
+### Main Menu
+![Main Menu](res/mainmenu.png)
+___
+### Alt Manager
+![Alt Manager](res/altmanager.png)
+___
+### Click Gui
+![Click Gui](res/clickgui.png)
+___
+### Music Screen
+![Music Screen](res/musicscreen.png)
+![Lyrics](res/lyrics.png)
+### [Music Screen 演示视频](res/musicplayer.mp4)
+___
+### Resourcepack Preview
+![Resourcepack Preview](res/respack%20preview.png)
