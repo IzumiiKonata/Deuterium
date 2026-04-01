@@ -13,6 +13,7 @@ import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
 import tritium.screens.ncm.LyricLine;
 import tritium.settings.BooleanSetting;
+import tritium.settings.ClientSettings;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
 import tritium.utils.math.Mth;
@@ -106,6 +107,20 @@ public class MusicLyricsWidget extends Widget {
 
         cleanupRender();
         StencilClipManager.endClip();
+
+        if (ClientSettings.DEBUG_MODE.getValue()) {
+            LyricLine currentLine = CloudMusic.currentLyric;
+            if (currentLine != null && !CloudMusic.haveNoWords) {
+                WordInfo wordInfo = calculateCurrentWordInfo(currentLine, songProgress);
+
+                LyricLine.Word current = currentLine.words.get(wordInfo.currentIndex);
+                FontManager.pf28bold.drawStringWithShadow("Current word: " + current.word, 100, 100, -1);
+                double value = (songProgress - current.timestamp) / (double) (current.duration);
+                FontManager.pf28bold.drawStringWithShadow("Perc: " + value, 100, 120, -1);
+                FontManager.pf28bold.drawStringWithShadow("Dur: " + current.duration, 100, 140, -1);
+                FontManager.pf28bold.drawStringWithShadow("Pos: " + (songProgress - current.timestamp), 100, 160, -1);
+            }
+        }
     }
 
     private boolean shouldRender() {
@@ -220,12 +235,10 @@ public class MusicLyricsWidget extends Widget {
                     (index - 1) * getLyricHeight() - (currentIndex * getLyricHeight());
             double v = prevLrc.offsetY - prevDest;
 
-            // 前一行接近目标位置时才开始滚动
             if (v < MusicLyricsWidget.getLyricHeight() * 0.55f) {
                 line.offsetY = Interpolations.interpolate(line.offsetY, dest, speed);
             }
         } else {
-            // 第一行直接滚动
             line.offsetY = Interpolations.interpolate(line.offsetY, dest, speed);
         }
     }
@@ -359,7 +372,9 @@ public class MusicLyricsWidget extends Widget {
     private void updateScrollWidth(LyricLine line, WordInfo wordInfo, float songProgress) {
         LyricLine.Word current = line.words.get(wordInfo.currentIndex);
 
-        double progress = Mth.limit((songProgress - current.timestamp) / (double) (current.duration), 0, 1);
+        double value = (songProgress - current.timestamp) / (double) (current.duration);
+
+        double progress = Mth.limit(value, 0, 1);
 
         double offsetX = progress * getFontRenderer().getStringWidthD(current.word);
 

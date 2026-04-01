@@ -17,16 +17,19 @@ import java.util.concurrent.CopyOnWriteArrayList;
  * @author IzumiiKonata
  * Date: 2025/10/18 10:55
  */
-@RequiredArgsConstructor
 public class LyricLine {
     @Getter
-    @NonNull
-    public Long timestamp;  // 时间戳(ms)
+    public long timestamp;  // 时间戳(ms)
 
     @Getter
     @Setter
     @NonNull
     public String lyric;  // 歌词文本
+
+    public LyricLine(long timestamp, @NonNull String lyric) {
+        this.timestamp = timestamp;
+        this.lyric = lyric;
+    }
 
     @Getter
     public String translationText;  // 翻译文本
@@ -43,6 +46,7 @@ public class LyricLine {
     public double reboundAnimation = 0;
     public Timer delayTimer = new Timer();
     public boolean renderEmphasizes = true;
+    public boolean isBreakLine = false;
 
     public final SpringAnimation spring = new SpringAnimation(new SpringParams(.9, 15, 90, false));
 

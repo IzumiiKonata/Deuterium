@@ -1,6 +1,7 @@
 package tritium.screens.ncm;
 
 import com.google.gson.JsonObject;
+import net.minecraft.util.Tuple;
 
 import java.util.*;
 import java.util.regex.Matcher;
@@ -235,14 +236,32 @@ public class LyricParser {
         Pattern pattern = Pattern.compile("\\((\\d+),(\\d+),0\\)((?!\\(\\d+,\\d+,0\\)|\\(\\d+,\\d+,0\\\\).)*");
         Matcher matcher = pattern.matcher(text);
 
+        List<Tuple<String, Tuple<Long, Long>>> words = new ArrayList<>();
+
         while (matcher.find()) {
             String group = matcher.group();
             String metadata = group.substring(1, group.indexOf(")") + 1);
             String[] metadataParts = metadata.split(",");
             String lyric = group.substring(group.indexOf(")") + 1);
 
-            LyricLine.Word wordTiming = new LyricLine.Word(lyric, Long.parseLong(metadataParts[0]), Long.parseLong(metadataParts[1]));
-            l.words.add(wordTiming);
+            long timestamp = Long.parseLong(metadataParts[0]);
+            long duration = Long.parseLong(metadataParts[1]);
+
+            if (duration <= 0 && !words.isEmpty()) {
+                // wtf
+                Tuple<String, Tuple<Long, Long>> last = words.getLast();
+                last.setA(last.getA() + lyric);
+            } else {
+                words.add(Tuple.of(lyric, new Tuple<>(timestamp, duration)));
+            }
         }
+
+        words.stream().map(
+        t -> new LyricLine.Word(
+                t.getA(),
+                t.getB().getA(),
+                t.getB().getB()
+            )
+        ).forEach(l.words::add);
     }
 }

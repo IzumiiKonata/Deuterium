@@ -175,6 +175,7 @@ public class CloudMusic {
     
     private static LyricLine createBreakLine(long timestamp, long duration) {
         LyricLine line = new LyricLine(timestamp, "● ● ●");
+        line.isBreakLine = true;
         line.words.add(new LyricLine.Word("● ● ●", timestamp, duration));
         return line;
     }
@@ -212,22 +213,25 @@ public class CloudMusic {
         if (lyric == null || lyric.words.isEmpty())
             return false;
 
-        LyricLine.Word last = lyric.words.getLast();
+//        LyricLine.Word last = lyric.words.getLast();
+//
+//        double lineStart = lyric.getTimestamp();
+//        double lineEnd = lineStart + lyric.duration;
+//
+//        double lastWordStart = last.timestamp;
+//        double lastWordEnd = lastWordStart + last.duration;
+//
+//        double tailGap = lineEnd - lastWordEnd;
+//
+//        double available = Math.max(last.duration, tailGap);
+//
+//        if (available < JUMP_TO_NEXT_MILLIS)
+//            return false;
+//
+//        if (songProgress < lineEnd - JUMP_TO_NEXT_MILLIS)
+//            return false;
 
-        double lineStart = lyric.getTimestamp();
-        double lineEnd = lineStart + lyric.duration;
-
-        double lastWordStart = last.timestamp;
-        double lastWordEnd = lastWordStart + last.duration;
-
-        double tailGap = lineEnd - lastWordEnd;
-
-        double available = Math.max(last.duration, tailGap);
-
-        if (available < JUMP_TO_NEXT_MILLIS)
-            return false;
-
-        if (songProgress < lineEnd - JUMP_TO_NEXT_MILLIS)
+        if (lyric.duration < JUMP_TO_NEXT_MILLIS)
             return false;
 
         return true;
@@ -239,10 +243,10 @@ public class CloudMusic {
             LyricLine prev = i > 0 ? lyrics.get(i - 1) : null;
 
             if (!haveNoWords
+                    && !lyric.isBreakLine
                     && lyric.getTimestamp() > songProgress
                     && lyric.getTimestamp() - songProgress <= JUMP_TO_NEXT_MILLIS
                     && canJumpToNextEarly(songProgress, prev)) {
-
                 return lyric;
             }
 
@@ -1253,7 +1257,7 @@ public class CloudMusic {
 
             float prevRate = player.player.getRate();
             player.player.rate(rate);
-            ConsoleScreen.log("set rate: {} => {}", prevRate, rate);
+            ConsoleScreen.log("set rate: %.2f => {}", prevRate / player.player.sampleRate(), rate);
         }, Float.class, "rate").setDescription("Set audio player's playback rate");
 
         // 设置播放器音量, [0, 1]

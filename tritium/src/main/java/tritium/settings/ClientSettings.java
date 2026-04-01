@@ -53,7 +53,8 @@ public class ClientSettings {
         }
     };
 
-    public static final BooleanSetting DEBUG_MODE = new BooleanSetting("Debug Info", false, () -> !Tritium.getInstance().isObfuscated());
+    public static final BooleanSetting SHOW_WIDGET_BOUNDARY = new BooleanSetting("Show widget boundary", false, () -> !Tritium.getInstance().isObfuscated());
+    public static final BooleanSetting DEBUG_MODE = new BooleanSetting("Debug Mode", false, () -> !Tritium.getInstance().isObfuscated());
 
     public static final ModeSetting<VideoPreset> VIDEO_PRESET = new ModeSetting<>("Video Preset", VideoPreset.Performance) {
         @Override

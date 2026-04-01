@@ -368,8 +368,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
             List<LyricLine.Word> words = lyric.words;
             if (!words.isEmpty()) {
-                for (int i = 0; i < words.size(); i++) {
-                    LyricLine.Word word = words.get(i);
+                for (LyricLine.Word word : words) {
                     double wordWidth = FontManager.pf65bold.getStringWidthD(word.word);
 
                     if (renderX + wordWidth >= lyricRenderOffsetX + lyricsWidth + lyric.reboundAnimation) {
@@ -403,7 +402,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                     }
 
                     if (CloudMusic.lyrics.indexOf(currentLyric) - k <= 1) {
-                        double progress = Mth.limit((songProgress - word.timestamp) / (double) (word.duration), 0, 1);
+                        double progress = Mth.limit((songProgress - word.timestamp)/* * (isCurrentLyric ? 1 : 1.5)*/ / (double) (word.duration), 0, 1);
                         double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
 
                         boolean shouldClip = progress > 0 && progress < 1;
@@ -492,7 +491,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                             Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, renderX, renderY - 2, fbWidth * .5, fbHeight * .5);
 
-                            if (ClientSettings.DEBUG_MODE.getValue()) {
+                            if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
 //                                FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
 //                                FontManager.pf18bold.drawString("Base: " + baseFb.framebufferTextureWidth + "x" + baseFb.framebufferTextureHeight, 50, 64, -1);
 

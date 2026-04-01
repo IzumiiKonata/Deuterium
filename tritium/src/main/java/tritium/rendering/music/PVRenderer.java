@@ -102,7 +102,7 @@ public abstract class PVRenderer {
 
     protected void debug(String text) {
 
-        if (!ClientSettings.DEBUG_MODE.getValue())
+        if (!ClientSettings.SHOW_WIDGET_BOUNDARY.getValue())
             return;
 
         FontManager.pf25.drawString(text, x, y, -1);

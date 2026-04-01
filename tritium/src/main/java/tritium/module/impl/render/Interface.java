@@ -84,7 +84,7 @@ public class Interface extends Module {
 //            this.renderWaterMark();
 //        }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             x = 300;
             y = 100;
 

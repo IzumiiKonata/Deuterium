@@ -87,7 +87,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);
@@ -115,7 +115,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);
@@ -144,7 +144,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);
@@ -173,7 +173,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);
@@ -228,7 +228,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);
@@ -250,7 +250,7 @@ public class Image {
         TextureUtils.bindTexture(img.getGlTextureId());
         Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, tWidth, tHeight, width, height);
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             renderDbgInfo("TexID: " + img.getGlTextureId(), x, y, width, height);
         }
 
@@ -277,7 +277,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);
@@ -301,7 +301,7 @@ public class Image {
 
         drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
 
-        if (ClientSettings.DEBUG_MODE.getValue())
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue())
             renderDbgInfo("TexID: " + textureId, x, y, width, height);
 
         GlStateManager.enableAlpha();
@@ -328,7 +328,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);
@@ -357,7 +357,7 @@ public class Image {
             Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
         }
 
-        if (ClientSettings.DEBUG_MODE.getValue()) {
+        if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
             int beginIndex = img.getResourcePath().indexOf("/");
             String str = img.getResourcePath().substring(beginIndex == -1 ? 0 : beginIndex + 1);
             renderDbgInfo(str, x, y, width, height);

@@ -295,7 +295,7 @@ public class CloudMusicApi {
         String deviceId = DeviceIdGenerator.generate();
         RequestUtil.globalDeviceId = deviceId;
 
-//        System.out.println("Device ID: " + deviceId);
+        System.out.println("Device ID: " + deviceId);
 
         String encodedId = Base64.getEncoder().encodeToString(
                 (deviceId + " " + ncmDllEncodeId(deviceId)).getBytes(StandardCharsets.UTF_8)

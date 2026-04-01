@@ -2,12 +2,14 @@ package net.minecraft.util;
 
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @EqualsAndHashCode
 public class Tuple<A, B> {
-    private final A a;
-    private final B b;
+    private A a;
+    private B b;
 
     public Tuple(A aIn, B bIn) {
         this.a = aIn;

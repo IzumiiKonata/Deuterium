@@ -183,7 +183,7 @@ public abstract class AbstractWidget<SELF extends AbstractWidget<SELF>> implemen
 
         this.onRender(mouseX, mouseY);
 
-        boolean debug = ClientSettings.DEBUG_MODE.getValue();
+        boolean debug = ClientSettings.SHOW_WIDGET_BOUNDARY.getValue();
 
         boolean childHovering = false;
 
