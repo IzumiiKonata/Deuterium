@@ -15,8 +15,7 @@ import tritium.management.*;
 import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.clickable.impl.ClickableIcon;
-import tritium.rendering.entities.clickable.impl.FlatMainMenuButton;
+import tritium.rendering.FlatMainMenuButton;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.loading.LoadingRenderer;
 import tritium.rendering.loading.LoadingScreenRenderer;
@@ -44,8 +43,6 @@ public class MainMenu extends BaseScreen {
 
     Framebuffer fbConverge = null;
     List<FlatMainMenuButton> buttons = new ArrayList<>();
-
-    ClickableIcon themeButton;
 
     public MainMenu() {
 
@@ -91,35 +88,12 @@ public class MainMenu extends BaseScreen {
                     buttonWidth, buttonHeight,
                     tuple.getFirst(),
                     this.getColor(ColorType.BUTTON),
-                    (x, y, i) -> tuple.getSecond().run()
+                    () -> tuple.getSecond().run()
                 )
             );
 
             offsetX += buttonWidth;
         }
-
-        this.themeButton = new ClickableIcon(
-                this.getThemeIcon(),
-                FontManager.tritium42,
-                8, 8,
-                32, 32
-                , () -> {
-                    ClientSettings.THEME.setValue(ClientSettings.THEME.getValue() == ThemeManager.Theme.Dark ? ThemeManager.Theme.Light : ThemeManager.Theme.Dark);
-
-                    this.buttons.forEach(b -> b.setBackgroundColor(this.getColor(ColorType.BUTTON)));
-//                    this.refreshDeconvergeThisFrame = true;
-
-                    this.themeButton.setIcon(this.getThemeIcon());
-                }, () -> {
-
-                }, () -> {
-
-                }, () -> {
-
-                }, () -> {
-
-                }
-         );
 
         startTime = System.currentTimeMillis();
         alphas = new float[0];
@@ -131,11 +105,9 @@ public class MainMenu extends BaseScreen {
 
         this.renderDeconverge();
 
-        this.buttons.forEach(button -> button.draw(mouseX, mouseY));
+        this.buttons.forEach(button -> button.render(mouseX, mouseY));
 
         Tritium.getInstance().getThemeManager().interp();
-
-        this.themeButton.draw(mouseX, mouseY);
 
         this.renderInfos();
 
@@ -259,12 +231,6 @@ public class MainMenu extends BaseScreen {
         BACKGROUND,
         BUTTON,
         TEXT
-    }
-
-    public String getThemeIcon() {
-        ThemeManager.Theme theme = ClientSettings.THEME.getValue();
-
-        return theme == ThemeManager.Theme.Dark ? "d" : "c";
     }
 
     @Override

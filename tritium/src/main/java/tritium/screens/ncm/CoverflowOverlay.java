@@ -21,7 +21,7 @@ import tritium.rendering.RGBA;
 import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.TextField;
+import tritium.rendering.TextField;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.Shaders;

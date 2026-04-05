@@ -4,7 +4,7 @@ import org.lwjgl.input.Mouse;
 import tritium.management.FontManager;
 import tritium.rendering.RGBA;
 import tritium.rendering.HSBColor;
-import tritium.rendering.entities.impl.GradientRect;
+import tritium.rendering.GradientRect;
 import tritium.rendering.Rect;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.ui.AbstractWidget;
@@ -63,15 +63,15 @@ public class ColorRenderer extends AbstractWidget<ColorRenderer> {
         float hue = this.getValue().getHue();
         Color color = this.getValue().getColor();
 
-        new GradientRect(positionX, positionY, zWidth, zHeight,
+        GradientRect.draw(positionX, positionY, zWidth, zHeight,
                 this.resetAlpha(Color.getHSBColor(hue, 1, 1), this.getMenuAlpha()), this.resetAlpha(Color.getHSBColor(hue, 1, 1), this.getMenuAlpha()), GradientRect.RenderType.Expand,
-                GradientRect.GradientType.Horizontal).draw();
-        new GradientRect(positionX, positionY, zWidth, zHeight,
+                GradientRect.GradientType.Horizontal);
+        GradientRect.draw(positionX, positionY, zWidth, zHeight,
                 this.resetAlpha(Color.getHSBColor(hue, 0, 1), this.getMenuAlpha()), 0x00F, GradientRect.RenderType.Expand,
-                GradientRect.GradientType.Horizontal).draw();
-        new GradientRect(positionX, positionY, zWidth, zHeight, 0x00F,
+                GradientRect.GradientType.Horizontal);
+        GradientRect.draw(positionX, positionY, zWidth, zHeight, 0x00F,
                 this.resetAlpha(Color.getHSBColor(hue, 1, 0), this.getMenuAlpha()), GradientRect.RenderType.Expand,
-                GradientRect.GradientType.Vertical).draw();
+                GradientRect.GradientType.Vertical);
 
         this.drawOutsideRect(positionX + this.getValue().getSaturation() * zWidth,
                 positionY + (1.0f - this.getValue().getBrightness()) * zHeight, 1, 1, 0.5,
@@ -154,9 +154,9 @@ public class ColorRenderer extends AbstractWidget<ColorRenderer> {
                         this.resetAlpha((((xExt % 2 == 0) == (yExt % 2 == 0)) ? Color.WHITE : new Color(190, 190, 190)), this.getMenuAlpha()),
                         Rect.RectType.EXPAND);
 
-        new GradientRect(positionX + zWidth + 16, positionY, 8, zHeight, 0x00F,
+        GradientRect.draw(positionX + zWidth + 16, positionY, 8, zHeight, 0x00F,
                 this.resetAlpha(color, this.getMenuAlpha()),
-                GradientRect.RenderType.Expand, GradientRect.GradientType.Vertical).draw();
+                GradientRect.RenderType.Expand, GradientRect.GradientType.Vertical);
 
         Rect.draw(positionX + zWidth + 16, positionY + (this.getValue().getAlpha() * 0.003921568627451F) * zHeight, 8, 1, RGBA.color(0, 0, 0, getMenuAlpha()));
 //        roundedRect(, 0, 0, 3, 4, Color.WHITE);

@@ -5,21 +5,14 @@ import lombok.Setter;
 import net.minecraft.client.gui.GuiScreen;
 import org.lwjgl.input.Mouse;
 import tritium.interfaces.SharedRenderingConstants;
-import tritium.rendering.entities.RenderableEntity;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.dialog.Dialog;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @author IzumiiKonata
  * @since 2023/12/17
  */
 public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
-
-    final List<RenderableEntity> widgets = new ArrayList<>();
 
     public boolean lmbPressed = false, rmbPressed = false;
 
@@ -51,27 +44,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
 
     }
 
-    public void clearAllWidgets() {
-
-        for (RenderableEntity w : this.widgets) {
-            this.clear(w);
-        }
-
-    }
-
-    private void clear(RenderableEntity ent) {
-
-        if (ent.hasChild()) {
-
-            for (RenderableEntity w : ent.getContainer()) {
-                this.clear(w);
-            }
-
-        }
-
-        ent.getContainer().clear();
-
-    }
 
     private void handleKeyTyped(char typedChar, int keyCode) {
 
@@ -79,8 +51,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
             this.dialog.keyTyped(typedChar, keyCode);
             return;
         }
-
-        this.widgets.forEach(w -> w.keyTyped(typedChar, keyCode));
 
         this.onKeyTyped(typedChar, keyCode);
     }
@@ -91,8 +61,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
             this.dialog.mouseClicked(mouseX, mouseY, mouseButton);
             return;
         }
-
-        this.widgets.forEach(w -> w.mouseClicked(mouseX, mouseY, mouseButton));
 
         clickMoveTicks = 0;
         lastClick = System.currentTimeMillis();
@@ -106,8 +74,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
             this.dialog.mouseReleased(mouseX, mouseY, mouseButton);
             return;
         }
-
-        this.widgets.forEach(w -> w.mouseReleased(mouseX, mouseY, mouseButton));
 
         if (mouseButton == 0) {
             this.lmbPressed = false;
@@ -126,8 +92,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
 //            this.dialog.handleMouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
 //            return;
 //        }
-
-        this.widgets.forEach(w -> w.handleMouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick));
 
         this.mouseClickMove(mouseX, mouseY, mouseButton, timeSinceLastClick);
     }
@@ -161,8 +125,6 @@ public class BaseScreen extends GuiScreen implements SharedRenderingConstants {
             rmbPressed = false;
 
         this.drawScreen(mouseX, mouseY);
-
-        this.widgets.forEach(w -> w.draw(mouseX, mouseY));
 
         this.renderLast(mouseX, mouseY);
 

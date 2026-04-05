@@ -12,7 +12,7 @@ import tritium.rendering.RGBA;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.Rect;
-import tritium.rendering.entities.impl.ScrollText;
+import tritium.rendering.ScrollText;
 import tritium.rendering.font.CFontRenderer;
 import tritium.screens.ncm.LyricLine;
 import tritium.settings.BooleanSetting;

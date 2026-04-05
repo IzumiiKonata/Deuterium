@@ -1,13 +1,10 @@
-package tritium.rendering.entities.impl;
+package tritium.rendering;
 
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.GL11;
-import tritium.rendering.RGBA;
-import tritium.rendering.Rect;
-import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;

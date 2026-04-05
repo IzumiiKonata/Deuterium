@@ -1,14 +1,12 @@
-package tritium.rendering.entities.clickable.impl;
+package tritium.rendering;
 
+import lombok.Getter;
 import lombok.Setter;
 import tritium.management.FontManager;
 import tritium.management.ThemeManager;
-import tritium.rendering.RGBA;
-import tritium.rendering.InterpolatableColor;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.clickable.ClickableEntity;
-import tritium.rendering.Rect;
 import tritium.rendering.font.CFontRenderer;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.settings.ClientSettings;
 import tritium.utils.i18n.Localizable;
 
@@ -18,9 +16,15 @@ import java.util.Objects;
  * @author IzumiiKonata
  * Date: 2025/9/30 10:44
  */
-public class FlatMainMenuButton extends ClickableEntity {
+public class FlatMainMenuButton {
+
+    @Getter
+    @Setter
+    private double x, y, width, height;
 
     private final Localizable text;
+
+    private final Runnable onClick;
 
     @Setter
     private int backgroundColor;
@@ -29,14 +33,17 @@ public class FlatMainMenuButton extends ClickableEntity {
 
     private double animationsRectWidth = .0d;
 
-    public FlatMainMenuButton(double x, double y, double width, double height, Localizable text, int backgroundColor, ClickHandler onClick) {
-        super(x, y, width, height, onClick, (x1, y1, i) -> {}, (x1, y1, i) -> {});
+    public FlatMainMenuButton(double x, double y, double width, double height, Localizable text, int backgroundColor, Runnable onClick) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
         this.text = text;
         this.backgroundColor = backgroundColor;
+        this.onClick = onClick;
     }
 
-    @Override
-    public void onRender(double mouseX, double mouseY) {
+    public void render(double mouseX, double mouseY) {
         Rect.draw(this.getX(), this.getY(), this.getWidth(), this.getHeight(), backgroundColor);
 
         boolean inBounds = this.isInBounds(mouseX, mouseY);
@@ -59,6 +66,10 @@ public class FlatMainMenuButton extends ClickableEntity {
                 1,
                 0xff0090ff
         );
+    }
+
+    private boolean isInBounds(double mouseX, double mouseY) {
+        return RenderSystem.isHovered(mouseX, mouseY, this.x, this.y, this.width, this.height);
     }
 
     private int getColor(ColorType type) {
@@ -85,5 +96,10 @@ public class FlatMainMenuButton extends ClickableEntity {
     private enum ColorType {
         UNFOCUSED,
         TEXT
+    }
+
+    public void mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if (this.isInBounds(mouseX, mouseY) && mouseButton == 0)
+            this.onClick.run();
     }
 }

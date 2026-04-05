@@ -3,7 +3,7 @@ package tritium.rendering.ui.widgets;
 import lombok.Getter;
 import net.minecraft.util.LazyLoadBase;
 import tritium.management.FontManager;
-import tritium.rendering.entities.impl.ScrollText;
+import tritium.rendering.ScrollText;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
 

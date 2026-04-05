@@ -1,68 +1,32 @@
-package tritium.rendering.entities.impl;
+package tritium.rendering;
 
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
-import tritium.rendering.entities.RenderableEntity;
 
-public class GradientRect extends RenderableEntity {
-    double x;
-    double y;
-    double width;
-    double height;
-    int color1;
-    int color2;
-    RenderType type;
-    GradientType type_gradient;
+public class GradientRect {
 
-    public GradientRect(double x, double y, double width, double height, int color1, int color2, RenderType type,
-                        GradientType type_gradient) {
-        super(x, y, width, height);
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
-        this.color1 = color1;
-        this.color2 = color2;
-        this.type = type;
-        this.type_gradient = type_gradient;
-    }
+    public static void draw(double x, double y, double width, double height, int color1, int color2, RenderType type,
+                            GradientType type_gradient) {
 
-    public void draw() {
-        switch (type) {
-            case Expand:
-                this.drawRect();
-                break;
-            case Position:
-                this.drawRect2();
-                break;
-            default:
-                break;
+        double x2, y2;
+
+        if (type == RenderType.Position) {
+            x2 = width;
+            y2 = height;
+        } else {
+            x2 = x + width;
+            y2 = y + height;
         }
-    }
 
-    private void drawRect() {
         switch (type_gradient) {
             case Vertical:
-                this.drawGradient(x, y, x + width, y + height, color1, color2);
+                drawGradient(x, y, x2, y2, color1, color2);
                 break;
             case Horizontal:
-                this.drawGradientSideways(x, y, x + width, y + height, color1, color2);
-                break;
-            default:
-                break;
-        }
-    }
-
-    private void drawRect2() {
-        switch (type_gradient) {
-            case Vertical:
-                this.drawGradient(x, y, width, height, color1, color2);
-                break;
-            case Horizontal:
-                this.drawGradientSideways(x, y, width, height, color1, color2);
+                drawGradientSideways(x, y, x2, y2, color1, color2);
                 break;
             default:
                 break;
@@ -101,7 +65,7 @@ public class GradientRect extends RenderableEntity {
         GlStateManager.enableTexture2D();
     }
 
-    public void drawGradient(double left, double top, double right, double bottom, int col1, int col2) {
+    private static void drawGradient(double left, double top, double right, double bottom, int col1, int col2) {
         float f = (float) (col1 >> 24 & 255) * 0.003921568627451F;
         float f1 = (float) (col1 >> 16 & 255) * 0.003921568627451F;
         float f2 = (float) (col1 >> 8 & 255) * 0.003921568627451F;
@@ -129,7 +93,7 @@ public class GradientRect extends RenderableEntity {
         GlStateManager.enableTexture2D();
     }
 
-    public void drawGradientSideways(double left, double top, double right, double bottom, int col1, int col2) {
+    private static void drawGradientSideways(double left, double top, double right, double bottom, int col1, int col2) {
         float f = (float) (col1 >> 24 & 255) * 0.003921568627451F;
         float f1 = (float) (col1 >> 16 & 255) * 0.003921568627451F;
         float f2 = (float) (col1 >> 8 & 255) * 0.003921568627451F;
@@ -155,70 +119,6 @@ public class GradientRect extends RenderableEntity {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public void setY(double y) {
-        this.y = y;
-    }
-
-    public double getWidth() {
-        return width;
-    }
-
-    public void setWidth(double width) {
-        this.width = width;
-    }
-
-    public double getHeight() {
-        return height;
-    }
-
-    public void setHeight(double height) {
-        this.height = height;
-    }
-
-    public RenderType getType() {
-        return type;
-    }
-
-    public void setType(RenderType type) {
-        this.type = type;
-    }
-
-    public GradientType getType_gradient() {
-        return type_gradient;
-    }
-
-    public void setType_gradient(GradientType type_gradient) {
-        this.type_gradient = type_gradient;
-    }
-
-    public int getColor1() {
-        return color1;
-    }
-
-    public void setColor1(int color1) {
-        this.color1 = color1;
-    }
-
-    public int getColor2() {
-        return color2;
-    }
-
-    public void setColor2(int color2) {
-        this.color2 = color2;
     }
 
     public enum RenderType {

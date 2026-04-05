@@ -6,7 +6,7 @@ import tritium.rendering.Stencil;
 import tritium.rendering.animation.Animation;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.Rect;
-import tritium.rendering.entities.impl.ScrollText;
+import tritium.rendering.ScrollText;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.contextmenu.ContextEntity;

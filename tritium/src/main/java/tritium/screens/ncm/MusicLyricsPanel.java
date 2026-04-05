@@ -21,7 +21,7 @@ import tritium.rendering.Rect;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Easing;
 import tritium.rendering.animation.Interpolations;
-import tritium.rendering.entities.impl.ScrollText;
+import tritium.rendering.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;

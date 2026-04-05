@@ -11,7 +11,7 @@ import tritium.command.Command;
 import tritium.management.CommandManager;
 import tritium.management.FontManager;
 import tritium.rendering.Rect;
-import tritium.rendering.entities.impl.TextField;
+import tritium.rendering.TextField;
 import tritium.rendering.ui.container.Panel;
 import tritium.rendering.ui.container.ScrollPanel;
 import tritium.rendering.ui.widgets.LabelWidget;

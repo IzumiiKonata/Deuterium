@@ -1,7 +1,7 @@
 package tritium.rendering.ui.widgets;
 
 import lombok.Getter;
-import tritium.rendering.entities.impl.TextField;
+import tritium.rendering.TextField;
 import tritium.rendering.font.CFontRenderer;
 import tritium.rendering.ui.AbstractWidget;
 import tritium.utils.cursor.CursorUtils;

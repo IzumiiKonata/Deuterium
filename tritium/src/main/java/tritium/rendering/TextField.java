@@ -1,4 +1,4 @@
-package tritium.rendering.entities.impl;
+package tritium.rendering;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -15,7 +15,6 @@ import net.minecraft.util.ChatAllowedCharacters;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
-import tritium.rendering.StencilClipManager;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.management.FontManager;
 import tritium.rendering.rendersystem.RenderSystem;
