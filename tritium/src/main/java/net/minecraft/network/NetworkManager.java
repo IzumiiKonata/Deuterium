@@ -128,36 +128,6 @@ public class NetworkManager extends SimpleChannelInboundHandler<Packet> {
 
     protected void channelRead0(ChannelHandlerContext p_channelRead0_1_, Packet p_channelRead0_2_) {
         if (this.channel.isOpen()) {
-
-            if (!(
-                    p_channelRead0_2_ instanceof S3EPacketTeams ||
-                    p_channelRead0_2_ instanceof S32PacketConfirmTransaction ||
-                    p_channelRead0_2_ instanceof S47PacketPlayerListHeaderFooter ||
-                    p_channelRead0_2_ instanceof S03PacketTimeUpdate ||
-                    p_channelRead0_2_ instanceof S00PacketKeepAlive ||
-                    p_channelRead0_2_ instanceof S19PacketEntityHeadLook ||
-                    p_channelRead0_2_ instanceof S14PacketEntity ||
-                    p_channelRead0_2_ instanceof S02PacketChat ||
-                    p_channelRead0_2_ instanceof S38PacketPlayerListItem ||
-                    p_channelRead0_2_ instanceof S2FPacketSetSlot ||
-                    p_channelRead0_2_ instanceof S22PacketMultiBlockChange
-            )) {
-                System.out.println(p_channelRead0_2_.getClass().getSimpleName());
-            }
-
-            if (
-                    p_channelRead0_2_ instanceof S1DPacketEntityEffect ||
-                    p_channelRead0_2_ instanceof S1CPacketEntityMetadata ||
-                    p_channelRead0_2_ instanceof S20PacketEntityProperties ||
-                    p_channelRead0_2_ instanceof S06PacketUpdateHealth
-            ) {
-                try {
-                    System.out.println(JsonUtils.toJsonString(p_channelRead0_2_));
-                } catch (Exception ignored){
-
-                }
-            }
-
             //CLIENT
             ReceivePacketEvent receivePacketEvent = EventManager.call(new ReceivePacketEvent(p_channelRead0_2_));
             if (receivePacketEvent.isCancelled()) {
