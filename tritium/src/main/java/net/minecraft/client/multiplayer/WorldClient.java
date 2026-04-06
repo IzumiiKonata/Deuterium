@@ -208,6 +208,12 @@ public class WorldClient extends World {
         Entity entity = this.getEntityByID(entityID);
 
         if (entity != null) {
+
+            if (entityID == mc.thePlayer.getEntityId()) {
+                System.err.println("Destroy self exploit detected!");
+                return;
+            }
+
             this.removeEntity(entity);
         }
 

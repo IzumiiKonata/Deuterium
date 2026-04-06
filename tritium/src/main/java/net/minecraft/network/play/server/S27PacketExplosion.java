@@ -10,7 +10,6 @@ import today.opai.api.interfaces.dataset.Vector3d;
 import today.opai.api.interfaces.game.network.server.SPacket27Explosion;
 import tritium.bridge.misc.math.Vector3dImpl;
 
-import java.io.IOException;
 import java.util.List;
 
 public class S27PacketExplosion implements Packet<INetHandlerPlayClient>, SPacket27Explosion {
@@ -100,15 +99,15 @@ public class S27PacketExplosion implements Packet<INetHandlerPlayClient>, SPacke
         handler.handleExplosion(this);
     }
 
-    public float func_149149_c() {
+    public float getMotionX() {
         return this.motionX;
     }
 
-    public float func_149144_d() {
+    public float getMotionY() {
         return this.motionY;
     }
 
-    public float func_149147_e() {
+    public float getMotionZ() {
         return this.motionZ;
     }
 

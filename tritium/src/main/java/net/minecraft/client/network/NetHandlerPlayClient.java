@@ -454,6 +454,18 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
      * player positioning
      */
     public void handlePlayerPosLook(S08PacketPlayerPosLook packetIn) {
+
+        if (
+                Math.abs(packetIn.getX()) >= Float.MAX_VALUE ||
+                Math.abs(packetIn.getZ()) >= Float.MAX_VALUE ||
+                Math.abs(packetIn.getY()) >= Float.MAX_VALUE ||
+                Math.abs(packetIn.getPitch()) >= Float.MAX_VALUE ||
+                Math.abs(packetIn.getYaw()) >= Float.MAX_VALUE
+        ) {
+            logger.error("Dropping S08PacketPlayerPosLook because of invalid value(s)");
+            return;
+        }
+
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         EntityPlayer entityplayer = this.gameController.thePlayer;
         double d0 = packetIn.getX();
@@ -791,12 +803,18 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
      * Initiates a new explosion (sound, particles, drop spawn) for the affected blocks indicated by the packet.
      */
     public void handleExplosion(S27PacketExplosion packetIn) {
+
+        if (Math.abs(packetIn.getStrength()) >= 100 || Math.abs(packetIn.getMotionX()) >= 1024 || Math.abs(packetIn.getMotionZ()) >= 1024 || Math.abs(packetIn.getMotionY()) >= 1024) {
+            logger.error("Dropping S27PacketExplosion because of invalid value(s)");
+            return;
+        }
+
         PacketThreadUtil.checkThreadAndEnqueue(packetIn, this, this.gameController);
         Explosion explosion = new Explosion(this.gameController.theWorld, null, packetIn.getX(), packetIn.getY(), packetIn.getZ(), packetIn.getStrength(), packetIn.getAffectedBlockPositions());
         explosion.doExplosionB(true);
-        this.gameController.thePlayer.motionX += packetIn.func_149149_c();
-        this.gameController.thePlayer.motionY += packetIn.func_149144_d();
-        this.gameController.thePlayer.motionZ += packetIn.func_149147_e();
+        this.gameController.thePlayer.motionX += packetIn.getMotionX();
+        this.gameController.thePlayer.motionY += packetIn.getMotionY();
+        this.gameController.thePlayer.motionZ += packetIn.getMotionZ();
     }
 
     /**
@@ -1494,7 +1512,7 @@ public class NetHandlerPlayClient implements INetHandlerPlayClient {
         } else {
 
             if (packetIn.getParticleCount() > 1024) {
-                logger.warn("Server tried to spawn too many particles!");
+                logger.error("Server tried to spawn too many particles!");
                 return;
             }
 
