@@ -11,7 +11,7 @@
     </parent>
 
     <artifactId>tritium</artifactId>
-    <version>1.4.6</version>
+    <version>1.4.7</version>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
