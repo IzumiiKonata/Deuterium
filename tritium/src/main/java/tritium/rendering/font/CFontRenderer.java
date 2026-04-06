@@ -1,5 +1,6 @@
 package tritium.rendering.font;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.*;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.GlStateManager;
@@ -268,7 +269,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return allLoaded;
     }
 
-    private final Map<String, StringRenderCall> callListMap = new HashMap<>();
+    private final Map<String, StringRenderCall> callListMap = new Object2ObjectOpenHashMap<>();
 
     @RequiredArgsConstructor
     private class StringRenderCall {
@@ -497,7 +498,7 @@ public class CFontRenderer implements Closeable, IFontRenderer {
         return Mth.floor(getStringWidthD(text));
     }
 
-    private final Map<String, Double> stringWidthMapD = new HashMap<>();
+    private final Map<String, Double> stringWidthMapD = new Object2ObjectOpenHashMap<>();
 
     public boolean areGlyphsLoaded(String text) {
 

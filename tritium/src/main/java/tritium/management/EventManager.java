@@ -1,5 +1,6 @@
 package tritium.management;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
@@ -21,7 +22,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
  */
 public class EventManager extends AbstractManager implements SharedConstants {
     // 方法Map
-    private static final Map<Type, List<Target>> registrationMap = new HashMap<>();
+    private static final Map<Type, List<Target>> registrationMap = new Object2ObjectOpenHashMap<>();
 
     public EventManager() {
         super("EventManager");

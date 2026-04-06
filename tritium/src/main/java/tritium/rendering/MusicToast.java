@@ -1,5 +1,6 @@
 package tritium.rendering;
 
+import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import net.minecraft.client.Minecraft;
@@ -29,7 +30,7 @@ import java.util.Map;
 public class MusicToast implements SharedRenderingConstants {
 
     @Getter
-    private final Map<String, String> locationToName = new HashMap<>();
+    private final Map<String, String> locationToName = new Object2ObjectOpenHashMap<>();
 
     final LazyLoadBase<AnimatedTexture> musicNotes = LazyLoadBase.of(() -> {
         try {

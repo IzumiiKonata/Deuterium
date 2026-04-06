@@ -31,7 +31,7 @@ public class MusicSpectrumWidget extends Widget {
     float[] renderSpectrum = new float[1];
     float[] renderSpectrumIndicator = new float[1];
 
-    Map<Integer, Long> indicatorTimeStamp = new HashMap<>();
+    long[] indicatorTimeStamp = new long[1];
 
     public final ModeSetting<Style> style = new ModeSetting<>("Style", Rect);
 
@@ -124,6 +124,7 @@ public class MusicSpectrumWidget extends Widget {
                 if (renderSpectrum.length != leng) {
                     renderSpectrum = Arrays.copyOf(renderSpectrum, leng);
                     renderSpectrumIndicator = new float[leng];
+                    indicatorTimeStamp = new long[leng];
                 }
 
                 for (int i = 0; i < leng; i++) {
@@ -306,15 +307,9 @@ public class MusicSpectrumWidget extends Widget {
 
                 if ((float) height < renderSpectrumIndicator[i]) {
                     renderSpectrumIndicator[i] = (float) height;
-
-                    if (indicatorTimeStamp.containsKey(i)) {
-                        indicatorTimeStamp.replace(i, System.currentTimeMillis());
-                    } else {
-                        indicatorTimeStamp.put(i, System.currentTimeMillis());
-                    }
-
+                    indicatorTimeStamp[i] = System.currentTimeMillis();
                 } else {
-                    long timeStamp = indicatorTimeStamp.computeIfAbsent(i, k -> System.currentTimeMillis());
+                    long timeStamp = indicatorTimeStamp[i];
 
                     if (System.currentTimeMillis() - timeStamp > 200) {
                         renderSpectrumIndicator[i] = Interpolations.interpolateLinear(renderSpectrumIndicator[i], (float) 6, 8);
