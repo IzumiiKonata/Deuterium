@@ -35,8 +35,12 @@ public class ImageImpl implements Image {
 
         if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
             texObj = new DynamicTexture(img, true);
+            img.close();
         } else {
-            MultiThreadingUtil.runAsync(() -> texObj = new DynamicTexture(img, true));
+            MultiThreadingUtil.runAsync(() -> {
+                texObj = new DynamicTexture(img, true);
+                img.close();
+            });
         }
     }
 
