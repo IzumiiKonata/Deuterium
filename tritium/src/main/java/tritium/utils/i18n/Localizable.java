@@ -2,7 +2,7 @@ package tritium.utils.i18n;
 
 import lombok.Getter;
 import tritium.Tritium;
-import tritium.management.Localizer;
+import tritium.management.LocalizationManager;
 
 /**
  * @author IzumiiKonata
@@ -38,13 +38,13 @@ public class Localizable {
         if (!translatable)
             return localizeKey;
 
-        boolean needReset = LANG != Localizer.getLANG();
+        boolean needReset = LANG != LocalizationManager.getLANG();
 
         if (translated == null || needReset) {
             this.translated = Tritium.getInstance().getLocalizer().translate(this.localizeKey);
 
             if (needReset) {
-                LANG = Localizer.getLANG();
+                LANG = LocalizationManager.getLANG();
             }
         }
 

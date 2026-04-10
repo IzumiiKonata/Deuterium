@@ -25,7 +25,7 @@ import java.util.*;
  * @author IzumiiKonata
  * @since 2023/12/10
  */
-public class Localizer extends AbstractManager {
+public class LocalizationManager extends AbstractManager {
 
     @Getter
     private static final List<Language> languages = new ArrayList<>();
@@ -35,7 +35,7 @@ public class Localizer extends AbstractManager {
 
     private static final List<String> missing = new ArrayList<>();
 
-    public Localizer() {
+    public LocalizationManager() {
         super("Localizer");
     }
 
@@ -122,12 +122,12 @@ public class Localizer extends AbstractManager {
 
     @Override
     public void stop() {
-        for (String s : Localizer.missing.stream().distinct().toList()) {
+        for (String s : LocalizationManager.missing.stream().distinct().toList()) {
             System.out.println("\"" + s + "\": \"\", ");
         }
     }
 
-    public static Localizer getInstance() {
+    public static LocalizationManager getInstance() {
         return Tritium.getInstance().getLocalizer();
     }
 }

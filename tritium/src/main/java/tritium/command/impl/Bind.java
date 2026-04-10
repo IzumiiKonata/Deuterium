@@ -4,7 +4,7 @@ import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.input.Keyboard;
 import tritium.command.Command;
 import tritium.command.CommandHandler;
-import tritium.management.Localizer;
+import tritium.management.LocalizationManager;
 import tritium.management.ModuleManager;
 import tritium.module.Module;
 
@@ -31,7 +31,7 @@ public class Bind extends Command {
         } else {
             // else we're going to print the key of the specified module
             client.getModuleManager().getModuleByName(op).ifPresentOrElse(
-                    md -> this.print(EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + ": " + EnumChatFormatting.RESET + Keyboard.getKeyName(md.getKeyBind())), () -> this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + op + EnumChatFormatting.RED))
+                    md -> this.print(EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN + ": " + EnumChatFormatting.RESET + Keyboard.getKeyName(md.getKeyBind())), () -> this.print(EnumChatFormatting.RED + LocalizationManager.format("command.bind.module not found", EnumChatFormatting.GOLD + op + EnumChatFormatting.RED))
             );
 
         }
@@ -50,7 +50,7 @@ public class Bind extends Command {
                                 md.setKeyBind(i - 101);
                                 this.print(
                                         EnumChatFormatting.GREEN +
-                                                Localizer.format(
+                                                LocalizationManager.format(
                                                         "command.bind.module bound to mouse button",
                                                         EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN,
                                                         EnumChatFormatting.RESET + String.valueOf(i) + EnumChatFormatting.GREEN
@@ -63,11 +63,11 @@ public class Bind extends Command {
 
                         md.setKeyBind(Keyboard.getKeyIndex(keyName.toUpperCase()));
 
-                        this.print(EnumChatFormatting.GREEN + Localizer.format("command.bind.module bound to key",
+                        this.print(EnumChatFormatting.GREEN + LocalizationManager.format("command.bind.module bound to key",
                                 EnumChatFormatting.GOLD + md.getInternalName() + EnumChatFormatting.GREEN,
                                 EnumChatFormatting.RESET + Keyboard.getKeyName(Keyboard.getKeyIndex(keyName.toUpperCase())
                                 )));
-                    }, () -> this.print(EnumChatFormatting.RED + Localizer.format("command.bind.module not found", EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED))
+                    }, () -> this.print(EnumChatFormatting.RED + LocalizationManager.format("command.bind.module not found", EnumChatFormatting.GOLD + moduleName + EnumChatFormatting.RED))
                 );
 
     }

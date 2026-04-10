@@ -4,7 +4,7 @@ import tritium.Tritium;
 import tritium.command.Command;
 import tritium.command.CommandHandler;
 import tritium.management.EventManager;
-import tritium.management.Localizer;
+import tritium.management.LocalizationManager;
 import tritium.management.ModuleManager;
 import tritium.management.WidgetsManager;
 import tritium.module.Module;
@@ -27,7 +27,7 @@ public class Reload extends Command {
 
     @CommandHandler
     public void execute() {
-        Localizer.loadLang();
+        LocalizationManager.loadLang();
         this.print("Reloaded translations!");
 
 //        PlayerAdapter.getInstances().clear();

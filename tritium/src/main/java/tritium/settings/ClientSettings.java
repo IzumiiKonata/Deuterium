@@ -15,7 +15,7 @@ import tritium.ncm.music.Quality;
 import tritium.rendering.ime.IngameIMERenderer;
 import tritium.screens.ClickGui;
 import tritium.utils.i18n.Localizable;
-import tritium.management.Localizer;
+import tritium.management.LocalizationManager;
 import tritium.management.ThemeManager;
 import tritium.module.Module;
 
@@ -37,7 +37,7 @@ public class ClientSettings {
     public static final StringModeSetting LANG = new StringModeSetting("Lang", "LOL", "LOL") {
         @Override
         public void onModeChanged(String before, String now) {
-            Localizer.setLang(now);
+            LocalizationManager.setLang(now);
 
             if (Minecraft.getMinecraft().currentScreen instanceof ClickGui) {
                 // 重新排序一下
@@ -147,7 +147,7 @@ public class ClientSettings {
         @Override
         public String getNameForRender(String modeIn) {
             if (modeIn.equals("Auto")) {
-                return Localizer.getInstance().translate("setting.auto.name");
+                return LocalizationManager.getInstance().translate("setting.auto.name");
             }
 
             return modeIn;
@@ -213,7 +213,7 @@ public class ClientSettings {
 
         settings.clear();
 
-        Localizer.loadLang();
+        LocalizationManager.loadLang();
 
         List<String> modes = new ArrayList<>();
         for (DisplayMode dMode : Display.getAvailableDisplayModes()) {

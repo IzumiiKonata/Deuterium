@@ -46,7 +46,7 @@ public class Tritium {
     private EventManager eventManager;
 
     @Getter
-    private Localizer localizer;
+    private LocalizationManager localizer;
 
     @Getter
     private ModuleManager moduleManager;
@@ -100,7 +100,7 @@ public class Tritium {
 
         this.fontManager = new FontManager();
         this.eventManager = new EventManager();
-        this.localizer = new Localizer();
+        this.localizer = new LocalizationManager();
         this.moduleManager = new ModuleManager();
         this.widgetsManager = new WidgetsManager();
         this.commandManager = new CommandManager();

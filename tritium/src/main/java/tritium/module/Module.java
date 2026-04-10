@@ -9,7 +9,7 @@ import today.opai.api.enums.EnumModuleCategory;
 import today.opai.api.interfaces.modules.PresetModule;
 import tritium.bridge.BridgeEventHandler;
 import tritium.bridge.module.PresetModuleWrapper;
-import tritium.management.Localizer;
+import tritium.management.LocalizationManager;
 import tritium.module.submodule.SubModule;
 import tritium.utils.i18n.Localizable;
 import tritium.interfaces.SharedConstants;
@@ -180,7 +180,7 @@ public class Module implements SharedConstants, SharedRenderingConstants {
 
             @Override
             public String getNameForRender(String modeIn) {
-                return Localizer.getInstance().translate("module." + Module.this.getInternalName() + ".submodule." + modeIn + ".name");
+                return LocalizationManager.getInstance().translate("module." + Module.this.getInternalName() + ".submodule." + modeIn + ".name");
             }
         };
 
