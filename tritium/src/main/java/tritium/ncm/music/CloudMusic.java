@@ -40,6 +40,7 @@ import tritium.utils.other.StringUtils;
 import tritium.utils.other.WrappedInputStream;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
@@ -1150,7 +1151,7 @@ public class CloudMusic {
                         NCMScreen.getInstance().loginRenderer.avatarLoaded = true;
                         MultiThreadingUtil.runAsync(() -> {
                             try (InputStream is = HttpUtils.get(url, null)) {
-                                BufferedImage img = NativeBackedImage.make(is);
+                                BufferedImage img = ImageIO.read(is);
 
                                 Textures.loadTextureAsyncly(NCMScreen.getInstance().loginRenderer.tempAvatar, img);
                             } catch (IOException e) {
