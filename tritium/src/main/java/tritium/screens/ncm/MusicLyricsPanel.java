@@ -25,6 +25,7 @@ import tritium.rendering.ScrollText;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.rendering.shader.ShaderProgram;
 import tritium.rendering.shader.Shaders;
+import tritium.rendering.shader.impl.BloomShader;
 import tritium.rendering.ui.widgets.IconWidget;
 import tritium.settings.ClientSettings;
 import tritium.utils.cursor.CursorUtils;
@@ -55,6 +56,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     boolean closing = false;
 
     Framebuffer baseFb, stencilFb;
+
+    static BloomShader coverBloomShader;
 
     Timer scrollOffsetResetTimer = new Timer();
 
@@ -321,6 +324,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         scrollOffset = Interpolations.interpolate(scrollOffset, scrollTarget, 0.25f);
 
         double lyricRenderOffsetX = RenderSystem.getWidth() * .48;
+
+        LyricLine currentLyric = progressBarDragging ? CloudMusic.findCurrentLyric(overridePlaybackProgress) : CloudMusic.currentLyric;
+        int currentIndex = CloudMusic.lyrics.indexOf(currentLyric);
+
         for (int k = 0; k < CloudMusic.lyrics.size(); k++) {
             LyricLine lyric = CloudMusic.lyrics.get(k);
 
@@ -332,14 +339,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 break;
             }
 
-            LyricLine currentLyric = progressBarDragging ? CloudMusic.findCurrentLyric(overridePlaybackProgress) : CloudMusic.currentLyric;
-            int indexOf = CloudMusic.lyrics.indexOf(currentLyric);
-
             boolean isCurrentLyric = lyric == currentLyric;
             lyric.alpha = Interpolations.interpolate(lyric.alpha, isCurrentLyric ? 1f : 0f, isCurrentLyric ? 0.1f : .05f);
             boolean isHovering = isHovered(mouseX, mouseY - scrollOffset, lyricRenderOffsetX, lyric.posY, lyricsWidth, lyric.height);
             lyric.hoveringAlpha = Interpolations.interpolate(lyric.hoveringAlpha, isHovering ? 1f : 0f, 0.2f);
-            lyric.blurAlpha = Interpolations.interpolate(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - indexOf) * .85f) : 0f, 0.05f);
+            lyric.blurAlpha = Interpolations.interpolate(lyric.blurAlpha, !hoveringLyrics ? Math.min(1f, Math.abs(k - currentIndex) * .85f) : 0f, 0.05f);
 
             if (isHovering) {
                 CursorUtils.setOverride(CursorUtils.HAND);
@@ -401,9 +405,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                         FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
                     }
 
-                    if (CloudMusic.lyrics.indexOf(currentLyric) - k <= 1) {
+                    if (currentIndex - k <= 1) {
                         double progress = Mth.limit((songProgress - word.timestamp)/* * (isCurrentLyric ? 1 : 1.5)*/ / (double) (word.duration), 0, 1);
-                        double stringWidthD = FontManager.pf65bold.getStringWidthD(word.word);
+                        double stringWidthD = wordWidth;
 
                         boolean shouldClip = progress > 0 && progress < 1;
 
@@ -426,6 +430,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             int scale = 2;
                             int fbWidth = ((int) stringWidthD) * scale, fbHeight = (FontManager.pf65bold.getHeight() + 6) * scale;
 
+                            int allocW = fbWidth;
+                            if (baseFb != null) allocW = Math.max(allocW, baseFb.framebufferWidth);
+                            if (stencilFb != null) allocW = Math.max(allocW, stencilFb.framebufferWidth);
+                            double uMax = fbWidth / (double) allocW;
+
 //                            if (StencilClipManager.stencilClipping())
 //                                GL11.glDisable(GL11.GL_STENCIL_TEST);
 
@@ -442,10 +451,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                             // stencil texture
                             {
-                                stencilFb = RenderSystem.createFrameBuffer(stencilFb, fbWidth, fbHeight);
+                                stencilFb = RenderSystem.createFrameBuffer(stencilFb, allocW, fbHeight);
                                 stencilFb.bindFramebuffer(true);
                                 stencilFb.setFramebufferColor(1, 1, 1, 0);
                                 stencilFb.framebufferClearNoBinding();
+                                GL11.glViewport(0, 0, fbWidth, fbHeight);
 
                                 GlStateManager.disableStencilTest();
 
@@ -456,10 +466,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                             // base texture
                             {
-                                baseFb = RenderSystem.createFrameBuffer(baseFb, fbWidth, fbHeight);
+                                baseFb = RenderSystem.createFrameBuffer(baseFb, allocW, fbHeight);
                                 baseFb.bindFramebuffer(true);
                                 baseFb.setFramebufferColor(1, 1, 1, 0);
                                 baseFb.framebufferClearNoBinding();
+                                GL11.glViewport(0, 0, fbWidth, fbHeight);
 
                                 GlStateManager.disableStencilTest();
 
@@ -489,7 +500,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 //                            if (StencilClipManager.stencilClipping())
 //                                GL11.glEnable(GL11.GL_STENCIL_TEST);
 
-                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, renderX, renderY - 2, fbWidth * .5, fbHeight * .5);
+                            Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, renderX, renderY - 2, fbWidth * .5, fbHeight * .5, uMax, 1.0);
 
                             if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
 //                                FontManager.pf18bold.drawString("Stencil: " + stencilFb.framebufferTextureWidth + "x" + stencilFb.framebufferTextureHeight, 50, 32, -1);
@@ -554,7 +565,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 //                FontManager.pf34bold.drawString(lyric.translationText, translationX, translationY, hexColor(1, 1, 1, alpha * .75f * ((lyric.alpha * .6f) + .4f)));
             }
 
-            blurRects.add(() -> Rect.draw(lyricRenderOffsetX - 4, lyric.posY + scrollOffset, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
+            if (alpha * lyric.blurAlpha > 0.004f)
+                blurRects.add(() -> Rect.draw(lyricRenderOffsetX - 4, lyric.posY + scrollOffset, lyricsWidth, lyric.height + 8, hexColor(1, 1, 1, alpha * lyric.blurAlpha)));
         }
 
         GlStateManager.pushMatrix();
@@ -595,8 +607,9 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             offsetY = RenderSystem.getHeight() * lyricFraction();
             List<LyricLine> list = CloudMusic.lyrics.subList(idxCurrent, CloudMusic.lyrics.size());
             int oobCounter = 0;
+            int j = idxCurrent - 1;
             for (LyricLine lyric : list) {
-                int j = CloudMusic.lyrics.indexOf(lyric);
+                j++;
 
 //                Rect.draw(RenderSystem.getWidth() * .5 + lyric.reboundAnimation, lyric.posY, width, lyric.height, 0x80FFFFFF);
 
@@ -661,7 +674,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, (.925 + (alpha * 0.075)));
-        Shaders.BLOOM_SHADER.runNoCaching(Collections.singletonList(() -> {
+        if (coverBloomShader == null)
+            coverBloomShader = new BloomShader();
+
+        coverBloomShader.run(Collections.singletonList(() -> {
             this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, -.5, 0, 0, 0, alpha * .4f);
         }));
         GlStateManager.popMatrix();

@@ -5,6 +5,7 @@ import tritium.rendering.shader.impl.*;
 public class Shaders {
     public static Shader BLOOM_SHADER = new BloomShader();
     public static GaussianBlurShader BLUR_SHADER = new GaussianBlurShader();
+    public static UIBackdropBlur UI_BLUR = new UIBackdropBlur();
     public static BlendShader BLEND = new BlendShader();
 
     public static MotionShader MOTION = new MotionShader();

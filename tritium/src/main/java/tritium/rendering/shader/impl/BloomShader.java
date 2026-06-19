@@ -21,12 +21,28 @@ import java.util.List;
 
 public class BloomShader extends Shader {
 
+    private static final int DOWNSAMPLE = 2;
+
+    private static int bufferWidth() {
+        return Math.max(1, Minecraft.getMinecraft().displayWidth / DOWNSAMPLE);
+    }
+
+    private static int bufferHeight() {
+        return Math.max(1, Minecraft.getMinecraft().displayHeight / DOWNSAMPLE);
+    }
+
+    private static Framebuffer createBloomBuffer() {
+        Framebuffer fb = new Framebuffer(bufferWidth(), bufferHeight(), true);
+        fb.setFramebufferFilter(GL11.GL_LINEAR);
+        return fb;
+    }
+
     private final ShaderProgram bloomProgram = new ShaderProgram("bloom.frag", "vertex.vsh");
-    private Framebuffer inputFramebuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
-    private Framebuffer outputFramebuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
+    private Framebuffer inputFramebuffer = createBloomBuffer();
+    private Framebuffer outputFramebuffer = createBloomBuffer();
     private GaussianKernel gaussianKernel = new GaussianKernel(0);
 
-    private Framebuffer cacheBuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
+    private Framebuffer cacheBuffer = createBloomBuffer();
 
     Timer updateTimer = new Timer();
     boolean cache = false;
@@ -167,15 +183,15 @@ public class BloomShader extends Shader {
     public void update() {
         Minecraft mc = Minecraft.getMinecraft();
 
-        if (mc.displayWidth != inputFramebuffer.framebufferWidth || mc.displayHeight != inputFramebuffer.framebufferHeight) {
+        if (bufferWidth() != inputFramebuffer.framebufferWidth || bufferHeight() != inputFramebuffer.framebufferHeight) {
             inputFramebuffer.deleteFramebuffer();
-            inputFramebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+            inputFramebuffer = createBloomBuffer();
 
             outputFramebuffer.deleteFramebuffer();
-            outputFramebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+            outputFramebuffer = createBloomBuffer();
 
             cacheBuffer.deleteFramebuffer();
-            cacheBuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+            cacheBuffer = createBloomBuffer();
         } else {
 //            inputFramebuffer.framebufferClear();
 //            outputFramebuffer.framebufferClear();

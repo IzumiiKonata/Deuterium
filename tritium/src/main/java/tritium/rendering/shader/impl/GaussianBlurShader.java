@@ -22,12 +22,28 @@ import java.util.List;
 
 public class GaussianBlurShader extends Shader {
 
+    private static final int DOWNSAMPLE = 2;
+
+    private static int bufferWidth() {
+        return Math.max(1, Minecraft.getMinecraft().displayWidth / DOWNSAMPLE);
+    }
+
+    private static int bufferHeight() {
+        return Math.max(1, Minecraft.getMinecraft().displayHeight / DOWNSAMPLE);
+    }
+
+    private static Framebuffer createBlurBuffer() {
+        Framebuffer fb = new Framebuffer(bufferWidth(), bufferHeight(), true);
+        fb.setFramebufferFilter(GL11.GL_LINEAR);
+        return fb;
+    }
+
     private final ShaderProgram blurProgram = new ShaderProgram("blur.frag", "vertex.vsh");
-    private Framebuffer inputFramebuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
-    private Framebuffer outputFramebuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
+    private Framebuffer inputFramebuffer = createBlurBuffer();
+    private Framebuffer outputFramebuffer = createBlurBuffer();
     private GaussianKernel gaussianKernel = new GaussianKernel(0);
 
-    private Framebuffer cacheBuffer = new Framebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
+    private Framebuffer cacheBuffer = createBlurBuffer();
 
     Timer updateTimer = new Timer();
 
@@ -171,15 +187,15 @@ public class GaussianBlurShader extends Shader {
 
         this.setActive(false);
 
-        if (mc.displayWidth != inputFramebuffer.framebufferWidth || mc.displayHeight != inputFramebuffer.framebufferHeight) {
+        if (bufferWidth() != inputFramebuffer.framebufferWidth || bufferHeight() != inputFramebuffer.framebufferHeight) {
             inputFramebuffer.deleteFramebuffer();
-            inputFramebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+            inputFramebuffer = createBlurBuffer();
 
             outputFramebuffer.deleteFramebuffer();
-            outputFramebuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+            outputFramebuffer = createBlurBuffer();
 
             cacheBuffer.deleteFramebuffer();
-            cacheBuffer = new Framebuffer(mc.displayWidth, mc.displayHeight, true);
+            cacheBuffer = createBlurBuffer();
         } else {
 //            inputFramebuffer.framebufferClear();
 //            outputFramebuffer.framebufferClear();

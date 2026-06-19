@@ -4,7 +4,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import tritium.ncm.music.AudioPlayer;
 import tritium.ncm.music.CloudMusic;
-import tritium.management.WidgetsManager;
 import tritium.rendering.HSBColor;
 import tritium.rendering.animation.Interpolations;
 import tritium.rendering.rendersystem.RenderSystem;
@@ -15,10 +14,6 @@ import tritium.settings.NumberSetting;
 import tritium.widget.Widget;
 
 import java.nio.ByteBuffer;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static tritium.widget.impl.MusicSpectrumWidget.Style.*;
 
@@ -47,6 +42,8 @@ public class MusicSpectrumWidget extends Widget {
     public final ColorSetting rectColor = new ColorSetting("Rect Color", new HSBColor(125, 125, 125, 200));
 
     public final NumberSetting<Double> multiplier = new NumberSetting<>("Multiplier", 1.0, 0.1, 3.0, 0.1);
+    public final NumberSetting<Double> spectrumTilt = new NumberSetting<>("Spectrum Tilt", 3.0, 0.0, 6.0, 0.5);
+    public final NumberSetting<Double> smoothing = new NumberSetting<>("Smoothing", 0.55, 0.0, 0.95, 0.05);
     public final BooleanSetting absVol = new BooleanSetting("Absolute Volume", true);
     public final BooleanSetting stereo = new BooleanSetting("Waveform Stereo", false);
 
@@ -76,16 +73,12 @@ public class MusicSpectrumWidget extends Widget {
         windowTime.setShouldRender(() -> style.getValue() == Waveform || style.getValue() == Oscilloscope);
 
         multiplier.setShouldRender(() -> style.getValue() == Rect || style.getValue() == Line);
+        spectrumTilt.setShouldRender(() -> style.getValue() == Rect || style.getValue() == Line);
+        smoothing.setShouldRender(() -> style.getValue() == Rect || style.getValue() == Line);
     }
 
     @Override
     public void onRender(boolean editing) {
-        float offset = 170;
-
-        AtomicReference<Double> spectrumWidth = new AtomicReference<>(RenderSystem.getWidth() / (double) renderSpectrum.length);
-
-        double maximumSpectrum = 1;
-
         Style style = this.style.getValue();
 
         boolean compatMode = this.compatMode.getValue();
@@ -119,61 +112,13 @@ public class MusicSpectrumWidget extends Widget {
 //            }
 
             if (rect || line) {
-
-                int leng = (int) (AudioPlayer.bandValues.length * .5);
-                if (renderSpectrum.length != leng) {
-                    renderSpectrum = Arrays.copyOf(renderSpectrum, leng);
-                    renderSpectrumIndicator = new float[leng];
-                    indicatorTimeStamp = new long[leng];
-                }
-
-                for (int i = 0; i < leng; i++) {
-
-                    float target = AudioPlayer.bandValues[i] * (compatMode ? 8 : 16);
-
-                    if (!Float.isFinite(target)) {
-                        target = 0;
-                    }
-
-                    if (!CloudMusic.player.player.isPlaying()) {
-                        target = 0;
-                    }
-
-                    float factor = 1f;
-                    renderSpectrum[i] = Interpolations.interpolate(renderSpectrum[i], target, (float) (2f - (this.absVol.getValue() ? 0 : .5f * (1 - WidgetsManager.musicInfo.volume.getValue()))) * factor);
-                    maximumSpectrum = (Math.max(maximumSpectrum, target));
-                }
-
+                this.updateSpectrum();
             }
 
             GlStateManager.pushMatrix();
 
             if (rect) {
-
-                GlStateManager.enableBlend();
-                GlStateManager.disableTexture2D();
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-//                int zLayerFixer = 100;
-//                GlStateManager.translate(0, 0, -zLayerFixer);
-
-                boolean gradientRect = this.rectColor.chroma.getValue();
-
-                if (gradientRect) {
-                    GlStateManager.shadeModel(GL11.GL_SMOOTH);
-                }
-
-                GL11.glBegin(gradientRect ? GL11.GL_QUADS : GL11.GL_TRIANGLES);
-                int step = compatMode ? 8 : 3;
-                spectrumWidth.set((compatMode ? this.getWidth() : RenderSystem.getWidth()) / ((double) renderSpectrum.length / step));
-                this.drawRect(spectrumWidth.get(), renderSpectrum.length, step, gradientRect);
-                GL11.glEnd();
-
-                if (gradientRect) {
-                    GlStateManager.shadeModel(GL11.GL_FLAT);
-                }
-
-//                GlStateManager.translate(0, 0, zLayerFixer);
+                this.drawBars(compatMode);
             }
 
             if (waveform || oscilloscope) {
@@ -200,43 +145,7 @@ public class MusicSpectrumWidget extends Widget {
             }
 
             if (line) {
-                GlStateManager.enableBlend();
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
-
-                GlStateManager.color(1, 1, 1, 1);
-                GlStateManager.disableTexture2D();
-                GL11.glEnable(GL11.GL_LINE_SMOOTH);
-                GL11.glLineWidth(compatMode ? .75f : 1.0f);
-
-                GL11.glBegin(GL11.GL_LINE_STRIP);
-
-                double shrink = 4;
-                int step = compatMode ? 2 : 1;
-
-                if (compatMode) {
-                    GL11.glVertex2d(this.getX() + 4, this.getY() + this.getHeight() - shrink);
-                    spectrumWidth.set((this.getWidth() - shrink * 2) / ((double) renderSpectrum.length / step));
-                } else {
-                    GL11.glVertex2d(0, RenderSystem.getHeight());
-                }
-
-                for (int i = 0; i < renderSpectrum.length; i += step) {
-                    GlStateManager.color(1, 1, 1, 1);
-                    double height = -renderSpectrum[i] * this.multiplier.getValue() * 10;
-
-                    if (compatMode)
-                        height = Math.max(height, -this.getHeight() + shrink * 2);
-
-                    GL11.glVertex2d((compatMode ? (this.getX() + 4) : 0) + spectrumWidth.get() * (i + 1) / step + spectrumWidth.get() * 0.5, (compatMode ? (this.getY() + this.getHeight() - shrink) : RenderSystem.getHeight()) + height);
-                }
-
-                if (compatMode) {
-                    GL11.glVertex2d(this.getX() + this.getWidth() - shrink, this.getY() + this.getHeight() - shrink);
-                } else {
-                    GL11.glVertex2d(RenderSystem.getWidth(), RenderSystem.getHeight());
-                }
-
-                GL11.glEnd();
+                this.drawLine(compatMode);
             }
 
             if (rect) {
@@ -255,168 +164,244 @@ public class MusicSpectrumWidget extends Widget {
     }
 
     public void drawWaveSub(double pWidgetHeight, boolean secondHalf, ByteBuffer bb, int vertCount) {
+        if (bb == null) {
+            return;
+        }
+
         double startX = this.getX() + 4;
         double startY = this.getY() + pWidgetHeight * 0.5 + (secondHalf ? pWidgetHeight : 0);
 
-        if (bb != null) {
-            GlStateManager.disableAlpha();
-            GlStateManager.enableBlend();
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.disableAlpha();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
 
-            GlStateManager.disableTexture2D();
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glHint(GL11.GL_LINE_SMOOTH_HINT, GL11.GL_NICEST);
 
-            GL11.glEnable(GL11.GL_LINE_SMOOTH);
-            GL11.glLineWidth(1f);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(startX, startY, 0);
 
-            GlStateManager.pushMatrix();
+        GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GL11.glVertexPointer(2, GL11.GL_FLOAT, 0, bb);
 
-            GlStateManager.translate(startX, startY, 0);
+//        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE, GL11.GL_ZERO);
+//
+//        GL11.glLineWidth(7f);
+//        GlStateManager.color(0.30f, 0.62f, 1.0f, 0.05f);
+//        GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, vertCount);
+//
+//        GL11.glLineWidth(4f);
+//        GlStateManager.color(0.38f, 0.72f, 1.0f, 0.10f);
+//        GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, vertCount);
+//
+//        GL11.glLineWidth(2f);
+//        GlStateManager.color(0.55f, 0.85f, 1.0f, 0.22f);
+//        GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, vertCount);
 
-            GL11.glEnableClientState(GL11.GL_VERTEX_ARRAY);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
 
-            GL11.glVertexPointer(2, GL11.GL_FLOAT, 0, bb);
+        GL11.glLineWidth(1.4f);
+        GlStateManager.color(0.92f, 0.98f, 1.0f, 0.95f);
+        GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, vertCount);
 
-            // 我操 不会真有人直接把几千几万个顶点全用glVertex喂给显卡吧
-            GL11.glDrawArrays(GL11.GL_LINE_STRIP, 0, vertCount);
+        GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
+        GlStateManager.popMatrix();
 
-            GL11.glDisableClientState(GL11.GL_VERTEX_ARRAY);
-
-            GlStateManager.popMatrix();
-
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
-            GlStateManager.enableTexture2D();
-        }
+        GL11.glLineWidth(1f);
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableAlpha();
     }
 
 
-    private void drawRect(double spectrumWidth, int j, int step, boolean gradientRect) {
+    private void updateSpectrum() {
+        int n = AudioPlayer.bandValues.length;
 
-        boolean compatMode = this.compatMode.getValue();
+        if (renderSpectrum.length != n) {
+            renderSpectrum = new float[n];
+            renderSpectrumIndicator = new float[n];
+            indicatorTimeStamp = new long[n];
+        }
 
-        double shrink = 4;
-        spectrumWidth -= (compatMode ? shrink * 2 : 0) / ((double) j / step);
+        boolean playing = CloudMusic.player.player.isPlaying();
+        float smooth = this.smoothing.getValue().floatValue();
+        float attackFraction = 1.0f + (1.0f - smooth) * 1.4f;
+        float decayFraction = 0.07f + (1.0f - smooth) * 1.6f;
 
-        for (int i = 0; i < j; i += step) {
+        long now = System.currentTimeMillis();
+        boolean indicator = this.indicator.getValue();
 
-            double height = -renderSpectrum[i] * this.multiplier.getValue() * 10;
+        for (int i = 0; i < n; i++) {
+            float target = AudioPlayer.bandValues[i];
 
-            if (compatMode)
-                height = Math.max(height, -this.getHeight() + shrink * 2);
+            if (!Float.isFinite(target) || !playing) {
+                target = 0.0f;
+            }
 
-            if (this.indicator.getValue()) {
+            float previous = renderSpectrum[i];
+            float current = Interpolations.interpolate(previous, target, target > previous ? attackFraction : decayFraction);
+            renderSpectrum[i] = current;
 
-                if ((float) height < renderSpectrumIndicator[i]) {
-                    renderSpectrumIndicator[i] = (float) height;
-                    indicatorTimeStamp[i] = System.currentTimeMillis();
-                } else {
-                    long timeStamp = indicatorTimeStamp[i];
-
-                    if (System.currentTimeMillis() - timeStamp > 200) {
-                        renderSpectrumIndicator[i] = Interpolations.interpolateLinear(renderSpectrumIndicator[i], (float) 6, 8);
-                    }
-
+            if (indicator) {
+                if (current >= renderSpectrumIndicator[i]) {
+                    renderSpectrumIndicator[i] = current;
+                    indicatorTimeStamp[i] = now;
+                } else if (now - indicatorTimeStamp[i] > 450) {
+                    float fallen = Interpolations.interpolate(renderSpectrumIndicator[i], 0.0f, 0.12f);
+                    renderSpectrumIndicator[i] = Math.max(fallen, current);
                 }
             }
+        }
+    }
 
-            double posX = (compatMode ? this.getX() + shrink : 0) + spectrumWidth * i / step;
-            double y = compatMode ? (this.getY() + this.getHeight() - shrink) : RenderSystem.getHeight();
+    private void drawBars(boolean compact) {
+        int n = renderSpectrum.length;
+        if (n == 0) {
+            return;
+        }
 
-            double left = posX;
-            double top = y;
-            double right = posX + spectrumWidth;
-            double bottom = y + height;
+        double pad = 4;
+        double regionX, regionW, baseY, maxH;
 
-            if (left > right) {
-                double i1 = left;
-                left = right;
-                right = i1;
+        if (compact) {
+            regionX = this.getX() + pad;
+            regionW = this.getWidth() - pad * 2;
+            baseY = this.getY() + this.getHeight() - pad;
+            maxH = this.getHeight() - pad * 2;
+        } else {
+            regionX = 0;
+            regionW = RenderSystem.getWidth();
+            baseY = RenderSystem.getHeight();
+            maxH = RenderSystem.getHeight() * 0.33;
+        }
+
+        double mult = this.multiplier.getValue();
+        double pitch = regionW / n;
+        double barW = compact ? Math.max(1.0, pitch * 0.82) : pitch;
+
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
+        GL11.glBegin(GL11.GL_QUADS);
+        for (int i = 0; i < n; i++) {
+            double h = Math.min(maxH, renderSpectrum[i] * maxH * mult);
+            if (h <= 0) {
+                continue;
             }
 
-            if (top > bottom) {
-                double j1 = top;
-                top = bottom;
-                bottom = j1;
-            }
+            double x0 = regionX + i * pitch + (pitch - barW) * 0.5;
+            double x1 = x0 + barW;
+            double top = baseY - h;
 
             int rgb = this.rectColor.getRGB(i);
-            int nextRgb = this.rectColor.getRGB(i + step);
-
             float a = (rgb >> 24 & 255) * RenderSystem.DIVIDE_BY_255;
             float r = (rgb >> 16 & 255) * RenderSystem.DIVIDE_BY_255;
             float g = (rgb >> 8 & 255) * RenderSystem.DIVIDE_BY_255;
             float b = (rgb & 255) * RenderSystem.DIVIDE_BY_255;
-            float nextA = (nextRgb >> 24 & 255) * RenderSystem.DIVIDE_BY_255;
-            float nextR = (nextRgb >> 16 & 255) * RenderSystem.DIVIDE_BY_255;
-            float nextG = (nextRgb >> 8 & 255) * RenderSystem.DIVIDE_BY_255;
-            float nextB = (nextRgb & 255) * RenderSystem.DIVIDE_BY_255;
 
-            if (gradientRect) {
-                GlStateManager.color(r, g, b, a);
+            float topAlpha = a * (1.0f - 0.8f * (float) (h / maxH));
 
-                GL11.glVertex2d(left, top);
-                GL11.glVertex2d(left, bottom);
+            GlStateManager.color(r, g, b, a);
+            GL11.glVertex2d(x0, baseY);
+            GL11.glVertex2d(x1, baseY);
 
-                GlStateManager.color(nextR, nextG, nextB, nextA);
+            GlStateManager.color(r, g, b, topAlpha);
+            GL11.glVertex2d(x1, top);
+            GL11.glVertex2d(x0, top);
+        }
+        GL11.glEnd();
 
-                GL11.glVertex2d(right, bottom);
-                GL11.glVertex2d(right, top);
-            } else {
-                GlStateManager.color(r, g, b, a);
+        if (this.indicator.getValue()) {
+            double capH = compact ? 1.0 : 1.5;
 
-                GL11.glVertex2d(right, bottom);
-                GL11.glVertex2d(left, top);
-                GL11.glVertex2d(left, bottom);
+            GL11.glBegin(GL11.GL_QUADS);
+            for (int i = 0; i < n; i++) {
+                double ph = Math.min(maxH, renderSpectrumIndicator[i] * maxH * mult);
+                if (ph <= capH) {
+                    continue;
+                }
 
-                GL11.glVertex2d(right, top);
-                GL11.glVertex2d(left, top);
-                GL11.glVertex2d(right, bottom);
+                double x0 = regionX + i * pitch + (pitch - barW) * 0.5;
+                double x1 = x0 + barW;
+                double capY = baseY - ph;
+
+                int rgb = this.rectColor.getRGB(i);
+                float a = (rgb >> 24 & 255) * RenderSystem.DIVIDE_BY_255;
+                float r = (rgb >> 16 & 255) * RenderSystem.DIVIDE_BY_255;
+                float g = (rgb >> 8 & 255) * RenderSystem.DIVIDE_BY_255;
+                float b = (rgb & 255) * RenderSystem.DIVIDE_BY_255;
+
+                GlStateManager.color(r, g, b, Math.min(1.0f, a + 0.25f));
+                GL11.glVertex2d(x0, capY - capH);
+                GL11.glVertex2d(x1, capY - capH);
+                GL11.glVertex2d(x1, capY);
+                GL11.glVertex2d(x0, capY);
             }
-
-            if (this.indicator.getValue()) {
-
-//                posX = spectrumWidth * i / step;
-                height = -1;
-
-                left = posX;
-                top = y + renderSpectrumIndicator[i] - 1;
-                right = posX + spectrumWidth;
-                bottom = y + renderSpectrumIndicator[i] - 1 + height;
-
-                if (left > right) {
-                    double i1 = left;
-                    left = right;
-                    right = i1;
-                }
-
-                if (top > bottom) {
-                    double j1 = top;
-                    top = bottom;
-                    bottom = j1;
-                }
-
-                if (gradientRect) {
-                    GlStateManager.color(r, g, b, a);
-
-                    GL11.glVertex2d(left, top);
-                    GL11.glVertex2d(left, bottom);
-
-                    GlStateManager.color(nextR, nextG, nextB, nextA);
-
-                    GL11.glVertex2d(right, bottom);
-                    GL11.glVertex2d(right, top);
-                } else {
-                    GL11.glVertex2d(right, bottom);
-                    GL11.glVertex2d(left, top);
-                    GL11.glVertex2d(left, bottom);
-
-                    GL11.glVertex2d(right, top);
-                    GL11.glVertex2d(left, top);
-                    GL11.glVertex2d(right, bottom);
-                }
-            }
-
+            GL11.glEnd();
         }
 
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableTexture2D();
+    }
+
+    private void drawLine(boolean compact) {
+        int n = renderSpectrum.length;
+        if (n < 2) {
+            return;
+        }
+
+        double pad = 4;
+        double regionX, regionW, baseY, maxH;
+
+        if (compact) {
+            regionX = this.getX() + pad;
+            regionW = this.getWidth() - pad * 2;
+            baseY = this.getY() + this.getHeight() - pad;
+            maxH = this.getHeight() - pad * 2;
+        } else {
+            regionX = 0;
+            regionW = RenderSystem.getWidth();
+            baseY = RenderSystem.getHeight();
+            maxH = RenderSystem.getHeight() * 0.33;
+        }
+
+        double mult = this.multiplier.getValue();
+        double pitch = regionW / (n - 1);
+
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+
+        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+        for (int i = 0; i < n; i++) {
+            double h = Math.min(maxH, renderSpectrum[i] * maxH * mult);
+            double x = regionX + i * pitch;
+
+            GlStateManager.color(1f, 1f, 1f, 0.16f);
+            GL11.glVertex2d(x, baseY);
+            GlStateManager.color(1f, 1f, 1f, 0.34f);
+            GL11.glVertex2d(x, baseY - h);
+        }
+        GL11.glEnd();
+
+        GlStateManager.color(1f, 1f, 1f, 0.9f);
+        GL11.glEnable(GL11.GL_LINE_SMOOTH);
+        GL11.glLineWidth(compact ? 1.0f : 1.5f);
+
+        GL11.glBegin(GL11.GL_LINE_STRIP);
+        for (int i = 0; i < n; i++) {
+            double h = Math.min(maxH, renderSpectrum[i] * maxH * mult);
+            double x = regionX + i * pitch;
+            GL11.glVertex2d(x, baseY - h);
+        }
+        GL11.glEnd();
+
+        GL11.glDisable(GL11.GL_LINE_SMOOTH);
+        GlStateManager.shadeModel(GL11.GL_FLAT);
+        GlStateManager.enableTexture2D();
     }
 
 }

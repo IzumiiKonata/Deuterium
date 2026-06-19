@@ -16,6 +16,8 @@ public class JSynFFT extends FixedRateStereoWriterToMono {
 
 	private FloatSample buffer;
 	private float[] real, imaginary;
+	private float[] windowed;
+	private float[] window;
 	private float[] realOut, imagOut;
 	private float[] fftOut;
 	FFTFactory.JavaFFT fft;
@@ -23,6 +25,8 @@ public class JSynFFT extends FixedRateStereoWriterToMono {
 	public final int bufferSize;
 
 	public static final int FFT_SIZE = 4096;
+
+	private static final float WINDOW_COHERENT_GAIN = 0.5f;
 
 	public interface FFTCalcCallback {
 		void onFFT(float[] fftData);
@@ -37,9 +41,15 @@ public class JSynFFT extends FixedRateStereoWriterToMono {
 		this.buffer = new FloatSample(bufferSize);
 		this.real = new float[FFT_SIZE];
 		this.imaginary = new float[FFT_SIZE];
+		this.windowed = new float[FFT_SIZE];
 		this.realOut = new float[FFT_SIZE];
 		this.imagOut = new float[FFT_SIZE];
 		this.fftOut = new float[FFT_SIZE];
+
+		this.window = new float[FFT_SIZE];
+		for (int i = 0; i < FFT_SIZE; i++) {
+			this.window[i] = (float) (0.5 - 0.5 * Math.cos(2.0 * Math.PI * i / (FFT_SIZE - 1)));
+		}
 
 		this.fft = new FFTFactory.JavaFFT(FFT_SIZE);
 
@@ -66,15 +76,19 @@ public class JSynFFT extends FixedRateStereoWriterToMono {
 				float[] bufferData = buffer.getBuffer();
 				System.arraycopy(bufferData, 0, real, FFT_SIZE - bufferSize, bufferSize);
 
+				for (int i = 0; i < FFT_SIZE; i++) {
+					windowed[i] = real[i] * window[i];
+				}
+
 				// 清空虚部
 				Arrays.fill(imaginary, 0.0f);
 
 				// 执行 FFT
-				fft.transform(false, real, imaginary, realOut, imagOut);
+				fft.transform(false, windowed, imaginary, realOut, imagOut);
 
 				// 计算频率点幅值
 				for (int i = 0; i < FFT_SIZE; i++) {
-					fftOut[i] = (float) hypot(realOut[i] / FFT_SIZE, imagOut[i] / FFT_SIZE);
+					fftOut[i] = (float) hypot(realOut[i] / FFT_SIZE, imagOut[i] / FFT_SIZE) / WINDOW_COHERENT_GAIN;
 				}
 
 				callback.onFFT(fftOut);

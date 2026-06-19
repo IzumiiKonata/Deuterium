@@ -59,7 +59,7 @@ public abstract class AbstractTexture implements ITextureObject {
     }
 
     @Getter
-    private FilterState filterState = FilterState.NEAREST;
+    private FilterState filterState = FilterState.NOT_SET;
 
     @Override
     public void linearFilter() {

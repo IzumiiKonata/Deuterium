@@ -80,7 +80,7 @@ public class Image {
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
-            RenderSystem.linearFilter();
+            textureObj.linearFilter();
             Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
@@ -108,7 +108,7 @@ public class Image {
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
-            RenderSystem.nearestFilter();
+            textureObj.nearestFilter();
             Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
@@ -137,7 +137,7 @@ public class Image {
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
-            RenderSystem.linearFilter();
+            textureObj.linearFilter();
             drawModalRectWithCustomSizedTextureRotate90R(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
@@ -166,7 +166,7 @@ public class Image {
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
-            RenderSystem.linearFilter();
+            textureObj.linearFilter();
             drawModalRectWithCustomSizedTextureRotate90L(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
@@ -221,7 +221,7 @@ public class Image {
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
-            RenderSystem.linearFilter();
+            textureObj.linearFilter();
             drawModalRectWithCustomSizedTextureFlippedX(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
@@ -321,7 +321,7 @@ public class Image {
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
-            RenderSystem.linearFilter();
+            textureObj.linearFilter();
             drawModalRectWithCustomSizedTextureFlippedY(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
@@ -350,7 +350,7 @@ public class Image {
         ITextureObject textureObj = Minecraft.getMinecraft().getTextureManager().getTexture(img);
         if (textureObj != null && textureObj != TextureUtil.missingTexture) {
             TextureUtils.bindTexture(textureObj.getGlTextureId());
-            RenderSystem.linearFilter();
+            textureObj.linearFilter();
             drawModalRectWithCustomSizedTextureFlippedXAndY(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);

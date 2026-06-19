@@ -33,6 +33,19 @@ public class ShaderProgram implements SharedConstants {
         GL11.glEnd();
     }
 
+    public static void drawQuadFlipped(final double x, final double y, final double width, final double height, final double uMax, final double vMax) {
+        GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
+        GL11.glTexCoord2d(0, vMax);
+        GL11.glVertex2d(x, y);
+        GL11.glTexCoord2d(0, 0);
+        GL11.glVertex2d(x, y + height);
+        GL11.glTexCoord2d(uMax, vMax);
+        GL11.glVertex2d(x + width, y);
+        GL11.glTexCoord2d(uMax, 0);
+        GL11.glVertex2d(x + width, y + height);
+        GL11.glEnd();
+    }
+
     public static void drawQuad(final double x, final double y, final double width, final double height) {
         GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
         GL11.glTexCoord2d(0, 0);

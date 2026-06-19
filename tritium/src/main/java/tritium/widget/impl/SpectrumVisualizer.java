@@ -1,175 +1,138 @@
 package tritium.widget.impl;
 
 import lombok.Getter;
+import repackage.processing.sound.Engine;
 import tritium.management.WidgetsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SpectrumVisualizer {
 
-    @Getter
-    private final int sampleRate;
+    private static final float MIN_FREQ = 20.0f;
+    private static final float MAX_FREQ = 20000.0f;
+
+    private static final float FLOOR_DB = -72.0f;
+    private static final float CEIL_DB = -6.0f;
+    private static final float PIVOT_FREQ = 1000.0f;
+
+    private static final double LOG2 = Math.log(2.0);
+
     @Getter
     private final int fftSize;
     @Getter
-    private final int numBands;
-    private final float minDB = -90f;
-    private final float maxDB = 0f;
+    private final int numBars;
+    private final int usableBins;
 
-    @Getter
-    private final List<FrequencyBand> bands = new ArrayList<>();
-    private final float[] bandMagnitudes;
-    private final int maxBin;
+    private int sampleRate = -1;
 
-    private final float lowFreqCutoff = 500.0f;
+    private float[] edgeBinLow;
+    private float[] edgeBinHigh;
+    private float[] centerFreq;
 
-    public SpectrumVisualizer(int sampleRate, int fftSize, int numBands) {
-        this.sampleRate = sampleRate;
+    private final float[] output;
+    private final float[] smoothed;
+
+    public SpectrumVisualizer(int fftSize, int numBars) {
         this.fftSize = fftSize;
-        this.numBands = numBands;
-        this.maxBin = fftSize / 2 - 1;
-
-        generateFrequencyBands();
-        this.bandMagnitudes = new float[bands.size()];
+        this.numBars = numBars;
+        this.usableBins = fftSize / 2;
+        this.output = new float[numBars];
+        this.smoothed = new float[numBars];
     }
 
-    private void generateFrequencyBands() {
-        float maxFreq = 14000;
-        float minFreq = 20.0f;
+    private void rebuild(int sampleRate) {
+        this.sampleRate = sampleRate;
 
-        generateEnhancedBarkBands(minFreq, maxFreq);
-    }
-
-    private void generateEnhancedBarkBands(float minFreq, float maxFreq) {
-        float lowFreqFactor = .3f;
-        int lowFreqBands = (int) (numBands * lowFreqFactor);
-        int highFreqBands = numBands - lowFreqBands;
-
-        float lowFreqMax = Math.min(lowFreqCutoff, maxFreq);
-        generateDenseBarkBands(minFreq, lowFreqMax, lowFreqBands);
-
-        if (lowFreqMax < maxFreq) {
-            float barkMin = freqToBark(lowFreqMax * .21f);
-            float barkMax = freqToBark(maxFreq);
-            float barkStep = (barkMax - barkMin) / highFreqBands;
-
-            for (int i = 0; i < highFreqBands; i++) {
-                float lowFreq = barkToFreq(barkMin + i * barkStep);
-                float highFreq = barkToFreq(barkMin + (i + 1) * barkStep);
-                float centerFreq = (lowFreq + highFreq) / 2;
-                int lowBin = freqToBin(lowFreq);
-                int highBin = freqToBin(highFreq);
-                lowBin = Math.max(0, Math.min(maxBin, lowBin));
-                highBin = Math.max(lowBin, Math.min(maxBin, highBin));
-                bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
-            }
-        }
-    }
-    private void generateDenseBarkBands(float minFreq, float maxFreq, int bandCount) {
-
-        int linearBands = bandCount / 5;
-        int barkBands = bandCount - linearBands;
-
-        float midFreq = minFreq + (maxFreq - minFreq) * .3f;
-
-        float linearStep = (midFreq - minFreq) / linearBands;
-        for (int i = 0; i < linearBands; i++) {
-            float lowFreq = minFreq + i * linearStep;
-            float highFreq = minFreq + (i + 1) * linearStep;
-            float centerFreq = (lowFreq + highFreq) / 2;
-
-            int lowBin = freqToBin(lowFreq);
-            int highBin = freqToBin(highFreq);
-            lowBin = Math.max(0, Math.min(maxBin, lowBin));
-            highBin = Math.max(lowBin, Math.min(maxBin, highBin));
-
-            bands.add(new FrequencyBand(centerFreq, lowFreq, highFreq, lowBin, highBin));
+        if (edgeBinLow == null) {
+            edgeBinLow = new float[numBars];
+            edgeBinHigh = new float[numBars];
+            centerFreq = new float[numBars];
         }
 
-    }
+        float nyquist = sampleRate * 0.5f;
+        float maxFreq = Math.min(MAX_FREQ, nyquist * 0.98f);
+        float minFreq = Math.min(MIN_FREQ, maxFreq * 0.5f);
 
-    private float freqToBark(float freq) {
-        return 13.0f * (float) Math.atan(0.00076f * freq) + 3.5f * (float) Math.atan((freq / 7500.0f) * (freq / 7500.0f));
-    }
+        double logRatio = Math.log(maxFreq / minFreq);
+        float binsPerHz = (float) fftSize / sampleRate;
 
-    private float barkToFreq(float bark) {
-        return 600.0f * (float) Math.sinh(bark / 4.0f);
-    }
+        for (int b = 0; b < numBars; b++) {
+            float lowFreq = (float) (minFreq * Math.exp(logRatio * b / numBars));
+            float highFreq = (float) (minFreq * Math.exp(logRatio * (b + 1) / numBars));
 
-    private int freqToBin(float freq) {
-        return Math.round(freq * fftSize / sampleRate);
+            edgeBinLow[b] = lowFreq * binsPerHz;
+            edgeBinHigh[b] = highFreq * binsPerHz;
+            centerFreq[b] = (float) Math.sqrt(lowFreq * highFreq);
+        }
     }
 
     public float[] processFFT(float[] magnitudes) {
-        if (magnitudes.length < fftSize / 2) {
-            return bandMagnitudes;
+        int sr = Engine.getEngine().getSampleRate();
+        if (sr <= 0) {
+            sr = 44100;
         }
 
-        for (int i = 0; i < bands.size(); i++) {
-            FrequencyBand band = bands.get(i);
-            float energy = 0;
-            int binCount = 0;
+        if (sr != sampleRate || edgeBinLow == null) {
+            rebuild(sr);
+        }
 
-            for (int bin = band.lowBin; bin <= band.highBin && bin < magnitudes.length; bin++) {
-                float magnitude = magnitudes[bin] * magnitudes[bin];
+        MusicSpectrumWidget widget = WidgetsManager.musicSpectrum;
+        float tilt = widget.spectrumTilt.getValue().floatValue();
+        boolean absVol = widget.absVol.getValue();
 
-                if (WidgetsManager.musicSpectrum.absVol.getValue()) {
-                    magnitude *= (0.125f * 0.125f) / (float) (WidgetsManager.musicInfo.volume.getValue() * WidgetsManager.musicInfo.volume.getValue());
-                } else {
-                    magnitude *= 0.25f * 0.25f;
+        double volume = WidgetsManager.musicInfo.volume.getValue();
+        float volumeComp = absVol ? (float) (-20.0 * Math.log10(Math.max(volume, 1.0e-3))) : 0.0f;
+
+        int maxBin = Math.min(usableBins - 1, magnitudes.length - 1);
+
+        for (int b = 0; b < numBars; b++) {
+            float low = edgeBinLow[b];
+            float high = edgeBinHigh[b];
+
+            double power;
+
+            if (high - low < 1.0f) {
+                float center = (low + high) * 0.5f;
+                int i0 = (int) Math.floor(center);
+                if (i0 < 0) i0 = 0;
+                if (i0 > maxBin) i0 = maxBin;
+                int i1 = Math.min(i0 + 1, maxBin);
+
+                float frac = center - i0;
+                float m = magnitudes[i0] + (magnitudes[i1] - magnitudes[i0]) * frac;
+                power = (double) m * m;
+            } else {
+                int binLo = Math.max(0, Math.round(low));
+                int binHi = Math.min(maxBin, Math.round(high));
+                if (binHi < binLo) binHi = binLo;
+
+                double sum = 0.0;
+                for (int bin = binLo; bin <= binHi; bin++) {
+                    float m = magnitudes[bin];
+                    sum += (double) m * m;
                 }
-
-                energy += magnitude;
-                binCount++;
+                power = sum / (binHi - binLo + 1);
             }
 
-            if (binCount > 0) {
-                energy = (float) Math.sqrt(energy / binCount);
-            }
+            double amplitude = Math.sqrt(power) * 2.0;
+            float db = (float) (20.0 * Math.log10(amplitude + 1.0e-9));
 
-            float db = energy < 1e-10f ? minDB : 20 * (float) Math.log10(energy);
+            db += volumeComp;
+            db += tilt * (float) (Math.log(centerFreq[b] / PIVOT_FREQ) / LOG2);
 
-            if (band.centerFreq < lowFreqCutoff) {
-                db -= (lowFreqCutoff - band.centerFreq) / lowFreqCutoff * 18f;
-            }
+            float normalized = (db - FLOOR_DB) / (CEIL_DB - FLOOR_DB);
+            if (normalized < 0.0f) normalized = 0.0f;
+            if (normalized > 1.0f) normalized = 1.0f;
 
-            double max = dBToLinear(-30);
-            double min = dBToLinear(-100);
-            double value = dBToLinear(db) * 2;
-
-            float sensitivity = 1.0f;
-
-            float normalized = (float) Math.pow((value - min) / (max - min), 1 / (1.8 * sensitivity));
-            bandMagnitudes[i] = normalized;
+            output[b] = normalized;
         }
 
-        for (int i = 0; i < bandMagnitudes.length; i++) {
-            if (!Float.isFinite(bandMagnitudes[i])) {
-                bandMagnitudes[i] = 0;
-            }
+        for (int b = 0; b < numBars; b++) {
+            float l = output[Math.max(0, b - 1)];
+            float c = output[b];
+            float r = output[Math.min(numBars - 1, b + 1)];
+            smoothed[b] = (l + 2.0f * c + r) * 0.25f;
         }
+        System.arraycopy(smoothed, 0, output, 0, numBars);
 
-        return bandMagnitudes;
-    }
-
-    private float dBToLinear(float input) {
-        return (float) Math.pow(10, input / 20);
-    }
-
-    public static class FrequencyBand {
-        final float centerFreq;
-        final float lowFreq;
-        final float highFreq;
-        final int lowBin;
-        final int highBin;
-
-        public FrequencyBand(float center, float low, float high, int lowBin, int highBin) {
-            this.centerFreq = center;
-            this.lowFreq = low;
-            this.highFreq = high;
-            this.lowBin = lowBin;
-            this.highBin = highBin;
-        }
+        return output;
     }
 }
