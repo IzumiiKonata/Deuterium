@@ -267,7 +267,10 @@ public class PlaylistPanel extends NCMPanel {
 
         musicsPanel.setBeforeRenderCallback(() -> musicsPanel.setMargin(0));
 
-        playList.loadMusicsWithCallback(musics -> musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music)).setShouldOverrideMouseCursor(true)).collect(Collectors.toList())));
+        playList.loadMusicsWithCallback(musics -> {
+            long revealStart = System.currentTimeMillis();
+            musicsPanel.addChild(musics.stream().map(music -> new MusicWidget(music, playList, playList.getMusics().indexOf(music), revealStart).setShouldOverrideMouseCursor(true)).collect(Collectors.toList()));
+        });
 
         if (this.tfSearch != null) {
             this.tfSearch.setTextChangedCallback(text -> {

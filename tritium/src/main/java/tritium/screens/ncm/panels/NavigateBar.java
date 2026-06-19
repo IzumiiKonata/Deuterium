@@ -288,6 +288,8 @@ public class NavigateBar extends NCMPanel {
         @Setter
         boolean selected = false;
 
+        float hoverAnim = 0f;
+
         public PlaylistItem(String icon, Supplier<Integer> iconColorSupplier, Supplier<String> label, Runnable onClick) {
             this.icon = icon;
             this.iconColorSupplier = iconColorSupplier;
@@ -304,9 +306,11 @@ public class NavigateBar extends NCMPanel {
             this.addChild(bg);
             this.bg.setBeforeRenderCallback(() -> {
                 bg.setMargin(0);
-                bg.setHidden(!selected);
+                float target = selected ? 0.2f : (this.isHovering() ? 0.1f : 0f);
+                hoverAnim = Interpolations.interpolate(hoverAnim, target, 0.3f);
+                bg.setHidden(hoverAnim <= 0.004f);
                 bg.setColor(Color.BLACK);
-                bg.setAlpha(selected ? 0.2f : 0f);
+                bg.setAlpha(hoverAnim);
                 bg.setRadius(4);
             });
 

@@ -4,6 +4,7 @@ import org.lwjgl.input.Mouse;
 import tritium.ncm.music.AudioPlayer;
 import tritium.ncm.music.CloudMusic;
 import tritium.management.FontManager;
+import tritium.rendering.animation.Interpolations;
 import tritium.rendering.ui.widgets.*;
 import tritium.screens.ncm.MusicLyricsPanel;
 import tritium.screens.ncm.NCMPanel;
@@ -17,6 +18,8 @@ import java.awt.*;
  * Date: 2025/10/17 21:24
  */
 public class ControlsBar extends NCMPanel {
+
+    private float coverHoverAnim = 0f;
 
     public ControlsBar() {
     }
@@ -44,10 +47,13 @@ public class ControlsBar extends NCMPanel {
                 .fadeIn()
                 .setLinearFilter(true)
                 .setShouldOverrideMouseCursor(true)
-                .setBeforeRenderCallback(() -> playingCover
-                        .setMargin(5)
-                        .setBounds(playingCover.getHeight(), playingCover.getHeight())
-                        .setRadius(2))
+                .setBeforeRenderCallback(() -> {
+                    coverHoverAnim = Interpolations.interpolate(coverHoverAnim, playingCover.isHovering() ? 1f : 0f, 0.3f);
+                    playingCover
+                            .setMargin(5)
+                            .setBounds(playingCover.getHeight(), playingCover.getHeight())
+                            .setRadius(2);
+                })
                 .setOnClickCallback((relativeX, relativeY, mouseButton) -> {
                     if (CloudMusic.currentlyPlaying != null) {
                         NCMScreen.getInstance().musicLyricsPanel = new MusicLyricsPanel(CloudMusic.currentlyPlaying);
@@ -55,6 +61,12 @@ public class ControlsBar extends NCMPanel {
 
                     return true;
                 });
+
+        playingCover.setTransformations(() -> {
+            if (coverHoverAnim > 0.001f) {
+                playingCover.scaleAtPos(playingCover.getX() + playingCover.getWidth() * 0.5, playingCover.getY() + playingCover.getHeight() * 0.5, 1 + coverHoverAnim * 0.08);
+            }
+        });
 
         double buttonsYOffset = -4;
 

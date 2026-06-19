@@ -1,6 +1,7 @@
 package tritium.screens.ncm.panels;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Location;
@@ -27,10 +28,27 @@ public class MusicWidget extends RoundedRectWidget {
     public Music music;
     boolean coverLoaded = false;
 
-    public MusicWidget(Music music, PlayList playList, int index) {
+    private final int index;
+    private final long revealStart;
+    private boolean entranceDone = false;
+
+    private static final long ENTRANCE_BASE_DELAY_MS = 160;
+    private static final long ENTRANCE_STAGGER_MS = 42;
+    private static final long ENTRANCE_DURATION_MS = 520;
+    private static final int ENTRANCE_INDEX_CAP = 16;
+    private static final double ENTRANCE_SLIDE = 12;
+
+    public MusicWidget(Music music, PlayList playList, int index, long revealStart) {
         super(0, 0, 0, 30);
         this.music = music;
         this.playList = playList;
+        this.index = index;
+        this.revealStart = revealStart;
+
+        this.setTransformations(() -> {
+            float ep = this.entranceProgress();
+            GlStateManager.translate(0, (1f - ep) * ENTRANCE_SLIDE, 0);
+        });
 
         RoundedRectWidget rrHoverIndicator = new RoundedRectWidget();
         this.addChild(rrHoverIndicator);
@@ -56,6 +74,17 @@ public class MusicWidget extends RoundedRectWidget {
                 .setRadius(this.getRadius()));
 
         this.setBeforeRenderCallback(() -> {
+
+            if (!entranceDone) {
+                float ep = this.entranceProgress();
+                if (ep >= 1f) {
+                    entranceDone = true;
+                    this.setAlpha(1f);
+                    this.setTransformations(null);
+                } else {
+                    this.setAlpha(ep);
+                }
+            }
 
             // 只在这个 music 被渲染的时候才加载封面
             if (!coverLoaded) {
@@ -190,6 +219,22 @@ public class MusicWidget extends RoundedRectWidget {
             lblMusicDuration.setPosition(this.getWidth() - 8 - lblMusicDuration.getWidth(), lblMusicDuration.getRelativeY());
         });
         lblMusicDuration.setClickable(false);
+    }
+
+    private float entranceProgress() {
+        long delay = ENTRANCE_BASE_DELAY_MS + (long) (Math.min(index, ENTRANCE_INDEX_CAP) * ENTRANCE_STAGGER_MS);
+        long elapsed = System.currentTimeMillis() - revealStart - delay;
+
+        if (elapsed <= 0L) {
+            return 0f;
+        }
+        if (elapsed >= ENTRANCE_DURATION_MS) {
+            return 1f;
+        }
+
+        float t = elapsed / (float) ENTRANCE_DURATION_MS;
+        float inv = 1f - t;
+        return 1f - inv * inv * inv;
     }
 
     private String formatDuration(long totalMillis) {

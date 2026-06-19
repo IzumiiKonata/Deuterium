@@ -1,11 +1,13 @@
 package tritium.screens;
 
 import lombok.Getter;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import tritium.management.ThemeManager;
 import tritium.rendering.RGBA;
 import tritium.rendering.animation.Interpolations;
+import tritium.rendering.rendersystem.RenderSystem;
 import tritium.screens.clickgui.category.CategoriesWindow;
 import tritium.screens.clickgui.Window;
 import tritium.screens.clickgui.module.ModuleListWindow;
@@ -72,18 +74,22 @@ public class ClickGui extends BaseScreen {
     @Override
     public void drawScreen(double mouseX, double mouseY) {
 
-        this.alpha = Interpolations.interpolate(this.alpha, this.closing ? .0f : 1f, 0.3f);
+        this.alpha = Interpolations.interpolate(this.alpha, this.closing ? .0f : 1f, 0.55f);
 
         if (this.alpha <= .05f && this.closing)
             mc.displayGuiScreen(null);
 
         this.dWheel = Mouse.getDWheel();
 
+        GlStateManager.pushMatrix();
+        this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 0.9 + this.alpha * 0.1);
+
         this.windows.forEach(window -> {
             window.setAlpha(this.alpha);
             window.render(mouseX, mouseY);
         });
 
+        GlStateManager.popMatrix();
     }
 
     @Override
