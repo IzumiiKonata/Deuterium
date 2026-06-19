@@ -471,7 +471,7 @@ public class Minecraft implements IThreadListener {
         this.renderEngine = new TextureManager(this.mcResourceManager);
 
         //CLIENT
-//        AsyncGLContext.init();
+        tritium.rendering.async.AsyncGLContext.init();
         //END CLIENT
 
         this.mcResourceManager.registerReloadListener(this.renderEngine);

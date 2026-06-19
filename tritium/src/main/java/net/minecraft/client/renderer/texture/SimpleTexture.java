@@ -79,7 +79,9 @@ public class SimpleTexture extends AbstractTexture {
         TextureUtil.allocateTexture(this.getGlTextureId(), bufferedimage.getWidth(), bufferedimage.getHeight());
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
-        GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = this.getGlTextureId();
+        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            GlStateManager.textureState[GlStateManager.activeTextureUnit].textureName = this.getGlTextureId();
+        }
         TextureUtil.setTextureBlurMipmap(linear, false);
         TextureUtil.setTextureClamped(clamp);
 
@@ -141,6 +143,10 @@ public class SimpleTexture extends AbstractTexture {
 
         }
 
-        GL11.glFlush();
+        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            GL11.glFlush();
+        } else {
+            GL11.glFinish();
+        }
     }
 }

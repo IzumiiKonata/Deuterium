@@ -20,6 +20,7 @@ import net.minecraft.util.JsonUtils;
 import net.minecraft.util.Location;
 import net.optifine.util.TextureUtils;
 import org.lwjgl.opengl.GL11;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 import tritium.utils.timing.Timer;
@@ -60,7 +61,7 @@ public class AnimatedTexture {
         this.frameWidth = img.getWidth();
         this.imgHeight = img.getHeight();
 
-        CompletableFuture<Void> textureUploadingTask = MultiThreadingUtil.runAsync(() -> this.locImg = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("AnimatedTexture", new DynamicTexture(img)));
+        CompletableFuture<Void> textureUploadingTask = MultiThreadingUtil.runAsync(() -> this.locImg = AsyncGLContext.callBlocking(() -> Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("AnimatedTexture", new DynamicTexture(img))));
 
         CompletableFuture<Void> serializeTask = MultiThreadingUtil.runAsync(() -> this.serializeMetadata(img, isMetadata));
 
@@ -283,7 +284,7 @@ public class AnimatedTexture {
 
                 Frame gen = new Frame(-1, frame.frameTime);
                 gen.generated = true;
-                gen.generatedLoc = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("ResourcePackPreviewGenerated", new DynamicTexture(generated));
+                gen.generatedLoc = AsyncGLContext.callBlocking(() -> Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("ResourcePackPreviewGenerated", new DynamicTexture(generated)));
                 this.frames.add(gen);
             }
         }

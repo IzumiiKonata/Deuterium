@@ -1,14 +1,12 @@
 package net.minecraft.util;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectMap;
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.apache.commons.lang3.Validate;
 import tritium.utils.optimization.IdentifierCaches;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Getter
 @EqualsAndHashCode(
@@ -66,43 +64,20 @@ public class Location {
 //        return 31 * this.resourceDomain.hashCode() + this.resourcePath.hashCode();
 //    }
 
-    private static final Map<String, Location> locationCache = new Object2ObjectOpenHashMap<>();
-    public static final Map<String, Map<String, Location>> twoDimensionsCache = new Object2ObjectOpenHashMap<>();
+    private static final Map<String, Location> locationCache = new ConcurrentHashMap<>();
+    public static final Map<String, Map<String, Location>> twoDimensionsCache = new ConcurrentHashMap<>();
 
     public static Location of(String path) {
-
-        if (!locationCache.containsKey(path)) {
-            String[] strings = splitObjectName(path);
-            Location location = new Location(strings[0], strings[1]);
-            locationCache.put(path, location);
-            return location;
-        }
-
-        return locationCache.get(path);
-
+        return locationCache.computeIfAbsent(path, p -> {
+            String[] strings = splitObjectName(p);
+            return new Location(strings[0], strings[1]);
+        });
     }
 
     public static Location of(String resourceDomainIn, String resourcePathIn) {
-
-        Map<String, Location> v1 = twoDimensionsCache.get(resourceDomainIn);
-        if (v1 != null) {
-            Location v2 = v1.get(resourcePathIn);
-
-            if (v2 != null) {
-                return v2;
-            }
-
-            Location location = new Location(resourceDomainIn, resourcePathIn);
-            v1.put(resourcePathIn, location);
-
-            return location;
-        }
-
-        Location location = new Location(resourceDomainIn, resourcePathIn);
-        Map<String, Location> map = new HashMap<>();
-        map.put(resourceDomainIn, location);
-        twoDimensionsCache.put(resourceDomainIn, map);
-        return location;
+        return twoDimensionsCache
+                .computeIfAbsent(resourceDomainIn, k -> new ConcurrentHashMap<>())
+                .computeIfAbsent(resourcePathIn, k -> new Location(resourceDomainIn, resourcePathIn));
     }
 
 }

@@ -5,10 +5,8 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.common.BitMatrix;
 import lombok.SneakyThrows;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.Location;
-import tritium.utils.other.multithreading.MultiThreadingUtil;
+import tritium.rendering.texture.Textures;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -26,14 +24,7 @@ public class QRCodeGenerator {
 
         BufferedImage img = QRCodeGenerator.generateQRCode(address, 128, 128);
 
-        MultiThreadingUtil.runAsync(() -> {
-
-            if (Minecraft.getMinecraft().getTextureManager().getTexture(qrCode) != null) {
-                Minecraft.getMinecraft().getTextureManager().deleteTexture(qrCode);
-            }
-
-            Minecraft.getMinecraft().getTextureManager().loadTexture(qrCode, new DynamicTexture(img));
-        });
+        Textures.loadTexture(qrCode, img);
 
     }
 

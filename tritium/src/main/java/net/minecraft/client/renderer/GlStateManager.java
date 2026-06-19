@@ -15,6 +15,7 @@ import org.lwjgl.opengl.GL13;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
 import tritium.rendering.FramebufferCaching;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.nio.FloatBuffer;
@@ -366,49 +367,34 @@ public class GlStateManager {
 
     public static int generateTexture() {
 
-        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread() && GLFW.glfwGetCurrentContext() <= 0) {
-            return MultiThreadingUtil.runOnMainThreadBlocking(GL11::glGenTextures);
+        if (!AsyncGLContext.canUploadOnCurrentThread()) {
+            if (AsyncGLContext.isReady()) {
+                return AsyncGLContext.callBlocking(GlStateManager::genTextureLocked);
+            }
+
+            return MultiThreadingUtil.runOnMainThreadBlocking(GlStateManager::genTextureLocked);
         }
 
-//        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+        return genTextureLocked();
+    }
+
+    private static int genTextureLocked() {
+        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
             return GL11.glGenTextures();
-//        }
-//
-//        if (!Minecraft.getMinecraft().loaded) {
-//            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
-//                int id = glGenTextures();
-//
-////                System.out.println("Generated texture ID: " + id + " for thread " + Thread.currentThread().getName());
-//
-//                return id;
-//            }
-//        }
-//
-//        ListenableFuture<Integer> future = Minecraft.getMinecraft().addScheduledTask(() -> {
-//
-//            int texId = glGenTextures();
-//            GL11.glFlush();
-//            GL11.glFinish();
-//
-//            return texId;
-//
-//        });
-//        try {
-//            return future.get(5, TimeUnit.SECONDS);
-//        } catch (TimeoutException e) {
-//            throw new RuntimeException("Timeout waiting for texture ID", e);
-//        } catch (ExecutionException | InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+        }
     }
 
     public static void generateTextures(IntBuffer buffer) {
-        GL11.glGenTextures(buffer);
+        synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+            GL11.glGenTextures(buffer);
+        }
     }
 
-    public static synchronized void deleteTexture(int texture) {
+    public static void deleteTexture(int texture) {
         if (texture != 0) {
-            GL11.glDeleteTextures(texture);
+            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+                GL11.glDeleteTextures(texture);
+            }
 
             for (GlStateManager.TextureState glstatemanager$texturestate : textureState) {
                 if (glstatemanager$texturestate.textureName == texture) {

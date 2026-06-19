@@ -8,6 +8,7 @@ import net.minecraft.client.renderer.texture.NativeBackedImage;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.Location;
 import tritium.interfaces.SharedConstants;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.network.HttpUtils;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
@@ -42,7 +43,7 @@ public class Textures implements SharedConstants {
                     NativeBackedImage img = NativeBackedImage.make(inputStream);
 
                     if (img != null) {
-                        Textures.loadTexture(location, img);
+                        Textures.loadTextureAsyncly(location, img);
                     }
                 }
             } catch (Exception e) {
@@ -60,34 +61,54 @@ public class Textures implements SharedConstants {
         if (img == null)
             return;
 
-        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            Minecraft.getMinecraft().addScheduledTask(() -> loadTexture(location, img, clearable, linear));
+        if (AsyncGLContext.isReady() && !AsyncGLContext.isWorkerThread()) {
+            AsyncGLContext.submit(() -> loadTextureDirect(location, img, clearable, linear));
+            return;
+        }
+
+        loadTextureDirect(location, img, clearable, linear);
+    }
+
+    private void loadTextureDirect(Location location, BufferedImage img, boolean clearable, boolean linear) {
+
+        if (img == null)
+            return;
+
+        if (!AsyncGLContext.canUploadOnCurrentThread()) {
+            MultiThreadingUtil.runOnMainThreadBlocking(() -> {
+                DynamicTexture dynamicTexture = new DynamicTexture(img, clearable, linear);
+                mc.getTextureManager().loadTexture(location, dynamicTexture);
+                return null;
+            });
             return;
         }
 
         DynamicTexture dynamicTexture = new DynamicTexture(img, clearable, linear);
         mc.getTextureManager().loadTexture(location, dynamicTexture);
-
     }
 
     public void loadTextureAsyncly(Location location, BufferedImage img, boolean flush, boolean clearable, boolean linear, Runnable after) {
 
-        MultiThreadingUtil.runAsync(
-                () -> {
-                    Textures.loadTexture(location, img, clearable, linear);
+        Runnable task = () -> {
+            Textures.loadTextureDirect(location, img, clearable, linear);
 
-                    if (flush) {
-                        img.flush();
+            if (flush) {
+                img.flush();
 
-                        if (img instanceof NativeBackedImage)
-                            ((NativeBackedImage) img).close();
-                    }
+                if (img instanceof NativeBackedImage)
+                    ((NativeBackedImage) img).close();
+            }
 
-                    if (after != null) {
-                        after.run();
-                    }
-                }
-        );
+            if (after != null) {
+                after.run();
+            }
+        };
+
+        if (AsyncGLContext.isReady()) {
+            AsyncGLContext.submit(task);
+        } else {
+            MultiThreadingUtil.runAsync(task);
+        }
 
     }
 

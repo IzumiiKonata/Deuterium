@@ -5,6 +5,7 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.NativeBackedImage;
 import today.opai.api.interfaces.render.Image;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 import java.io.ByteArrayInputStream;
@@ -17,7 +18,7 @@ import java.util.Base64;
  */
 public class ImageImpl implements Image {
 
-    ITextureObject texObj = null;
+    volatile ITextureObject texObj = null;
 
     public ImageImpl(String b64) {
         this(Base64.getDecoder().decode(b64));
@@ -33,14 +34,17 @@ public class ImageImpl implements Image {
         if (img == null)
             throw new IllegalArgumentException("Cannot read image");
 
-        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+        Runnable task = () -> {
             texObj = new DynamicTexture(img, true);
             img.close();
+        };
+
+        if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            task.run();
+        } else if (AsyncGLContext.isReady()) {
+            AsyncGLContext.submit(task);
         } else {
-            MultiThreadingUtil.runAsync(() -> {
-                texObj = new DynamicTexture(img, true);
-                img.close();
-            });
+            MultiThreadingUtil.runAsync(task);
         }
     }
 

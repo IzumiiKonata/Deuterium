@@ -84,7 +84,7 @@ public class Image {
             Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
@@ -112,7 +112,7 @@ public class Image {
             Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
@@ -141,7 +141,7 @@ public class Image {
             drawModalRectWithCustomSizedTextureRotate90R(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
@@ -170,7 +170,7 @@ public class Image {
             drawModalRectWithCustomSizedTextureRotate90L(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
@@ -225,7 +225,7 @@ public class Image {
             drawModalRectWithCustomSizedTextureFlippedX(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
@@ -274,7 +274,7 @@ public class Image {
             Gui.drawModalRectWithCustomSizedTexture(x, y, 0, 0, tWidth, tHeight, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
@@ -325,7 +325,7 @@ public class Image {
             drawModalRectWithCustomSizedTextureFlippedY(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {
@@ -354,7 +354,7 @@ public class Image {
             drawModalRectWithCustomSizedTextureFlippedXAndY(x, y, 0, 0, width, height, width, height);
         } else if (textureObj != TextureUtil.missingTexture) {
             textureObj = new SimpleTexture(img);
-            Minecraft.getMinecraft().getTextureManager().loadTexture(img, textureObj);
+            Minecraft.getMinecraft().getTextureManager().loadTextureAsync(img, textureObj);
         }
 
         if (ClientSettings.SHOW_WIDGET_BOUNDARY.getValue()) {

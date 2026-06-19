@@ -36,8 +36,8 @@ public class ThreadDownloadImageData extends SimpleTexture {
     private final File cacheFile;
     private final String imageUrl;
     private final IImageBuffer imageBuffer;
-    private BufferedImage bufferedImage;
-    private boolean textureRequested = false;
+    private volatile BufferedImage bufferedImage;
+    private volatile boolean textureRequested = false;
     private boolean textureUploaded;
     public Boolean imageFound = null;
     public boolean pipeline = false;
@@ -50,7 +50,7 @@ public class ThreadDownloadImageData extends SimpleTexture {
     }
 
     @SneakyThrows
-    private void checkTextureUploaded() {
+    private synchronized void checkTextureUploaded() {
         if (!this.textureUploaded && this.bufferedImage != null) {
             this.textureUploaded = true;
 

@@ -9,6 +9,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 import org.lwjgl.opengl.GL14;
 import org.lwjgl.system.MemoryUtil;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.other.DevUtils;
 import tritium.utils.other.MemoryTracker;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
@@ -95,7 +96,7 @@ public class DynamicTexture extends AbstractTexture {
 
     public void allocateTexture(int textureWidth, int textureHeight) {
 
-        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+        if (!AsyncGLContext.canUploadOnCurrentThread()) {
             MultiThreadingUtil.runOnMainThreadBlocking(() -> {
                 this.allocateTextureImpl(0, textureWidth, textureHeight);
                 return null;
@@ -140,7 +141,7 @@ public class DynamicTexture extends AbstractTexture {
     @SneakyThrows
     public void updateDynamicTexture() {
 
-        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+        if (!AsyncGLContext.canUploadOnCurrentThread()) {
             MultiThreadingUtil.runOnMainThreadBlocking(() -> {
                 this.updateDynamicTexture();
                 return null;
@@ -216,6 +217,10 @@ public class DynamicTexture extends AbstractTexture {
             this.dynamicTextureData = null;
 
         GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+
+        if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            GL11.glFinish();
+        }
     }
 
     public void clear() {

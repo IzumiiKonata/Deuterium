@@ -40,7 +40,7 @@ public abstract class PVRenderer {
             } catch (Throwable e) {
                 throw new RuntimeException(e);
             }
-            Textures.triggerLoad(t, new DynamicTexture(make));
+            Textures.loadTextureAsyncly(t, make);
         }));
     }
 

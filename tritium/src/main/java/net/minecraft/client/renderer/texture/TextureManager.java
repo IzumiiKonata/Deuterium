@@ -14,6 +14,7 @@ import net.optifine.CustomGuis;
 import net.optifine.EmissiveTextures;
 import net.optifine.RandomEntities;
 import net.optifine.shaders.ShadersTex;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.utils.logging.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,12 +23,14 @@ import java.util.*;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class TextureManager implements ITickable, IResourceManagerReloadListener {
     private static final Logger logger = LogManager.getLogger("TextureManager");
     public final Map<Location, ITextureObject> mapTextureObjects = new ConcurrentHashMap<>(512);
     private final List<ITickable> listTickables = Lists.newArrayList();
-    private final Map<String, Integer> mapTextureCounters = Maps.newHashMap();
+    private final Map<String, AtomicInteger> mapTextureCounters = new ConcurrentHashMap<>();
+    private final Set<Location> loadingTextures = ConcurrentHashMap.newKeySet();
     private final IResourceManager theResourceManager;
     private ITextureObject boundTexture;
     private Location boundTextureLocation;
@@ -117,9 +120,7 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
 
         ITextureObject prev = this.mapTextureObjects.put(textureLocation, textureObj);
 
-        if (prev != null && prev.getGlTextureId() != textureObj.getGlTextureId()) {
-            System.out.println("Key = " + textureLocation + ", Prev = " + prev.getGlTextureId() + ", New = " + textureObj.getGlTextureId());
-//            DevUtils.printCurrentInvokeStack();
+        if (prev != null && prev != textureObj && prev.getGlTextureId() != textureObj.getGlTextureId()) {
             if (!Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
                 Minecraft.getMinecraft().addScheduledTask(() -> TextureUtil.deleteTexture(prev.getGlTextureId()));
             } else {
@@ -128,6 +129,25 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
         }
 
         return flag;
+    }
+
+    public void loadTextureAsync(Location textureLocation, ITextureObject textureObj) {
+        if (!AsyncGLContext.isReady() || AsyncGLContext.isWorkerThread()) {
+            this.loadTexture(textureLocation, textureObj);
+            return;
+        }
+
+        if (this.mapTextureObjects.containsKey(textureLocation) || !this.loadingTextures.add(textureLocation)) {
+            return;
+        }
+
+        AsyncGLContext.submit(() -> {
+            try {
+                this.loadTexture(textureLocation, textureObj);
+            } finally {
+                this.loadingTextures.remove(textureLocation);
+            }
+        });
     }
 
     public ITextureObject getTexture(Location textureLocation) {
@@ -139,15 +159,8 @@ public class TextureManager implements ITickable, IResourceManagerReloadListener
             texture = Config.getMojangLogoTexture(texture);
         }
 
-        Integer integer = this.mapTextureCounters.get(name);
+        int integer = this.mapTextureCounters.computeIfAbsent(name, k -> new AtomicInteger(0)).incrementAndGet();
 
-        if (integer == null) {
-            integer = 1;
-        } else {
-            integer = integer + 1;
-        }
-
-        this.mapTextureCounters.put(name, integer);
         Location resourcelocation = Location.of(String.format("dynamic/%s_%d", name, integer));
         this.loadTexture(resourcelocation, texture);
         return resourcelocation;

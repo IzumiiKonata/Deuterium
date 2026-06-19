@@ -6,11 +6,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.optifine.shaders.MultiTexID;
 import net.optifine.shaders.ShadersTex;
 import org.lwjgl.opengl.GL11;
+import tritium.rendering.async.AsyncGLContext;
 import tritium.rendering.rendersystem.RenderSystem;
 import tritium.utils.other.multithreading.MultiThreadingUtil;
 
 public abstract class AbstractTexture implements ITextureObject {
-    protected int glTextureId = -1;
+    protected volatile int glTextureId = -1;
     protected boolean blur;
     protected boolean mipmap;
     protected boolean blurLast;
@@ -51,11 +52,20 @@ public abstract class AbstractTexture implements ITextureObject {
     }
 
     public int getGlTextureId() {
-        if (this.glTextureId == -1) {
-            this.glTextureId = TextureUtil.glGenTextures();
+        int id = this.glTextureId;
+
+        if (id == -1) {
+            synchronized (this) {
+                id = this.glTextureId;
+
+                if (id == -1) {
+                    id = TextureUtil.glGenTextures();
+                    this.glTextureId = id;
+                }
+            }
         }
 
-        return this.glTextureId;
+        return id;
     }
 
     @Getter
@@ -112,6 +122,10 @@ public abstract class AbstractTexture implements ITextureObject {
 
         if (Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
             GlStateManager.deleteTexture(this.getGlTextureId());
+        } else if (AsyncGLContext.canUploadOnCurrentThread()) {
+            synchronized (AsyncGLContext.MULTITHREADING_LOCK) {
+                GL11.glDeleteTextures(this.getGlTextureId());
+            }
         } else {
             MultiThreadingUtil.runOnMainThreadBlocking(() -> {
                 GL11.glDeleteTextures(this.getGlTextureId());
