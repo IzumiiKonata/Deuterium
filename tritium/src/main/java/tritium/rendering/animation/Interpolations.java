@@ -28,7 +28,7 @@ public class Interpolations {
                                      double fraction) {
         boolean increasing = startValue < endValue;
 
-        double result = tritium.utils.math.Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5, startValue, endValue);
+        double result = Mth.lerp(expFactor(fraction * 0.5, RenderSystem.getFrameDeltaTime()), startValue, endValue);
 
         if (increasing) {
             return Math.min(endValue, result);
@@ -42,7 +42,7 @@ public class Interpolations {
                                     float fraction) {
         boolean increasing = startValue < endValue;
 
-        float result = (float) tritium.utils.math.Mth.lerp(RenderSystem.getFrameDeltaTime() * fraction * 0.5f, startValue, endValue);
+        float result = (float) Mth.lerp(expFactor(fraction * 0.5, RenderSystem.getFrameDeltaTime()), startValue, endValue);
 
         if (increasing) {
             return Math.min(endValue, result);
@@ -55,7 +55,7 @@ public class Interpolations {
                                      double fraction, double delta) {
         boolean increasing = startValue < endValue;
 
-        double result = Mth.lerp(delta * fraction * 0.5, startValue, endValue);
+        double result = Mth.lerp(expFactor(fraction * 0.5, delta), startValue, endValue);
 
         if (increasing) {
             return Math.min(endValue, result);
@@ -63,6 +63,17 @@ public class Interpolations {
             return Math.max(endValue, result);
         }
 
+    }
+
+    private static double expFactor(double rate, double delta) {
+        double r = rate * delta;
+        if (r <= 0.0) {
+            return 0.0;
+        }
+        if (r >= 40.0) {
+            return 1.0;
+        }
+        return 1.0 - Math.exp(-r);
     }
 
     public static float interpolate(float startValue, float endValue,
@@ -110,14 +121,15 @@ public class Interpolations {
      */
     public static void calcFrameDelta() {
 
-        double value = ((double) System.nanoTime() - (double) lastNanoFrame) / 10000000.0;
+        long now = System.nanoTime();
+        double value = (now - lastNanoFrame) / 10000000.0;
 
         if (value > 20) {
             value = 0.01;
         }
 
         RenderSystem.setFrameDeltaTime(value);
-        lastNanoFrame = System.nanoTime();
+        lastNanoFrame = now;
     }
 
     public static Color getColorAnimationState(Color animation, Color finalState, double speed) {
