@@ -61,6 +61,7 @@ public class NSFPlayer {
 
     private volatile boolean linearMixing = false;
     private volatile boolean triangleMoreSteps = false;
+    private volatile boolean echoEnabled = false;
 
     @Getter
     private String title = "";
@@ -161,6 +162,7 @@ public class NSFPlayer {
             XgmMultiSoundMixer mix = (XgmMultiSoundMixer) renderer.mixer;
             mix.setLinearMixing(linearMixing);
             mix.setTriangleSmoothing(triangleMoreSteps ? TRIANGLE_SMOOTH_FACTOR : 1);
+            mix.setEchoEnabled(echoEnabled);
         }
 
         AbstractNsfSound tri = renderer.getSound(CHANNEL_2A03_TRIANGLE);
@@ -186,6 +188,17 @@ public class NSFPlayer {
 
     public void setTriangleMoreSteps(boolean value) {
         this.triangleMoreSteps = value;
+        synchronized (lock) {
+            applyPatches();
+        }
+    }
+
+    public boolean isEchoEnabled() {
+        return echoEnabled;
+    }
+
+    public void setEchoEnabled(boolean value) {
+        this.echoEnabled = value;
         synchronized (lock) {
             applyPatches();
         }

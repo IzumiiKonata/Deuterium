@@ -72,6 +72,7 @@ public class NSFPlayerScreen extends BaseScreen {
     private final Rect2 browserClose = new Rect2();
     private final Rect2 linearMixBtn = new Rect2();
     private final Rect2 triStepsBtn = new Rect2();
+    private final Rect2 echoBtn = new Rect2();
 
     private static boolean dropRegistered = false;
     private static GLFWDropCallback dropCallback;
@@ -185,9 +186,11 @@ public class NSFPlayerScreen extends BaseScreen {
         double pad = 14;
         double linW = tf.getStringWidth("线性混音") + pad;
         double triW = tf.getStringWidth("三角波平滑") + pad;
+        double echoW = tf.getStringWidth("混响") + pad;
 
         browseBtn.set(rightX - browseW, cy, browseW, bh);
-        triStepsBtn.set(browseBtn.x - 8 - triW, cy, triW, bh);
+        echoBtn.set(browseBtn.x - 8 - echoW, cy, echoW, bh);
+        triStepsBtn.set(echoBtn.x - 6 - triW, cy, triW, bh);
         linearMixBtn.set(triStepsBtn.x - 6 - linW, cy, linW, bh);
 
         double titleMax = linearMixBtn.x - x - 10;
@@ -203,6 +206,7 @@ public class NSFPlayerScreen extends BaseScreen {
 
         drawToggle(linearMixBtn, "线性混音", player.isLinearMixing(), mouseX, mouseY);
         drawToggle(triStepsBtn, "三角波平滑", player.isTriangleMoreSteps(), mouseX, mouseY);
+        drawToggle(echoBtn, "混响", player.isEchoEnabled(), mouseX, mouseY);
         drawButton(browseBtn, "浏览...", mouseX, mouseY, true);
     }
 
@@ -500,6 +504,10 @@ public class NSFPlayerScreen extends BaseScreen {
         }
         if (triStepsBtn.contains(mouseX, mouseY)) {
             player.setTriangleMoreSteps(!player.isTriangleMoreSteps());
+            return;
+        }
+        if (echoBtn.contains(mouseX, mouseY)) {
+            player.setEchoEnabled(!player.isEchoEnabled());
             return;
         }
 

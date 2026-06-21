@@ -101,6 +101,25 @@ public class XgmMultiSoundMixer extends AbstractNsfSoundMixer<AbstractXgmAudioCh
 			}
 		}
 	}
+
+	private boolean echoEnabled = true;
+
+	public void setEchoEnabled(boolean enabled) {
+		this.echoEnabled = enabled;
+		if (interceptors == null) {
+			return;
+		}
+		for (ArrayList<ISoundInterceptor> list : interceptors) {
+			if (list == null) {
+				continue;
+			}
+			for (ISoundInterceptor itc : list) {
+				if (itc instanceof EchoUnit) {
+					itc.setEnable(enabled);
+				}
+			}
+		}
+	}
 	
 	/* **********
 	 * 轨道参数 *
@@ -332,6 +351,7 @@ public class XgmMultiSoundMixer extends AbstractNsfSoundMixer<AbstractXgmAudioCh
 		// 构造拦截器组
 		EchoUnit echo = new EchoUnit();
 		echo.setRate(param.sampleRate);
+		echo.setEnable(echoEnabled);
 		list.add(echo); // 注意, 回音是这里产生的. 如果想去掉回音, 修改这里
 
 		DCFilter dcf = new DCFilter();
