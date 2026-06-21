@@ -732,11 +732,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         this.progressBarHeight = Interpolations.interpolate(this.progressBarHeight, hoveringProgressBar ? 8 : 5, 0.3f);
 
         this.progressThumbAlpha = Interpolations.interpolate(this.progressThumbAlpha, hoveringProgressBar ? 1.0 : 0.0, 0.25f);
-        if (this.progressThumbAlpha > 0.01) {
-            double thumbR = 5.5;
-            double thumbX = elementsXOffset + progressBarWidth * perc;
-            roundedRect(thumbX - thumbR, progressBarYOffset - thumbR, thumbR * 2, thumbR * 2, thumbR, hexColor(1f, 1f, 1f, (float) (alpha * this.progressThumbAlpha)));
-        }
+//        if (this.progressThumbAlpha > 0.01) {
+//            double thumbR = 5.5;
+//            double thumbX = elementsXOffset + progressBarWidth * perc;
+//            roundedRect(thumbX - thumbR, progressBarYOffset - thumbR, thumbR * 2, thumbR * 2, thumbR, hexColor(1f, 1f, 1f, (float) (alpha * this.progressThumbAlpha)));
+//        }
 
         boolean lmbDown = Mouse.isButtonDown(0);
         if (hoveringProgressBar && lmbDown && !prevMouse) {
@@ -793,11 +793,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         this.volumeBarHeight = Interpolations.interpolate(this.volumeBarHeight, hoveringVolumeBar ? 8 : 5, 0.3f);
 
         this.volumeThumbAlpha = Interpolations.interpolate(this.volumeThumbAlpha, hoveringVolumeBar ? 1.0 : 0.0, 0.25f);
-        if (this.volumeThumbAlpha > 0.01) {
-            double thumbR = 5.0;
-            double thumbX = volumeBarXOffset + volumeBarWidth * (player == null ? 0 : player.getVolume());
-            roundedRect(thumbX - thumbR, volumeBarYOffset - thumbR, thumbR * 2, thumbR * 2, thumbR, hexColor(1f, 1f, 1f, (float) (alpha * this.volumeThumbAlpha)));
-        }
+//        if (this.volumeThumbAlpha > 0.01) {
+//            double thumbR = 5.0;
+//            double thumbX = volumeBarXOffset + volumeBarWidth * (player == null ? 0 : player.getVolume());
+//            roundedRect(thumbX - thumbR, volumeBarYOffset - thumbR, thumbR * 2, thumbR * 2, thumbR, hexColor(1f, 1f, 1f, (float) (alpha * this.volumeThumbAlpha)));
+//        }
 
         if (hoveringVolumeBar && lmbDown) {
             double xDelta = Math.max(0, Math.min(volumeBarWidth, (mouseX - (volumeBarXOffset))));
