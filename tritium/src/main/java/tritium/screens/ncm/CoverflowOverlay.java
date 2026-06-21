@@ -175,7 +175,13 @@ public class CoverflowOverlay extends BaseScreen {
         if (!Mouse.isButtonDown(1) && rmbPressed)
             rmbPressed = false;
 
-        Rect.draw(0, 0, RenderSystem.getWidth(), RenderSystem.getHeight(), RGBA.color(0, 0, 0, alpha * 0.5f));
+        double screenW = RenderSystem.getWidth();
+        double screenH = RenderSystem.getHeight();
+        double vignetteH = screenH * 0.3;
+
+        Rect.draw(0, 0, screenW, screenH, RGBA.black(alpha * 0.6f));
+        RenderSystem.drawGradientRectTopToBottom(0, 0, screenW, vignetteH, RGBA.black(alpha * 0.35f), RGBA.black(0f));
+        RenderSystem.drawGradientRectTopToBottom(0, screenH - vignetteH, screenW, screenH, RGBA.black(0f), RGBA.black(alpha * 0.45f));
 
         if (albumList.isEmpty())
             return;
@@ -344,15 +350,16 @@ public class CoverflowOverlay extends BaseScreen {
         GlStateManager.scale(renderingData.scale, renderingData.scale, 1);
         GlStateManager.translate(-(offsetX + coverSize * 0.5), 0, 0);
 
-        Rect.draw(offsetX, -coverSize * 0.5f, coverSize, coverSize, RGBA.color(128, 128, 128, 128));
+        Rect.draw(offsetX, -coverSize * 0.5f, coverSize, coverSize, RGBA.color(255, 255, 255, (int) (22 * alpha)));
 
         if (texture != null) {
             GlStateManager.bindTexture(texture.getGlTextureId());
             texture.linearFilter();
-            Image.draw(offsetX, -coverSize * 0.5, coverSize, coverSize, Image.Type.Normal);
+            GlStateManager.color(1, 1, 1, alpha);
+            Image.draw(offsetX, -coverSize * 0.5, coverSize, coverSize, Image.Type.NoColor);
 
             // reflection
-            Shaders.VF_FADEOUT.draw(offsetX, coverSize * 0.5, coverSize, coverSize, 0.5, 0.85f);
+            Shaders.VF_FADEOUT.draw(offsetX, coverSize * 0.5, coverSize, coverSize, 0.5, 0.85f * alpha);
 
             if (renderingData.flipped || (renderingData.rotateDeg < -5 && index == i)) {
                 // flip it
@@ -379,7 +386,11 @@ public class CoverflowOverlay extends BaseScreen {
                 double contentPaneWidth = coverSize - contentSpacing * 2;
                 double contentPaneHeight = coverSize - (imgSpacing * 2 + imgSize + contentSpacing * 2);
 
-                StencilClipManager.beginClip(() -> Rect.draw(contentPaneX, contentPaneY, contentPaneWidth, contentPaneHeight, -1));
+                StencilClipManager.beginClip(() -> {
+                    GlStateManager.disableDepth();
+                    Rect.draw(contentPaneX, contentPaneY, contentPaneWidth, contentPaneHeight, -1);
+                });
+                GlStateManager.disableDepth();
                 Rect.draw(contentPaneX, contentPaneY, contentPaneWidth, contentPaneHeight, RGBA.color(255, 255, 255, 20));
 
                 double yAdd = 5;
@@ -475,8 +486,16 @@ public class CoverflowOverlay extends BaseScreen {
 
             CFontRenderer fr = FontManager.pf50bold;
 
-            fr.drawCenteredStringWithShadow(al.getName(), RenderSystem.getWidth() * 0.5, RenderSystem.getHeight() * 0.5 + (coverSize - paneHeight * 0.225) / paneHeight * RenderSystem.getHeight(), -1);
-//            fr.drawCenteredString(al.getA, RenderSystem.getWidth() * 0.5, RenderSystem.getHeight() * 0.5 + (coverSize - paneHeight * 0.25) / paneHeight * RenderSystem.getHeight() + fr.getHeight(), -1);
+            double titleX = RenderSystem.getWidth() * 0.5;
+            double titleY = RenderSystem.getHeight() * 0.5 + (coverSize - paneHeight * 0.225) / paneHeight * RenderSystem.getHeight();
+
+            fr.drawCenteredStringWithShadow(al.getName(), titleX, titleY, RGBA.white(alpha));
+
+            List<String> translatedNames = al.getTranslatedName();
+            if (translatedNames != null && !translatedNames.isEmpty()) {
+                CFontRenderer subtitle = FontManager.pf25;
+                subtitle.drawCenteredString(translatedNames.get(0), titleX, titleY + fr.getHeight() + 3, RGBA.color(185, 185, 192, (int) (190 * alpha)));
+            }
 
             this.setupProjectionTransformation();
         }
