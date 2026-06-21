@@ -1,7 +1,6 @@
 package tritium.widget.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
-import net.optifine.util.MathUtils;
 import tritium.ncm.music.CloudMusic;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
@@ -26,6 +25,8 @@ import tritium.widget.Widget;
 public class MusicLyricsWidget extends Widget {
 
     static double scrollOffset = 0;
+
+    private double fontH, lyricH;
 
     public ModeSetting<ScrollEffects> scrollEffects = new ModeSetting<>("Scroll Effects", ScrollEffects.Scroll);
     public ModeSetting<AlignMode> alignMode = new ModeSetting<>("Align Mode", AlignMode.Center);
@@ -88,8 +89,17 @@ public class MusicLyricsWidget extends Widget {
     public void onRender(boolean editing) {
 
         if (!shouldRender()) {
+            if (editing) {
+                renderEditingPlaceholder();
+            }
             return;
         }
+
+        this.setWidth(this.width.getValue().floatValue());
+        this.setHeight(this.height.getValue().floatValue());
+
+        this.fontH = getFontRenderer().getHeight();
+        this.lyricH = getLyricHeight();
 
         float songProgress = CloudMusic.player.getCurrentTimeMillis();
 
@@ -105,7 +115,7 @@ public class MusicLyricsWidget extends Widget {
 
         renderAllLyrics(shouldNotDisplayOtherLyrics, songProgress);
 
-        cleanupRender();
+        GlStateManager.popMatrix();
         StencilClipManager.endClip();
 
         if (ClientSettings.DEBUG_MODE.getValue()) {
@@ -142,14 +152,17 @@ public class MusicLyricsWidget extends Widget {
             if (CloudMusic.currentLyric == null) {
                 scrollOffset = 0;
             } else {
-                scrollOffset = Interpolations.interpolate(scrollOffset, (indexOf * getLyricHeight()), 0.2f);
+                scrollOffset = Interpolations.interpolate(scrollOffset, indexOf * lyricH, 0.2f);
             }
         }
     }
 
     private void renderAllLyrics(boolean shouldNotDisplayOtherLyrics, float songProgress) {
-        double offsetY = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0 - scrollOffset;
+        double offsetY = this.getY() + this.getHeight() / 2.0 - fontH / 2.0 - scrollOffset;
         int indexOf = CloudMusic.lyrics.indexOf(CloudMusic.currentLyric);
+
+        AlignMode alignMode = this.alignMode.getValue();
+        double pivotX = alignPivotX(alignMode);
 
         synchronized (CloudMusic.lyrics) {
             for (int i = 0; i < CloudMusic.lyrics.size(); i++) {
@@ -165,7 +178,7 @@ public class MusicLyricsWidget extends Widget {
                 );
 
                 if (renderInfo.shouldSkip) {
-                    offsetY += getLyricHeight();
+                    offsetY += lyricH;
                     continue;
                 }
 
@@ -175,15 +188,80 @@ public class MusicLyricsWidget extends Widget {
 
                 updateLyricAnimation(line, i == indexOf);
 
+                double focus = Math.max(0f, line.lineAlpha - 0.25f) / 0.75;
+                double scale = 1.0 + focus * 0.05;
+
+                GlStateManager.pushMatrix();
+                scaleAtPos(pivotX, renderInfo.yPosition + fontH * 0.5, scale);
+
                 renderLyricText(line, renderInfo, i, indexOf);
 
                 if (line == CloudMusic.currentLyric && !line.words.isEmpty()) {
                     handleScrollEffects(line, renderInfo, songProgress);
                 }
 
-                offsetY += getLyricHeight();
+                GlStateManager.popMatrix();
+
+                offsetY += lyricH;
             }
         }
+    }
+
+    private double alignPivotX(AlignMode alignMode) {
+        return switch (alignMode) {
+            case Left -> this.getX();
+            case Center -> this.getX() + this.getWidth() / 2.0;
+            case Right -> this.getX() + this.getWidth();
+        };
+    }
+
+    private double computeEdgeFade(double yPosition) {
+        double height = this.getHeight();
+        if (height <= 0) return 1.0;
+
+        double band = Math.min(height * 0.5, lyricH * 1.4);
+        if (band <= 0) return 1.0;
+
+        double cy = yPosition + fontH * 0.5;
+        double distance = Math.min(cy - this.getY(), this.getY() + height - cy);
+
+        return Easing.EASE_OUT_CUBIC.getFunction().apply(Mth.limit(distance / band, 0, 1));
+    }
+
+    private static int withFade(int color, double fade) {
+        if (fade >= 1.0) return color;
+        int alpha = (int) (((color >>> 24) & 0xFF) * Mth.limit(fade, 0, 1));
+        return RGBA.color(color & 0xFFFFFF, alpha);
+    }
+
+    private void renderEditingPlaceholder() {
+        this.setWidth(this.width.getValue().floatValue());
+        this.setHeight(this.height.getValue().floatValue());
+        this.fontH = getFontRenderer().getHeight();
+        this.lyricH = getLyricHeight();
+
+        AlignMode alignMode = this.alignMode.getValue();
+        double pivotX = alignPivotX(alignMode);
+        double centerY = this.getY() + this.getHeight() / 2.0 - fontH / 2.0;
+        String[] samples = {"Tritium Music", "正在播放歌词预览", "Now Playing Preview"};
+
+        GlStateManager.pushMatrix();
+        StencilClipManager.beginClip(() -> Rect.draw(this.getX() - 2, this.getY(), this.getWidth() + 4, this.getHeight(), -1));
+
+        for (int i = -1; i <= 1; i++) {
+            double y = centerY + i * lyricH;
+            double fade = computeEdgeFade(y);
+            int alpha = (int) ((i == 0 ? 1.0 : 0.25) * 255 * fade);
+            double scale = i == 0 ? 1.05 : 1.0;
+
+            GlStateManager.pushMatrix();
+            scaleAtPos(pivotX, y + fontH * 0.5, scale);
+            renderAlignedText(samples[i + 1], y, RGBA.color(255, 255, 255, alpha), alignMode);
+            GlStateManager.popMatrix();
+        }
+
+        StencilClipManager.endClip();
+        GlStateManager.popMatrix();
     }
 
     private LyricRenderInfo calculateLyricPosition(LyricLine line, int index, int currentIndex,
@@ -191,14 +269,14 @@ public class MusicLyricsWidget extends Widget {
         LyricRenderInfo info = new LyricRenderInfo();
 
         if (!singleLineMode) {
-            double dest = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0 +
-                    index * getLyricHeight() - (currentIndex * getLyricHeight());
+            double dest = this.getY() + this.getHeight() / 2.0 - fontH / 2.0 +
+                    index * lyricH - (currentIndex * lyricH);
 
             if (line.offsetY == Double.MIN_VALUE || Math.abs(line.offsetY - dest) > 100) {
                 line.offsetY = dest;
             }
 
-            if (line.offsetY + getLyricHeight() < this.getY()) {
+            if (line.offsetY + lyricH < this.getY()) {
                 info.shouldSkip = true;
                 line.offsetY = dest;
                 return info;
@@ -213,10 +291,11 @@ public class MusicLyricsWidget extends Widget {
 
             info.yPosition = this.graceScroll.getValue() ? line.offsetY : offsetY;
         } else {
-            info.yPosition = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0;
-            line.offsetY = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0;
+            info.yPosition = this.getY() + this.getHeight() / 2.0 - fontH / 2.0;
+            line.offsetY = info.yPosition;
         }
 
+        info.fade = computeEdgeFade(info.yPosition);
         return info;
     }
 
@@ -231,11 +310,11 @@ public class MusicLyricsWidget extends Widget {
         } catch (Exception ignored) {}
 
         if (prevLrc != null) {
-            double prevDest = this.getY() + this.getHeight() / 2.0 - getFontRenderer().getHeight() / 2.0 +
-                    (index - 1) * getLyricHeight() - (currentIndex * getLyricHeight());
+            double prevDest = this.getY() + this.getHeight() / 2.0 - fontH / 2.0 +
+                    (index - 1) * lyricH - (currentIndex * lyricH);
             double v = prevLrc.offsetY - prevDest;
 
-            if (v < MusicLyricsWidget.getLyricHeight() * 0.55f) {
+            if (v < lyricH * 0.55f) {
                 line.offsetY = Interpolations.interpolate(line.offsetY, dest, speed);
             }
         } else {
@@ -258,17 +337,15 @@ public class MusicLyricsWidget extends Widget {
         boolean shouldRender = !hasWords || !bSlideIn || index != currentIndex ||
                 this.alignMode.getValue() == AlignMode.Left;
 
-        int alpha = calculateAlpha(line, index, currentIndex, hasWords);
+        boolean isActive = index <= currentIndex;
+        int primaryColor = withFade(RGBA.color(255, 255, 255, calculateAlpha(line, index, currentIndex, hasWords)), renderInfo.fade);
+        int secondaryColor = withFade(RGBA.color(255, 255, 255, isActive ? (int) (line.lineAlpha * 255) : 100), renderInfo.fade);
 
         String secondaryLyric = hasSecondaryLyrics() ? getSecondaryLyrics(line) : "";
         boolean secondaryLyricEmpty = secondaryLyric.isEmpty();
 
-        Runnable renderTask = createRenderTask(
-                line, renderInfo, secondaryLyric, secondaryLyricEmpty,
-                shouldRender, alpha, index <= currentIndex
-        );
-
-        renderTask.run();
+        renderByAlignment(line, renderInfo, secondaryLyric, secondaryLyricEmpty,
+                shouldRender, primaryColor, secondaryColor);
     }
 
     private int calculateAlpha(LyricLine line, int index, int currentIndex, boolean hasWords) {
@@ -279,25 +356,12 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    private Runnable createRenderTask(LyricLine line, LyricRenderInfo renderInfo,
-                                      String secondaryLyric, boolean secondaryLyricEmpty,
-                                      boolean shouldRender, int alpha,
-                                      boolean isActive) {
-        return () -> {
-            int hexColor = RGBA.color(255, 255, 255, alpha);
-            int rgb = RGBA.color(255, 255, 255, isActive ? (int) (line.lineAlpha * 255) : 100);
-
-            renderByAlignment(line, renderInfo, secondaryLyric, secondaryLyricEmpty,
-                    shouldRender, hexColor, rgb);
-
-        };
-    }
-
     private void renderByAlignment(LyricLine line, LyricRenderInfo renderInfo,
                                    String secondaryLyric, boolean secondaryLyricEmpty,
                                    boolean shouldRender, int hexColor, int rgb) {
         AlignMode alignMode = this.alignMode.getValue();
         double y = renderInfo.yPosition;
+        double secondaryY = y + fontH + 2;
 
         switch (alignMode) {
             case Left:
@@ -305,8 +369,7 @@ public class MusicLyricsWidget extends Widget {
                     bigFrString(line.getLyric(), this.getX(), y, hexColor);
                 }
                 if (!secondaryLyricEmpty) {
-                    smallFrString(secondaryLyric, this.getX(),
-                            y + getFontRenderer().getHeight() + 2, rgb);
+                    smallFrString(secondaryLyric, this.getX(), secondaryY, rgb);
                 }
                 break;
             case Center:
@@ -315,8 +378,7 @@ public class MusicLyricsWidget extends Widget {
                     bigFrStringCentered(line.getLyric(), centerX, y, hexColor);
                 }
                 if (!secondaryLyricEmpty) {
-                    smallFrStringCentered(secondaryLyric, centerX,
-                            y + getFontRenderer().getHeight() + 2, rgb);
+                    smallFrStringCentered(secondaryLyric, centerX, secondaryY, rgb);
                 }
                 break;
             case Right:
@@ -327,7 +389,7 @@ public class MusicLyricsWidget extends Widget {
                 if (!secondaryLyricEmpty) {
                     smallFrString(secondaryLyric,
                             this.getX() + this.getWidth() - getSmallFontRenderer().getStringWidthD(secondaryLyric),
-                            y + getFontRenderer().getHeight() + 2, rgb);
+                            secondaryY, rgb);
                 }
                 break;
         }
@@ -361,11 +423,6 @@ public class MusicLyricsWidget extends Widget {
             info.textBefore.append(line.words.get(m).word);
         }
 
-        // calculate accumulated text
-        for (int m = 0; m < info.currentIndex + 1; m++) {
-            info.textAccumulated.append(line.words.get(m).word);
-        }
-
         return info;
     }
 
@@ -382,18 +439,10 @@ public class MusicLyricsWidget extends Widget {
     }
 
     private void renderScrollEffect(LyricLine line, LyricRenderInfo renderInfo, WordInfo wordInfo, float songProgress) {
-        ScrollEffects effectMode = this.scrollEffects.getValue();
-
-        switch (effectMode) {
-            case Scroll:
-                renderScrollMode(line, renderInfo);
-                break;
-            case FadeIn:
-                renderFadeInMode(line, renderInfo, wordInfo, songProgress);
-                break;
-            case SlideIn:
-                renderSlideInMode(line, renderInfo, wordInfo, songProgress);
-                break;
+        switch (this.scrollEffects.getValue()) {
+            case Scroll -> renderScrollMode(line, renderInfo);
+            case FadeIn -> renderFadeInMode(line, renderInfo, wordInfo, songProgress);
+            case SlideIn -> renderSlideInMode(line, renderInfo, wordInfo, songProgress);
         }
     }
 
@@ -401,78 +450,61 @@ public class MusicLyricsWidget extends Widget {
         AlignMode alignMode = this.alignMode.getValue();
         double x = calculateAlignmentX(line.getLyric(), alignMode);
 
-        StencilClipManager.beginClip(() -> Rect.draw(x, renderInfo.yPosition, line.scrollWidth + 1, getFontRenderer().getHeight() + 4, -1));
+        StencilClipManager.beginClip(() -> Rect.draw(x, renderInfo.yPosition, line.scrollWidth + 1, fontH + 4, -1));
 
-        renderAlignedText(line.getLyric(), renderInfo.yPosition, -1, alignMode);
+        renderAlignedText(line.getLyric(), renderInfo.yPosition, withFade(-1, renderInfo.fade), alignMode);
 
         StencilClipManager.endClip();
     }
 
     private void renderFadeInMode(LyricLine line, LyricRenderInfo renderInfo, WordInfo wordInfo, float songProgress) {
-        AlignMode alignMode = this.alignMode.getValue();
+        double offsetX = calculateAlignmentX(line.getLyric(), this.alignMode.getValue());
 
-        double offsetX = calculateAlignmentX(line.getLyric(), alignMode);
-        for (int m = 0; m < wordInfo.currentIndex + 1; m++) {
+        for (int m = 0; m <= wordInfo.currentIndex; m++) {
             LyricLine.Word word = line.words.get(m);
-            String wordText = word.word;
 
             if (m == wordInfo.currentIndex) {
-                updateCurrentWordAnimation(word, line, wordInfo.currentIndex, songProgress);
-            } else if (m < wordInfo.currentIndex) {
+                updateCurrentWordAnimation(word, songProgress);
+            } else {
                 word.alpha = 1;
             }
 
-            double stWidth = getFontRenderer().getStringWidthD(wordText);
-            bigFrString(wordText, offsetX, renderInfo.yPosition,
-                    RGBA.color(255, 255, 255, (int) (word.alpha * 255)));
+            bigFrString(word.word, offsetX, renderInfo.yPosition,
+                    RGBA.color(255, 255, 255, (int) (word.alpha * 255 * renderInfo.fade)));
 
-            offsetX += stWidth;
+            offsetX += getFontRenderer().getStringWidthD(word.word);
         }
     }
 
     private void renderSlideInMode(LyricLine line, LyricRenderInfo renderInfo, WordInfo wordInfo, float songProgress) {
-        AlignMode alignMode = this.alignMode.getValue();
+        double offsetX = calculateSlideInTargetX(line, this.alignMode.getValue());
+        double targetOffsetX = 0;
 
-        double targetX = calculateSlideInTargetX(line, alignMode);
+        for (int m = 0; m <= wordInfo.currentIndex; m++) {
+            LyricLine.Word word = line.words.get(m);
+            double stWidth = getFontRenderer().getStringWidthD(word.word);
 
-        Runnable renderTask = () -> {
-            double offsetX = targetX;
-            double targetOffsetX = 0;
-
-            for (int m = 0; m < wordInfo.currentIndex + 1; m++) {
-                LyricLine.Word word = line.words.get(m);
-                String wordText = word.word;
-                double stWidth = getFontRenderer().getStringWidthD(wordText);
-
-                if (m == wordInfo.currentIndex) {
-                    updateCurrentWordAnimation(word, line, wordInfo.currentIndex, songProgress);
-
-                    Easing easeInOutQuad = Easing.EASE_OUT_CUBIC;
-                    targetOffsetX += stWidth * easeInOutQuad.getFunction().apply(word.progress);
-                } else if (m < wordInfo.currentIndex) {
-                    word.alpha = 1;
-                    targetOffsetX += stWidth;
-                }
-
-                bigFrString(wordText, offsetX, renderInfo.yPosition,
-                        RGBA.color(255, 255, 255, (int) (word.alpha * 255)));
-
-                offsetX += stWidth;
+            if (m == wordInfo.currentIndex) {
+                updateCurrentWordAnimation(word, songProgress);
+                targetOffsetX += stWidth * Easing.EASE_OUT_CUBIC.getFunction().apply(word.progress);
+            } else {
+                word.alpha = 1;
+                targetOffsetX += stWidth;
             }
 
-            line.targetOffsetX = targetOffsetX;
-        };
+            bigFrString(word.word, offsetX, renderInfo.yPosition,
+                    RGBA.color(255, 255, 255, (int) (word.alpha * 255 * renderInfo.fade)));
 
-        renderTask.run();
+            offsetX += stWidth;
+        }
+
+        line.targetOffsetX = targetOffsetX;
     }
 
-    private void updateCurrentWordAnimation(LyricLine.Word word, LyricLine line,
-                                            int currentIndex, float songProgress) {
-        double perc = Mth.limit((songProgress - word.timestamp) / (double) (word.duration), 0, 1);
-        double clamped = Math.max(0, Math.min(1, perc));
-
-        word.progress = Interpolations.interpolate(word.progress, clamped, 1);
-        word.alpha = (float) Math.min(1, clamped * 1.25f);
+    private void updateCurrentWordAnimation(LyricLine.Word word, float songProgress) {
+        double progress = Mth.limit((songProgress - word.timestamp) / (double) word.duration, 0, 1);
+        word.progress = progress;
+        word.alpha = (float) Math.min(1, progress * 1.25f);
     }
 
     private double calculateAlignmentX(String text, AlignMode alignMode) {
@@ -505,14 +537,9 @@ public class MusicLyricsWidget extends Widget {
         }
     }
 
-    private void cleanupRender() {
-        GlStateManager.popMatrix();
-        this.setWidth(this.width.getValue().floatValue());
-        this.setHeight(this.height.getValue().floatValue());
-    }
-
     private static class LyricRenderInfo {
         double yPosition;
+        double fade = 1.0;
         boolean shouldSkip = false;
         boolean shouldBreak = false;
     }
@@ -520,7 +547,6 @@ public class MusicLyricsWidget extends Widget {
     private static class WordInfo {
         int currentIndex = 0;
         StringBuilder textBefore = new StringBuilder();
-        StringBuilder textAccumulated = new StringBuilder();
     }
 
     private static CFontRenderer getFontRenderer() {
@@ -561,20 +587,6 @@ public class MusicLyricsWidget extends Widget {
         } else {
             getSmallFontRenderer().drawCenteredString(text, x, y, color);
         }
-    }
-
-    private static LyricLine.Word getPrevWord(int cur, int j, LyricLine line) {
-        LyricLine.Word prev;
-        if (cur - 1 < 0) {
-            if (j - 1 < 0) {
-                prev = line.words.getFirst();
-            } else {
-                prev = CloudMusic.lyrics.get(j - 1).words.getLast();
-            }
-        } else {
-            prev = line.words.get(cur - 1);
-        }
-        return prev;
     }
 
 }
