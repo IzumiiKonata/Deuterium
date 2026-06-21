@@ -30,8 +30,8 @@ public class ControlsBar extends NCMPanel {
 
         this.addChild(bg);
 
-        bg.setColor(0xFF1D1D1D)
-          .setAlpha(.95f)
+        bg.setColor(NCMScreen.getColor(NCMScreen.ColorType.GENERIC_BACKGROUND))
+          .setAlpha(.96f)
           .setBeforeRenderCallback(() -> bg.setMargin(0));
 
         RoundedImageWidget playingCover = new RoundedImageWidget(() -> {
@@ -155,7 +155,8 @@ public class ControlsBar extends NCMPanel {
         this.addChild(progressBarBg);
 
         progressBarBg
-                .setColor(Color.GRAY)
+                .setColor(0xFFFFFFFF)
+                .setAlpha(0.2f)
                 .setRadius(1)
                 .setBounds(135, 3)
                 .setShouldOverrideMouseCursor(true)

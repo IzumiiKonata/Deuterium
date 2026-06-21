@@ -67,6 +67,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
     boolean progressBarDragging = false;
     double progressBarProgressOverride = 0;
     double progressBarHeight = 8, volumeBarHeight = 8;
+    double progressThumbAlpha = 0, volumeThumbAlpha = 0;
 
     boolean prevMouse = false;
 
@@ -325,6 +326,11 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         double lyricRenderOffsetX = RenderSystem.getWidth() * .48;
 
+        double dividerX = lyricRenderOffsetX - 32;
+        double dividerMidY = posY + height * 0.5;
+        RenderSystem.drawGradientRectTopToBottom(dividerX, posY + height * 0.16, dividerX + 1, dividerMidY, hexColor(1f, 1f, 1f, 0f), hexColor(1f, 1f, 1f, alpha * 0.06f));
+        RenderSystem.drawGradientRectTopToBottom(dividerX, dividerMidY, dividerX + 1, posY + height * 0.84, hexColor(1f, 1f, 1f, alpha * 0.06f), hexColor(1f, 1f, 1f, 0f));
+
         LyricLine currentLyric = progressBarDragging ? CloudMusic.findCurrentLyric(overridePlaybackProgress) : CloudMusic.currentLyric;
         int currentIndex = CloudMusic.lyrics.indexOf(currentLyric);
 
@@ -402,7 +408,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                             FontManager.pf65bold.drawString(word.word, renderX, renderY - word.emphasizes[0], hexColor(1, 1, 1, alpha * .5f));
                         }
                     } else {
-                        FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .5f));
+                        FontManager.pf65bold.drawString(word.word, renderX, renderY, hexColor(1, 1, 1, alpha * .35f));
                     }
 
                     if (currentIndex - k <= 1) {
@@ -546,7 +552,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 String[] strings = FontManager.pf65bold.fitWidth(lyric.lyric, lyricsWidth);
 
                 for (String string : strings) {
-                    FontManager.pf65bold.drawString(string, renderX, renderY, hexColor(1, 1, 1, alpha * ((lyric.alpha * .6f) + .4f)));
+                    FontManager.pf65bold.drawString(string, renderX, renderY, hexColor(1, 1, 1, alpha * ((lyric.alpha * .7f) + .3f)));
                     renderY += FontManager.pf65bold.getHeight() * .85 + 4;
                 }
 
@@ -678,7 +684,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             coverBloomShader = new BloomShader();
 
         coverBloomShader.run(Collections.singletonList(() -> {
-            this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, -.5, 0, 0, 0, alpha * .4f);
+            this.roundedRect(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc - 2, -.5, 0, 0, 0, alpha * .4f);
         }));
         GlStateManager.popMatrix();
 
@@ -699,6 +705,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             this.roundedRectTextured(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc, alpha * coverAlpha);
         }
 
+//        this.roundedOutline(center - coverSize * .5 + xOffset, center - coverSize * .575, coverSize, coverSize, coverRadius * coverSizePerc + 1, 1.5, new Color(1f, 1f, 1f, alpha * .12f));
+
         double elementsXOffset = center - this.getCoverSizeMax() * .5 + xOffset;
         double elementsYOffset = center + this.getCoverSizeMax() * .45 + 8;
 
@@ -709,7 +717,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         double progressBarYOffset = elementsYOffset + FontManager.pf20bold.getHeight() + 8 + FontManager.pf20bold.getHeight() + 8;
         double progressBarWidth = this.getCoverSizeMax();
 
-        roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha * .5f));
+        roundedRect(elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, progressBarHeight, (this.progressBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha * .22f));
 
         float currentTimeMillis = player == null ? 0 : player.getCurrentTimeMillis();
         float totalTimeMillis = player == null ? 0.01f : player.getTotalTimeMillis();
@@ -722,6 +730,13 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
         boolean hoveringProgressBar = progressBarDragging || this.isHovered(mouseX, mouseY, elementsXOffset, progressBarYOffset - progressBarHeight * .5, progressBarWidth, 8);
         this.progressBarHeight = Interpolations.interpolate(this.progressBarHeight, hoveringProgressBar ? 8 : 5, 0.3f);
+
+        this.progressThumbAlpha = Interpolations.interpolate(this.progressThumbAlpha, hoveringProgressBar ? 1.0 : 0.0, 0.25f);
+        if (this.progressThumbAlpha > 0.01) {
+            double thumbR = 5.5;
+            double thumbX = elementsXOffset + progressBarWidth * perc;
+            roundedRect(thumbX - thumbR, progressBarYOffset - thumbR, thumbR * 2, thumbR * 2, thumbR, hexColor(1f, 1f, 1f, (float) (alpha * this.progressThumbAlpha)));
+        }
 
         boolean lmbDown = Mouse.isButtonDown(0);
         if (hoveringProgressBar && lmbDown && !prevMouse) {
@@ -769,13 +784,21 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         FontManager.music40.drawString("J", elementsXOffset + progressBarWidth - FontManager.music40.getStringWidthD("J") + 4, volumeIconY, hexColor(1, 1, 1, alpha * .5f));
 
         double volumeBarXOffset = elementsXOffset + FontManager.music40.getStringWidthD("I") - 2;
-        roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha * .5f));
+        roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha * .22f));
         StencilClipManager.beginClip(() -> Rect.draw(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth * (player == null ? 0 : player.getVolume()), volumeBarHeight, -1));
         roundedRect(volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, volumeBarHeight, (this.volumeBarHeight / 8.0f) * 2.5, hexColor(1, 1, 1, alpha));
         StencilClipManager.endClip();
 
         boolean hoveringVolumeBar = this.isHovered(mouseX, mouseY, volumeBarXOffset, volumeBarYOffset - volumeBarHeight * .5, volumeBarWidth, 8);
         this.volumeBarHeight = Interpolations.interpolate(this.volumeBarHeight, hoveringVolumeBar ? 8 : 5, 0.3f);
+
+        this.volumeThumbAlpha = Interpolations.interpolate(this.volumeThumbAlpha, hoveringVolumeBar ? 1.0 : 0.0, 0.25f);
+        if (this.volumeThumbAlpha > 0.01) {
+            double thumbR = 5.0;
+            double thumbX = volumeBarXOffset + volumeBarWidth * (player == null ? 0 : player.getVolume());
+            roundedRect(thumbX - thumbR, volumeBarYOffset - thumbR, thumbR * 2, thumbR * 2, thumbR, hexColor(1f, 1f, 1f, (float) (alpha * this.volumeThumbAlpha)));
+        }
+
         if (hoveringVolumeBar && lmbDown) {
             double xDelta = Math.max(0, Math.min(volumeBarWidth, (mouseX - (volumeBarXOffset))));
             double percent = xDelta / volumeBarWidth;
@@ -931,7 +954,15 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             GlStateManager.popMatrix();
         }
 
-        Rect.draw(posX, posY, width, height, hexColor(0, 0, 0, alpha * .35f));
+        Rect.draw(posX, posY, width, height, hexColor(0f, 0f, 0f, alpha * .42f));
+
+        double fadeH = height * 0.22;
+        RenderSystem.drawGradientRectTopToBottom(posX, posY, posX + width, posY + fadeH, hexColor(0f, 0f, 0f, alpha * .5f), hexColor(0f, 0f, 0f, 0f));
+        RenderSystem.drawGradientRectTopToBottom(posX, posY + height - fadeH, posX + width, posY + height, hexColor(0f, 0f, 0f, 0f), hexColor(0f, 0f, 0f, alpha * .55f));
+
+        double sideW = width * 0.16;
+        RenderSystem.drawGradientRectLeftToRight(posX, posY, posX + sideW, posY + height, hexColor(0f, 0f, 0f, alpha * .35f), hexColor(0f, 0f, 0f, 0f));
+        RenderSystem.drawGradientRectLeftToRight(posX + width - sideW, posY, posX + width, posY + height, hexColor(0f, 0f, 0f, 0f), hexColor(0f, 0f, 0f, alpha * .35f));
     }
 
     private float calculateLowFrequencyEnergy() {

@@ -110,7 +110,7 @@ public class NCMScreen extends BaseScreen {
 
         this.currentPanelBg.setBeforeRenderCallback(() -> {
             this.currentPanelBg.setBounds(playlistsPanel.getWidth(), 0, this.currentPanelBg.getParentWidth() - playlistsPanel.getWidth(), this.getPanelHeight() * 0.93);
-            this.currentPanelBg.setColor(getColor(ColorType.GENERIC_BACKGROUND));
+            this.currentPanelBg.setColor(getColor(ColorType.ELEMENT_BACKGROUND));
         });
 
         this.controlsBar = new ControlsBar();
@@ -143,6 +143,12 @@ public class NCMScreen extends BaseScreen {
         this.checkDirty();
 
         int dWheel = Mouse.getDWheel();
+
+        double screenW = RenderSystem.getWidth(), screenH = RenderSystem.getHeight();
+        Rect.draw(0, 0, screenW, screenH, hexColor(0f, 0f, 0f, alpha * 0.55f));
+        double vignetteH = screenH * 0.35;
+        RenderSystem.drawGradientRectTopToBottom(0, 0, screenW, vignetteH, hexColor(0f, 0f, 0f, alpha * 0.28f), hexColor(0f, 0f, 0f, 0f));
+        RenderSystem.drawGradientRectTopToBottom(0, screenH - vignetteH, screenW, screenH, hexColor(0f, 0f, 0f, 0f), hexColor(0f, 0f, 0f, alpha * 0.32f));
 
         GlStateManager.pushMatrix();
         this.scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 0.9 + (alpha * 0.1));
@@ -184,6 +190,11 @@ public class NCMScreen extends BaseScreen {
             this.controlsBar.setAlpha(alpha);
             this.controlsBar.setBounds(this.currentPanelBg.getX(), this.currentPanelBg.getY() + this.currentPanelBg.getHeight(), this.currentPanelBg.getWidth(), this.getPanelHeight() - this.currentPanelBg.getHeight());
             this.controlsBar.renderWidget(mouseX, mouseY, dWheel);
+
+            int hairline = hexColor(1f, 1f, 1f, alpha * 0.05f);
+            double sepX = this.currentPanelBg.getX();
+            Rect.draw(sepX, this.basePanel.getY(), 1, this.basePanel.getHeight(), hairline);
+            Rect.draw(sepX, this.currentPanelBg.getY() + this.currentPanelBg.getHeight(), this.currentPanelBg.getWidth(), 1, hairline);
         }
 
         if (this.musicLyricsPanel != null) {
@@ -372,11 +383,11 @@ public class NCMScreen extends BaseScreen {
     public static int getColor(ColorType type) {
 
         return switch (type) {
-            case GENERIC_BACKGROUND -> 0x1E1E1E;
-            case ELEMENT_BACKGROUND -> 0x232323;
-            case ELEMENT_HOVER -> 0x353535;
-            case PRIMARY_TEXT -> 0xFFFFFF;
-            case SECONDARY_TEXT -> 0x6B6B6B;
+            case GENERIC_BACKGROUND -> 0x0E0F12;
+            case ELEMENT_BACKGROUND -> 0x16171B;
+            case ELEMENT_HOVER -> 0x24262C;
+            case PRIMARY_TEXT -> 0xF2F3F5;
+            case SECONDARY_TEXT -> 0x8A8D94;
         };
 
     }

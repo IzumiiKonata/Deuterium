@@ -127,12 +127,13 @@ public class StencilClipManager {
 
     // 清除模板缓冲区
     public static void clear() {
-        clipBufferStack.clear();
-
         Framebuffer fb = Framebuffer.currentlyBinding;
         if (fb != null) {
             fb.currentStencilValue = 0;
             fb.stencilStack.clear();
+            clipBufferStack.removeIf(f -> f == fb);
+        } else {
+            clipBufferStack.clear();
         }
     }
 }
