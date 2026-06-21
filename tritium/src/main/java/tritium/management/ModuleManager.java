@@ -54,6 +54,7 @@ public class ModuleManager extends AbstractManager {
     public static final BowZoom bowZoom = new BowZoom();
     public static final OldAnimation oldAnimation = new OldAnimation();
     public static final OpenNCMScreen openNCMScreen = new OpenNCMScreen();
+    public static final OpenNSFScreen openNSFScreen = new OpenNSFScreen();
 
     // MOVEMENT
     public static final AutoSprint autoSprint = new AutoSprint();

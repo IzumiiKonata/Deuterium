@@ -79,6 +79,8 @@
     "module.chroma.name": "Chroma",
     "module.arraylistoutlinecolor.name": "Outline Color",
     "module.ncm screen.name": "Music Player",
+    "module.nsf screen.name": "NSF Player",
+    "module.nsf screen.desc": "Plays .nsf chiptune music with a per-channel oscilloscope.",
 
     "module.autosprint.name": "Auto Sprint",
     "module.autosprint.desc": "Makes you sprint automatically",
