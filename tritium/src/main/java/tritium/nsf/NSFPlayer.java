@@ -16,6 +16,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import static tritium.zdream.nsfplayer.core.INsfChannelCode.*;
+
 public class NSFPlayer {
 
     private static final int RING_SIZE = 16384;
