@@ -96,9 +96,12 @@ public class XgmMultiSoundMixer extends AbstractNsfSoundMixer<AbstractXgmAudioCh
 	public void setTriangleSmoothing(int factor) {
 		this.triSmooth = Math.max(1, factor);
 		for (AbstractXgmMultiMixer multi : multiList) {
-			if (multi instanceof Xgm2A07Mixer) {
-				((Xgm2A07Mixer) multi).setTriDivisor(triSmooth);
-			}
+            switch (multi) {
+                case Xgm2A07Mixer xgm2A07Mixer -> xgm2A07Mixer.setTriDivisor(triSmooth);
+                case XgmVRC6Mixer xgmVRC6Mixer -> xgmVRC6Mixer.setSawSmoothing(triSmooth != 1);
+                default -> {
+                }
+            }
 		}
 	}
 
@@ -299,6 +302,8 @@ public class XgmMultiSoundMixer extends AbstractNsfSoundMixer<AbstractXgmAudioCh
 			} else if (multi instanceof Xgm2A07Mixer) {
 				((Xgm2A07Mixer) multi).setLinearMixing(linearMixing);
 				((Xgm2A07Mixer) multi).setTriDivisor(triSmooth);
+			} else if (multi instanceof XgmVRC6Mixer) {
+				((XgmVRC6Mixer) multi).setSawSmoothing(triSmooth != 1);
 			}
 		}
 

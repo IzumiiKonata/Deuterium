@@ -1,5 +1,8 @@
 package tritium.zdream.nsfplayer.mixer.xgm;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * VRC6 三个轨道的合并轨道
  * 
@@ -11,6 +14,10 @@ public class XgmVRC6Mixer extends AbstractXgmMultiMixer {
 	final XgmLinearChannel pulse1, pulse2, sawtooth;
 	private boolean enable1, enable2, enableSaw;
 	private final int MASTER = (int) (256.0 * 1223.0 / 1920.0); // 163.067
+
+	@Getter
+	@Setter
+	private boolean sawSmoothing = false;
 
 	public XgmVRC6Mixer() {
 		pulse1 = new XgmLinearChannel();
@@ -82,7 +89,7 @@ public class XgmVRC6Mixer extends AbstractXgmMultiMixer {
 	public int render(int index) {
 		float sum = (enable1 ? pulse1.read(index) * pulse1.getLevel() : 0)
 				+ (enable2 ? pulse2.read(index) * pulse2.getLevel() : 0)
-				+ (enableSaw ? sawtooth.read(index) * sawtooth.getLevel() : 0);
+				+ (enableSaw ? sawtooth.read(index) * sawtooth.getLevel() / (this.sawSmoothing ? 8.0f : 1.0f) : 0);
 		int value = (int) (sum * MASTER) >> 1;
 		value = intercept(value, 1);
 		return value;

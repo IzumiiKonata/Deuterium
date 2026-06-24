@@ -9,6 +9,7 @@ import tritium.zdream.nsfplayer.nsf.renderer.NsfRenderer;
 import tritium.zdream.nsfplayer.nsf.renderer.NsfRendererConfig;
 import tritium.zdream.nsfplayer.sound.AbstractNsfSound;
 import tritium.zdream.nsfplayer.sound.SoundTriangle;
+import tritium.zdream.nsfplayer.sound.SoundVRC6Sawtooth;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -165,9 +166,12 @@ public class NSFPlayer {
             mix.setEchoEnabled(echoEnabled);
         }
 
-        AbstractNsfSound tri = renderer.getSound(CHANNEL_2A03_TRIANGLE);
-        if (tri instanceof SoundTriangle) {
-            ((SoundTriangle) tri).setSmoothSteps(triangleMoreSteps ? TRIANGLE_SMOOTH_FACTOR : 1);
+        if (renderer.getSound(CHANNEL_2A03_TRIANGLE) instanceof SoundTriangle tri) {
+            tri.setSmoothSteps(triangleMoreSteps ? TRIANGLE_SMOOTH_FACTOR : 1);
+        }
+
+        if (renderer.getSound(CHANNEL_VRC6_SAWTOOTH) instanceof SoundVRC6Sawtooth saw) {
+            saw.setSmoothSteps(triangleMoreSteps);
         }
     }
 

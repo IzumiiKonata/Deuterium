@@ -185,7 +185,7 @@ public class NSFPlayerScreen extends BaseScreen {
         CFontRenderer tf = FontManager.pf12bold;
         double pad = 14;
         double linW = tf.getStringWidth("线性混音") + pad;
-        double triW = tf.getStringWidth("三角波平滑") + pad;
+        double triW = tf.getStringWidth("三角波/锯齿波平滑") + pad;
         double echoW = tf.getStringWidth("混响") + pad;
 
         browseBtn.set(rightX - browseW, cy, browseW, bh);
@@ -205,7 +205,7 @@ public class NSFPlayerScreen extends BaseScreen {
         }
 
         drawToggle(linearMixBtn, "线性混音", player.isLinearMixing(), mouseX, mouseY);
-        drawToggle(triStepsBtn, "三角波平滑", player.isTriangleMoreSteps(), mouseX, mouseY);
+        drawToggle(triStepsBtn, "三角波/锯齿波平滑", player.isTriangleMoreSteps(), mouseX, mouseY);
         drawToggle(echoBtn, "混响", player.isEchoEnabled(), mouseX, mouseY);
         drawButton(browseBtn, "浏览...", mouseX, mouseY, true);
     }

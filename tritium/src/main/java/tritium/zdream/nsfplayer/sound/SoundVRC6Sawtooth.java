@@ -1,5 +1,7 @@
 package tritium.zdream.nsfplayer.sound;
 
+import lombok.Setter;
+
 /**
  * VRC6 锯齿形轨道的发声器
  * 
@@ -58,8 +60,11 @@ public class SoundVRC6Sawtooth extends SoundVRC6 {
 	/**
 	 * 计算音像的振幅参数
 	 */
-	private int phaseAccumulator;
-	
+	private double phaseAccumulator;
+
+	@Setter
+	private boolean smoothSteps;
+
 	/* **********
 	 * 公共方法 *
 	 ********** */
@@ -84,27 +89,65 @@ public class SoundVRC6Sawtooth extends SoundVRC6 {
 			return;
 		}
 
-		while (time >= counter) {
-			time -= counter;
-			this.time += counter;
-			counter = period + 1;
+		if (smoothSteps) {
 
-			if ((cycleCounter & 1) != 0)
-				phaseAccumulator = (phaseAccumulator + volume) & 0xFF;
-
-			cycleCounter++;
-
-			if (cycleCounter == 14) {
-				phaseAccumulator = 0;
-				cycleCounter = 0;
+			if (counter <= 0) {
+				counter = period + 1;
 			}
 
-			// The 5 highest bits of accumulator are sent to the mixer
-			mix(phaseAccumulator >> 3);
+			double stepIncrement = (double) volume / (2.0 * (period + 1));
+
+			while (time > 0) {
+				int cyclesToSimulate = Math.min(time, counter);
+
+				for (int i = 0; i < cyclesToSimulate; i++) {
+					phaseAccumulator += stepIncrement;
+
+					if (phaseAccumulator >= 256.0) {
+						phaseAccumulator -= 256.0;
+					}
+
+					counter--;
+					this.time++;
+					time--;
+
+					if (counter == 0) {
+						counter = period + 1;
+						cycleCounter++;
+						if (cycleCounter >= 14) {
+							phaseAccumulator = 0;
+							cycleCounter = 0;
+						}
+					}
+
+					mix((int) phaseAccumulator);
+				}
+			}
+		} else {
+			while (time >= counter) {
+				time -= counter;
+				this.time += counter;
+				counter = period + 1;
+
+				if ((cycleCounter & 1) != 0) {
+					// 转换为 int 运算后模拟 8 位溢出，再存回 double
+					int acc = (int) phaseAccumulator;
+					phaseAccumulator = (acc + volume) & 0xFF;
+				}
+
+				cycleCounter++;
+
+				if (cycleCounter >= 14) {
+					phaseAccumulator = 0;
+					cycleCounter = 0;
+				}
+
+				// 模拟原版 5 位 DAC 输出
+				mix((int) phaseAccumulator >> 3);
+			}
+
+			counter -= time;
+			this.time += time;
 		}
-
-		counter -= time;
-		this.time += time;
 	}
-
 }
