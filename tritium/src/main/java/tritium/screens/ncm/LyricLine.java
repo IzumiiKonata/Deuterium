@@ -55,6 +55,7 @@ public class LyricLine {
     public double offsetX = 0;
     public double targetOffsetX = 0;
     public float lineAlpha = .4f;
+    public float auroraGlow = 0f;
 
     public double offsetY = Double.MIN_VALUE;
 

@@ -1,9 +1,11 @@
 package tritium.widget.impl;
 
 import net.minecraft.client.renderer.GlStateManager;
+import tritium.ncm.music.AudioPlayer;
 import tritium.ncm.music.CloudMusic;
 import tritium.management.FontManager;
 import tritium.management.WidgetsManager;
+import tritium.rendering.HSBColor;
 import tritium.rendering.RGBA;
 import tritium.rendering.StencilClipManager;
 import tritium.rendering.animation.Easing;
@@ -13,6 +15,7 @@ import tritium.rendering.font.CFontRenderer;
 import tritium.screens.ncm.LyricLine;
 import tritium.settings.BooleanSetting;
 import tritium.settings.ClientSettings;
+import tritium.settings.ColorSetting;
 import tritium.settings.ModeSetting;
 import tritium.settings.NumberSetting;
 import tritium.utils.math.Mth;
@@ -34,7 +37,8 @@ public class MusicLyricsWidget extends Widget {
     public enum ScrollEffects {
         Scroll,
         FadeIn,
-        SlideIn
+        SlideIn,
+        Aurora
     }
 
     public enum AlignMode {
@@ -52,6 +56,14 @@ public class MusicLyricsWidget extends Widget {
     public BooleanSetting showTranslation = new BooleanSetting("Show Translation", true);
     public BooleanSetting graceScroll = new BooleanSetting("Elegant Scrolling", true);
     public BooleanSetting showRoman = new BooleanSetting("Show Romanization in Japanese songs", false);
+
+    public ColorSetting glowColor = new ColorSetting("Glow Color", new HSBColor(140, 215, 255, 255), () -> scrollEffects.getValue() == ScrollEffects.Aurora);
+    public BooleanSetting auroraBloom = new BooleanSetting("Aurora Glow", true, () -> scrollEffects.getValue() == ScrollEffects.Aurora);
+    public BooleanSetting auroraSpark = new BooleanSetting("Aurora Spark", true, () -> scrollEffects.getValue() == ScrollEffects.Aurora);
+    public BooleanSetting audioReactive = new BooleanSetting("Audio Reactive", true, () -> scrollEffects.getValue() == ScrollEffects.Aurora);
+    public NumberSetting<Double> auroraUnsungOpacity = new NumberSetting<>("Unsung Opacity", 0.35, 0.0, 1.0, 0.05, () -> scrollEffects.getValue() == ScrollEffects.Aurora);
+
+    private double auroraEnergy = 0;
 
     public MusicLyricsWidget() {
         super("MusicLyrics");
@@ -194,6 +206,10 @@ public class MusicLyricsWidget extends Widget {
                 GlStateManager.pushMatrix();
                 scaleAtPos(pivotX, renderInfo.yPosition + fontH * 0.5, scale);
 
+                if (this.scrollEffects.getValue() == ScrollEffects.Aurora && !line.words.isEmpty()) {
+                    updateAuroraLinger(line, renderInfo, line == CloudMusic.currentLyric);
+                }
+
                 renderLyricText(line, renderInfo, i, indexOf);
 
                 if (line == CloudMusic.currentLyric && !line.words.isEmpty()) {
@@ -333,9 +349,11 @@ public class MusicLyricsWidget extends Widget {
     private void renderLyricText(LyricLine line, LyricRenderInfo renderInfo,
                                  int index, int currentIndex) {
         boolean hasWords = !line.words.isEmpty();
-        boolean bSlideIn = this.scrollEffects.getValue() == ScrollEffects.SlideIn;
-        boolean shouldRender = !hasWords || !bSlideIn || index != currentIndex ||
-                this.alignMode.getValue() == AlignMode.Left;
+        ScrollEffects effect = this.scrollEffects.getValue();
+        boolean isCurrent = index == currentIndex;
+        boolean slideInSelf = hasWords && effect == ScrollEffects.SlideIn && isCurrent && this.alignMode.getValue() != AlignMode.Left;
+        boolean auroraSelf = hasWords && effect == ScrollEffects.Aurora && isCurrent;
+        boolean shouldRender = !(slideInSelf || auroraSelf);
 
         boolean isActive = index <= currentIndex;
         int primaryColor = withFade(RGBA.color(255, 255, 255, calculateAlpha(line, index, currentIndex, hasWords)), renderInfo.fade);
@@ -443,7 +461,177 @@ public class MusicLyricsWidget extends Widget {
             case Scroll -> renderScrollMode(line, renderInfo);
             case FadeIn -> renderFadeInMode(line, renderInfo, wordInfo, songProgress);
             case SlideIn -> renderSlideInMode(line, renderInfo, wordInfo, songProgress);
+            case Aurora -> renderAuroraMode(line, renderInfo);
         }
+    }
+
+    private void renderAuroraMode(LyricLine line, LyricRenderInfo renderInfo) {
+        CFontRenderer fr = getFontRenderer();
+        String text = line.getLyric();
+        if (text.isEmpty()) return;
+
+        double leftX = calculateAlignmentX(text, this.alignMode.getValue());
+        double baseY = renderInfo.yPosition;
+        double fade = renderInfo.fade;
+
+        double lineWidth = fr.getStringWidthD(text);
+        double sungTotal = computeSungTotal(fr, line);
+        double sweep = sungTotal > 0 ? Mth.limit(line.scrollWidth / sungTotal, 0.0, 1.0) : 0.0;
+        double headX = leftX + sweep * lineWidth;
+
+        double rawEnergy = this.audioReactive.getValue() ? lowFrequencyEnergy() : 0.0;
+        auroraEnergy = Interpolations.interpolate(auroraEnergy, rawEnergy, 0.25);
+        double beat = auroraEnergy;
+
+        double liftAmount = fontH * (0.10 + beat * 0.05);
+        double waveSigma = Math.max(10.0, fontH * 1.1);
+        double maxCharScale = 0.11 + beat * 0.05;
+
+        if (this.auroraBloom.getValue() && ClientSettings.RENDER_GLOW.getValue()) {
+            renderAuroraGlow(fr, text, leftX, baseY, headX, fade, beat, line.auroraGlow);
+        }
+
+        double unsung = this.auroraUnsungOpacity.getValue();
+
+        char[] chars = text.toCharArray();
+        double x = leftX;
+
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            char next = i + 1 < chars.length ? chars[i + 1] : '\0';
+            double cw = fr.getCharWidth(c, next);
+
+            double reveal = Mth.limit((headX - x) / Math.max(1.0E-3, cw), 0.0, 1.0);
+            double charAlpha = (unsung + (1.0 - unsung) * reveal) * fade;
+
+            if (charAlpha > 0.003) {
+                double cx = x + cw * 0.5;
+                double d = headX - cx;
+                double wave = Math.exp(-(d * d) / (2.0 * waveSigma * waveSigma));
+                double lift = wave * liftAmount;
+                double charScale = 1.0 + wave * maxCharScale;
+
+                int accent = RGBA.opaque(this.glowColor.getRGB(i * 0.2, 255));
+                int tinted = RGBA.srgbLerp((float) (wave * 0.55), 0xFFFFFFFF, accent);
+                int color = withFade(tinted, charAlpha);
+
+                GlStateManager.pushMatrix();
+                scaleAtPos(cx, baseY + fontH * 0.5 - lift, charScale);
+                fr.drawString(String.valueOf(c), x, baseY - lift, color);
+                GlStateManager.popMatrix();
+            }
+
+            x += cw;
+        }
+
+        if (this.auroraSpark.getValue() && sweep > 0.001 && sweep < 0.999) {
+            renderAuroraSpark(headX, baseY, fade, beat);
+        }
+    }
+
+    private double computeSungTotal(CFontRenderer fr, LyricLine line) {
+        int n = line.words.size();
+        if (n == 0) return fr.getStringWidthD(line.getLyric());
+
+        StringBuilder before = new StringBuilder();
+        for (int i = 0; i < n - 1; i++) {
+            before.append(line.words.get(i).word);
+        }
+
+        return fr.getStringWidthD(before.toString()) + fr.getStringWidthD(line.words.get(n - 1).word);
+    }
+
+    private void renderAuroraGlow(CFontRenderer fr, String text, double leftX, double baseY, double headX, double fade, double beat, double glowAlpha) {
+        double intensity = Mth.limit(0.45 + beat * 0.5, 0.0, 1.0) * fade * glowAlpha;
+        if (intensity <= 0.01) return;
+
+        double centerY = baseY + fontH * 0.5;
+
+        double[][] layers = {
+                {1.60, 0.07}, {1.46, 0.11}, {1.33, 0.17}, {1.20, 0.25}, {1.10, 0.34}
+        };
+
+        char[] chars = text.toCharArray();
+        double x = leftX;
+
+        for (int i = 0; i < chars.length; i++) {
+            char c = chars[i];
+            char next = i + 1 < chars.length ? chars[i + 1] : '\0';
+            double cw = fr.getCharWidth(c, next);
+
+            double reveal = Mth.limit((headX - x) / Math.max(1.0E-3, cw), 0.0, 1.0);
+
+            if (reveal > 0.01 && c != ' ') {
+                double cx = x + cw * 0.5;
+                int rgb = this.glowColor.getRGB(i * 0.2, 255) & 0xFFFFFF;
+                String s = String.valueOf(c);
+
+                for (double[] layer : layers) {
+                    int alpha = (int) (intensity * reveal * layer[1] * 255.0);
+                    if (alpha <= 0) continue;
+
+                    GlStateManager.pushMatrix();
+                    scaleAtPos(cx, centerY, layer[0]);
+                    fr.drawString(s, x, baseY, RGBA.color(rgb, alpha));
+                    GlStateManager.popMatrix();
+                }
+            }
+
+            x += cw;
+        }
+    }
+
+    private void updateAuroraLinger(LyricLine line, LyricRenderInfo renderInfo, boolean isCurrent) {
+        line.auroraGlow = Interpolations.interpolate(line.auroraGlow, isCurrent ? 1f : 0f, isCurrent ? 0.35f : 0.06f);
+
+        if (isCurrent) return;
+        if (!this.auroraBloom.getValue() || !ClientSettings.RENDER_GLOW.getValue()) return;
+        if (line.auroraGlow <= 0.01f) return;
+
+        CFontRenderer fr = getFontRenderer();
+        String text = line.getLyric();
+        if (text.isEmpty()) return;
+
+        double leftX = calculateAlignmentX(text, this.alignMode.getValue());
+        double headX = leftX + fr.getStringWidthD(text);
+        renderAuroraGlow(fr, text, leftX, renderInfo.yPosition, headX, renderInfo.fade, auroraEnergy, line.auroraGlow);
+    }
+
+    private void renderAuroraSpark(double headX, double baseY, double fade, double beat) {
+        double centerY = baseY + fontH * 0.5;
+        double pulse = 0.6 + 0.4 * beat;
+        int rgb = this.glowColor.getRGB() & 0xFFFFFF;
+
+        double haloW = Math.max(2.0, fontH * 0.42) * (0.85 + beat * 0.3);
+        double haloH = fontH * 1.05;
+        roundedRect(headX - haloW * 0.5, centerY - haloH * 0.5, haloW, haloH, haloW * 0.5, RGBA.color(rgb, (int) (fade * pulse * 90.0)));
+
+        double coreW = Math.max(1.0, fontH * 0.13);
+        double coreH = fontH * 0.92;
+        roundedRect(headX - coreW * 0.5, centerY - coreH * 0.5, coreW, coreH, coreW * 0.5, RGBA.white((int) (fade * pulse * 230.0)));
+
+        double dot = Math.max(1.5, fontH * 0.2) * (0.9 + beat * 0.4);
+        roundedRect(headX - dot * 0.5, centerY - dot * 0.5, dot, dot, dot * 0.5, RGBA.white((int) (fade * Math.min(1.0, 0.8 + beat) * 255.0)));
+    }
+
+    private double lowFrequencyEnergy() {
+        float[] bands = AudioPlayer.bandValues;
+        if (bands == null || bands.length == 0) return 0.0;
+
+        int count = Math.min(10, bands.length);
+        double weightedSum = 0.0, totalWeight = 0.0;
+
+        for (int i = 0; i < count; i++) {
+            double weight = Math.exp(-i * 0.25);
+            double value = Math.min(bands[i], 2.0);
+            weightedSum += value * weight;
+            totalWeight += weight;
+        }
+
+        if (totalWeight <= 0.0) return 0.0;
+
+        double average = weightedSum / totalWeight;
+        return Mth.limit(Math.log1p(average * 4.0) * 0.6, 0.0, 1.0);
     }
 
     private void renderScrollMode(LyricLine line, LyricRenderInfo renderInfo) {

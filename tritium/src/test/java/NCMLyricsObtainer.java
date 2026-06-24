@@ -119,6 +119,34 @@ public class NCMLyricsObtainer {
                 System.err.println("Failed to save translations!");
                 e.printStackTrace();
             }
+
+            if (result.has("yrc")) {
+                String yrc = result.getAsJsonObject("yrc").get("lyric").getAsString();
+                lyric = yrc.replace("\\n", "\n");
+
+                while (!(lyric.startsWith("[") && isNumber(lyric.substring(1, 2)))) {
+                    lyric = lyric.substring(1);
+                }
+
+                finalLyrics = new StringBuilder();
+
+                for (String s : lyric.split("\n")) {
+                    // if the lyrics is empty then continue
+                    if (s.substring(s.lastIndexOf("]") + 1).isEmpty()) {
+                        continue;
+                    }
+
+                    finalLyrics.append(s).append("\n");
+                }
+
+                File originalYrc = new File(dest, "original.yrc");
+                try {
+                    Files.write(originalYrc.toPath(), finalLyrics.toString().getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING, StandardOpenOption.WRITE);
+                } catch (IOException e) {
+                    System.err.println("Failed to save original yrc!");
+                    e.printStackTrace();
+                }
+            }
         }
 
     }
