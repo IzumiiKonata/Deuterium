@@ -952,8 +952,8 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             int tileSize = 1000;
             int cropSize = 600;
             int maxOffset = tileSize - cropSize;
-            float cropU = (float) (coverFloatX * maxOffset);
-            float cropV = (float) (coverFloatY * maxOffset);
+            float cropU = (float) Mth.limit(coverFloatX * maxOffset, 0, maxOffset);
+            float cropV = (float) Mth.limit(coverFloatY * maxOffset, 0, maxOffset);
 
             GlStateManager.enableBlend();
             GlStateManager.disableAlpha();
