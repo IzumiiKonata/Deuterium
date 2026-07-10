@@ -1,6 +1,7 @@
 package tritium.screens.ncm;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -63,6 +64,10 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
     double coverSize = (CloudMusic.player == null || CloudMusic.player.isPausing()) ? this.getCoverSizeMin() : this.getCoverSizeMax();
     float coverAlpha = 1f;
+
+    double coverFloatX = 0.5, coverFloatY = 0.5;
+    double coverFloatTargetX = 0.5, coverFloatTargetY = 0.5;
+    Timer coverFloatTimer = new Timer();
 
     boolean progressBarDragging = false;
     double progressBarProgressOverride = 0;
@@ -929,18 +934,37 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             float scaledEnergy = (float) Math.log1p(lowFreqEnergy * 10) * 0.05f;
             
             float damping = lowFreqEnergy > fftScale ? 0.3f : 0.6f;
-            fftScale = Interpolations.interpolate(fftScale, scaledEnergy * .25, damping);
+            fftScale = Interpolations.interpolate(fftScale, scaledEnergy * .75, damping);
 
             scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 + fftScale);
 
-            double bgSize = Math.max(width, height);
+            if (coverFloatTimer.isDelayed(4000)) {
+                coverFloatTargetX = Math.random();
+                coverFloatTargetY = Math.random();
+                coverFloatTimer.reset();
+            }
+
+            if (!CloudMusic.player.isPausing()) {
+                coverFloatX = Interpolations.interpolateLinear(coverFloatX, coverFloatTargetX, 0.0035f);
+                coverFloatY = Interpolations.interpolateLinear(coverFloatY, coverFloatTargetY, 0.0035f);
+            }
+
+            int tileSize = 1000;
+            int cropSize = 600;
+            int maxOffset = tileSize - cropSize;
+            float cropU = (float) (coverFloatX * maxOffset);
+            float cropV = (float) (coverFloatY * maxOffset);
+
+            GlStateManager.enableBlend();
+            GlStateManager.disableAlpha();
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+            GlStateManager.enableTexture2D();
 
             if (prevBg != null && musicBgAlpha < 0.99f) {
-                int glTextureId = prevBg.getGlTextureId();
-                GlStateManager.bindTexture(glTextureId);
+                GlStateManager.bindTexture(prevBg.getGlTextureId());
                 prevBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha);
-                Image.draw(posX + width * .5 - bgSize * .5, posY + height * .5 - bgSize * .5, bgSize, bgSize, Image.Type.NoColor);
+                Gui.drawScaledCustomSizeModalRect(posX, posY, cropU, cropV, cropSize, cropSize, width, height, tileSize, tileSize);
             }
 
             if (texBg != null) {
@@ -948,7 +972,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 GlStateManager.bindTexture(texBg.getGlTextureId());
                 texBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha * this.musicBgAlpha);
-                Image.draw(posX + width * .5 - bgSize * .5, posY + height * .5 - bgSize * .5, bgSize, bgSize, Image.Type.NoColor);
+                Gui.drawScaledCustomSizeModalRect(posX, posY, cropU, cropV, cropSize, cropSize, width, height, tileSize, tileSize);
             }
 
             GlStateManager.popMatrix();
