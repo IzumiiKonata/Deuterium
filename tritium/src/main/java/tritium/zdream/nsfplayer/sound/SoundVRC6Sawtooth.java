@@ -100,11 +100,13 @@ public class SoundVRC6Sawtooth extends SoundVRC6 {
 			while (time > 0) {
 				int cyclesToSimulate = Math.min(time, counter);
 
+				double v = 256;
+
 				for (int i = 0; i < cyclesToSimulate; i++) {
 					phaseAccumulator += stepIncrement;
 
-					if (phaseAccumulator >= 256.0) {
-						phaseAccumulator -= 256.0;
+					if (phaseAccumulator >= v) {
+						phaseAccumulator -= v;
 					}
 
 					counter--;

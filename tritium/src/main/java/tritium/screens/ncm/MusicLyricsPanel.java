@@ -929,7 +929,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             float scaledEnergy = (float) Math.log1p(lowFreqEnergy * 10) * 0.05f;
             
             float damping = lowFreqEnergy > fftScale ? 0.3f : 0.6f;
-            fftScale = Interpolations.interpolate(fftScale, scaledEnergy, damping);
+            fftScale = Interpolations.interpolate(fftScale, scaledEnergy * .25, damping);
 
             scaleAtPos(RenderSystem.getWidth() * .5, RenderSystem.getHeight() * .5, 1 + fftScale);
 
