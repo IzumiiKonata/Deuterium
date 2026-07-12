@@ -30,7 +30,7 @@ public class TextureAtlas {
     }
 
     public void init() {
-        MultiThreadingUtil.runOnMainThread(() -> {
+        MultiThreadingUtil.runOnMainThreadForced(() -> {
             this.textureId = GlStateManager.generateTexture();
             GlStateManager.bindTexture(textureId);
 

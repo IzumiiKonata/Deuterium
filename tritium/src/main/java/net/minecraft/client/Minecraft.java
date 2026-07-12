@@ -363,7 +363,9 @@ public class Minecraft implements IThreadListener {
 
         ClientSettings.initialize();
 
-        MultiThreadingUtil.runAsync(FontManager::loadFonts);
+//        MultiThreadingUtil.runAsync();
+
+        FontManager.loadFonts();
 
         this.proxy = gameConfig.userInfo.proxy == null ? Proxy.NO_PROXY : gameConfig.userInfo.proxy;
         this.session = gameConfig.userInfo.session;
@@ -2487,9 +2489,25 @@ public class Minecraft implements IThreadListener {
         }
     }
 
+    public <V> ListenableFuture<V> addForcedScheduledTask(Callable<V> callableToSchedule) {
+        Validate.notNull(callableToSchedule);
+
+        ListenableFutureTask<V> listenablefuturetask = ListenableFutureTask.create(callableToSchedule);
+
+        synchronized (this.scheduledTasks) {
+            this.scheduledTasks.add(listenablefuturetask);
+            return listenablefuturetask;
+        }
+    }
+
     public ListenableFuture<Object> addScheduledTask(Runnable runnableToSchedule) {
         Validate.notNull(runnableToSchedule);
         return this.addScheduledTask(Executors.callable(runnableToSchedule));
+    }
+
+    public ListenableFuture<Object> addForcedScheduledTask(Runnable runnableToSchedule) {
+        Validate.notNull(runnableToSchedule);
+        return this.addForcedScheduledTask(Executors.callable(runnableToSchedule));
     }
 
     public boolean isCallingFromMinecraftThread() {

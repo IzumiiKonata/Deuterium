@@ -51,6 +51,10 @@ public class MultiThreadingUtil {
         Minecraft.getMinecraft().addScheduledTask(runnable);
     }
 
+    public static void runOnMainThreadForced(Runnable runnable) {
+        Minecraft.getMinecraft().addForcedScheduledTask(runnable);
+    }
+
     private static class FutureTaskWrapper implements Runnable {
         private final Runnable runnable;
         private final CompletableFuture<Void> future;
