@@ -37,6 +37,7 @@ import tritium.utils.timing.Timer;
 import tritium.widget.impl.MusicLyricsWidget;
 
 import java.awt.*;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.List;
 
@@ -339,6 +340,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
         LyricLine currentLyric = progressBarDragging ? CloudMusic.findCurrentLyric(overridePlaybackProgress) : CloudMusic.currentLyric;
         int currentIndex = CloudMusic.lyrics.indexOf(currentLyric);
 
+
         for (int k = 0; k < CloudMusic.lyrics.size(); k++) {
             LyricLine lyric = CloudMusic.lyrics.get(k);
 
@@ -525,16 +527,16 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
 
                                 GlStateManager.bindTexture(baseFb.framebufferTexture);
                                 double xOff = spacing + 120;
-                                ShaderProgram.drawQuadFlipped(xOff, spacing, fbWidth * .5, fbHeight * .5);
+                                ShaderProgram.drawQuadFlipped(xOff, spacing, allocW * .5, fbHeight * .5);
 
                                 FontManager.pf28bold.drawCenteredStringVertical("Base Texture", spacing + 8, spacing + fbHeight * .25, -1);
 
                                 GlStateManager.bindTexture(stencilFb.framebufferTexture);
-                                ShaderProgram.drawQuadFlipped(xOff, spacing + fbHeight * .5 + 20, fbWidth * .5, fbHeight * .5);
+                                ShaderProgram.drawQuadFlipped(xOff, spacing + fbHeight * .5 + 20, allocW * .5, fbHeight * .5);
 
                                 FontManager.pf28bold.drawCenteredStringVertical("Stencil Texture", spacing + 8, spacing + fbHeight * .5 + 20 + fbHeight * .25, -1);
 
-                                Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, xOff, spacing + (fbHeight * .5) * 2 + 40, fbWidth * .5, fbHeight * .5);
+                                Shaders.STENCIL.draw(baseFb.framebufferTexture, stencilFb.framebufferTexture, xOff, spacing + (fbHeight * .5) * 2 + 40, allocW * .5, fbHeight * .5);
 
                                 FontManager.pf28bold.drawCenteredStringVertical("Result", spacing + 8, spacing + (fbHeight * .5) * 2 + 40 + fbHeight * .25, -1);
 
@@ -955,6 +957,16 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
             float cropU = (float) Mth.limit(coverFloatX * maxOffset, 0, maxOffset);
             float cropV = (float) Mth.limit(coverFloatY * maxOffset, 0, maxOffset);
 
+            double renderTileWidth, renderTileHeight;
+
+            if (width > height) {
+                renderTileWidth = tileSize;
+                renderTileHeight = tileSize * (width / height);
+            } else {
+                renderTileWidth = tileSize * (height / width);
+                renderTileHeight = tileSize;
+            }
+
             GlStateManager.enableBlend();
             GlStateManager.disableAlpha();
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
@@ -964,7 +976,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 GlStateManager.bindTexture(prevBg.getGlTextureId());
                 prevBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha);
-                Gui.drawScaledCustomSizeModalRect(posX, posY, cropU, cropV, cropSize, cropSize, width, height, tileSize, tileSize);
+                Gui.drawScaledCustomSizeModalRect(posX, posY, cropU, cropV, cropSize, cropSize, width, height, renderTileWidth, renderTileHeight);
             }
 
             if (texBg != null) {
@@ -972,7 +984,7 @@ public class MusicLyricsPanel implements SharedRenderingConstants {
                 GlStateManager.bindTexture(texBg.getGlTextureId());
                 texBg.linearFilter();
                 GlStateManager.color(1, 1, 1, alpha * this.musicBgAlpha);
-                Gui.drawScaledCustomSizeModalRect(posX, posY, cropU, cropV, cropSize, cropSize, width, height, tileSize, tileSize);
+                Gui.drawScaledCustomSizeModalRect(posX, posY, cropU, cropV, cropSize, cropSize, width, height, renderTileWidth, renderTileHeight);
             }
 
             GlStateManager.popMatrix();

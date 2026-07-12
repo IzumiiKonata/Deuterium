@@ -76,17 +76,17 @@ public class WidgetsManager extends AbstractManager implements SharedRenderingCo
                 widget.setX(0);
             }
 
-            if (widget.getX() + widget.getWidth() > RenderSystem.getWidth()) {
-                widget.setX(RenderSystem.getWidth() - widget.getWidth());
-            }
+//            if (widget.getX() + widget.getWidth() > RenderSystem.getWidth()) {
+//                widget.setX(RenderSystem.getWidth() - widget.getWidth());
+//            }
 
             if (widget.getY() + widget.getHeight() < 0) {
                 widget.setY(0);
             }
 
-            if (widget.getY() + widget.getHeight() > RenderSystem.getHeight()) {
-                widget.setY(RenderSystem.getHeight() - widget.getHeight());
-            }
+//            if (widget.getY() + widget.getHeight() > RenderSystem.getHeight()) {
+//                widget.setY(RenderSystem.getHeight() - widget.getHeight());
+//            }
 
         }
 

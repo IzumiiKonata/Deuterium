@@ -123,11 +123,11 @@ public abstract class Widget extends Module {
     }
 
     public double getX() {
-        return RenderSystem.getWidth() * x;
+        return Math.min(RenderSystem.getWidth() * x, RenderSystem.getWidth() - this.getWidth());
     }
 
     public double getY() {
-        return RenderSystem.getHeight() * y;
+        return Math.min(RenderSystem.getHeight() * y, RenderSystem.getHeight() - this.getHeight());
     }
 
     public void setX(double x) {
