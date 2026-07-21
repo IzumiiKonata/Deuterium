@@ -420,7 +420,9 @@ public class Minecraft implements IThreadListener {
                         this.displayCrashReport(this.crashReporter);
                     }
                 }
-            } catch (MinecraftError ignored) {
+            } catch (MinecraftError m) {
+                System.err.println("wtf Minecraft Error");
+                m.printStackTrace();
                 break;
             } catch (ReportedException reportedexception) {
                 this.addGraphicsAndWorldToCrashReport(reportedexception.getCrashReport());

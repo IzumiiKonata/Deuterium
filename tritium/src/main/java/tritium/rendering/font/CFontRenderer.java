@@ -623,19 +623,23 @@ public class CFontRenderer implements Closeable, IFontRenderer {
     }
 
     public float getCharWidth(char ch, char nextChar) {
+        if (ch == '（') ch = '(';
+        if (ch == '）') ch = ')';
+        if (ch == '・') ch = '·';
+
         Glyph glyph = allGlyphs[ch];
 
         if (glyph == null)
             return .0f;
 
-        float width = glyph.width * .5f;
+        float width = glyph.width;
         
         // 添加字间距
         if (fontKerning != null && nextChar != '\0') {
             width += fontKerning.getKerning(ch, nextChar, sizePx);
         }
         
-        return width;
+        return width * .5f;
     }
 
     public double getStringHeight(String text) {
