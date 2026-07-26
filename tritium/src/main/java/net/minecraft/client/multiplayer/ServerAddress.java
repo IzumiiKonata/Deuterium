@@ -5,6 +5,7 @@ import javax.naming.directory.DirContext;
 import javax.naming.directory.InitialDirContext;
 import java.net.IDN;
 import java.util.Hashtable;
+import java.util.Locale;
 
 public class ServerAddress {
     private final String ipAddress;
@@ -70,19 +71,38 @@ public class ServerAddress {
      * Returns a server's address and port for the specified hostname, looking up the SRV record if possible
      */
     private static String[] getServerAddress(String p_78863_0_) {
+        if (System.getProperty("os.name", "").toLowerCase(Locale.ROOT).startsWith("windows")) {
+            try {
+                String[] address = WindowsDnsSrvResolver.resolve(p_78863_0_);
+
+                if (address != null) {
+                    return address;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+
+        DirContext dircontext = null;
+
         try {
-            String s = "com.sun.jndi.dns.DnsContextFactory";
             Class.forName("com.sun.jndi.dns.DnsContextFactory");
-            Hashtable hashtable = new Hashtable();
+            Hashtable<String, String> hashtable = new Hashtable<>();
             hashtable.put("java.naming.factory.initial", "com.sun.jndi.dns.DnsContextFactory");
             hashtable.put("java.naming.provider.url", "dns:");
             hashtable.put("com.sun.jndi.dns.timeout.retries", "1");
-            DirContext dircontext = new InitialDirContext(hashtable);
+            dircontext = new InitialDirContext(hashtable);
             Attributes attributes = dircontext.getAttributes("_minecraft._tcp." + p_78863_0_, new String[]{"SRV"});
             String[] astring = attributes.get("srv").get().toString().split(" ", 4);
             return new String[]{astring[3], astring[2]};
         } catch (Throwable var6) {
             return new String[]{p_78863_0_, Integer.toString(25565)};
+        } finally {
+            if (dircontext != null) {
+                try {
+                    dircontext.close();
+                } catch (Exception ignored) {
+                }
+            }
         }
     }
 
