@@ -80,8 +80,8 @@ public class OAuth {
                 });
                 httpServer.setExecutor(null);
                 httpServer.start();
-            } catch (Exception e) {
-                callback.onFailed(e);
+            } catch (Throwable t) {
+                callback.onFailed(t);
             }
         });
     }
@@ -332,7 +332,7 @@ public class OAuth {
 
         void onSucceed(String uuid, String userName, String token, String refreshToken);
 
-        void onFailed(Exception e);
+        void onFailed(Throwable t);
 
         void setStatus(String status);
 

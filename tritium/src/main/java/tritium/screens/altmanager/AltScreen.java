@@ -188,9 +188,9 @@ public class AltScreen extends BaseScreen {
                     final Localizable lFailed = Localizable.of("altscreen.failed");
 
                     @Override
-                    public void onFailed(Exception e) {
-                        e.printStackTrace();
-                        dialog.setLabel(Localizable.ofUntranslatable(lFailed.get() + "\n" + e.getMessage()));
+                    public void onFailed(Throwable t) {
+                        t.printStackTrace();
+                        dialog.setLabel(Localizable.ofUntranslatable(lFailed.get() + "\n" + t.getMessage()));
                         AltScreen.getInstance().status = EnumChatFormatting.RED + lFailed.get();
                     }
 
@@ -439,9 +439,9 @@ public class AltScreen extends BaseScreen {
                     }
 
                     @Override
-                    public void onFailed(Exception e) {
-                        e.printStackTrace();
-                        dialog.setLabel(Localizable.ofUntranslatable(lFailed.get() + "\n" + e.getMessage()));
+                    public void onFailed(Throwable t) {
+                        t.printStackTrace();
+                        dialog.setLabel(Localizable.ofUntranslatable(lFailed.get() + "\n" + t.getMessage()));
                         AltScreen.this.status = EnumChatFormatting.RED + lFailed.get();
                     }
 

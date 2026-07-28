@@ -47,6 +47,7 @@ public class LaunchClassLoader extends URLClassLoader {
         // classloader exclusions
         addClassLoaderExclusion("java.");
         addClassLoaderExclusion("sun.");
+        addClassLoaderExclusion("com.sun.net.httpserver.");
 //        addClassLoaderExclusion("org.lwjgl.");
         addClassLoaderExclusion("org.apache.logging.");
         addClassLoaderExclusion("net.minecraft.launchwrapper.");
